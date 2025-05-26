@@ -127,13 +127,13 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                         + (game.getRoundCount() + aaa.getTurnsTilHit())
                         + ", fired by "
                         + game.getPlayer(aaa.getPlayerId()).getName();
-                game.getBoard().addSpecialHexDisplay(
+                game.getBoard(aaa.getTarget(game).getBoardId()).addSpecialHexDisplay(
                         aaa.getTarget(game).getPosition(),
                         new SpecialHexDisplay(
                                 SpecialHexDisplay.Type.ARTILLERY_INCOMING, game
                                         .getRoundCount() + aaa.getTurnsTilHit(),
                                 game.getPlayer(aaa.getPlayerId()), artyMsg,
-                                SpecialHexDisplay.SHD_OBSCURED_TEAM));
+                                SpecialHexDisplay.SHD_VISIBLETO_TEAM));
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
@@ -334,12 +334,12 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             if (!mineClear) {
                 vPhaseReport.addElement(r);
             }
-            targetHex = game.getBoard().getHex(targetPos);
-            heights.add((targetHex != null) ? game.getBoard().getHex(targetPos).getLevel() : 0);
+            targetHex = game.getBoard(target.getBoardId()).getHex(targetPos);
+            heights.add((targetHex != null) ? game.getBoard(target.getBoardId()).getHex(targetPos).getLevel() : 0);
             artyMsg = "Artillery hit here on round " + game.getRoundCount()
                     + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
                     + " (this hex is now an auto-hit)";
-            game.getBoard().addSpecialHexDisplay(targetPos,
+            game.getBoard(target.getBoardId()).addSpecialHexDisplay(targetPos,
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
                             game.getRoundCount(), game.getPlayer(aaa.getPlayerId()), artyMsg));
         } else {
@@ -559,7 +559,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             // Here we're doing damage for each hit with more standard artillery shells
             while (nweaponsHit > 0) {
-                gameManager.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
+                gameManager.artilleryDamageArea(targetPos, atype,
                         subjectId, ae, isFlak, heights.get(0), mineClear, vPhaseReport,
                         asfFlak);
                 nweaponsHit--;
@@ -586,7 +586,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                     }
                 }
                 handleArtilleryDriftMarker(origPos, c, aaa,
-                        gameManager.artilleryDamageArea(c, aaa.getCoords(), atype, subjectId, ae, isFlak,
+                        gameManager.artilleryDamageArea(c, atype, subjectId, ae, isFlak,
                                 height, mineClear, vPhaseReport, asfFlak));
             }
 

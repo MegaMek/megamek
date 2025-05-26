@@ -46,6 +46,7 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.ImageCache;
 import megamek.common.Board;
+import megamek.common.BoardType;
 import megamek.common.Coords;
 import megamek.common.Hex;
 import megamek.common.Terrains;
@@ -88,23 +89,20 @@ class TerrainShadowHelper {
     BufferedImage updateShadowMap() {
         // Issues:
         // Bridge shadows show a gap towards connected hexes. I don't know why.
-        // More than one super image on a hex (building + road) doesn't work. how do I
-        // get
+        // More than one super image on a hex (building + road) doesn't work. how do I get
         // the super for a hex for a specific terrain? This would also help
         // with building shadowing other buildings.
         // AO shadows might be handled by this too. But:
         // this seems to need a lot of additional copying (paint shadow on a clean map
         // for this level alone; soften up;
-        // copy to real shadow
-        // map with clipping area active; get new clean shadow map for next shadowed
-        // level;
+        // copy to real shadow map with clipping area active; get new clean shadow map for next shadowed level;
         // too much hassle currently; it works so beautifully
         if (!GUIP.getShadowMap()) {
             return null;
         }
 
-        Board board = boardView.game.getBoard();
-        if ((board == null) || board.inSpace()) {
+        Board board = boardView.getBoard();
+        if ((board == null) || board.isSpace() || (board.getBoardType() == BoardType.SKY)) {
             return null;
         }
 
@@ -370,7 +368,8 @@ class TerrainShadowHelper {
         }
 
         long tT5 = System.nanoTime() - stT;
-        LOGGER.info("Time to prepare the shadow map: {}ms", tT5 / 1e6);
+        int memory = shadowMap.getWidth() * shadowMap.getHeight() * 4 / 1_000_000;
+        LOGGER.info("Time to prepare the shadow map: {}ms; memory (roughly): {} MB", tT5 / 1e6, memory);
         return shadowMap;
     }
 

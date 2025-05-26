@@ -198,7 +198,7 @@ public class TilesetManager implements IPreferenceChangeListener {
         if (wreckageDecals.containsKey(filename)) {
             marker = wreckageDecals.get(filename);
         } else {
-            marker = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
+            marker = TilesetManager.loadSpecificImage(wreckDecalDir, filename);
             wreckageDecals.put(filename, marker);
         }
 
@@ -228,7 +228,7 @@ public class TilesetManager implements IPreferenceChangeListener {
         if (wreckageDecals.containsKey(filename)) {
             marker = wreckageDecals.get(filename);
         } else {
-            marker = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
+            marker = TilesetManager.loadSpecificImage(wreckDecalDir, filename);
             wreckageDecals.put(filename, marker);
         }
 
@@ -248,7 +248,7 @@ public class TilesetManager implements IPreferenceChangeListener {
         String imageKey = String.format("%s%s", filename, rotationKey);
 
         if (!wreckageDecals.containsKey(imageKey)) {
-            Image baseImage = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
+            Image baseImage = TilesetManager.loadSpecificImage(wreckDecalDir, filename);
 
             for (double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
                 RotateFilter rf = new RotateFilter(x * 90);
@@ -281,7 +281,7 @@ public class TilesetManager implements IPreferenceChangeListener {
             String imageKey = String.format("%s%s", filename, rotationKey);
 
             if (!wreckageDecals.containsKey(imageKey)) {
-                Image baseImage = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
+                Image baseImage = TilesetManager.loadSpecificImage(wreckDecalDir, filename);
 
                 for (double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
                     RotateFilter rf = new RotateFilter(x * 90);
@@ -453,29 +453,29 @@ public class TilesetManager implements IPreferenceChangeListener {
      * Load all the images we'll need for the game and place them in the tracker
      */
     public void loadNeededImages(Game game) {
-        Board board = game.getBoard();
-        // pre-match all hexes with images, load hex images
-        int width = board.getWidth();
-        int height = board.getHeight();
-        // We want to cache as many of the images as we can, but if we have
-        // more images than cache size, lets not waste time
-        if ((width * height) > ImageCache.MAX_SIZE) {
-            // Find the largest size by size square we can fit in the cache
-            int max_dim = (int) Math.sqrt(ImageCache.MAX_SIZE);
-            if (width < max_dim) {
-                height = ImageCache.MAX_SIZE / width;
-            } else if (height < max_dim) {
-                width = ImageCache.MAX_SIZE / height;
-            } else {
-                width = height = max_dim;
-            }
-        }
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                Hex hex = board.getHex(x, y);
-                loadHexImage(hex);
-            }
-        }
+//        Board board = game.getBoard();
+//        // pre-match all hexes with images, load hex images
+//        int width = board.getWidth();
+//        int height = board.getHeight();
+//        // We want to cache as many of the images as we can, but if we have
+//        // more images than cache size, lets not waste time
+//        if ((width * height) > ImageCache.MAX_SIZE) {
+//            // Find the largest size by size square we can fit in the cache
+//            int max_dim = (int) Math.sqrt(ImageCache.MAX_SIZE);
+//            if (width < max_dim) {
+//                height = ImageCache.MAX_SIZE / width;
+//            } else if (height < max_dim) {
+//                width = ImageCache.MAX_SIZE / height;
+//            } else {
+//                width = height = max_dim;
+//            }
+//        }
+//        for (int y = 0; y < height; y++) {
+//            for (int x = 0; x < width; x++) {
+//                Hex hex = board.getHex(x, y);
+//                loadHexImage(hex);
+//            }
+//        }
 
         // load all mek images
         for (Entity e : game.getEntitiesVector()) {
@@ -489,20 +489,20 @@ public class TilesetManager implements IPreferenceChangeListener {
 
         }
 
-        minefieldSign = LoadSpecificImage(Configuration.hexesDir(), Minefield.FILENAME_IMAGE);
-        hexMask = LoadSpecificImage(Configuration.hexesDir(), FILENAME_HEX_MASK);
+        minefieldSign = loadSpecificImage(Configuration.hexesDir(), Minefield.FILENAME_IMAGE);
+        hexMask = loadSpecificImage(Configuration.hexesDir(), FILENAME_HEX_MASK);
 
-        artilleryAutohit = LoadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_AUTOHIT_IMAGE);
-        artilleryAdjusted = LoadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_ADJUSTED_IMAGE);
-        artilleryIncoming = LoadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_INCOMING_IMAGE);
-        orbitalBombardmentIncoming = LoadSpecificImage(Configuration.hexesDir(), FILENAME_ORBITAL_BOMBARDMENT_INCOMING_IMAGE);
-        orbitalBombardmentHit = LoadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_HIT_IMAGE);
+        artilleryAutohit = loadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_AUTOHIT_IMAGE);
+        artilleryAdjusted = loadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_ADJUSTED_IMAGE);
+        artilleryIncoming = loadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_INCOMING_IMAGE);
+        orbitalBombardmentIncoming = loadSpecificImage(Configuration.hexesDir(), FILENAME_ORBITAL_BOMBARDMENT_INCOMING_IMAGE);
+        orbitalBombardmentHit = loadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_HIT_IMAGE);
 
         started = true;
     }
 
     /** Local method. Loads and returns the image. */
-    public static Image LoadSpecificImage(File path, String name) {
+    public static Image loadSpecificImage(File path, String name) {
         Image result = ImageUtil.loadImageFromFile(new MegaMekFile(path, name).toString());
         if ((result == null) || (result.getWidth(null) <= 0) || (result.getHeight(null) <= 0)) {
             logger.error("Error opening image: " + name);

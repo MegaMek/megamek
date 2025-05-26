@@ -39,6 +39,8 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
+import megamek.client.ui.tileset.EntityImage;
+import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.Entity;
@@ -348,8 +350,8 @@ public class MekTableModel extends AbstractTableModel {
                     setToolTipText(unitTooltips.get(row));
                     if (entity instanceof Entity) {
                         final Camouflage camouflage = ((Entity) entity).getCamouflageOrElseOwners();
-                        final Image icon = clientGui.getBoardView().getTilesetManager()
-                                .loadPreviewImage((Entity) entity, camouflage);
+                        final Image base = MMStaticDirectoryManager.getMekTileset().imageFor((Entity) entity);
+                        final Image icon = new EntityImage(base, camouflage, this, (Entity) entity).loadPreviewImage(true);
                         if (!compact) {
                             setIcon(icon, size);
                             setIconTextGap(UIUtil.scaleForGUI(10));

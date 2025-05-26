@@ -36,6 +36,8 @@ import javax.swing.ToolTipManager;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.dialogs.ConfirmDialog;
@@ -132,6 +134,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private ElevationOption lastDeploymentOption = null;
 
     private final ClientGUI clientgui;
+    private final Game game;
 
     /**
      * Creates and lays out a new deployment phase display for the specified client.
@@ -139,8 +142,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     public DeploymentDisplay(ClientGUI clientgui) {
         super(clientgui);
         this.clientgui = clientgui;
-        clientgui.getClient().getGame().addGameListener(this);
-        clientgui.getBoardView().addBoardViewListener(this);
+        game = clientgui.getClient().getGame();
+        game.addGameListener(this);
         setupStatusBar(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase"));
 
         setButtons();
@@ -209,116 +212,97 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         lastDeploymentOption = null;
 
         // hmm, sometimes this gets called when there's no ready entities?
-        if (clientgui.getClient().getGame().getEntity(en) == null) {
+        Entity entity = game.getEntity(en);
+        if (entity == null) {
             disableButtons();
             setNextEnabled(true);
+            clientgui.clearFieldOfFire();
+            clientgui.clearTemporarySprites();
             logger.error("DeploymentDisplay: Tried to select non-existent entity: " + en);
             return;
         }
 
-        if ((ce() != null) && ce().isWeapOrderChanged()) {
-            clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
+        if (entity.isWeapOrderChanged()) {
+            clientgui.getClient().sendEntityWeaponOrderUpdate(entity);
         }
 
         // FIXME: Hack alert: remove C3 sprites from earlier here, or we might crash
         // when
         // trying to draw a c3 sprite belonging to the previously selected,
         // but not deployed entity. BoardView1 should take care of that itself.
-        if (clientgui.getBoardView() != null) {
-            clientgui.getBoardView().clearC3Networks();
-        }
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).clearC3Networks());
         cen = en;
         clientgui.setSelectedEntityNum(en);
-        clientgui.getBoardView().select(null);
-        clientgui.getBoardView().cursor(null);
-        // RACE : if player clicks fast enough, ce() is null.
-        if (null != ce()) {
-            setTurnEnabled(true);
-            butDone.setEnabled(false);
-            clientgui.getBoardView().markDeploymentHexesFor(ce());
-            // set facing according to starting position
-            switch (ce().getStartingPos()) {
-                case Board.START_W:
-                case Board.START_SW:
-                    ce().setFacing(1);
-                    ce().setSecondaryFacing(1);
-                    break;
-                case Board.START_SE:
-                case Board.START_E:
-                    ce().setFacing(5);
-                    ce().setSecondaryFacing(5);
-                    break;
-                case Board.START_NE:
-                    ce().setFacing(4);
-                    ce().setSecondaryFacing(4);
-                    break;
-                case Board.START_N:
-                    ce().setFacing(3);
-                    ce().setSecondaryFacing(3);
-                    break;
-                case Board.START_NW:
-                    ce().setFacing(2);
-                    ce().setSecondaryFacing(2);
-                    break;
-                default:
-                    ce().setFacing(0);
-                    ce().setSecondaryFacing(0);
-                    break;
-            }
-            boolean assaultDropOption = ce().getGame()
-                                              .getOptions()
-                                              .booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP);
-            setAssaultDropEnabled(ce().canAssaultDrop() && assaultDropOption);
-            if (!ce().canAssaultDrop() && assaultDropOption) {
-                buttons.get(DeployCommand.DEPLOY_ASSAULTDROP)
-                      .setText(Messages.getString("DeploymentDisplay.AssaultDrop"));
-                assaultDropPreference = false;
-            }
-
-            setLoadEnabled(!getLoadableEntities().isEmpty());
-            setUnloadEnabled(!ce().getLoadedUnits().isEmpty());
-
-            setNextEnabled(true);
-            setRemoveEnabled(true);
-
-            clientgui.getUnitDisplay().displayEntity(ce());
-            clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.SUMMARY);
-            clientgui.updateFiringArc(ce());
-            clientgui.showSensorRanges(ce());
-            computeCFWarningHexes(ce());
-            computeTowLinkBreakageHexes(ce());
-        } else {
-            disableButtons();
-            setNextEnabled(true);
-            clientgui.clearFieldOfFire();
-            clientgui.clearTemporarySprites();
+        clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
+        setTurnEnabled(true);
+        butDone.setEnabled(false);
+        markDeploymentHexes(entity);
+        // set facing according to starting position
+        switch (entity.getStartingPos()) {
+            case Board.START_W:
+            case Board.START_SW:
+                entity.setFacing(1);
+                entity.setSecondaryFacing(1);
+                break;
+            case Board.START_SE:
+            case Board.START_E:
+                entity.setFacing(5);
+                entity.setSecondaryFacing(5);
+                break;
+            case Board.START_NE:
+                entity.setFacing(4);
+                entity.setSecondaryFacing(4);
+                break;
+            case Board.START_N:
+                entity.setFacing(3);
+                entity.setSecondaryFacing(3);
+                break;
+            case Board.START_NW:
+                entity.setFacing(2);
+                entity.setSecondaryFacing(2);
+                break;
+            default:
+                entity.setFacing(0);
+                entity.setSecondaryFacing(0);
+                break;
         }
+        boolean assaultDropOption = game.getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP);
+        setAssaultDropEnabled(entity.canAssaultDrop() && assaultDropOption);
+        if (!entity.canAssaultDrop() && assaultDropOption) {
+            buttons.get(DeployCommand.DEPLOY_ASSAULTDROP)
+                  .setText(Messages.getString("DeploymentDisplay.AssaultDrop"));
+            assaultDropPreference = false;
+        }
+
+        setLoadEnabled(!getLoadableEntities().isEmpty());
+        setUnloadEnabled(!entity.getLoadedUnits().isEmpty());
+
+        setNextEnabled(true);
+        setRemoveEnabled(true);
+
+        clientgui.getUnitDisplay().displayEntity(entity);
+        clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.SUMMARY);
+        clientgui.updateFiringArc(entity);
+        clientgui.showSensorRanges(entity);
+        computeWarningHexes(entity);
     }
 
-    private void computeCFWarningHexes(Entity ce) {
-        Game game = clientgui.getClient().getGame();
-        List<Coords> warnList = CollapseWarning.findCFWarningsDeployment(game, ce, game.getBoard());
+    private void computeWarningHexes(Entity ce) {
+        Set<BoardLocation> warnList = new HashSet<>(CollapseWarning.findCFWarningsDeployment(game, ce));
+        warnList.addAll(TowLinkWarning.findTowLinkIssues(game, ce));
         clientgui.showCollapseWarning(warnList);
     }
 
-    private void computeTowLinkBreakageHexes(Entity ce) {
-        Game game = clientgui.getClient().getGame();
-        List<Coords> warnList = TowLinkWarning.findTowLinkIssues(game, ce, game.getBoard());
-        clientgui.showCollapseWarning(warnList);
-    }
-
-    /** Enables relevant buttons and sets up for your turn. */
+    /** Enables relevant buttons and sets up for the local player's turn. */
     private void beginMyTurn() {
         clientgui.maybeShowUnitDisplay();
         selectEntity(clientgui.getClient().getFirstDeployableEntityNum());
         setNextEnabled(true);
         setRemoveEnabled(true);
-        clientgui.getBoardView().markDeploymentHexesFor(ce());
     }
 
     /** Clears out old deployment data and disables relevant buttons. */
     private void endMyTurn() {
-        final Game game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());
         if (game.getPhase().isDeployment() &&
                   (null != next) &&
@@ -327,10 +311,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             clientgui.maybeShowUnitDisplay();
         }
         cen = Entity.NONE;
-        clientgui.getBoardView().select(null);
-        clientgui.getBoardView().highlight(null);
-        clientgui.getBoardView().cursor(null);
-        clientgui.getBoardView().markDeploymentHexesFor(null);
+        clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
+        hideDeploymentHexes();
         clientgui.setSelectedEntityNum(Entity.NONE);
         clientgui.clearTemporarySprites();
         disableButtons();
@@ -354,23 +336,24 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
     }
 
+    /**
+     * Notify the player that the planned deployment is not possible if vertain circumstances are met. Returns true
+     * in that case (cancel deployment), false if deployment can proceed.
+     *
+     * @return True to cancel deployment, false to proceed.
+     */
     private boolean checkNags() {
-        final Game game = clientgui.getClient().getGame();
-
-        if ((ce() != null) && (ce() instanceof Dropship) && !ce().isAirborne()) {
-            ArrayList<Coords> crushedBuildingLocs = new ArrayList<>();
-            ArrayList<Coords> secondaryPositions = new ArrayList<>();
-            secondaryPositions.add(ce().getPosition());
-            for (int dir = 0; dir < 6; dir++) {
-                secondaryPositions.add(ce().getPosition().translated(dir));
-            }
-            for (Coords pos : secondaryPositions) {
-                Building bld = game.getBoard().getBuildingAt(pos);
-                if (bld != null) {
-                    crushedBuildingLocs.add(pos);
-                }
-            }
-            if (!crushedBuildingLocs.isEmpty()) {
+        Entity entity = ce();
+        if (entity == null || entity.getPosition() == null) {
+            return true;
+        }
+        if ((entity instanceof Dropship) && !entity.isAirborne()) {
+            List<Coords> allPositions = new ArrayList<>();
+            allPositions.add(entity.getPosition());
+            allPositions.addAll(entity.getPosition().allAdjacent());
+            boolean crushesBuildingHex = allPositions.stream()
+                   .anyMatch(c -> game.getBoard(entity.getBoardId()).getBuildingAt(c) != null);
+            if (crushesBuildingHex) {
                 String title = Messages.getString("DeploymentDisplay.alertDialog.title");
                 String body = Messages.getString("DeploymentDisplay.dropshipBuildingDeploy");
                 clientgui.doAlertDialog(title, body);
@@ -380,26 +363,20 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         // Check nag for doomed planetary conditions
         if (GUIP.getNagForDoomed()) {
-            if (ce() != null) {
-                String reason = game.getPlanetaryConditions().whyDoomed(ce(), game);
-                if (reason != null) {
-                    String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title");
-                    String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", reason);
-                    ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
-                    if (nag.getAnswer()) {
-                        // do they want to be bothered again?
-                        if (!nag.getShowAgain()) {
-                            GUIP.setNagForDoomed(false);
-                        }
-                    } else {
-                        return true;
+            String reason = game.getPlanetaryConditions().whyDoomed(entity, game);
+            if (reason != null) {
+                String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title");
+                String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", reason);
+                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIP.setNagForDoomed(false);
                     }
+                } else {
+                    return true;
                 }
             }
-        }
-
-        if (ce() == null) {
-            return true;
         }
 
         return false;
@@ -414,13 +391,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         disableButtons();
 
         int elevationOrAltitude = entity.isAero() ? entity.getAltitude() : entity.getElevation();
-        clientgui.getClient()
-              .deploy(entity.getId(),
-                    entity.getPosition(),
-                    entity.getFacing(),
-                    elevationOrAltitude,
-                    entity.getLoadedUnits(),
-                    assaultDropPreference);
+        clientgui.getClient().deploy(entity.getId(), entity.getPosition(), entity.getBoardId(), entity.getFacing(),
+                elevationOrAltitude, entity.getLoadedUnits(), assaultDropPreference);
         entity.setDeployed(true);
 
         if (entity.isWeapOrderChanged()) {
@@ -434,7 +406,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         disableButtons();
         clientgui.getClient().sendDeleteEntity(cen);
         // Also remove units that are carried by the present unit
-        for (Entity carried : clientgui.getClient().getGame().getEntity(cen).getLoadedUnits()) {
+        for (Entity carried : game.getEntity(cen).getLoadedUnits()) {
             clientgui.getClient().sendDeleteEntity(carried.getId());
         }
         cen = Entity.NONE;
@@ -442,40 +414,31 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     /** Returns the current entity. */
     private Entity ce() {
-        return clientgui.getClient().getGame().getEntity(cen);
+        return game.getEntity(cen);
     }
 
     public void die() {
         if (clientgui.getClient().isMyTurn()) {
             endMyTurn();
         }
-        clientgui.getBoardView().markDeploymentHexesFor(null);
-        clientgui.getClient().getGame().removeGameListener(this);
-        clientgui.getBoardView().removeBoardViewListener(this);
+        hideDeploymentHexes();
+        game.removeGameListener(this);
+        clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));
         removeAll();
     }
 
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
+        if (isIgnoringEvents() || !game.getPhase().isDeployment()) {
             return;
         }
 
-        final Game game = clientgui.getClient().getGame();
-        // On simultaneous phases, each player ending their turn will generate a turn
-        // change
-        // We want to ignore turns from other players and only listen to events we
-        // generated
+        // On simultaneous phases, each player ending their turn will generate a turn change
+        // We want to ignore turns from other players and only listen to events we generated
         // Except on the first turn
         if (game.getPhase().isSimultaneous(game) &&
                   (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber()) &&
                   (game.getTurnIndex() != 0)) {
-            return;
-        }
-
-        if (!game.getPhase().isDeployment()) {
-            // ignore
             return;
         }
 
@@ -505,10 +468,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
-        clientgui.getBoardView().markDeploymentHexesFor(null);
+        hideDeploymentHexes();
 
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase().isLounge()) {
+        if (game.getPhase().isLounge()) {
             endMyTurn();
         }
         // Are we ignoring events?
@@ -516,20 +479,28 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        if (clientgui.getClient().getGame().getPhase().isDeployment()) {
+        if (game.getPhase().isDeployment()) {
             setStatusBarText(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase"));
         }
     }
 
+    private void hideDeploymentHexes() {
+        markDeploymentHexes(null);
+    }
+
+    private void markDeploymentHexes(@Nullable Entity entity) {
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).markDeploymentHexesFor(entity));
+    }
+
     //
-    // BoardListener
+    // BoardViewListener
     //
     @Override
     public void hexMoused(BoardViewEvent b) {
         Coords coords = b.getCoords();
         Entity entity = ce();
         if (isIgnoringEvents() ||
-                  (coords == null) ||
+                  !game.hasBoardLocation(coords, b.getBoardId()) ||
                   (entity == null) ||
                   !clientgui.getClient().isMyTurn() ||
                   (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) ||
@@ -544,26 +515,24 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             ToolTipManager.sharedInstance().setEnabled(false);
 
             boolean shiftHeld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
-            Board board = clientgui.getClient().getGame().getBoard();
-            // When the unit is not already on the board, ignore turn mode and place the unit instead
-            if ((entity.getPosition() != null) && (shiftHeld || turnMode)) {
+            Board board = game.getBoard(b.getBoardId());
+            int previousBoardId = entity.getBoardId();
+            // use turn mode only when the unit is already on that same board
+            if ((entity.getPosition() != null) && (b.getBoardId() == previousBoardId) && (shiftHeld || turnMode)) {
                 processTurn(entity, coords);
                 return;
-            } else if (entity.isBoardProhibited(board.getType())) {
-                showWrongBoardTypeMessage();
+            } else if (entity.isBoardProhibited(board)) {
+                showWrongBoardTypeMessage(board);
                 return;
             } else if (!(board.isLegalDeployment(coords, entity) || assaultDropPreference)) {
                 showOutsideDeployAreaMessage();
                 return;
             }
 
-            if (!board.inSpace()) {
+            if (!board.isSpace()) {
                 int finalElevation;
-                var deploymentHelper = new AllowedDeploymentHelper(entity,
-                      coords,
-                      board,
-                      board.getHex(coords),
-                      clientgui.getClient().getGame());
+                var deploymentHelper = new AllowedDeploymentHelper(entity, coords, board,
+                        board.getHex(coords), game);
                 List<ElevationOption> elevationOptions = deploymentHelper.findAllowedElevations();
 
                 if (elevationOptions.isEmpty()) {
@@ -602,13 +571,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 }
             }
             entity.setPosition(coords);
-            clientgui.getBoardView().redrawAllEntities();
+            entity.setBoardId(b.getBoardId());
+            clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawAllEntities());
             clientgui.updateFiringArc(entity);
             clientgui.showSensorRanges(entity);
-            clientgui.getBoardView().getPanel().repaint();
+            clientgui.boardViews().forEach(IBoardView::repaint);
             butDone.setEnabled(true);
             if (!shiftHeld) {
-                clientgui.getBoardView().select(coords);
+                clientgui.boardViews().forEach(bv -> bv.select(null));
+                clientgui.getBoardView(entity).select(coords);
             }
         } finally {
             ToolTipManager.sharedInstance().setEnabled(true);
@@ -662,12 +633,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                      .anyMatch(o -> o.elevation() <= elevation);
     }
 
-    private void showWrongBoardTypeMessage() {
-        Board board = clientgui.getClient().getGame().getBoard();
+    private void showWrongBoardTypeMessage(Board board) {
         String title = Messages.getString("DeploymentDisplay.alertDialog.title");
-        String msg = Messages.getString("DeploymentDisplay.wrongMapType",
-              ce().getShortName(),
-              Board.getTypeName(board.getType()));
+        String boardType = switch (board.getBoardType()) {
+            case CAPITAL_RADAR, RADAR -> "Radar";
+            case SKY, SKY_WITH_TERRAIN -> "Atmospheric";
+            case FAR_SPACE, NEAR_SPACE -> "Space";
+            case GROUND -> "Ground";
+        };
+        String msg = Messages.getString("DeploymentDisplay.wrongMapType", ce().getShortName(), boardType);
         JOptionPane.showMessageDialog(clientgui.getFrame(), msg, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
@@ -686,7 +660,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void processTurn(Entity entity, Coords coords) {
         entity.setFacing(entity.getPosition().direction(coords));
         entity.setSecondaryFacing(entity.getFacing());
-        clientgui.getBoardView().redrawEntity(entity);
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(entity));
         clientgui.updateFiringArc(entity);
         clientgui.showSensorRanges(entity);
         turnMode = false;
@@ -699,17 +673,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     public void actionPerformed(ActionEvent evt) {
         final Client client = clientgui.getClient();
         final String actionCmd = evt.getActionCommand();
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
+        if (isIgnoringEvents() || !client.isMyTurn()) {
             return;
         }
 
-        if (!client.isMyTurn()) {
-
-        } else if (actionCmd.equals(DeployCommand.DEPLOY_NEXT.getCmd())) {
+        if (actionCmd.equals(DeployCommand.DEPLOY_NEXT.getCmd())) {
             if (ce() != null) {
                 ce().setPosition(null);
-                clientgui.getBoardView().redrawEntity(ce());
+                clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(ce()));
                 // Unload any loaded units during this turn
                 List<Integer> lobbyLoadedUnits = ce().getLoadedKeepers();
                 for (Entity other : ce().getLoadedUnits()) {
@@ -853,7 +824,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 if (loaded != null) {
                     if (loader.unload(loaded)) {
                         loaded.setTransportId(Entity.NONE);
-                        loaded.newRound(clientgui.getClient().getGame().getRoundCount());
+                        loaded.newRound(game.getRoundCount());
                         clientgui.getUnitDisplay().displayEntity(ce());
                         // Unit loaded in the lobby? Server needs updating
                         if (loader.getLoadedKeepers().contains(loaded.getId())) {
@@ -932,7 +903,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             if (client.getGame().getTurn().isValidEntity(e, client.getGame())) {
                 if (ce() != null) {
                     ce().setPosition(null);
-                    clientgui.getBoardView().redrawEntity(ce());
+                    clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(ce()));
                     // Unload any loaded units during this turn
                     List<Integer> lobbyLoadedUnits = ce().getLoadedKeepers();
                     for (Entity other : ce().getLoadedUnits()) {
@@ -945,15 +916,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     }
                 }
                 selectEntity(e.getId());
-                if (null != e.getPosition()) {
-                    clientgui.getBoardView().centerOnHex(e.getPosition());
+                if (game.hasBoardLocation(e.getPosition(), e.getBoardId())) {
+                    clientgui.getBoardView(e).centerOnHex(e.getPosition());
                 }
             }
         } else {
             clientgui.maybeShowUnitDisplay();
             clientgui.getUnitDisplay().displayEntity(e);
-            if (e.isDeployed()) {
-                clientgui.getBoardView().centerOnHex(e.getPosition());
+            if (game.hasBoardLocation(e.getPosition(), e.getBoardId())) {
+                clientgui.getBoardView(e).centerOnHex(e.getPosition());
             }
         }
     }
@@ -1005,7 +976,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (ce() == null) {
             return choices;
         }
-        List<Entity> entities = clientgui.getClient().getGame().getEntitiesVector();
+        List<Entity> entities = game.getEntitiesVector();
         for (Entity other : entities) {
             if (other.isSelectableThisTurn() && ce().canLoad(other, false)
                       // We can't depend on the transport id to be set because we sent a server update

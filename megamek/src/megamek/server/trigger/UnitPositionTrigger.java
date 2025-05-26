@@ -96,7 +96,7 @@ public class UnitPositionTrigger implements Trigger {
                 .filter(e -> matchesPlayerName(game.getPlayer(e.getOwnerId())))
                 .filter(e -> e instanceof Entity)
                 .map(e -> (Entity) e)
-                .filter(e -> area.containsCoords(e.getPosition(), game.getBoard()))
+                .filter(e -> area.containsCoords(e.getPosition(), game.getBoard(e)))
                 .count();
             return (matchingUnitCount >= minUnitCount) && (matchingUnitCount <= maxUnitCount);
         } else {

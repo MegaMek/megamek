@@ -194,21 +194,6 @@ public class HandheldWeapon extends Entity {
     }
 
     @Override
-    public boolean doomedOnGround() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedInAtmosphere() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedInSpace() {
-        return false;
-    }
-
-    @Override
     public boolean isNuclearHardened() {
         // Genuinely I have no idea
         throw new UnsupportedOperationException("Construction only.");

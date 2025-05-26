@@ -145,10 +145,32 @@ public class ScenarioV2 implements Scenario {
 
         game.setupTeams();
 
-        game.setBoard(0, createBoard());
-        int zone = 1000;
-        for (HexArea hexArea : deploymentAreas) {
-            game.getBoard().addDeploymentZone(zone++, hexArea);
+        game.receiveBoards(new HashMap<>());
+
+        int id = 0;
+        for (Board board : parseBoards()) {
+            int boardId = board.getBoardId();
+            // when the scenario does not give an ID, it will be 0; then assign an ID
+            // default to 0 instead of -1 to keep compatibility with single-board!
+            if (boardId == 0) {
+                boardId = id;
+                id++;
+                board.setBoardId(boardId);
+            }
+            game.setBoard(boardId, board);
+        }
+        // post-process embedded boards and deployment areas
+        for (Board board : game.getBoards().values()) {
+            for (Coords coord : board.getEmbeddedBoardHexes()) {
+                Board embeddedBoard = game.getBoard(board.getEmbeddedBoardAt(coord));
+                embeddedBoard.setEnclosingBoard(board.getBoardId());
+            }
+            int zone = 1000;
+            for (HexArea hexArea : deploymentAreas) {
+                if (hexArea.matchesBoardId(board)) {
+                    board.addDeploymentZone(zone++, hexArea);
+                }
+            }
         }
         if ((game instanceof PlanetaryConditionsUsing)) {
             parsePlanetaryConditions((PlanetaryConditionsUsing) game);
@@ -449,7 +471,7 @@ public class ScenarioV2 implements Scenario {
         return units.stream().mapToInt(InGameObject::getId).max().orElse(0) + 1;
     }
 
-    private Board createBoard() throws ScenarioLoaderException {
+    private List<Board> parseBoards() throws ScenarioLoaderException {
         if (!node.has(MAP) && !node.has(MAPS)) {
             throw new ScenarioLoaderException("ScenarioLoaderException.missingMap");
         }
@@ -458,8 +480,7 @@ public class ScenarioV2 implements Scenario {
             mapNode = node.get(MAPS);
         }
 
-        // TODO: currently, the first parsed board is used
-        return BoardDeserializer.parse(mapNode, scenarioDirectory()).get(0);
+        return BoardDeserializer.parse(mapNode, scenarioDirectory());
     }
 
     private File scenarioDirectory() {

@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.clientGUI.boardview.spriteHandler;
 
+import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.MovementModifierEnvelopeSprite;
 import megamek.common.Game;
@@ -30,8 +31,8 @@ public class MovementModifierSpriteHandler extends BoardViewSpriteHandler {
 
     private final Game game;
 
-    public MovementModifierSpriteHandler(BoardView boardView, Game game) {
-        super(boardView);
+    public MovementModifierSpriteHandler(AbstractClientGUI clientGUI, Game game) {
+        super(clientGUI);
         this.game = game;
     }
 
@@ -48,6 +49,11 @@ public class MovementModifierSpriteHandler extends BoardViewSpriteHandler {
 
     public void renewSprites(Collection<MovePath> movePaths) {
         clear();
+        if (clientGUI.boardViews().isEmpty()) {
+            return;
+        }
+        BoardView boardView = (BoardView) clientGUI.boardViews().get(0);
+        movePaths.stream().map(path -> new MovementModifierEnvelopeSprite(boardView, path)).forEach(currentSprites::add);
         movePaths.stream()
               .filter(MovePath::isMoveLegal)
               .map(path -> new MovementModifierEnvelopeSprite(boardView, path))

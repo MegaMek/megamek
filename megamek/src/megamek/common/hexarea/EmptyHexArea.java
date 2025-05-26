@@ -43,4 +43,9 @@ public class EmptyHexArea extends AbstractHexArea {
     public Set<Coords> getCoords() {
         return new HashSet<>();
     }
+
+    @Override
+    public boolean matchesBoardId(Board board) {
+        return false;
+    }
 }

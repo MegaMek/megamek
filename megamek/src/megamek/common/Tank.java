@@ -656,8 +656,12 @@ public class Tank extends Entity {
      * Tanks have all sorts of prohibited terrain.
      */
     @Override
-    public boolean isLocationProhibited(Coords c, int currElevation) {
-        Hex hex = game.getBoard().getHex(c);
+    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
+        if (!game.hasBoardLocation(c, testBoardId)) {
+            return true;
+        }
+
+        Hex hex = game.getHex(c, testBoardId);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
@@ -1368,7 +1372,7 @@ public class Tank extends Entity {
         }
 
         // are we wheeled and in light snow?
-        Hex hex = game.getBoard().getHex(getPosition());
+        Hex hex = game.getHex(getPosition(), getBoardId());
         if ((null != hex) &&
                   (getMovementMode() == EntityMovementMode.WHEELED) &&
                   (hex.terrainLevel(Terrains.SNOW) == 1)) {
@@ -1766,21 +1770,6 @@ public class Tank extends Entity {
         return getMovementMode().equals(EntityMovementMode.SUBMARINE) || super.hasEnvironmentalSealing();
     }
 
-    @Override
-    public boolean doomedOnGround() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedInAtmosphere() {
-        return true;
-    }
-
-    @Override
-    public boolean doomedInSpace() {
-        return true;
-    }
-
     /**
      * Checks to see if a Tank is capable of going hull-down. This is true if hull-down rules are enabled and the Tank
      * is in a fortified hex.
@@ -1792,7 +1781,10 @@ public class Tank extends Entity {
         // MoveStep line 2179 performs this same check
         // performing it here will allow us to disable the Hulldown button
         // if the movement is illegal
-        Hex occupiedHex = game.getBoard().getHex(getPosition());
+        if (!game.hasBoardLocation(getPosition(), getBoardId())) {
+            return false;
+        }
+        Hex occupiedHex = game.getHex(getBoardLocation());
         return occupiedHex.containsTerrain(Terrains.FORTIFIED) &&
                      game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
     }

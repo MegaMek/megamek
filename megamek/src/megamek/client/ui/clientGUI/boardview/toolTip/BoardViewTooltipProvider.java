@@ -48,15 +48,16 @@ public interface BoardViewTooltipProvider {
     }
 
     /**
-     * Returns a String that is displayed as the tooltip for a point according to the mouse event's
-     * point in the BoardView's drawing area.
-     * The String may be an HTML string. It is passed to Swing's TooltipManager without further
-     * modification, i.e. if it is an HTML string all tags must already be present. The given movementTarget
-     * coordinates may be used to display information about another hex or field in that BoardView.
-     * This method forwards to {@link #getTooltip(Point, Coords)} and should not be overridden.
+     * Returns a String that is displayed as the tooltip for a point according to the mouse event's point in the
+     * BoardView's drawing area. The String may be an HTML string. It is passed to Swing's TooltipManager without
+     * further modification, i.e. if it is an HTML string all tags must already be present. The String may also be null
+     * to show no tooltip at all. The given movementTarget coordinates may be used to display information about another
+     * hex or field in that BoardView. This method forwards to {@link #getTooltip(Point, Coords)} and should not be
+     * overridden.
      *
-     * @param event A mouse event associated with a position in the BoardView
+     * @param event          A mouse event associated with a position in the BoardView
      * @param movementTarget Another coordinate to display additional information about
+     *
      * @return The tooltip to display
      */
     default String getTooltip(MouseEvent event, @Nullable Coords movementTarget) {

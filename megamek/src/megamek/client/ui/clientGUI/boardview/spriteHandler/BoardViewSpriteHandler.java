@@ -18,13 +18,13 @@
  */
 package megamek.client.ui.clientGUI.boardview.spriteHandler;
 
+import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.common.event.*;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * This is a base class for SpriteHandlers that create and remove sprites in an attached BoardView.
@@ -37,21 +37,20 @@ public abstract class BoardViewSpriteHandler implements GameListener {
 
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    protected final BoardView boardView;
-    protected final List<Sprite> currentSprites = new ArrayList<>();
+    protected final AbstractClientGUI clientGUI;
+    protected final Collection<Sprite> currentSprites = new ArrayList<>();
 
-    public BoardViewSpriteHandler(BoardView boardView) {
-        this.boardView = boardView;
+    public BoardViewSpriteHandler(AbstractClientGUI clientGUI) {
+        this.clientGUI = clientGUI;
     }
 
     /**
-     * Removes any current sprites of this handler from the attached BoardView and clears this handler's
-     * internal sprite list.
-     *
+     * Removes any current sprites of this handler from all BoardViews and clears this handler's internal sprite list.
+     * <p>
      * When overriding this, call super.clear() or remember to perform clean up in the overriding method.
      */
     public void clear() {
-        boardView.removeSprites(currentSprites);
+        clientGUI.boardViews().forEach(boardView -> boardView.removeSprites(currentSprites));
         currentSprites.clear();
     }
 

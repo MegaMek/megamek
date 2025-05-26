@@ -24,17 +24,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.UIManager;
 
 import megamek.client.Client;
@@ -75,7 +76,7 @@ public class MapMenu extends JPopupMenu {
 
     private Coords coords;
     Game game;
-    Component currentPanel;
+    JComponent currentPanel;
     private Board board;
     Client client;
     ClientGUI gui;
@@ -83,15 +84,17 @@ public class MapMenu extends JPopupMenu {
     Entity myEntity;
     Targetable myTarget = null;
     private boolean hasMenu;
+    private final BoardLocation boardLocation;
 
-    public MapMenu(Coords coords, Client client, Component panel, ClientGUI gui) {
+    public MapMenu(Coords coords, int boardId, JComponent panel, ClientGUI gui) {
         this.coords = coords;
-        game = client.getGame();
         currentPanel = panel;
-        board = client.getBoard();
-        this.client = client;
         this.gui = gui;
+        client = gui.getClient();
+        game = client.getGame();
+        board = game.getBoard(boardId);
         selectedEntity = myEntity = gui.getDisplayedUnit();
+        boardLocation = BoardLocation.of(coords, boardId);
 
         hasMenu = createMenu();
         // make popups not consume mouse events outside them
@@ -116,142 +119,79 @@ public class MapMenu extends JPopupMenu {
 
     private boolean createMenu() {
         removeAll();
-        int itemCount = 0;
-        JMenu menu = createSelectMenu();
-        if (menu.getItemCount() > 0) {
-            this.add(menu);
-            itemCount++;
-        }
 
-        menu = createViewMenu();
-        if (menu.getItemCount() > 0) {
-            this.add(menu);
-            itemCount++;
-        }
+        addIfNotEmpty(createSelectMenu());
+        addIfNotEmpty(createViewMenu());
 
         if (client.isMyTurn() && (myEntity != null)) {
             selectTarget();
+            addIfNotEmpty(createTargetMenu());
+            // Don't show some menus for a unit that is not on this board
+            if (boardLocation.isOn(myEntity.getBoardId())) {
 
-            menu = createTargetMenu();
-            if (menu.getItemCount() > 0) {
-                this.add(menu);
-                itemCount++;
-            }
+                if (currentPanel instanceof MovementDisplay) {
+                    if (getComponentCount() > 0) {
+                        addSeparator();
+                    }
+                    addIfNotEmpty(createMovementMenu(myEntity.getPosition().equals(coords)));
+                    addIfNotEmpty(createTurnMenu());
+                    addIfNotEmpty(createStandMenu());
+                    addIfNotEmpty(createConvertMenu());
+                    addIfNotEmpty(createPhysicalMenu(true));
+                    removeSeparatorIfLast();
 
-            if (currentPanel instanceof MovementDisplay) {
-                menu = createMovementMenu(myEntity.getPosition().equals(coords));
+                } else if ((currentPanel instanceof FiringDisplay)) {
+                    if (getComponentCount() > 0) {
+                        addSeparator();
+                    }
+                    addIfNotEmpty(createWeaponsFireMenu());
+                    addIfNotEmpty(createModeMenu());
+                    addIfNotEmpty(createTorsoTwistMenu());
+                    addIfNotEmpty(createRotateTurretMenu());
+                    removeSeparatorIfLast();
 
-                if (itemCount > 0) {
-                    addSeparator();
-                    itemCount++;
+                } else if ((currentPanel instanceof PhysicalDisplay)) {
+                    addIfNotEmptyWithSeparator(createPhysicalMenu(false));
                 }
-
-                if (menu.getItemCount() > 0) {
-                    this.add(menu);
-                    itemCount++;
-                }
-
-                menu = createTurnMenu();
-
-                if (menu.getItemCount() > 0) {
-                    this.add(menu);
-                    itemCount++;
-                }
-
-                menu = createStandMenu();
-
-                if (menu.getItemCount() > 0) {
-                    this.add(menu);
-                    itemCount++;
-                }
-
-                menu = createConvertMenu();
-
-                if (menu.getItemCount() > 0) {
-                    this.add(menu);
-                    itemCount++;
-                }
-
-                menu = createPhysicalMenu(true);
-
-                if (menu.getItemCount() > 0) {
-                    addSeparator();
-                    this.add(menu);
-                    itemCount++;
-                }
-
-            } else if ((currentPanel instanceof FiringDisplay)) {
-
-                if (itemCount > 0) {
-                    addSeparator();
-                    itemCount++;
-                }
-
-                menu = createWeaponsFireMenu();
-                if (menu.getItemCount() > 0) {
-                    this.add(menu);
-                    itemCount++;
-                }
-
-                menu = createModeMenu();
-                if (menu.getItemCount() > 0) {
-                    this.add(menu);
-                    itemCount++;
-                }
-
-                menu = createTorsoTwistMenu();
-                if (menu.getItemCount() > 0) {
-                    this.add(menu);
-                    itemCount++;
-                }
-
-                menu = createRotateTurretMenu();
-                if (menu.getItemCount() > 0) {
-                    this.add(menu);
-                    itemCount++;
-                }
-
-            } else if ((currentPanel instanceof PhysicalDisplay)) {
-                menu = createPhysicalMenu(false);
-
-                if (menu.getItemCount() > 0) {
-                    addSeparator();
-                    this.add(menu);
-                    itemCount++;
-                }
-
             }
         }
 
-        menu = touchOffExplosivesMenu();
-        if (menu.getItemCount() > 0) {
-            this.add(menu);
-            itemCount++;
-        }
-
-        menu = createSpecialHexDisplayMenu();
-        if (menu.getItemCount() > 0) {
-            this.add(menu);
-            itemCount++;
-        }
-        menu = createPleaToRoyaltyMenu();
-        if (menu.getItemCount() > 0) {
-            this.addSeparator();
-            this.add(menu);
-            itemCount++;
-        }
-
-        this.addSeparator();
-        menu = createGamemasterMenu();
-        if (menu.getItemCount() > 0) {
-            this.add(menu);
-            itemCount++;
-        }
-
-        return itemCount > 0;
+        addIfNotEmpty(touchOffExplosivesMenu());
+        addIfNotEmptyWithSeparator(createSpecialHexDisplayMenu());
+        addIfNotEmptyWithSeparator(createPleaToRoyaltyMenu());
+        addIfNotEmptyWithSeparator(createGamemasterMenu());
+        return getComponentCount() > 0;
     }
 
-    private JMenuItem TargetMenuItem(Targetable t) {
+    private void addIfNotEmpty(JMenu subMenu) {
+        if (subMenu.getItemCount() > 0) {
+            add(subMenu);
+        }
+    }
+
+    private void addIfNotEmptyWithSeparator(JMenu subMenu) {
+        if (subMenu.getItemCount() > 0) {
+            if (getComponentCount() > 0) {
+                addSeparator();
+            }
+            add(subMenu);
+        }
+    }
+
+    /**
+     * Removes the last component of this menu, if it is a JSeparator.
+     */
+    private void removeSeparatorIfLast() {
+        try {
+            if (getComponent(getComponentCount() - 1) instanceof JSeparator) {
+                remove(getComponentCount() - 1);
+            }
+        } catch (Exception e) {
+            // This is only for GUI beauty, it should not ever fail
+        }
+    }
+
+    private JMenuItem targetMenuItem(Targetable t) {
         JMenuItem item = new JMenuItem(Messages.getString("ClientGUI.targetMenuItem") + t.getDisplayName());
 
         String targetCode = getTargetCode(t);
@@ -274,7 +214,7 @@ public class MapMenu extends JPopupMenu {
         String targetCode;
 
         if (t instanceof Entity) {
-            targetCode = "E|" + ((Entity) t).getId();
+            targetCode = "E|" + t.getId();
         } else if (t instanceof BuildingTarget) {
             targetCode = "B|" + t.getPosition().getX() + "|" + t.getPosition().getY() + "|" + t.getTargetType();
         } else if (t instanceof MinefieldTarget) {
@@ -365,7 +305,7 @@ public class MapMenu extends JPopupMenu {
     private JMenu touchOffExplosivesMenu() {
         JMenu menu = new JMenu("Touch off explosives");
 
-        Building bldg = client.getBoard().getBuildingAt(coords);
+        Building bldg = board.getBuildingAt(coords);
         if ((bldg != null)) {
             for (final DemolitionCharge charge : bldg.getDemolitionCharges()) {
                 if (charge.playerId == client.getLocalPlayer().getId() && coords.equals(charge.pos)) {
@@ -379,25 +319,17 @@ public class MapMenu extends JPopupMenu {
     }
 
     /**
-     * Create various menus related to <code>SpecialHexDisplay</code>.
-     *
-     * @return
+     * @return A submenu for SpecialHexDisplays
      */
     private JMenu createSpecialHexDisplayMenu() {
         JMenu menu = new JMenu("Special Hex Display");
 
-        final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(coords);
-
-        SpecialHexDisplay note = null;
-        if (shdList != null) {
-            for (SpecialHexDisplay shd : shdList) {
-                if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE &&
-                          shd.getOwner().equals(client.getLocalPlayer())) {
-                    note = shd;
-                    break;
-                }
-            }
-        }
+        SpecialHexDisplay note = game.getBoard(boardLocation.boardId())
+               .getSpecialHexDisplay(coords)
+               .stream()
+               .filter(shd -> shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE)
+               .filter(shd -> shd.getOwner().equals(client.getLocalPlayer()))
+               .findFirst().orElse(null);
 
         final SpecialHexDisplay finalNote = Objects.requireNonNullElseGet(note,
               () -> new SpecialHexDisplay(SpecialHexDisplay.Type.PLAYER_NOTE,
@@ -411,14 +343,15 @@ public class MapMenu extends JPopupMenu {
             nd.setVisible(true);
             gui.getBoardView().setShouldIgnoreKeys(false);
             if (nd.isAccepted()) {
-                client.sendSpecialHexDisplayAppend(coords, finalNote);
+                client.sendSpecialHexDisplayAppend(coords, boardLocation.boardId(), finalNote);
             }
         });
         menu.add(item);
 
         if (note != null) {
             item = new JMenuItem(Messages.getString("NoteDialog.delete"));
-            item.addActionListener(e -> client.sendSpecialHexDisplayDelete(coords, finalNote));
+            item.addActionListener(e ->
+                                         client.sendSpecialHexDisplayDelete(coords, boardLocation.boardId(), finalNote));
         }
         menu.add(item);
 
@@ -607,20 +540,26 @@ public class MapMenu extends JPopupMenu {
         JMenu setWaypointMenu = new JMenu(Messages.getString("Bot.commands.setWaypoint")); // "Set hex " + coords.toFriendlyString() + " as the waypoint"
         for (Entity entity : client.getGame().getPlayerEntities(bot, false)) {
             JMenuItem waypoint = new JMenuItem(entity.getDisplayName());
-            waypoint.addActionListener(evt -> client.sendChat(String.format("%s: aw : %s %s",
-                  bot.getName(),
-                  entity.getId() + "",
-                  coords.hexCode(client.getGame().getBoard()))));
+            waypoint.addActionListener(evt ->
+                client.sendChat(String.format("%s: aw : %s %s",
+                    bot.getName(),
+                    entity.getId() + "",
+                    coords.hexCode(board)
+                ))
+            );
             setWaypointMenu.add(waypoint);
         }
 
         JMenu addWaypointMenu = new JMenu(Messages.getString("Bot.commands.addWaypoint")); // "Add hex " + coords.toFriendlyString() + " as a waypoint");
         for (Entity entity : client.getGame().getPlayerEntities(bot, false)) {
             JMenuItem waypoint = new JMenuItem(entity.getDisplayName());
-            waypoint.addActionListener(evt -> client.sendChat(String.format("%s: sw : %s %s",
-                  bot.getName(),
-                  entity.getId() + "",
-                  coords.hexCode(client.getGame().getBoard()))));
+            waypoint.addActionListener(evt ->
+                client.sendChat(String.format("%s: sw : %s %s",
+                    bot.getName(),
+                    entity.getId() + "",
+                    coords.hexCode(board)
+                ))
+            );
             addWaypointMenu.add(waypoint);
         }
 
@@ -652,7 +591,7 @@ public class MapMenu extends JPopupMenu {
      */
     private JMenu createGamemasterMenu() {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.Gamemaster"));
-        if (client.getLocalPlayer().getGameMaster()) {
+        if (client.getLocalPlayer().isGameMaster()) {
             JMenu dmgMenu = new JMenu(Messages.getString("Gamemaster.EditDamage"));
             JMenu cfgMenu = new JMenu(Messages.getString("Gamemaster.Configure"));
             JMenu traitorMenu = new JMenu(Messages.getString("Gamemaster.Traitor"));
@@ -865,9 +804,8 @@ public class MapMenu extends JPopupMenu {
 
     private JMenu createSelectMenu() {
         JMenu menu = new JMenu("Select");
-        // add select options
         if (canSelectEntities()) {
-            for (Entity entity : client.getGame().getEntitiesVector(coords, canTargetEntities())) {
+            for (Entity entity : client.getGame().getEntitiesVector(boardLocation, canTargetEntities())) {
                 if (client.getMyTurn().isValidEntity(entity, client.getGame())) {
                     menu.add(selectJMenuItem(entity));
                 }
@@ -879,10 +817,9 @@ public class MapMenu extends JPopupMenu {
     private JMenu createViewMenu() {
         JMenu menu = new JMenu("View");
         Game game = client.getGame();
-
         Player localPlayer = client.getLocalPlayer();
 
-        for (Entity entity : game.getEntitiesVector(coords, true)) {
+        for (Entity entity : game.getEntitiesVector(boardLocation, true)) {
             // Only add the unit if it's actually visible
             // With double blind on, the game may unseen units
             if (!entity.isSensorReturn(localPlayer) && entity.hasSeenEntity(localPlayer)) {
@@ -985,9 +922,9 @@ public class MapMenu extends JPopupMenu {
                 menu.add(item);
             }
 
-            if (game.getPlanetaryConditions().isRecklessConditions() &&
-                      !game.getBoard().inSpace() &&
-                      !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
+            if (game.getPlanetaryConditions().isRecklessConditions()
+                    && !board.isSpace()
+                    && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butReckless"));
                 item.setActionCommand(MoveCommand.MOVE_RECKLESS.getCmd());
                 item.addActionListener(evt -> {
@@ -1075,9 +1012,9 @@ public class MapMenu extends JPopupMenu {
                 menu.add(item);
             }
 
-            if (game.getPlanetaryConditions().isRecklessConditions() &&
-                      !game.getBoard().inSpace() &&
-                      !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
+            if (game.getPlanetaryConditions().isRecklessConditions()
+                    && !board.isSpace()
+                    && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butReckless"));
                 item.setActionCommand(MoveCommand.MOVE_RECKLESS.getCmd());
                 item.addActionListener(evt -> {
@@ -1458,15 +1395,13 @@ public class MapMenu extends JPopupMenu {
         JMenu menu = new JMenu("Target");
 
         // If we can't target entities, nothing to do
-        if (!canTargetEntities()) {
+        if (!canTargetEntities() || (board.getHex(coords) == null)) {
             return menu;
         }
 
-        // VTOLs/AirMeks making strafing or bombing attacks already declared the target
-        // hex(es)
-        // in the movement phase and cannot change them.
+        // VTOLs/AirMeks making strafing or bombing attacks already declared the target hex(es) in the movement phase
+        // and cannot change them.
         if (myEntity.isMakingVTOLGroundAttack()) {
-            menu.setEnabled(false);
             return menu;
         }
 
@@ -1479,113 +1414,112 @@ public class MapMenu extends JPopupMenu {
         Player localPlayer = client.getLocalPlayer();
 
         // Add menu item to target each entity in the coords
-        for (Entity entity : client.getGame().getEntitiesVector(coords)) {
-            // Only add the unit if it's actually visible
-            // With double blind on, the game may have unseen units
+        for (Entity entity : client.getGame().getEntitiesVector(coords, board.getBoardId(), false)) {
+            // Only add the unit if it's actually visible; with double blind on, the game may have unseen units
             if (!entity.isSensorReturn(localPlayer) && entity.hasSeenEntity(localPlayer) && !entity.isHidden()) {
-                menu.add(TargetMenuItem(entity));
+                menu.add(targetMenuItem(entity));
             }
         }
 
         Hex h = board.getHex(coords);
-        // If the hex is null, we're done here
-        if (h == null) {
-            return menu;
-        }
 
         // Clearing hexes and igniting hexes
-        if (isFiringDisplay && !board.inSpace() && !board.inAtmosphere()) {
-            menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_CLEAR)));
-            if (canStartFires &&
-                      (h.containsTerrain(Terrains.WOODS) ||
-                             h.containsTerrain(Terrains.JUNGLE) ||
-                             h.containsTerrain(Terrains.FIELDS))) {
-                menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_IGNITE)));
+        if (isFiringDisplay && !board.isSpace() && !board.isLowAltitude()) {
+            menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_CLEAR)));
+            if (canStartFires
+                    && (h.hasVegetation() || h.containsTerrain(Terrains.FIELDS))) {
+                menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_IGNITE)));
             }
-            // Targeting fuel tanks
         }
+
+        // Targeting fuel tanks
         if (h.containsTerrain(Terrains.FUEL_TANK)) {
-            menu.add(TargetMenuItem(new BuildingTarget(coords, board, false)));
+            menu.add(targetMenuItem(new BuildingTarget(coords, board, false)));
             if (canStartFires) {
-                menu.add(TargetMenuItem(new BuildingTarget(coords, board, true)));
+                menu.add(targetMenuItem(new BuildingTarget(coords, board, true)));
             }
-            // Targeting buildings or bridges
         }
+
+        // Targeting buildings or bridges
         if ((h.containsTerrain(Terrains.BUILDING) || h.containsTerrain(Terrains.BRIDGE))) {
-            menu.add(TargetMenuItem(new BuildingTarget(coords, board, false)));
+            menu.add(targetMenuItem(new BuildingTarget(coords, board, false)));
             if (canStartFires) {
-                menu.add(TargetMenuItem(new BuildingTarget(coords, board, true)));
+                menu.add(targetMenuItem(new BuildingTarget(coords, board, true)));
             }
         }
 
         if (isFiringDisplay) {
-            if (board.inSpace() && hasAmmoType(AmmoType.T_SCREEN_LAUNCHER)) {
-                menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_SCREEN)));
+            if (board.isSpace() && hasAmmoType(AmmoType.T_SCREEN_LAUNCHER)) {
+                menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_SCREEN)));
             } else {
-                if ((hasAmmoType(AmmoType.T_LRM) || hasAmmoType(AmmoType.T_LRM_IMP) || hasAmmoType(AmmoType.T_MML)) &&
-                          (hasMunitionType(AmmoType.Munitions.M_FASCAM) ||
-                                 hasMunitionType(AmmoType.Munitions.M_THUNDER) ||
-                                 hasMunitionType(AmmoType.Munitions.M_THUNDER_ACTIVE) ||
-                                 hasMunitionType(AmmoType.Munitions.M_THUNDER_AUGMENTED) ||
-                                 hasMunitionType(AmmoType.Munitions.M_THUNDER_INFERNO) ||
-                                 hasMunitionType(AmmoType.Munitions.M_THUNDER_VIBRABOMB))) {
-                    menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_MINEFIELD_DELIVER)));
+                if ((hasAmmoType(AmmoType.T_LRM)
+                        || hasAmmoType(AmmoType.T_LRM_IMP)
+                        || hasAmmoType(AmmoType.T_MML))
+                        && (hasMunitionType(AmmoType.Munitions.M_FASCAM)
+                                || hasMunitionType(AmmoType.Munitions.M_THUNDER)
+                                || hasMunitionType(AmmoType.Munitions.M_THUNDER_ACTIVE)
+                                || hasMunitionType(AmmoType.Munitions.M_THUNDER_AUGMENTED)
+                                || hasMunitionType(AmmoType.Munitions.M_THUNDER_INFERNO)
+                                || hasMunitionType(AmmoType.Munitions.M_THUNDER_VIBRABOMB))) {
+                    menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_MINEFIELD_DELIVER)));
                 }
 
                 if (hasMunitionType(AmmoType.Munitions.M_FLARE)) {
-                    menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_FLARE_DELIVER)));
+                    menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_FLARE_DELIVER)));
                 }
 
                 if (hasAmmoType(AmmoType.T_BA_MICRO_BOMB)) {
-                    menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_BOMB)));
+                    menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_BOMB)));
                 }
 
-                if (hasWeaponFlag(WeaponType.F_DIVE_BOMB) || hasWeaponFlag(WeaponType.F_ALT_BOMB)) {
-                    menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_AERO_BOMB)));
+                if (hasWeaponFlag(WeaponType.F_DIVE_BOMB)
+                        || hasWeaponFlag(WeaponType.F_ALT_BOMB)) {
+                    menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_AERO_BOMB)));
                 }
 
-                if (hasAmmoType(AmmoType.T_ARROW_IV) ||
-                          hasAmmoType(AmmoType.T_SNIPER) ||
-                          hasAmmoType(AmmoType.T_CRUISE_MISSILE) ||
-                          hasAmmoType(AmmoType.T_ALAMO) ||
-                          hasAmmoType(AmmoType.T_KILLER_WHALE) ||
-                          hasAmmoType(AmmoType.T_LONG_TOM) ||
-                          hasAmmoType(AmmoType.T_THUMPER) ||
-                          hasAmmoType(AmmoType.T_BA_TUBE)) {
-                    menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_ARTILLERY)));
+                if (hasAmmoType(AmmoType.T_ARROW_IV)
+                        || hasAmmoType(AmmoType.T_SNIPER)
+                        || hasAmmoType(AmmoType.T_CRUISE_MISSILE)
+                        || hasAmmoType(AmmoType.T_ALAMO)
+                        || hasAmmoType(AmmoType.T_KILLER_WHALE)
+                        || hasAmmoType(AmmoType.T_LONG_TOM)
+                        || hasAmmoType(AmmoType.T_THUMPER)
+                        || hasAmmoType(AmmoType.T_BA_TUBE)) {
+                    menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
                 }
-                if (canStartFires && hasFireExtinguisher() && h.containsTerrain(Terrains.FIRE)) {
-                    menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_EXTINGUISH)));
+                if (canStartFires && hasFireExtinguisher()
+                        && h.containsTerrain(Terrains.FIRE)) {
+                    menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_EXTINGUISH)));
                 }
             }
         }
         // Check for Mine Clearance
         if (isFiringDisplay || isTargetingDisplay) {
             if (client.getGame().containsMinefield(coords)) {
-                menu.add(TargetMenuItem(new MinefieldTarget(coords)));
+                menu.add(targetMenuItem(new MinefieldTarget(coords)));
             }
         }
 
-        if (isTargetingDisplay &&
-                  !board.inSpace() &&
-                  !board.inAtmosphere() &&
-                  (hasAmmoType(AmmoType.T_ARROW_IV) ||
-                         hasAmmoType(AmmoType.T_SNIPER) ||
-                         hasAmmoType(AmmoType.T_CRUISE_MISSILE) ||
-                         hasAmmoType(AmmoType.T_ALAMO) ||
-                         hasAmmoType(AmmoType.T_KILLER_WHALE) ||
-                         hasAmmoType(AmmoType.T_LONG_TOM) ||
-                         hasAmmoType(AmmoType.T_THUMPER) ||
-                         hasAmmoType(AmmoType.T_BA_TUBE))) {
-            menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_ARTILLERY)));
+        if (isTargetingDisplay
+                && !board.isSpace()
+                && !board.isLowAltitude()
+                && (hasAmmoType(AmmoType.T_ARROW_IV)
+                        || hasAmmoType(AmmoType.T_SNIPER)
+                        || hasAmmoType(AmmoType.T_CRUISE_MISSILE)
+                        || hasAmmoType(AmmoType.T_ALAMO)
+                        || hasAmmoType(AmmoType.T_KILLER_WHALE)
+                        || hasAmmoType(AmmoType.T_LONG_TOM)
+                        || hasAmmoType(AmmoType.T_THUMPER)
+                        || hasAmmoType(AmmoType.T_BA_TUBE))) {
+            menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
         }
         // Check for adding TAG targeting buildings and hexes
-        if (isTargetingDisplay && myEntity.hasTAG() && !board.inSpace()) {
-            menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_TAG)));
-            if (h.containsTerrain(Terrains.FUEL_TANK) ||
-                      h.containsTerrain(Terrains.BUILDING) ||
-                      h.containsTerrain(Terrains.BRIDGE)) {
-                menu.add(TargetMenuItem(new BuildingTarget(coords, board, Targetable.TYPE_BLDG_TAG)));
+        if (isTargetingDisplay && myEntity.hasTAG() && !board.isSpace()) {
+            menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_TAG)));
+            if (h.containsTerrain(Terrains.FUEL_TANK)
+                    || h.containsTerrain(Terrains.BUILDING)
+                    || h.containsTerrain(Terrains.BRIDGE)) {
+                menu.add(targetMenuItem(new BuildingTarget(coords, board, Targetable.TYPE_BLDG_TAG)));
             }
         }
         return menu;
@@ -1620,7 +1554,7 @@ public class MapMenu extends JPopupMenu {
             return new MinefieldTarget(targetCoords);
         }
 
-        return new HexTarget(targetCoords, Integer.parseInt(target.nextToken()));
+        return new HexTarget(targetCoords, board, Integer.parseInt(target.nextToken()));
     }
 
     private boolean hasAmmoType(int ammoType) {
@@ -1786,9 +1720,9 @@ public class MapMenu extends JPopupMenu {
         Vector<Entity> list = new Vector<>();
 
         Player localPlayer = client.getLocalPlayer();
-        boolean friendlyFire = (game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE));
+        boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
-        for (Entity en : game.getEntitiesVector(coords)) {
+        for (Entity en : game.getEntitiesVector(boardLocation, false)) {
             // Only add the unit if it's actually visible
             // With double blind on, the game may have unseen units
             if ((en.isEnemyOf(myEntity) || friendlyFire) &&

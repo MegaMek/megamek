@@ -23,6 +23,7 @@ import megamek.client.ui.IDisplayable;
 import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.client.ui.clientGUI.boardview.toolTip.BoardViewTooltipProvider;
 import megamek.common.Coords;
+import megamek.common.Player;
 
 import java.util.List;
 import javax.swing.*;
@@ -86,6 +87,8 @@ public interface IBoardView {
      */
     void setLocalPlayer(int playerId);
 
+    Player getLocalPlayer();
+
     /**
      * Frees the resources this boardview uses and removes listeners. Call when this boardview is not
      * used anymore. The boardview will no longer be functional after calling this method. When overriding
@@ -130,6 +133,10 @@ public interface IBoardView {
      * @see #addOverlay(IDisplayable)
      */
     void removeOverlay(IDisplayable overlay);
+
+    default void refreshDisplayables() {
+        getPanel().repaint();
+    }
 
     /**
      * Placeholder: this is only an idea; can we make draw modifications modular? Like field of fire,
@@ -227,4 +234,54 @@ public interface IBoardView {
      * @param sprites the Sprites to remove
      */
     void removeSprites(Collection<? extends Sprite> sprites);
+
+    /**
+     * Highlights the given coords, if they are on the board. When coords is null, remove the highlight. Note that a
+     * BoardView implementation may choose to do nothing.
+     *
+     * @param coords the Coords to highlight
+     */
+    void highlight(Coords coords);
+
+    /**
+     * Selects the given coords, if they are on the board. When coords is null, remove the selection. Note that a
+     * BoardView implementation may choose to do nothing.
+     *
+     * @param coords the Coords to select
+     */
+    void select(Coords coords);
+
+    /**
+     * Places a cursor on the given coords, if they are on the board. When coords is null, remove the cursor. Note
+     * that a BoardView implementation may choose to do nothing.
+     *
+     * @param coords the Coords to cursor
+     */
+    void cursor(Coords coords);
+
+    /**
+     * Removes the markers set by the select(), cursor() and highlight() methods.
+     */
+    default void clearMarkedHexes() {
+        select(null);
+        highlight(null);
+        cursor(null);
+    }
+
+    /**
+     * @return This BoardView's board ID. Defaults to 0 for all implementations that don't support multiple boards.
+     */
+    default int getBoardId() {
+        return 0;
+    }
+
+    /**
+     * Returns true when this boardview is showing some animation and should not be centered on another hex or be
+     * hidden right now. An example is showing a unit's move animation.
+     *
+     * @return True when this BoardView is in the process of showing some animation
+     */
+    default boolean isShowingAnimation() {
+        return false;
+    }
 }

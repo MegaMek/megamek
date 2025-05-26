@@ -1079,7 +1079,7 @@ public abstract class Mek extends Entity {
               .count();
 
         if (!mpCalculationSetting.ignoreSubmergedJumpJets && hasOccupiedHex() && getElevation() < 0) {
-            int waterLevel = game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER);
+            int waterLevel = game.getHexOf(this).terrainLevel(Terrains.WATER);
             if (waterLevel > 1) {
                 return 0;
             } else if (waterLevel == 1) {
@@ -1662,11 +1662,11 @@ public abstract class Mek extends Entity {
      * Gets the number of heat sinks that are underwater.
      */
     private int sinksUnderwater() {
-        if ((getPosition() == null) || isOffBoard()) {
+        if ((getPosition() == null) || isOffBoard() || !game.hasBoardLocation(getPosition(), getBoardId())) {
             return 0;
         }
 
-        Hex curHex = game.getBoard().getHex(getPosition());
+        Hex curHex = game.getHex(getPosition(), getBoardId());
         // are we even in water? is it depth 1+
         if ((curHex.terrainLevel(Terrains.WATER) <= 0) || (getElevation() >= 0)) {
             return 0;
@@ -3946,21 +3946,6 @@ public abstract class Mek extends Entity {
     }
 
     @Override
-    public boolean doomedOnGround() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedInAtmosphere() {
-        return true;
-    }
-
-    @Override
-    public boolean doomedInSpace() {
-        return true;
-    }
-
-    @Override
     public boolean hasEiCockpit() {
         return isClan() || super.hasEiCockpit();
     }
@@ -4215,16 +4200,18 @@ public abstract class Mek extends Entity {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int currElevation) {
-        Hex hex = game.getBoard().getHex(c);
-        if (hex == null) {
-            return false;
+    public boolean isLocationProhibited(Coords c, int testBoardId, int testElevation) {
+        if (!game.hasBoardLocation(c, testBoardId)) {
+            return true;
         }
+
+        Hex hex = game.getHex(c, testBoardId);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
 
-        if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
+        if ((game.getBoard(testBoardId).isSpace() && doomedInSpace())
+                  || (game.getBoard(testBoardId).isLowAltitude() && doomedInAtmosphere())) {
             return true;
         }
 
@@ -4238,7 +4225,7 @@ public abstract class Mek extends Entity {
                 return true;
             }
             // Can't deploy on a bridge
-            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == testElevation)
                     && hex.containsTerrain(Terrains.BRIDGE)) {
                 return true;
             }
@@ -4284,7 +4271,7 @@ public abstract class Mek extends Entity {
         }
 
         // a swimming Mek (UMU) may not reach above the surface
-        if ((currElevation == -1) && hex.hasDepth1WaterOrDeeper()
+        if ((testElevation == -1) && hex.hasDepth1WaterOrDeeper()
                 && (hex.terrainLevel(Terrains.WATER) > 1) && !isProne()) {
             return true;
         }
@@ -4295,16 +4282,18 @@ public abstract class Mek extends Entity {
 
     @Override
     public boolean isLocationDeadly(Coords c) {
-        Hex hex = game.getBoard().getHex(c);
+        //legacy
+        return isLocationDeadly(c, 0);
+    }
 
-        if (this.isIndustrial()
-                && !this.hasEnvironmentalSealing()
-                && (this.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
-                && hex.terrainLevel(Terrains.WATER) >= 2) {
-            return true;
-        }
-
-        return false;
+    @Override
+    public boolean isLocationDeadly(Coords c, int boardId) {
+        return isIndustrial()
+                     && hasEngine()
+                     && getEngine().isICE()
+                     && !hasEnvironmentalSealing()
+                     && game.hasBoardLocation(c, boardId)
+                     && game.getHex(c, boardId).terrainLevel(Terrains.WATER) >= 2;
     }
 
     /**

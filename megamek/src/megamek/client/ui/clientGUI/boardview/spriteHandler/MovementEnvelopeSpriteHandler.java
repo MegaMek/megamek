@@ -18,6 +18,8 @@
  */
 package megamek.client.ui.clientGUI.boardview.spriteHandler;
 
+import megamek.client.ui.clientGUI.AbstractClientGUI;
+import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.MovementEnvelopeSprite;
@@ -35,8 +37,8 @@ public class MovementEnvelopeSpriteHandler extends BoardViewSpriteHandler {
 
     private final IGame game;
 
-    public MovementEnvelopeSpriteHandler(BoardView boardView, IGame game) {
-        super(boardView);
+    public MovementEnvelopeSpriteHandler(AbstractClientGUI clientGUI, IGame game) {
+        super(clientGUI);
         this.game = game;
     }
 
@@ -51,10 +53,16 @@ public class MovementEnvelopeSpriteHandler extends BoardViewSpriteHandler {
         game.removeGameListener(this);
     }
 
-    public void setMovementEnvelope(Map<Coords, Integer> mvEnvData, int walk, int run, int jump, int gear) {
+    public void setMovementEnvelope(Map<Coords, Integer> mvEnvData, int boardId, int walk, int run, int jump,
+          int gear) {
         clear();
 
         if (mvEnvData == null) {
+            return;
+        }
+
+        IBoardView iBoardView = clientGUI.getBoardView(boardId);
+        if (!(iBoardView instanceof BoardView boardView)) {
             return;
         }
 

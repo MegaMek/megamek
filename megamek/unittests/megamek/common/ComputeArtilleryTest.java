@@ -21,6 +21,7 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -85,6 +86,8 @@ class ComputeArtilleryTest {
         Board mockBoard = mock(Board.class);
         Game mockGame = mock(Game.class);
         when(mockGame.getBoard()).thenReturn(mockBoard);
+        when(mockGame.onConnectedBoards(any(Targetable.class), any(Targetable.class))).thenReturn(true);
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
 
         Entity shooter = mock(Entity.class);
         Entity target = mock(Entity.class);

@@ -388,7 +388,7 @@ public class TipOfTheDay {
 
             float tipStartY = startY + labelHeight;
             // Render HTML content
-            drawHtmlTip(tipGraphics, htmlPane, tipFont, startX, tipStartY,
+            drawHtmlTip(tipGraphics, htmlPane, startX, tipStartY,
                     currentAvailableTextWidth, position, referenceBounds, scaledSidePadding);
 
         } finally {
@@ -467,7 +467,7 @@ public class TipOfTheDay {
     /**
      * Draws HTML content with outline and fill
      */
-    private void drawHtmlTip(Graphics2D graphics, JTextPane htmlPane, Font font, float startX, float startY,
+    private void drawHtmlTip(Graphics2D graphics, JTextPane htmlPane, float startX, float startY,
                             int availableWidth, Position position, Rectangle referenceBounds, float scaledSidePadding) {
         if (htmlPane == null || htmlPane.getText() == null || htmlPane.getText().trim().isEmpty()) {
             return;

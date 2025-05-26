@@ -195,8 +195,10 @@ public class TipOfTheDay {
             TextLayout labelLayout = new TextLayout(labelAS.getIterator(), frc);
             float labelHeight = labelLayout.getAscent() + labelLayout.getDescent() + labelLayout.getLeading();
             float labelWidth = (float) labelLayout.getBounds().getWidth();
-            String actualTipContentToRender = wrapTextWithHtml(unwrapHtml(tipOfTheDay), currentAvailableTextWidth);
-            JTextPane htmlPane = createHtmlPane(actualTipContentToRender, tipFont, currentAvailableTextWidth);
+            String actualTipContentToRender = tipOfTheDay;
+            // We unwrap and wrap the tip content with HTML to ensure it is displayed correctly
+            actualTipContentToRender = wrapTextWithHtml(unwrapHtml(tipOfTheDay));
+            JTextPane htmlPane = createHtmlPane(actualTipContentToRender, tipFont, currentAvailableTextWidth, position);
             float totalTipHeight = htmlPane.getPreferredSize().height;
 
             // Positioning
@@ -410,7 +412,7 @@ public class TipOfTheDay {
         return bodyContent;
     }
 
-    private String wrapTextWithHtml(String bodyContent, int width) {
+    private String wrapTextWithHtml(String bodyContent) {
         if (bodyContent == null) {
             bodyContent = "";
         }
@@ -420,13 +422,18 @@ public class TipOfTheDay {
     /**
      * Creates a JLabel configured for HTML rendering
      */
-    private JTextPane createHtmlPane(String htmlText, Font font, int width) {
+    private JTextPane createHtmlPane(String htmlText, Font font, int width, Position position) {
         JTextPane textPane = new JTextPane();
         textPane.setContentType("text/html");
         textPane.setFont(font);
         HTMLEditorKit kit = new HTMLEditorKit();
         StyleSheet styleSheet = kit.getStyleSheet();
         String fontWeight = font.isBold() ? "bold" : "normal";
+        String textAlign = switch (position) {
+            case BOTTOM_LEFT_CORNER -> "left";
+            case BOTTOM_RIGHT_CORNER -> "right";
+            default -> "center"; // TOP_BORDER, BOTTOM_BORDER
+        };
         styleSheet.addRule("html { " +
             "font-family: '" + font.getFamily() + "'; " +
             "font-size: " + Math.ceil(font.getSize()*0.75) + "pt; " +
@@ -435,6 +442,7 @@ public class TipOfTheDay {
             "padding: 0; " +
             "width: " + width + "px; " +
             "max-width: " + width + "px; " +
+            "text-align: " + textAlign + "; " +
             "}");
         textPane.setEditorKit(kit);
         textPane.setMargin(new Insets(0, 0, 0, 0));
@@ -443,9 +451,7 @@ public class TipOfTheDay {
         textPane.setOpaque(false);
         textPane.setEditable(false);
         textPane.setFocusable(false);
-        textPane.setSize(width, Integer.MAX_VALUE);
-        Dimension preferredSize = textPane.getPreferredSize();
-        textPane.setSize(width, preferredSize.height);
+        textPane.setSize(width, Short.MAX_VALUE);
         return textPane;
     }
 

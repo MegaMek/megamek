@@ -19,10 +19,10 @@
 package megamek.client.ui.clientGUI.boardview.toolTip;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.util.FontHandler;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.util.FontHandler;
+import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 

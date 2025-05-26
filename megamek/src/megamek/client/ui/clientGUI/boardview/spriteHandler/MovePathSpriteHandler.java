@@ -19,7 +19,7 @@
 
 package megamek.client.ui.clientGUI.boardview.spriteHandler;
 
-import megamek.client.ui.swing.AbstractClientGUI;
+import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.SBFStepSprite;
 import megamek.common.annotations.Nullable;

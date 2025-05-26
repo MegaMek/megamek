@@ -24,9 +24,9 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 
-import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.IBoardView;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.clientGUI.boardview.overlay.TurnDetailsOverlay;
 import megamek.client.ui.util.KeyCommandBind;

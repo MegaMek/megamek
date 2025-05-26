@@ -21,7 +21,7 @@ package megamek.client.ui.clientGUI.boardview.spriteHandler;
 import java.util.List;
 import java.util.Map;
 
-import megamek.client.ui.swing.AbstractClientGUI;
+import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.GroundObjectSprite;
 import megamek.common.Coords;

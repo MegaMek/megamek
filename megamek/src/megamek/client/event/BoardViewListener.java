@@ -20,7 +20,7 @@
 package megamek.client.event;
 
 import megamek.common.Coords;
-import megamek.client.ui.swing.boardview.IBoardView;
+import megamek.client.ui.clientGUI.boardview.IBoardView;
 
 import java.util.EventListener;
 

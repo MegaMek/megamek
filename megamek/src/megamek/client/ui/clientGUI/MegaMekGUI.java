@@ -922,7 +922,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     void scenario(String fileName) {
         String chosenFileName;
         if (fileName.isBlank()) {
-            ScenarioChooser scenarioChooser = new ScenarioChooser(frame);
+            ScenarioChooserDialog scenarioChooser = new ScenarioChooserDialog(frame);
             scenarioChooser.setVisible(true);
             chosenFileName = scenarioChooser.getSelectedScenarioFilename();
             if (chosenFileName == null) {

@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.phaseDisplay.MovementDisplay;
+import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.common.*;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;

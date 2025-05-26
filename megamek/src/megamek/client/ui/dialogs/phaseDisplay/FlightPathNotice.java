@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.phaseDisplay.dialog;
+package megamek.client.ui.dialogs.phaseDisplay;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.clientGUI.ClientGUI;
 
 /**
  * @see #FlightPathNotice(ClientGUI)

@@ -19,7 +19,7 @@
  */
 package megamek.client.event;
 
-import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.common.BoardLocation;
 import megamek.common.Coords;
 import megamek.common.Entity;

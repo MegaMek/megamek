@@ -19,7 +19,7 @@
 package megamek.server.totalwarfare;
 
 import megamek.MMConstants;
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.*;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;

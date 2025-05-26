@@ -18,8 +18,8 @@
  */
 package megamek.client.ui.clientGUI.boardview.spriteHandler;
 
-import megamek.client.ui.swing.AbstractClientGUI;
-import megamek.client.ui.swing.boardview.IBoardView;
+import megamek.client.ui.clientGUI.AbstractClientGUI;
+import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.MovementEnvelopeSprite;

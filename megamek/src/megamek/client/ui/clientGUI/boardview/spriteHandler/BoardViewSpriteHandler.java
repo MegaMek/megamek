@@ -18,9 +18,8 @@
  */
 package megamek.client.ui.clientGUI.boardview.spriteHandler;
 
-import megamek.client.ui.swing.AbstractClientGUI;
+import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.common.event.*;
 

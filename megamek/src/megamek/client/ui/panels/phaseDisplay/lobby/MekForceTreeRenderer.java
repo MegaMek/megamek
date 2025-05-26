@@ -19,9 +19,9 @@
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
 import megamek.MMConstants;
-import megamek.client.ui.swing.tileset.EntityImage;
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
+import megamek.client.ui.tileset.EntityImage;
+import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.Entity;

@@ -49,7 +49,6 @@ import java.util.stream.Stream;
 
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.common.*;

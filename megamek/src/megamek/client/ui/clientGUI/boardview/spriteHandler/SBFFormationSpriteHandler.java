@@ -19,11 +19,11 @@
 package megamek.client.ui.clientGUI.boardview.spriteHandler;
 
 import megamek.client.SBFClient;
+import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.SBFFormationSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.SBFPlaceHolderSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
-import megamek.client.ui.swing.AbstractClientGUI;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEvent;
 import megamek.common.strategicBattleSystems.SBFFormation;

@@ -71,7 +71,7 @@ import megamek.common.preference.PreferenceManager;
 /**
  * Shows reports, with an Okay JButton
  */
-public class MiniReportDisplay extends JPanel implements ActionListener, HyperlinkListener {
+public class MiniReportDisplayPanel extends JPanel implements ActionListener, HyperlinkListener {
     private JButton butSwitchLocation;
     private JTabbedPane tabs;
     private JButton butPlayerSearchUp;
@@ -93,7 +93,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
 
     private static final int MRD_MAXNAMELENGHT = 60;
 
-    public MiniReportDisplay(IClientGUI clientgui) {
+    public MiniReportDisplayPanel(IClientGUI clientgui) {
 
         if (clientgui == null) {
             return;

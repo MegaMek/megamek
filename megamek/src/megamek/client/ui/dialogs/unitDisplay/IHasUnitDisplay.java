@@ -15,8 +15,6 @@
 
 package megamek.client.ui.dialogs.unitDisplay;
 
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplay;
-
 public interface IHasUnitDisplay {
-    UnitDisplay getUnitDisplay();
+    UnitDisplayPanel getUnitDisplay();
 }

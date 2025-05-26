@@ -28,7 +28,7 @@ import javax.swing.JComponent;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplay;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Mek;
@@ -46,7 +46,7 @@ public class TripodMekMapSet implements DisplayMapSet {
     private static final int REAR_AREA_OFFSET = 8;
     private static final int INT_STRUCTURE_OFFSET = 12;
 
-    private UnitDisplay unitDisplay;
+    private UnitDisplayPanel unitDisplayPanel;
 
     // Array of polygonal areas - parts of mek body.
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[21];
@@ -165,8 +165,8 @@ public class TripodMekMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIP.getUnitDisplayMekArmorLargeFontSize());
 
-    public TripodMekMapSet(JComponent c, UnitDisplay unitDisplay) {
-        this.unitDisplay = unitDisplay;
+    public TripodMekMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
+        this.unitDisplayPanel = unitDisplayPanel;
         comp = c;
         setAreas();
         setLabels();
@@ -231,39 +231,39 @@ public class TripodMekMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[Mek.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplay, Mek.LOC_HEAD);
-        areas[Mek.LOC_CT] = new PMSimplePolygonArea(centralTorso, unitDisplay, Mek.LOC_CT);
-        areas[Mek.LOC_RT] = new PMSimplePolygonArea(rightTorso, unitDisplay, Mek.LOC_RT);
-        areas[Mek.LOC_LT] = new PMSimplePolygonArea(leftTorso, unitDisplay, Mek.LOC_LT);
-        areas[Mek.LOC_RARM] = new PMSimplePolygonArea(rightArm, unitDisplay, Mek.LOC_RARM);
-        areas[Mek.LOC_LARM] = new PMSimplePolygonArea(leftArm, unitDisplay, Mek.LOC_LARM);
-        areas[Mek.LOC_RLEG] = new PMSimplePolygonArea(rightLeg, unitDisplay, Mek.LOC_RLEG);
-        areas[Mek.LOC_LLEG] = new PMSimplePolygonArea(leftLeg, unitDisplay, Mek.LOC_LLEG);
-        areas[Mek.LOC_CLEG] = new PMSimplePolygonArea(centerLeg, unitDisplay, Mek.LOC_CLEG);
+        areas[Mek.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplayPanel, Mek.LOC_HEAD);
+        areas[Mek.LOC_CT] = new PMSimplePolygonArea(centralTorso, unitDisplayPanel, Mek.LOC_CT);
+        areas[Mek.LOC_RT] = new PMSimplePolygonArea(rightTorso, unitDisplayPanel, Mek.LOC_RT);
+        areas[Mek.LOC_LT] = new PMSimplePolygonArea(leftTorso, unitDisplayPanel, Mek.LOC_LT);
+        areas[Mek.LOC_RARM] = new PMSimplePolygonArea(rightArm, unitDisplayPanel, Mek.LOC_RARM);
+        areas[Mek.LOC_LARM] = new PMSimplePolygonArea(leftArm, unitDisplayPanel, Mek.LOC_LARM);
+        areas[Mek.LOC_RLEG] = new PMSimplePolygonArea(rightLeg, unitDisplayPanel, Mek.LOC_RLEG);
+        areas[Mek.LOC_LLEG] = new PMSimplePolygonArea(leftLeg, unitDisplayPanel, Mek.LOC_LLEG);
+        areas[Mek.LOC_CLEG] = new PMSimplePolygonArea(centerLeg, unitDisplayPanel, Mek.LOC_CLEG);
         areas[REAR_AREA_OFFSET + Mek.LOC_CT] = new PMSimplePolygonArea(
-                rearCentralTorso, unitDisplay, Mek.LOC_CT);
+                rearCentralTorso, unitDisplayPanel, Mek.LOC_CT);
         areas[REAR_AREA_OFFSET + Mek.LOC_RT] = new PMSimplePolygonArea(
-                rearRightTorso, unitDisplay, Mek.LOC_RT);
+                rearRightTorso, unitDisplayPanel, Mek.LOC_RT);
         areas[REAR_AREA_OFFSET + Mek.LOC_LT] = new PMSimplePolygonArea(
-                rearLeftTorso, unitDisplay, Mek.LOC_LT);
+                rearLeftTorso, unitDisplayPanel, Mek.LOC_LT);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_HEAD] = new PMSimplePolygonArea(
-                intStHead, unitDisplay, Mek.LOC_HEAD);
+                intStHead, unitDisplayPanel, Mek.LOC_HEAD);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_CT] = new PMSimplePolygonArea(
-                inStCentralTorso, unitDisplay, Mek.LOC_CT);
+                inStCentralTorso, unitDisplayPanel, Mek.LOC_CT);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_RT] = new PMSimplePolygonArea(
-                inStRightTorso, unitDisplay, Mek.LOC_RT);
+                inStRightTorso, unitDisplayPanel, Mek.LOC_RT);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_LT] = new PMSimplePolygonArea(
-                inStLeftTorso, unitDisplay, Mek.LOC_LT);
+                inStLeftTorso, unitDisplayPanel, Mek.LOC_LT);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_RARM] = new PMSimplePolygonArea(
-                inStRightArm, unitDisplay, Mek.LOC_RARM);
+                inStRightArm, unitDisplayPanel, Mek.LOC_RARM);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_LARM] = new PMSimplePolygonArea(
-                inStLeftArm, unitDisplay, Mek.LOC_LARM);
+                inStLeftArm, unitDisplayPanel, Mek.LOC_LARM);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_RLEG] = new PMSimplePolygonArea(
-                inStRightLeg, unitDisplay, Mek.LOC_RLEG);
+                inStRightLeg, unitDisplayPanel, Mek.LOC_RLEG);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_LLEG] = new PMSimplePolygonArea(
-                inStLeftLeg, unitDisplay, Mek.LOC_LLEG);
+                inStLeftLeg, unitDisplayPanel, Mek.LOC_LLEG);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_CLEG] = new PMSimplePolygonArea(
-                inStCenterLeg, unitDisplay, Mek.LOC_CLEG);
+                inStCenterLeg, unitDisplayPanel, Mek.LOC_CLEG);
         heatImage = comp.createImage(10, 120);
         drawHeatControl(0);
         heatHotArea = new PMPicPolygonalArea(heatControl, heatImage);

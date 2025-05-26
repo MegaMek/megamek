@@ -48,7 +48,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * This class shows information about a unit that doesn't belong elsewhere.
  */
 class ExtraPanel extends PicMap implements ActionListener, ItemListener {
-    private final UnitDisplay unitDisplay;
+    private final UnitDisplayPanel unitDisplayPanel;
 
     private JPanel panelMain;
     private JScrollPane scrollPane;
@@ -84,8 +84,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
     MMComboBox<GamePhase> comboActivateHiddenPhase = new MMComboBox<>("comboActivateHiddenPhase");
 
-    ExtraPanel(UnitDisplay unitDisplay) {
-        this.unitDisplay = unitDisplay;
+    ExtraPanel(UnitDisplayPanel unitDisplayPanel) {
+        this.unitDisplayPanel = unitDisplayPanel;
         prompt = null;
 
         narcLabel = new JLabel(Messages.getString("MekDisplay.AffectedBy"), SwingConstants.CENTER);
@@ -342,7 +342,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         ((DefaultListModel<String>) narcList.getModel()).removeAllElements();
         sinks = 0;
         myMekId = en.getId();
-        ClientGUI clientgui = unitDisplay.getClientGUI();
+        ClientGUI clientgui = unitDisplayPanel.getClientGUI();
         if ((clientgui != null) && (clientgui.getClient().getLocalPlayer().getId() != en.getOwnerId())) {
             sinks2B.setEnabled(false);
             dumpBombs.setEnabled(false);
@@ -611,7 +611,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
     @Override
     public void itemStateChanged(ItemEvent ev) {
-        ClientGUI clientgui = unitDisplay.getClientGUI();
+        ClientGUI clientgui = unitDisplayPanel.getClientGUI();
         if (clientgui == null) {
             return;
         }
@@ -634,7 +634,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        ClientGUI clientgui = unitDisplay.getClientGUI();
+        ClientGUI clientgui = unitDisplayPanel.getClientGUI();
         if (clientgui == null) {
             return;
         }

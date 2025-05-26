@@ -67,17 +67,17 @@ import megamek.common.util.fileUtils.MegaMekFile;
  */
 public class SummaryPanel extends PicMap {
 
-    private final UnitDisplay unitDisplay;
+    private final UnitDisplayPanel unitDisplayPanel;
     private final JLabel unitInfo;
     private final JPanel contentPanel;
 
     private static final GUIPreferences GUI_PREFERENCES = GUIPreferences.getInstance();
 
     /**
-     * @param unitDisplay the UnitDisplay UI to attach to
+     * @param unitDisplayPanel the UnitDisplay UI to attach to
      */
-    SummaryPanel(UnitDisplay unitDisplay) {
-        this.unitDisplay = unitDisplay;
+    SummaryPanel(UnitDisplayPanel unitDisplayPanel) {
+        this.unitDisplayPanel = unitDisplayPanel;
         setBackGround();
 
         contentPanel = new JPanel();
@@ -103,62 +103,62 @@ public class SummaryPanel extends PicMap {
     private void setBackGround() {
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
-        Image tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+        Image tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
                 udSpec.getBackgroundTile()).toString());
-        PMUtil.setImage(tile, unitDisplay);
+        PMUtil.setImage(tile, unitDisplayPanel);
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
-        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+        tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
                 udSpec.getTopLine()).toString());
-        PMUtil.setImage(tile, unitDisplay);
+        PMUtil.setImage(tile, unitDisplayPanel);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
-        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+        tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
                 udSpec.getBottomLine()).toString());
-        PMUtil.setImage(tile, unitDisplay);
+        PMUtil.setImage(tile, unitDisplayPanel);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
-        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+        tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
                 udSpec.getLeftLine()).toString());
-        PMUtil.setImage(tile, unitDisplay);
+        PMUtil.setImage(tile, unitDisplayPanel);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
-        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+        tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
                 udSpec.getRightLine()).toString());
-        PMUtil.setImage(tile, unitDisplay);
+        PMUtil.setImage(tile, unitDisplayPanel);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_LEFT;
-        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+        tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
                 udSpec.getTopLeftCorner()).toString());
-        PMUtil.setImage(tile, unitDisplay);
+        PMUtil.setImage(tile, unitDisplayPanel);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_LEFT;
-        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+        tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
                 udSpec.getBottomLeftCorner()).toString());
-        PMUtil.setImage(tile, unitDisplay);
+        PMUtil.setImage(tile, unitDisplayPanel);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_RIGHT;
-        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+        tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
                 udSpec.getTopRightCorner()).toString());
-        PMUtil.setImage(tile, unitDisplay);
+        PMUtil.setImage(tile, unitDisplayPanel);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_RIGHT;
-        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+        tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
                 udSpec.getBottomRightCorner()).toString());
-        PMUtil.setImage(tile, unitDisplay);
+        PMUtil.setImage(tile, unitDisplayPanel);
         addBgDrawer(new BackGroundDrawer(tile, b));
     }
 
@@ -166,7 +166,7 @@ public class SummaryPanel extends PicMap {
      * @param entity The Entity to display info for
      */
     public void displayMek(Entity entity) {
-        Player localPlayer = unitDisplay.getClientGUI().getClient().getLocalPlayer();
+        Player localPlayer = unitDisplayPanel.getClientGUI().getClient().getLocalPlayer();
         String txt = "";
 
         if (entity == null) {
@@ -197,7 +197,7 @@ public class SummaryPanel extends PicMap {
                 row = UIUtil.tag("TR", "", col);
                 rows += row;
 
-                String hexTip = HexTooltip.getHexTip(mhex, unitDisplay.getClientGUI().getClient(), entity.getBoardId());
+                String hexTip = HexTooltip.getHexTip(mhex, unitDisplayPanel.getClientGUI().getClient(), entity.getBoardId());
                 if (!hexTip.isEmpty()) {
                     attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUI_PREFERENCES.getUnitToolTipTerrainBGColor()));
                     col = UIUtil.tag("TD", attr, hexTip);

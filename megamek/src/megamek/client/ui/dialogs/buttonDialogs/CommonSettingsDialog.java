@@ -52,6 +52,7 @@ import javax.swing.event.MouseInputAdapter;
 import com.formdev.flatlaf.icons.FlatHelpButtonIcon;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.models.FileNameComboBoxModel;
 import megamek.client.ui.buttons.MMButton;
 import megamek.client.ui.comboBoxes.MMComboBox;
@@ -71,7 +72,6 @@ import megamek.client.ui.panels.phaseDisplay.StatusBarPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.StatusBarPhaseDisplay.PhaseCommand;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplay;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.PlayerColour;
@@ -1418,12 +1418,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         JLabel orderLabel = new JLabel(Messages.getString("CommonSettingsDialog.orderLabel") + ": ");
         row.add(orderLabel);
 
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_A1));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_B1));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_C1));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_A2));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_B2));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_C2));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_A1));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_B1));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_C1));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_A2));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_B2));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_C2));
 
         JList<String> listUnitDisplayNonTabbed = new JList<>(unitDisplayNonTabbed);
         listUnitDisplayNonTabbed.setLayoutOrientation(JList.HORIZONTAL_WRAP);
@@ -2446,12 +2446,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         }
 
         unitDisplayNonTabbed.clear();
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_A1));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_B1));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_C1));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_A2));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_B2));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_C2));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_A1));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_B1));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_C1));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_A2));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_B2));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_C2));
 
         unitDisplayAutoDisplayReportCombo.setSelectedItem(GUIP.getUnitDisplayAutoDisplayReportPhase());
         unitDisplayAutoDisplayNonReportCombo.setSelectedItem(GUIP.getUnitDisplayAutoDisplayNonReportPhase());
@@ -2874,41 +2874,41 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             boolean unitDisplayNonTabbedChanged = false;
             int s = unitDisplayNonTabbed.getSize();
 
-            if ((s > UnitDisplay.NON_TABBED_ZERO_INDEX) &&
-                      (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ZERO_INDEX)
-                              .equals(UDOP.getString(UnitDisplay.NON_TABBED_A1)))) {
+            if ((s > UnitDisplayPanel.NON_TABBED_ZERO_INDEX) &&
+                      (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ZERO_INDEX)
+                              .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_A1)))) {
                 unitDisplayNonTabbedChanged = true;
-                UDOP.setValue(UnitDisplay.NON_TABBED_A1, unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ZERO_INDEX));
+                UDOP.setValue(UnitDisplayPanel.NON_TABBED_A1, unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ZERO_INDEX));
             }
-            if ((s > UnitDisplay.NON_TABBED_ONE_INDEX) &&
-                      (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ONE_INDEX)
-                              .equals(UDOP.getString(UnitDisplay.NON_TABBED_B1)))) {
+            if ((s > UnitDisplayPanel.NON_TABBED_ONE_INDEX) &&
+                      (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ONE_INDEX)
+                              .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_B1)))) {
                 unitDisplayNonTabbedChanged = true;
-                UDOP.setValue(UnitDisplay.NON_TABBED_B1, unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ONE_INDEX));
+                UDOP.setValue(UnitDisplayPanel.NON_TABBED_B1, unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ONE_INDEX));
             }
-            if ((s > UnitDisplay.NON_TABBED_TWO_INDEX) &&
-                      (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_TWO_INDEX)
-                              .equals(UDOP.getString(UnitDisplay.NON_TABBED_C1)))) {
+            if ((s > UnitDisplayPanel.NON_TABBED_TWO_INDEX) &&
+                      (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_TWO_INDEX)
+                              .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_C1)))) {
                 unitDisplayNonTabbedChanged = true;
-                UDOP.setValue(UnitDisplay.NON_TABBED_C1, unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_TWO_INDEX));
+                UDOP.setValue(UnitDisplayPanel.NON_TABBED_C1, unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_TWO_INDEX));
             }
-            if ((s > UnitDisplay.NON_TABBED_THREE_INDEX) &&
-                      (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_THREE_INDEX)
-                              .equals(UDOP.getString(UnitDisplay.NON_TABBED_A2)))) {
+            if ((s > UnitDisplayPanel.NON_TABBED_THREE_INDEX) &&
+                      (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_THREE_INDEX)
+                              .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_A2)))) {
                 unitDisplayNonTabbedChanged = true;
-                UDOP.setValue(UnitDisplay.NON_TABBED_A2, unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_THREE_INDEX));
+                UDOP.setValue(UnitDisplayPanel.NON_TABBED_A2, unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_THREE_INDEX));
             }
-            if ((s > UnitDisplay.NON_TABBED_FOUR_INDEX) &&
-                      (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FOUR_INDEX)
-                              .equals(UDOP.getString(UnitDisplay.NON_TABBED_B2)))) {
+            if ((s > UnitDisplayPanel.NON_TABBED_FOUR_INDEX) &&
+                      (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FOUR_INDEX)
+                              .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_B2)))) {
                 unitDisplayNonTabbedChanged = true;
-                UDOP.setValue(UnitDisplay.NON_TABBED_B2, unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FOUR_INDEX));
+                UDOP.setValue(UnitDisplayPanel.NON_TABBED_B2, unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FOUR_INDEX));
             }
-            if ((s > UnitDisplay.NON_TABBED_FIVE_INDEX) &&
-                      (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FIVE_INDEX)
-                              .equals(UDOP.getString(UnitDisplay.NON_TABBED_C2)))) {
+            if ((s > UnitDisplayPanel.NON_TABBED_FIVE_INDEX) &&
+                      (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FIVE_INDEX)
+                              .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_C2)))) {
                 unitDisplayNonTabbedChanged = true;
-                UDOP.setValue(UnitDisplay.NON_TABBED_C2, unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FIVE_INDEX));
+                UDOP.setValue(UnitDisplayPanel.NON_TABBED_C2, unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FIVE_INDEX));
             }
 
             if ((unitDisplayNonTabbedChanged) && (clientgui != null)) {

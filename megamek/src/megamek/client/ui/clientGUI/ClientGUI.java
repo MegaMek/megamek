@@ -67,13 +67,14 @@ import megamek.client.ui.dialogs.*;
 import megamek.client.ui.dialogs.BotCommands.BotCommandsDialog;
 import megamek.client.ui.dialogs.BotCommands.BotCommandsPanel;
 import megamek.client.ui.dialogs.minimap.MinimapDialog;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MegaMekUnitSelectorDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.EditBotsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.GameOptionsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.LOSDialog;
 import megamek.client.ui.dialogs.helpDialogs.HelpDialog;
-import megamek.client.ui.dialogs.miniReport.MiniReportDisplay;
+import megamek.client.ui.dialogs.miniReport.MiniReportDisplayPanel;
 import megamek.client.ui.dialogs.miniReport.MiniReportDisplayDialog;
 import megamek.client.ui.dialogs.unitDisplay.IHasUnitDisplay;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
@@ -102,7 +103,6 @@ import megamek.client.ui.dialogs.minimap.MinimapPanel;
 import megamek.client.ui.panels.ReceivingGameDataPanel;
 import megamek.client.ui.panels.StartingScenarioPanel;
 import megamek.client.ui.panels.WaitingForServerPanel;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplay;
 import megamek.client.ui.tileset.EntityImage;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.BASE64ToolKit;
@@ -295,7 +295,7 @@ public class ClientGUI extends AbstractClientGUI
     private JPanel panA1;
     private JPanel panA2;
 
-    private final UnitDisplay unitDisplay;
+    private final UnitDisplayPanel unitDisplayPanel;
     private UnitDisplayDialog unitDisplayDialog;
 
     private BotCommandsDialog botCommandsDialog;
@@ -329,7 +329,7 @@ public class ClientGUI extends AbstractClientGUI
      */
     private final Map<String, String> mainNames = new HashMap<>();
 
-    private MiniReportDisplay miniReportDisplay;
+    private MiniReportDisplayPanel miniReportDisplayPanel;
     private MiniReportDisplayDialog miniReportDisplayDialog;
 
     /**
@@ -412,7 +412,7 @@ public class ClientGUI extends AbstractClientGUI
 
         audioService.loadSoundFiles();
 
-        unitDisplay = new UnitDisplay(this, controller);
+        unitDisplayPanel = new UnitDisplayPanel(this, controller);
 
         registerCommand(new HelpCommand(this));
         registerCommand(new MoveCommand(this));
@@ -456,8 +456,8 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     @Override
-    public UnitDisplay getUnitDisplay() {
-        return unitDisplay;
+    public UnitDisplayPanel getUnitDisplay() {
+        return unitDisplayPanel;
     }
 
     public UnitDisplayDialog getUnitDisplayDialog() {
@@ -498,12 +498,12 @@ public class ClientGUI extends AbstractClientGUI
         this.botCommandsDialog = botCommandsDialog;
     }
 
-    public MiniReportDisplay getMiniReportDisplay() {
-        return miniReportDisplay;
+    public MiniReportDisplayPanel getMiniReportDisplay() {
+        return miniReportDisplayPanel;
     }
 
-    public void setMiniReportDisplay(final MiniReportDisplay miniReportDisplay) {
-        this.miniReportDisplay = miniReportDisplay;
+    public void setMiniReportDisplay(final MiniReportDisplayPanel miniReportDisplayPanel) {
+        this.miniReportDisplayPanel = miniReportDisplayPanel;
     }
 
     public MiniReportDisplayDialog getMiniReportDisplayDialog() {
@@ -622,7 +622,7 @@ public class ClientGUI extends AbstractClientGUI
         aw.setLocation(0, 0);
         aw.setSize(300, 300);
 
-        unitDisplay.addMekDisplayListener(this);
+        unitDisplayPanel.addMekDisplayListener(this);
         setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), this));
         getUnitDisplayDialog().setVisible(false);
 
@@ -631,7 +631,7 @@ public class ClientGUI extends AbstractClientGUI
         getForceDisplayDialog().add(getForceDisplayPanel(), BorderLayout.CENTER);
         getForceDisplayDialog().setVisible(false);
 
-        setMiniReportDisplay(new MiniReportDisplay(this));
+        setMiniReportDisplay(new MiniReportDisplayPanel(this));
         setMiniReportDisplayDialog(new MiniReportDisplayDialog(getFrame(), this));
         getMiniReportDisplayDialog().setVisible(false);
         setMiniReportVisible(GUIP.getMiniReportEnabled());
@@ -2557,12 +2557,12 @@ public class ClientGUI extends AbstractClientGUI
 
         @Override
         public void gameEntityChange(GameEntityChangeEvent e) {
-            if ((unitDisplay != null) &&
-                      (unitDisplay.getCurrentEntity() != null) &&
+            if ((unitDisplayPanel != null) &&
+                      (unitDisplayPanel.getCurrentEntity() != null) &&
                       (e.getEntity() != null) &&
-                      (unitDisplay.getCurrentEntity().getId() == e.getEntity().getId())) {
+                      (unitDisplayPanel.getCurrentEntity().getId() == e.getEntity().getId())) {
                 // underlying object may have changed, so reset
-                unitDisplay.displayEntity(e.getEntity());
+                unitDisplayPanel.displayEntity(e.getEntity());
             }
         }
 
@@ -3345,7 +3345,7 @@ public class ClientGUI extends AbstractClientGUI
      */
     @Nullable
     public Entity getDisplayedUnit() {
-        return unitDisplay.getCurrentEntity();
+        return unitDisplayPanel.getCurrentEntity();
     }
 
     /**
@@ -3358,25 +3358,25 @@ public class ClientGUI extends AbstractClientGUI
      * @return The weapon that is currently selected in the Unit Display, if any
      */
     public Optional<WeaponMounted> getDisplayedWeapon() {
-        WeaponMounted weapon = unitDisplay.wPan.getSelectedWeapon();
+        WeaponMounted weapon = unitDisplayPanel.wPan.getSelectedWeapon();
         if ((getDisplayedUnit() == null) ||
                   (weapon == null) ||
                   (client.getGame().getEntity(getDisplayedUnit().getId()) == null)) {
             return Optional.empty();
         }
-        Mounted<?> weaponOnUnit = getDisplayedUnit().getEquipment(unitDisplay.wPan.getSelectedWeaponNum());
+        Mounted<?> weaponOnUnit = getDisplayedUnit().getEquipment(unitDisplayPanel.wPan.getSelectedWeaponNum());
         if (weaponOnUnit == weapon) {
             return Optional.of(weapon);
         } else {
             logger.error("Unsafe selected weapon. Returning null instead. Equipment ID {} on unit {}",
-                  unitDisplay.wPan.getSelectedWeaponNum(),
+                  unitDisplayPanel.wPan.getSelectedWeaponNum(),
                   getDisplayedUnit());
             return Optional.empty();
         }
     }
 
     public Optional<AmmoMounted> getDisplayedAmmo() {
-        return unitDisplay.wPan.getSelectedAmmo();
+        return unitDisplayPanel.wPan.getSelectedAmmo();
     }
 
     @Override
@@ -3449,7 +3449,7 @@ public class ClientGUI extends AbstractClientGUI
 
     private void toggleFleeZone() {
         showFleeZone = !showFleeZone;
-        Entity entity = unitDisplay.getCurrentEntity();
+        Entity entity = unitDisplayPanel.getCurrentEntity();
         if (showFleeZone && entity != null) {
             Game game = client.getGame();
             Board board = game.getBoard(entity);

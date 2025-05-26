@@ -38,7 +38,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JLabel;
+import javax.swing.JTextPane;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.SkinSpecification;
@@ -194,8 +196,8 @@ public class TipOfTheDay {
             float labelHeight = labelLayout.getAscent() + labelLayout.getDescent() + labelLayout.getLeading();
             float labelWidth = (float) labelLayout.getBounds().getWidth();
             String actualTipContentToRender = wrapTextWithHtml(unwrapHtml(tipOfTheDay), currentAvailableTextWidth);
-            JLabel htmlLabel = createHtmlLabel(actualTipContentToRender, tipFont, currentAvailableTextWidth);
-            float totalTipHeight = htmlLabel.getPreferredSize().height;
+            JTextPane htmlPane = createHtmlPane(actualTipContentToRender, tipFont, currentAvailableTextWidth);
+            float totalTipHeight = htmlPane.getPreferredSize().height;
 
             // Positioning
             float totalBlockHeight = labelHeight + totalTipHeight;
@@ -371,11 +373,11 @@ public class TipOfTheDay {
             };
             float labelDrawY = startY + labelLayout.getAscent();
 
-            drawTipTitleWithBackground(tipGraphics, labelLayout, labelDrawX, labelDrawY, TIP_TITLE_FONT_COLOR);
+            drawTipTitle(tipGraphics, labelLayout, labelDrawX, labelDrawY, TIP_TITLE_FONT_COLOR);
 
             float tipStartY = startY + labelHeight;
             // Render HTML content
-            drawHtmlTip(tipGraphics, actualTipContentToRender, tipFont, startX, tipStartY,
+            drawHtmlTip(tipGraphics, htmlPane, tipFont, startX, tipStartY,
                     currentAvailableTextWidth, position, referenceBounds, scaledSidePadding);
 
         } finally {
@@ -399,7 +401,7 @@ public class TipOfTheDay {
                 } else {
                     // Use content within <html> but outside/malformed <body>
                     bodyContent = bodyContent.substring(bodyTagStartIndex + "<body>".length()).trim();
-                    if(bodyContent.toLowerCase().endsWith("</body>")){ // clean up if only end tag remains
+                    if(bodyContent.toLowerCase().endsWith("</body>")){
                         bodyContent = bodyContent.substring(0, bodyContent.length() - "</body>".length()).trim();
                     }
                 }
@@ -412,39 +414,50 @@ public class TipOfTheDay {
         if (bodyContent == null) {
             bodyContent = "";
         }
-        return "<html><body style='width: " + width + "px; margin: 0; padding: 0;'>"
-               + bodyContent
-               + "</body></html>";
+        return "<html>" + bodyContent + "</html>";
     }
 
     /**
      * Creates a JLabel configured for HTML rendering
      */
-    private JLabel createHtmlLabel(String htmlText, Font font, int width) {
-        JLabel label = new JLabel();
-        label.setText(htmlText);
-        label.setFont(font);
-        label.setForeground(TIP_FONT_COLOR);
-        label.setSize(width, Short.MAX_VALUE);
-        return label;
+    private JTextPane createHtmlPane(String htmlText, Font font, int width) {
+        JTextPane textPane = new JTextPane();
+        textPane.setContentType("text/html");
+        textPane.setFont(font);
+        HTMLEditorKit kit = new HTMLEditorKit();
+        StyleSheet styleSheet = kit.getStyleSheet();
+        String fontWeight = font.isBold() ? "bold" : "normal";
+        styleSheet.addRule("html { " +
+            "font-family: '" + font.getFamily() + "'; " +
+            "font-size: " + Math.ceil(font.getSize()*0.75) + "pt; " +
+            "font-weight: " + fontWeight + "; " +
+            "margin: 0; " +
+            "padding: 0; " +
+            "width: " + width + "px; " +
+            "max-width: " + width + "px; " +
+            "}");
+        textPane.setEditorKit(kit);
+        textPane.setMargin(new Insets(0, 0, 0, 0));
+        textPane.setBorder(null);
+        textPane.setText(htmlText);
+        textPane.setOpaque(false);
+        textPane.setEditable(false);
+        textPane.setFocusable(false);
+        textPane.setSize(width, Integer.MAX_VALUE);
+        Dimension preferredSize = textPane.getPreferredSize();
+        textPane.setSize(width, preferredSize.height);
+        return textPane;
     }
 
     /**
      * Draws HTML content with outline and fill
      */
-    private void drawHtmlTip(Graphics2D graphics, String htmlText, Font font, float startX, float startY,
+    private void drawHtmlTip(Graphics2D graphics, JTextPane htmlPane, Font font, float startX, float startY,
                             int availableWidth, Position position, Rectangle referenceBounds, float scaledSidePadding) {
-
-        if (htmlText == null || htmlText.trim().isEmpty()) {
+        if (htmlPane == null || htmlPane.getText() == null || htmlPane.getText().trim().isEmpty()) {
             return;
         }
-
-        JLabel htmlLabel = new JLabel(htmlText);
-        htmlLabel.setFont(font);
-        htmlLabel.setOpaque(false);
-
-        htmlLabel.setSize(availableWidth, Short.MAX_VALUE);
-        Dimension preferredSize = htmlLabel.getPreferredSize();
+        Dimension preferredSize = htmlPane.getPreferredSize();
 
         if (preferredSize.width <= 0 || preferredSize.height <= 0) {
             // No valid size to draw
@@ -467,7 +480,7 @@ public class TipOfTheDay {
                 drawX = Math.max(startX, drawX);
                 break;
         }
-        htmlLabel.setBounds(0, 0, contentWidthToDraw, actualHeight);
+        htmlPane.setBounds(0, 0, contentWidthToDraw, actualHeight);
 
         Graphics2D g2d = (Graphics2D) graphics.create();
         try {
@@ -482,25 +495,25 @@ public class TipOfTheDay {
             int stroke = Math.max(1, (int) Math.ceil(strokeThickness));
 
             // Outline Pass:
-            htmlLabel.setForeground(TIP_STROKE_COLOR);
+            htmlPane.setForeground(TIP_STROKE_COLOR);
             for (int dy_offset = -stroke; dy_offset <= stroke; dy_offset++) {
                 for (int dx_offset = -stroke; dx_offset <= stroke; dx_offset++) {
                     if (dx_offset != 0 || dy_offset != 0) {
                         AffineTransform originalTransform = g2d.getTransform();
                         g2d.translate(dx_offset, dy_offset);
-                        htmlLabel.paint(g2d);
+                        htmlPane.paint(g2d);
                         g2d.setTransform(originalTransform);
                     }
                 }
             }
-            htmlLabel.setForeground(TIP_FONT_COLOR);
-            htmlLabel.paint(g2d);
+            htmlPane.setForeground(TIP_FONT_COLOR);
+            htmlPane.paint(g2d);
         } finally {
             g2d.dispose();
         }
     }
 
-    private void drawTipTitleWithBackground(Graphics2D tipGraphics, TextLayout tipLayout,
+    private void drawTipTitle(Graphics2D tipGraphics, TextLayout tipLayout,
           float lineDrawX, float lineDrawY, Color tipFontColor) {
         AffineTransform oldTransform = tipGraphics.getTransform();
         tipGraphics.translate(lineDrawX, lineDrawY);

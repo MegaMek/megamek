@@ -204,7 +204,7 @@ public class TipOfTheDay {
             TextLayout labelLayout = new TextLayout(labelAS.getIterator(), frc);
             float labelHeight = labelLayout.getAscent() + labelLayout.getDescent() + labelLayout.getLeading();
             float labelWidth = (float) labelLayout.getBounds().getWidth();
-            String actualTipContentToRender = assignVariables(tipOfTheDay);
+            String actualTipContentToRender = mapVariables(tipOfTheDay);
             // We unwrap and wrap the tip content with HTML to ensure it is displayed correctly
             actualTipContentToRender = wrapTextWithHtml(unwrapHtml(tipOfTheDay));
             JTextPane htmlPane = createHtmlPane(actualTipContentToRender, tipFont, currentAvailableTextWidth, position);
@@ -540,15 +540,15 @@ public class TipOfTheDay {
         tipGraphics.setTransform(oldTransform);
     }
 
-    private String assignVariables(String text) {
+    private String mapVariables(String text) {
         if (text == null || text.isEmpty()) {
             return "";
         }
-        text = addKeybinds(text);
+        text = mapKeybinds(text);
         return text;
     }
 
-    private String addKeybinds(String text) {
+    private String mapKeybinds(String text) {
         if (!text.contains(KEYBIND_VARIABLE_PREFIX)) {
             return text; // No keybind variables to replace
         }

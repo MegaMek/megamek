@@ -13,7 +13,7 @@
  *
  */
 
-package megamek.client.ui.dialogs;
+package megamek.client.ui.dialogs.BotCommands;
 
 import megamek.client.AbstractClient;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
@@ -70,27 +70,6 @@ public class BotCommandsPanel extends JPanel {
         this.controller = controller;
 
         this.initialize();
-    }
-
-    /**
-     * Returns a non-modal dialog with a minimap for the given game.
-     */
-    public static JDialog createBotCommandDialog(JFrame parent, AbstractClient client, AudioService audioService, MegaMekController controller) {
-        var result = new JDialog(parent, Messages.getString("ClientGUI.BotCommand"), false);
-
-        result.setLocation(GUIP.getBotCommandsPosX(), GUIP.getBotCommandsPosY());
-        result.setSize(new Dimension(600, 120));
-        result.setMinimumSize(new Dimension(600, 120));
-        result.setResizable(true);
-        result.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                GUIP.setBotCommandsEnabled(false);
-            }
-        });
-
-        result.add(new BotCommandsPanel(client, audioService, controller));
-        return result;
     }
 
     private void initialize() {

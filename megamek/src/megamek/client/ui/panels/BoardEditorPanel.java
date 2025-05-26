@@ -57,6 +57,7 @@ import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
+import megamek.client.ui.dialogs.minimap.MinimapDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.clientGUI.BoardFileFilter;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -78,7 +79,7 @@ import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.dialogs.buttonDialogs.MultiIntSelectorDialog;
 import megamek.client.ui.dialogs.randomMap.RandomMapDialog;
 import megamek.client.ui.dialogs.randomMap.ResizeMapDialog;
-import megamek.client.ui.dialogs.minimap.Minimap;
+import megamek.client.ui.dialogs.minimap.MinimapPanel;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.FontHandler;
@@ -248,7 +249,7 @@ public class BoardEditorPanel extends JPanel
     private final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForBoardEditor();
     private AbstractHelpDialog help;
     private CommonSettingsDialog settingsDialog;
-    private JDialog minimapW;
+    private MinimapDialog minimapW;
     private final MegaMekController controller;
 
     // The current files
@@ -1106,7 +1107,9 @@ public class BoardEditorPanel extends JPanel
         scrCenterPanel.getVerticalScrollBar().setUnitIncrement(16);
         add(scrCenterPanel, BorderLayout.CENTER);
         add(panButtons, BorderLayout.PAGE_END);
-        minimapW = Minimap.createMinimap(frame, bv, game, null, 0);
+
+        minimapW = new MinimapDialog(frame, null);
+        minimapW.add(new MinimapPanel(minimapW, game, bv, null, null, 0));
         minimapW.setVisible(guip.getMinimapEnabled());
     }
 

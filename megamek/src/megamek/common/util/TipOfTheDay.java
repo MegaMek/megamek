@@ -28,6 +28,7 @@
 package megamek.common.util;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
@@ -37,11 +38,15 @@ import java.text.AttributedString;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JTextPane;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
+import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.SkinSpecification;
 import megamek.client.ui.widget.SkinSpecification.UIComponents;
@@ -74,6 +79,10 @@ public class TipOfTheDay {
     private static final float TIP_BACKGROUND_FADE_TO_OPACITY = 0.0f;
     private static final float TIP_BACKGROUND_FADE_AREA_PERCENT = 1.0f;
     private static final boolean DEFAULT_USE_RADIAL_GRADIENT = false;
+
+    private static final String VARIABLE_PREFIX = "{";
+    private static final String VARIABLE_SUFFIX = "}";
+    private static final String KEYBIND_VARIABLE_PREFIX = VARIABLE_PREFIX+"keybind:";
 
     private final String bundleName;
     private final String tipOfTheDay;
@@ -195,7 +204,7 @@ public class TipOfTheDay {
             TextLayout labelLayout = new TextLayout(labelAS.getIterator(), frc);
             float labelHeight = labelLayout.getAscent() + labelLayout.getDescent() + labelLayout.getLeading();
             float labelWidth = (float) labelLayout.getBounds().getWidth();
-            String actualTipContentToRender = tipOfTheDay;
+            String actualTipContentToRender = assignVariables(tipOfTheDay);
             // We unwrap and wrap the tip content with HTML to ensure it is displayed correctly
             actualTipContentToRender = wrapTextWithHtml(unwrapHtml(tipOfTheDay));
             JTextPane htmlPane = createHtmlPane(actualTipContentToRender, tipFont, currentAvailableTextWidth, position);
@@ -529,5 +538,45 @@ public class TipOfTheDay {
         tipGraphics.setColor(tipFontColor); // Fill color
         tipGraphics.fill(tipShape); // Draw fill
         tipGraphics.setTransform(oldTransform);
+    }
+
+    private String assignVariables(String text) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+        text = addKeybinds(text);
+        return text;
+    }
+
+    private String addKeybinds(String text) {
+        if (!text.contains(KEYBIND_VARIABLE_PREFIX)) {
+            return text; // No keybind variables to replace
+        }
+        Set<String> keybindCommands = new java.util.HashSet<>();
+        Pattern pattern = Pattern.compile("\\"+KEYBIND_VARIABLE_PREFIX+"([^}]+)\\"+VARIABLE_SUFFIX);
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            keybindCommands.add(matcher.group(1));
+        }
+        for (String cmd : keybindCommands) {
+            String keybindVariable = KEYBIND_VARIABLE_PREFIX + cmd + VARIABLE_SUFFIX;
+            KeyCommandBind kcb = null;
+            try {
+                // We try to find it by enum first (faster)
+                kcb = KeyCommandBind.valueOf(cmd.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                // If not found, we look it up by command name
+                kcb = KeyCommandBind.getBindByCmd(cmd);
+            }
+            if (kcb != null) {
+                String modifier = KeyEvent.getModifiersExText(kcb.modifiers);
+                String key = KeyEvent.getKeyText(kcb.key);
+                String keybind = modifier.isEmpty() ? key : modifier + "+" + key;
+                text = text.replace(keybindVariable, keybind);
+            } else {
+                text = text.replace(keybindVariable, "UNASSIGNED");
+            }
+        }
+        return text;
     }
 }

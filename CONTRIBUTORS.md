@@ -306,7 +306,7 @@ From Sarna.net. A GNU FDL 1.2 Wiki, text compared to original TRO text for direc
   by copyright unless noted." (See Template:PD-USGov, NASA copyright policy page or JPL Image Use Policy.) -
   data/images/hexes/largeTextures/textureLunar.jpg
 - textureVolcano (https://pixabay.com/en/rock-pumus-volcanic-rock-1044181/) Creative Commons CC0 -
-  data/images/hexes/largeTextures/textureVolcano
+  data/images/hexes/largeTextures/textureVolcano.jpg
 - BigGrass (https://www.flickr.com/photos/99624358@N00/4290929736) Creative Commons Attribution 2.0 Generic (CC BY
   2.0) https://creativecommons.org/licenses/by/2.0/ Applied the make seamless map function for tiling, arranged four of
   the images together then shrank to 800x600. - data/images/hexes/largeTextures/BigGrass.jpg

@@ -6,13 +6,13 @@ Here I share 18 maps I made for MegaMek:
 
 ## Woodland 2 (not official)
 
-An expansion for the official woodland map. I think it fits quit well.
+An expansion for the official woodland map. I think it fits quite well.
 
 - woodland_2.board
 
 ## Village
 
-Just a single map with a road, buidlings, hills and woods.
+Just a single map with a road, buildings, hills and woods.
 
 - village_1.board
 

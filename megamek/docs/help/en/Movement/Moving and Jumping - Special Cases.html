@@ -24,21 +24,6 @@
             padding-left: 10px;
         }
 
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .config-image {
-            min-width: 200px;
-            max-width: 300px;
-        }
-
-        .table-container {
-            overflow-x: auto;
-        }
-
         table {
             border-collapse: collapse;
             width: 100%;
@@ -55,24 +40,11 @@
             background-color: rgba(0, 0, 0, 0.1);
         }
 
-        table.config-table, td.config-image, td.config-details {
-            border: 0;
-            padding: 8px 12px;
-            text-align: left;
-        }
-
         code {
             background-color: rgba(0, 0, 0, 0.03);
             padding: 2px 4px;
             border-radius: 4px;
             font-family: 'Courier New', Courier, monospace;
-        }
-
-        .command {
-            background-color: rgba(0, 0, 0, 0.03);
-            padding: 10px;
-            border-left: 3px solid rgba(0, 0, 0, 0.2);
-            margin-bottom: 15px;
         }
 
         .command code {
@@ -117,15 +89,6 @@
             text-decoration: underline;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            .config-image {
-                max-width: 100%;
-            }
-        }
     </style>
 </head>
 <body>

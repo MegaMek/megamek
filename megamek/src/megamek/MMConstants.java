@@ -60,7 +60,7 @@ public final class MMConstants extends SuiteConstants {
           Paths.get("docs/help/en/princess/PrincessBotDocumentation.html").toString();
     public static final String BOARD_README_FILE_PATH = Paths.get("docs/Archive Stuff/maps/Map Editor-readme.txt")
         .toString();
-    public static final String MEGAMEK_README_FILE_PATH = Paths.get("docs/1-Readme/readme.txt").toString();
+    public static final String MEGAMEK_README_FILE_PATH = Paths.get("docs/README.md").toString();
     public static final String USER_DIR_README_FILE = Paths.get("docs/help/en/UserDir/UserDirHelp.html").toString();
     public static final String USER_NAME_FACTIONS_DIRECTORY_PATH = Paths.get("userdata/data/names/factions/")
         .toString();

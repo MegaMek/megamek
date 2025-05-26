@@ -63,7 +63,10 @@ import megamek.client.event.MekDisplayEvent;
 import megamek.client.event.MekDisplayListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.*;
+import megamek.client.ui.dialogs.BotCommands.BotCommandsDialog;
+import megamek.client.ui.dialogs.BotCommands.BotCommandsPanel;
 import megamek.client.ui.dialogs.clientDialogs.PlanetaryConditionsDialog;
+import megamek.client.ui.dialogs.minimap.MinimapDialog;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MegaMekUnitSelectorDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.EditBotsDialog;
@@ -95,7 +98,7 @@ import megamek.client.ui.dialogs.forceDisplay.ForceDisplayPanel;
 import megamek.client.ui.panels.phaseDisplay.*;
 import megamek.client.ui.panels.phaseDisplay.lobby.ChatLounge;
 import megamek.client.ui.panels.phaseDisplay.lobby.PlayerSettingsDialog;
-import megamek.client.ui.dialogs.minimap.Minimap;
+import megamek.client.ui.dialogs.minimap.MinimapPanel;
 import megamek.client.ui.panels.ReceivingGameDataPanel;
 import megamek.client.ui.panels.StartingScenarioPanel;
 import megamek.client.ui.panels.WaitingForServerPanel;
@@ -293,12 +296,12 @@ public class ClientGUI extends AbstractClientGUI
     private final UnitDisplay unitDisplay;
     private UnitDisplayDialog unitDisplayDialog;
 
-    private JDialog botCommandsDialog;
+    private BotCommandsDialog botCommandsDialog;
 
     public ForceDisplayPanel forceDisplayPanel;
     private ForceDisplayDialog forceDisplayDialog;
 
-    public JDialog minimapW;
+    public MinimapDialog minimapW;
     private MapMenu popup;
     private RulerDialog ruler;
     protected JComponent curPanel;
@@ -483,20 +486,20 @@ public class ClientGUI extends AbstractClientGUI
         this.forceDisplayDialog.setFocusableWindowState(false);
     }
 
-    public JDialog getMiniMapDialog() {
+    public MinimapDialog getMiniMapDialog() {
         return minimapW;
     }
 
-    public void setMiniMapDialog(final JDialog miniMapDialog) {
+    public void setMiniMapDialog(final MinimapDialog miniMapDialog) {
         minimapW = miniMapDialog;
         minimapW.setFocusableWindowState(false);
     }
 
-    public JDialog getBotCommandsDialog() {
+    public BotCommandsDialog getBotCommandsDialog() {
         return botCommandsDialog;
     }
 
-    public void setBotCommandsDialog(JDialog botCommandsDialog) {
+    public void setBotCommandsDialog(BotCommandsDialog botCommandsDialog) {
         this.botCommandsDialog = botCommandsDialog;
     }
 
@@ -666,8 +669,12 @@ public class ClientGUI extends AbstractClientGUI
         ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
         UIUtil.updateWindowBounds(ruler);
 
-        setBotCommandsDialog(BotCommandsPanel.createBotCommandDialog(frame, this.getClient(), this.audioService, null));
-        setMiniMapDialog(Minimap.createMinimap(frame, getBoardView(), getClient().getGame(), this));
+        setBotCommandsDialog(new BotCommandsDialog(frame, this));
+        getBotCommandsDialog().add(new BotCommandsPanel(getClient(), audioService, null));
+
+        setMiniMapDialog(new MinimapDialog(frame, this));
+        getMiniMapDialog().add(new MinimapPanel(getMiniMapDialog(), getClient().getGame(), bv, this, null));
+
         cb = new ChatterBox(this);
         cb.setChatterBox2(cb2);
         cb2.setChatterBox(cb);
@@ -794,8 +801,8 @@ public class ClientGUI extends AbstractClientGUI
 
     private boolean resetMiniMapZoom(Container c) {
         for (Component comp : c.getComponents()) {
-            if (comp instanceof Minimap) {
-                Minimap mm = (Minimap) comp;
+            if (comp instanceof MinimapPanel) {
+                MinimapPanel mm = (MinimapPanel) comp;
                 mm.resetZoom();
                 return true;
             } else {
@@ -1110,10 +1117,8 @@ public class ClientGUI extends AbstractClientGUI
         super.saveSettings();
 
         // Minimap Dialog
-        if ((getMiniMapDialog() != null) &&
-                  ((getMiniMapDialog().getSize().width * getMiniMapDialog().getSize().height) > 0)) {
-            GUIP.setMinimapPosX(getMiniMapDialog().getLocation().x);
-            GUIP.setMinimapPosY(getMiniMapDialog().getLocation().y);
+        if (getMiniMapDialog() != null) {
+            getMiniMapDialog().saveSettings();
         }
 
         // Unit Display Dialog
@@ -1146,10 +1151,8 @@ public class ClientGUI extends AbstractClientGUI
         }
 
         // BotCommands Dialog
-        if ((getBotCommandsDialog() != null) &&
-                  ((getBotCommandsDialog().getSize().width * getBotCommandsDialog().getSize().height) > 0)) {
-            GUIP.setBotCommandsPosX(getBotCommandsDialog().getLocation().x);
-            GUIP.setBotCommandsPosY(getBotCommandsDialog().getLocation().y);
+        if (getBotCommandsDialog() != null) {
+            getBotCommandsDialog().saveSettings();
         }
 
     }

@@ -56,7 +56,7 @@ import megamek.client.ui.models.FileNameComboBoxModel;
 import megamek.client.ui.buttons.MMButton;
 import megamek.client.ui.comboBoxes.MMComboBox;
 import megamek.client.ui.dialogs.helpDialogs.HelpDialog;
-import megamek.client.ui.dialogs.minimap.Minimap;
+import megamek.client.ui.dialogs.minimap.MinimapPanel;
 import megamek.client.ui.clientGUI.ButtonOrderPreferences;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.buttons.ColourSelectorButton;
@@ -1779,7 +1779,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         MapSettings mapSettings = MapSettings.getInstance();
         var board = BoardUtilities.generateRandom(mapSettings);
 
-        boardImage = Minimap.getMinimapImageMaxZoom(board, CLIENT_PREFERENCES.getMinimapTheme());
+        boardImage = MinimapPanel.getMinimapImageMaxZoom(board, CLIENT_PREFERENCES.getMinimapTheme());
 
         boardImageLabel = new JLabel(new ImageIcon(boardImage));
         boardImageLabel.setPreferredSize(new Dimension(250, 250));
@@ -1789,7 +1789,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             if (theme != null) {
                 var newTheme = new MegaMekFile(Configuration.minimapThemesDir(), theme).getFile();
                 SwingUtilities.invokeLater(() -> {
-                    boardImage = Minimap.getMinimapImageMaxZoom(board, newTheme);
+                    boardImage = MinimapPanel.getMinimapImageMaxZoom(board, newTheme);
                     boardImageLabel.setIcon(new ImageIcon(boardImage));
                     boardImageLabel.revalidate();
                     boardImageLabel.repaint();

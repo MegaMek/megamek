@@ -51,7 +51,7 @@ import static megamek.common.Terrains.FUEL_TANK;
 /**
  * This class is WIP, commiting just to have an artifact.
  */
-public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
+public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter {
     private final Client client;
     private final IGame game;
     private final List<Blip> removedUnits;
@@ -93,7 +93,7 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
     private final int leftMargin = 3;
 
 
-    public BoardviewlessMinimap(Client client) {
+    public BoardviewlessMinimapPanel(Client client) {
         super(new BorderLayout(), true);
         this.client = client;
         this.game = client.getGame();
@@ -232,7 +232,7 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
             }
             boardNeedsRedraw = false;
 
-            boardImage = Minimap.getMinimapImageMaxZoom(board, CLIENT_PREFERENCES.getStrategicViewTheme());
+            boardImage = MinimapPanel.getMinimapImageMaxZoom(board, CLIENT_PREFERENCES.getStrategicViewTheme());
             size = Math.min(
                 boardImage.getHeight() / game.getBoard().getHeight(),
                 boardImage.getWidth() / game.getBoard().getWidth());

@@ -19,7 +19,7 @@
 package megamek.client.ui.dialogs.advancedSearchMap;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.minimap.Minimap;
+import megamek.client.ui.dialogs.minimap.MinimapPanel;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.*;
 import megamek.common.util.ImageUtil;
@@ -170,7 +170,7 @@ class BoardTableModel extends AbstractTableModel {
             Board board = new Board(16, 17);
             board.load(new MegaMekFile(Configuration.boardsDir(), path).getFile());
 
-            BufferedImage image = Minimap.getMinimapImageMaxZoom(board);
+            BufferedImage image = MinimapPanel.getMinimapImageMaxZoom(board);
 
             int scaledHeight = Math.min(image.getHeight(), height);
             int scaledWidth = Math.max(1, image.getWidth() * scaledHeight / image.getHeight());

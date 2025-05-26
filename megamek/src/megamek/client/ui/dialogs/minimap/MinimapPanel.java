@@ -41,7 +41,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -80,8 +79,8 @@ import megamek.utilities.GifWriterThread;
  * buttons -clean up listenercode.. -initializecolors is fugly
  * -uses break-to-label -uses while-true
  */
-public final class Minimap extends JPanel implements IPreferenceChangeListener {
-    private static final MMLogger logger = MMLogger.create(Minimap.class);
+public final class MinimapPanel extends JPanel implements IPreferenceChangeListener {
+    private static final MMLogger logger = MMLogger.create(MinimapPanel.class);
 
     private static final Color[] terrainColors = new Color[Terrains.SIZE];
     public static final int DESTROYED_UNIT_ALPHA = 64;
@@ -183,32 +182,6 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
     private boolean dragging = false;
 
-    /**
-     * Returns a non-modal dialog with a minimap for the given game.
-     *
-     * @param parent The frame to use as parent frame for the dialog
-     * @param bv     Optional: A boardview showing the map
-     * @param game   A game containing at least the board, but not necessarily
-     *               anything else
-     * @param cg     Optional: A ClientGUI object housing this minimap
-     */
-    public static JDialog createMinimap(JFrame parent, @Nullable BoardView bv, Game game, @Nullable IClientGUI cg) {
-        var result = new JDialog(parent, Messages.getString("ClientGUI.Minimap"), false);
-
-        result.setLocation(GUIP.getMinimapPosX(), GUIP.getMinimapPosY());
-        result.setResizable(false);
-        result.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                GUIP.setMinimapEnabled(false);
-            }
-        });
-
-        result.add(new Minimap(result, game, bv, cg, null));
-        result.pack();
-        return result;
-    }
-
     /** Returns a minimap image of the given board at the maximum zoom index. */
     public static BufferedImage getMinimapImageMaxZoom(Board board) {
         return getMinimapImage(board, MAX_ZOOM, null);
@@ -251,7 +224,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             if ((zoom < MIM_ZOOM) || (zoom > MAX_ZOOM)) {
                 throw new Exception("The given zoom index is out of bounds.");
             }
-            Minimap tempMM = new Minimap(null, game, bv, clientGui, minimapTheme);
+            MinimapPanel tempMM = new MinimapPanel(null, game, bv, clientGui, minimapTheme);
             tempMM.zoom = zoom;
             tempMM.movePathLines.clear();
             tempMM.movePathLines.addAll(movePathLines);
@@ -274,7 +247,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
      * used to create a snapshot image. When a boardview is given, the visible area
      * is shown.
      */
-    private Minimap(@Nullable JDialog dlg, Game g, @Nullable BoardView bview, @Nullable IClientGUI cg, @Nullable File minimapTheme) {
+    public MinimapPanel(@Nullable JDialog dlg, Game g, @Nullable BoardView bview, @Nullable IClientGUI cg,
+          @Nullable File minimapTheme) {
         game = Objects.requireNonNull(g);
         board = Objects.requireNonNull(game.getBoard());
         bv = bview;
@@ -1882,7 +1856,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         @Override
         public void mouseClicked(MouseEvent me) {
             if (me.getButton() == MouseEvent.BUTTON1) {
-                Point mapPoint = SwingUtilities.convertPoint(dialog, me.getX(), me.getY(), Minimap.this);
+                Point mapPoint = SwingUtilities.convertPoint(dialog, me.getX(), me.getY(), MinimapPanel.this);
                 processMouseRelease(mapPoint.x, mapPoint.y, me.getModifiersEx());
                 dragging = false;
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -1909,7 +1883,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
         @Override
         public void mouseDragged(MouseEvent me) {
-            Point mapPoint = SwingUtilities.convertPoint(dialog, me.getX(), me.getY(), Minimap.this);
+            Point mapPoint = SwingUtilities.convertPoint(dialog, me.getX(), me.getY(), MinimapPanel.this);
             if (new Rectangle(getSize()).contains(mapPoint.x, mapPoint.y)) {
                 if (!dragging) {
                     dragging = true;
@@ -1923,7 +1897,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     MouseWheelListener mouseWheelListener = new MouseWheelListener() {
         @Override
         public void mouseWheelMoved(MouseWheelEvent we) {
-            Point mapPoint = SwingUtilities.convertPoint(dialog, we.getX(), we.getY(), Minimap.this);
+            Point mapPoint = SwingUtilities.convertPoint(dialog, we.getX(), we.getY(), MinimapPanel.this);
             if (new Rectangle(getSize()).contains(mapPoint.x, mapPoint.y)) {
                 if (we.getWheelRotation() > 0 ^ GUIP.getMouseWheelZoomFlip()) {
                     zoomIn();

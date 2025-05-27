@@ -289,10 +289,17 @@ public abstract class PathRanker implements IPathRanker {
         var ignoredTargets = owner.getBehaviorSettings().getIgnoredUnitTargets();
         var priorityTargets = getOwner().getBehaviorSettings().getPriorityUnitTargets();
         for (Entity enemy : enemies) {
+            // For now, skip anything not on the same map
+            if (!game.onTheSameBoard(me, enemy)) {
+                continue;
+            }
+
             // Skip airborne aero units as they're further away than they seem and hard to catch.
             // Also, skip withdrawing enemy bot units that are not priority targets skip ignored units
             if (enemy.isAirborneAeroOnGroundMap()
-                || (!priorityTargets.contains(enemy.getId()) && getOwner().getHonorUtil().isEnemyBroken(enemy.getId(), enemy.getOwnerId(), getOwner().getForcedWithdrawal()))
+                || (!priorityTargets.contains(enemy.getId())
+                  && getOwner().getHonorUtil().isEnemyBroken(enemy.getId(), enemy.getOwnerId(),
+                  getOwner().getForcedWithdrawal()))
                 || ignoredTargets.contains(enemy.getId())) {
                 continue;
             }
@@ -520,8 +527,8 @@ public abstract class PathRanker implements IPathRanker {
         // If we're jumping onto a building, make sure it can support our weight.
         if (path.isJumping()) {
             final Coords finalCoords = path.getFinalCoords();
-            final Building building = game.getBoard().getBuildingAt(finalCoords);
-            if (building == null) {
+            Optional<Building> building = game.getBuildingAt(finalCoords, path.getFinalBoardId());
+            if (building.isEmpty()) {
                 return false;
             }
 
@@ -530,9 +537,9 @@ public abstract class PathRanker implements IPathRanker {
             double mass = path.getEntity().getWeight() + 10;
 
             // Add the mass of anyone else standing in/on this building.
-            mass += owner.getMassOfAllInBuilding(game, finalCoords);
+            mass += owner.getMassOfAllInBuilding(game, finalCoords, path.getFinalBoardId());
 
-            return (mass > building.getCurrentCF(finalCoords));
+            return (mass > building.get().getCurrentCF(finalCoords));
         }
 
         // If we're not jumping, check each building to see if it will collapse if it
@@ -541,13 +548,13 @@ public abstract class PathRanker implements IPathRanker {
         final Enumeration<MoveStep> steps = path.getSteps();
         while (steps.hasMoreElements()) {
             final MoveStep step = steps.nextElement();
-            final Building building = game.getBoard().getBuildingAt(step.getPosition());
+            final Building building = game.getBoard(step.getBoardId()).getBuildingAt(step.getPosition());
             if (building == null) {
                 continue;
             }
 
             // Add the mass of anyone else standing in/on this building.
-            double fullMass = mass + owner.getMassOfAllInBuilding(game, step.getPosition());
+            double fullMass = mass + owner.getMassOfAllInBuilding(game, step.getPosition(), step.getBoardId());
 
             if (fullMass > building.getCurrentCF(step.getPosition())) {
                 return true;

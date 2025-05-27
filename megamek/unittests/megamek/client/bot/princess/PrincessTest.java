@@ -472,13 +472,13 @@ class PrincessTest {
 
         Hex mockHex = mock(Hex.class);
         when(mockHex.getLevel()).thenReturn(0);
-        when(mockPrincess.getHex(any(Coords.class))).thenReturn(mockHex);
 
         Game mockGame = mock(Game.class);
         PlanetaryConditions mockPC = new PlanetaryConditions();
         mockPC.setGravity(1.0f);
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPC);
         doReturn(mockGame).when(mockPrincess).getGame();
+        when(mockGame.getHexOf(any(Targetable.class))).thenReturn(mockHex);
 
         BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
         when(mockBehavior.getFallShameIndex()).thenReturn(5);

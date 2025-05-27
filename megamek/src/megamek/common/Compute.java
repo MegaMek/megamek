@@ -4108,7 +4108,7 @@ public class Compute {
         // Use firing solution if Advanced Sensors is on
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
                 && target.getTargetType() == Targetable.TYPE_ENTITY
-                && game.getBoard().isSpace()) {
+                && game.getBoard(target).isSpace()) {
             Entity te = (Entity) target;
             return hasAnyFiringSolution(game, te.getId());
         }
@@ -4123,7 +4123,8 @@ public class Compute {
 
         // Target may be in an illuminated hex
         if (!teIlluminated) {
-            teIlluminated = !IlluminationLevel.determineIlluminationLevel(game, target.getPosition()).isNone();
+            teIlluminated = !IlluminationLevel.determineIlluminationLevel(game, target.getBoardId(),
+                  target.getPosition()).isNone();
         }
 
         // if either does not have a position then return false

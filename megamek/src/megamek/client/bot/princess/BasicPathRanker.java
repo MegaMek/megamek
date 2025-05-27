@@ -749,6 +749,11 @@ public class BasicPathRanker extends PathRanker {
         boolean extremeRange = isExtremeRange(game);
         boolean losRange = isLosRange(game);
         for (Entity enemy : enemies) {
+            // For now, disregard enemy units that are not on the same board
+            if (!game.onTheSameBoard(movingUnit, enemy)) {
+                continue;
+            }
+
             // Skip ejected pilots.
             if (enemy instanceof EjectedCrew) {
                 continue;
@@ -865,7 +870,7 @@ public class BasicPathRanker extends PathRanker {
         scores.put("movementMod", movementMod);
         // Try to face the enemy.
         Coords medianEnemyPosition = unitsMedianCoordinateCalculator.getEnemiesMedianCoordinate(enemies,
-              path.getFinalCoords());
+              path.getFinalCoords(), path.getFinalBoardId());
         Coords closestEnemyPositionNotZeroDistance = Optional.ofNullable(findClosestEnemy(movingUnit,
               pathCopy.getFinalCoords(),
               game,
@@ -1123,21 +1128,23 @@ public class BasicPathRanker extends PathRanker {
         final double closingDistance = Math.ceil(Math.max(3.0, maxRange * 0.6));
 
         var crowdingFriends = getOwner().getFriendEntities()
-                                    .stream()
-                                    .filter(e -> e instanceof Mek || e instanceof Tank)
-                                    .filter(Entity::isDeployed)
-                                    .map(Entity::getPosition)
-                                    .filter(Objects::nonNull)
-                                    .filter(c -> c.distance(movePath.getFinalCoords()) <= herdingDistance)
-                                    .count();
+              .stream()
+              .filter(e -> movePath.getFinalBoardId() == e.getBoardId())
+              .filter(e -> e instanceof Mek || e instanceof Tank)
+              .filter(Entity::isDeployed)
+              .map(Entity::getPosition)
+              .filter(Objects::nonNull)
+              .filter(c -> c.distance(movePath.getFinalCoords()) <= herdingDistance)
+              .count();
 
         var crowdingEnemies = enemies.stream()
-                                    .filter(e -> e instanceof Mek || e instanceof Tank)
-                                    .filter(Entity::isDeployed)
-                                    .map(Entity::getPosition)
-                                    .filter(Objects::nonNull)
-                                    .filter(c -> c.distance(movePath.getFinalCoords()) <= closingDistance)
-                                    .count();
+              .filter(e -> movePath.getFinalBoardId() == e.getBoardId())
+              .filter(e -> e instanceof Mek || e instanceof Tank)
+              .filter(Entity::isDeployed)
+              .map(Entity::getPosition)
+              .filter(Objects::nonNull)
+              .filter(c -> c.distance(movePath.getFinalCoords()) <= closingDistance)
+              .count();
 
         double friendsCrowdingTolerance = antiCrowdingFactor * crowdingFriends;
         double enemiesCrowdingTolerance = antiCrowdingFactor * crowdingEnemies;

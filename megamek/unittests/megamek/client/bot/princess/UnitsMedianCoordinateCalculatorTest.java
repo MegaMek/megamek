@@ -35,7 +35,6 @@ package megamek.client.bot.princess;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
@@ -56,7 +55,7 @@ class UnitsMedianCoordinateCalculatorTest {
         List<Entity> enemies = new ArrayList<>();
         Coords myPosition = new Coords(10, 10);
         var unitsMedianCalculator = new UnitsMedianCoordinateCalculator(5);
-        Coords result = unitsMedianCalculator.getEnemiesMedianCoordinate(enemies, myPosition);
+        Coords result = unitsMedianCalculator.getEnemiesMedianCoordinate(enemies, myPosition, 0);
 
         // When no enemies are present, the function should return null
         assertNull(result);
@@ -69,7 +68,7 @@ class UnitsMedianCoordinateCalculatorTest {
         List<Entity> enemies = List.of(enemyMoved(new Coords(5, 5)));
         Coords myPosition = new Coords(10, 10);
         var unitsMedianCalculator = new UnitsMedianCoordinateCalculator(5);
-        Coords result = unitsMedianCalculator.getEnemiesMedianCoordinate(enemies, myPosition);
+        Coords result = unitsMedianCalculator.getEnemiesMedianCoordinate(enemies, myPosition, 0);
 
         // With only one enemy, the median should be that enemy's position
         assertEquals(new Coords(5, 5), result);
@@ -87,7 +86,7 @@ class UnitsMedianCoordinateCalculatorTest {
         Coords myPosition = new Coords(10, 10);
 
         var unitsMedianCalculator = new UnitsMedianCoordinateCalculator(5);
-        Coords result = unitsMedianCalculator.getEnemiesMedianCoordinate(enemies, myPosition);
+        Coords result = unitsMedianCalculator.getEnemiesMedianCoordinate(enemies, myPosition, 0);
 
         // Median of these three positions should be calculated
         // For these coordinates, median should be (8, 8)
@@ -110,7 +109,7 @@ class UnitsMedianCoordinateCalculatorTest {
 
 
         var unitsMedianCalculator = new UnitsMedianCoordinateCalculator(5);
-        Coords result = unitsMedianCalculator.getEnemiesMedianCoordinate(enemies, myPosition);
+        Coords result = unitsMedianCalculator.getEnemiesMedianCoordinate(enemies, myPosition, 0);
 
         // The function should consider only the 5 closest enemies
         // The 5 closest are: (9,9), (11,11), (12,8), (8,12), (5,5)
@@ -130,14 +129,14 @@ class UnitsMedianCoordinateCalculatorTest {
         List<Entity> enemies = List.of(enemy1, enemy2, enemy3);
 
         var unitsMedianCalculator = new UnitsMedianCoordinateCalculator(2);
-        Coords median1 = unitsMedianCalculator.getEnemiesMedianCoordinate(enemies, myPosition);
+        Coords median1 = unitsMedianCalculator.getEnemiesMedianCoordinate(enemies, myPosition, 0);
 
         // With limit 2, only enemy1 and enemy2 are considered
         // Median of (11,11) and (12,10) is (11.5, 10.5) which rounds to (12, 11)
         assertEquals(new Coords(11, 10), median1);
 
         myPosition = new Coords(15, 15);
-        Coords median2 = unitsMedianCalculator.getEnemiesMedianCoordinate(enemies, myPosition);
+        Coords median2 = unitsMedianCalculator.getEnemiesMedianCoordinate(enemies, myPosition, 0);
 
         // Now enemy3 and enemy1 are the closest
         // Median of (14,14) and (11,11) is (12, 12)

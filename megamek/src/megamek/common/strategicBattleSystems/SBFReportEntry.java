@@ -52,11 +52,8 @@ public class SBFReportEntry implements ReportEntry {
 
     public static void setupStylesheet(JTextPane pane) {
         pane.setContentType("text/html");
-        StyleSheet styleSheet = new StyleSheet();
-        setupStylesheet(styleSheet);
-        HTMLEditorKit newKit = new HTMLEditorKit();
-        newKit.setStyleSheet(styleSheet);
-        pane.setEditorKit(newKit);
+        StyleSheet styleSheet = ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet();
+        Report.setupStylesheet(styleSheet);
     }
 
     public static void setupStylesheet(StyleSheet styleSheet) {

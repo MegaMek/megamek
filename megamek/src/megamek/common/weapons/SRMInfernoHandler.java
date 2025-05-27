@@ -277,13 +277,13 @@ public class SRMInfernoHandler extends SRMHandler {
         // a 5 or less
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && gameManager.tryIgniteHex(target.getPosition(), subjectId, false,
+                && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false,
                         true,
                         getFireTNRoll(), 5,
                         vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(),
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), target.getBoardId(),
                 nDamage, subjectId);
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;

@@ -30,7 +30,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import megamek.client.ui.swing.lobby.LobbyUtility;
+import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
 import megamek.common.util.BuildingTemplate;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;

@@ -26,9 +26,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import megamek.MMConstants;
 import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.Base64Image;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
+import megamek.client.ui.util.PlayerColour;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ChargeAttackAction;
@@ -84,7 +85,6 @@ import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.common.weapons.bombs.*;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
-import megamek.common.ITechnology.TechBase;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
@@ -300,6 +300,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean destroyed = false;
 
     private Coords position = null;
+    private int boardId = 0;
 
     /**
      * Used for Entities that are bigger than a single hex. This contains the central hex plus all of the other hexes
@@ -403,8 +404,9 @@ public abstract class Entity extends TurnOrdered
     // need to keep a list of areas that this entity has passed through on the
     // current turn
     private Vector<Coords> passedThrough = new Vector<>();
-
     private List<Integer> passedThroughFacing = new ArrayList<>();
+    // The passed through hexes can be on another board (ground board flight path of an atmospheric aero)
+    private int passedThroughBoardId = 0;
 
     private List<InvalidSourceBuildReason> invalidSourceBuildReasons = new ArrayList<>();
     /**
@@ -1796,7 +1798,16 @@ public abstract class Entity extends TurnOrdered
      * Returns true if this entity is selectable for action. Transported entities can not be selected.
      */
     public boolean isSelectableThisTurn() {
-        return !done && (conveyance == Entity.NONE) && !unloadedThisTurn && !isClearingMinefield() && !isCarcass();
+        return !done && (conveyance == Entity.NONE) && !unloadedThisTurn && !isClearingMinefield() && !isCarcass()
+              && (isSpaceborneInSpaceTurn() || isNonSpaceborneInNonSpaceTurn());
+    }
+
+    private boolean isSpaceborneInSpaceTurn() {
+        return isSpaceborne() && game.isSpaceRound();
+    }
+
+    private boolean isNonSpaceborneInNonSpaceTurn() {
+        return !isSpaceborne() && game.isAtmosphericRound();
     }
 
     /**
@@ -2010,10 +2021,6 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
-    /**
-     * Returns the current position of this entity on the board. This is not named getLocation(), since I want the word
-     * location to refer to hit locations on a Mek or vehicle.
-     */
     @Override
     public Coords getPosition() {
         return position;
@@ -2265,17 +2272,18 @@ public abstract class Entity extends TurnOrdered
     }
 
     public boolean canGoDown() {
-        return canGoDown(elevation, getPosition());
+        return canGoDown(elevation, position, boardId);
     }
 
     /**
      * is it possible to go down, or are we landed/just above the water/treeline? assuming passed elevation.
      */
-    public boolean canGoDown(int assumedElevation, Coords assumedPos) {
-        if (!getGame().getBoard().contains(assumedPos)) {
+    public boolean canGoDown(int assumedElevation, Coords assumedPos, int boardId) {
+        if ((game == null) || !game.hasBoardLocation(assumedPos, boardId) || game.getBoard(boardId).isSpace()) {
             return false;
         }
-        Hex hex = getGame().getBoard().getHex(assumedPos);
+
+        Hex hex = game.getBoard(boardId).getHex(assumedPos);
         int assumedAlt = assumedElevation + hex.getLevel();
         int minAlt = hex.getLevel();
         switch (getMovementMode()) {
@@ -2285,10 +2293,8 @@ public abstract class Entity extends TurnOrdered
                 minAlt -= Math.max(0, BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth());
                 break;
             case WIGE:
-                // Per errata, WiGEs have flotation hull, which makes no sense unless it changes
-                // the rule
+                // Per errata, WiGEs have flotation hull, which makes no sense unless it changes the rule
                 // in TW that they cannot land on water.
-                // See
                 if (isAirborne()) {
                     return false;
                 }
@@ -2320,9 +2326,9 @@ public abstract class Entity extends TurnOrdered
             case AERODYNE:
             case SPHEROID:
                 assumedAlt = assumedElevation;
-                if (game.getBoard().inAtmosphere()) {
+                if (game.getBoard(boardId).isLowAltitude()) {
                     minAlt = Math.max(0, hex.ceiling(true)) + 1;
-                } else if (game.getBoard().onGround() && isAirborne()) {
+                } else if (game.getBoard(boardId).isGround() && isAirborne()) {
                     minAlt = 1;
                 }
                 // if sensors are damaged then, one higher
@@ -2363,12 +2369,12 @@ public abstract class Entity extends TurnOrdered
     /**
      * is it possible to go up, or are we at maximum altitude? assuming passed elevation.
      */
-    public boolean canGoUp(int assumedElevation, Coords assumedPos) {
-        // Could have a hex off the board
-        if (!getGame().getBoard().contains(assumedPos)) {
+    public boolean canGoUp(int assumedElevation, Coords assumedPos, int boardId) {
+        if ((game == null) || !game.hasBoardLocation(assumedPos, boardId) || game.getBoard(boardId).isSpace()) {
             return false;
         }
-        Hex hex = getGame().getBoard().getHex(assumedPos);
+
+        Hex hex = game.getBoard(boardId).getHex(assumedPos);
         int assumedAlt = assumedElevation + hex.getLevel();
         int maxAlt = hex.getLevel();
         switch (getMovementMode()) {
@@ -2388,10 +2394,8 @@ public abstract class Entity extends TurnOrdered
                 break;
             case AERODYNE:
             case SPHEROID:
-                if (!game.getBoard().inSpace()) {
-                    assumedAlt = assumedElevation;
-                    maxAlt = 10;
-                }
+                assumedAlt = assumedElevation;
+                maxAlt = 10;
                 break;
             case SUBMARINE:
                 maxAlt = hex.getLevel() - getHeight();
@@ -2399,8 +2403,7 @@ public abstract class Entity extends TurnOrdered
             case INF_UMU:
             case BIPED_SWIM:
             case QUAD_SWIM:
-                // UMU's won't allow the entity to break the surface of the
-                // water
+                // UMU's won't allow the entity to break the surface of the water
                 maxAlt = hex.getLevel() - (getHeight() + 1);
                 break;
             case WIGE:
@@ -2548,10 +2551,10 @@ public abstract class Entity extends TurnOrdered
      * Convenience method to determine whether this entity is on a ground map with an atmosphere
      */
     public boolean isOnAtmosphericGroundMap() {
-        boolean onGroundOrinAtmosphere = getGame().getBoard().onGround() ||
+        boolean onGroundOrinAtmosphere = getGame().getBoard().isGround() ||
                                                // doesn't make sense in english, but "atmospheric" map actually
                                                // covers maps that are within a planet's gravity well
-                                               getGame().getBoard().inAtmosphere();
+                                               getGame().getBoard().isLowAltitude();
         PlanetaryConditions conditions = getGame().getPlanetaryConditions();
         return conditions.getAtmosphere().isDenserThan(Atmosphere.TRACE) && onGroundOrinAtmosphere;
     }
@@ -2562,7 +2565,7 @@ public abstract class Entity extends TurnOrdered
      * @return True if this is an airborne aircraft on a ground map.
      */
     public boolean isAirborneAeroOnGroundMap() {
-        return isAero() && isAirborne() && getGame() != null && getGame().getBoard().onGround();
+        return isAero() && isAirborne() && (game != null) && game.isOnGroundMap(this);
     }
 
     /**
@@ -2571,7 +2574,7 @@ public abstract class Entity extends TurnOrdered
      * @return True if this is an aero landed on a ground map.
      */
     public boolean isAeroLandedOnGroundMap() {
-        return isAero() && !isAirborne() && getGame() != null && getGame().getBoard().onGround();
+        return isAero() && !isAirborne() && (game != null) && game.isOnGroundMap(this);
     }
 
     /**
@@ -3315,21 +3318,52 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true if the specified hex contains some sort of prohibited terrain.
+     * Returns true when the given location cannot legally be entered or deployed into by this unit at its present
+     * elevation or altitude. Also returns true when the location doesn't exist. Even when this method returns true,
+     * the location need not be deadly to the unit.
+     *
+     * @param boardLocation The location to test
+     * @return True when the location is illegal to be in for this unit, regardless of elevation
+     *
+     * @see #isLocationDeadly(Coords)
      */
-    public boolean isLocationProhibited(Coords c) {
-        return isLocationProhibited(c, elevation);
+    public final boolean isLocationProhibited(BoardLocation boardLocation) {
+        return isLocationProhibited(boardLocation.coords(), boardLocation.boardId(), isAero() ? altitude : elevation);
     }
 
     /**
-     * @param c             {@link Coords} Coordinates
-     * @param currElevation Elevation level
+     * Returns true when the given location cannot legally be entered or deployed into by this unit at the given
+     * elevation or altitude. Also returns true when the location doesn't exist. Even when this
+     * method returns true, the location need not be deadly to the unit.
      *
-     * @return true if the specified hex contains some sort of prohibited terrain if the Entity is at the specified
-     *       elevation. Elevation generally only matters for units like WiGEs or VTOLs.
+     * @param boardLocation The location to test
+     * @param testElevation The elevation or altitude to test
+     * @return True when the location is illegal to be in for this unit, regardless of elevation
+     *
+     * @see #isLocationDeadly(Coords)
      */
-    public boolean isLocationProhibited(Coords c, int currElevation) {
-        Hex hex = game.getBoard().getHex(c);
+    public final boolean isLocationProhibited(BoardLocation boardLocation, int testElevation) {
+        return isLocationProhibited(boardLocation.coords(), boardLocation.boardId(), testElevation);
+    }
+
+    /**
+     * Returns true when the given location cannot legally be entered or deployed into by this unit at the given
+     * elevation or altitude. Also returns true when the location doesn't exist. Even when this
+     * method returns true, the location need not be deadly to the unit.
+     *
+     * @param testPosition The position to test
+     * @param testBoardId The board to test
+     * @param testElevation The elevation or altitude to test
+     * @return True when the location is illegal to be in for this unit, regardless of elevation
+     *
+     * @see #isLocationDeadly(Coords)
+     */
+    public boolean isLocationProhibited(Coords testPosition, int testBoardId, int testElevation) {
+        if (!game.hasBoardLocation(testPosition, testBoardId)) {
+            return true;
+        }
+
+        Hex hex = game.getHex(testPosition, testBoardId);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return !isAirborne();
         }
@@ -3345,29 +3379,64 @@ public abstract class Entity extends TurnOrdered
                 return true;
             }
             // Can't deploy on a bridge
-            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation) && hex.containsTerrain(Terrains.BRIDGE)) {
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == testElevation) && hex.containsTerrain(Terrains.BRIDGE)) {
                 return true;
             }
             // Can't deploy on the surface of water
-            return hex.containsTerrain(Terrains.WATER) && (currElevation == 0);
+            return hex.containsTerrain(Terrains.WATER) && (testElevation == 0);
         }
 
         return false;
     }
 
     /**
-     * @return True if the given board is prohibited to this unit.
+     * Returns true if the specified hex contains some sort of prohibited terrain.
+     * legacy - use the board location/board ID methods instead
      */
-    public boolean isBoardProhibited(int mapType) {
-        return ((mapType == Board.T_GROUND) && doomedOnGround()) ||
-                     ((mapType == Board.T_ATMOSPHERE) && doomedInAtmosphere()) ||
-                     ((mapType == Board.T_SPACE) && doomedInSpace());
+    public final boolean isLocationProhibited(Coords c) {
+        return isLocationProhibited(c, elevation);
     }
 
     /**
-     * Returns true if the specified hex contains some sort of deadly terrain.
+     * @param c             {@link Coords} Coordinates
+     * @param currElevation Elevation level
+     *
+     * @return true if the specified hex contains some sort of prohibited terrain if the Entity is at the specified
+     *       elevation. Elevation generally only matters for units like WiGEs or VTOLs.
+     *
+     * legacy - use the board location/board ID methods instead
      */
+    public final boolean isLocationProhibited(Coords c, int currElevation) {
+        return isLocationProhibited(c, boardId, currElevation);
+    }
+
+    /**
+     * @return True if the given board is prohibited to this unit.
+     */
+    public boolean isBoardProhibited(Board board) {
+        return isBoardProhibited(board.getBoardType());
+    }
+
+    /**
+     * @return True if the given board is prohibited to this unit.
+     */
+    public boolean isBoardProhibited(BoardType boardType) {
+        return (boardType.isGround() && doomedOnGround()) ||
+                     (boardType.isLowAltitude() && doomedInAtmosphere()) ||
+                     (boardType.isSpace() && doomedInSpace());
+    }
+
+     // legacy use board id version
     public boolean isLocationDeadly(Coords c) {
+        return isLocationDeadly(c, 0);
+    }
+
+
+    /**
+     * Returns true if the specified hex exists and has terrain that is deadly to this unit.
+     * Note: Currently this is only overridden for meks and is missing elevation information which makes it incomplete.
+     */
+    public boolean isLocationDeadly(Coords c, int boardId) {
         return false;
     }
 
@@ -4531,7 +4600,7 @@ public abstract class Entity extends TurnOrdered
                       game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB) &&
                       m.getType().hasFlag(AmmoType.F_SPACE_BOMB) &&
                       isBomber() &&
-                      game.getBoard().inSpace()) {
+                      game.getBoard().isSpace()) {
                 try {
                     WeaponMounted bomb = (WeaponMounted) addEquipment(spaceBomb, m.getLocation(), false);
                     if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
@@ -4544,7 +4613,7 @@ public abstract class Entity extends TurnOrdered
                 foundSpaceBomb = true;
             }
 
-            if (!game.getBoard().inSpace() &&
+            if (!game.getBoard().isSpace() &&
                       m.getType().hasFlag(AmmoType.F_GROUND_BOMB) &&
                       !((this instanceof LandAirMek) && (getConversionMode() == LandAirMek.CONV_MODE_MEK))) {
                 if (addedBombAttacks < 1) {
@@ -5453,7 +5522,7 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasActiveECM(boolean stealth) {
         // no ECM in space unless strat op option enabled
-        if (game.getBoard().inSpace() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+        if (isSpaceborne() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
         if (!isShutDown()) {
@@ -5491,7 +5560,7 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasGhostTargets(boolean active) {
         // no Ghost Targets in space unless strat op option enabled
-        if (game.getBoard().inSpace()) {
+        if (isSpaceborne()) {
             return false;
         }
 
@@ -5529,7 +5598,7 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasActiveECCM() {
         // no ECM in space unless strat op option enabled
-        if (game.getBoard().inSpace() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+        if (isSpaceborne() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
         if ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM) ||
@@ -5557,13 +5626,17 @@ public abstract class Entity extends TurnOrdered
      *       <code>Entity.NONE</code> if no ECM is active.
      */
     public int getECMRange() {
+        if (game == null) {
+            return NONE;
+        }
+
         // no ECM in space unless strat op option enabled
-        if (game.getBoard().inSpace() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-            return Entity.NONE;
+        if (isSpaceborne() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+            return NONE;
         }
         // If we have stealth up and running, there's no bubble.
         if (isStealthOn()) {
-            return Entity.NONE;
+            return NONE;
         }
 
         if (!isShutDown()) {
@@ -5687,7 +5760,7 @@ public abstract class Entity extends TurnOrdered
                 }
 
                 // in space the range of all BAPs is given by the mode
-                if (game.getBoard().inSpace()) {
+                if (isSpaceborne()) {
                     return m.curMode().equals("Medium") ? 12 : 6;
                 }
 
@@ -6784,7 +6857,7 @@ public abstract class Entity extends TurnOrdered
         getActiveAMS().stream()
               .filter(ams -> ams.getType().hasFlag(WeaponType.F_AMSBAY) ||
                                    (ams.getType().hasFlag(WeaponType.F_PDBAY) && !ams.isUsedThisRound()))
-              .filter(ams -> Compute.isInArc(game,
+              .filter(ams -> ComputeArc.isInArc(game,
                     getId(),
                     getEquipmentNum(ams),
                     game.getEntity(telemissileAttack.getEntityId())))
@@ -6804,7 +6877,7 @@ public abstract class Entity extends TurnOrdered
                                                                                                 null) &&
                                                                                                !targets.contains(
                                                                                                      weaponHandler.getWaa()) &&
-                                                                                               Compute.isInArc(getGame(),
+                                                                                               ComputeArc.isInArc(getGame(),
                                                                                                      getId(),
                                                                                                      getEquipmentNum(ams),
                                                                                                      (weaponHandler instanceof CapitalMissileBearingsOnlyHandler) ?
@@ -7217,7 +7290,7 @@ public abstract class Entity extends TurnOrdered
             roll.addModifier(taserInterference, "taser interference");
         }
 
-        if (getGame().getPhase().isMovement() && isPowerReverse()) {
+        if (game.getPhase().isMovement() && isPowerReverse()) {
             roll.addModifier(1, "power reverse");
         }
 
@@ -7241,13 +7314,13 @@ public abstract class Entity extends TurnOrdered
         // check weather conditions for all entities
         int weatherMod = conditions.getWeatherPilotPenalty();
         boolean hasAllWeather = (null == crew) || !hasAbility(OptionsConstants.UNOFF_ALLWEATHER);
-        if ((weatherMod != 0) && !game.getBoard().inSpace() && hasAllWeather) {
+        if ((weatherMod != 0) && !isSpaceborne() && hasAllWeather) {
             roll.addModifier(weatherMod, conditions.getWeather().toString());
         }
 
         // check wind conditions for all entities
         int windMod = conditions.getWindPilotPenalty(this);
-        if ((windMod != 0) && !game.getBoard().inSpace() && hasAllWeather) {
+        if ((windMod != 0) && !isSpaceborne() && hasAllWeather) {
             roll.addModifier(windMod, conditions.getWind().toString());
         }
 
@@ -7671,7 +7744,7 @@ public abstract class Entity extends TurnOrdered
         // If we aren't traveling along a road, apply terrain modifiers
         boolean previousStepCountsAsPavement = (prevStep == null) || prevStep.isPavementStep();
         if (!previousStepCountsAsPavement || !currStep.isPavementStep()) {
-            addPilotingModifierForTerrain(roll, lastPos);
+            addPilotingModifierForTerrain(roll, lastPos, currStep.getBoardId());
         }
 
         boolean prevStepPavement = (prevStep != null) ?
@@ -7721,7 +7794,7 @@ public abstract class Entity extends TurnOrdered
     public PilotingRollData checkRubbleMove(MoveStep step, EntityMovementType moveType, Hex curHex, Coords lastPos,
           Coords curPos, boolean isLastStep, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
-        addPilotingModifierForTerrain(roll, curPos, true);
+        addPilotingModifierForTerrain(roll, curPos, step.getBoardId(), true);
 
         if (!lastPos.equals(curPos) &&
                   ((moveType != EntityMovementType.MOVE_JUMP) || isLastStep) &&
@@ -7768,7 +7841,7 @@ public abstract class Entity extends TurnOrdered
                 roll.addModifier(-1, "Swamp Beast");
             }
 
-            addPilotingModifierForTerrain(roll, curPos, false);
+            addPilotingModifierForTerrain(roll, curPos, step.getBoardId(), false);
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
@@ -7864,8 +7937,9 @@ public abstract class Entity extends TurnOrdered
                   (prevPos.equals(curPos) && (!(this instanceof ProtoMek) && !(this instanceof Infantry)))) {
             return 0;
         }
-        Hex curHex = game.getBoard().getHex(curPos);
-        Hex prevHex = game.getBoard().getHex(prevPos);
+        Board board = game.getBoard(step.getBoardId());
+        Hex curHex = board.getHex(curPos);
+        Hex prevHex = board.getHex(prevPos);
 
         // ineligible because of movement type or unit type
         if (isAirborne()) {
@@ -7883,7 +7957,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         // check for movement inside a hangar
-        Building curBldg = game.getBoard().getBuildingAt(curPos);
+        Building curBldg = board.getBuildingAt(curPos);
         if ((null != curBldg) &&
                   curBldg.isIn(prevPos) &&
                   (curBldg.getBldgClass() == Building.HANGAR) &&
@@ -7917,7 +7991,7 @@ public abstract class Entity extends TurnOrdered
         // check to see if its a wall
         if (rv > 1) {
             Building bldgEntered;
-            bldgEntered = game.getBoard().getBuildingAt(curPos);
+            bldgEntered = board.getBuildingAt(curPos);
             if (bldgEntered.getType() == BuildingType.WALL) {
                 return 4;
             }
@@ -9445,17 +9519,33 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns whether an entity can flee from its current position. Currently returns true if the entity is on the edge
-     * of the board.
+     * Returns true when this unit can flee from its current position. This requires the unit to have mobility and be
+     * in control as well as its position being eligible for fleeing. When no special flee area is set by a scenario,
+     * the latter will typically be true when the unit is at the edge of its board. The position of units with a null
+     * position as well as offboard units are considered to be eligible for fleeing.
+     *
+     * @return True when the unit can flee given its position and status
      */
-    public boolean canFlee(Coords pos) {
+    public final boolean canFlee() {
+        return canFlee(position);
+    }
+
+    /**
+     * Returns true when this unit can flee from the given position. This requires the unit to have mobility and be
+     * in control as well as the position being eligible for fleeing. When no special flee area is set by a scenario,
+     * the latter will typically be true when the position is at the edge of its board. A null position as well as
+     * offboard units are considered to be eligible for fleeing.
+     *
+     * @return True when the unit can flee from the given position, given its current status
+     */
+    public boolean canFlee(@Nullable Coords position) {
         return ((getWalkMP() > 0) || (this instanceof Infantry)) &&
                      !isProne() &&
                      !isStuck() &&
                      !isShutDown() &&
                      !getCrew().isUnconscious() &&
                      (getSwarmTargetId() == NONE) &&
-                     (isOffBoard() || ((pos != null) && game.canFleeFrom(this, pos)));
+                     (isOffBoard() || (position == null) || game.canFleeFrom(this, position));
     }
 
     public void setEverSeenByEnemy(boolean b) {
@@ -9868,12 +9958,12 @@ public abstract class Entity extends TurnOrdered
         boolean canHit = false;
         boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
-        if (getPosition() == null) {
+        if (!game.hasBoardLocationOf(this)) {
             return false; // not on board?
         }
 
         if ((this instanceof Infantry) && hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_DEMOLITION_CHARGE)) {
-            Hex hex = game.getBoard().getHex(getPosition());
+            Hex hex = game.getHex(position, boardId);
 
             if (hex == null) {
                 return false;
@@ -9962,7 +10052,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         // If there are no valid Entity targets, check for add valid buildings.
-        Enumeration<Building> buildings = game.getBoard().getBuildings();
+        Enumeration<Building> buildings = game.getBoard(boardId).getBuildings();
         while (!canHit && buildings.hasMoreElements()) {
             final Building bldg = buildings.nextElement();
 
@@ -9977,7 +10067,7 @@ public abstract class Entity extends TurnOrdered
                 }
 
                 // Can the entity target *this* hex of the building?
-                final BuildingTarget target = new BuildingTarget(coords, game.getBoard(), false);
+                final BuildingTarget target = new BuildingTarget(coords, game.getBoard(boardId), false);
                 canHit |= Compute.canPhysicalTarget(game, getId(), target);
 
             } // Check the next hex of the building
@@ -10002,18 +10092,25 @@ public abstract class Entity extends TurnOrdered
         }
         for (WeaponMounted mounted : getWeaponList()) {
             WeaponType weaponType = mounted.getType();
-            if ((weaponType != null) && (weaponType.hasFlag(WeaponType.F_ARTILLERY))) {
+            if (weaponType == null) {
+                LOGGER.error("Weapon without weapontype!");
+                continue;
+            }
+            if (weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
                 return true;
             }
-            // Bearings-only capital missiles fire during the targeting phase
-            if ((weaponType instanceof CapitalMissileBayWeapon) || (weaponType instanceof AR10BayWeapon)) {
-                if (mounted.isInBearingsOnlyMode()) {
-                    return true;
-                }
+
+            // Bearings-only capital missiles fire during the targeting phase, SO:AA p.88 (it actually says Indirect
+            // Artillery Attack Phase but this would be the arty damage phase and the targeting phase seems more
+            // appropriate)
+            if (((weaponType instanceof CapitalMissileBayWeapon) || (weaponType instanceof AR10BayWeapon))
+                  && mounted.isInBearingsOnlyMode()) {
+                return true;
             }
 
-            // Surface-to-surface capital missiles count as artillery
-            if (getAltitude() == 0 && weaponType instanceof CapitalMissileWeapon) {
+            // Capital O2S, A2S, A2O, S2O and S2S attacks are made based on the artillery rules and can only be made
+            // against hexes and therefore require a ground map; SO:AA p.91
+            if ((weaponType.isCapital() || weaponType.isSubCapital()) && (game != null) && game.hasGroundBoard()) {
                 return true;
             }
         }
@@ -10691,11 +10788,30 @@ public abstract class Entity extends TurnOrdered
 
     public abstract boolean doomedInVacuum();
 
-    public abstract boolean doomedOnGround();
+    /**
+     * @return True when this unit is not allowed to be or will not survive in any hex of a ground map (unless
+     * it is being transported).
+     */
+    public boolean doomedOnGround() {
+        return false;
+    }
 
-    public abstract boolean doomedInAtmosphere();
+    /**
+     * @return True when this unit is not allowed to be or will not survive in any hex of a low altitude a.k.a.
+     * atmospheric map (unless it is being transported). Note that this has nothing to do with the atmosphere (or
+     * lack of it, depending on planetary conditions), only the map type and scale.
+     */
+    public boolean doomedInAtmosphere() {
+        return true;
+    }
 
-    public abstract boolean doomedInSpace();
+    /**
+     * @return True when this unit is not allowed to be or will not survive in any hex of a space map (unless it is
+     * being transported).
+     */
+    public boolean doomedInSpace() {
+        return true;
+    }
 
     /**
      * Prior to TacOps errata 3.3, armor was rounded up to the nearest half ton As of TacOps errata 3.3, patchwork armor
@@ -10836,14 +10952,16 @@ public abstract class Entity extends TurnOrdered
         int fa = (effectivePos.degree(src) + ((6 - face) * 60)) % 360;
 
         int leftBetter = 2;
+        Board board = game.getBoard(this);
         // if we're right on the line, we need to special case this defender would choose along which hex the LOS
         // gets drawn, and that side also determines the side we hit in
         if ((fa % 30) == 0) {
-            Hex srcHex = game.getBoard().getHex(src);
-            Hex curHex = game.getBoard().getHex(getPosition());
+            Hex srcHex = board.getHex(src);
+            Hex curHex = board.getHex(getPosition());
             if ((srcHex != null) && (curHex != null)) {
                 LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src,
                       getPosition(),
+                      boardId,
                       1,
                       getElevation(),
                       srcHex.floor(),
@@ -10852,7 +10970,7 @@ public abstract class Entity extends TurnOrdered
                 leftBetter = LosEffects.dividedLeftBetter(in,
                       game,
                       ai,
-                      Compute.isInBuilding(game, this),
+                      isInBuilding(),
                       new LosEffects());
             }
         }
@@ -10883,7 +11001,7 @@ public abstract class Entity extends TurnOrdered
         if (isAero()) {
             IAero a = (IAero) this;
             // Handle spheroids in atmosphere or on the ground differently
-            if (a.isSpheroid() && (game != null) && !game.getBoard().inSpace()) {
+            if (a.isSpheroid() && (game != null) && !isSpaceborne()) {
                 if ((fa >= 0) && (fa < 180)) {
                     return ToHitData.SIDE_RIGHT;
                 }
@@ -10964,13 +11082,14 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Apply PSR modifier for difficult terrain at the specified coordinates
+     * Apply PSR modifier for difficult terrain at the specified coordinates.
      *
-     * @param roll the PSR to modify
-     * @param c    the coordinates where the PSR happens
+     * @param roll    the PSR to modify
+     * @param c       the coordinates where the PSR happens
+     * @param boardId the board ID where the PSR happens
      */
-    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c) {
-        addPilotingModifierForTerrain(roll, c, false);
+    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c, int boardId) {
+        addPilotingModifierForTerrain(roll, c, boardId, false);
     }
 
     /**
@@ -10978,18 +11097,20 @@ public abstract class Entity extends TurnOrdered
      *
      * @param roll           the PSR to modify
      * @param c              the coordinates where the PSR happens
-     * @param enteringRubble True if entering rubble, else false
+     * @param boardId        the board ID where the PSR happens
+     * @param enteringRubble True if entering rubble
      */
-    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c, boolean enteringRubble) {
-        if ((c == null) || (roll == null)) {
+    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c, int boardId, boolean enteringRubble) {
+        if ((c == null) || (roll == null) || isOffBoard() || !isDeployed()) {
             return;
         }
-        if (isOffBoard() || !(isDeployed())) {
+        Hex hex = game.getBoard(boardId).getHex(c);
+        if (hex == null) {
+            LOGGER.error("Tried to add piloting modifier for null hex");
             return;
         }
-        Hex hex = game.getBoard().getHex(c);
-        hex.applyTerrainPilotingModifiers(getMovementMode(), roll, enteringRubble);
 
+        hex.applyTerrainPilotingModifiers(getMovementMode(), roll, enteringRubble);
         if (hex.containsTerrain(Terrains.JUNGLE) && hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
             roll.addModifier(-1, "Forest Ranger");
         }
@@ -11002,10 +11123,9 @@ public abstract class Entity extends TurnOrdered
      * @param step the move step the PSR occurs at
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll, MoveStep step) {
-        if (step.getElevation() > 0) {
-            return;
+        if (step.getElevation() <= 0) {
+            addPilotingModifierForTerrain(roll, step.getPosition(), step.getBoardId());
         }
-        addPilotingModifierForTerrain(roll, step.getPosition());
     }
 
     /**
@@ -11014,26 +11134,25 @@ public abstract class Entity extends TurnOrdered
      * @param roll the PSR to modify
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll) {
-        if (getElevation() > 0) {
-            return;
+        if (getElevation() <= 0) {
+            addPilotingModifierForTerrain(roll, getPosition(), getBoardId());
         }
-        addPilotingModifierForTerrain(roll, getPosition());
     }
 
     /**
      * defensively check and correct elevation
      */
     public boolean fixElevation() {
-        if (!isDeployed() || isOffBoard() || !game.getBoard().contains(getPosition())) {
+        if (!isDeployed() || isOffBoard() || !game.getBoard(boardId).contains(getPosition())) {
             return false;
         }
 
-        if (!isElevationValid(getElevation(), game.getBoard().getHex(getPosition()))) {
+        if (!isElevationValid(getElevation(), game.getBoard(boardId).getHex(getPosition()))) {
             LOGGER.error("{} in hex {} is at invalid elevation {}",
                   getDisplayName(),
-                  HexTarget.coordsToId(getPosition()),
+                  HexTarget.locationToId(getBoardLocation()),
                   getElevation());
-            setElevation(-game.getBoard().getHex(getPosition()).depth());
+            setElevation(-game.getBoard(boardId).getHex(getPosition()).depth());
             LOGGER.error(" moved to elevation {}", getElevation());
             return true;
         }
@@ -11596,6 +11715,14 @@ public abstract class Entity extends TurnOrdered
         return passedThroughFacing;
     }
 
+    public int getPassedThroughBoardId() {
+        return passedThroughBoardId;
+    }
+
+    public void setPassedThroughBoardId(int passedThroughBoardId) {
+        this.passedThroughBoardId = passedThroughBoardId;
+    }
+
     public void addPassedThrough(Coords c) {
         passedThrough.add(c);
     }
@@ -12068,16 +12195,14 @@ public abstract class Entity extends TurnOrdered
      *
      * @param amount Amount of Coolant to add
      */
-    public void addCoolantFailureAmount(int amount) {
-    }
+    public void addCoolantFailureAmount(int amount) { }
 
     /**
      * This is implemented in subclasses, do nothing in general
      * <p>
      * Resets the coolant failure amount
      */
-    public void resetCoolantFailureAmount() {
-    }
+    public void resetCoolantFailureAmount() { }
 
     /**
      * @return the tonnage of additional mounted communications equipment
@@ -12093,161 +12218,30 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return information (range, location, strength) about ECM if the unit has active ECM or null if it doesn't. In
-     *       the case of multiple ECCM system, the best one takes precedence, as a unit can only have one active ECCM at
-     *       a time.
+     * @return True if this unit is being transported by another.
      */
-    public ECMInfo getECMInfo() {
-        // If we don't have a position, ECM doesn't have an effect
-        if ((getPosition() == null) || isShutDown() || isStealthOn() || (getTransportId() != Entity.NONE)) {
-            return null;
-        }
-
-        // E(C)CM operates differently in space (SO pg 110)
-        if (game.getBoard().inSpace()) {
-            // No ECM in space unless SO rule is on
-            if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-                return null;
-            }
-            int range = getECMRange();
-            if ((range >= 0) && hasActiveECM()) {
-                return new ECMInfo(range, 1, this);
-            } else {
-                return null;
-            }
-        }
-
-        // ASF ECM only has an effect if the unit is NOE
-        if (isAirborne() && !isNOE()) {
-            return null;
-        }
-
-        ECMInfo bestInfo = null;
-        Comparator<ECMInfo> ecmComparator;
-        ecmComparator = new ECMInfo.ECCMComparator();
-        for (MiscMounted m : getMisc()) {
-            // Ignore if inoperable
-            if (m.isInoperable()) {
-                continue;
-            }
-            ECMInfo newInfo = null;
-            // Angel ECM
-            if (m.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
-                if (m.curMode().equals("ECM")) {
-                    newInfo = new ECMInfo(6, 0, this);
-                    newInfo.setAngelECMStrength(1);
-                } else if (m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECM & Ghost Targets")) {
-                    newInfo = new ECMInfo(6, 1, this);
-                    // Doesn't count as Angel ECM
-                }
-                // BA Angel ECM has a shorter range
-                if ((newInfo != null) && (this instanceof BattleArmor)) {
-                    newInfo.setRange(2);
-                }
-                // Anything that's not Angel ECM
-            } else if (m.getType().hasFlag(MiscType.F_ECM) && m.curMode().equals("ECM")) {
-                int range = 6;
-                if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
-                    range = 0;
-                } else if (m.getType().hasFlag(MiscType.F_EW_EQUIPMENT) ||
-                                 m.getType().hasFlag(MiscType.F_NOVA) ||
-                                 m.getType().hasFlag(MiscType.F_WATCHDOG)) {
-                    range = 3;
-                }
-                newInfo = new ECMInfo(range, 1, this);
-                newInfo.setECMNova(m.getType().hasFlag(MiscType.F_NOVA));
-            }
-            // In some type of ECM mode...
-            if (newInfo != null) {
-                if ((bestInfo == null) || (ecmComparator.compare(newInfo, bestInfo) > 0)) {
-                    bestInfo = newInfo;
-                }
-            }
-        }
-        return bestInfo;
+    public boolean isTransported() {
+        return getTransportId() != Entity.NONE;
     }
 
     /**
-     * @return information (range, location, strength) about ECCM if the unit has active ECCM or null if it doesn't. In
+     * @return Information (range, location, strength) about ECM if the unit has active ECM or null if it doesn't. In
+     *       the case of multiple ECCM systems, the best one takes precedence, as a unit can only have one active
+     *       ECCM at a time.
+     */
+    @Nullable
+    public ECMInfo getECMInfo() {
+        return ComputeECM.getECMInfo(this);
+    }
+
+    /**
+     * @return Information (range, location, strength) about ECCM if the unit has active ECCM or null if it doesn't. In
      *       the case of multiple ECCM system, the best one takes precedence, as a unit can only have one active ECCM at
      *       a time.
      */
+    @Nullable
     public ECMInfo getECCMInfo() {
-        // If we don't have a position, ECM doesn't have an effect
-        if ((getPosition() == null) || isShutDown() || isStealthOn() || (getTransportId() != Entity.NONE)) {
-            return null;
-        }
-        // E(C)CM operates differently in space (SO pg 110)
-        if (game.getBoard().inSpace()) {
-            // No ECCM in space unless SO rule is on
-            if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-                return null;
-            }
-            int bapRange = getBAPRange();
-            int range = getECMRange();
-            ECMInfo eccmInfo = new ECMInfo(0, 0, this);
-            eccmInfo.setECCMStrength(1);
-            if (bapRange > 0) {
-                eccmInfo.setRange(bapRange);
-                // Medium range band only effects the nose, so set direction
-                if (bapRange > 6) {
-                    eccmInfo.setDirection(getFacing());
-                }
-            } else if ((range >= 0) && hasActiveECCM()) {
-                eccmInfo.setRange(range);
-            } else {
-                eccmInfo = null;
-            }
-            return eccmInfo;
-        }
-
-        ECMInfo bestInfo = null;
-        Comparator<ECMInfo> ecmComparator;
-        ecmComparator = new ECMInfo.ECCMComparator();
-        for (MiscMounted m : getMisc()) {
-            ECMInfo newInfo = null;
-            if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS) && m.curMode().equals("ECCM")) {
-                if ((getTotalCommGearTons() > 3)) {
-                    newInfo = new ECMInfo(6, 0.5, this);
-                }
-                if ((getTotalCommGearTons() > 6)) {
-                    newInfo = new ECMInfo(6, 1, this);
-                }
-            }
-            // Angel ECM
-            if (m.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
-                if (m.curMode().equals("ECCM")) {
-                    newInfo = new ECMInfo(6, 0, this);
-                    newInfo.setAngelECCMStrength(1);
-                } else if (m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECCM & Ghost Targets")) {
-                    newInfo = new ECMInfo(6, 1, this);
-                    // Doesn't count as Angel
-                }
-                // BA Angel ECM has a shorter range
-                if ((newInfo != null) && (this instanceof BattleArmor)) {
-                    newInfo.setRange(2);
-                }
-                // Anything that's not Angel ECM
-            } else if (m.getType().hasFlag(MiscType.F_ECM) && m.curMode().equals("ECCM")) {
-                int range = 6;
-                if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
-                    range = 0;
-                } else if (m.getType().hasFlag(MiscType.F_EW_EQUIPMENT) ||
-                                 m.getType().hasFlag(MiscType.F_NOVA) ||
-                                 m.getType().hasFlag(MiscType.F_WATCHDOG)) {
-                    range = 3;
-                }
-                newInfo = new ECMInfo(range, 0, this);
-                newInfo.setECCMStrength(1);
-            }
-            // In some type of ECCM mode...
-            if (newInfo != null) {
-                if ((bestInfo == null) || (ecmComparator.compare(newInfo, bestInfo) > 0)) {
-                    bestInfo = newInfo;
-                }
-            }
-        }
-        return bestInfo;
+        return ComputeECM.getECCMInfo(this);
     }
 
     /**
@@ -12453,7 +12447,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * is this entity a large craft? (dropship, jumpship, warship, or space station)
+     * is this entity a large craft? (dropship, jumpship, warship, or space station, see TW p.20)
      */
     public boolean isLargeCraft() {
         return (this instanceof Dropship) || (this instanceof Jumpship);
@@ -12726,28 +12720,37 @@ public abstract class Entity extends TurnOrdered
                      (getMovementMode() == EntityMovementMode.SPHEROID);
     }
 
+    /**
+     * Returns true when this unit is currently on a space board, either close to a planet ("high altitude") or in deep
+     * space but only if its position is valid, i.e. not when it is transported or otherwise has a null position or is
+     * off board or undeployed. On a high altitude board, a unit is spaceborne even if it happens to be in an atmosphere
+     * hex.
+     * <p>
+     * This method is safe to call when game is null.
+     *
+     * @return True when in space
+     */
     public boolean isSpaceborne() {
-        // for now if you are in space, you are space borne, but this will become more complicated when we start
-        // adding multiple maps to the same game and so I should try to replace most calls to `game.getBoard()
-        // .inSpace()` with this one
-        return game != null && game.getBoard().inSpace();
+        return (game != null) && game.isOnSpaceMap(getBoardLocation());
     }
 
     /**
-     * is the unit flying Nap of the Earth? (i.e. one elevation above ground)
+     * @return True if this unit is flying at the Nap of the Earth (NOE), i.e. one altitude above ground.
      */
-    public boolean isNOE() {
-
-        if (!isAirborne()) {
+    public final boolean isNOE() {
+        if ((game == null) || !game.hasBoardLocation(position, boardId) || !isAirborne()) {
             return false;
         }
-        if (game.getBoard().inAtmosphere()) {
-            return (1 == (getAltitude() - game.getBoard().getHex(getPosition()).ceiling(true)));
+        Board board = game.getBoard(this);
+        if (board.isLowAltitude()) {
+            return (1 == (getAltitude() - board.getHex(position).ceiling(true)));
+            //FIXME the ceiling method and this seem to be in disagreement
+            // the hex ceiling method is there so the distinction between ground and atmo maps isnt necessary
+        } else if (board.isGround()) {
+            return getAltitude() == 1;
+        } else {
+            return false;
         }
-        if (game.getBoard().onGround()) {
-            return 1 == getAltitude();
-        }
-        return false;
     }
 
     public int getStartingPos() {
@@ -13720,7 +13723,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public Camouflage getCamouflageOrElseOwners() {
-        return getCamouflageOrElse(getOwner().getCamouflage());
+        return getCamouflageOrElse(getOwner() != null ? getOwner().getCamouflage() : Camouflage.of(PlayerColour.GRAY));
     }
 
     public Camouflage getCamouflageOrElse(final Camouflage camouflage) {
@@ -15646,5 +15649,33 @@ public abstract class Entity extends TurnOrdered
 
     public void setJumpingWithMechanicalBoosters(boolean jumpingWithMechanicalBoosters) {
         isJumpingWithMechanicalBoosters = jumpingWithMechanicalBoosters;
+    }
+
+    @Override
+    public int getBoardId() {
+        return boardId;
+    }
+
+    public void setBoardId(int boardId) {
+        this.boardId = boardId;
+    }
+
+    /**
+     * @return True when this unit is inside of a building. Returns false when it does not have a game, is not on a
+     *       board, its hex has no building or its elevation is below the basement or on or above the building.
+     */
+    public boolean isInBuilding() {
+        return Compute.isInBuilding(game, elevation, position, boardId);
+    }
+
+    /**
+     * Returns true when this Entity's game is not null and the given boolean game option is active in the game. This
+     * is a convenience method to avoid NPEs.
+     *
+     * @param optionName The name of the game option, e.g. OptionsConstants.ADVAERORULES_STRATOPS_ECM
+     * @return True when the Entity is part of a game and the option is active in that game
+     */
+    protected boolean isActiveOption(String optionName) {
+        return (game != null) && game.getOptions().booleanOption(optionName);
     }
 }

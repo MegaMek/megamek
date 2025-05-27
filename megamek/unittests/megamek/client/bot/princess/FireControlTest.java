@@ -238,6 +238,11 @@ class FireControlTest {
         mockGame = mock(Game.class);
         when(mockGame.getOptions()).thenReturn(mockGameOptions);
         when(mockGame.getBoard()).thenReturn(mockBoard);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
 
         // Base planetary conditions
         PlanetaryConditions planetaryConditions = new PlanetaryConditions();

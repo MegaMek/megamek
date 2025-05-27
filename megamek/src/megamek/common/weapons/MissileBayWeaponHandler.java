@@ -274,7 +274,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                 && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR
                         && target.getTargetType() != Targetable.TYPE_HEX_IGNITE
                         && target.getTargetType() != Targetable.TYPE_BUILDING))
-                || game.getBoard().inSpace()) {
+                || game.getBoard().isSpace()) {
             return super.handle(phase, vPhaseReport);
         }
 

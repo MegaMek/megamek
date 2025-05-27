@@ -19,7 +19,7 @@
 
 package megamek.client.ui.sbf;
 
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.Compute;
 import megamek.common.TargetRollModifier;
 import megamek.common.strategicBattleSystems.SBFToHitData;

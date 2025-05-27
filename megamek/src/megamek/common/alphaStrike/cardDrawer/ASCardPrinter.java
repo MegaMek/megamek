@@ -42,7 +42,7 @@ import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
 import megamek.MMConstants;
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.alphaStrike.ASCardDisplayable;
 

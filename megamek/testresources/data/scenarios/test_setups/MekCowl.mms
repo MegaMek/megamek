@@ -4,6 +4,10 @@ planet: None
 description: A few units on a small map to test mek cowl (quirk) functions
 map: Beginner Box/16x17 Grassland 1.board
 
+options:
+  off:
+    - check_victory
+
 factions:
 - name: Test Player
 

@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -56,7 +57,9 @@ class ComputeECMTest {
 
         // Mock the board
         Board mockBoard = mock(Board.class);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
+        when(mockBoard.contains(any(Coords.class))).thenReturn(true);
+        when(mockBoard.contains(anyInt(), anyInt())).thenReturn(true);
 
         // Mock Options
         GameOptions mockOptions = mock(GameOptions.class);
@@ -69,6 +72,12 @@ class ComputeECMTest {
         when(mockGame.getSmokeCloudList()).thenReturn(new ArrayList<>());
         when(mockGame.getOptions()).thenReturn(mockOptions);
         when(mockGame.getPlayer(anyInt())).thenReturn(mockPlayer);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(BoardLocation.class))).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
 
         File f;
         MekFileParser mfp;
@@ -205,7 +214,9 @@ class ComputeECMTest {
 
         // Mock the board
         Board mockBoard = mock(Board.class);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
+        when(mockBoard.contains(any(Coords.class))).thenReturn(true);
+        when(mockBoard.contains(anyInt(), anyInt())).thenReturn(true);
 
         // Mock Options
         GameOptions mockOptions = mock(GameOptions.class);
@@ -217,6 +228,12 @@ class ComputeECMTest {
         when(mockGame.getBoard()).thenReturn(mockBoard);
         when(mockGame.getSmokeCloudList()).thenReturn(new ArrayList<>());
         when(mockGame.getOptions()).thenReturn(mockOptions);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(BoardLocation.class))).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
 
         // Create a list of enemies, owned by the mockEnemy
         Vector<Entity> entitiesVector = createECMEnemy(mockEnemy, mockGame);
@@ -247,6 +264,7 @@ class ComputeECMTest {
         Entity ae = mock(Mek.class);
         entitiesVector.add(ae);
         when(ae.getPosition()).thenReturn(aePos);
+        when(ae.getBoardLocation()).thenReturn(BoardLocation.of(aePos, 0));
         when(ae.getGame()).thenReturn(mockGame);
         when(ae.isINarcedWith(INarcPod.ECM)).thenReturn(false);
         when(ae.getOwner()).thenReturn(mockPlayer);
@@ -439,7 +457,9 @@ class ComputeECMTest {
 
         // Mock the board
         Board mockBoard = mock(Board.class);
-        when(mockBoard.inSpace()).thenReturn(false);
+        when(mockBoard.isSpace()).thenReturn(false);
+        when(mockBoard.contains(any(Coords.class))).thenReturn(true);
+        when(mockBoard.contains(anyInt(), anyInt())).thenReturn(true);
 
         // Mock Options
         GameOptions mockOptions = mock(GameOptions.class);
@@ -451,6 +471,12 @@ class ComputeECMTest {
         when(mockGame.getBoard()).thenReturn(mockBoard);
         when(mockGame.getSmokeCloudList()).thenReturn(new ArrayList<>());
         when(mockGame.getOptions()).thenReturn(mockOptions);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.hasBoard(0)).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(BoardLocation.class))).thenReturn(true);
+        when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
 
         // Create a list of enemies, owned by the mockEnemy
         Vector<Entity> entitiesVector = createECMEnemy(mockEnemy, mockGame);
@@ -684,6 +710,7 @@ class ComputeECMTest {
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(ecm1);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(ecm1Pos, 0));
         entitiesVector.add(enemy1);
 
         // Add Entity with ECM out of range
@@ -693,6 +720,7 @@ class ComputeECMTest {
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(ecm1);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(ecm1Pos, 0));
         entitiesVector.add(enemy1);
 
         // Add several non-ECM enemies
@@ -700,24 +728,28 @@ class ComputeECMTest {
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(ecm1Pos, 0));
         entitiesVector.add(enemy1);
 
         enemy1 = mock(Aero.class);
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(ecm1Pos, 0));
         entitiesVector.add(enemy1);
 
         enemy1 = mock(BattleArmor.class);
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(ecm1Pos, 0));
         entitiesVector.add(enemy1);
 
         enemy1 = mock(Mek.class);
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(ecm1Pos, 0));
         entitiesVector.add(enemy1);
 
         return entitiesVector;
@@ -741,6 +773,7 @@ class ComputeECMTest {
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(ecm1);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(new Coords(1, 1), 0));
         entitiesVector.add(enemy1);
 
         // Add Entity with ECM out of range
@@ -750,6 +783,7 @@ class ComputeECMTest {
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(ecm1);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(new Coords(1, 1), 0));
         entitiesVector.add(enemy1);
 
         // Add several non-ECM enemies
@@ -757,24 +791,28 @@ class ComputeECMTest {
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(new Coords(1, 1), 0));
         entitiesVector.add(enemy1);
 
         enemy1 = mock(Aero.class);
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(new Coords(1, 1), 0));
         entitiesVector.add(enemy1);
 
         enemy1 = mock(BattleArmor.class);
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(new Coords(1, 1), 0));
         entitiesVector.add(enemy1);
 
         enemy1 = mock(Mek.class);
         when(enemy1.getOwner()).thenReturn(owner);
         when(enemy1.getECMInfo()).thenReturn(null);
         when(enemy1.getGame()).thenReturn(mockGame);
+        when(enemy1.getBoardLocation()).thenReturn(BoardLocation.of(new Coords(1, 1), 0));
         entitiesVector.add(enemy1);
 
         return entitiesVector;

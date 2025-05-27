@@ -14,7 +14,7 @@
  */
 package megamek.test;
 
-import megamek.client.ui.swing.tileset.TilesetManager;
+import megamek.client.ui.tileset.TilesetManager;
 import megamek.common.Configuration;
 import megamek.common.Terrain;
 import megamek.common.util.StringUtil;

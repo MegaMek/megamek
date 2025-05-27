@@ -28,7 +28,7 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 import megamek.client.ratgenerator.ForceDescriptor;
-import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
+import megamek.client.ui.dialogs.unitSelectorDialogs.AbstractUnitSelectorDialog;
 import megamek.common.*;
 import megamek.common.containers.MunitionTree;
 import megamek.common.equipment.AmmoMounted;

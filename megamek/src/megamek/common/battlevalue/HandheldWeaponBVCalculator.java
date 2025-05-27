@@ -33,9 +33,8 @@
 package megamek.common.battlevalue;
 
 import megamek.common.Entity;
-import megamek.common.HandheldWeapon;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
 public class HandheldWeaponBVCalculator extends BVCalculator {
     HandheldWeaponBVCalculator(Entity entity) {

@@ -67,7 +67,7 @@ ij_java_array_initializer_wrap = normal
 ij_java_assert_statement_colon_on_next_line = false
 ij_java_assert_statement_wrap = off
 ij_java_assignment_wrap = off
-ij_java_binary_operation_sign_on_next_line = false
+ij_java_binary_operation_sign_on_next_line = true
 ij_java_binary_operation_wrap = on_every_item
 ij_java_blank_lines_after_anonymous_class_header = 0
 ij_java_blank_lines_after_class_header = 0
@@ -335,7 +335,7 @@ ij_java_throws_keyword_wrap = normal
 ij_java_throws_list_wrap = on_every_item
 ij_java_use_external_annotations = false
 ij_java_use_fq_class_names = false
-ij_java_use_relative_indents = true
+ij_java_use_relative_indents = false
 ij_java_use_single_class_imports = true
 ij_java_variable_annotation_wrap = on_every_item
 ij_java_visibility = public
@@ -435,7 +435,7 @@ ij_properties_keep_blank_lines = false
 ij_properties_key_value_delimiter = equals
 ij_properties_spaces_around_key_value_delimiter = false
 
-[{*.yaml,*.yml}]
+[{*.yaml,*.yml,*.mms,*.mmu}]
 indent_size = 2
 ij_yaml_align_values_properties = do_not_align
 ij_yaml_autoinsert_sequence_marker = true

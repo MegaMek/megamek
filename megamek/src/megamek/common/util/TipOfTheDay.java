@@ -39,10 +39,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
-import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.client.ui.util.UIUtil;
+import megamek.client.ui.widget.SkinSpecification;
+import megamek.client.ui.widget.SkinSpecification.UIComponents;
+import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.common.internationalization.I18n;
 
 /**

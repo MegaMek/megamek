@@ -15,7 +15,7 @@
 package megamek.common;
 
 import megamek.client.Client;
-import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.options.GameOptions;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;

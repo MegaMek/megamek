@@ -87,7 +87,7 @@ public class BoardData extends EntityDataMap<BoardData.Field> {
         BoardData data = new BoardData();
 
         // Basic board information
-        data.put(Field.BOARD_NAME, board.getMapName())
+        data.put(Field.BOARD_NAME, board.getBoardName())
               .put(Field.WIDTH, board.getWidth())
               .put(Field.HEIGHT, board.getHeight());
 

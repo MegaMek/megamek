@@ -36,7 +36,7 @@ import java.util.List;
 
 import megamek.client.Client;
 import megamek.client.ratgenerator.ForceDescriptor;
-import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.*;
 import megamek.common.AmmoType.Munitions;
 import megamek.common.containers.MunitionTree;

@@ -29,7 +29,7 @@ import java.util.Vector;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
@@ -189,11 +189,10 @@ public class FighterSquadron extends AeroSpaceFighter {
 
     @Override
     public boolean hasActiveECM() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
-            return super.hasActiveECM();
-        } else {
+        if (isSpaceborne() && isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return getActiveSubEntities().stream().anyMatch(Entity::hasActiveECM);
+        } else {
+            return super.hasActiveECM();
         }
     }
 
@@ -212,13 +211,13 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
         int vel = getCurrentVelocity();
         int vmod = vel - (2 * getWalkMP());
-        if (!getGame().getBoard().inSpace() && (vmod > 0)) {
+        if (!isSpaceborne() && (vmod > 0)) {
             prd.addModifier(vmod, "Velocity greater than 2x safe thrust");
         }
 
         // add in atmospheric effects later
         PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (!(game.getBoard().inSpace()
+        if (!(isSpaceborne()
                 || conditions.getAtmosphere().isVacuum())) {
             prd.addModifier(+2, "Atmospheric operations");
             prd.addModifier(-1, "fighter/ small craft");
@@ -576,8 +575,8 @@ public class FighterSquadron extends AeroSpaceFighter {
             extBombChoices[type] = 0;
         }
         // add the space bomb attack
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
-                && game.getBoard().inSpace() && !getBombs(AmmoType.F_SPACE_BOMB).isEmpty()) {
+        if (isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
+                && isSpaceborne() && !getBombs(AmmoType.F_SPACE_BOMB).isEmpty()) {
             try {
                 addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (Exception ignored) {
@@ -585,7 +584,7 @@ public class FighterSquadron extends AeroSpaceFighter {
             }
         }
 
-        if (!game.getBoard().inSpace() && !getBombs(AmmoType.F_GROUND_BOMB).isEmpty()) {
+        if (!isSpaceborne() && !getBombs(AmmoType.F_GROUND_BOMB).isEmpty()) {
             try {
                 addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (Exception ignored) {

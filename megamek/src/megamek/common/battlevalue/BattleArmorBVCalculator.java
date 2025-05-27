@@ -32,7 +32,7 @@
  */
 package megamek.common.battlevalue;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -40,8 +40,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.MiscMounted;

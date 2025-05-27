@@ -18,7 +18,7 @@
  */
 package megamek.common.alphaStrike.conversion;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.MiscType.*;
 import static megamek.common.alphaStrike.ASUnitType.BA;
 import static megamek.common.alphaStrike.ASUnitType.BM;
@@ -32,7 +32,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 import java.util.Arrays;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;

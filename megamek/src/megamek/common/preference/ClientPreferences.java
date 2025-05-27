@@ -13,19 +13,20 @@
  */
 package megamek.common.preference;
 
-import megamek.MMConstants;
-import megamek.common.Configuration;
-import megamek.common.moves.MovePath;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.logging.MMLogger;
+import static megamek.client.bot.princess.BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Locale;
+import java.util.Objects;
 
-import static megamek.client.bot.princess.BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION;
+import megamek.MMConstants;
+import megamek.common.Configuration;
+import megamek.common.moves.MovePath;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 
 public class ClientPreferences extends PreferenceStoreProxy {
     private static final MMLogger logger = MMLogger.create(ClientPreferences.class);
@@ -75,6 +76,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String NAG_ASK_FOR_VICTORY_LIST = "AskForVictoryList";
     public static final String SHOW_AUTO_RESOLVE_PANEL = "ShowAutoResolvePanel";
     public static final String FAVORITE_PRINCESS_BEHAVIOR_SETTING = "FavoritePrincessBehaviorSetting";
+    public static final String LAST_SCENARIO = "LastScenario";
 
     /**
      * A user-specified directory, typically outside the MM directory, where content
@@ -127,6 +129,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_AUTO_RESOLVE_PANEL, true);
         store.setDefault(STAMP_FILENAMES, false);
         store.setDefault(FAVORITE_PRINCESS_BEHAVIOR_SETTING, DEFAULT_BEHAVIOR_DESCRIPTION);
+        store.setDefault(LAST_SCENARIO, "");
 
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
@@ -505,5 +508,13 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public void setFavoritePrincessBehaviorSetting(String name) {
         store.setValue(FAVORITE_PRINCESS_BEHAVIOR_SETTING, name);
+    }
+
+    public void setLastScenario(String scenario) {
+        store.setValue(LAST_SCENARIO, scenario);
+    }
+
+    public String getLastScenario() {
+        return Objects.requireNonNullElse(store.getString(LAST_SCENARIO), "");
     }
 }

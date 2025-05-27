@@ -18,7 +18,7 @@
  */
 package megamek.client.ui.displayWrappers;
 
-import megamek.client.ui.swing.util.FontHandler;
+import megamek.client.ui.util.FontHandler;
 import megamek.common.annotations.Nullable;
 
 import java.awt.*;

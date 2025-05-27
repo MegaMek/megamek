@@ -13,10 +13,9 @@
  */
 package megamek.common.autoresolve.acar.report;
 
-import megamek.client.ui.swing.util.PlayerColour;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.util.PlayerColour;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.Entity;
-import megamek.common.autoresolve.component.Formation;
 
 public class EntityNameReportEntry extends PublicReportEntry {
 

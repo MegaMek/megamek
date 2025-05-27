@@ -183,12 +183,12 @@ public class Precognition implements Runnable {
                     getGame().addSmokeCloud(cloud);
                     break;
                 case CHANGE_HEX:
-                    getGame().getBoard().setHex((Coords) c.getObject(0), (Hex) c.getObject(1));
+                    game.getBoard((int) c.getObject(1)).setHex((Coords) c.getObject(0),
+                          (Hex) c.getObject(2));
                     break;
                 case CHANGE_HEXES:
-                    List<Coords> coords = new ArrayList<>((Set<Coords>) c.getObject(0));
-                    List<Hex> hexes = new ArrayList<>((Set<Hex>) c.getObject(1));
-                    getGame().getBoard().setHexes(coords, hexes);
+                    var changedHexes = (Map<BoardLocation, Hex>) c.getObject(0);
+                    game.getBoards().values().forEach(board -> board.setHexes(changedHexes));
                     break;
                 case BLDG_UPDATE:
                     receiveBuildingUpdate(c);
@@ -250,9 +250,10 @@ public class Precognition implements Runnable {
                     getGame().setFlares(v2);
                     break;
                 case SENDING_SPECIAL_HEX_DISPLAY:
-                    getGame().getBoard().setSpecialHexDisplayTable(
-                            (Hashtable<Coords, Collection<SpecialHexDisplay>>) c.getObject(0));
-                    getGame().processGameEvent(new GameBoardChangeEvent(this));
+                    var shdTable = (Map<Coords, Collection<SpecialHexDisplay>>) c.getObject(0);
+                    var boardId = (int) c.getObject(1);
+                    game.getBoard(boardId).setSpecialHexDisplayTable(shdTable);
+                    game.processGameEvent(new GameBoardChangeEvent(this));
                     break;
                 case ENTITY_NOVA_NETWORK_CHANGE:
                     receiveEntityNovaNetworkModeChange(c);
@@ -809,7 +810,9 @@ public class Precognition implements Runnable {
 
     @SuppressWarnings("unchecked")
     private void receiveBuildingUpdate(Packet packet) {
-        getGame().getBoard().updateBuildings((Vector<Building>) packet.getObject(0));
+        for (Building building : (List<Building>) packet.getObject(0)) {
+            game.getBoard(building.getBoardId()).updateBuilding(building);
+        }
     }
 
     @SuppressWarnings("unchecked")

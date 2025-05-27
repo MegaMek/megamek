@@ -18,8 +18,8 @@
  */
 package megamek.common.strategicBattleSystems;
 
-import megamek.client.ui.swing.tooltip.SBFInGameObjectTooltip;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip;
+import megamek.client.ui.util.UIUtil;
 
 public class SBFFormationReportEntry extends SBFReportEntry {
 

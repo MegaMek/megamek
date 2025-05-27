@@ -18,7 +18,7 @@
 */
 package megamek.client.commands;
 
-import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.clientGUI.ClientGUI;
 
 /**
  * A command that exist purely for the accessibility UI so that commands can be made as the default rather than chat.

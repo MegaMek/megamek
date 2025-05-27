@@ -312,10 +312,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             report.indent(2);
             reportVec.add(report);
             int[] damages = { (int) Math.floor(damage / 10.0), (int) Math.floor(damage / 20.0) };
-            manager.doExplosion(damages,
-                  false,
-                  entity.getPosition(),
-                  true,
+            manager.doExplosion(damages, false, entity.getPosition(), 0, true,
                   reportVec,
                   null,
                   5,

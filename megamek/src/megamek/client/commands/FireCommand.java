@@ -20,8 +20,8 @@
 package megamek.client.commands;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
@@ -305,7 +305,7 @@ public class FireCommand extends ClientCommand {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(getClient().getGame());
                 Targetable target = waa.getTarget(getClient().getGame());
-                boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
+                boolean curInFrontArc = ComputeArc.isInArc(attacker.getPosition(),
                                                         attacker.getSecondaryFacing(), target,
                                                         attacker.getForwardArc());
                 if (curInFrontArc) {
@@ -326,7 +326,7 @@ public class FireCommand extends ClientCommand {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(getClient().getGame());
                 Targetable target = waa.getTarget(getClient().getGame());
-                boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
+                boolean curInFrontArc = ComputeArc.isInArc(attacker.getPosition(),
                                                         attacker.getSecondaryFacing(), target,
                                                         attacker.getForwardArc());
                 if (!curInFrontArc) {

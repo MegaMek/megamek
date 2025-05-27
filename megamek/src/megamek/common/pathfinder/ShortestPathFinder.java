@@ -213,13 +213,11 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
                 h1 = first.getFinalCoords().distance(destination)
                         + getFacingDiff(first, destination, backwards)
                         + getLevelDiff(first, destination, board, first.isJumping())
-                        + getElevationDiff(first, destination, board,
-                                first.getEntity());
+                        + getElevationDiff(first, destination, board, first.getEntity());
                 h2 = second.getFinalCoords().distance(destination)
                         + getFacingDiff(second, destination, backwards)
                         + getLevelDiff(second, destination, board, second.isJumping())
-                        + getElevationDiff(second, destination, board,
-                                second.getEntity());
+                        + getElevationDiff(second, destination, board, second.getEntity());
             }
 
             int dd = (first.getMpUsed() + h1) - (second.getMpUsed() + h2);
@@ -248,10 +246,10 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * @param game        The current {@link Game}
      */
     public static ShortestPathFinder newInstanceOfAStar(final Coords destination,
-            final MoveStepType stepType, final Game game) {
+            final MoveStepType stepType, final Game game, int boardId) {
         final ShortestPathFinder spf = new ShortestPathFinder(
                 new ShortestPathFinder.MovePathRelaxer(),
-                new ShortestPathFinder.MovePathAStarComparator(destination, stepType, game.getBoard()),
+                new ShortestPathFinder.MovePathAStarComparator(destination, stepType, game.getBoard(boardId)),
                 stepType, game);
 
         spf.addStopCondition(new DestinationReachedStopCondition(destination));
@@ -398,7 +396,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      */
     public static int getLevelDiff(final MovePath mp, Coords dest, Board board, boolean ignore) {
         // Ignore level differences if we're not on the ground
-        if (ignore || !board.onGround() || (mp.getFinalElevation() != 0)) {
+        if (ignore || !board.isGround() || (mp.getFinalElevation() != 0)) {
             return 0;
         }
         Hex currHex = board.getHex(mp.getFinalCoords());
@@ -439,8 +437,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         Hex destHex = board.getHex(dest);
         int currElevation = mp.getFinalElevation();
         // Get elevation in destination hex, ignoring buildings
-        int destElevation = ent.elevationOccupied(destHex,
-                mp.getFinalElevation());
+        int destElevation = ent.elevationOccupied(destHex, mp.getFinalElevation());
         // If there's a building, we could stand on it
         if (destHex.containsTerrain(Terrains.BLDG_ELEV)) {
             // Assume that we stay on same level if building is high enough
@@ -460,8 +457,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             elevationDiff *= 2;
         }
         // Penalty for standing
-        if (ent.isProne() && !(mp.contains(MoveStepType.GET_UP)
-                || mp.contains(MoveStepType.CAREFUL_STAND))) {
+        if (ent.isProne() && !(mp.contains(MoveStepType.GET_UP) || mp.contains(MoveStepType.CAREFUL_STAND))) {
             elevationDiff += 2;
         }
         return elevationDiff;

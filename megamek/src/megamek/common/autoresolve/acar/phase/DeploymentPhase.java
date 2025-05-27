@@ -110,7 +110,7 @@ public class DeploymentPhase extends PhaseHandler {
                 break;
         }
 
-        getSimulationManager().setFormationAt(formation, new BoardLocation(new Coords(startingPos, 0), 0));
+        getSimulationManager().setFormationAt(formation, BoardLocation.of(new Coords(startingPos, 0), 0));
         formation.setDeployed(true);
         var formationEntity = formation.getEntity();
         if (formationEntity != null) {

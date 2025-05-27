@@ -18,7 +18,7 @@
  */
 package megamek.common.alphaStrike.cardDrawer;
 
-import megamek.client.ui.swing.util.StringDrawer;
+import megamek.client.ui.util.StringDrawer;
 import megamek.common.alphaStrike.ASCardDisplayable;
 
 import java.awt.*;

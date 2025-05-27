@@ -13,7 +13,7 @@ New terrain features
 
 Terrain special effects (advanced menu)
  - Drought, dries up water on the map to leave lower water, swamp or rough.
-   Use river + drought to get a dried up river bed.
+   Use river and drought to get a dried up river bed.
    FX modifier adjusts the severity of the drought
  - Fires, clears and ignites woods for a map that looks like a battle just finished
    A low % chance on high temperature worlds could give riflemen a nasty shock
@@ -38,4 +38,4 @@ Defects fixed
 Defects introduced :)
  - Advanced map settings is quite a big list now, it should maybe be split into two columns...
    GridBagLayout makes my head hurt
- - More localisation needed for the german & russian
+ - More localization needed for the german & russian

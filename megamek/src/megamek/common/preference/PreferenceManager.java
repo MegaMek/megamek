@@ -79,6 +79,35 @@ public class PreferenceManager {
         return result;
     }
 
+    public IPreferenceStore getPreferenceStore(String name, String... previousNames) {
+        migratePreferenceStore(name, previousNames);
+        IPreferenceStore result = stores.get(name);
+
+        if (result == null) {
+            result = new PreferenceStore();
+            stores.put(name, result);
+        }
+        return result;
+    }
+
+    /**
+     * Migrates the preference store from previous names to the new name if any is present;
+     * @param name the new name for the preference store
+     * @param previousNames the previous names of the preference store to migrate from
+     */
+    private void migratePreferenceStore(String name, String[] previousNames) {
+        IPreferenceStore result = null;
+        for (String previousName : previousNames) {
+            if (stores.containsKey(previousName)) {
+                result = stores.remove(previousName);
+            }
+        }
+
+        if (result != null) {
+            stores.put(name, result);
+        }
+    }
+
     protected void load() {
         stores = new Hashtable<>();
         clientPreferenceStore = new PreferenceStore();

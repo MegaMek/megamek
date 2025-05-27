@@ -489,7 +489,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     protected GUIPreferences() {
-        store = PreferenceManager.getInstance().getPreferenceStore(getClass().getName());
+        store = PreferenceManager.getInstance().getPreferenceStore("GUIPreferences",
+              getClass().getName(), "megamek.client.ui.swing.GUIPreferences");
 
         store.setDefault(BOARDEDIT_RNDDIALOG_START, false);
         setDefault(ADVANCED_NO_SAVE_NAG, false);

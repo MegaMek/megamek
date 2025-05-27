@@ -205,7 +205,7 @@ public class EditBotsDialog extends AbstractButtonDialog {
                     gridPanel.add(new JLabel());
                 } else {
                     // Not a Ghost or Princess, something else
-                    gridPanel.add(new JLabel(LOCAL + ' ' + bot.getClass().toString()));
+                    gridPanel.add(new JLabel(LOCAL + ' ' + bot.getClass()));
                     gridPanel.add(new JLabel());
                     gridPanel.add(new JLabel());
                     gridPanel.add(new JLabel());

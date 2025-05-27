@@ -143,6 +143,16 @@ public class BehaviorSettingsFactory {
     public BehaviorSettings getBehavior(String desc) {
         return behaviorMap.get(desc);
     }
+    /**
+     * Returns the named {@link megamek.client.bot.princess.BehaviorSettings}.
+     *
+     * @param desc The name of the behavior; matched to
+     *             {@link megamek.client.bot.princess.BehaviorSettings#getDescription()}.
+     * @return The named behavior or default if no match is found.
+     */
+    public BehaviorSettings getBehaviorOrDefault(String desc, BehaviorSettings defaultBehavior) {
+        return behaviorMap.getOrDefault(desc, defaultBehavior);
+    }
 
     private @Nullable Document buildPrincessBehaviorDoc() {
         try {

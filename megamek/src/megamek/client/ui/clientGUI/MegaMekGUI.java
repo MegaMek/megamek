@@ -1166,6 +1166,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Hides this window for later. Listens to the frame until it closes, then calls unlaunch().
      */
     private void launch(JFrame launched) {
+        // Stop tip cycling when launching another window
+        if (tipOfTheDay != null) {
+            tipOfTheDay.stopCycling();
+        }
         // listen to new frame
         launched.addWindowListener(new WindowAdapter() {
             @Override
@@ -1185,6 +1189,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (server != null) {
             server.die();
             server = null;
+        }
+        // Stop tip cycling when leaving main menu
+        if (tipOfTheDay != null) {
+            tipOfTheDay.stopCycling();
         }
         // show menu frame
         frame.setVisible(true);

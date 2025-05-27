@@ -616,7 +616,7 @@ public class TipOfTheDay {
         textPane.setContentType("text/html");
         textPane.setFont(font);
         HTMLEditorKit kit = new HTMLEditorKit();
-        StyleSheet styleSheet = kit.getStyleSheet();
+        StyleSheet styleSheet = new StyleSheet();
         String fontWeight = font.isBold() ? "bold" : "normal";
         String textAlign = switch (position) {
             case BOTTOM_LEFT_CORNER -> "left";
@@ -633,6 +633,7 @@ public class TipOfTheDay {
             "max-width: " + width + "px; " +
             "text-align: " + textAlign + "; " +
             "}");
+        kit.setStyleSheet(styleSheet);
         textPane.setEditorKit(kit);
         textPane.setMargin(new Insets(0, 0, 0, 0));
         textPane.setBorder(null);

@@ -30,8 +30,8 @@ public class UnitDisplayOrderPreferences extends PreferenceStoreProxy {
 
     protected UnitDisplayOrderPreferences() {
 
-        store = PreferenceManager.getInstance().getPreferenceStore(
-                getClass().getName());
+        store = PreferenceManager.getInstance().getPreferenceStore("UnitDisplayOrderPreferences",
+                getClass().getName(), "megamek.client.ui.swing.UnitDisplayOrderPreferences");
 
         store.setDefault(UnitDisplayPanel.NON_TABBED_A1, UnitDisplayPanel.NON_TABBED_GENERAL);
         store.setDefault(UnitDisplayPanel.NON_TABBED_A2, UnitDisplayPanel.NON_TABBED_PILOT);

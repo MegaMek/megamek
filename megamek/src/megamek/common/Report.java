@@ -727,8 +727,11 @@ public class Report implements ReportEntry {
 
     public static void setupStylesheet(JTextPane pane) {
         pane.setContentType("text/html");
-        StyleSheet styleSheet = ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet();
-        Report.setupStylesheet(styleSheet);
+        StyleSheet styleSheet = new StyleSheet();
+        setupStylesheet(styleSheet);
+        HTMLEditorKit newKit = new HTMLEditorKit();
+        newKit.setStyleSheet(styleSheet);
+        pane.setEditorKit(newKit);
     }
 
     public static void setupStylesheet(StyleSheet styleSheet) {
@@ -736,6 +739,7 @@ public class Report implements ReportEntry {
         Font font = new Font(GUIP.getReportFontType(), Font.PLAIN, UIUtil.FONT_SCALE1);
         int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
 
+        // styleSheet.addRule("html { text-align: left; }");
         styleSheet
                 .addRule("pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
         styleSheet.addRule("a { color: " + hexColor(GUIP.getReportLinkColor()) + " }");

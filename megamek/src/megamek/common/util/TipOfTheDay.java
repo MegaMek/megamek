@@ -615,7 +615,6 @@ public class TipOfTheDay {
         JTextPane textPane = new JTextPane();
         textPane.setContentType("text/html");
         textPane.setFont(font);
-        HTMLEditorKit kit = new HTMLEditorKit();
         StyleSheet styleSheet = new StyleSheet();
         String fontWeight = font.isBold() ? "bold" : "normal";
         String textAlign = switch (position) {
@@ -633,8 +632,10 @@ public class TipOfTheDay {
             "max-width: " + width + "px; " +
             "text-align: " + textAlign + "; " +
             "}");
-        kit.setStyleSheet(styleSheet);
-        textPane.setEditorKit(kit);
+
+        HTMLEditorKit newKit = new HTMLEditorKit();
+        newKit.setStyleSheet(styleSheet);
+        textPane.setEditorKit(newKit);
         textPane.setMargin(new Insets(0, 0, 0, 0));
         textPane.setBorder(null);
         textPane.setText(htmlText);

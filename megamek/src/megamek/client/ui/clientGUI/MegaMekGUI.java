@@ -36,6 +36,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -95,6 +96,7 @@ import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.MegaMekButton;
+import megamek.client.ui.widget.RawImagePanel;
 import megamek.client.ui.widget.SkinSpecification;
 import megamek.client.ui.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.widget.SkinXMLHandler;
@@ -130,6 +132,7 @@ import megamek.server.Server;
 import megamek.server.sbf.SBFGameManager;
 import megamek.server.totalwarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
+import megamek.common.util.ImageUtil;
 
 public class MegaMekGUI implements IPreferenceChangeListener {
     private static final MMLogger LOGGER = MMLogger.create(MegaMekGUI.class);
@@ -148,9 +151,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private IGameManager gameManager;
     private CommonSettingsDialog settingsDialog;
     private Image splashImage;
-    private Image logoImage;
-    private Image medalImage;
-    JPanel splashPanel;
+    private VolatileImage logoImage;
+    private VolatileImage medalImage;
+    private RawImagePanel splashPanel;
     private TipOfTheDay tipOfTheDay;
 
     private static MegaMekController controller;
@@ -352,11 +355,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // displays aren't as large as their secondary displays.
         Dimension scaledMonitorSize = UIUtil.getScaledScreenSize(frame);
         splashImage = getImage(FILENAME_MEGAMEK_SPLASH, scaledMonitorSize.width, scaledMonitorSize.height);
-        logoImage = getImage(FILENAME_LOGO, scaledMonitorSize.width, scaledMonitorSize.height);
-        medalImage = getImage(FILENAME_MEDAL, scaledMonitorSize.width, scaledMonitorSize.height);
+        logoImage = ImageUtil.convertToVolatileImage(getImage(FILENAME_LOGO, scaledMonitorSize.width, scaledMonitorSize.height), Transparency.TRANSLUCENT);
+        medalImage = ImageUtil.convertToVolatileImage(getImage(FILENAME_MEDAL, scaledMonitorSize.width, scaledMonitorSize.height), Transparency.TRANSLUCENT);
         Dimension splashPanelPreferredSize = calculateSplashPanelPreferredSize(scaledMonitorSize, splashImage);
         // This is an empty panel that will contain the splash image
-        splashPanel = new JPanel() {
+        splashPanel = new RawImagePanel(splashImage) {
             @Override
             public void paint(Graphics g) {
                 super.paint(g); // Draw background, border, and children first
@@ -366,10 +369,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     int panelHeight = this.getHeight();
                     int padding = 20;
                     int targetMedalWidth = 0;
-                    // Draw the main splash image, scaled to fill the panel
-                    if (splashImage != null) {
-                        g2d.drawImage(splashImage, 0, 0, panelWidth, panelHeight, null);
-                    }
 
                     // Draw Tip of the Day
                     if (tipOfTheDay != null) {

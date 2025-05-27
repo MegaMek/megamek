@@ -24,9 +24,8 @@
             padding-left: 10px;
         }
 
-        .quotation {
-            border-left: 4px solid rgba(0, 0, 0, 0.3);
-            padding-left: 10px;
+        img {
+            width: 100%;
         }
 
         .container {
@@ -39,10 +38,6 @@
             flex: 1;
             min-width: 300px;
             max-width: 500px;
-        }
-
-        .table-container {
-            overflow-x: auto;
         }
 
         table {
@@ -61,7 +56,7 @@
             background-color: rgba(0, 0, 0, 0.1);
         }
 
-        table.config-table, td.config-image, td.config-details {
+        td.config-image {
             border: 0;
             padding: 8px 12px;
             text-align: left;
@@ -72,13 +67,6 @@
             padding: 2px 4px;
             border-radius: 4px;
             font-family: 'Courier New', Courier, monospace;
-        }
-
-        .command {
-            background-color: rgba(0, 0, 0, 0.03);
-            padding: 10px;
-            border-left: 3px solid rgba(0, 0, 0, 0.2);
-            margin-bottom: 15px;
         }
 
         .command code {
@@ -176,7 +164,7 @@
 <h2 id="section4">Illustrated Example: Mines in the starting hex</h2>
 <div class="container">
     <div class="config-image">
-        <img src="01.png" alt="Image after selecting Jump" style="width: 100%;">
+        <img src="01.png" alt="Image after selecting Jump">
     </div>
     <div class="config-details">
         <p>After declaring jumping mode, the "Lay Mines" button will be enabled</p>
@@ -184,7 +172,7 @@
 </div>
 <div class="container">
     <div class="config-image">
-        <img src="02.png" alt="Select the trooper in the dialog" style="width: 100%;">
+        <img src="02.png" alt="Select the trooper in the dialog">
     </div>
     <div class="config-details">
         <p>Clicking on Lay Mines a dialog will show up asking which trooper you want to choose.</p>
@@ -192,7 +180,7 @@
 </div>
 <div class="container">
     <div class="config-image">
-        <img src="03.png" alt="Select target landing hex" style="width: 100%;">
+        <img src="03.png" alt="Select target landing hex">
     </div>
     <div class="config-details">
         <p>After confirming the dialog, you select the hex into which you want to land the jumping infantry.</p>
@@ -200,7 +188,7 @@
 </div>
 <div class="container">
     <div class="config-image">
-        <img src="04.png" alt="Minefield is left in the starting hex" style="width: 100%;">
+        <img src="04.png" alt="Minefield is left in the starting hex">
     </div>
     <div class="config-details">
         <p>The mines will show up in the hex from which the Fa Shih jumped from.</p>

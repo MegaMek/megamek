@@ -62,7 +62,6 @@ public class SBFReportEntry implements ReportEntry {
     public static void setupStylesheet(StyleSheet styleSheet) {
         GUIPreferences GUIP = GUIPreferences.getInstance();
         int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
-        // styleSheet.addRule("html { text-align: left; }");
         styleSheet.addRule("pre { font-family:Noto Sans; font-size:" + size + "pt; }");
         styleSheet.addRule("a { color: " + hexColor(GUIP.getReportLinkColor()) + " }");
         styleSheet.addRule("span.warning { color: " + hexColor(GUIP.getWarningColor()) + " }");

@@ -30,7 +30,8 @@ public class ButtonOrderPreferences extends PreferenceStoreProxy {
     }
 
     protected ButtonOrderPreferences() {
-        store = PreferenceManager.getInstance().getPreferenceStore(getClass().getName());
+        store = PreferenceManager.getInstance().getPreferenceStore("ButtonOrderPreferences",
+              getClass().getName(), "megamek.client.ui.swing.ButtonOrderPreferences");
 
         for (MoveCommand cmd : MoveCommand.values()) {
             store.setDefault(cmd.getCmd(), cmd.ordinal());

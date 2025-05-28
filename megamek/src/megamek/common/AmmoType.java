@@ -1106,7 +1106,6 @@ public class AmmoType extends EquipmentType {
                 .setTechRating(TechRating.F)
                 .setClanAdvancement(3070, 3073, 3145, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.CBS)
                 .setProductionFactions(Faction.CBS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),

@@ -2193,7 +2193,8 @@ public class Princess extends BotClient {
             return false;
         } else if (!entity.canFlee(entity.getPosition())) {
             return false;
-        } else if (0 < getPathRanker(entity).distanceToHomeEdge(entity.getPosition(), getHomeEdge(entity), getGame())) {
+        } else if (0 < getPathRanker(entity).distanceToHomeEdge(entity.getPosition(), entity.getBoardId(),
+              getHomeEdge(entity), getGame())) {
             return false;
         } else if (!getFleeBoard() && !(entity.isCrippled() && getForcedWithdrawal())) {
             return false;

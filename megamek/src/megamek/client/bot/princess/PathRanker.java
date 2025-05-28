@@ -438,19 +438,10 @@ public abstract class PathRanker implements IPathRanker {
         return SharedUtility.getPSRList(path);
     }
 
-    /**
-     * Returns distance to the unit's home edge.
-     * Gives the distance to the closest edge
-     *
-     * @param position Final coordinates of the proposed move.
-     * @param homeEdge Unit's home edge.
-     * @param game     The current {@link Game}
-     * @return The distance to the unit's home edge.
-     */
     @Override
-    public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, Game game) {
-        int width = game.getBoard().getWidth();
-        int height = game.getBoard().getHeight();
+    public int distanceToHomeEdge(Coords position, int boardId, CardinalEdge homeEdge, Game game) {
+        int width = game.getBoard(boardId).getWidth();
+        int height = game.getBoard(boardId).getHeight();
 
         int distance;
         switch (homeEdge) {
@@ -575,6 +566,11 @@ public abstract class PathRanker implements IPathRanker {
         int xTotal = 0;
         int yTotal = 0;
         int friendOnBoardCount = 0;
+        Entity me = game.getEntity(myId);
+        if (me == null) {
+            return null;
+        }
+        Board board = game.getBoard(me);
 
         for (Entity friend : friends) {
             if (friend.getId() == myId) {
@@ -582,11 +578,11 @@ public abstract class PathRanker implements IPathRanker {
             }
 
             // Skip any friends not on the board.
-            if (friend.isOffBoard()) {
+            if (friend.isOffBoard() || !game.onTheSameBoard(me, friend)) {
                 continue;
             }
             Coords friendPosition = friend.getPosition();
-            if ((friendPosition == null) || !game.getBoard().contains(friendPosition)) {
+            if ((friendPosition == null) || !board.contains(friendPosition)) {
                 continue;
             }
 
@@ -603,7 +599,7 @@ public abstract class PathRanker implements IPathRanker {
         int yCenter = Math.round((float) yTotal / friendOnBoardCount);
         Coords center = new Coords(xCenter, yCenter);
 
-        if (!game.getBoard().contains(center)) {
+        if (!board.contains(center)) {
             logger.error("Center of ally group " + center.toFriendlyString()
                     + " not within board boundaries.");
             return null;

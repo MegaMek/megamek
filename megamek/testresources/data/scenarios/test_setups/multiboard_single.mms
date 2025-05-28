@@ -17,7 +17,7 @@ options:
     - check_victory
 
 factions:
-- name: P1
+- name: Hooman
   deploy: S
 #  deploy:
 #    area:
@@ -36,24 +36,25 @@ factions:
 
   units:
     - fullname: Grasshopper GHR-5N
-      at: [ 13, 12 ]
+#      at: [ 13, 12 ]
       board: 3
       facing: 0
 
-    - fullname: Atlas AS7-D
-      at: [ 15, 13 ]
-      board: 3
-      facing: 0
+#    - fullname: Atlas AS7-D
+#      at: [ 15, 13 ]
+#      board: 3
+#      facing: 0
 
 
 - name: Princess
+  deploy: N
   units:
     - fullname: Grasshopper GHR-5N
-      at: [ 4, 4 ]
+#      at: [ 4, 4 ]
       board: 3
       facing: 3
 
-    - fullname: Atlas AS7-D
-      at: [ 7, 3 ]
-      board: 3
-      facing: 3
+#    - fullname: Atlas AS7-D
+#      at: [ 7, 3 ]
+#      board: 3
+#      facing: 3

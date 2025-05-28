@@ -729,10 +729,7 @@ public final class UIUtil {
      * @param parent        component
      *
      * @return a JLabel setup to the correct size to act as a splash screen
-     *
-     * @deprecated no indicated uses
      */
-    @Deprecated(since = "0.50.06", forRemoval = true)
     public static RawImagePanel createSplashComponent(String imgSplashFile, Component parent) {
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
@@ -747,6 +744,7 @@ public final class UIUtil {
             tracker.waitForID(0);
         } catch (InterruptedException ignored) {
             // really should never come here
+            logger.warn("Splash image loading interrupted", ignored);
         }
 
         return createSplashComponent(imgSplash, parent, scaledMonitorSize);

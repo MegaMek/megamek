@@ -41,12 +41,13 @@ import java.util.stream.Collectors;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
+import megamek.common.util.YamlSerializerEquipmentType;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.logging.MMLogger;
-import megamek.common.YamlEncDec;
+import megamek.common.TechAdvancement.AdvancementPhase;
 
 /**
  * Represents any type of equipment mounted on a 'Mek, excluding systems and actuators.
@@ -1143,65 +1144,10 @@ public class EquipmentType implements ITechnology {
     /**
      * Constructs a map containing the YAML-serializable data for this equipment type.
      * 
-     * <p>The returned map contains the following keys:
-     * <ul>
-     *   <li><b>"id"</b>: The internal name of the equipment (String).</li>
-     *   <li><b>"name"</b>: The display name of the equipment (String).</li>
-     *   <li><b>"shortName"</b>: The short name of the equipment, if available (String).</li>
-     *   <li><b>"aliases"</b>: A list of alias names for the equipment, excluding duplicates (List&lt;String&gt;).</li>
-     *   <li><b>"sortingName"</b>: The sorting name of the equipment, if available (String).</li>
-     *   <li><b>"tonnage"</b>: The tonnage of the equipment, or a variable indicator (Object).</li>
-     *   <li><b>"criticals"</b>: The number of critical slots required, or a variable indicator (Object).</li>
-     *   <li><b>"cost"</b>: The cost of the equipment, or a variable indicator (Object).</li>
-     *   <li><b>"bv"</b>: The battle value of the equipment, or a variable indicator (Object).</li>
-     *   <li><b>"rulesRefs"</b>: References to the rules governing this equipment, if available (String).</li>
-     * </ul>
-     * 
-     * <p>Variable indicators are represented by {@code YamlEncDec.VARIABLE}.
-     * 
      * @return A map containing the YAML-serializable data for this equipment type.
      */
-    protected Map<String, Object> getYamlData() {
-        Map<String, Object> data = new LinkedHashMap<>();
-        data.put("id", this.internalName);
-        data.put("name", this.name);
-        YamlEncDec.addPropIfNotEmpty(data, "shortName", shortName);
-        if (this.namesVector != null && !this.namesVector.isEmpty()) {
-            List<String> aliases = new ArrayList<>();
-            for (String aliasName : this.namesVector) {
-                if (aliasName == null) continue;
-                if (aliasName.equals(this.internalName)) continue;
-                if (aliasName.equals(this.name)) continue;
-                if (aliasName.equals(this.shortName)) continue;
-                aliases.add(aliasName);
-            }
-            if (!aliases.isEmpty()) {
-                data.put("aliases", aliases);
-            }
-        }
-        YamlEncDec.addPropIfNotEmpty(data, "sortingName", sortingName);
-        if (isVariableTonnage()) {
-            data.put("tonnage", YamlEncDec.VARIABLE);
-        } else {
-            data.put("tonnage", tonnage);
-        }
-        if (isVariableCriticals()) {
-            data.put("criticals", YamlEncDec.VARIABLE);
-        } else {
-            data.put("criticals", criticals);
-        }
-        if (isVariableCost()) {
-            data.put("cost", YamlEncDec.VARIABLE);
-        } else {
-            data.put("cost", cost);
-        }
-        if (isVariableBV()) {
-            data.put("bv", YamlEncDec.VARIABLE);
-        } else {
-            data.put("bv", bv);
-        }
-        YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", rulesRefs);
-        return data;
+    public Map<String, Object> getYamlData() {
+        return YamlSerializerEquipmentType.serialize(this);
     }
 
     public static void writeEquipmentExtendedDatabase(File f) {

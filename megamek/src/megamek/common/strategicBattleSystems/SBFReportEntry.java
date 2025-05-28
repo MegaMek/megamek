@@ -53,13 +53,12 @@ public class SBFReportEntry implements ReportEntry {
     public static void setupStylesheet(JTextPane pane) {
         pane.setContentType("text/html");
         StyleSheet styleSheet = ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet();
-        setupStylesheet(styleSheet);
+        Report.setupStylesheet(styleSheet);
     }
 
     public static void setupStylesheet(StyleSheet styleSheet) {
         GUIPreferences GUIP = GUIPreferences.getInstance();
         int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
-
         styleSheet.addRule("pre { font-family:Noto Sans; font-size:" + size + "pt; }");
         styleSheet.addRule("a { color: " + hexColor(GUIP.getReportLinkColor()) + " }");
         styleSheet.addRule("span.warning { color: " + hexColor(GUIP.getWarningColor()) + " }");

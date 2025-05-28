@@ -30,7 +30,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.common;
+package megamek.common.util;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -42,6 +42,10 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
+import megamek.common.AmmoType;
+import megamek.common.EquipmentType;
+import megamek.common.MiscType;
+import megamek.common.WeaponType;
 import megamek.logging.MMLogger;
 
 public class YamlEncDec {
@@ -70,6 +74,44 @@ public class YamlEncDec {
         }
     }
     
+    public static void addPropIfNotDefault(Map<String, Object> data, String key, Object value, Object defaultValue) {
+        if (data == null || key == null || key.trim().isEmpty()) {
+            return;
+        }
+        
+        // Handle null cases
+        if (value == null && defaultValue == null) {
+            return; // Both null, don't add
+        }
+        
+        if (value == null || defaultValue == null) {
+            data.put(key, value); // One is null, add the value
+            return;
+        }
+        
+        // For numeric types, handle floating point precision
+        if (value instanceof Number && defaultValue instanceof Number) {
+            if (isFloatingPoint(value) || isFloatingPoint(defaultValue)) {
+                double diff = Math.abs(((Number) value).doubleValue() - ((Number) defaultValue).doubleValue());
+                if (diff > 1e-9) {
+                    data.put(key, value);
+                }
+            } else if (!value.equals(defaultValue)) {
+                data.put(key, value);
+            }
+            return;
+        }
+        
+        // Default comparison using equals()
+        if (!value.equals(defaultValue)) {
+            data.put(key, value);
+        }
+    }
+
+    private static boolean isFloatingPoint(Object value) {
+        return value instanceof Double || value instanceof Float;
+    }
+    
     public static void writeEquipmentDatabase(String targetFolder) {
         try {
             logger.info("Exporting YAML files to " + targetFolder);
@@ -82,7 +124,7 @@ public class YamlEncDec {
             for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes.hasMoreElements(); ) {
                 EquipmentType equipmentType = equipmentTypes.nextElement();
                 if (equipmentType instanceof AmmoType ammo) {
-                    if (ammo.base != null) {
+                    if (ammo.getBaseAmmo() != null) {
                         continue;
                     }
                 }
@@ -92,7 +134,7 @@ public class YamlEncDec {
             for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes.hasMoreElements(); ) {
                 EquipmentType equipmentType = equipmentTypes.nextElement();
                 if (equipmentType instanceof AmmoType ammo) {
-                    if (ammo.base == null) {
+                    if (ammo.getBaseAmmo() == null) {
                         continue;
                     }
                 } else {
@@ -102,6 +144,7 @@ public class YamlEncDec {
             }
         } catch (Exception e) {
             System.out.println("Error writing YAML database: " + e.getMessage());
+            e.printStackTrace();
             logger.error("", e);
         }
     }
@@ -131,8 +174,8 @@ public class YamlEncDec {
         boolean appendMode = false;
         System.out.println("- "+equipmentType.getName());
         if (equipmentType instanceof AmmoType ammo) {
-            if (ammo.base != null) {
-                fileName = ammo.base.getShortName();
+            if (ammo.getBaseAmmo() != null) {
+                fileName = ammo.getBaseAmmo().getShortName();
             } else {
                 fileName = ammo.getShortName();
             }
@@ -156,7 +199,7 @@ public class YamlEncDec {
         }
         seenKey = typeFolder+"_"+fileName;
         if (equipmentType instanceof AmmoType ammo) {
-            if (ammo.base != null) {
+            if (ammo.getBaseAmmo() != null) {
                 if (!seen.containsKey(seenKey)) {
                     throw new Exception("Not found seen key "+seenKey+ " for ammo mutation "+ammo.getName());
                 };

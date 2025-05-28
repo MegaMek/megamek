@@ -395,8 +395,8 @@ public class TipOfTheDay {
             float labelWidth = (float) labelLayout.getBounds().getWidth();
             String actualTipContentToRender = mapVariables(currentTipOfTheDay);
             // We unwrap and wrap the tip content with HTML to ensure it is displayed correctly
-            actualTipContentToRender = wrapTextWithHtml(unwrapHtml(actualTipContentToRender));
-            JTextPane htmlPane = createHtmlPane(actualTipContentToRender, tipFont, currentAvailableTextWidth, position);
+            actualTipContentToRender = wrapTextWithHtml(unwrapHtml(actualTipContentToRender), tipFont, currentAvailableTextWidth, position);
+            JTextPane htmlPane = createHtmlPane(actualTipContentToRender, tipFont, currentAvailableTextWidth);
             float totalTipHeight = htmlPane.getPreferredSize().height;
 
             // Positioning
@@ -601,40 +601,34 @@ public class TipOfTheDay {
         return bodyContent;
     }
 
-    private String wrapTextWithHtml(String bodyContent) {
+    private String wrapTextWithHtml(String bodyContent, Font font, int width, Position position) {
         if (bodyContent == null) {
             bodyContent = "";
         }
-        return "<html>" + bodyContent + "</html>";
-    }
-
-    /**
-     * Creates a JTextPane configured for HTML rendering
-     */
-    private JTextPane createHtmlPane(String htmlText, Font font, int width, Position position) {
-        JTextPane textPane = new JTextPane();
-        textPane.setContentType("text/html");
-        textPane.setFont(font);
-        HTMLEditorKit kit = new HTMLEditorKit();
-        StyleSheet styleSheet = new StyleSheet();
         String fontWeight = font.isBold() ? "bold" : "normal";
         String textAlign = switch (position) {
             case BOTTOM_LEFT_CORNER -> "left";
             case BOTTOM_RIGHT_CORNER -> "right";
             default -> "center"; // BOTTOM_BORDER
         };
-        styleSheet.addRule("html { " +
-            "font-family: '" + font.getFamily() + "'; " +
+        final String style = "font-family: '" + font.getFamily() + "'; " +
             "font-size: " + Math.ceil(font.getSize()*0.75) + "pt; " +
             "font-weight: " + fontWeight + "; " +
             "margin: 0; " +
             "padding: 0; " +
             "width: " + width + "px; " +
             "max-width: " + width + "px; " +
-            "text-align: " + textAlign + "; " +
-            "}");
-        kit.setStyleSheet(styleSheet);
-        textPane.setEditorKit(kit);
+            "text-align: " + textAlign + "; ";
+        return "<html style=\""+style+"\">" + bodyContent + "</html>";
+    }
+
+    /**
+     * Creates a JTextPane configured for HTML rendering
+     */
+    private JTextPane createHtmlPane(String htmlText, Font font, int width) {
+        JTextPane textPane = new JTextPane();
+        textPane.setContentType("text/html");
+        textPane.setFont(font);
         textPane.setMargin(new Insets(0, 0, 0, 0));
         textPane.setBorder(null);
         textPane.setText(htmlText);

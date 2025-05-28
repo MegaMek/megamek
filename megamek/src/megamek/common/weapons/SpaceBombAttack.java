@@ -50,6 +50,7 @@ public class SpaceBombAttack extends Weapon {
         flags = flags.or(F_SPACE_BOMB).or(F_SOLO_ATTACK);
         hittable = false;
         capital = true;
+        techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
     }
 
     /*

@@ -23,6 +23,7 @@ import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.awt.image.Kernel;
+import java.awt.image.VolatileImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;

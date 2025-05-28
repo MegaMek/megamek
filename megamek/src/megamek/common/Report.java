@@ -736,6 +736,7 @@ public class Report implements ReportEntry {
         Font font = new Font(GUIP.getReportFontType(), Font.PLAIN, UIUtil.FONT_SCALE1);
         int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
 
+        // styleSheet.addRule("html { text-align: left; }");
         styleSheet
                 .addRule("pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
         styleSheet.addRule("a { color: " + hexColor(GUIP.getReportLinkColor()) + " }");

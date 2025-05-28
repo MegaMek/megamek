@@ -10813,7 +10813,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Get the entity's current hex.
         Coords coords = entity.getPosition();
-        Hex curHex = game.getBoard().getHex(coords);
+        Hex curHex = game.getHexOf(entity);
 
         Report r;
 
@@ -11388,7 +11388,7 @@ TargetRoll nTargetRoll,
                                          ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        Building bldg = game.getBoard(target).getBuildingAt(target.getPosition());
 
         if (lastEntityId != paa.getEntityId()) {
             // report who is making the attacks

@@ -7,6 +7,15 @@ map:
     name: Grassland
     id: 3
 
+  - type: sky
+    width: 35
+    height: 20
+    name: Sky
+    embed:
+      - at: [ 31, 11 ]
+        id: 3
+    id: 5
+
 #  - file: unofficial/Cakefish/General/50x50 Grass QRF Airbase.board
 #    name: Airport
 #    id: 5
@@ -18,21 +27,13 @@ options:
 
 factions:
 - name: Hooman
-  deploy: S
-#  deploy:
-#    area:
-#      terrain:
-#        type: woods
-#        maxdistance: 1
-#        boards: 1
-#  deploy:
-#    area:
-#      border:
-#        edges: [ east, north ]
-#        # optional: the minimum distance from the edge; 0 means start at the edge hexes
-#        mindistance: 2
-#        # optional: the maximum distance from the edge
-#        maxdistance: 3
+
+  deploy:
+    area:
+      terrain:
+        type: woods
+        maxdistance: 1
+        boards: 3
 
   units:
     - fullname: Grasshopper GHR-5N
@@ -45,16 +46,18 @@ factions:
 #      board: 3
 #      facing: 0
 
+    - fullname: Sai S-4
+      at: [ 5, 5 ]
+      board: 5
+      facing: 2
+      altitude: 4
+
 
 - name: Princess
   deploy: N
   units:
     - fullname: Grasshopper GHR-5N
-#      at: [ 4, 4 ]
       board: 3
-#      facing: 3
 
-#    - fullname: Atlas AS7-D
-#      at: [ 7, 3 ]
-#      board: 3
-#      facing: 3
+    - fullname: Grasshopper GHR-5N
+      board: 3

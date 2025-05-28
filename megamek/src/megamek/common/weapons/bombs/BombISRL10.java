@@ -51,7 +51,7 @@ public class BombISRL10 extends MissileWeapon {
         this.toHitModifier = 1;
         this.ammoType = AmmoType.T_RL_BOMB;
         rulesRefs = "229, TM";
-        new TechAdvancement(TechBase.IS)
+        this.techAdvancement.setTechBase(TechBase.IS)
             .setIntroLevel(false)
             .setUnofficial(false)
             .setTechRating(TechRating.B)

@@ -1104,9 +1104,9 @@ public class AmmoType extends EquipmentType {
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
                 .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(3070, 3073, 3145, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.CBS)
                 .setProductionFactions(Faction.CBS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
@@ -1965,6 +1965,13 @@ public class AmmoType extends EquipmentType {
         explosive = true;
         instantModeSwitch = false;
         ammoRatio = 0;
+    }
+
+    /**
+     * Returns the base ammo type, if any.
+     */
+    public AmmoType getBaseAmmo() {
+        return base;
     }
 
     /**
@@ -16001,7 +16008,7 @@ public class AmmoType extends EquipmentType {
     }
 
     @Override
-    protected Map<String, Object> getYamlData() {
+    public Map<String, Object> getYamlData() {
         Map<String, Object> data = super.getYamlData();
         data.put("type", "ammo");
         if (kgPerShot > 0) {

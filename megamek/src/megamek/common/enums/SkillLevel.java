@@ -126,6 +126,14 @@ public enum SkillLevel {
     public boolean isHeroicOrGreater() {
         return isHeroic() || isLegendary();
     }
+    
+    public boolean isGreaterThan(SkillLevel skillLevel) {
+        return (!this.equals(skillLevel) && this.experienceLevel > skillLevel.experienceLevel);
+    }
+    
+    public boolean equalsOrGreaterThan(SkillLevel skillLevel) {
+        return (this.equals(skillLevel) || (this.isGreaterThan(skillLevel)));
+    }
     // endregion Boolean Comparisons
 
     /**

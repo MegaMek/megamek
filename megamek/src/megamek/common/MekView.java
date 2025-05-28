@@ -39,6 +39,8 @@ import megamek.common.eras.Eras;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DiscordFormat;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -277,33 +279,24 @@ public class MekView {
 
         TableElement tpTable = new TableElement(3);
         String tableSpacer = "     ";
-        tpTable.setColNames(Messages.getString("MekView.Level"), tableSpacer,
+        tpTable.setColNames(Messages.getString("MekView.Availability"), tableSpacer,
                 Messages.getString("MekView.Era"));
         tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
 
-        String eraText = entity.getExperimentalRange()
-                + eraText(entity.getPrototypeDate(), entity.getProductionDate());
-        tpTable.addRow(TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_EXPERIMENTAL),
-                tableSpacer, eraText);
-
-        eraText = entity.getAdvancedRange()
-                + eraText(entity.getProductionDate(), entity.getCommonDate());
-        tpTable.addRow(TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_ADVANCED),
-                tableSpacer, eraText);
-
-        eraText = entity.getStandardRange()
-                + eraText(entity.getCommonDate(), ITechnology.DATE_NONE);
-        tpTable.addRow(TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_STANDARD),
-                tableSpacer, eraText);
+        tpTable.addRow(Messages.getString("MekView.Prototype"), tableSpacer, entity.getPrototypeRangeDate());
+        tpTable.addRow(Messages.getString("MekView.Production"), tableSpacer, entity.getProductionDateRange());
+        tpTable.addRow(Messages.getString("MekView.Common"), tableSpacer, entity.getCommonDateRange());
 
         String extinctRange = entity.getExtinctionRange();
         if (extinctRange.length() > 1) {
             tpTable.addRow(Messages.getString("MekView.Extinct"), tableSpacer, extinctRange);
         }
+
         sHead.add(tpTable);
 
         sHead.add(new LabeledElement(Messages.getString("MekView.TechRating"), entity.getFullRatingName()));
         sHead.add(new SingleLine());
+        sHead.add(new LabeledElement(Messages.getString("MekView.EarliestTechDate"), entity.getEarliestTechDateAndEra()));
 
         if (!isInf) {
             sHead.add(new LabeledElement(Messages.getString("MekView.Weight"),
@@ -606,22 +599,6 @@ public class MekView {
     /** @return True when the unit requires an ammo block. */
     private boolean showAmmoBlock(boolean showDetail) {
         return (!entity.usesWeaponBays() || !showDetail) && !entity.getAmmo().stream().allMatch(this::hideAmmo);
-    }
-
-    private String eraText(int startYear, int endYear) {
-        String eraText = "";
-        if (startYear != ITechnology.DATE_NONE) {
-            Era startEra = Eras.getEra(startYear);
-            Era endEra = Eras.getEra(endYear - 1);
-            eraText = " (" + startEra.name();
-            if (endYear == ITechnology.DATE_NONE) {
-                eraText += " -";
-            } else if (!endEra.equals(startEra)) {
-                eraText += " to " + endEra.name();
-            }
-            eraText += ")";
-        }
-        return eraText;
     }
 
     /**

@@ -9,6 +9,9 @@
  */
 package megamek.common;
 
+import megamek.common.eras.Era;
+import megamek.common.eras.Eras;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -46,6 +49,10 @@ public class CompositeTechLevel implements ITechnology, Serializable {
      * @param clan      - whether the equipment tech base is Clan
      * @param mixed     - whether the equipment contains a mix of Clan and IS equipment
      * @param introYear - the year the composite equipment is first available
+     * - Prototype production common extinction reintroduction
+     *                  They want to use eras - this unit is prototype
+     *                  - new availability type - TN to find a prototype table
+     *                  -
      */
     public CompositeTechLevel(TechAdvancement initialTA, boolean clan, boolean mixed, int introYear, Faction techFaction) {
         this.techFaction = techFaction;
@@ -195,11 +202,13 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             if (experimental == null) {
                 if (advanced != null && prodDate > advanced) {
                     experimental = advanced;
+                } else if (advanced != null && prodDate < advanced) {
+                    experimental = protoDate;
                 } else if (standard != null) {
                     advanced = null;
                     if (prodDate > standard) {
                         experimental = standard;
-                    } else if (protoDate <= standard) {
+                    } else {
                         // Tech never went into production, experimental straight to common
                         experimental = protoDate;
                     }
@@ -229,6 +238,27 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             standard = Math.max(standard, commonDate);
         }
 
+        // Sanity check
+        if (experimental != null) {
+            if (experimental != introYear) {
+                experimental = introYear;
+            }
+        } else if (advanced != null) {
+            if (advanced > introYear) {
+                advanced = introYear;
+            }
+        } else if (standard != null) {
+            if (standard > introYear) {
+                standard = introYear;
+            }
+        }
+
+        if (experimental != null) {
+            if (experimental.equals(advanced) || experimental.equals(standard)) {
+                experimental = null;
+            }
+        }
+
         addExtinctionRange(mixed ? tech.getExtinctionDate() : tech.getExtinctionDate(clan, techFaction),
               mixed ? tech.getReintroductionDate() : tech.getReintroductionDate(clan, techFaction));
 
@@ -237,9 +267,9 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         for (Era era : Era.values()) {
             AvailabilityValue av = tech.getBaseAvailability(era);
             // Clan mixed tech units cannot use IS tech introduced during SW until 3050.
-            if (clan &&  era == Era.SW && !tech.isClan() 
+            if (clan &&  era == Era.SW && !tech.isClan()
                 && !techFaction.getAffiliation().equals(FactionAffiliation.CLAN)
-                && (techFaction != Faction.CS) 
+                && (techFaction != Faction.CS)
                 && ITechnology.getTechEra(tech.getIntroductionDate()).equals(Era.SW)) {
                 av = AvailabilityValue.X;
             }
@@ -356,7 +386,6 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             }
             StringBuilder sb = new StringBuilder();
             sb.append(formatYear(start, startApproximate));
-
             if (end == null) {
                 sb.append("+");
             } else {
@@ -395,6 +424,141 @@ public class CompositeTechLevel implements ITechnology, Serializable {
 
     public int getEarliestTechDate() {
         return earliest;
+    }
+
+    /**
+     * Returns the prototype/experimental date ranges, accounting for extinction periods
+     * @return List of DateRange objects representing when the unit is in prototype phase
+     */
+    public String getPrototypeDateRange() {
+        if (experimental == null) {
+            return formatDateRanges(new ArrayList<>());
+        }
+
+        int endDate = DATE_NONE;
+        if (advanced != null) {
+            endDate = advanced - 1;
+        } else if (standard != null) {
+            endDate = standard - 1;
+        }
+
+        return formatDateRanges(splitRangeByExtinctions(experimental, endDate));
+    }
+
+    /**
+     * Returns the production/advanced date ranges, accounting for extinction periods
+     * @return List of DateRange objects representing when the unit is in production phase
+     */
+    public String getProductionDateRange() {
+        if (advanced == null) {
+            return formatDateRanges(new ArrayList<>());
+        }
+
+        int endDate = DATE_NONE;
+        if (standard != null) {
+            endDate = standard - 1;
+        }
+
+        return formatDateRanges(splitRangeByExtinctions(advanced, endDate));
+    }
+
+    /**
+     * Returns the common/standard date ranges, accounting for extinction periods
+     * @return List of DateRange objects representing when the unit is in common phase
+     */
+    public String getCommonDateRange() {
+        if (standard == null) {
+            return formatDateRanges(new ArrayList<>());
+        }
+
+        return formatDateRanges(splitRangeByExtinctions(standard, DATE_NONE));
+    }
+
+    /**
+     * Helper method to split a date range by extinction periods
+     * @param startDate The start date of the range
+     * @param endDate The end date of the range (DATE_NONE for open-ended)
+     * @return List of DateRange objects with extinction periods removed
+     */
+    private List<DateRange> splitRangeByExtinctions(int startDate, int endDate) {
+        List<DateRange> result = new ArrayList<>();
+
+        if (extinct.isEmpty()) {
+            // No extinctions, return single range
+            result.add(new DateRange(startDate, endDate));
+            return result;
+        }
+
+        int currentStart = startDate;
+
+        for (DateRange extinctionRange : extinct) {
+            int extinctStart = extinctionRange.start;
+            Integer extinctEnd = extinctionRange.end;
+
+            // If extinction starts after our range ends, we're done
+            if (endDate != DATE_NONE && extinctStart > endDate) {
+                break;
+            }
+
+            // If extinction ends before our range starts, skip it
+            if (extinctEnd != null && extinctEnd < currentStart) {
+                continue;
+            }
+
+            // If there's a gap before the extinction, add it
+            if (currentStart < extinctStart) {
+                int gapEnd = Math.min(extinctStart - 1, endDate == DATE_NONE ? extinctStart - 1 : endDate);
+                result.add(new DateRange(currentStart, gapEnd));
+            }
+
+            // Move past the extinction period
+            if (extinctEnd != null) {
+                currentStart = Math.max(currentStart, extinctEnd + 1);
+            } else {
+                // Extinction goes to the end of time, nothing more to add
+                return result;
+            }
+
+            // If we've moved past our end date, we're done
+            if (endDate != DATE_NONE && currentStart > endDate) {
+                return result;
+            }
+        }
+
+        // Add any remaining range after all extinctions
+        if (endDate == DATE_NONE || currentStart <= endDate) {
+            result.add(new DateRange(currentStart, endDate));
+        }
+
+        return result;
+    }
+
+    /**
+     * Formats a list of DateRange objects as a string for display, including era information
+     * @param ranges List of DateRange objects
+     * @return Formatted string representation with era metadata
+     */
+    public String formatDateRanges(List<DateRange> ranges) {
+        if (ranges.isEmpty()) {
+            return "-";
+        }
+
+        return ranges.stream()
+              .map(this::formatDateRangeWithEra)
+              .collect(Collectors.joining(", "));
+    }
+
+    /**
+     * Formats a single DateRange with era information
+     * @param range The DateRange to format
+     * @return Formatted string with era metadata
+     */
+    private String formatDateRangeWithEra(DateRange range) {
+        StringBuilder result = new StringBuilder();
+        String eraText = Eras.getEraText(range.start, range.end);
+        return result.append(range)
+              .append(eraText)
+              .toString();
     }
 
     @Override

@@ -105,12 +105,14 @@ public class ManagedVolatileImage {
      * Gets the VolatileImage, ensuring it's valid.
      */
     public VolatileImage getImage() {
-        int validation = volatileImage.validate(gc);
-        if (validation == VolatileImage.IMAGE_INCOMPATIBLE) {
-            createVolatileImage();
-        } else if (validation == VolatileImage.IMAGE_RESTORED) {
-            renderToVolatileImage();
-        }
+        do {
+            int validation = volatileImage.validate(gc);
+            if (validation == VolatileImage.IMAGE_INCOMPATIBLE) {
+                createVolatileImage();
+            } else if (validation == VolatileImage.IMAGE_RESTORED || volatileImage.contentsLost()) {
+                renderToVolatileImage();
+            }
+        } while (volatileImage.contentsLost());
         return volatileImage;
     }
     

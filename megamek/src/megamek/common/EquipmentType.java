@@ -46,7 +46,7 @@ import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.logging.MMLogger;
-import megamek.common.YamlEncDec;
+import megamek.common.TechAdvancement.AdvancementPhase;
 
 /**
  * Represents any type of equipment mounted on a 'Mek, excluding systems and actuators.
@@ -1162,6 +1162,16 @@ public class EquipmentType implements ITechnology {
      * @return A map containing the YAML-serializable data for this equipment type.
      */
     protected Map<String, Object> getYamlData() {
+        EquipmentType defaultEquipment;
+        if (this instanceof WeaponType) {
+            defaultEquipment = new WeaponType();
+        } else if (this instanceof AmmoType) {
+            defaultEquipment = new AmmoType();
+        } else if (this instanceof MiscType) {
+            defaultEquipment = new MiscType();
+        } else {
+            throw new IllegalStateException("getYamlData() called on an unsupported EquipmentType: " + this.getClass().getName());
+        }
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("id", this.internalName);
         data.put("name", this.name);
@@ -1180,27 +1190,137 @@ public class EquipmentType implements ITechnology {
             }
         }
         YamlEncDec.addPropIfNotEmpty(data, "sortingName", sortingName);
+        YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", rulesRefs);
+        Map<String, Object> stats = new LinkedHashMap<>();
         if (isVariableTonnage()) {
-            data.put("tonnage", YamlEncDec.VARIABLE);
+            stats.put("tonnage", YamlEncDec.VARIABLE);
         } else {
-            data.put("tonnage", tonnage);
-        }
-        if (isVariableCriticals()) {
-            data.put("criticals", YamlEncDec.VARIABLE);
-        } else {
-            data.put("criticals", criticals);
+            stats.put("tonnage", tonnage);
         }
         if (isVariableCost()) {
-            data.put("cost", YamlEncDec.VARIABLE);
+            stats.put("cost", YamlEncDec.VARIABLE);
         } else {
-            data.put("cost", cost);
+            stats.put("cost", cost);
         }
         if (isVariableBV()) {
-            data.put("bv", YamlEncDec.VARIABLE);
+            stats.put("bv", YamlEncDec.VARIABLE);
         } else {
-            data.put("bv", bv);
+            stats.put("bv", bv);
         }
-        YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", rulesRefs);
+        if (isVariableCriticals()) {
+            stats.put("criticals", YamlEncDec.VARIABLE);
+        } else {
+            stats.put("criticals", criticals);
+        }
+        YamlEncDec.addPropIfNotDefault(stats, "hittable", hittable, defaultEquipment.hittable);
+        YamlEncDec.addPropIfNotDefault(stats, "spreadable", spreadable, defaultEquipment.spreadable);
+        YamlEncDec.addPropIfNotDefault(stats, "explosive", explosive, defaultEquipment.explosive);
+        YamlEncDec.addPropIfNotDefault(stats, "toHitModifier", toHitModifier, defaultEquipment.toHitModifier);
+        YamlEncDec.addPropIfNotDefault(stats, "tankslots", tankslots, defaultEquipment.tankslots);
+        YamlEncDec.addPropIfNotDefault(stats, "svslots", svslots, defaultEquipment.svslots);
+        YamlEncDec.addPropIfNotDefault(stats, "omniFixedOnly", omniFixedOnly, defaultEquipment.omniFixedOnly);
+        YamlEncDec.addPropIfNotDefault(stats, "instantModeSwitch", instantModeSwitch, defaultEquipment.instantModeSwitch);
+        data.put("stats", stats);
+        if (this.modes != null && !this.modes.isEmpty()) {
+            List<String> modes = new ArrayList<>();
+            for (EquipmentMode mode : this.modes) {
+                if (mode == null) continue;
+                modes.add(mode.name);
+            }
+            if (!modes.isEmpty()) {
+                data.put("modes", modes);
+            }
+        }
+        if (this.techAdvancement != null) {
+            final TechAdvancement tech = this.techAdvancement;
+            final TechAdvancement defaultTech = defaultEquipment.techAdvancement;
+            Map<String, Object> techData = new LinkedHashMap<>();
+            techData.put("base", tech.getTechBase().name().toLowerCase());
+            techData.put("rating", tech.getTechRating().getName());
+            techData.put("level", tech.getStaticTechLevel().toString());
+            // Availability
+            Map<String, Object> availability = new LinkedHashMap<>();
+            for (Era era : Era.values()) {
+                AvailabilityValue availabilityValue = tech.getBaseAvailability(era);
+                availability.put(era.name().toLowerCase(), availabilityValue.getName());
+            }
+            techData.put("availability", availability);
+            // Advancement
+            Map<String, Object> advancementIS = new LinkedHashMap<>();
+            for (AdvancementPhase phase : AdvancementPhase.values()) {
+                if (tech.getISAdvancement(phase) == null) {
+                    continue;
+                }
+                String advancement = (tech.getISApproximate(phase) ? "~" : "") + tech.getISAdvancement(phase);
+                String defaultAdvancement;
+                if (defaultTech.getISAdvancement(phase) == null) {
+                    defaultAdvancement = null;
+                } else {
+                    defaultAdvancement = (defaultTech.getISApproximate(phase) ? "~" : "") + defaultTech.getISAdvancement(phase);
+                }
+                YamlEncDec.addPropIfNotDefault(advancementIS, phase.name().toLowerCase(),
+                      advancement, defaultAdvancement);
+            }
+            Map<String, Object> advancementClan = new LinkedHashMap<>();
+            for (AdvancementPhase phase : AdvancementPhase.values()) {
+                if (tech.getClanAdvancement(phase) == null) {
+                    continue;
+                }
+                String advancement = (tech.getClanApproximate(phase) ? "~" : "") + tech.getClanAdvancement(phase);
+                String defaultAdvancement;
+                if (defaultTech.getClanAdvancement(phase) == null) {
+                    defaultAdvancement = null;
+                } else {
+                    defaultAdvancement = (defaultTech.getClanApproximate(phase) ? "~" : "") + defaultTech.getClanAdvancement(phase);
+                }
+                YamlEncDec.addPropIfNotDefault(advancementClan, phase.name().toLowerCase(),
+                      advancement, defaultAdvancement);
+            }
+            Map<String, Object> advancement = new LinkedHashMap<>();
+            if (!advancementIS.isEmpty()) {
+                advancement.put("is", advancementIS);
+            }
+            if (!advancementClan.isEmpty()) {
+                advancement.put("clan", advancementClan);
+            }
+            if (!advancement.isEmpty()) {
+                techData.put("advancement", advancement);
+            }
+            // Factions
+            Map<String, Object> factions = new LinkedHashMap<>();
+            if (tech.getPrototypeFactions().size() > 0) {
+                List<String> factionsList = new ArrayList<>();
+                for (Faction faction : tech.getPrototypeFactions()) {
+                    factionsList.add(faction.getCodeMM());
+                }
+                factions.put("prototype", factionsList);
+            }
+            if (tech.getProductionFactions().size() > 0) {
+                List<String> factionsList = new ArrayList<>();
+                for (Faction faction : tech.getProductionFactions()) {
+                    factionsList.add(faction.getCodeMM());
+                }
+                factions.put("production", factionsList);
+            }
+            if (tech.getExtinctionFactions().size() > 0) {
+                List<String> factionsList = new ArrayList<>();
+                for (Faction faction : tech.getExtinctionFactions()) {
+                    factionsList.add(faction.getCodeMM());
+                }
+                factions.put("extinction", factionsList);
+            }
+            if (tech.getReintroductionFactions().size() > 0) {
+                List<String> factionsList = new ArrayList<>();
+                for (Faction faction : tech.getReintroductionFactions()) {
+                    factionsList.add(faction.getCodeMM());
+                }
+                factions.put("reintroduction", factionsList);
+            }
+            if (!factions.isEmpty()) {
+                techData.put("factions", factions);
+            }
+            data.put("tech", techData);
+        }
         return data;
     }
 

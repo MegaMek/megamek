@@ -70,6 +70,44 @@ public class YamlEncDec {
         }
     }
     
+    public static void addPropIfNotDefault(Map<String, Object> data, String key, Object value, Object defaultValue) {
+        if (data == null || key == null || key.trim().isEmpty()) {
+            return;
+        }
+        
+        // Handle null cases
+        if (value == null && defaultValue == null) {
+            return; // Both null, don't add
+        }
+        
+        if (value == null || defaultValue == null) {
+            data.put(key, value); // One is null, add the value
+            return;
+        }
+        
+        // For numeric types, handle floating point precision
+        if (value instanceof Number && defaultValue instanceof Number) {
+            if (isFloatingPoint(value) || isFloatingPoint(defaultValue)) {
+                double diff = Math.abs(((Number) value).doubleValue() - ((Number) defaultValue).doubleValue());
+                if (diff > 1e-9) {
+                    data.put(key, value);
+                }
+            } else if (!value.equals(defaultValue)) {
+                data.put(key, value);
+            }
+            return;
+        }
+        
+        // Default comparison using equals()
+        if (!value.equals(defaultValue)) {
+            data.put(key, value);
+        }
+    }
+
+    private static boolean isFloatingPoint(Object value) {
+        return value instanceof Double || value instanceof Float;
+    }
+    
     public static void writeEquipmentDatabase(String targetFolder) {
         try {
             logger.info("Exporting YAML files to " + targetFolder);

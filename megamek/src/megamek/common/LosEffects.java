@@ -69,7 +69,7 @@ public class LosEffects {
         public Coords targetPos;
         // default to the standard single board unless specifically set; los tracing only works on a single board; if
         // attacker and target are on different boards, one must be placed on an assumed position on the other's board
-        public int boardId = 0;
+        public int boardId = IGame.DEFAULT_BOARD_ID;
 
         /**
          * The absolute elevation of the attacker, i.e. the number of levels attacker is placed above a level 0 hex.
@@ -483,6 +483,9 @@ public class LosEffects {
             int atmosphericBoardId = BoardHelper.enclosingBoardId(game, target.getBoardLocation());
             targetPositions.add(BoardHelper.positionOnEnclosingBoard(game, atmosphericBoardId));
             boardId = attacker.getBoardId();
+        } else if (Compute.isAirToGround(attacker, target)) {
+            attackerPositions.clear();
+            attackerPositions.add(target.getPosition());
         }
 
         LosEffects bestLOS = null;
@@ -513,7 +516,7 @@ public class LosEffects {
           final @Nullable Coords targetPosition,
           final boolean spotting) {
         // LEGACY - in time, replace with the correct boardId
-        return  calculateLOS(game, attacker, target, attackerPosition, targetPosition, 0, spotting);
+        return  calculateLOS(game, attacker, target, attackerPosition, targetPosition, IGame.DEFAULT_BOARD_ID, spotting);
     }
 
     /**

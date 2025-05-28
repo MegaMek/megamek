@@ -47,7 +47,7 @@ factions:
 #      facing: 0
 
     - fullname: Sai S-4
-      at: [ 5, 5 ]
+      at: [ 30, 10 ]
       board: 5
       facing: 2
       altitude: 4

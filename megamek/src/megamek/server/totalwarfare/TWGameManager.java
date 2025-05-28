@@ -661,7 +661,7 @@ public class TWGameManager extends AbstractGameManager {
             send(connId, createArtilleryPacket(player));
             send(connId, createFlarePacket());
             for (int boardId : game.getBoardIds()) {
-                send(createSpecialHexDisplayPacket(connId, boardId));
+                send(connId, createSpecialHexDisplayPacket(connId, boardId));
             }
             send(connId, new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings()));
             send(connId, new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));

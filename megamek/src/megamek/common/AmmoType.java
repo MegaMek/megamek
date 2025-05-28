@@ -1942,7 +1942,7 @@ public class AmmoType extends EquipmentType {
     private String subMunitionName = "";
 
     // Reference to the base ammo type, if any
-    protected AmmoType base = null;
+    public AmmoType base = null;
 
     // Collate artillery / artillery cannon types for flak check
     // Add ADA here when implemented
@@ -16001,7 +16001,7 @@ public class AmmoType extends EquipmentType {
     }
 
     @Override
-    protected Map<String, Object> getYamlData() {
+    public Map<String, Object> getYamlData() {
         Map<String, Object> data = super.getYamlData();
         data.put("type", "ammo");
         if (kgPerShot > 0) {

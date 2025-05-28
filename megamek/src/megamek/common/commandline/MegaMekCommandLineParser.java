@@ -200,7 +200,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
         if (getTokenType() == TOK_LITERAL) {
             targetFolder = getTokenValue();
             nextToken();
-            megamek.common.YamlEncDec.writeEquipmentDatabase(targetFolder);
+            megamek.common.util.YamlEncDec.writeEquipmentDatabase(targetFolder);
         } else {
             throw new ParseException("folder name expected");
         }

@@ -321,19 +321,19 @@ public class TechAdvancement implements ITechnology {
         return this;
     }
 
-    protected Integer getISAdvancement(AdvancementPhase phase) {
+    public Integer getISAdvancement(AdvancementPhase phase) {
         return isAdvancement.get(phase);
     }
 
-    protected Integer getClanAdvancement(AdvancementPhase phase) {
+    public Integer getClanAdvancement(AdvancementPhase phase) {
         return clanAdvancement.get(phase);
     }
 
-    protected boolean getISApproximate(AdvancementPhase phase) {
+    public boolean getISApproximate(AdvancementPhase phase) {
         return isApproximate.get(phase);
     }
 
-    protected boolean getClanApproximate(AdvancementPhase phase) {
+    public boolean getClanApproximate(AdvancementPhase phase) {
         return clanApproximate.get(phase);
     }
 

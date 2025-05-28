@@ -30,7 +30,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.common;
+package megamek.common.util;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -42,6 +42,10 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
+import megamek.common.AmmoType;
+import megamek.common.EquipmentType;
+import megamek.common.MiscType;
+import megamek.common.WeaponType;
 import megamek.logging.MMLogger;
 
 public class YamlEncDec {
@@ -140,6 +144,7 @@ public class YamlEncDec {
             }
         } catch (Exception e) {
             System.out.println("Error writing YAML database: " + e.getMessage());
+            e.printStackTrace();
             logger.error("", e);
         }
     }

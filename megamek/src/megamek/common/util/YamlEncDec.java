@@ -124,7 +124,7 @@ public class YamlEncDec {
             for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes.hasMoreElements(); ) {
                 EquipmentType equipmentType = equipmentTypes.nextElement();
                 if (equipmentType instanceof AmmoType ammo) {
-                    if (ammo.base != null) {
+                    if (ammo.getBaseAmmo() != null) {
                         continue;
                     }
                 }
@@ -134,7 +134,7 @@ public class YamlEncDec {
             for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes(); equipmentTypes.hasMoreElements(); ) {
                 EquipmentType equipmentType = equipmentTypes.nextElement();
                 if (equipmentType instanceof AmmoType ammo) {
-                    if (ammo.base == null) {
+                    if (ammo.getBaseAmmo() == null) {
                         continue;
                     }
                 } else {
@@ -174,8 +174,8 @@ public class YamlEncDec {
         boolean appendMode = false;
         System.out.println("- "+equipmentType.getName());
         if (equipmentType instanceof AmmoType ammo) {
-            if (ammo.base != null) {
-                fileName = ammo.base.getShortName();
+            if (ammo.getBaseAmmo() != null) {
+                fileName = ammo.getBaseAmmo().getShortName();
             } else {
                 fileName = ammo.getShortName();
             }
@@ -199,7 +199,7 @@ public class YamlEncDec {
         }
         seenKey = typeFolder+"_"+fileName;
         if (equipmentType instanceof AmmoType ammo) {
-            if (ammo.base != null) {
+            if (ammo.getBaseAmmo() != null) {
                 if (!seen.containsKey(seenKey)) {
                     throw new Exception("Not found seen key "+seenKey+ " for ammo mutation "+ammo.getName());
                 };

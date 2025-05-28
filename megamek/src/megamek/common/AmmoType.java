@@ -1942,7 +1942,7 @@ public class AmmoType extends EquipmentType {
     private String subMunitionName = "";
 
     // Reference to the base ammo type, if any
-    public AmmoType base = null;
+    protected AmmoType base = null;
 
     // Collate artillery / artillery cannon types for flak check
     // Add ADA here when implemented
@@ -1965,6 +1965,13 @@ public class AmmoType extends EquipmentType {
         explosive = true;
         instantModeSwitch = false;
         ammoRatio = 0;
+    }
+
+    /**
+     * Returns the base ammo type, if any.
+     */
+    public AmmoType getBaseAmmo() {
+        return base;
     }
 
     /**

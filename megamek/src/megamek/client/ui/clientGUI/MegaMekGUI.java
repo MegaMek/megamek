@@ -242,6 +242,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     private int drawMedal(Graphics2D g2d, int panelWidth, int panelHeight, int padding) {
         int targetMedalWidth = 0;
+        if (medalImage == null) {
+            return targetMedalWidth; // Skip drawing if medalImage is not initialized
+        }
         VolatileImage image = medalImage.getImage();
         if (image.getWidth(null) > 0 && image.getHeight(null) > 0) {
             double medalHeightScalePercent = 0.15; // Medal height as 15% of panel height

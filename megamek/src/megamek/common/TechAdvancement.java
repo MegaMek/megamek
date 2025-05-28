@@ -321,6 +321,21 @@ public class TechAdvancement implements ITechnology {
         return this;
     }
 
+    protected Integer getISAdvancement(AdvancementPhase phase) {
+        return isAdvancement.get(phase);
+    }
+
+    protected Integer getClanAdvancement(AdvancementPhase phase) {
+        return clanAdvancement.get(phase);
+    }
+
+    protected boolean getISApproximate(AdvancementPhase phase) {
+        return isApproximate.get(phase);
+    }
+
+    protected boolean getClanApproximate(AdvancementPhase phase) {
+        return clanApproximate.get(phase);
+    }
 
     /**
      * A convenience method that will set identical values for IS and Clan factions.
@@ -941,16 +956,15 @@ public class TechAdvancement implements ITechnology {
         return techRating;
     }
 
-    public TechAdvancement setAvailability(AvailabilityValue... av) {
-        int i = 0;
-        for (Era era : Era.values()) {
-            if (i < av.length) {
-                availability.put(era, av[i]);
-            } else {
-                availability.put(era, AvailabilityValue.X);
-            }
-            i++;
+    public TechAdvancement setAvailability(AvailabilityValue sl, AvailabilityValue sw,
+                                          AvailabilityValue clan, AvailabilityValue da) {
+        if (sl == null || sw == null || clan == null || da == null) {
+            throw new IllegalArgumentException("Availability values cannot be null");
         }
+        availability.put(Era.SL, sl);
+        availability.put(Era.SW, sw);
+        availability.put(Era.CLAN, clan);
+        availability.put(Era.DA, da);
         return this;
     }
 

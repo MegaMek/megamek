@@ -92,6 +92,9 @@ public class TechAdvancement implements ITechnology {
             isApproximate.put(phase, false);
             clanApproximate.put(phase, false);
         }
+        for (Era era : Era.values()) {
+            availability.put(era, AvailabilityValue.A);
+        }
     }
 
     public TechAdvancement(TechBase techBase) {

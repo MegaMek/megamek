@@ -31,6 +31,7 @@ import megamek.common.MekView;
 import megamek.common.TechConstants;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.util.YamlEncDec;
 import megamek.common.verifier.TestEntity;
 import megamek.logging.MMLogger;
 
@@ -200,7 +201,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
         if (getTokenType() == TOK_LITERAL) {
             targetFolder = getTokenValue();
             nextToken();
-            megamek.common.util.YamlEncDec.writeEquipmentDatabase(targetFolder);
+            YamlEncDec.writeEquipmentDatabase(targetFolder);
         } else {
             throw new ParseException("folder name expected");
         }

@@ -700,7 +700,7 @@ public final class UIUtil {
      * @param multiResImageMap a collection of widths matched with corresponding image file path
      * @param parent           component
      *
-     * @return a JLabel setup to the correct size to act as a splash screen
+     * @return a RawImagePanel setup to the correct size to act as a splash screen
      */
     public static RawImagePanel createSplashComponent(TreeMap<Integer, String> multiResImageMap, Component parent) {
         // Use the current monitor so we don't "overflow" computers whose primary
@@ -728,7 +728,7 @@ public final class UIUtil {
      * @param imgSplashFile path to an image on disk
      * @param parent        component
      *
-     * @return a JLabel setup to the correct size to act as a splash screen
+     * @return a RawImagePanel setup to the correct size to act as a splash screen
      */
     public static RawImagePanel createSplashComponent(String imgSplashFile, Component parent) {
         // Use the current monitor so we don't "overflow" computers whose primary
@@ -755,7 +755,7 @@ public final class UIUtil {
      * @param observer          An imageObserver
      * @param scaledMonitorSize the dimensions of the monitor taking into account display scaling
      *
-     * @return a JLabel setup to the correct size to act as a splash screen
+     * @return a RawImagePanel setup to the correct size to act as a splash screen
      */
 
     public static RawImagePanel createSplashComponent(Image imgSplash, ImageObserver observer, Dimension scaledMonitorSize) {

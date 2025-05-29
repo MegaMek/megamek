@@ -2470,7 +2470,7 @@ public class ClientGUI extends AbstractClientGUI
                         miniMaps.get(boardId).dispose();
                     }
                     BoardView boardView = new BoardView(client.getGame(), controller, ClientGUI.this, boardId);
-                    MinimapDialog newMinimap = new MinimapDialog(frame,ClientGUI.this);
+                    MinimapDialog newMinimap = new MinimapDialog(frame);
                     newMinimap.add(new MinimapPanel(newMinimap, client.getGame(), boardView, ClientGUI.this, null,
                           boardId));
                     newMinimap.setVisible(true);

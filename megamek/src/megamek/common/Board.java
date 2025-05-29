@@ -1789,6 +1789,9 @@ public class Board implements Serializable {
     }
 
     public boolean containsBridges() {
+        if (isSpace() || isSky()) {
+            return false;
+        }
         for (Coords c : bldgByCoords.keySet()) {
             Hex hex = getHex(c);
             if (hex.containsTerrain(Terrains.BRIDGE)) {

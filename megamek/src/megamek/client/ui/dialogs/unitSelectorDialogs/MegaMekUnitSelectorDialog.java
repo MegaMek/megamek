@@ -34,6 +34,7 @@ import megamek.common.enums.Gender;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.logging.MMLogger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,6 +45,7 @@ import java.util.Map;
 public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     private static final long serialVersionUID = -5717009055093904636L;
+    MMLogger LOGGER = MMLogger.create(MegaMekUnitSelectorDialog.class);
     //region Variable Declarations
     private ClientGUI clientGUI;
     private JComboBox<String> comboPlayer = new JComboBox<>();
@@ -200,8 +202,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         if (mscInstance.isInitialized()) {
             final Map<String, String> hFailedFiles = MekSummaryCache.getInstance().getFailedFiles();
             if ((hFailedFiles != null) && !hFailedFiles.isEmpty()) {
-                // self-showing dialog
-                new UnitFailureDialog(frame, hFailedFiles);
+                LOGGER.warn("Unit loading errors: " + hFailedFiles);
             }
         }
     }

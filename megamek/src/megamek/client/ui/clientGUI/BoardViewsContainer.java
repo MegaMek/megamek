@@ -18,11 +18,13 @@
  */
 package megamek.client.ui.clientGUI;
 
+import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.common.Board;
 import megamek.common.IGame;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,6 +62,7 @@ public class BoardViewsContainer {
      */
     public BoardViewsContainer(AbstractClientGUI clientGUI) {
         this.clientGUI = Objects.requireNonNull(clientGUI);
+        mapTabPane.addChangeListener(this::updateBoardviewKeyStatus);
     }
 
     /**
@@ -128,10 +131,15 @@ public class BoardViewsContainer {
      * @return The currently shown boardview, if any
      */
     public Optional<IBoardView> getCurrentBoardView() {
-        if ((clientGUI.boardViews.size() > 1) && (mapTabPane.getSelectedComponent() != null)) {
+        if ((clientGUI.boardViews.size() > 1)) {
             Component shownComponent = mapTabPane.getSelectedComponent();
-            int boardId = shownBoardViews.get(shownComponent);
-            return Optional.of(boardView(boardId));
+            // The components that the tabbed pane shows are JScrollPanes that wrap the boardviews
+            if ((shownComponent != null) && shownBoardViews.containsKey(shownComponent)) {
+                int boardId = shownBoardViews.get(shownComponent);
+                return Optional.of(boardView(boardId));
+            } else {
+                return Optional.empty();
+            }
         } else if (clientGUI.boardViews.size() == 1) {
             return Optional.of(boardView(clientGUI.boardViews.keySet().iterator().next()));
         } else {
@@ -161,5 +169,27 @@ public class BoardViewsContainer {
 
     private IBoardView boardView(int id) {
         return clientGUI.boardViews.get(id);
+    }
+
+    /**
+     * Sets the boardviews that are not shown to ignore key presses from the MegamekController (Key Dispatcher) and
+     * the currently shown boardview to accept them.
+     *
+     * @param changeEvent The changeEvent (not used)
+     */
+    private void updateBoardviewKeyStatus(ChangeEvent changeEvent) {
+        if (clientGUI.boardViews.size() > 1) {
+            // Set all boardviews to ignore key presses
+            for (IBoardView boardView : clientGUI.boardViews()) {
+                if (boardView instanceof BoardView bv) {
+                    bv.setShouldIgnoreKeys(true);
+                }
+            }
+            // set the currently visible boardview to process key presses
+            Optional<IBoardView> ibv = getCurrentBoardView();
+            if (ibv.isPresent() && (ibv.get() instanceof BoardView bv)) {
+                bv.setShouldIgnoreKeys(false);
+            }
+        }
     }
 }

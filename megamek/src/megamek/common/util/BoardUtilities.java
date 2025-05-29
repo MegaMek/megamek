@@ -1922,7 +1922,7 @@ public class BoardUtilities {
      * @return the Board.START_ constant representing the "opposite" edge
      */
     public static CardinalEdge determineOppositeEdge(Entity entity) {
-        Board board = entity.getGame().getBoard();
+        Board board = entity.getGame().getBoard(entity);
 
         // the easiest part is if the entity is supposed to start on a particular edge. Just return the opposite edge.
         int oppositeEdge = board.getOppositeEdge(entity.getStartingPos());

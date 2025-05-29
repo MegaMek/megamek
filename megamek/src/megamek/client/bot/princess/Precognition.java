@@ -817,7 +817,8 @@ public class Precognition implements Runnable {
 
     @SuppressWarnings("unchecked")
     private void receiveBuildingCollapse(Packet packet) {
-        getGame().getBoard().collapseBuilding((Vector<Coords>) packet.getObject(0));
+        int boardId = packet.getIntValue(1);
+        game.getBoard(boardId).collapseBuilding((Vector<Coords>) packet.getObject(0));
     }
 
     /**

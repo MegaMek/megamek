@@ -1429,11 +1429,11 @@ public class MekView {
                 sb.append("<tr>");
                 for (int col = 0; col < colNames.length; col++) {
                     if (justification[col] == JUSTIFIED_RIGHT) {
-                        sb.append("<th align=\"right\" style=\"text-align:right;vertical-align:top;\">");
+                        sb.append("<th align=\"right\">");
                     } else if (justification[col] == JUSTIFIED_CENTER) {
-                        sb.append("<th align=\"center\" style=\"text-align:center;vertical-align:top;\">");
+                        sb.append("<th align=\"center\">");
                     } else {
-                        sb.append("<th align=\"left\" style=\"text-align:left;vertical-align:top;\">");
+                        sb.append("<th align=\"left\">");
                     }
                     if (justification[col] != JUSTIFIED_LEFT) {
                         sb.append("&nbsp;&nbsp;");

@@ -188,7 +188,7 @@ public class BulldozerMovePath extends MovePath {
      * to a form through which the current unit can move
      */
     public static int calculateLevelingCost(Coords finalCoords, Entity entity) {
-        Board board = entity.getGame().getBoard();
+        Board board = entity.getGame().getBoard(entity);
         Hex destHex = board.getHex(finalCoords);
         int levelingCost = CANNOT_LEVEL;
 

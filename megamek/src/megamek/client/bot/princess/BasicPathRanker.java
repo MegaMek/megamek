@@ -310,7 +310,7 @@ public class BasicPathRanker extends PathRanker {
         // if the target is infantry protected by a building, we have to fire at the
         // building instead.
         if (losEffects.infantryProtected()) {
-            actualTarget = new BuildingTarget(targetState.getPosition(), game.getBoard(), false);
+            actualTarget = new BuildingTarget(targetState.getPosition(), game.getBoard(enemy), false);
             targetState = new EntityState(actualTarget);
         }
 
@@ -352,7 +352,7 @@ public class BasicPathRanker extends PathRanker {
         // If I don't have a range, I can't do damage.
         // exception: I might, if I'm an aero on a ground map attacking a ground unit
         // because aero unit ranges are a "special case"
-        boolean aeroAttackingGroundUnitOnGroundMap = me.isAirborne() && !enemy.isAero() && game.getBoard().isGround();
+        boolean aeroAttackingGroundUnitOnGroundMap = me.isAirborne() && !enemy.isAero() && game.getBoard(enemy).isGround();
 
         int maxRange = getOwner().getMaxWeaponRange(me, enemy.isAirborne());
         if (distance > maxRange && !aeroAttackingGroundUnitOnGroundMap) {
@@ -561,7 +561,7 @@ public class BasicPathRanker extends PathRanker {
           @Nullable Coords enemyMedianPosition, @Nullable Coords closestEnemyPosition) {
         int facingDiff = facingDiffCalculator.getFacingDiff(movingUnit,
               path,
-              game.getBoard().getCenter(),
+              game.getBoard(movingUnit).getCenter(),
               enemyMedianPosition,
               closestEnemyPosition);
         double facingMod = FACING_MOD_MULTIPLIER * facingDiff;
@@ -594,7 +594,9 @@ public class BasicPathRanker extends PathRanker {
         BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner());
 
         if (behaviorType == BehaviorType.ForcedWithdrawal || behaviorType == BehaviorType.MoveToDestination) {
-            int newDistanceToHome = distanceToHomeEdge(path.getFinalCoords(), getOwner().getHomeEdge(movingUnit), game);
+            int newDistanceToHome = distanceToHomeEdge(path.getFinalCoords(), path.getFinalBoardId(),
+                  getOwner().getHomeEdge(movingUnit),
+                  game);
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
             double selfPreservationMod;
 
@@ -749,13 +751,18 @@ public class BasicPathRanker extends PathRanker {
         boolean extremeRange = isExtremeRange(game);
         boolean losRange = isLosRange(game);
         for (Entity enemy : enemies) {
+            // For now, disregard enemy units that are not on the same board
+            if (!game.onTheSameBoard(movingUnit, enemy)) {
+                continue;
+            }
+
             // Skip ejected pilots.
             if (enemy instanceof EjectedCrew) {
                 continue;
             }
 
             // Skip units not on the board.
-            if (enemy.isOffBoard() || (enemy.getPosition() == null) || !game.getBoard().contains(enemy.getPosition())) {
+            if (enemy.isOffBoard() || (enemy.getPosition() == null) || !game.getBoard(enemy).contains(enemy.getPosition())) {
                 continue;
             }
 
@@ -865,7 +872,7 @@ public class BasicPathRanker extends PathRanker {
         scores.put("movementMod", movementMod);
         // Try to face the enemy.
         Coords medianEnemyPosition = unitsMedianCoordinateCalculator.getEnemiesMedianCoordinate(enemies,
-              path.getFinalCoords());
+              path.getFinalCoords(), path.getFinalBoardId());
         Coords closestEnemyPositionNotZeroDistance = Optional.ofNullable(findClosestEnemy(movingUnit,
               pathCopy.getFinalCoords(),
               game,
@@ -1123,21 +1130,23 @@ public class BasicPathRanker extends PathRanker {
         final double closingDistance = Math.ceil(Math.max(3.0, maxRange * 0.6));
 
         var crowdingFriends = getOwner().getFriendEntities()
-                                    .stream()
-                                    .filter(e -> e instanceof Mek || e instanceof Tank)
-                                    .filter(Entity::isDeployed)
-                                    .map(Entity::getPosition)
-                                    .filter(Objects::nonNull)
-                                    .filter(c -> c.distance(movePath.getFinalCoords()) <= herdingDistance)
-                                    .count();
+              .stream()
+              .filter(e -> movePath.getFinalBoardId() == e.getBoardId())
+              .filter(e -> e instanceof Mek || e instanceof Tank)
+              .filter(Entity::isDeployed)
+              .map(Entity::getPosition)
+              .filter(Objects::nonNull)
+              .filter(c -> c.distance(movePath.getFinalCoords()) <= herdingDistance)
+              .count();
 
         var crowdingEnemies = enemies.stream()
-                                    .filter(e -> e instanceof Mek || e instanceof Tank)
-                                    .filter(Entity::isDeployed)
-                                    .map(Entity::getPosition)
-                                    .filter(Objects::nonNull)
-                                    .filter(c -> c.distance(movePath.getFinalCoords()) <= closingDistance)
-                                    .count();
+              .filter(e -> movePath.getFinalBoardId() == e.getBoardId())
+              .filter(e -> e instanceof Mek || e instanceof Tank)
+              .filter(Entity::isDeployed)
+              .map(Entity::getPosition)
+              .filter(Objects::nonNull)
+              .filter(c -> c.distance(movePath.getFinalCoords()) <= closingDistance)
+              .count();
 
         double friendsCrowdingTolerance = antiCrowdingFactor * crowdingFriends;
         double enemiesCrowdingTolerance = antiCrowdingFactor * crowdingEnemies;
@@ -1203,7 +1212,7 @@ public class BasicPathRanker extends PathRanker {
 
             if (target.isOffBoard() ||
                       (target.getPosition() == null) ||
-                      !game.getBoard().contains(target.getPosition())) {
+                      !game.getBoard(target).contains(target.getPosition())) {
                 continue; // Skip targets not actually on the board.
             }
 
@@ -1255,28 +1264,6 @@ public class BasicPathRanker extends PathRanker {
         return closest.getPosition().distance(position);
     }
 
-    /**
-     * Gives the distance to the closest edge
-     *
-     * @deprecated Was only used in a test and nowhere else.
-     */
-    @Deprecated(since = "0.50.07", forRemoval = true)
-    int distanceToClosestEdge(Coords position, Game game) {
-        int width = game.getBoard().getWidth();
-        int height = game.getBoard().getHeight();
-        int minimum = position.getX();
-        if ((width - position.getX()) < minimum) {
-            minimum = position.getX();
-        }
-        if (position.getY() < minimum) {
-            minimum = position.getY();
-        }
-        if ((height - position.getY()) < minimum) {
-            minimum = height - position.getY();
-        }
-        return minimum;
-    }
-
     public double checkPathForHazards(MovePath path, Entity movingUnit, Game game) {
         logger.trace("Checking Path ({}) for hazards.", path);
 
@@ -1298,8 +1285,8 @@ public class BasicPathRanker extends PathRanker {
         if (path.isJumping()) {
             logger.trace("Jumping, only checking landing hex.");
             Coords endCoords = path.getFinalCoords();
-            Hex endHex = game.getBoard().getHex(endCoords);
-            return checkHexForHazards(endHex, movingUnit, true, path.getLastStep(), true, path, game.getBoard());
+            Hex endHex = game.getBoard(path.getFinalBoardId()).getHex(endCoords);
+            return checkHexForHazards(endHex, movingUnit, true, path.getLastStep(), true, path, game.getBoard(path.getFinalBoardId()));
         }
 
         double totalHazard = 0;
@@ -1310,14 +1297,14 @@ public class BasicPathRanker extends PathRanker {
             if ((coords == null) || coords.equals(previousCoords)) {
                 continue;
             }
-            Hex hex = game.getBoard().getHex(coords);
+            Hex hex = game.getBoard(step.getBoardId()).getHex(coords);
             totalHazard += checkHexForHazards(hex,
                   movingUnit,
                   lastStep.equals(step),
                   step,
                   false,
                   path,
-                  game.getBoard());
+                  game.getBoard(step.getBoardId()));
             previousCoords = coords;
         }
         logger.trace("Total Hazard = {}", totalHazard);

@@ -227,13 +227,13 @@ public class PathEnumerator {
                 npf.run(new MovePath(game, mover, wayPoint));
                 paths.addAll(npf.getAllComputedPathsUncategorized());
                 // this handles the case of the mover being an aerospace unit on a space map
-            } else if (mover.isAero() && game.getBoard().isSpace()) {
+            } else if (mover.isAero() && game.getBoard(mover).isSpace()) {
                 AeroSpacePathFinder apf = AeroSpacePathFinder.getInstance(getGame());
                 apf.run(new MovePath(game, mover, wayPoint));
                 paths.addAll(apf.getAllComputedPathsUncategorized());
                 // this handles the case of the mover being a winged aerospace unit on a
                 // low-atmosphere map
-            } else if (mover.isAero() && game.getBoard().isLowAltitude()
+            } else if (mover.isAero() && game.getBoard(mover).isLowAltitude()
                     && !Compute.useSpheroidAtmosphere(game, mover)) {
                 AeroLowAltitudePathFinder apf = AeroLowAltitudePathFinder.getInstance(getGame());
                 apf.run(new MovePath(game, mover, wayPoint));
@@ -287,7 +287,7 @@ public class PathEnumerator {
                     ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(mover.getAnyTypeMaxJumpMP(),
                             MoveStepType.FORWARDS, getGame());
                     spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                    spf.run((new MovePath(game, mover, wayPoint)).addStep(MoveStepType.START_JUMP));
+                    spf.run(new MovePath(game, mover, wayPoint).addStep(MoveStepType.START_JUMP));
                     paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
 
@@ -324,7 +324,7 @@ public class PathEnumerator {
             // calculate bounding area for move
             ConvexBoardArea myArea = new ConvexBoardArea();
             myArea.addCoordFacingCombos(getUnitPotentialLocations().get(
-                    mover.getId()).iterator(), owner.getBoard());
+                    mover.getId()).iterator(), owner.getGame().getBoard(mover));
             getUnitMovableAreas().put(mover.getId(), myArea);
 
             return true;
@@ -433,9 +433,9 @@ public class PathEnumerator {
     private void adjustPathForBridge(MovePath path) {
         boolean needsAdjust = false;
         for (Coords c : path.getCoordsSet()) {
-            Hex hex = getGame().getBoard().getHex(c);
+            Hex hex = getGame().getBoard(path.getFinalBoardId()).getHex(c);
             if ((hex != null) && hex.containsTerrain(Terrains.BRIDGE)) {
-                if (getGame().getBoard().getBuildingAt(c).getCurrentCF(c) >= path.getEntity().getWeight()) {
+                if (getGame().getBoard(path.getFinalBoardId()).getBuildingAt(c).getCurrentCF(c) >= path.getEntity().getWeight()) {
                     needsAdjust = true;
                     break;
                 } else {
@@ -550,7 +550,7 @@ public class PathEnumerator {
                 return mapHasBridges.get();
             }
 
-            mapHasBridges = new AtomicBoolean(getGame().getBoard().containsBridges());
+            mapHasBridges = new AtomicBoolean(getGame().hasBridges());
         }
 
         return mapHasBridges.get();

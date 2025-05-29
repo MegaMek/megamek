@@ -507,7 +507,8 @@ class BasicPathRankerTest {
     void testRankPath() {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(1.0).when(testRanker).getMovePathSuccessProbability(any(MovePath.class));
-        doReturn(20).when(testRanker).distanceToHomeEdge(any(Coords.class), any(CardinalEdge.class), any(Game.class));
+        doReturn(20).when(testRanker).distanceToHomeEdge(any(Coords.class), anyInt(), any(CardinalEdge.class),
+              any(Game.class));
         doReturn(12.0).when(testRanker).distanceToClosestEnemy(any(Entity.class), any(Coords.class), any(Game.class));
         doReturn(0.0).when(testRanker).checkPathForHazards(any(MovePath.class), any(Entity.class), any(Game.class));
 
@@ -550,11 +551,14 @@ class BasicPathRankerTest {
 
         final Game mockGame = mock(Game.class);
         when(mockGame.getBoard()).thenReturn(mockBoard);
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
         when(mockGame.getOptions()).thenReturn(mockGameOptions);
         when(mockGame.getArtilleryAttacks()).thenReturn(Collections.emptyEnumeration());
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPC);
         when(mockPrincess.getGame()).thenReturn(mockGame);
         when(mockMover.getGame()).thenReturn(mockGame);
+        when(mockGame.onTheSameBoard(any(Targetable.class), any(Targetable.class))).thenCallRealMethod();
 
         final List<Entity> testEnemies = new ArrayList<>();
 
@@ -850,7 +854,7 @@ class BasicPathRankerTest {
         assertRankedPathEquals(expected, actual);
 
         // TEST CASE 15: Fleeing - closer to home edge
-        doReturn(10).when(testRanker).distanceToHomeEdge(any(Coords.class), any(CardinalEdge.class), any(Game.class));
+        doReturn(10).when(testRanker).distanceToHomeEdge(any(Coords.class), anyInt(), any(CardinalEdge.class), any(Game.class));
         expected = new RankedPath(-51.25,
               mockPath,
               builder.withFallMod(0, 0, 500)
@@ -866,7 +870,7 @@ class BasicPathRankerTest {
         }
 
         // TEST CASE 16: Fleeing - farther from home edge
-        doReturn(30).when(testRanker).distanceToHomeEdge(any(Coords.class), any(CardinalEdge.class), any(Game.class));
+        doReturn(30).when(testRanker).distanceToHomeEdge(any(Coords.class), anyInt(), any(CardinalEdge.class), any(Game.class));
         expected = new RankedPath(-51.25,
               mockPath,
               builder.withFallMod(0, 0, 500)
@@ -883,7 +887,7 @@ class BasicPathRankerTest {
 
         // Reset fleeing settings
         doReturn(20).when(testRanker)
-              .distanceToHomeEdge(nullable(Coords.class), any(CardinalEdge.class), any(Game.class));
+              .distanceToHomeEdge(nullable(Coords.class), anyInt(), any(CardinalEdge.class), any(Game.class));
         when(mockPrincess.wantsToFallBack(eq(mockMover))).thenReturn(false);
         when(mockMover.isCrippled()).thenReturn(false);
 
@@ -975,6 +979,7 @@ class BasicPathRankerTest {
         final Coords position = new Coords(0, 0);
         final Entity me = mock(BipedMek.class);
         final Game mockGame = mock(Game.class);
+        when(mockGame.onTheSameBoard(any(Targetable.class), any(Targetable.class))).thenCallRealMethod();
 
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(enemyList).when(mockPrincess).getEnemyEntities();
@@ -1015,7 +1020,9 @@ class BasicPathRankerTest {
         when(mockBoard.contains(any(Coords.class))).thenReturn(true);
 
         final Game mockGame = mock(Game.class);
-        when(mockGame.getBoard()).thenReturn(mockBoard);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
+        when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
+        when(mockGame.onTheSameBoard(any(Targetable.class), any(Targetable.class))).thenCallRealMethod();
 
         final Entity mockFriend1 = mock(BipedMek.class);
         when(mockFriend1.getId()).thenReturn(myId);
@@ -1023,6 +1030,7 @@ class BasicPathRankerTest {
         final Coords friendPosition1 = new Coords(0, 0);
         when(mockFriend1.getPosition()).thenReturn(friendPosition1);
         friends.add(mockFriend1);
+        when(mockGame.getEntity(myId)).thenReturn(mockFriend1);
 
         final Entity mockFriend2 = mock(BipedMek.class);
         when(mockFriend2.getId()).thenReturn(2);
@@ -1321,6 +1329,7 @@ class BasicPathRankerTest {
         Game mockGame = mock(Game.class);
         Board mockBoard = mock(Board.class);
         when(mockGame.getBoard()).thenReturn(mockBoard);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
         for (Coords c : coords) {
             when(mockBoard.getHex(eq(c))).thenReturn(hexes.get(coords.indexOf(c)));
         }
@@ -2206,6 +2215,7 @@ class BasicPathRankerTest {
 
         final Building mockBuilding = mock(Building.class);
         when(mockGame.getBoard().getBuildingAt(eq(testCoordsThree))).thenReturn(mockBuilding);
+
         when(mockBuilding.getCurrentCF(eq(testCoordsThree))).thenReturn(77);
 
         // Test walking onto mud; jumping doesn't change danger because Meks can't bog

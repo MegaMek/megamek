@@ -238,8 +238,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             finalFacing = (finalFacing + 5) % 6;
             Coords curPos = cmd.getFinalCoords();
             Coords target = curPos.translated(finalFacing);
-            // We need to set this to get the rotate behavior
+
+            // We need to set this to get the rotated behavior
+            shiftHeld = true;
             currentMove(target, cmd.getFinalBoardId());
+            shiftHeld = false;
             updateMove();
         }
     }

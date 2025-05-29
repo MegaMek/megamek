@@ -1080,7 +1080,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             } else if (col == COL_LEVEL) {
                 return ms.getLevel();
             } else if (col == COL_VTL) {
-                return ms.getLevel(gameOptions.intOption(OptionsConstants.ALLOWED_YEAR));
+                if (gameOptions != null) {
+                    return ms.getLevel(gameOptions.intOption(OptionsConstants.ALLOWED_YEAR));
+                } else {
+                    return ms.getLevel(); // fallback to base tech level
+                }
             }
             return "?";
         }

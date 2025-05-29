@@ -282,14 +282,17 @@ public class MekView {
         tpTable.setColNames(Messages.getString("MekView.Availability"), tableSpacer,
                 Messages.getString("MekView.Era"));
         tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
-
-        tpTable.addRow(Messages.getString("MekView.Prototype"), tableSpacer, entity.getPrototypeRangeDate());
-        tpTable.addRow(Messages.getString("MekView.Production"), tableSpacer, entity.getProductionDateRange());
-        tpTable.addRow(Messages.getString("MekView.Common"), tableSpacer, entity.getCommonDateRange());
+        tpTable.addRow(Messages.getString("MekView.Prototype"), tableSpacer, entity.getPrototypeRangeDate()
+              .replace(", ", "<br>"));
+        tpTable.addRow(Messages.getString("MekView.Production"), tableSpacer, entity.getProductionDateRange()
+              .replace(", ", "<br>"));
+        tpTable.addRow(Messages.getString("MekView.Common"), tableSpacer, entity.getCommonDateRange()
+              .replace(", ", "<br>"));
 
         String extinctRange = entity.getExtinctionRange();
         if (extinctRange.length() > 1) {
-            tpTable.addRow(Messages.getString("MekView.Extinct"), tableSpacer, extinctRange);
+            tpTable.addRow(Messages.getString("MekView.Extinct"), tableSpacer,
+                  extinctRange.replace(", ", "<br>"));
         }
 
         sHead.add(tpTable);
@@ -1426,11 +1429,11 @@ public class MekView {
                 sb.append("<tr>");
                 for (int col = 0; col < colNames.length; col++) {
                     if (justification[col] == JUSTIFIED_RIGHT) {
-                        sb.append("<th align=\"right\">");
+                        sb.append("<th align=\"right\" style=\"text-align:right;vertical-align:top;\">");
                     } else if (justification[col] == JUSTIFIED_CENTER) {
-                        sb.append("<th align=\"center\">");
+                        sb.append("<th align=\"center\" style=\"text-align:center;vertical-align:top;\">");
                     } else {
-                        sb.append("<th align=\"left\">");
+                        sb.append("<th align=\"left\" style=\"text-align:left;vertical-align:top;\">");
                     }
                     if (justification[col] != JUSTIFIED_LEFT) {
                         sb.append("&nbsp;&nbsp;");

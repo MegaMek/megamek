@@ -1108,7 +1108,7 @@ public class BoardEditorPanel extends JPanel
         add(scrCenterPanel, BorderLayout.CENTER);
         add(panButtons, BorderLayout.PAGE_END);
 
-        minimapW = new MinimapDialog(frame, null);
+        minimapW = new MinimapDialog(frame);
         minimapW.add(new MinimapPanel(minimapW, game, bv, null, null, 0));
         minimapW.setVisible(guip.getMinimapEnabled());
     }

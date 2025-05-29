@@ -1933,12 +1933,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                       ChatLounge.this,
                       clientgui.getClient(),
                       mapSettings);
-                try {
-                    TilesetManager tm = new TilesetManager(game());
-                    rmd.activateDialog(tm.getThemes());
-                } catch (IOException e) {
-                    LOGGER.error("Couldnt load tileset");
-                }
+                rmd.activateDialog(clientgui.getTilesetManager().getThemes());
 
             } else if (ev.getSource().equals(butBoardPreview)) {
                 previewGameBoard();

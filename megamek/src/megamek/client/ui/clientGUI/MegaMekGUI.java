@@ -56,7 +56,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
@@ -124,6 +123,7 @@ import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoader;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
+import megamek.common.util.ManagedVolatileImage;
 import megamek.common.util.TipOfTheDay;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
@@ -132,7 +132,6 @@ import megamek.server.Server;
 import megamek.server.sbf.SBFGameManager;
 import megamek.server.totalwarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
-import megamek.common.util.ImageUtil;
 
 public class MegaMekGUI implements IPreferenceChangeListener {
     private static final MMLogger LOGGER = MMLogger.create(MegaMekGUI.class);
@@ -151,8 +150,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private IGameManager gameManager;
     private CommonSettingsDialog settingsDialog;
     private Image splashImage;
-    private VolatileImage logoImage;
-    private VolatileImage medalImage;
+    private ManagedVolatileImage logoImage;
+    private ManagedVolatileImage medalImage;
     private RawImagePanel splashPanel;
     private TipOfTheDay tipOfTheDay;
 
@@ -243,10 +242,14 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     private int drawMedal(Graphics2D g2d, int panelWidth, int panelHeight, int padding) {
         int targetMedalWidth = 0;
-        if (medalImage != null && medalImage.getWidth(null) > 0 && medalImage.getHeight(null) > 0) {
+        if (medalImage == null) {
+            return targetMedalWidth; // Skip drawing if medalImage is not initialized
+        }
+        VolatileImage image = medalImage.getImage();
+        if (image.getWidth(null) > 0 && image.getHeight(null) > 0) {
             double medalHeightScalePercent = 0.15; // Medal height as 15% of panel height
-            int originalMedalWidth = medalImage.getWidth(null);
-            int originalMedalHeight = medalImage.getHeight(null);
+            int originalMedalWidth = image.getWidth(null);
+            int originalMedalHeight = image.getHeight(null);
 
             int targetMedalHeight = (int) (panelHeight * medalHeightScalePercent);
             if (targetMedalHeight < 1) targetMedalHeight = 1; // Ensure minimum size
@@ -262,17 +265,18 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             if (medalX < 0) medalX = 0;
             if (medalY < 0) medalY = 0;
 
-            g2d.drawImage(medalImage, medalX, medalY, targetMedalWidth, targetMedalHeight, null);
+            g2d.drawImage(image, medalX, medalY, targetMedalWidth, targetMedalHeight, null);
         }
         return targetMedalWidth;
     }
 
     private void drawLogo(Graphics2D g2d, int panelWidth, int panelHeight, int targetMedalWidth, int padding) {
-        if (logoImage != null && logoImage.getWidth(null) > 0 && logoImage.getHeight(null) > 0) {
+        VolatileImage image = logoImage.getImage();
+        if (image.getWidth(null) > 0 && image.getHeight(null) > 0) {
             double logoWidthScalePercent = 0.25; // Logo width as 25% of panel width
 
-            int originalLogoWidth = logoImage.getWidth(null);
-            int originalLogoHeight = logoImage.getHeight(null);
+            int originalLogoWidth = image.getWidth(null);
+            int originalLogoHeight = image.getHeight(null);
 
             int targetLogoWidth = (int) (panelWidth * logoWidthScalePercent);
             if (targetLogoWidth < 1) targetLogoWidth = 1; // Ensure minimum size
@@ -288,7 +292,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             if (logoX < 0) logoX = 0;
             if (logoY < 0) logoY = 0;
 
-            g2d.drawImage(logoImage, logoX, logoY, targetLogoWidth, targetLogoHeight, null);
+            g2d.drawImage(image, logoX, logoY, targetLogoWidth, targetLogoHeight, null);
         }
     }
 
@@ -355,8 +359,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // displays aren't as large as their secondary displays.
         Dimension scaledMonitorSize = UIUtil.getScaledScreenSize(frame);
         splashImage = getImage(FILENAME_MEGAMEK_SPLASH, scaledMonitorSize.width, scaledMonitorSize.height);
-        logoImage = ImageUtil.convertToVolatileImage(getImage(FILENAME_LOGO, scaledMonitorSize.width, scaledMonitorSize.height), Transparency.TRANSLUCENT);
-        medalImage = ImageUtil.convertToVolatileImage(getImage(FILENAME_MEDAL, scaledMonitorSize.width, scaledMonitorSize.height), Transparency.TRANSLUCENT);
+        logoImage = new ManagedVolatileImage(getImage(FILENAME_LOGO, scaledMonitorSize.width, scaledMonitorSize.height), Transparency.TRANSLUCENT);
+        medalImage = new ManagedVolatileImage(getImage(FILENAME_MEDAL, scaledMonitorSize.width, scaledMonitorSize.height), Transparency.TRANSLUCENT);
         Dimension splashPanelPreferredSize = calculateSplashPanelPreferredSize(scaledMonitorSize, splashImage);
         // This is an empty panel that will contain the splash image
         splashPanel = new RawImagePanel(splashImage) {

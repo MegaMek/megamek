@@ -36,8 +36,8 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
 
+import java.util.Comparator;
 import java.util.List;
-
 
 /**
  * Calculates the median coordinate of enemy units for tactical decision-making.
@@ -47,7 +47,7 @@ import java.util.List;
  * <p>
  * The calculation:
  * <ul>
- *   <li>Filters out enemies without valid positions</li>
+ *   <li>Filters out enemies without valid positions or on another board</li>
  *   <li>Sorts enemies by distance, with adjustments for units that haven't moved</li>
  *   <li>Considers only the closest enemies (limited to a small tactical group)</li>
  *   <li>Calculates the geometric median of these positions</li>
@@ -58,38 +58,56 @@ import java.util.List;
  */
 class UnitsMedianCoordinateCalculator {
 
-    private final int numberOfUnitToConsider;
+    private final int numberOfUnitsToConsider;
 
     /**
      * Constructor for UnitsMedianCoordinateCalculator.
-     * @param numberOfUnitToConsider The number of closest enemy units to consider for median calculation.
-     *                               Must be greater than 0.
+     *
+     * @param numberOfUnitsToConsider The number of closest enemy units to consider for median calculation. Must be
+     *                                greater than 0.
+     *
      * @throws IllegalArgumentException if numberOfUnitToConsider is less than or equal to 0.
      */
-    UnitsMedianCoordinateCalculator(int numberOfUnitToConsider) {
-        if (numberOfUnitToConsider <= 0) {
+    UnitsMedianCoordinateCalculator(int numberOfUnitsToConsider) {
+        if (numberOfUnitsToConsider <= 0) {
             throw new IllegalArgumentException("numberOfUnitToConsider must be greater than 0");
         }
-        this.numberOfUnitToConsider = numberOfUnitToConsider;
+        this.numberOfUnitsToConsider = numberOfUnitsToConsider;
     }
 
     /**
      * Calculates the median coordinate of the closest enemy units relative to a position.
      * <p>
      * This method finds the closest enemies to the specified position, with special handling for units that haven't
-     * moved yet. Units that can still move are considered to be farther away by their walk MP, anticipating that
-     * they might move away from the current position.
+     * moved yet. Units that can still move are considered to be farther away by their walk MP, anticipating that they
+     * might move away from the current position.
      * <p>
-     * The calculation only considers the top N closest enemy units to focus on immediate threats rather than the
-     * entire battlefield, where N is defined when initializing this calculator.
+     * The calculation only considers the top N closest enemy units to focus on immediate threats rather than the entire
+     * battlefield, where N is defined when initializing this calculator. Units without a position or on a different
+     * board are disregarded.
      *
      * @param enemies  List of enemy entities to evaluate
      * @param position Reference position to calculate distances from
-     * @return The median coordinate of the closest enemies, representing the central threat position. Returns null
-     * if there are no enemies.
+     * @param boardId  The game board from which units are to be considered
+     *
+     * @return The median coordinate of the closest enemies, representing the central threat position. Returns null if
+     *       there are no enemies.
      */
-    @Nullable Coords getEnemiesMedianCoordinate(List<Entity> enemies, Coords position) {
-        List<Coords> coords = enemies.stream().filter(e -> e.getPosition() != null).sorted((e1, e2) -> {
+    @Nullable Coords getEnemiesMedianCoordinate(List<Entity> enemies, Coords position, int boardId) {
+        Comparator<Entity> distanceSorter = getDistanceSorter(position);
+        List<Coords> coords = enemies.stream()
+              .filter(e -> e.getPosition() != null)
+              .filter(e -> e.getBoardId() == boardId)
+              .sorted(distanceSorter)
+              .limit(numberOfUnitsToConsider)
+              .map(Entity::getPosition)
+              .toList();
+
+        return Coords.median(coords);
+    }
+
+    private Comparator<Entity> getDistanceSorter(final Coords position) {
+        return (e1, e2) -> {
             // Consider that those who have not moved will move away from me
             boolean hasNotMoved1 = e1.isSelectableThisTurn() && !e1.isImmobile();
             boolean hasNotMoved2 = e2.isSelectableThisTurn() && !e2.isImmobile();
@@ -98,8 +116,6 @@ class UnitsMedianCoordinateCalculator {
             double dist1 = Math.max(0, e1.getPosition().distance(position) + bonusDistance1);
             double dist2 = Math.max(0, e2.getPosition().distance(position) + bonusDistance2);
             return Double.compare(dist1, dist2);
-        }).limit(this.numberOfUnitToConsider).map(Entity::getPosition).toList();
-
-        return Coords.median(coords);
+        };
     }
 }

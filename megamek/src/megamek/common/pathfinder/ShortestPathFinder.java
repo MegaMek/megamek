@@ -266,11 +266,8 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * @param stepType the type of step to use
      * @param game     The current {@link Game}
      */
-    public static ShortestPathFinder newInstanceOfOneToAll(final int maxMP, final MoveStepType stepType,
-            final Game game) {
-        ShortestPathFinder shortestPathFinder = new ShortestPathFinder(
-                new ShortestPathFinder.MovePathRelaxer(),
-                new ShortestPathFinder.MovePathMPCostComparator(),
+    public static ShortestPathFinder newInstanceOfOneToAll(int maxMP, MoveStepType stepType, Game game) {
+        var shortestPathFinder = new ShortestPathFinder(new MovePathRelaxer(), new MovePathMPCostComparator(),
                 stepType, game);
         shortestPathFinder.addFilter(new MovePathLengthFilter(maxMP));
         shortestPathFinder.addFilter(new MovePathLegalityFilter(game));

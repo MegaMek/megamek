@@ -32,14 +32,12 @@
  */
 package megamek.client.ui.dialogs.minimap;
 
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
 
@@ -55,22 +53,19 @@ import megamek.client.ui.util.UIUtil;
  */
 public class MinimapDialog extends JDialog {
 
-    private final ClientGUI clientGUI;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     /**
      * Creates a new MiniMapDialog.
      *
-     * @param frame the parent frame for this dialog
-     * @param clientGUI the ClientGUI reference, which can be null for standalone usage
+     * @param frame     the parent frame for this dialog
      */
-    public MinimapDialog(final JFrame frame, final ClientGUI clientGUI) {
+    public MinimapDialog(final JFrame frame) {
         super(frame, "", false);
-        this.clientGUI = clientGUI;
-        this.setTitle(Messages.getString("ClientGUI.Minimap"));
+        setTitle(Messages.getString("ClientGUI.Minimap"));
 
-        this.setLocation(GUIP.getMinimapPosX(), GUIP.getMinimapPosY());
-        this.setResizable(false);
+        setLocation(GUIP.getMinimapPosX(), GUIP.getMinimapPosY());
+        setResizable(false);
 
         UIUtil.updateWindowBounds(this);
 
@@ -84,20 +79,18 @@ public class MinimapDialog extends JDialog {
     //endregion Constructors
 
     /**
-     * Saves the current size and position of the dialog to preferences.
-     * Different settings are stored based on whether the display is in
-     * tabbed or non-tabbed mode.
+     * Saves the current size and position of the dialog to preferences. Different settings are stored based on whether
+     * the display is in tabbed or non-tabbed mode.
      */
     public void saveSettings() {
-        if ((getSize().width * getSize().height) > 0) {
+        if (getSize().width * getSize().height > 0) {
             GUIP.setMinimapPosX(getLocation().x);
             GUIP.setMinimapPosY(getLocation().y);
         }
     }
 
     /**
-     * Overrides the default window event processing to save settings when
-     * the window is deactivated or closing.
+     * Overrides the default window event processing to save settings when the window is deactivated or closing.
      *
      * @param e the window event
      */
@@ -106,26 +99,6 @@ public class MinimapDialog extends JDialog {
         super.processWindowEvent(e);
         if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
             saveSettings();
-        }
-    }
-
-    /**
-     * Processes key events and forwards them to the client GUI to enable
-     * hotkey functionality throughout the application.
-     *
-     * @param evt the key event to process
-     */
-    @Override
-    protected void processKeyEvent(KeyEvent evt) {
-        if (clientGUI != null) {
-            evt.setSource(clientGUI);
-            clientGUI.getMenuBar().dispatchEvent(evt);
-            // Make the source be the ClientGUI and not the dialog
-            // This prevents a ClassCastException in ToolTipManager
-            clientGUI.getCurrentPanel().dispatchEvent(evt);
-        }
-        if (!evt.isConsumed()) {
-            super.processKeyEvent(evt);
         }
     }
 }

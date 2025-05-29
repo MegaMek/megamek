@@ -278,7 +278,7 @@ public class MekView {
         }
 
         TableElement tpTable = new TableElement(3);
-        String tableSpacer = "     ";
+        String tableSpacer = "&nbsp;&nbsp;&nbsp;&nbsp;";
         tpTable.setColNames(Messages.getString("MekView.Availability"), tableSpacer,
                 Messages.getString("MekView.Era"));
         tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);

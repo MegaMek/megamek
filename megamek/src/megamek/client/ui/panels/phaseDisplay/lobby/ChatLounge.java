@@ -112,6 +112,8 @@ import megamek.client.ui.buttons.DialogButton;
 import megamek.client.ui.panels.phaseDisplay.lobby.PlayerTable.PlayerTableModel;
 import megamek.client.ui.dialogs.minimap.MinimapPanel;
 import megamek.client.ui.panels.phaseDisplay.AbstractPhaseDisplay;
+import megamek.client.ui.tileset.MMStaticDirectoryManager;
+import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.SkinSpecification;
@@ -1931,7 +1933,12 @@ public class ChatLounge extends AbstractPhaseDisplay
                       ChatLounge.this,
                       clientgui.getClient(),
                       mapSettings);
-                rmd.activateDialog(clientgui.getBoardView().getTilesetManager().getThemes());
+                try {
+                    TilesetManager tm = new TilesetManager(game());
+                    rmd.activateDialog(tm.getThemes());
+                } catch (IOException e) {
+                    LOGGER.error("Couldnt load tileset");
+                }
 
             } else if (ev.getSource().equals(butBoardPreview)) {
                 previewGameBoard();
@@ -3246,7 +3253,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                 refreshTree();
                 break;
             case GUIPreferences.USE_CAMO_OVERLAY:
-                clientgui.getBoardView().getTilesetManager().reloadUnitIcons();
+                clientgui.getTilesetManager().reloadUnitIcons();
                 mekModel.refreshCells();
                 refreshTree();
                 break;

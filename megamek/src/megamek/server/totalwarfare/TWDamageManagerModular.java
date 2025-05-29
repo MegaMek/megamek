@@ -1820,6 +1820,12 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     // potentials?
                     nextHit = battleArmor.getTransferLocation(hit);
                     if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
+
+                        // Entity destroyed.
+                        reportVec.addAll(
+                              manager.destroyEntity(battleArmor, "damage", true, false)
+                        );
+
                         // nowhere for further damage to go
                         damage = 0;
                     } else if (nextHit.getLocation() == Entity.LOC_NONE) {

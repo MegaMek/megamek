@@ -821,6 +821,13 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         final Version version = getVersion(n);
         if (SuiteConstants.VERSION.is(version)) {
             return true;
+        } else if (version.toString().toLowerCase().contains("nightly") &&
+              (version.getMajor() == SuiteConstants.VERSION.getMajor() && 
+                    version.getMinor() == SuiteConstants.VERSION.getMinor() &&
+                    version.getPatch() == SuiteConstants.VERSION.getPatch())
+                && version.toString().contains(SuiteConstants.VERSION.toString())) {
+            // Nightly version of current development version
+            return true;
         } else {
             LOGGER.errorDialog(Messages.getString("MegaMek.LoadGameAlert.title"),
                   Messages.getString("MegaMek.LoadGameIncorrectVersion.message"),

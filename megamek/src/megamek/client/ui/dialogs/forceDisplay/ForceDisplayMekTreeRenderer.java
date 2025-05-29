@@ -95,7 +95,7 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
                 Image image;
                 Camouflage camo = entity.getCamouflageOrElseOwners();
                 if (clientGUI != null) {
-                    image = clientGUI.getBoardView().getTilesetManager().loadPreviewImage(entity, camo, false);
+                    image = clientGUI.getTilesetManager().loadPreviewImage(entity, camo, false);
                 } else {
                     Image base = MMStaticDirectoryManager.getMekTileset().imageFor(entity);
                     EntityImage entityImage = EntityImage.createIcon(base, camo, entity, false);

@@ -134,7 +134,7 @@ class TWPhaseEndManager {
                 gameManager.resolveOnlyWeaponAttacks();
                 gameManager.assignAMS();
                 gameManager.handleAttacks();
-                gameManager.resolveBoobyTraps();  // booby trap says it resolves "imediately"... could be problematic
+                gameManager.resolveBoobyTraps();  // booby trap says it resolves "immediately"... could be problematic
                 gameManager.resolveScheduledNukes();
                 gameManager.resolveScheduledOrbitalBombardments();
                 gameManager.applyBuildingDamage();

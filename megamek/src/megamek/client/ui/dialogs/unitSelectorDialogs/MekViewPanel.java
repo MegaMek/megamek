@@ -24,8 +24,11 @@ import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.io.Serial;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -37,6 +40,9 @@ import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLDocument;
 
 import megamek.client.ui.util.FluffImageHelper;
 import megamek.client.ui.util.UIUtil;
@@ -46,16 +52,19 @@ import megamek.common.MekView;
 import megamek.common.Report;
 import megamek.common.templates.TROView;
 
+import static megamek.MMConstants.MUL_URL_PREFIX;
+
 /**
  * @author Jay Lawson
  * @since November 2, 2009
  */
 public class MekViewPanel extends JPanel {
 
+    @Serial
     private static final long serialVersionUID = 2438490306644271135L;
 
-    private JTextPane txtMek = new JTextPane();
-    private JLabel lblMek = new JLabel();
+    private final JTextPane txtMek = new JTextPane();
+    private final JLabel lblMek = new JLabel();
     private JScrollPane scrMek;
 
     public static final int DEFAULT_WIDTH = 360;
@@ -73,9 +82,44 @@ public class MekViewPanel extends JPanel {
             txtMek.setMinimumSize(new Dimension(width, height));
             txtMek.setPreferredSize(new Dimension(width, height));
         }
-        txtMek.addHyperlinkListener(e -> {
-            if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
-                UIUtil.browse(e.getURL().toString(), this);
+
+        txtMek.addHyperlinkListener(pe -> {
+            if (HyperlinkEvent.EventType.ACTIVATED == pe.getEventType()) {
+
+                boolean isMulAddress = pe.getURL().toString().startsWith(MUL_URL_PREFIX);
+                if (isMulAddress) {
+                    UIUtil.browse(pe.getURL().toString(), this);
+                } else {
+                    String reference = pe.getDescription();
+                    if (reference != null && reference.startsWith("#")) {
+                        reference = reference.substring(1);
+                        String finalReference = reference;
+                        SwingUtilities.invokeLater(() -> txtMek.scrollToReference(finalReference));
+                    }
+                }
+            }
+        });
+
+        // Add mouse motion listener to show tooltips for links.
+        txtMek.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int pos = txtMek.viewToModel2D(e.getPoint());
+                if (pos >= 0 && txtMek.getDocument() instanceof HTMLDocument doc) {
+                    var elem = doc.getCharacterElement(pos);
+                    if (elem != null) {
+                        // The Element’s attributes may point us to a <SPAN> tag
+                        var attrs = elem.getAttributes();
+                        Object attrsAttribute = attrs.getAttribute(HTML.Tag.SPAN);
+
+                        if (attrsAttribute instanceof AttributeSet attributeSet) {
+                            String title = (String) attributeSet.getAttribute(HTML.getAttributeKey("title"));
+                            if (title != null) {
+                                txtMek.setToolTipText(title);
+                            }
+                        }
+                    }
+                }
             }
         });
         scrMek = new JScrollPane(txtMek);

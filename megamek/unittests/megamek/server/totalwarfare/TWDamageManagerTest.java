@@ -33,17 +33,21 @@
 
 package megamek.server.totalwarfare;
 
+import megamek.MMConstants;
 import megamek.common.*;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DamageType;
+import megamek.server.Server;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -55,6 +59,8 @@ class TWDamageManagerTest {
     private TWDamageManager oldMan;
     private TWDamageManagerModular newMan;
     private Game game;
+    private Server server;
+    private Random random = new Random();
 
     @BeforeAll
     static void before() {
@@ -62,7 +68,7 @@ class TWDamageManagerTest {
     }
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         // Set up game with options
         game = gameMan.getGame();
         GameOptions gOp = new GameOptions();
@@ -71,6 +77,10 @@ class TWDamageManagerTest {
         // DamageManagers will throw if uninitialized at use
         oldMan = new TWDamageManager(gameMan, game);
         newMan = new TWDamageManagerModular(gameMan, game);
+        
+        // Need servers to handle unit destruction (sad face)
+        server = new Server(null, random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
+              gameMan, false, "", null, true);
     }
 
     Entity loadEntityFromFile(String filename) throws FileNotFoundException {
@@ -126,7 +136,7 @@ class TWDamageManagerTest {
         assertEquals(5, battleArmor.getArmor(BattleArmor.LOC_TROOPER_1));
 
         // Reset for new damage method
-        BattleArmor battleArmor2 = (BattleArmor) loadEntityFromFile(unit);
+        BattleArmor battleArmor2 = loadBA(unit);
 
         // Validate starting armor
         assertEquals(10, battleArmor2.getArmor(BattleArmor.LOC_TROOPER_1));
@@ -136,6 +146,41 @@ class TWDamageManagerTest {
         damageInfo = new DamageInfo(battleArmor2, hit, 5);
         newMan.damageEntity(damageInfo);
         assertEquals(5, battleArmor2.getArmor(BattleArmor.LOC_TROOPER_1));
+    }
+    
+    @Test
+    void killBAComparison() throws FileNotFoundException {
+        // We need to show that both old and new damagers kill BAs _dead_.
+        
+        String unit = "Elemental BA [Laser] (Sqd5).blk";
+        BattleArmor battleArmor = loadBA(unit);
+        DamageInfo damageInfo;
+
+        // Validate starting armor
+        assertEquals(10, battleArmor.getArmor(BattleArmor.LOC_TROOPER_1));
+
+        // Deal damage with original method
+        for (int count=0; count<=15; count++) {
+            HitData hit = battleArmor.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+            damageInfo = new DamageInfo(battleArmor, hit, 5);
+            oldMan.damageEntity(damageInfo);
+        }
+        
+        assertTrue(battleArmor.isDoomed());
+
+        // Reset for new damage method
+        BattleArmor battleArmor2 = loadBA(unit);
+
+        // Validate starting armor
+        assertEquals(10, battleArmor2.getArmor(BattleArmor.LOC_TROOPER_1));
+
+        // Deal damage with new method
+        for (int count=0; count<=15; count++) {
+            HitData hit = battleArmor2.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+            damageInfo = new DamageInfo(battleArmor2, hit, 5);
+            newMan.damageEntity(damageInfo);
+        }
+        assertTrue(battleArmor2.isDoomed());
     }
 
     @Test

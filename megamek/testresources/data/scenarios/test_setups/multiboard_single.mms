@@ -1,7 +1,8 @@
 MMSVersion: 2
-name: Test Setup no 2 for multiple boards
+name: Multiboard Playtest Scenario
 planet: None
-description: uses a single board of ID != 0 (multiboard requires this to no longer break anywhere)
+description: Your lone Grasshopper is attacked by two Grasshoppers. You have a Sai aerospace fighter to support your 
+  mek.
 map:
   - file: Beginner Box/16x17 Grassland 1.board
     name: Grassland
@@ -16,17 +17,13 @@ map:
         id: 3
     id: 5
 
-#  - file: unofficial/Cakefish/General/50x50 Grass QRF Airbase.board
-#    name: Airport
-#    id: 5
-
 options:
   on:
   off:
     - check_victory
 
 factions:
-- name: Hooman
+- name: Human
 
   deploy:
     area:
@@ -37,14 +34,7 @@ factions:
 
   units:
     - fullname: Grasshopper GHR-5N
-#      at: [ 13, 12 ]
       board: 3
-#      facing: 0
-
-#    - fullname: Atlas AS7-D
-#      at: [ 15, 13 ]
-#      board: 3
-#      facing: 0
 
     - fullname: Sai S-4
       at: [ 30, 10 ]

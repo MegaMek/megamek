@@ -172,7 +172,7 @@ public final class Eras {
             Era startEra = Eras.getEra(startYear);
             if (endYear == null) {
                 // Open-ended range
-                eraText = " (" + startEra.name() + " -)";
+                eraText = " (" + startEra.name() + " and onwards)";
             } else {
                 Era endEra = Eras.getEra(endYear);
                 eraText = " (" + startEra.name();

@@ -52,6 +52,7 @@ import megamek.common.MekView;
 import megamek.common.Report;
 import megamek.common.templates.TROView;
 
+import static megamek.MMConstants.BT_URL_SHRAPNEL;
 import static megamek.MMConstants.MUL_URL_PREFIX;
 
 /**
@@ -87,7 +88,8 @@ public class MekViewPanel extends JPanel {
             if (HyperlinkEvent.EventType.ACTIVATED == pe.getEventType()) {
 
                 boolean isMulAddress = pe.getURL().toString().startsWith(MUL_URL_PREFIX);
-                if (isMulAddress) {
+                boolean isShrapnelAddress = pe.getURL().toString().startsWith(BT_URL_SHRAPNEL);
+                if (isMulAddress || isShrapnelAddress) {
                     UIUtil.browse(pe.getURL().toString(), this);
                 } else {
                     String reference = pe.getDescription();

@@ -17,10 +17,13 @@ import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
+import java.io.Serial;
+
 /**
  * The attacker pushes the target.
  */
 public class PushAttackAction extends DisplacementAttackAction {
+    @Serial
     private static final long serialVersionUID = 6878038939232914083L;
 
     public PushAttackAction(int entityId, int targetId, Coords targetPos) {
@@ -36,33 +39,27 @@ public class PushAttackAction extends DisplacementAttackAction {
     }
 
     /**
-     * pushes are impossible when physical attacks are impossible, or a
-     * retractable blade is extended
+     * pushes are impossible when physical attacks are impossible, or a retractable blade is extended
      *
-     * @param game   The current {@link Game}
-     * @param ae
-     * @param target
-     * @return
+     * @return A String giving the reason why the push attack is impossible
      */
-    protected static String toHitIsImpossible(Game game, Entity ae, Targetable target) {
-        String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(game, ae, target);
+    protected static String toHitIsImpossible(Game game, Entity attacker, Targetable target) {
+        String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(game, attacker, target);
 
         if (physicalImpossible != null) {
             return physicalImpossible;
         }
 
-        if (ae.getGrappled() != Entity.NONE) {
+        if (attacker.getGrappled() != Entity.NONE) {
             return "Unit Grappled";
         }
 
         // can't push if carrying any cargo per TW
-        if ((ae instanceof Mek) &&
-                !((Mek) ae).canFireWeapon(Mek.LOC_LARM) ||
-                !((Mek) ae).canFireWeapon(Mek.LOC_LARM)) {
+        if ((attacker instanceof Mek mek) && !(mek.canFireWeapon(Mek.LOC_LARM) || mek.canFireWeapon(Mek.LOC_LARM))) {
             return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
         }
 
-        if ((ae instanceof Mek) && ((Mek) ae).hasExtendedRetractableBlade()) {
+        if ((attacker instanceof Mek mek) && mek.hasExtendedRetractableBlade()) {
             return "Extended retractable blade";
         }
 
@@ -88,9 +85,12 @@ public class PushAttackAction extends DisplacementAttackAction {
         if (te == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't target a null entity!");
         }
+        if (!game.onTheSameBoard(ae, target)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker and target are not on the same board.");
+        }
 
-        Hex attHex = game.getBoard().getHex(ae.getPosition());
-        Hex targHex = game.getBoard().getHex(te.getPosition());
+        Hex attHex = game.getHexOf(ae);
+        Hex targHex = game.getHexOf(te);
 
         if (attHex == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Entity #" + ae.getId() + " does not know its position.");
@@ -106,7 +106,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         Building bldg = null;
         if (targetInBuilding) {
-            bldg = game.getBoard().getBuildingAt(te.getPosition());
+            bldg = game.getBuildingAt(te.getBoardLocation()).orElse(null);
         }
         ToHitData toHit;
 
@@ -221,7 +221,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         if (targetInBuilding) {
             if (!Compute.isInBuilding(game, ae)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is inside building");
-            } else if (!game.getBoard().getBuildingAt(ae.getPosition()).equals(bldg)) {
+            } else if (!game.getBoard(ae).getBuildingAt(ae.getPosition()).equals(bldg)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is inside different building");
             }
         }

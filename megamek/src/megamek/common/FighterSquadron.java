@@ -30,6 +30,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
@@ -496,7 +497,7 @@ public class FighterSquadron extends AeroSpaceFighter {
      */
     @Override
     public int[] getBombLoadout() {
-        int[] loadout = new int[BombType.B_NUM];
+        int[] loadout = new int[BombTypeEnum.NUM];
         for (Entity fighter : getSubEntities()) {
             for (Mounted<?> m : fighter.getBombs()) {
                 loadout[((BombType) m.getType()).getBombType()]++;
@@ -527,7 +528,7 @@ public class FighterSquadron extends AeroSpaceFighter {
         clearBombs();
 
         // Find out what bombs everyone has
-        for (int bombType = 0; bombType < BombType.B_NUM; bombType++) {
+        for (int bombType = 0; bombType < BombTypeEnum.NUM; bombType++) {
             int finalBombType = bombType;
             int maxBombCount = 0;
             for (Entity fighter : getSubEntities()) {
@@ -541,19 +542,19 @@ public class FighterSquadron extends AeroSpaceFighter {
 
         // Now that we know our bomb choices, load 'em
         int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
-        for (int type = 0; type < BombType.B_NUM; type++) {
+        for (int type = 0; type < BombTypeEnum.NUM; type++) {
             for (int i = 0; i < extBombChoices[type]; i++) {
-                if ((type == BombType.B_ALAMO)
+                if ((type == BombTypeEnum.ALAMO)
                         && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                     continue;
-                } else if ((type > BombType.B_TAG) && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
+                } else if ((type > BombTypeEnum.TAG) && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
                     continue;
                 }
 
                 // some bombs need an associated weapon and if so
                 // they need a weapon for each bomb
-                if ((null != BombType.getBombWeaponName(type)) && (type != BombType.B_ARROW)
-                        && (type != BombType.B_HOMING)) {
+                if ((null != BombType.getBombWeaponName(type)) && (type != BombTypeEnum.ARROW)
+                        && (type != BombTypeEnum.HOMING)) {
                     try {
                         addBomb(EquipmentType.get(BombType.getBombWeaponName(type)), LOC_NOSE);
                     } catch (Exception ignored) {
@@ -563,9 +564,9 @@ public class FighterSquadron extends AeroSpaceFighter {
                 // If the bomb was added as a weapon, don't add the ammo
                 // The ammo will end up never getting removed from the squadron
                 // because it doesn't count as a weapon.
-                if ((type != BombType.B_TAG) && (null == BombType.getBombWeaponName(type))) {
+                if ((type != BombTypeEnum.TAG) && (null == BombType.getBombWeaponName(type))) {
                     try {
-                        addEquipment(EquipmentType.get(BombType.getBombInternalName(type)), LOC_NOSE, false);
+                        addEquipment(EquipmentType.get(type.getInternalName()), LOC_NOSE, false);
                     } catch (Exception ignored) {
 
                     }

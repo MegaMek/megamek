@@ -27,7 +27,7 @@ public class InfantryLaserPistolBrightStarL15 extends InfantryWeapon {
         name = "Laser Pistol (Brightstar L-15)";
         setInternalName(name);
         addLookupName("BRIGHTSTARL15");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1750;
         bv = 0.056;
         tonnage = 0.0014;

@@ -37,7 +37,7 @@ public class InfantrySupportGrenadeLauncherCompactWeapon extends InfantryWeapon 
 		addLookupName("InfantryCompactGL");
 		addLookupName("InfantryCompactGrenadeLauncher");
 		addLookupName("Infantry Compact Grenade Launcher");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 290;
 		bv = 0.49;
 		tonnage = .003;

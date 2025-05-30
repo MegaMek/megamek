@@ -446,18 +446,18 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 AmmoType ammoType = mounted.getType();
 
                 // per errata, TAG will spot for LRMs and such
-                if ((ammoType.getAmmoType() == AmmoType.T_LRM) ||
-                          (ammoType.getAmmoType() == AmmoType.T_LRM_IMP) ||
-                          (ammoType.getAmmoType() == AmmoType.T_MML) ||
-                          (ammoType.getAmmoType() == AmmoType.T_NLRM) ||
-                          (ammoType.getAmmoType() == AmmoType.T_MEK_MORTAR)) {
+                if ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                          (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                          (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                          (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
+                          (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) {
                     return true;
                 }
 
-                if (((ammoType.getAmmoType() == AmmoType.T_ARROW_IV) ||
-                           (ammoType.getAmmoType() == AmmoType.T_LONG_TOM) ||
-                           (ammoType.getAmmoType() == AmmoType.T_SNIPER) ||
-                           (ammoType.getAmmoType() == AmmoType.T_THUMPER)) &&
+                if (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV) ||
+                           (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM) ||
+                           (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER) ||
+                           (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.THUMPER)) &&
                           (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING))) {
                     return true;
                 }
@@ -467,7 +467,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                       .stream()
                       .anyMatch(bomb -> !bomb.isDestroyed() &&
                                               (bomb.getUsableShotsLeft() > 0) &&
-                                              (bomb.getType().getBombType() == BombType.B_LG))) {
+                                              (bomb.getType().getBombType() == BombTypeEnum.LG))) {
                 return true;
             }
         }

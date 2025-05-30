@@ -31,7 +31,7 @@ public class ISBAGaussRifleKingDavidLight extends Weapon {
         addLookupName("IS BA King David Light Gauss Rifle");
         damage = 1;
         baDamageClass = WeaponType.WEAPON_BURST_1D6;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         shortRange = 3;
         mediumRange = 6;
         longRange = 9;

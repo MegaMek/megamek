@@ -37,6 +37,7 @@ import javax.swing.JPanel;
 
 import megamek.client.ui.Messages;
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 
 /**
  * A dialog to determine bomb payload.
@@ -116,7 +117,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         //initialize the bomb choices
         for (int i = 0; i < bombs.length; i++) {
             b_choices[i] = new JComboBox<String>();
-            b_labels[i] = new JLabel(BombType.getBombName(i));
+            b_labels[i] = new JLabel(BombTypeEnum.fromIndex(i).getDisplayName());
             int max = bombs[i];
             if ((limit > -1) && (max > limit)) {
                 max = limit;

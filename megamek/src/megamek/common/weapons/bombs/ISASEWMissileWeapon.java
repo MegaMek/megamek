@@ -37,7 +37,7 @@ public class ISASEWMissileWeapon extends ThunderBoltWeapon {
         super();
 
         this.name = "Anti-Ship Electronic Warfare (ASEW) Missiles";
-        this.setInternalName(BombType.getBombWeaponName(BombType.B_ASEW));
+        this.setInternalName(BombType.getBombWeaponName(BombTypeEnum.ASEW));
         this.heat = 0;
         this.damage = 0;
         this.rackSize = 1;
@@ -56,7 +56,7 @@ public class ISASEWMissileWeapon extends ThunderBoltWeapon {
         this.medAV = 0;
         this.longAV = 0;
         this.maxRange = RANGE_MED;
-        this.ammoType = AmmoType.T_ASEW_MISSILE;
+        this.ammoType = AmmoType.AmmoTypeEnum.ASEW_MISSILE;
         this.capital = false;
         this.missileArmor = 30;
         rulesRefs = "358, TO";

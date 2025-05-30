@@ -38,7 +38,7 @@ public class SniperCannon extends ArtilleryCannonWeapon {
         sortingName = "Cannon Arty Sniper";
         heat = 10;
         rackSize = 10;
-        ammoType = AmmoType.T_SNIPER_CANNON;
+        ammoType = AmmoType.AmmoTypeEnum.SNIPER_CANNON;
         minimumRange = 2;
         shortRange = 4;
         mediumRange = 8;

@@ -640,8 +640,8 @@ class TeamLoadOutGeneratorTest {
               faction,
               techBase,
               mixedTech);
-        int[] expected = new int[BombType.B_NUM];
-        expected[BombType.B_RLP] = bombUnits;
+        int[] expected = new int[BombTypeEnum.NUM];
+        expected[BombTypeEnum.RLP] = bombUnits;
         assertArrayEquals(expected, generatedBombs);
     }
 
@@ -671,9 +671,9 @@ class TeamLoadOutGeneratorTest {
               techBase,
               mixedTech);
         // Should always get some regular rocket launchers
-        assertTrue(generatedBombs[BombType.B_RL] > 0);
+        assertTrue(generatedBombs[BombTypeEnum.RL] > 0);
         // Should not use RL-Ps when RLs are available
-        assertEquals(0, generatedBombs[BombType.B_RLP]);
+        assertEquals(0, generatedBombs[BombTypeEnum.RLP]);
     }
 
     /**
@@ -702,6 +702,6 @@ class TeamLoadOutGeneratorTest {
               techBase,
               mixedTech);
         // Pre-2823, Clan units can take RL-P bombs
-        assertTrue(generatedBombs[BombType.B_RLP] > 0);
+        assertTrue(generatedBombs[BombTypeEnum.RLP] > 0);
     }
 }

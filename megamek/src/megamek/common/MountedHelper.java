@@ -30,7 +30,7 @@ public class MountedHelper {
     /** Returns true if the given Mounted m is a Coolant Pod. */
     public static boolean isCoolantPod(@Nullable Mounted<?> m) {
         return (m != null) && (m.getType() instanceof AmmoType)
-                && (((AmmoType) m.getType()).getAmmoType() == AmmoType.T_COOLANT_POD);
+                && (((AmmoType) m.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD);
     }
 
     /** Returns true if the given Mounted m is an Artemis IV system (IS/C). */

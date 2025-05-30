@@ -31,7 +31,7 @@ public class InfantryShotgunWranglemanTriBarrel extends InfantryWeapon {
        name = "Shotgun (Wrangleman Tri-Barrel)";
        setInternalName(name);
        addLookupName("Wrangleman Tri-Barrel");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .243;
        tonnage =  0.003;
        infantryDamage =  0.27;

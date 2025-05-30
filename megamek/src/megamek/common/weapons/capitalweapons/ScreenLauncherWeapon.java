@@ -36,7 +36,7 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
         this.addLookupName("ScreenLauncher");
         this.heat = 10;
         this.damage = 15;
-        this.ammoType = AmmoType.T_SCREEN_LAUNCHER;
+        this.ammoType = AmmoType.AmmoTypeEnum.SCREEN_LAUNCHER;
         this.shortRange = 3;
         this.mediumRange = 6;
         this.longRange = 9;

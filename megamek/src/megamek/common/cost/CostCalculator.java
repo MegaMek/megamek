@@ -95,7 +95,7 @@ public class CostCalculator {
         Map<String, Long> weaponsCostMap = new HashMap<>();
         for (Mounted<?> mounted : entity.getEquipment()) {
             if (ignoreAmmo && (mounted.getType() instanceof AmmoType)
-                    && (!(((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD))) {
+                    && (!(((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD))) {
                 continue;
             }
             if (mounted.isWeaponGroup() || mounted.getType() instanceof ArmorType) {

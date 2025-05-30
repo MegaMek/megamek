@@ -53,6 +53,7 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.common.*;
 import megamek.common.AmmoType.Munitions;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
@@ -9842,7 +9843,7 @@ public class TWGameManager extends AbstractGameManager {
                 Mounted<?> ammoUsed = artilleryFirer.getEquipment(waa.getAmmoId());
                 AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
                 if (atype != null &&
-                          (atype.getAmmoType() == AmmoType.T_ARROW_IV || atype.getAmmoType() == BombType.B_HOMING)) {
+                          (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV || atype.getAmmoType() == BombTypeEnum.HOMING)) {
                     isHomingMissile = true;
                 }
             }
@@ -10760,7 +10761,7 @@ public class TWGameManager extends AbstractGameManager {
         for (Mounted<?> mounted : entity.getTotalWeaponList()) {
             if (mounted.isJammed() && !mounted.isDestroyed()) {
                 WeaponType wtype = (WeaponType) mounted.getType();
-                if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                if (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY) {
                     Roll diceRoll = Compute.rollD6(2);
                     r = new Report(3030);
                     r.indent();
@@ -10779,12 +10780,12 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 // Unofficial option to unjam UACs, ACs, and LACs like Rotary
                 // Autocannons
-                if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) ||
-                           (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB) ||
-                           (wtype.getAmmoType() == AmmoType.T_AC) ||
-                           (wtype.getAmmoType() == AmmoType.T_AC_IMP) ||
-                           (wtype.getAmmoType() == AmmoType.T_PAC) ||
-                           (wtype.getAmmoType() == AmmoType.T_LAC)) &&
+                if (((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) ||
+                           (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB) ||
+                           (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
+                           (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
+                           (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.PAC) ||
+                           (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LAC)) &&
                           game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
                     Roll diceRoll = Compute.rollD6(2);
                     r = new Report(3030);
@@ -19697,7 +19698,7 @@ TargetRoll nTargetRoll,
                             break;
                         }
                         // does it use Ammo?
-                        if (wtype.getAmmoType() != AmmoType.T_NA) {
+                        if (wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA) {
                             Mounted<?> m = equipmentHit.getLinked();
                             int ammoroll = Compute.d6(2);
                             if (ammoroll >= 10) {
@@ -22363,10 +22364,10 @@ TargetRoll nTargetRoll,
 
         // Inferno ammo causes heat buildup as well as the damage
         if ((mounted.getType() instanceof AmmoType) &&
-                  ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM) ||
-                         (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM_IMP) ||
-                         (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_IATM) ||
-                         (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_MML)) &&
+                  ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                         (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+                         (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.IATM) ||
+                         (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.MML)) &&
                   (((AmmoType) mounted.getType()).getMunitionType().contains(Munitions.M_INFERNO) &&
                          (mounted.getHittableShotsLeft() > 0))) {
             en.heatBuildup += Math.min(mounted.getExplosionDamage(), 30);
@@ -22374,7 +22375,7 @@ TargetRoll nTargetRoll,
 
         // Inferno bombs in LAM bomb bays
         if ((mounted.getType() instanceof BombType) &&
-                  (((BombType) mounted.getType()).getBombType() == BombType.B_INFERNO)) {
+                  (((BombType) mounted.getType()).getBombType() == BombTypeEnum.INFERNO)) {
             en.heatBuildup += Math.min(mounted.getExplosionDamage(), 30);
         }
 
@@ -22383,18 +22384,18 @@ TargetRoll nTargetRoll,
 
         // Smoke ammo halves damage
         if ((mounted.getType() instanceof AmmoType) &&
-                  ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM) ||
-                         (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM_IMP) ||
-                         (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_LRM) ||
-                         (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_LRM_IMP)) &&
+                  ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                         (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+                         (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                         (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)) &&
                   (((AmmoType) mounted.getType()).getMunitionType().contains(Munitions.M_SMOKE_WARHEAD) &&
                          (mounted.getHittableShotsLeft() > 0))) {
             damage = ((mounted.getExplosionDamage()) / 2);
         }
         // coolant explodes for 2 damage and reduces heat by 3
         if ((mounted.getType() instanceof AmmoType) &&
-                  ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_VEHICLE_FLAMER) ||
-                         (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_HEAVY_FLAMER)) &&
+                  ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.VEHICLE_FLAMER) ||
+                         (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.HEAVY_FLAMER)) &&
                   (((AmmoType) mounted.getType()).getMunitionType().contains(Munitions.M_COOLANT) &&
                          (mounted.getHittableShotsLeft() > 0))) {
             damage = 2;
@@ -22550,9 +22551,9 @@ TargetRoll nTargetRoll,
                     continue;
                 }
                 // coolant pods and flamer coolant ammo don't explode from heat
-                if ((atype.getAmmoType() == AmmoType.T_COOLANT_POD) ||
-                          (((atype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER) ||
-                                  (atype.getAmmoType() == AmmoType.T_HEAVY_FLAMER)) &&
+                if ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) ||
+                          (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.VEHICLE_FLAMER) ||
+                                  (atype.getAmmoType() == AmmoType.AmmoTypeEnum.HEAVY_FLAMER)) &&
                                  (atype.getMunitionType().contains(Munitions.M_COOLANT)))) {
                     continue;
                 }
@@ -24704,7 +24705,7 @@ TargetRoll nTargetRoll,
             logger.error("Entity " + e.getDisplayName() + " does not have weapon #" + weaponId);
             return;
         }
-        if (mWeap.getType().getAmmoType() == AmmoType.T_NA) {
+        if (mWeap.getType().getAmmoType() == AmmoType.AmmoTypeEnum.NA) {
             logger.error("Item #" +
                                weaponId +
                                " of entity " +
@@ -25357,7 +25358,7 @@ TargetRoll nTargetRoll,
             if ((equip.getType() instanceof AmmoType) ||
                       (equip.getLinked() != null &&
                              equip.getLinked().getType() instanceof BombType &&
-                             ((BombType) equip.getLinked().getType()).getBombType() == BombType.B_INFERNO)) {
+                             ((BombType) equip.getLinked().getType()).getBombType() == BombTypeEnum.INFERNO)) {
                 entity.heat += Math.min(equip.getExplosionDamage(), 30);
             }
             vDesc.addAll(explodeEquipment(entity, boomloc, boomslot));
@@ -28379,10 +28380,10 @@ TargetRoll nTargetRoll,
         // Values used later
         boolean isFuelAirBomb = ammo != null &&
                                       (ammo.getMunitionType().contains(Munitions.M_FAE) ||
-                                             (BombType.getBombTypeFromInternalName(ammo.getInternalName()) ==
-                                                    BombType.B_FAE_SMALL ||
-                                                    BombType.getBombTypeFromInternalName(ammo.getInternalName()) ==
-                                                          BombType.B_FAE_LARGE));
+                                             (BombTypeEnum.fromInternalName(ammo.getInternalName()) ==
+                                                    BombTypeEnum.FAE_SMALL ||
+                                                    BombTypeEnum.fromInternalName(ammo.getInternalName()) ==
+                                                          BombTypeEnum.FAE_LARGE));
         Building bldg = game.getBuildingAt(coords, boardId).orElse(null);
         Hex hex = game.getHex(coords, boardId);
         int effectiveLevel = (hex != null) ? hex.getLevel() : 0;
@@ -28650,11 +28651,11 @@ TargetRoll nTargetRoll,
             }
         }
 
-        if (type == BombType.B_FAE_SMALL || type == BombType.B_FAE_LARGE) {
+        if (type == BombTypeEnum.FAE_SMALL || type == BombTypeEnum.FAE_LARGE) {
             // pass FAE bombs with the special handler
             alreadyHit = AreaEffectHelper.processFuelAirDamage(center,
                   targetLevel,
-                  (BombType) EquipmentType.get(BombType.getBombInternalName(type)),
+                  (BombType) EquipmentType.get(type.getInternalName()),
                   killer,
                   vPhaseReport,
                   this);

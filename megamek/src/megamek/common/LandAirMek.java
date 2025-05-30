@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.AmmoMounted;
@@ -132,8 +133,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     // Bomb choices
 
-    protected int[] intBombChoices = new int[BombType.B_NUM];
-    protected int[] extBombChoices = new int[BombType.B_NUM];
+    protected BombLoadout intBombChoices = new HashMap<>();
+    protected BombLoadout extBombChoices = new HashMap<>();
 
     private Targetable airmekBombTarget = null;
 
@@ -503,10 +504,10 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             } else if (prevMode == CONV_MODE_FIGHTER) {
                 for (Mounted<?> m : getTotalWeaponList()) {
                     WeaponType weaponType = (WeaponType) m.getType();
-                    if (weaponType.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                    if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY) {
                         m.setMode("");
                         m.setModeSwitchable(true);
-                    } else if (weaponType.getAmmoType() == AmmoType.T_AC_ULTRA) {
+                    } else if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) {
                         m.setMode("");
                         m.setModeSwitchable(true);
                     } else if (weaponType.hasIndirectFire()) {
@@ -1101,15 +1102,13 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     @Override
-    public int[] getIntBombChoices() {
-        return intBombChoices.clone();
+    public BombLoadout getIntBombChoices() {
+        return new HashMap<>(intBombChoices);
     }
 
     @Override
-    public void setIntBombChoices(int[] bc) {
-        if (bc.length == intBombChoices.length) {
-            intBombChoices = bc.clone();
-        }
+    public void setIntBombChoices(BombLoadout bc) {
+        intBombChoices = new HashMap<>(bc);
     }
 
     @Override
@@ -1129,17 +1128,19 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     @Override
-    public int[] getExtBombChoices() {
-        return extBombChoices;
+    public BombLoadout getExtBombChoices() {
+        return new HashMap<>(extBombChoices);
     }
 
     @Override
-    public void setExtBombChoices(int[] bc) {
+    public void setExtBombChoices(BombLoadout bc) {
+        // Do nothing; LAMs don't have external bomb bays
     }
 
     @Override
     public void clearBombChoices() {
-        Arrays.fill(intBombChoices, 0);
+        intBombChoices.clear();
+        extBombChoices.clear();
     }
 
     @Override
@@ -2009,13 +2010,15 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         mounted.setLocation(loc, false);
         int slots = 1;
         if (mounted.getType() instanceof BombType) {
-            slots = BombType.getBombCost(((BombType) mounted.getType()).getBombType());
+            slots = ((BombType) mounted.getType()).getBombType().getCost();
         } else if (mounted.getType() instanceof WeaponType) {
-            int type = BombType.getBombTypeForWeapon(mounted.getType());
-            if (type >= 0) {
-                slots = BombType.getBombCost(type);
-            } else {
-                slots = mounted.getCriticals();
+            if (mounted.getType() instanceof BombType bomb) {
+                BombTypeEnum bombType = bomb.getBombType();
+                if (bombType == BombTypeEnum.NONE) {
+                    slots = mounted.getCriticals();
+                } else {
+                    slots = bombType.getCost();
+                }
             }
         }
 

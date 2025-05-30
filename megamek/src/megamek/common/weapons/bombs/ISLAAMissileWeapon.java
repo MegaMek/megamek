@@ -31,7 +31,7 @@ public class ISLAAMissileWeapon extends ThunderBoltWeapon {
         super();
 
         this.name = "Light Air-to-Air (LAA) Missiles";
-        this.setInternalName(BombType.getBombWeaponName(BombType.B_LAA));
+        this.setInternalName(BombType.getBombWeaponName(BombTypeEnum.LAA));
         this.heat = 0;
         this.damage = 6;
         this.rackSize = 1;
@@ -49,7 +49,7 @@ public class ISLAAMissileWeapon extends ThunderBoltWeapon {
         this.shortAV = 6;
         this.medAV = 6;
         this.maxRange = RANGE_MED;
-        this.ammoType = AmmoType.T_LAA_MISSILE;
+        this.ammoType = AmmoType.AmmoTypeEnum.LAA_MISSILE;
         this.capital = false;
         this.missileArmor = 6;
         rulesRefs = "359, TO";

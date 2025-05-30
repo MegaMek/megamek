@@ -46,8 +46,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         twoRollsUltra = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
-                && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
-                        || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB));
+                && ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
+                        || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB));
     }
 
     @Override
@@ -142,8 +142,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             weapon.setJammed(true);
             isJammed = true;
-            if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
-                    || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+            if ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
+                    || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
                 r.messageId = 3160;
             } else {
                 r.messageId = 3170;

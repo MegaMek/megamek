@@ -36,7 +36,7 @@ public class InfantryRifleSunbeamStarfireERLaserWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantrySunbeamStarfire");
 		addLookupName("Sunbeam Starfire ER Laser Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 2500;
 		bv = 2.01;
 		tonnage = .005;

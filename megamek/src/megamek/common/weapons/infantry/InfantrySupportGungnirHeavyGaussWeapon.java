@@ -29,7 +29,7 @@ public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryGungnirHeavySupportGaussRifle");
 		addLookupName("GungnirHeavySupportGaussRifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 15000;
 		tonnage = 0.006;
 		bv = 0.0;

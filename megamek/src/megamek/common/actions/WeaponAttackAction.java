@@ -20,12 +20,14 @@ import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
@@ -96,7 +98,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     private int swarmMissiles = 0;
 
     // bomb stuff
-    private HashMap<String, int[]> bombPayloads = new HashMap<>();
+    private HashMap<String, BombLoadout> bombPayloads = new HashMap<>();
 
     // equipment that affects this attack (AMS, ECM?, etc)
     // only used server-side
@@ -129,15 +131,15 @@ public class WeaponAttackAction extends AbstractAttackAction {
     public WeaponAttackAction(int entityId, int targetId, int weaponId) {
         super(entityId, targetId);
         this.weaponId = weaponId;
-        this.bombPayloads.put("internal", new int[BombType.B_NUM]);
-        this.bombPayloads.put("external", new int[BombType.B_NUM]);
+        this.bombPayloads.put("internal", new BombLoadout());
+        this.bombPayloads.put("external", new BombLoadout());
     }
 
     public WeaponAttackAction(int entityId, int targetType, int targetId, int weaponId) {
         super(entityId, targetType, targetId);
         this.weaponId = weaponId;
-        this.bombPayloads.put("internal", new int[BombType.B_NUM]);
-        this.bombPayloads.put("external", new int[BombType.B_NUM]);
+        this.bombPayloads.put("internal", new BombLoadout());
+        this.bombPayloads.put("external", new BombLoadout());
     }
 
     // Copy constructor, hopefully with enough info to generate same to-hit data.
@@ -163,8 +165,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
         swarmingMissiles = other.swarmingMissiles;
         swarmMissiles = other.swarmMissiles;
         weaponId = other.weaponId;
-        this.bombPayloads.put("internal", Arrays.copyOf(other.bombPayloads.get("internal"), BombType.B_NUM));
-        this.bombPayloads.put("external", Arrays.copyOf(other.bombPayloads.get("external"), BombType.B_NUM));
+        this.bombPayloads.put("internal", Arrays.copyOf(other.bombPayloads.get("internal"), BombTypeEnum.NUM));
+        this.bombPayloads.put("external", Arrays.copyOf(other.bombPayloads.get("external"), BombTypeEnum.NUM));
     }
 
     public int getWeaponId() {
@@ -472,7 +474,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // 2003-01-02 BattleArmor MG and Small Lasers have unlimited ammo.
         // 2002-09-16 Infantry weapons have unlimited ammo.
 
-        final boolean usesAmmo = (wtype.getAmmoType() != AmmoType.T_NA) && !isWeaponInfantry;
+        final boolean usesAmmo = (wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA) && !isWeaponInfantry;
 
         final AmmoMounted ammo = usesAmmo ? linkedAmmo : null;
 
@@ -494,12 +496,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
                                      Compute.isFlakAttack(ae, te) &&
                                      (wtype instanceof CLBALBX ||
                                             ((atype != null) &&
-                                                   ((((atype.getAmmoType() == AmmoType.T_AC_LBX) ||
-                                                            (atype.getAmmoType() == AmmoType.T_AC_LBX_THB) ||
-                                                            (atype.getAmmoType() == AmmoType.T_SBGAUSS)) &&
+                                                   ((((atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX) ||
+                                                            (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX_THB) ||
+                                                            (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SBGAUSS)) &&
                                                            (munition.contains(AmmoType.Munitions.M_CLUSTER))) ||
                                                           munition.contains(AmmoType.Munitions.M_FLAK) ||
-                                                          (atype.getAmmoType() == AmmoType.T_HAG) ||
+                                                          (atype.getAmmoType() == AmmoType.AmmoTypeEnum.HAG) ||
                                                           atype.countsAsFlak())));
 
         boolean isIndirect = weapon.hasModes() && (weapon.curMode().isIndirect());
@@ -513,9 +515,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
                                                          Compute.isTargetTagged(target, game);
 
         boolean isInferno = ((atype != null) &&
-                                   ((atype.getAmmoType() == AmmoType.T_SRM) ||
-                                          (atype.getAmmoType() == AmmoType.T_SRM_IMP) ||
-                                          (atype.getAmmoType() == AmmoType.T_MML)) &&
+                                   ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                                          (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+                                          (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) &&
                                    (atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) ||
                                    (isWeaponInfantry && (wtype.hasFlag(WeaponType.F_INFERNO))));
 
@@ -562,17 +564,17 @@ public class WeaponAttackAction extends AbstractAttackAction {
         boolean isHoming = ammo != null && ammo.isHomingAmmoInHomingMode();
 
         boolean bHeatSeeking = (atype != null) &&
-                                     ((atype.getAmmoType() == AmmoType.T_SRM) ||
-                                            (atype.getAmmoType() == AmmoType.T_SRM_IMP) ||
-                                            (atype.getAmmoType() == AmmoType.T_MML) ||
-                                            (atype.getAmmoType() == AmmoType.T_LRM) ||
-                                            (atype.getAmmoType() == AmmoType.T_LRM_IMP)) &&
+                                     ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                                            (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+                                            (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                                            (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                                            (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)) &&
                                      (munition.contains(AmmoType.Munitions.M_HEAT_SEEKING));
 
         boolean bFTL = (atype != null) &&
-                             ((atype.getAmmoType() == AmmoType.T_MML) ||
-                                    (atype.getAmmoType() == AmmoType.T_LRM) ||
-                                    (atype.getAmmoType() == AmmoType.T_LRM_IMP)) &&
+                             ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)) &&
                              (munition.contains(AmmoType.Munitions.M_FOLLOW_THE_LEADER) &&
                                     !ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition()));
 
@@ -585,7 +587,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                                  !mLinker.isBreached() &&
                                  mLinker.getType().hasFlag(MiscType.F_APOLLO)) &&
                                 (atype != null) &&
-                                (atype.getAmmoType() == AmmoType.T_MRM);
+                                (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
 
         boolean bArtemisV = ((mLinker != null) &&
                                    (mLinker.getType() instanceof MiscType) &&
@@ -627,7 +629,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                                  !mLinker.isBreached() &&
                                  mLinker.getType().hasFlag(MiscType.F_APOLLO)) &&
                                 (bAmmo != null) &&
-                                (bAmmo.getAmmoType() == AmmoType.T_MRM);
+                                (bAmmo.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
 
                 bArtemisV = ((mLinker != null) &&
                                    (mLinker.getType() instanceof MiscType) &&
@@ -668,12 +670,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
             if (!isTargetECMAffected &&
                       te.isINarcedBy(ae.getOwner().getTeam()) &&
                       (atype != null) &&
-                      ((atype.getAmmoType() == AmmoType.T_LRM) ||
-                             (atype.getAmmoType() == AmmoType.T_LRM_IMP) ||
-                             (atype.getAmmoType() == AmmoType.T_MML) ||
-                             (atype.getAmmoType() == AmmoType.T_SRM) ||
-                             (atype.getAmmoType() == AmmoType.T_SRM_IMP) ||
-                             (atype.getAmmoType() == AmmoType.T_NLRM)) &&
+                      ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM)) &&
                       (munition.contains(AmmoType.Munitions.M_NARC_CAPABLE))) {
                 isINarcGuided = true;
             }
@@ -700,11 +702,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
             if ((spotter == null) &&
                       (atype != null) &&
-                      ((atype.getAmmoType() == AmmoType.T_LRM) ||
-                             (atype.getAmmoType() == AmmoType.T_LRM_IMP) ||
-                             (atype.getAmmoType() == AmmoType.T_MML) ||
-                             (atype.getAmmoType() == AmmoType.T_NLRM) ||
-                             (atype.getAmmoType() == AmmoType.T_MEK_MORTAR)) &&
+                      ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
                       (munition.contains(AmmoType.Munitions.M_SEMIGUIDED))) {
                 for (TagInfo ti : game.getTagInfo()) {
                     if (target.getId() == ti.target.getId()) {
@@ -723,7 +725,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         boolean mpMelevationHack = false;
         if (usesAmmo &&
-                  ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)) &&
+                  ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)) &&
                   (atype != null) &&
                   (munition.contains(AmmoType.Munitions.M_MULTI_PURPOSE)) &&
                   (ae.getElevation() == -1) &&
@@ -1365,18 +1367,18 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // make sure weapon can deliver flares
             if ((target.getTargetType() == Targetable.TYPE_FLARE_DELIVER) &&
                       !(usesAmmo &&
-                              ((atype.getAmmoType() == AmmoType.T_LRM) ||
-                                     (atype.getAmmoType() == AmmoType.T_MML) ||
-                                     (atype.getAmmoType() == AmmoType.T_LRM_IMP) ||
-                                     (atype.getAmmoType() == AmmoType.T_MEK_MORTAR)) &&
+                              ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                                     (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                                     (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                                     (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
                               (munition.contains(AmmoType.Munitions.M_FLARE)))) {
                 return Messages.getString("WeaponAttackAction.NoFlares");
             }
 
             // These ammo types can only target hexes for flare delivery
-            if (((atype.getAmmoType() == AmmoType.T_LRM) ||
-                       (atype.getAmmoType() == AmmoType.T_LRM_IMP) ||
-                       (atype.getAmmoType() == AmmoType.T_MML)) &&
+            if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                       (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                       (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) &&
                       (atype.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) &&
                       (target.getTargetType() != Targetable.TYPE_FLARE_DELIVER)) {
                 return Messages.getString("WeaponAttackAction.OnlyFlare");
@@ -1410,10 +1412,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             // These ammo types can only target hexes for minefield delivery
-            if (((atype.getAmmoType() == AmmoType.T_LRM) ||
-                       (atype.getAmmoType() == AmmoType.T_LRM_IMP) ||
-                       (atype.getAmmoType() == AmmoType.T_MML) ||
-                       (atype.getAmmoType() == AmmoType.T_MEK_MORTAR)) &&
+            if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                       (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                       (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                       (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
                       ((atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER)) ||
                              (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE)) ||
                              (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO)) ||
@@ -1612,7 +1614,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Only screen launchers may target a hex for screen launch
         if (Targetable.TYPE_HEX_SCREEN == target.getTargetType()) {
             if (wtype != null &&
-                      (!((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) ||
+                      (!((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SCREEN_LAUNCHER) ||
                                (wtype instanceof ScreenLauncherBayWeapon)))) {
                 return Messages.getString("WeaponAttackAction.ScreenLauncherOnly");
             }
@@ -1621,7 +1623,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Screen Launchers can only target hexes
         if ((Targetable.TYPE_HEX_SCREEN != target.getTargetType()) &&
                   (wtype != null &&
-                         ((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) ||
+                         ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SCREEN_LAUNCHER) ||
                                 (wtype instanceof ScreenLauncherBayWeapon)))) {
             return Messages.getString("WeaponAttackAction.ScreenHexOnly");
         }
@@ -1739,14 +1741,14 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Torpedos must remain in the water over their whole path to the target
         if ((atype != null) &&
-                  ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO) ||
-                         (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO) ||
-                         (((atype.getAmmoType() == AmmoType.T_SRM) ||
-                                 (atype.getAmmoType() == AmmoType.T_SRM_IMP) ||
-                                 (atype.getAmmoType() == AmmoType.T_MRM) ||
-                                 (atype.getAmmoType() == AmmoType.T_LRM) ||
-                                 (atype.getAmmoType() == AmmoType.T_LRM_IMP) ||
-                                 (atype.getAmmoType() == AmmoType.T_MML)) &&
+                  ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_TORPEDO) ||
+                         (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_TORPEDO) ||
+                         (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                                 (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+                                 (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MRM) ||
+                                 (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                                 (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                                 (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) &&
                                 (atype.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)))) &&
                   (los.getMinimumWaterDepth() < 1)) {
             return Messages.getString("WeaponAttackAction.TorpOutOfWater");
@@ -1832,7 +1834,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                   wtype != null &&
                   (ae.getConversionMode() == LandAirMek.CONV_MODE_MEK) &&
                   wtype.hasFlag(WeaponType.F_BOMB_WEAPON) &&
-                  wtype.getAmmoType() != AmmoType.T_RL_BOMB &&
+                  wtype.getAmmoType() != AmmoType.AmmoTypeEnum.RL_BOMB &&
                   !wtype.hasFlag(WeaponType.F_TAG)) {
             return Messages.getString("WeaponAttackAction.NoBombInMekMode");
         }
@@ -1847,7 +1849,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 boolean usable = false;
                 for (WeaponMounted m : weapon.getBayWeapons()) {
                     WeaponType bayWType = m.getType();
-                    boolean bayWUsesAmmo = (bayWType.getAmmoType() != AmmoType.T_NA);
+                    boolean bayWUsesAmmo = (bayWType.getAmmoType() != AmmoType.AmmoTypeEnum.NA);
                     if (m.canFire()) {
                         if (bayWUsesAmmo) {
                             if ((m.getLinked() != null) && (m.getLinked().getUsableShotsLeft() > 0)) {
@@ -2263,17 +2265,17 @@ public class WeaponAttackAction extends AbstractAttackAction {
                                 // check the loaded ammo for the Arrow IV flag
                                 AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
                                 AmmoType bAType = bayWAmmo.getType();
-                                if (bAType.getAmmoType() != AmmoType.T_ARROW_IV) {
+                                if (bAType.getAmmoType() != AmmoType.AmmoTypeEnum.ARROW_IV) {
                                     return Messages.getString("WeaponAttackAction.OnlyArrowArty");
                                 }
                             }
-                        } else if ((wtype.getAmmoType() != AmmoType.T_ARROW_IV) &&
-                                         (wtype.getAmmoType() != AmmoType.T_ARROW_IV_BOMB)) {
+                        } else if ((wtype.getAmmoType() != AmmoType.AmmoTypeEnum.ARROW_IV) &&
+                                         (wtype.getAmmoType() != AmmoType.AmmoTypeEnum.ARROW_IV_BOMB)) {
                             // For Fighters, LAMs, Small Craft and VTOLs
                             return Messages.getString("WeaponAttackAction.OnlyArrowArty");
                         }
                     }
-                } else if ((wtype.getAmmoType() == AmmoType.T_ARROW_IV) &&
+                } else if ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV) &&
                                  atype != null &&
                                  atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
                     // Air-Defense Arrow IV can only target airborne enemy units between 1 and 51 hexes away
@@ -2449,7 +2451,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
             // BA NARCs and Tasers can only fire at one target in a round
             if ((ae instanceof BattleArmor) &&
-                      (wtype.hasFlag(WeaponType.F_TASER) || wtype.getAmmoType() == AmmoType.T_NARC)) {
+                      (wtype.hasFlag(WeaponType.F_TASER) || wtype.getAmmoType() == AmmoType.AmmoTypeEnum.NARC)) {
                 // Go through all of the current actions to see if a NARC or Taser
                 // has been fired
                 for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
@@ -2466,7 +2468,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                                   weapon.getType().hasFlag(WeaponType.F_TASER)) {
                             return Messages.getString("WeaponAttackAction.BATaserSameTarget");
                         }
-                        if (prevWtype.getAmmoType() == AmmoType.T_NARC && wtype.getAmmoType() == AmmoType.T_NARC) {
+                        if (prevWtype.getAmmoType() == AmmoType.AmmoTypeEnum.NARC && wtype.getAmmoType() == AmmoType.AmmoTypeEnum.NARC) {
                             return Messages.getString("WeaponAttackAction.BANarcSameTarget");
                         }
                     }
@@ -2488,7 +2490,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             // ASEW Missiles cannot be launched in an atmosphere
-            if ((wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE) && !ae.isSpaceborne()) {
+            if ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.ASEW_MISSILE) && !ae.isSpaceborne()) {
                 return Messages.getString("WeaponAttackAction.ASEWAtmo");
             }
 
@@ -2585,7 +2587,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             // BA Micro bombs only when flying
-            if ((atype != null) && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
+            if ((atype != null) && (atype.getAmmoType() == AmmoType.AmmoTypeEnum.BA_MICRO_BOMB)) {
                 if (!ae.isAirborneVTOLorWIGE()) {
                     return Messages.getString("WeaponAttackAction.MinimumAlt1");
                     // and can only target hexes
@@ -2599,7 +2601,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
             // Can't attack a Micro Bomb hex target with other weapons
             if ((target.getTargetType() == Targetable.TYPE_HEX_BOMB) &&
-                      !(usesAmmo && atype != null && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB))) {
+                      !(usesAmmo && atype != null && (atype.getAmmoType() == AmmoType.AmmoTypeEnum.BA_MICRO_BOMB))) {
                 return Messages.getString("WeaponAttackAction.InvalidForBombing");
             }
 
@@ -2855,7 +2857,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             if (isIndirect &&
                       usesAmmo &&
                       atype != null &&
-                      (atype.getAmmoType() == AmmoType.T_MML) &&
+                      (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) &&
                       !atype.hasFlag(AmmoType.F_MML_LRM)) {
                 return Messages.getString("WeaponAttackAction.NoIndirectSRM");
             }
@@ -2956,7 +2958,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             // NARC and iNARC
-            if ((wtype.getAmmoType() == AmmoType.T_NARC) || (wtype.getAmmoType() == AmmoType.T_INARC)) {
+            if ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.NARC) || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.INARC)) {
                 // Cannot be used against targets inside buildings
                 if (targetInBuilding) {
                     return Messages.getString("WeaponAttackAction.NoNarcInBuilding");
@@ -3181,7 +3183,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Screen launchers target hexes and hit automatically (if in range)
         if (wtype != null &&
-                  ((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) || (wtype instanceof ScreenLauncherBayWeapon)) &&
+                  ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SCREEN_LAUNCHER) || (wtype instanceof ScreenLauncherBayWeapon)) &&
                   distance <= wtype.getExtremeRange()) {
             return Messages.getString("WeaponAttackAction.ScreenAutoHit");
         }
@@ -3299,15 +3301,14 @@ public class WeaponAttackAction extends AbstractAttackAction {
         this.swarmMissiles = swarmMissiles;
     }
 
-    public int[] getBombPayload() {
-        int[] bombPayload = new int[BombType.B_NUM];
-        for (int i = 0; i < bombPayloads.get("internal").length; i++) {
-            bombPayload[i] = bombPayloads.get("internal")[i] + bombPayloads.get("external")[i];
-        }
-        return bombPayload;
+    public BombLoadout getBombPayload() {
+        BombLoadout combined = new HashMap<>(bombPayloads.get("internal"));
+        bombPayloads.get("external").forEach((type, count) -> 
+            combined.merge(type, count, Integer::sum));
+        return combined;
     }
 
-    public HashMap<String, int[]> getBombPayloads() {
+    public HashMap<String, BombLoadout> getBombPayloads() {
         return bombPayloads;
     }
 
@@ -3316,8 +3317,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
      *             each indexed by the constants declared in BombType. Each element indicates how many types of that
      *             bomb should be fired.
      */
-    public void setBombPayloads(HashMap<String, int[]> bpls) {
-        bombPayloads = (HashMap<String, int[]>) bpls.clone();
+    public void setBombPayloads(HashMap<String, BombLoadout> bpls) {
+        bombPayloads = new HashMap<>();
+        for (Map.Entry<String, BombLoadout> entry : bpls.entrySet()) {
+            bombPayloads.put(entry.getKey(), new HashMap<>(entry.getValue()));
+        }
     }
 
     public boolean isStrafing() {
@@ -3510,7 +3514,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // +4 for trying to fire ASEW or antiship missile at a target of < 500 tons
-        if ((wtype.hasFlag(WeaponType.F_ANTI_SHIP) || wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE) &&
+        if ((wtype.hasFlag(WeaponType.F_ANTI_SHIP) || wtype.getAmmoType() == AmmoType.AmmoTypeEnum.ASEW_MISSILE) &&
                   (te != null) &&
                   (te.getWeight() < 500)) {
             toHit.addModifier(4, Messages.getString("WeaponAttackAction.TeTooSmallForASM"));
@@ -3578,7 +3582,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if (isFlakAttack) {
             // ...and if so, which one (HAGs get an extra -1 as per TW p. 136
             // that's not covered by anything else).
-            if (atype != null && atype.getAmmoType() == AmmoType.T_HAG) {
+            if (atype != null && atype.getAmmoType() == AmmoType.AmmoTypeEnum.HAG) {
                 toHit.addModifier(-3, Messages.getString("WeaponAttackAction.HagFlak"));
             } else {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
@@ -3617,11 +3621,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if (isIndirect) {
             // semiguided ammo negates this modifier, if TAG succeeded
             if ((atype != null) &&
-                      ((atype.getAmmoType() == AmmoType.T_LRM) ||
-                             (atype.getAmmoType() == AmmoType.T_LRM_IMP) ||
-                             (atype.getAmmoType() == AmmoType.T_MML) ||
-                             (atype.getAmmoType() == AmmoType.T_NLRM) ||
-                             (atype.getAmmoType() == AmmoType.T_MEK_MORTAR)) &&
+                      ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
                       (munition.contains(AmmoType.Munitions.M_SEMIGUIDED))) {
 
                 if (Compute.isTargetTagged(target, game)) {
@@ -3709,10 +3713,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Autocannon Munitions
 
         // Armor Piercing ammo is a flat +1
-        if (((atype.getAmmoType() == AmmoType.T_AC) ||
-                   (atype.getAmmoType() == AmmoType.T_LAC) ||
-                   (atype.getAmmoType() == AmmoType.T_AC_IMP) ||
-                   (atype.getAmmoType() == AmmoType.T_PAC)) &&
+        if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
+                   (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
+                   (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
+                   (atype.getAmmoType() == AmmoType.AmmoTypeEnum.PAC)) &&
                   (munition.contains(AmmoType.Munitions.M_ARMOR_PIERCING))) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.ApAmmo"));
         }
@@ -3720,7 +3724,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Bombs
 
         // Air-to-air Arrow and Light Air-to-air missiles
-        if (((atype.getAmmoType() == AmmoType.T_AAA_MISSILE) || (atype.getAmmoType() == AmmoType.T_LAA_MISSILE)) &&
+        if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.AAA_MISSILE) || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LAA_MISSILE)) &&
                   Compute.isAirToGround(ae, target)) {
             // +4 penalty if trying to use one against a ground target that is not flying
             // (Errata: https://bg.battletech.com/forums/index.php?topic=87401.msg2060972#msg2060972 )
@@ -3798,11 +3802,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Listen-Kill ammo from War of 3039 sourcebook?
         if (!isECMAffected &&
-                  ((atype.getAmmoType() == AmmoType.T_LRM) ||
-                         (atype.getAmmoType() == AmmoType.T_LRM_IMP) ||
-                         (atype.getAmmoType() == AmmoType.T_MML) ||
-                         (atype.getAmmoType() == AmmoType.T_SRM) ||
-                         (atype.getAmmoType() == AmmoType.T_SRM_IMP)) &&
+                  ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                         (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                         (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                         (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                         (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) &&
                   (munition.contains(AmmoType.Munitions.M_LISTEN_KILL)) &&
                   !((te != null) && te.isClan())) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.ListenKill"));
@@ -4030,11 +4034,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // LB-X cluster, HAG flak, flak ammo ineligible for TC bonus
             boolean usesLBXCluster = usesAmmo &&
                                            (atype != null) &&
-                                           (atype.getAmmoType() == AmmoType.T_AC_LBX ||
-                                                  atype.getAmmoType() == AmmoType.T_AC_LBX_THB) &&
+                                           (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX ||
+                                                  atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX_THB) &&
                                            munition.contains(AmmoType.Munitions.M_CLUSTER);
-            boolean usesHAGFlak = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_HAG && isFlakAttack;
-            boolean isSBGauss = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_SBGAUSS;
+            boolean usesHAGFlak = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.AmmoTypeEnum.HAG && isFlakAttack;
+            boolean isSBGauss = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.AmmoTypeEnum.SBGAUSS;
             boolean isFlakAmmo = usesAmmo && (atype != null) && (munition.contains(AmmoType.Munitions.M_FLAK));
             if (ae.hasTargComp() &&
                       wtype != null &&
@@ -4145,11 +4149,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // LB-X cluster, HAG flak, flak ammo ineligible for TC bonus
             boolean usesLBXCluster = usesAmmo &&
                                            (atype != null) &&
-                                           (atype.getAmmoType() == AmmoType.T_AC_LBX ||
-                                                  atype.getAmmoType() == AmmoType.T_AC_LBX_THB) &&
+                                           (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX ||
+                                                  atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX_THB) &&
                                            munition.contains(AmmoType.Munitions.M_CLUSTER);
-            boolean usesHAGFlak = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_HAG && isFlakAttack;
-            boolean isSBGauss = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_SBGAUSS;
+            boolean usesHAGFlak = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.AmmoTypeEnum.HAG && isFlakAttack;
+            boolean isSBGauss = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.AmmoTypeEnum.SBGAUSS;
             boolean isFlakAmmo = usesAmmo && (atype != null) && (munition.contains(AmmoType.Munitions.M_FLAK));
             if (ae.hasTargComp() &&
                       wtype != null &&
@@ -4170,7 +4174,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // (isn't recoil fun?)
             // So it's here instead of with other weapon mods that apply across the board
             if ((wtype != null) &&
-                      ((wtype.ammoType == AmmoType.T_GAUSS_HEAVY) || (wtype.ammoType == AmmoType.T_IGAUSS_HEAVY)) &&
+                      ((wtype.ammoType == AmmoType.AmmoTypeEnum.GAUSS_HEAVY) || (wtype.ammoType == AmmoType.AmmoTypeEnum.IGAUSS_HEAVY)) &&
                       !(ae instanceof Dropship) &&
                       !(ae instanceof Jumpship)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.FighterHeavyGauss"));
@@ -4371,7 +4375,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         AmmoMounted bammo = bweap.getLinkedAmmo();
                         if (bammo != null) {
                             AmmoType batype = bammo.getType();
-                            if (batype.getAmmoType() != AmmoType.T_BARRACUDA) {
+                            if (batype.getAmmoType() != AmmoType.AmmoTypeEnum.BARRACUDA) {
                                 onlyBarracuda = false;
                             }
                         }
@@ -4634,8 +4638,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
                           !wtype.hasFlag(WeaponType.F_TASER) &&
                           (atype != null) &&
                           (!usesAmmo ||
-                                 !(((atype.getAmmoType() == AmmoType.T_AC_LBX) ||
-                                          (atype.getAmmoType() == AmmoType.T_AC_LBX_THB)) &&
+                                 !(((atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX) ||
+                                          (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX_THB)) &&
                                          (munition.contains(AmmoType.Munitions.M_CLUSTER))))) {
                     tcMod = 2;
                 }
@@ -4664,11 +4668,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
             // semiguided ammo negates this modifier, if TAG succeeded
             if ((atype != null) &&
-                      ((atype.getAmmoType() == AmmoType.T_LRM) ||
-                             (atype.getAmmoType() == AmmoType.T_LRM_IMP) ||
-                             (atype.getAmmoType() == AmmoType.T_MML) ||
-                             (atype.getAmmoType() == AmmoType.T_NLRM) ||
-                             (atype.getAmmoType() == AmmoType.T_MEK_MORTAR)) &&
+                      ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
+                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
                       (munition.contains(AmmoType.Munitions.M_SEMIGUIDED)) &&
                       (te.getTaggedBy() != UNASSIGNED)) {
                 int nAdjust = thTemp.getValue();
@@ -4678,10 +4682,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
             // precision ammo reduces this modifier
             else if ((atype != null) &&
-                           ((atype.getAmmoType() == AmmoType.T_AC) ||
-                                  (atype.getAmmoType() == AmmoType.T_LAC) ||
-                                  (atype.getAmmoType() == AmmoType.T_AC_IMP) ||
-                                  (atype.getAmmoType() == AmmoType.T_PAC)) &&
+                           ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
+                                  (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
+                                  (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
+                                  (atype.getAmmoType() == AmmoType.AmmoTypeEnum.PAC)) &&
                            (munition.contains(AmmoType.Munitions.M_PRECISION))) {
                 int nAdjust = Math.min(2, thTemp.getValue());
                 if (nAdjust > 0) {
@@ -5182,7 +5186,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Battle Armor bomb racks (Micro bombs) use gunnery skill and no other mods per
         // TWp228 2018 errata
-        if ((atype != null) && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
+        if ((atype != null) && (atype.getAmmoType() == AmmoType.AmmoTypeEnum.BA_MICRO_BOMB)) {
             if (ae.getPosition().equals(target.getPosition())) {
                 toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
             } else {

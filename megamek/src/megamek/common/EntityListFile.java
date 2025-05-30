@@ -55,6 +55,7 @@ import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.AmmoType.Munitions;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.force.Force;
 import megamek.common.loaders.BLKFile;
@@ -1010,12 +1011,12 @@ public class EntityListFile {
             // Write the Bomb Data if needed
             if (entity.isBomber()) {
                 IBomber b = (IBomber) entity;
-                int[] intBombChoices = b.getIntBombChoices();
-                int[] extBombChoices = b.getExtBombChoices();
+                BombLoadout intBombChoices = b.getIntBombChoices();
+                BombLoadout extBombChoices = b.getExtBombChoices();
                 if (intBombChoices.length > 0 || extBombChoices.length > 0) {
                     output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_BOMBS + ">\n");
-                    for (int type = 0; type < BombType.B_NUM; type++) {
-                        String typeName = BombType.getBombInternalName(type);
+                    for (int type = 0; type < BombTypeEnum.NUM; type++) {
+                        String typeName = type.getInternalName();
                         if (intBombChoices[type] > 0) {
                             output.write(indentStr(indentLvl + 2) +
                                                '<' +

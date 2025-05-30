@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
@@ -189,7 +190,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         nDamPerHit = atype.getRackSize();
 
         // copperhead gets 10 damage less than standard
-        if (atype != null && atype.getAmmoType() != AmmoType.T_ARROW_IV) {
+        if (atype != null && atype.getAmmoType() != AmmoType.AmmoTypeEnum.ARROW_IV) {
             nDamPerHit -= 10;
         }
 
@@ -204,7 +205,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         // entityTarget
         // mounting AMS
         if (atype != null
-                && atype.getAmmoType() == AmmoType.T_ARROW_IV) {
+                && atype.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV) {
             gameManager.assignAMS();
         }
         while (nweaponsHit > 0) {
@@ -447,8 +448,8 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
     protected int handleAMS(Vector<Report> vPhaseReport, Mounted<?> ammoUsed) {
 
         int hits = 1;
-        if (((AmmoType) ammoUsed.getType()).getAmmoType() == AmmoType.T_ARROW_IV
-                || ((AmmoType) ammoUsed.getType()).getAmmoType() == BombType.B_HOMING) {
+        if (((AmmoType) ammoUsed.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV
+                || ((AmmoType) ammoUsed.getType()).getAmmoType() == BombTypeEnum.HOMING) {
 
             // this has to be called here or it fires before the TAG shot and we have no
             // target

@@ -86,7 +86,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             r.add(wtype.getName() + number);
             if (entityTarget != null) {
-                if ((wtype.getAmmoType() != AmmoType.T_NA)
+                if ((wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
                         && (weapon.getLinked() != null)
                         && (weapon.getLinked().getType() instanceof AmmoType)) {
                     AmmoType atype = (AmmoType) weapon.getLinked().getType();
@@ -339,7 +339,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         int armor = wtype.getMissileArmor();
         //AR10 munitions
         if (atype != null) {
-            if (atype.getAmmoType() == AmmoType.T_AR10) {
+            if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AR10) {
                 if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
                     av = 4;
                     armor = 40;
@@ -406,7 +406,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
 
         //AR10 munitions
         if (atype != null) {
-            if (atype.getAmmoType() == AmmoType.T_AR10) {
+            if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AR10) {
                 if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
                     toReturn = 4;
                 } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
@@ -459,30 +459,30 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
      * get the cap mis mod given a single ammo type
      */
     protected int getCritMod(AmmoType atype) {
-        if (atype == null || atype.getAmmoType() == AmmoType.T_PIRANHA
-                || atype.getAmmoType() == AmmoType.T_AAA_MISSILE
-                || atype.getAmmoType() == AmmoType.T_ASEW_MISSILE
-                || atype.getAmmoType() == AmmoType.T_LAA_MISSILE) {
+        if (atype == null || atype.getAmmoType() == AmmoType.AmmoTypeEnum.PIRANHA
+                || atype.getAmmoType() == AmmoType.AmmoTypeEnum.AAA_MISSILE
+                || atype.getAmmoType() == AmmoType.AmmoTypeEnum.ASEW_MISSILE
+                || atype.getAmmoType() == AmmoType.AmmoTypeEnum.LAA_MISSILE) {
             return 0;
         }
-        if (atype.getAmmoType() == AmmoType.T_WHITE_SHARK
-                || atype.getAmmoType() == AmmoType.T_WHITE_SHARK_T
+        if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.WHITE_SHARK
+                || atype.getAmmoType() == AmmoType.AmmoTypeEnum.WHITE_SHARK_T
                 || atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
                 // Santa Anna, per IO rules
                 || atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
             return 9;
-        } else if (atype.getAmmoType() == AmmoType.T_KRAKEN_T
-                || atype.getAmmoType() == AmmoType.T_KRAKENM
+        } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.KRAKEN_T
+                || atype.getAmmoType() == AmmoType.AmmoTypeEnum.KRAKENM
                 // Peacemaker, per IO rules
                 || atype.hasFlag(AmmoType.F_PEACEMAKER)) {
             return 8;
-        } else if (atype.getAmmoType() == AmmoType.T_KILLER_WHALE
-                || atype.getAmmoType() == AmmoType.T_KILLER_WHALE_T
+        } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.KILLER_WHALE
+                || atype.getAmmoType() == AmmoType.AmmoTypeEnum.KILLER_WHALE_T
                 || atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
-                || atype.getAmmoType() == AmmoType.T_MANTA_RAY
-                || atype.getAmmoType() == AmmoType.T_ALAMO) {
+                || atype.getAmmoType() == AmmoType.AmmoTypeEnum.MANTA_RAY
+                || atype.getAmmoType() == AmmoType.AmmoTypeEnum.ALAMO) {
             return 10;
-        } else if (atype.getAmmoType() == AmmoType.T_STINGRAY) {
+        } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.STINGRAY) {
             return 12;
         } else {
             return 11;

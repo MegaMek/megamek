@@ -36,7 +36,7 @@ public class InfantryShotgunBuccaneerGelGunWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryBuccaneerGelGun");
 		addLookupName("Buccaneer Gel Gun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 200;
 		bv = 0.06;
 		tonnage = .0025;

@@ -30,6 +30,7 @@ import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
@@ -1098,16 +1099,18 @@ public class MekView {
     private List<ViewElement> getBombs() {
         List<ViewElement> retVal = new ArrayList<>();
         IBomber b = (IBomber) entity;
-        int[] choices = b.getIntBombChoices();
-        for (int type = 0; type < BombType.B_NUM; type++) {
-            if (choices[type] > 0) {
-                retVal.add(new SingleLine(BombType.getBombName(type) + " (" + choices[type] + ") [Int. Bay]"));
+        BombLoadout choices = b.getIntBombChoices();
+        for (BombTypeEnum type : BombTypeEnum.values()) {
+            if ((type.getIndex()< 0)) continue;
+            if (choices[type.getIndex()] > 0) {
+                retVal.add(new SingleLine(type.getDisplayName() + " (" + choices[type.getIndex()] + ") [Int. Bay]"));
             }
         }
         choices = b.getExtBombChoices();
-        for (int type = 0; type < BombType.B_NUM; type++) {
-            if (choices[type] > 0) {
-                retVal.add(new SingleLine(BombType.getBombName(type) + " (" + choices[type] + ")"));
+        for (BombTypeEnum type : BombTypeEnum.values()) {
+            if ((type.getIndex()< 0)) continue;
+            if (choices[type.getIndex()] > 0) {
+                retVal.add(new SingleLine(type.getDisplayName() + " (" + choices[type.getIndex()] + ")"));
             }
         }
         return retVal;

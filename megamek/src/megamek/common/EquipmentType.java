@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
+import megamek.common.util.YamlEncDec;
 import megamek.common.util.YamlSerializerEquipmentType;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.defensivepods.BPodWeapon;
@@ -419,7 +420,7 @@ public class EquipmentType implements ITechnology {
 
         // special-case. RACs only explode when jammed
         if ((mounted.getType() instanceof WeaponType) &&
-                  (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC_ROTARY)) {
+                  (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY)) {
             if (!mounted.isJammed()) {
                 return false;
             }
@@ -427,10 +428,10 @@ public class EquipmentType implements ITechnology {
 
         // special case. ACs only explode when firing incendiary ammo
         if ((mounted.getType() instanceof WeaponType) &&
-                  ((((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC) ||
-                         (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_LAC) ||
-                         (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC_IMP) ||
-                         (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_PAC))) {
+                  ((((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
+                         (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
+                         (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
+                         (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.PAC))) {
             if (!mounted.isUsedThisRound()) {
                 return false;
             }
@@ -1147,7 +1148,7 @@ public class EquipmentType implements ITechnology {
      * @return A map containing the YAML-serializable data for this equipment type.
      */
     public Map<String, Object> getYamlData() {
-        return YamlSerializerEquipmentType.serialize(this);
+        return YamlEncDec.serialize(this);
     }
 
     public static void writeEquipmentExtendedDatabase(File f) {

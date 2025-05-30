@@ -32,7 +32,7 @@ public class ISBASupportPPC extends PPCWeapon {
         setInternalName("ISBASupportPPC");
         addLookupName("IS BA Support PPC");
         damage = 2;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         shortRange = 2;
         mediumRange = 5;
         longRange = 7;

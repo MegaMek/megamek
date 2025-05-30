@@ -36,7 +36,7 @@ public class InfantryArchaicVibroBladeWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryVibroBlade");
         addLookupName("Vibro Blade");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 100;
         bv = 0.19;
         tonnage = .00035; 

@@ -1082,7 +1082,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         HashMap<String, int[]> loadouts = new HashMap<>();
         String[] titles = new String[] { "internal", "external" };
         for (String title : titles) {
-            payloads.put(title, new int[BombType.B_NUM]);
+            payloads.put(title, new int[BombTypeEnum.NUM]);
         }
 
         // Have to return after map is filled in, not before
@@ -1236,7 +1236,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             }
 
             if ((mounted.getLinked() != null)
-                    && (mounted.getType().getAmmoType() != AmmoType.T_NA)
+                    && (mounted.getType().getAmmoType() != AmmoType.AmmoTypeEnum.NA)
                     && (mounted.getLinked().getType() instanceof AmmoType)) {
                 AmmoMounted ammoMount = mounted.getLinkedAmmo();
                 AmmoType ammoType = ammoMount.getType();
@@ -1245,9 +1245,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 waa.setAmmoMunitionType(ammoMunitionType);
                 waa.setAmmoCarrier(ammoMount.getEntity().getId());
                 if (((ammoMunitionType.contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB)) &&
-                        ((ammoType.getAmmoType() == AmmoType.T_LRM)
-                                || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
-                                || (ammoType.getAmmoType() == AmmoType.T_MML)))
+                        ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                                || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                                || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML)))
                         || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_VIBRABOMB_IV))) {
                     VibrabombSettingDialog vsd = new VibrabombSettingDialog(
                             clientgui.getFrame());
@@ -1993,7 +1993,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         return entity.getIndividualWeaponList().stream()
               .map(Mounted::getType)
               .filter(type -> type.hasFlag(WeaponType.F_ENERGY))
-              .anyMatch(type -> type.getAmmoType() == AmmoType.T_NA);
+              .anyMatch(type -> type.getAmmoType() == AmmoType.AmmoTypeEnum.NA);
     }
 
     private void updateActivateSPA() {
@@ -2180,13 +2180,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             AmmoType aType = (AmmoType) weapon.getLinked().getType();
             EnumSet<AmmoType.Munitions> munitionType = aType.getMunitionType();
             // Mek mortar flares should default to deliver flare
-            if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
+            if ((aType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)
                     && (munitionType.contains(AmmoType.Munitions.M_FLARE))) {
                 return new HexTarget(pos, boardId, Targetable.TYPE_FLARE_DELIVER);
                 // Certain mek mortar types and LRMs should target hexes
-            } else if (((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
-                    || (aType.getAmmoType() == AmmoType.T_LRM)
-                    || (aType.getAmmoType() == AmmoType.T_LRM_IMP))
+            } else if (((aType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)
+                    || (aType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                    || (aType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP))
                     && ((munitionType.contains(AmmoType.Munitions.M_AIRBURST))
                             || (munitionType.contains(AmmoType.Munitions.M_SMOKE_WARHEAD)))) {
                 return new HexTarget(pos, boardId, Targetable.TYPE_HEX_CLEAR);

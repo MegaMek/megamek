@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
@@ -244,7 +245,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
     }
 
     void loadBombsOnASF(Entity bomber, int bombType, int count) {
-        int[] bombsArray = new int[BombType.B_NUM];
+        int[] bombsArray = new int[BombTypeEnum.NUM];
         bombsArray[bombType] = count;
         ((IBomber) bomber).setExtBombChoices(bombsArray);
         ((IBomber) bomber).applyBombs();
@@ -259,7 +260,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
     void handleArrowIVHomingBombTargetMekWithTAG() throws LocationFullException {
         // Create and load entities
         AeroSpaceFighter attacker = createASF("ATT-10", "Buzzsaw", "Alyce", aPlayer);
-        loadBombOnASF(attacker, BombType.B_HOMING);
+        loadBombOnASF(attacker, BombTypeEnum.HOMING);
         Mek tagger = createMek("TAG-3R", "Taggity", "Taggart", aPlayer, 1, 1);
         Mounted<?> tagWeapon = tagger.addEquipment(tagType, Mek.LOC_CT);
         Mek defender = createMek("TGT-1A", "Targeto", "Bob", dPlayer);
@@ -316,9 +317,9 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
     void handleArrowIVHomingBombTargetMekWithASFTAG() throws LocationFullException {
         // Create and load entities
         AeroSpaceFighter attacker = createASF("ATT-10", "Buzzsaw", "Alyce", aPlayer);
-        loadBombOnASF(attacker, BombType.B_HOMING);
+        loadBombOnASF(attacker, BombTypeEnum.HOMING);
         AeroSpaceFighter tagger = createASF("TAGA-10", "Sky Eye", "MacTaggert", aPlayer);
-        loadBombOnASF(tagger, BombType.B_TAG);
+        loadBombOnASF(tagger, BombTypeEnum.TAG);
         Mek defender = createMek("TGT-1A", "Targeto", "Bob", dPlayer);
 
         // Set positions; critical for WAA

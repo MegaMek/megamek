@@ -37,7 +37,7 @@ public class InfantrySupportGrenadeLauncherInfernoWeapon extends InfantryWeapon 
 		addLookupName(name);
 		addLookupName("InfantryInfernoGrenadeLauncher");
 		addLookupName("Infantry Inferno Grenade Launcher");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 465;
 		bv = 1.04;
 		tonnage = .005;

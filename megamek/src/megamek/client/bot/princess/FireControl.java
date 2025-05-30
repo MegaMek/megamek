@@ -28,6 +28,7 @@ import megamek.common.moves.MoveStep;
 import org.apache.logging.log4j.Level;
 
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
@@ -743,7 +744,7 @@ public class FireControl {
         // Make sure we have ammo.
         final WeaponType weaponType = (WeaponType) weapon.getType();
         final Mounted<?> firingAmmo;
-        if (AmmoType.T_NA != weaponType.getAmmoType()) {
+        if (AmmoType.AmmoTypeEnum.NA != weaponType.getAmmoType()) {
             // Use ammo arg if provided, else use linked ammo.
             firingAmmo = (ammo == null) ? weapon.getLinkedAmmo() : ammo;
             if (null == firingAmmo) {
@@ -928,7 +929,7 @@ public class FireControl {
         }
 
         // ammo mods
-        if (AmmoType.T_NA != weaponType.getAmmoType()
+        if (AmmoType.AmmoTypeEnum.NA != weaponType.getAmmoType()
                 && (null != firingAmmo)
                 && (firingAmmo.getType() instanceof AmmoType ammoType)) {
             // Set of munitions we'll consider for Flak targeting
@@ -997,7 +998,7 @@ public class FireControl {
             }
 
             // Guesstimate Air-to-Air missile mods; targetState values are less accurate but workable
-            if ((ammoType.getAmmoType() == AmmoType.T_AAA_MISSILE) || (ammoType.getAmmoType() == AmmoType.T_LAA_MISSILE)) {
+            if ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AAA_MISSILE) || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LAA_MISSILE)) {
                 if (!targetState.isAirborneAero()) {
                     // Mod for firing at non-flying ground
                     if (!targetState.isAirborne()) {
@@ -1127,7 +1128,7 @@ public class FireControl {
 
         // Is the weapon loaded?
         AmmoMounted firingAmmo = (ammo == null) ? weapon.getLinkedAmmo() : ammo;
-        if (AmmoType.T_NA != (weapon.getType()).ammoType) {
+        if (AmmoType.AmmoTypeEnum.NA != (weapon.getType()).ammoType) {
             if (null == firingAmmo) {
                 return new ToHitData(TH_WEAPON_NO_AMMO);
             }
@@ -1314,7 +1315,7 @@ public class FireControl {
                 } else {
                     // For certain weapon types, look over all their loaded ammos
                     List<AmmoMounted> ammos;
-                    if (List.of(AmmoType.T_ATM, AmmoType.T_IATM, AmmoType.T_MML).contains(weaponType.getAmmoType())) {
+                    if (List.of(AmmoType.AmmoTypeEnum.ATM, AmmoType.AmmoTypeEnum.IATM, AmmoType.AmmoTypeEnum.MML).contains(weaponType.getAmmoType())) {
                         ammos = shooter.getAmmo(weapon);
                     } else {
                         // Otherwise assume the current loaded ammo is suitable representative
@@ -1681,7 +1682,7 @@ public class FireControl {
             final Game game,
             final boolean assumeUnderFlightPath,
             final boolean guessToHit,
-            final HashMap<String, int[]> bombPayloads) {
+            final HashMap<String, BombLoadout> bombPayloads) {
         return new WeaponFireInfo(shooter, flightPath, target, targetState,
                 weapon, ammo, game, assumeUnderFlightPath, guessToHit, owner, bombPayloads);
     }
@@ -1779,7 +1780,7 @@ public class FireControl {
             } else {
                 // For certain weapon types, look over all their loaded ammos
                 List<AmmoMounted> ammos;
-                if (List.of(AmmoType.T_ATM, AmmoType.T_IATM, AmmoType.T_MML).contains(weaponType.getAmmoType())) {
+                if (List.of(AmmoType.AmmoTypeEnum.ATM, AmmoType.AmmoTypeEnum.IATM, AmmoType.AmmoTypeEnum.MML).contains(weaponType.getAmmoType())) {
                     ammos = shooter.getAmmo(weapon);
                 } else {
                     // Otherwise assume the current loaded ammo is suitable representative
@@ -1929,7 +1930,7 @@ public class FireControl {
             } else {
                 // For certain weapon types, look over all their loaded ammos
                 List<AmmoMounted> ammos;
-                if (List.of(AmmoType.T_ATM, AmmoType.T_IATM, AmmoType.T_MML).contains(weaponType.getAmmoType())) {
+                if (List.of(AmmoType.AmmoTypeEnum.ATM, AmmoType.AmmoTypeEnum.IATM, AmmoType.AmmoTypeEnum.MML).contains(weaponType.getAmmoType())) {
                     ammos = shooter.getAmmo(weapon);
                 } else {
                     // Otherwise assume the current loaded ammo is suitable representative
@@ -2059,15 +2060,15 @@ public class FireControl {
         while (weaponIter.hasNext()) {
             final WeaponMounted weapon = weaponIter.next();
             if (weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
-                final HashMap<String, int[]> bombPayloads = new HashMap<String, int[]>();
-                bombPayloads.put("internal", new int[BombType.B_NUM]);
-                bombPayloads.put("external", new int[BombType.B_NUM]);
+                final HashMap<String, BombLoadout> bombPayloads = new HashMap<String, BombLoadout>();
+                bombPayloads.put("internal", new BombLoadout());
+                bombPayloads.put("external", new BombLoadout());
 
                 // load up all droppable bombs, yeah baby! Mix thunder bombs and infernos 'cause
                 // why the hell not.
                 // seriously, though, TODO: more intelligent bomb drops
                 for (final BombMounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
-                    int bType = bomb.getType().getBombType();
+                    BombTypeEnum bType = bomb.getType().getBombType();
                     if (bomb.isInternalBomb()) {
                         // Can only drop 6 internal bombs in one turn.
                         if (bombPayloads.get("internal")[bType] < 6) {
@@ -2827,7 +2828,7 @@ public class FireControl {
 
                 // For certain weapon types, look over all their loaded ammos
                 List<AmmoMounted> ammos;
-                if (List.of(AmmoType.T_ATM, AmmoType.T_IATM, AmmoType.T_MML).contains(weaponType.getAmmoType())) {
+                if (List.of(AmmoType.AmmoTypeEnum.ATM, AmmoType.AmmoTypeEnum.IATM, AmmoType.AmmoTypeEnum.MML).contains(weaponType.getAmmoType())) {
                     ammos = shooter.getAmmo(weapon);
                 } else {
                     // Otherwise assume the current loaded ammo is suitable representative
@@ -3800,9 +3801,9 @@ public class FireControl {
      * @return true if weaponType doesn't actually track ammo
      */
     protected static boolean effectivelyAmmoless(WeaponType weaponType) {
-        List<Integer> ammoTypes = Arrays.asList(
-                AmmoType.T_NA,
-                AmmoType.T_INFANTRY);
+        List<AmmoType.AmmoTypeEnum> ammoTypes = Arrays.asList(
+                AmmoType.AmmoTypeEnum.NA,
+                AmmoType.AmmoTypeEnum.INFANTRY);
         return ammoTypes.contains(weaponType.getAmmoType());
     }
 }

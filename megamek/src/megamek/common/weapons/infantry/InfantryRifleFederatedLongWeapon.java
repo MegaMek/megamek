@@ -36,7 +36,7 @@ public class InfantryRifleFederatedLongWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryFederatedLongRifle");
 		addLookupName("Federated Long Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 120;
 		bv = 1.07;
 		tonnage = .005;

@@ -35,7 +35,7 @@ public class InfantryShotgunWakazashiWeapon extends InfantryWeapon {
         name = "Shotgun (Wakazashi O-12)";
         setInternalName(name);
         addLookupName("WakazashiO12");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 180;
         bv = 0.35;
         tonnage = .0052;

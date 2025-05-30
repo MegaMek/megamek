@@ -34,7 +34,7 @@ public class SubCapMissileStingrayWeapon extends SubCapMissileWeapon {
         this.shortName = "Stingray";
         this.heat = 9;
         this.damage = 3;
-        this.ammoType = AmmoType.T_STINGRAY;
+        this.ammoType = AmmoType.AmmoTypeEnum.STINGRAY;
         this.shortRange = 7;
         this.mediumRange = 14;
         this.longRange = 21;

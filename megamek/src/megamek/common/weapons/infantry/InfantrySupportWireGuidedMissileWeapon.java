@@ -29,7 +29,7 @@ public class InfantrySupportWireGuidedMissileWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryWireGuidedMissileLauncher");
 		addLookupName("WireGuidedMissileLauncher");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 800000;
 		tonnage = 0.095;
 		bv = 0.00;

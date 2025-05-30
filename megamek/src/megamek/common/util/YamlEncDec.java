@@ -51,8 +51,16 @@ import megamek.logging.MMLogger;
 public class YamlEncDec {
     private static final MMLogger logger = MMLogger.create(YamlEncDec.class);
 
-    public static String VARIABLE = "variable";
-    public static String VERSION = "1.0";
+    /**
+     * Serializes an EquipmentType to a Map<String, Object> using the ideal serializer.
+     *
+     * @param equipmentType The EquipmentType to serialize.
+     * @return A Map containing the serialized data.
+     */
+    public static Map<String, Object> serialize(EquipmentType equipmentType) {
+        YamlSerializerEquipmentType serializer = new YamlSerializerEquipmentType();
+        return serializer.serialize(equipmentType);
+    }
 
     private static String sanitizeFileName(String name) {
         if (name == null || name.trim().isEmpty()) {
@@ -209,9 +217,6 @@ public class YamlEncDec {
         appendMode = seen.containsKey(seenKey);
         final File f = new File(fullPath);
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f, appendMode))) {
-            if (!appendMode) {
-                bufferedWriter.append("version: \"" + YamlEncDec.VERSION + "\"\n");
-            }
             yamlMapper.writeValue(bufferedWriter, content);
         }
         seen.put(seenKey, true);

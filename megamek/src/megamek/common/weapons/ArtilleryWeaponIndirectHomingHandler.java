@@ -20,6 +20,7 @@
 package megamek.common.weapons;
 
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
@@ -188,7 +189,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         AmmoType ammoType = (AmmoType) ammo.getType();
 
         // copperhead gets 10 damage less than standard
-        if (!(ammoType.getAmmoType() == AmmoType.T_ARROW_IV || ammoType.getAmmoType() == AmmoType.T_ARROW_IV_BOMB)) {
+        if (!(ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV_BOMB)) {
             nDamPerHit -= 10;
         }
 
@@ -462,8 +463,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
     protected int handleAMS(Vector<Report> vPhaseReport) {
 
         int hits = 1;
-        if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_ARROW_IV
-                || ((AmmoType) ammo.getType()).getAmmoType() == BombType.B_HOMING) {
+        if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV
+                || ((AmmoType) ammo.getType()).getAmmoType() == BombTypeEnum.HOMING) {
 
             // this has to be called here or it fires before the TAG shot and we have no
             // target

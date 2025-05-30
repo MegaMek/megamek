@@ -19,11 +19,14 @@
 package megamek.common;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import megamek.common.equipment.BombMounted;
 import megamek.common.options.OptionsConstants;
+import megamek.common.BombType.BombTypeEnum;
 
 /**
  * Common interface for all entities capable of carrying bombs and making bomb
@@ -88,13 +91,13 @@ public interface IBomber {
      * @return The number of each internally-mounted bomb type that was selected
      *         prior to deployment
      */
-    int[] getIntBombChoices();
+    BombLoadout getIntBombChoices();
 
     /**
      * @return The number of each externally-mounted bomb type that was selected
      *         prior to deployment
      */
-    int[] getExtBombChoices();
+    BombLoadout getExtBombChoices();
 
     /**
      * Sets the bomb type selections prior to deployment.
@@ -102,7 +105,7 @@ public interface IBomber {
      * @param bc An array with the count of each bomb type as the value of the bomb
      *           type's index
      */
-    void setIntBombChoices(int[] bc);
+    void setIntBombChoices(BombLoadout bc);
 
     /**
      * Sets the bomb type selections for external mounts.
@@ -110,17 +113,16 @@ public interface IBomber {
      * @param bc An array with the count of each bomb type as the value of the bomb
      *           type's index
      */
-    void setExtBombChoices(int[] bc);
+    void setExtBombChoices(BombLoadout bc);
 
     /**
      * @return summed combination of internal and external choices
      */
-    default int[] getBombChoices() {
-        int[] intArr = getIntBombChoices();
-        int[] extArr = getExtBombChoices();
-        IntStream range = IntStream.range(0, Math.min(intArr.length, extArr.length));
-        IntStream stream3 = range.map(i -> intArr[i] + extArr[i]);
-        return stream3.toArray();
+    default BombLoadout getBombChoices() {
+        BombLoadout combined = new HashMap<>(getIntBombChoices());
+        getExtBombChoices().forEach((type, count) -> 
+            combined.merge(type, count, Integer::sum));
+        return combined;
     }
 
     /**
@@ -128,7 +130,7 @@ public interface IBomber {
      *
      * @param ebc
      */
-    default void setBombChoices(int[] ebc) {
+    default void setBombChoices(BombLoadout ebc) {
         setExtBombChoices(ebc);
     }
 
@@ -211,7 +213,7 @@ public interface IBomber {
                 // Add points if A) not external only, and any kind of bomb, or B) external
                 // only, and not internal bomb
                 points += !(externalOnly && bomb.isInternalBomb())
-                        ? BombType.getBombCost(((BombType) bomb.getType()).getBombType())
+                        ? ((BombType) bomb.getType()).getBombType().getCost()
                         : 0;
             }
         }
@@ -226,60 +228,59 @@ public interface IBomber {
     default void applyBombs() {
         Game game = ((Entity) this).getGame();
         int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
-        Integer[] iSorted = new Integer[BombType.B_NUM];
+        
         // Apply the largest bombs first because we need to fit larger bombs into a
-        // single location
-        // in LAMs.
-        for (int i = 0; i < iSorted.length; i++) {
-            iSorted[i] = i;
-        }
-        Integer[] eSorted = iSorted.clone();
-
-        Arrays.sort(iSorted, (a, b) -> BombType.bombCosts[b] - BombType.bombCosts[a]);
-        Arrays.sort(eSorted, (a, b) -> BombType.bombCosts[b] - BombType.bombCosts[a]);
+        // single location in LAMs.
+        List<BombTypeEnum> sortedBySize = Arrays.stream(BombTypeEnum.values())
+                .filter(type -> type != BombTypeEnum.NONE)
+                .sorted((a, b) -> Integer.compare(b.getCost(), a.getCost()))
+                .toList();
 
         // First, internal bombs
-        for (int type : iSorted) {
-            for (int i = 0; i < getIntBombChoices()[type]; i++) {
-                int loc = availableBombLocation(BombType.bombCosts[type]);
-                if ((type == BombType.B_ALAMO)
+        BombLoadout intBombs = getIntBombChoices();
+        for (BombTypeEnum bombType : sortedBySize) {
+            int count = intBombs.getOrDefault(bombType, 0);
+            for (int i = 0; i < count; i++) {
+                int loc = availableBombLocation(bombType.getCost());
+                if ((bombType == BombTypeEnum.ALAMO)
                         && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                     continue;
                 }
-                if ((type > BombType.B_TAG)
+                if ((bombType.ordinal() > BombTypeEnum.TAG.ordinal())
                         && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
                     continue;
                 }
-
                 // some bombs need an associated weapon and if so
                 // they need a weapon for each bomb
-                if (null != BombType.getBombWeaponName(type)) {
-                    applyBombWeapons(type, loc, true);
+                if (null != bombType.getWeaponName()) {
+                    applyBombWeapons(bombType, loc, true);
                 } else {
-                    applyBombEquipment(type, loc, true);
+                    applyBombEquipment(bombType, loc, true);
                 }
             }
         }
 
         // Now external bombs
-        for (int type : eSorted) {
-            for (int i = 0; i < getExtBombChoices()[type]; i++) {
-                int loc = availableBombLocation(BombType.bombCosts[type]);
-                if ((type == BombType.B_ALAMO)
+        BombLoadout extBombs = getExtBombChoices();
+        for (BombTypeEnum bombType : sortedBySize) {
+            int count = extBombs.getOrDefault(bombType, 0);
+            for (int i = 0; i < count; i++) {
+                int loc = availableBombLocation(bombType.getCost());
+                if ((bombType == BombTypeEnum.ALAMO)
                         && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                     continue;
                 }
-                if ((type > BombType.B_TAG)
+                if ((bombType.ordinal() > BombTypeEnum.TAG.ordinal())
                         && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
                     continue;
                 }
 
                 // some bombs need an associated weapon and if so
                 // they need a weapon for each bomb
-                if (null != BombType.getBombWeaponName(type)) {
-                    applyBombWeapons(type, loc, false);
+                if (null != bombType.getWeaponName()) {
+                    applyBombWeapons(bombType, loc, false);
                 } else {
-                    applyBombEquipment(type, loc, false);
+                    applyBombEquipment(bombType, loc, false);
                 }
             }
         }
@@ -293,9 +294,9 @@ public interface IBomber {
      * @param loc      location where mounted.
      * @param internal mounted internally or not.
      */
-    private void applyBombEquipment(int type, int loc, boolean internal) {
+    private void applyBombEquipment(BombTypeEnum bombType, int loc, boolean internal) {
         try {
-            EquipmentType et = EquipmentType.get(BombType.getBombInternalName(type));
+            EquipmentType et = EquipmentType.get(bombType.getInternalName());
             Mounted<?> m = ((Entity) this).addEquipment(et, loc, false);
             m.setInternalBomb(internal);
         } catch (LocationFullException ignored) {
@@ -311,16 +312,16 @@ public interface IBomber {
      * @param loc      location where mounted.
      * @param internal mounted internally or not.
      */
-    private void applyBombWeapons(int type, int loc, boolean internal) {
+    private void applyBombWeapons(BombTypeEnum bombType, int loc, boolean internal) {
         Mounted<?> m;
         try {
-            EquipmentType et = EquipmentType.get(BombType.getBombWeaponName(type));
+            EquipmentType et = EquipmentType.get(bombType.getWeaponName());
             m = ((Entity) this).addBomb(et, loc);
             m.setInternalBomb(internal);
             // Add bomb itself as single-shot ammo.
-            if (type != BombType.B_TAG) {
+            if (bombType != BombTypeEnum.TAG) {
                 Mounted<?> ammo = Mounted.createMounted((Entity) this,
-                        EquipmentType.get(BombType.getBombInternalName(type)));
+                        EquipmentType.get(bombType.getInternalName()));
                 ammo.setShotsLeft(1);
                 ammo.setInternalBomb(internal);
                 m.setLinked(ammo);

@@ -33,7 +33,7 @@ public abstract class SubCapCannonWeapon extends AmmoWeapon {
 
     public SubCapCannonWeapon() {
         super();
-        ammoType = AmmoType.T_SCC;
+        ammoType = AmmoType.AmmoTypeEnum.SCC;
         atClass = CLASS_CAPITAL_AC;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).andNot(F_PROTO_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         capital = true;

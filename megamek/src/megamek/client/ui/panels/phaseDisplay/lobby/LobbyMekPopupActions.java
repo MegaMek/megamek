@@ -441,8 +441,8 @@ public class LobbyMekPopupActions implements ActionListener {
             if (entity.isBomber() && !entity.isVehicle()) {
                 IBomber bomber = (IBomber) entity;
                 // Clear existing bomb choices!
-                bomber.setIntBombChoices(new int[BombType.B_NUM]);
-                bomber.setExtBombChoices(new int[BombType.B_NUM]);
+                bomber.setIntBombChoices(new int[BombTypeEnum.NUM]);
+                bomber.setExtBombChoices(new int[BombTypeEnum.NUM]);
                 resetBombers.add(entity);
             }
         }

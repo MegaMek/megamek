@@ -36,7 +36,7 @@ public class InfantryPistolClanPulseLaserPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryClanPulseLaserPistol");
         addLookupName("Clan Pulse Laser Pistol");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1500;
         bv = 0.61;
         tonnage = .001;

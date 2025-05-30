@@ -37,7 +37,7 @@ public class InfantryPistolBlazerPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryBlazerPistol");
         addLookupName("Blazer Pistol");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 3000;
         bv = 0.79;
         tonnage = .002;

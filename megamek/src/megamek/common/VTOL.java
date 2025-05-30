@@ -13,6 +13,7 @@
  */
 package megamek.common;
 
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
 import megamek.common.moves.MoveStep;
@@ -21,7 +22,9 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static megamek.common.Terrains.*;
 
@@ -81,8 +84,8 @@ public class VTOL extends Tank implements IBomber {
         return LOC_TURRET_2;
     }
 
-    protected int[] intBombChoices = new int[BombType.B_NUM];
-    protected int[] extBombChoices = new int[BombType.B_NUM];
+    protected BombLoadout intBombChoices = new HashMap<>();
+    protected BombLoadout extBombChoices = new HashMap<>();
 
     private Targetable bombTarget = null;
     private final List<Coords> strafingCoords = new ArrayList<>();
@@ -273,21 +276,22 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
-    public int[] getIntBombChoices() {
+    public BombLoadout getIntBombChoices() {
+        return new HashMap<>(intBombChoices);
         return intBombChoices.clone();
     }
 
     @Override
-    public void setIntBombChoices(int[] bc) {
+    public void setIntBombChoices(BombLoadout bc) {
     }
 
     @Override
-    public int[] getExtBombChoices() {
+    public BombLoadout getExtBombChoices() {
         return extBombChoices.clone();
     }
 
     @Override
-    public void setExtBombChoices(int[] bc) {
+    public void setExtBombChoices(BombLoadout bc) {
         if (bc.length == extBombChoices.length) {
             extBombChoices = bc;
         }

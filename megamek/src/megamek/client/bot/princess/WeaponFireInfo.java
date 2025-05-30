@@ -24,6 +24,7 @@ import java.text.NumberFormat;
 import java.util.*;
 
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -168,7 +169,7 @@ public class WeaponFireInfo {
             final boolean assumeUnderFlightPath,
             final boolean guess,
             final Princess owner,
-            final HashMap<String, int[]> bombPayloads) {
+            final HashMap<String, BombLoadout> bombPayloads) {
         this(shooter, null, shooterPath, target, targetState, weapon, ammo, game, assumeUnderFlightPath, guess, owner,
                 bombPayloads);
     }
@@ -213,7 +214,7 @@ public class WeaponFireInfo {
             final boolean assumeUnderFlightPath,
             final boolean guess,
             final Princess owner,
-            final HashMap<String, int[]> bombPayloads) {
+            final HashMap<String, BombLoadout> bombPayloads) {
         this.owner = owner;
 
         setShooter(shooter);
@@ -425,7 +426,7 @@ public class WeaponFireInfo {
         }
     }
 
-    private WeaponAttackAction buildBombAttackAction(final HashMap<String, int[]> bombPayloads) {
+    private WeaponAttackAction buildBombAttackAction(final HashMap<String, BombLoadout> bombPayloads) {
         final WeaponAttackAction diveBomb = new WeaponAttackAction(getShooter().getId(),
                 getTarget().getTargetType(),
                 getTarget().getId(),
@@ -544,7 +545,7 @@ public class WeaponFireInfo {
                 (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
             // Assume average cluster size for this weapon, unless it has Streak
             // capabilities
-            if (!List.of(AmmoType.T_SRM_STREAK, AmmoType.T_LRM_STREAK, AmmoType.T_IATM)
+            if (!List.of(AmmoType.AmmoTypeEnum.SRM_STREAK, AmmoType.AmmoTypeEnum.LRM_STREAK, AmmoType.AmmoTypeEnum.IATM)
                     .contains(weaponType.getAmmoType())) {
                 boolean artillery = (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY);
                 int rs = weaponType.getRackSize();
@@ -834,7 +835,7 @@ public class WeaponFireInfo {
     void initDamage(@Nullable final MovePath shooterPath,
             final boolean assumeUnderFlightPath,
             final boolean guess,
-            final HashMap<String, int[]> bombPayloads) {
+            final HashMap<String, BombLoadout> bombPayloads) {
 
         final StringBuilder msg = new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
                 .append(" firing ").append(getWeapon().getDesc())

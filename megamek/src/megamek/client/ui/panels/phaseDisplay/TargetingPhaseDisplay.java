@@ -643,7 +643,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         // put this and the rest of the method into a separate function for access
         // externally.
         if ((null != mounted.getLinked())
-                && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA)) {
+                && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.AmmoTypeEnum.NA)) {
             Mounted<?> ammoMount = mounted.getLinked();
             waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
             EnumSet<AmmoType.Munitions> ammoMunitionType = ((AmmoType) ammoMount.getType()).getMunitionType();

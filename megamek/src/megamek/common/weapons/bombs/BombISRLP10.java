@@ -30,7 +30,7 @@ public class BombISRLP10 extends MissileWeapon {
         super();
 
         this.name = "Rocket Launcher (Prototype) Pod";
-        this.setInternalName(BombType.getBombWeaponName(BombType.B_RLP));
+        this.setInternalName(BombType.getBombWeaponName(BombTypeEnum.RLP));
         addLookupName("RL-P 10 (Bomb)");
         this.heat = 0;
         this.rackSize = 10;
@@ -48,7 +48,7 @@ public class BombISRLP10 extends MissileWeapon {
         this.medAV = 6;
         this.maxRange = RANGE_MED;
         this.toHitModifier = 1;
-        this.ammoType = AmmoType.T_RL_BOMB;
+        this.ammoType = AmmoType.AmmoTypeEnum.RL_BOMB;
         rulesRefs = "73, 195, 217, IO";
         techAdvancement.setTechBase(TechBase.ALL)
             .setIntroLevel(false)

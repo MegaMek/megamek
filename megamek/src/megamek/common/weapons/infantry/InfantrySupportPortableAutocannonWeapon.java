@@ -37,7 +37,7 @@ public class InfantrySupportPortableAutocannonWeapon extends InfantryWeapon {
 		addLookupName("InfantryPortableAutocannon");
 		addLookupName("InfantrySemiPortableAutocannon");
 		addLookupName("Infantry Semi Portable Autocannon");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 2000;
 		bv = 2.35;
         tonnage = .025;

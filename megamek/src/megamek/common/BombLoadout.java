@@ -37,7 +37,6 @@ import java.util.HashMap;
 import megamek.common.BombType.BombTypeEnum;
 /**
  * Represents a collection of bombs with their quantities.
- * Provides type-safe operations for managing bomb loadouts.
  */
 public class BombLoadout extends HashMap<BombTypeEnum, Integer> {
 
@@ -55,14 +54,14 @@ public class BombLoadout extends HashMap<BombTypeEnum, Integer> {
     }
 
     @Override
-    public Integer put(BombTypeEnum key, Integer value) {
+    public Integer put(BombTypeEnum key, Integer count) {
         if (key == BombTypeEnum.NONE) {
             throw new IllegalArgumentException("Cannot add NONE bomb type");
         }
-        if (value <= 0) {
+        if (count <= 0) {
             return remove(key);
         }
-        return super.put(key, value);
+        return super.put(key, count);
     }
 
     /**

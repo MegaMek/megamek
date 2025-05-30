@@ -59,6 +59,7 @@ class TWDamageManagerTest {
     private TWDamageManager oldMan;
     private TWDamageManagerModular newMan;
     private Game game;
+    private Player player;
     private Server server;
     private Random random = new Random();
 
@@ -81,6 +82,10 @@ class TWDamageManagerTest {
         // Need servers to handle unit destruction (sad face)
         server = new Server(null, random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
               gameMan, false, "", null, true);
+        
+        // Player for certain checks and messages
+        player = new Player(1, "Test");
+        game.addPlayer(1, player);
     }
 
     Entity loadEntityFromFile(String filename) throws FileNotFoundException {
@@ -104,6 +109,7 @@ class TWDamageManagerTest {
         BattleArmor battleArmor = (BattleArmor) loadEntityFromFile(filename);
         battleArmor.setId(game.getNextEntityId());
         game.addEntity(battleArmor);
+        battleArmor.setOwner(player);
         return battleArmor;
     }
 
@@ -111,6 +117,7 @@ class TWDamageManagerTest {
         BipedMek mek = (BipedMek) loadEntityFromFile(filename);
         mek.setId(game.getNextEntityId());
         game.addEntity(mek);
+        mek.setOwner(player);
         return mek;
     }
 
@@ -118,34 +125,35 @@ class TWDamageManagerTest {
         AeroSpaceFighter asf = (AeroSpaceFighter) loadEntityFromFile(filename);
         asf.setId(game.getNextEntityId());
         game.addEntity(asf);
+        asf.setOwner(player);
         return asf;
     }
 
     @Test
     void damageBAComparison() throws FileNotFoundException {
         String unit = "Elemental BA [Laser] (Sqd5).blk";
-        BattleArmor battleArmor = loadBA(unit);
+        BattleArmor mek = loadBA(unit);
 
         // Validate starting armor
-        assertEquals(10, battleArmor.getArmor(BattleArmor.LOC_TROOPER_1));
+        assertEquals(10, mek.getArmor(BattleArmor.LOC_TROOPER_1));
 
         // Deal damage with original method
         HitData hit = new HitData(BattleArmor.LOC_TROOPER_1);
-        DamageInfo damageInfo = new DamageInfo(battleArmor, hit, 5);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 5);
         oldMan.damageEntity(damageInfo);
-        assertEquals(5, battleArmor.getArmor(BattleArmor.LOC_TROOPER_1));
+        assertEquals(5, mek.getArmor(BattleArmor.LOC_TROOPER_1));
 
         // Reset for new damage method
-        BattleArmor battleArmor2 = loadBA(unit);
+        BattleArmor mek2 = loadBA(unit);
 
         // Validate starting armor
-        assertEquals(10, battleArmor2.getArmor(BattleArmor.LOC_TROOPER_1));
+        assertEquals(10, mek2.getArmor(BattleArmor.LOC_TROOPER_1));
 
         // Deal damage with new method
         hit = new HitData(BattleArmor.LOC_TROOPER_1);
-        damageInfo = new DamageInfo(battleArmor2, hit, 5);
+        damageInfo = new DamageInfo(mek2, hit, 5);
         newMan.damageEntity(damageInfo);
-        assertEquals(5, battleArmor2.getArmor(BattleArmor.LOC_TROOPER_1));
+        assertEquals(5, mek2.getArmor(BattleArmor.LOC_TROOPER_1));
     }
     
     @Test
@@ -153,54 +161,87 @@ class TWDamageManagerTest {
         // We need to show that both old and new damagers kill BAs _dead_.
         
         String unit = "Elemental BA [Laser] (Sqd5).blk";
-        BattleArmor battleArmor = loadBA(unit);
+        BattleArmor mek = loadBA(unit);
         DamageInfo damageInfo;
 
         // Validate starting armor
-        assertEquals(10, battleArmor.getArmor(BattleArmor.LOC_TROOPER_1));
+        assertEquals(10, mek.getArmor(BattleArmor.LOC_TROOPER_1));
 
         // Deal damage with original method
         for (int count=0; count<=15; count++) {
-            HitData hit = battleArmor.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-            damageInfo = new DamageInfo(battleArmor, hit, 5);
+            HitData hit = mek.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+            damageInfo = new DamageInfo(mek, hit, 5);
             oldMan.damageEntity(damageInfo);
         }
         
-        assertTrue(battleArmor.isDoomed());
+        assertTrue(mek.isDoomed());
 
         // Reset for new damage method
-        BattleArmor battleArmor2 = loadBA(unit);
+        BattleArmor mek2 = loadBA(unit);
 
         // Validate starting armor
-        assertEquals(10, battleArmor2.getArmor(BattleArmor.LOC_TROOPER_1));
+        assertEquals(10, mek2.getArmor(BattleArmor.LOC_TROOPER_1));
 
         // Deal damage with new method
         for (int count=0; count<=15; count++) {
-            HitData hit = battleArmor2.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-            damageInfo = new DamageInfo(battleArmor2, hit, 5);
+            HitData hit = mek2.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+            damageInfo = new DamageInfo(mek2, hit, 5);
             newMan.damageEntity(damageInfo);
         }
-        assertTrue(battleArmor2.isDoomed());
+        assertTrue(mek2.isDoomed());
+    }
+
+    @Test
+    void destroySectionCritTransferComparison() throws FileNotFoundException {
+        // We need to show that both old and new damagers transfer crits correctly.
+
+        String unit = "Crusader CRD-3R.mtf";
+        Mek mek = loadMek(unit);
+
+        // Validate starting armor
+        assertEquals(20, mek.getArmor(Mek.LOC_LARM));
+
+        // Deal damage with original method
+        HitData hit = new HitData(Mek.LOC_LARM);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 55);
+        oldMan.damageEntity(damageInfo);
+        // Armor is DOOMED on destroyed component
+        assertEquals(IArmorState.ARMOR_DOOMED, mek.getArmor(Mek.LOC_LARM));
+        // Must have taken critical damage; may have exploded
+        assertNotEquals(15, mek.getInternal(Mek.LOC_LT));
+
+        // Reset for new damage method
+        Mek mek2 = loadMek(unit);
+
+        // Validate starting armor
+        assertEquals(20, mek2.getArmor(Mek.LOC_LARM));
+
+        // Deal damage with new method
+        hit = new HitData(Mek.LOC_LARM);
+        damageInfo = new DamageInfo(mek2, hit, 55);
+        newMan.damageEntity(damageInfo);
+        assertEquals(IArmorState.ARMOR_DOOMED, mek2.getArmor(Mek.LOC_LARM));
+        assertNotEquals(15, mek.getInternal(Mek.LOC_LT));
     }
 
     @Test
     void damageReactiveArmorBA() throws FileNotFoundException {
         String unit = "Black Wolf BA (ER Pulse) (Sqd5).blk";
-        BattleArmor battleArmor = loadBA(unit);
+        BattleArmor mek = loadBA(unit);
 
         // Validate starting armor
-        assertEquals(11, battleArmor.getArmor(BattleArmor.LOC_TROOPER_1));
+        assertEquals(11, mek.getArmor(BattleArmor.LOC_TROOPER_1));
 
         // Deal "20" points of damage (should fill 10 circles)
         HitData hit = new HitData(BattleArmor.LOC_TROOPER_1);
         // All AmmoWeaponHandlers (including artillery) use Ballistic damage type
         hit.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
         // Set areaSatArty so all suits take damage
-        DamageInfo damageInfo = new DamageInfo(battleArmor, hit, 20, false, DamageType.NONE,
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 20, false, DamageType.NONE,
               false, true);
         newMan.damageEntity(damageInfo);
 
-        assertEquals(1, battleArmor.getArmor(BattleArmor.LOC_TROOPER_1));
+        assertEquals(1, mek.getArmor(BattleArmor.LOC_TROOPER_1));
     }
 
     @Test
@@ -263,7 +304,6 @@ class TWDamageManagerTest {
     void damageMekStandardArmorCritFromAP() throws FileNotFoundException {
         String unit = "Cyclops CP-10-Z.mtf";
         BipedMek mek = loadMek(unit);
-        mek.setOwner(new Player(1, "Test")); // Needed in case of pilot ejection due to crits
 
         // Deal "20" points of AP damage (should fill 20 circles against Standard)
         HitData hit = new HitData(BipedMek.LOC_CT, false, 0, false,

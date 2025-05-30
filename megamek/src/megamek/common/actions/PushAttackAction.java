@@ -55,7 +55,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         }
 
         // can't push if carrying any cargo per TW
-        if ((attacker instanceof Mek mek) && !(mek.canFireWeapon(Mek.LOC_LARM) || mek.canFireWeapon(Mek.LOC_LARM))) {
+        if ((attacker instanceof Mek mek) && !(mek.canFireWeapon(Mek.LOC_LARM) || mek.canFireWeapon(Mek.LOC_RARM))) {
             return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
         }
 

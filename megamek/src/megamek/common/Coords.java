@@ -442,6 +442,16 @@ public class Coords implements Serializable {
      *
      * @return the degree direction of another Coords
      */
+    public int dotProduct(Coords d) {
+        return (int) Math.round((180 / Math.PI) * radian(d));
+    }
+
+
+    /**
+     * @param d the destination coordinate.
+     *
+     * @return the degree direction of another Coords
+     */
     public int degree(Coords d) {
         return (int) Math.round((180 / Math.PI) * radian(d));
     }

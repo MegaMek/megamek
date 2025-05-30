@@ -33,6 +33,7 @@ import java.util.List;
 
 import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.enums.FacingArc;
 import megamek.common.equipment.WeaponMounted;
 import megamek.logging.MMLogger;
 
@@ -47,7 +48,7 @@ public class WeaponDataEncoder {
      * Encodes the weapons of an entity into a List of Integers, each weapon is encoded as a sequence of 5 integers
      * which represents the max damage it causes, its arc, short range, medium range and long range.
      * @param entity The entity from which to encode the weapon data
-     * @return the encoded list
+     * @return the encoded list [max damage, arc code, short range, medium range, long range]
      */
     public static List<Integer> getEncodedWeaponData(Entity entity) {
         List<Integer> weaponData = new ArrayList<>();
@@ -67,6 +68,8 @@ public class WeaponDataEncoder {
             }
 
             int arc = entity.getWeaponArc(equipmentId);
+            FacingArc facingArc = FacingArc.valueOf(arc);
+            FacingArc facingArc2 = FacingArc.valueOf("foobar");
             int shortRange = weapon.getType().getShortRange();
             int mediumRange = weapon.getType().getMediumRange();
             int longRange = weapon.getType().getLongRange();

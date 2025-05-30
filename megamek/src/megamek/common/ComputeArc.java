@@ -18,6 +18,7 @@
  */
 package megamek.common;
 
+import megamek.common.enums.FacingArc;
 import megamek.logging.MMLogger;
 
 import java.util.*;
@@ -46,15 +47,7 @@ public class ComputeArc {
             return true;
         }
 
-        int facing = attacker.isSecondaryArcWeapon(weaponId) ? attacker.getSecondaryFacing() : attacker.getFacing();
-
-        if ((attacker instanceof Tank tank) && (tank.getEquipment(weaponId).getLocation() == tank.getLocTurret2())) {
-            facing = tank.getDualTurretFacing();
-        }
-
-        if (attacker.getEquipment(weaponId).isMekTurretMounted()) {
-            facing = attacker.getSecondaryFacing() + (attacker.getEquipment(weaponId).getFacing() % 6);
-        }
+        int facing = getFacing(weaponId, attacker);
 
         Coords aPos = attacker.getPosition();
         Coords tPos = target.getPosition();
@@ -140,7 +133,7 @@ public class ComputeArc {
         // When the above methods all deliver BoardLocations, matching boardIds can be checked:
 //        final int attackerBoardId = attacker.getBoardId();
 //        if (targetPositions.stream().anyMatch(bl -> !bl.isOnBoard(attackerBoardId))) {
-//            LogManager.getLogger().error("Target Coords must be on the same board as the attacker!");
+//            LOGGER.error("Target Coords must be on the same board as the attacker!");
 //        }
 
         return isInArc(aPos, facing, targetPositions, attacker.getWeaponArc(weaponId));
@@ -158,6 +151,138 @@ public class ComputeArc {
         return isInArc(src, facing, List.of(dest), arc);
     }
 
+    public static boolean isInArc2(Game game, int attackerId, int weaponId, Targetable target) {
+        Entity attacker = game.getEntity(attackerId);
+
+        if ((attacker == null) || (target == null)) {
+            LOGGER.error("Trying to compute arc with a null attacker or target");
+            return false;
+        }
+
+        if ((attacker.getPosition() == null) || (target.getPosition() == null)) {
+            LOGGER.error("Trying to compute arc with null position on attacker or target");
+            return false;
+        }
+
+        if ((attacker instanceof Mek) && (attacker.getGrappled() == target.getId())) {
+            return true;
+        }
+
+        int facing = getFacing(weaponId, attacker);
+
+        Coords aPos = attacker.getPosition();
+        Coords tPos = target.getPosition();
+
+        // aeros in the same hex in space may still be able to fire at one another. Translate
+        // their positions to see who was further back
+        if (attacker.isSpaceborne() && (target instanceof Entity targetEntity) && aPos.equals(tPos)
+              && attacker.isAero() && target.isAero()) {
+            if (Compute.shouldMoveBackHex(attacker, targetEntity) < 0) {
+                aPos = attacker.getPriorPosition();
+            } else {
+                tPos = targetEntity.getPriorPosition();
+            }
+        }
+
+        // Allow dive-bombing VTOLs to attack the hex they are in, if they didn't select one for bombing while moving
+        if ((attacker.getMovementMode() == EntityMovementMode.VTOL) && aPos.equals(tPos)
+              && game.onTheSameBoard(attacker, target)) {
+            if (attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+                return true;
+            }
+        }
+
+        // if using advanced AA options, then ground-to-air fire determines arc by closest position
+        if (Compute.isGroundToAir(attacker, target) && (target instanceof Entity targetEntity)) {
+            tPos = Compute.getClosestFlightPath(attacker.getId(), attacker.getPosition(), targetEntity);
+        }
+
+        // AMS defending against Ground to Air fire needs to calculate arc based on the closest flight path
+        // Technically it's an AirToGround attack since the AMS is on the aircraft
+        if (Compute.isAirToGround(attacker, target)
+              && (attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS)
+              || attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMSBAY))) {
+            aPos = Compute.getClosestFlightPath(target.getId(), target.getPosition(), attacker);
+        }
+
+        List<Coords> targetPositions = new ArrayList<>();
+        targetPositions.add(tPos);
+        targetPositions.addAll(target.getSecondaryPositions().values());
+        targetPositions.removeIf(Objects::isNull);
+
+        if (CrossBoardAttackHelper.isCrossBoardArtyAttack(attacker, target, game)) {
+            // When attacking between two ground boards, replace the attacker and target positions with the positions
+            // of the boards themselves on the atmospheric map
+            // When the ground boards are only connected through a high atmospheric map, the arrangement of
+            // the maps is unkown and the arc cannot be tested; therefore return false in that case, although
+            // a distance could be computed
+            Board attackerAtmoBoard = game.getEnclosingBoard(game.getBoard(attacker));
+            Board targetAtmoBoard = game.getEnclosingBoard(game.getBoard(target));
+            if (attackerAtmoBoard.getBoardId() == targetAtmoBoard.getBoardId()) {
+                aPos = attackerAtmoBoard.embeddedBoardPosition(attacker.getBoardId());
+                targetPositions.clear();
+                targetPositions.add(attackerAtmoBoard.embeddedBoardPosition(target.getBoardId()));
+            } else {
+                return false;
+            }
+        }
+
+        if (CrossBoardAttackHelper.isOrbitToSurface(game, attacker, target)) {
+            // For this attack, the ground row hex enclosing the ground map target must be in arc; replace position
+            Board targetAtmoBoard = game.getEnclosingBoard(game.getBoard(target.getBoardId()));
+            targetPositions.clear();
+            targetPositions.add(game.getBoard(attacker).embeddedBoardPosition(targetAtmoBoard.getBoardId()));
+        }
+
+        if (Compute.isAirToAir(game, attacker, target) && !game.onTheSameBoard(attacker, target)
+              && (game.onDirectlyConnectedBoards(attacker, target) || CrossBoardAttackHelper.onGroundMapsWithinOneAtmoMap(game, attacker, target))) {
+            // In A2A attacks between different maps (only ground/ground, ground/atmo or atmo/ground), replace the
+            // position of the unit on the ground map with the position of the ground map itself in the atmo map
+            if (game.isOnGroundMap(attacker) && game.isOnAtmosphericMap(target)) {
+                aPos = game.getBoard(target).embeddedBoardPosition(attacker.getBoardId());
+            } else if (game.isOnAtmosphericMap(attacker) && game.isOnGroundMap(target)) {
+                targetPositions.clear();
+                targetPositions.add(game.getBoard(attacker).embeddedBoardPosition(target.getBoardId()));
+            } else if (game.isOnGroundMap(attacker) && game.isOnGroundMap(target)) {
+                // Different ground maps, here replace both positions with their respective atmo map hexes
+                aPos = game.getBoard(target).embeddedBoardPosition(attacker.getBoardId());
+                targetPositions.clear();
+                targetPositions.add(game.getBoard(attacker).embeddedBoardPosition(target.getBoardId()));
+            }
+        }
+
+        // When the above methods all deliver BoardLocations, matching boardIds can be checked:
+        //        final int attackerBoardId = attacker.getBoardId();
+        //        if (targetPositions.stream().anyMatch(bl -> !bl.isOnBoard(attackerBoardId))) {
+        //            LOGGER.error("Target Coords must be on the same board as the attacker!");
+        //        }
+
+        FacingArc facingArc = FacingArc.valueOf(attacker.getWeaponArc(weaponId));
+        return facingArc.isInsideArc(UnitPosition.of(aPos, facing), UnitPosition.of(target));
+    }
+
+    private static int getFacing(int weaponId, Entity attacker) {
+        int facing = attacker.isSecondaryArcWeapon(weaponId) ? attacker.getSecondaryFacing() : attacker.getFacing();
+
+        if ((attacker instanceof Tank tank) && (tank.getEquipment(weaponId).getLocation() == tank.getLocTurret2())) {
+            facing = tank.getDualTurretFacing();
+        }
+
+        if (attacker.getEquipment(weaponId).isMekTurretMounted()) {
+            facing = attacker.getSecondaryFacing() + (attacker.getEquipment(weaponId).getFacing() % 6);
+        }
+        return facing;
+    }
+
+    public static boolean isInArc2(Coords src, int facing, List<Coords> destV,
+          int arc) {
+
+
+
+        FacingArc facingArc = FacingArc.valueOf(arc);
+
+
+    }
     /**
      * Returns true if the target is in the specified arc. Note: This has to take vectors of coordinates to account for
      * potential secondary positions

@@ -47,7 +47,7 @@ import megamek.logging.MMLogger;
  * @author Luana Coppio
  */
 public class UnitState extends EntityDataMap<UnitState.Field> {
-    private static final MMLogger logger = MMLogger.create(UnitState.class);
+    private static final MMLogger LOGGER = MMLogger.create(UnitState.class);
 
     /**
      * Enum defining all available unit state fields.

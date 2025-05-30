@@ -945,7 +945,7 @@ public final class BoardView extends AbstractBoardView
 
                 break;
             case GUIPreferences.USE_CAMO_OVERLAY:
-                getTilesetManager().reloadUnitIcons();
+                tileManager.reloadUnitIcons();
                 break;
 
             case GUIPreferences.USE_ISOMETRIC:
@@ -967,7 +967,7 @@ public final class BoardView extends AbstractBoardView
             case GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII:
             case GUIPreferences.SHADOWMAP:
                 clearHexImageCache();
-                getTilesetManager().reloadUnitIcons();
+                tileManager.reloadUnitIcons();
                 boardPanel.repaint();
                 break;
             case GUIPreferences.INCLINES:

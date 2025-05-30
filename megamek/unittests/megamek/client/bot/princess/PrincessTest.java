@@ -418,7 +418,7 @@ class PrincessTest {
 
         // Unit is on home edge.
         BasicPathRanker mockRanker = mock(BasicPathRanker.class);
-        when(mockRanker.distanceToHomeEdge(any(Coords.class), any(CardinalEdge.class), any(Game.class))).thenReturn(0);
+        when(mockRanker.distanceToHomeEdge(any(Coords.class), anyInt(), any(CardinalEdge.class), any(Game.class))).thenReturn(0);
         when(mockPrincess.getPathRanker(any(Entity.class))).thenReturn(mockRanker);
 
         // Mock objects so we don't have nulls.
@@ -461,7 +461,7 @@ class PrincessTest {
 
         // The unit can flee, but is no longer on the board edge.
         when(mockMek.canFlee(mockMek.getPosition())).thenReturn(true);
-        when(mockRanker.distanceToHomeEdge(any(Coords.class), any(CardinalEdge.class), any(Game.class))).thenReturn(1);
+        when(mockRanker.distanceToHomeEdge(any(Coords.class), anyInt(), any(CardinalEdge.class), any(Game.class))).thenReturn(1);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
     }
 
@@ -472,13 +472,13 @@ class PrincessTest {
 
         Hex mockHex = mock(Hex.class);
         when(mockHex.getLevel()).thenReturn(0);
-        when(mockPrincess.getHex(any(Coords.class))).thenReturn(mockHex);
 
         Game mockGame = mock(Game.class);
         PlanetaryConditions mockPC = new PlanetaryConditions();
         mockPC.setGravity(1.0f);
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPC);
         doReturn(mockGame).when(mockPrincess).getGame();
+        when(mockGame.getHexOf(any(Targetable.class))).thenReturn(mockHex);
 
         BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
         when(mockBehavior.getFallShameIndex()).thenReturn(5);

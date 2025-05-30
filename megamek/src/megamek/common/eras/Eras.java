@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
+import megamek.common.ITechnology;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -159,7 +160,43 @@ public final class Eras {
             return previousEra(era).end().with(TemporalAdjusters.ofDateAdjuster(date -> date.plusDays(1)));
         }
     }
+    /**
+     * Generates era text for a date range, similar to the original eraText method
+     * @param startYear Start year of the range
+     * @param endYear End year of the range (null for open-ended)
+     * @return Era text string
+     */
+    public static String getEraText(int startYear, Integer endYear) {
+        String eraText = "";
+        if (startYear != ITechnology.DATE_NONE) {
+            Era startEra = Eras.getEra(startYear);
+            if (endYear == null) {
+                // Open-ended range
+                eraText = " (" + startEra.name() + " and onwards)";
+            } else {
+                Era endEra = Eras.getEra(endYear);
+                eraText = " (" + startEra.name();
+                if (!endEra.equals(startEra)) {
+                    eraText += " to " + endEra.name();
+                }
+                eraText += ")";
+            }
+        }
+        return eraText;
+    }
 
+    /**
+     * Generates era text for a date range, similar to the original eraText method
+     * @param year the year in question
+     * @return Era text string
+     */
+    public static String getEraText(int year) {
+        String eraText = "";
+        if (year != ITechnology.DATE_NONE) {
+            eraText = " (" + Eras.getEra(year).name() + ")";
+        }
+        return eraText;
+    }
     // region non-public
 
     private static final Era ERA_PLACEHOLDER = new Era("???", "Unknown", null, null, -1, null);

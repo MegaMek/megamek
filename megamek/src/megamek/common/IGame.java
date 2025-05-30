@@ -38,6 +38,8 @@ public interface IGame {
 
     MMLogger LOGGER = MMLogger.create(IGame.class);
 
+    int DEFAULT_BOARD_ID = 0;
+
     // region Player turns
 
     @Nullable

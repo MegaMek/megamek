@@ -231,11 +231,11 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
     private void filterReport(String selectedKeyword) {
         String filterResult = "";
         String[] keywords = selectedKeyword.split(" ");
-        String[] htmlLines = currentClient.phaseReport.split("\r\n|\n|\r");
+        String[] htmlLines = currentClient.phaseReport.split("<br>");
         for (String htmlLine : htmlLines) {
             for (String word : keywords) {
                 if (htmlLine.replaceAll("<[^>]*>", "").toUpperCase().contains(word.toUpperCase())) {
-                    filterResult += htmlLine + System.lineSeparator();
+                    filterResult += htmlLine + "<br>";
                     break;
                 }
             }
@@ -440,18 +440,44 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
     }
 
     private JScrollPane loadHtmlScrollPane(String t) {
-        filterButtonReset();
 
         JTextPane ta = new JTextPane();
         Report.setupStylesheet(ta);
         ta.addHyperlinkListener(this);
         BASE64ToolKit toolKit = new BASE64ToolKit();
         ta.setEditorKit(toolKit);
-        ta.setText("<pre>" + t + "</pre>");
+        //ta.setText("<pre>" + t + "</pre>");
+        //if (filterEnabled) {
+        ta.setText("<div class='report'>" + t + "</div>");
+        //} else {
+        //    ta.setText("<div class='report'>" + removeExcessUnitSprites(t) + "</div>");
+        // }
+
         ta.setEditable(false);
         ta.setOpaque(false);
         ta.setCaretPosition(0);
+        filterButtonReset();
         return new JScrollPane(ta);
+    }
+
+    private String removeExcessUnitSprites(String report) {
+        String prevEnt = "";
+        String curEnt = "";
+        String[] tempReport = report.split("<br>");
+        for (int i = 0; i < tempReport.length; i++) {
+            if (tempReport[i].contains("-------------------") || tempReport[i].contains("Piloting Rolls")) {
+                prevEnt = "";
+            }
+            if (tempReport[i].contains("<a href='#entity:")) {
+                curEnt = tempReport[i].substring(tempReport[i].indexOf("<a href='#entity:"),
+                      tempReport[i].indexOf("<a href='#entity:") + 18);
+                if (prevEnt.equals(curEnt) && !tempReport[i].contains("bgshade")) {
+                    tempReport[i] = tempReport[i].replaceAll("<img[^>]*>", "");
+                }
+                prevEnt = curEnt;
+            }
+        }
+        return String.join("<br>", tempReport);
     }
 
     public void addReportPages(GamePhase phase) {

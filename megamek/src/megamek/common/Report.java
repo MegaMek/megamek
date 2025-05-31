@@ -31,7 +31,6 @@ import javax.swing.text.html.StyleSheet;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
-import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
@@ -738,10 +737,7 @@ public class Report implements ReportEntry {
               + "; font-size: "
               + size
               + "pt; font-style:normal;}");
-        //styleSheet.addRule("a { color: " + hexColor(GUIP.getReportLinkColor()) + " }");
-        styleSheet.addRule("a { color: "
-              + hexColor(SkinXMLHandler.getSkin(GUIP.getUITheme()).fontColors.get(0))
-              + " }");
+        styleSheet.addRule("a { color: " + hexColor(GUIP.getReportLinkColor()) + " }");
         styleSheet.addRule("span.warning { color: " + hexColor(GUIP.getWarningColor()) + " }");
         styleSheet.addRule("span.success { color: " + hexColor(GUIP.getReportSuccessColor()) + " }");
         styleSheet.addRule("span.miss { color: " + hexColor(GUIP.getReportMissColor()) + " }");

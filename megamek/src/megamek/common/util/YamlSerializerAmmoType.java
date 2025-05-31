@@ -52,7 +52,7 @@ public class YamlSerializerAmmoType extends YamlSerializerEquipmentType {
     /**
      * Constructs a map containing the YAML-serializable data for the given ammo type.
      * 
-     * @param equipment The equipment type to serialize
+     * @param ammo The ammo type to serialize
      * @return A map containing the YAML-serializable data for the equipment type
      */
     public Map<String, Object> serialize(AmmoType ammo) {

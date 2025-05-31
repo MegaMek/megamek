@@ -232,10 +232,18 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         String filterResult = "";
         String[] keywords = selectedKeyword.split(" ");
         String[] htmlLines = currentClient.phaseReport.split("<br>");
-        for (String htmlLine : htmlLines) {
-            for (String word : keywords) {
+        for (int i = 0; i < htmlLines.length; i++) {
+            String htmlLine = htmlLines[i];
+            for (int j = 0; j < keywords.length; j++) {
+                String word = keywords[j];
                 if (htmlLine.replaceAll("<[^>]*>", "").toUpperCase().contains(word.toUpperCase())) {
+                    if (i > 0 && htmlLines[i - 1].contains("<img")) {
+                        filterResult += htmlLines[i - 1] + "<br>"; // get image from line above
+                    }
                     filterResult += htmlLine + "<br>";
+                    if (i < htmlLines.length - 1 && htmlLines[i + 1].contains("</div>")) {
+                        filterResult += "</div>"; // close div tag
+                    }
                     break;
                 }
             }

@@ -246,7 +246,7 @@ class TWDamageManagerTest {
 
     @ParameterizedTest()
     @ValueSource(strings = { "Original", "Modular"})
-    void destroySectionCritTransferOriginal(String manager) throws FileNotFoundException {
+    void destroySectionCritTransfers(String manager) throws FileNotFoundException {
         // We need to show that both old and new damage managers transfer damage correctly.
         TWDamageManager damageManager = (manager.equals("Original")) ? oldMan : newMan;
 

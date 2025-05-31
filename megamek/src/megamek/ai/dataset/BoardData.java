@@ -53,20 +53,14 @@ public class BoardData extends EntityDataMap<BoardData.Field> {
     /**
      * Nested class to represent a single row of hex data
      */
-    public static class HexRow {
-        private final int rowIndex;
-        private final List<Hex> hexes;
-
+    public record HexRow(int rowIndex, List<Hex> hexes) {
         public HexRow(int rowIndex, List<Hex> hexes) {
             this.rowIndex = rowIndex;
             this.hexes = new ArrayList<>(hexes);
         }
 
-        public int getRowIndex() {
-            return rowIndex;
-        }
-
-        public List<Hex> getHexes() {
+        @Override
+        public List<Hex> hexes() {
             return new ArrayList<>(hexes);
         }
     }

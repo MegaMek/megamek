@@ -35,6 +35,7 @@ package megamek.common;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -43,7 +44,7 @@ public class UnitPosition {
 
     private final Coords position;
     private final Set<Coords> secondaryPositions;
-    private final int facing;
+    private final Facing facing;
     private final int elevation;
     private final int altitude;
     private final int height;
@@ -60,7 +61,7 @@ public class UnitPosition {
      */
     private UnitPosition(Coords position,
           Set<Coords> secondaryPositions,
-          int facing,
+          Facing facing,
           int elevation,
           int altitude,
           int height) {
@@ -72,14 +73,28 @@ public class UnitPosition {
         this.height = height;
     }
 
-    public static UnitPosition of(Coords position, int facing) {
+    public static UnitPosition of(Coords coords) {
+        return UnitPosition.of(coords, 0);
+    }
+
+    public static UnitPosition of(List<Coords> coords) {
         return new UnitPosition(
-              position,
-              Collections.singleton(position),
-              facing,
+              coords.get(0),
+              new HashSet<>(coords),
+              Facing.NONE,
               0,
               0,
               0);
+    }
+
+    public static UnitPosition of(Coords position, int facing) {
+        // Fill with zeros as it is a simple position without facing or elevation data
+        return new UnitPosition(position, Collections.singleton(position), Facing.valueOfInt(facing), 0, 0, 0);
+    }
+
+    public static UnitPosition of(Coords position, Facing facing) {
+        // Fill with zeros as it is a simple position without facing or elevation data
+        return new UnitPosition(position, Collections.singleton(position), facing, 0, 0, 0);
     }
 
     public static UnitPosition of(Targetable targetable) {
@@ -97,14 +112,14 @@ public class UnitPosition {
         return new UnitPosition(
               targetable.getPosition(),
               targetPositions,
-              facing,
+              Facing.valueOfInt(facing),
               targetable.getElevation(),
               targetable.getAltitude(),
               targetable.getHeight());
     }
 
     public int facingAngle() {
-        return facing * 60;
+        return facing.getAngle();
     }
 
     public int relativeDotProduct(Coords target) {
@@ -131,7 +146,7 @@ public class UnitPosition {
         return secondaryPositions;
     }
 
-    public int getFacing() {
+    public Facing getFacing() {
         return facing;
     }
 

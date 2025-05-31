@@ -68,8 +68,6 @@ public class WeaponDataEncoder {
             }
 
             int arc = entity.getWeaponArc(equipmentId);
-            FacingArc facingArc = FacingArc.valueOf(arc);
-            FacingArc facingArc2 = FacingArc.valueOf("foobar");
             int shortRange = weapon.getType().getShortRange();
             int mediumRange = weapon.getType().getMediumRange();
             int longRange = weapon.getType().getLongRange();

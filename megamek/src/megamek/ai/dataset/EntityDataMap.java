@@ -49,6 +49,8 @@ public abstract class EntityDataMap<F extends Enum<F>> {
     // Keep track of insertion order separately
     private final List<F> fieldOrder = new ArrayList<>();
 
+    private static final String VERSION = "31052025";
+
     /**
      * Creates an empty EntityDataMap.
      * @param fieldEnumClass The class of the enum type F
@@ -119,5 +121,13 @@ public abstract class EntityDataMap<F extends Enum<F>> {
      */
     public Class<F> getFieldEnumClass() {
         return fieldEnumClass;
+    }
+
+    /**
+     * Gets the versioned class name for this data map.
+     * @return The class name with version appended
+     */
+    public String getVersionedClassName() {
+        return getClass().getSimpleName() + "." + VERSION;
     }
 }

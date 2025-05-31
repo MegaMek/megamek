@@ -48,7 +48,7 @@ import megamek.logging.MMLogger;
  * @author Luana Coppio
  */
 public class UnitAction extends EntityDataMap<UnitAction.Field> {
-    private static final MMLogger logger = MMLogger.create(UnitAction.class);
+
     /**
      * Enum defining all available unit action fields.
      */

@@ -1,5 +1,5 @@
 MMSVersion: 2
-name: Multiboard Playtest Scenario
+name: Multiboard Playtest Scenario 1
 planet: None
 description: Your lone Grasshopper is attacked by two Grasshoppers. You have a Sai aerospace fighter to support your 
   mek.
@@ -36,8 +36,14 @@ factions:
     - fullname: Grasshopper GHR-5N
       board: 3
 
-    - fullname: Sai S-4
-      at: [ 30, 10 ]
+    - fullname: Sai S-8
+      at: [ 5, 6 ]
+      board: 5
+      facing: 2
+      altitude: 7
+
+    - fullname: Sai S-8
+      at: [ 12, 12 ]
       board: 5
       facing: 2
       altitude: 4

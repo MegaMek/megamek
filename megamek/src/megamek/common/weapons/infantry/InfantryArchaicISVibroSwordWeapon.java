@@ -37,7 +37,7 @@ public class InfantryArchaicISVibroSwordWeapon extends InfantryWeapon {
         addLookupName("InfantryVibroSword");
         addLookupName("InfantryISVibroSword");
         addLookupName("IS Vibro Sword");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 300;
         bv = 0.29;
         tonnage = .004;

@@ -43,7 +43,7 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
         super();
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_PROTO_WEAPON)
                 .or(F_FLAMER).or(F_ENERGY).or(F_BURST_FIRE);
-        ammoType = AmmoType.T_VEHICLE_FLAMER;
+        ammoType = AmmoType.AmmoTypeEnum.VEHICLE_FLAMER;
         atClass = CLASS_POINT_DEFENSE;
     }
 

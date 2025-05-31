@@ -30,7 +30,7 @@ public class ISBAGaussRifleGrandMauler extends Weapon {
         addLookupName("ISBAGrandMauler");
         heat = 0;
         damage = 1;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         shortRange = 2;
         mediumRange = 4;
         longRange = 5;

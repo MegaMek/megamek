@@ -28,7 +28,7 @@ public class InfantryProstheticLaserWeapon extends InfantryWeapon {
         name = "Prosthetic Laser";
         setInternalName(name);
         addLookupName("ProstheticLaser");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 1000;
         bv = 0.0;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);

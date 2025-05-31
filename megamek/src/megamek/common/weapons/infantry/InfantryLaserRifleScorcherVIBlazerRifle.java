@@ -28,7 +28,7 @@ public class InfantryLaserRifleScorcherVIBlazerRifle extends InfantryWeapon {
         name = "Blazer Rifle (Scorcher VI)";
         setInternalName(name);
         addLookupName("SCORCHERVI");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1500;
         bv = 1.05;
         tonnage = 0.0075;

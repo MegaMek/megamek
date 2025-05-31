@@ -562,12 +562,12 @@ public class EquipChoicePanel extends JPanel {
             // don't allow ammo switching of most things for Aerospace allow only MML, ATM, and NARC. LRM/SRM can
             // switch between Artemis and standard, but not other munitions. Same with MRM.
             if ((entity instanceof Aero) &&
-                      !((at.getAmmoType() == AmmoType.T_MML) ||
-                              (at.getAmmoType() == AmmoType.T_SRM) ||
-                              (at.getAmmoType() == AmmoType.T_LRM) ||
-                              (at.getAmmoType() == AmmoType.T_MRM) ||
-                              (at.getAmmoType() == AmmoType.T_ATM) ||
-                              (at.getAmmoType() == AmmoType.T_IATM))) {
+                      !((at.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                              (at.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                              (at.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                              (at.getAmmoType() == AmmoType.AmmoTypeEnum.MRM) ||
+                              (at.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) ||
+                              (at.getAmmoType() == AmmoType.AmmoTypeEnum.IATM))) {
                 continue;
             }
 
@@ -637,7 +637,7 @@ public class EquipChoicePanel extends JPanel {
                     continue;
                 }
 
-                if (Set.of(AmmoType.T_LRM, AmmoType.T_SRM).contains(atCheck.getAmmoType()) &&
+                if (Set.of(AmmoType.AmmoTypeEnum.LRM, AmmoType.AmmoTypeEnum.SRM).contains(atCheck.getAmmoType()) &&
                           entity.isBattleArmor() &&
                           !atCheck.hasFlag(AmmoTypeFlag.F_BATTLEARMOR)) {
                     continue;
@@ -677,7 +677,7 @@ public class EquipChoicePanel extends JPanel {
 
         for (WeaponMounted weapon : entity.getWeaponList()) {
             // don't deal with bay or grouped weapons for now
-            if (weapon.getType().getAmmoType() == AmmoType.T_NA) {
+            if (weapon.getType().getAmmoType() == AmmoType.AmmoTypeEnum.NA) {
                 continue;
             }
 

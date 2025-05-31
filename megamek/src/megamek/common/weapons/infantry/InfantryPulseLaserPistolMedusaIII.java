@@ -27,7 +27,7 @@ public class InfantryPulseLaserPistolMedusaIII extends InfantryWeapon {
         name = "Pulse Laser Pistol (Medusa III)";
         setInternalName(name);
         addLookupName("MEDUSAIII");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 950;
         bv = 0.0315;
         tonnage = 0.0011;

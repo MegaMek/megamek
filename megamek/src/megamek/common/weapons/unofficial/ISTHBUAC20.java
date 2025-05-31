@@ -31,7 +31,7 @@ public class ISTHBUAC20 extends UACWeapon {
         heat = 10;
         damage = 20;
         rackSize = 20;
-        ammoType = AmmoType.T_AC_ULTRA_THB;
+        ammoType = AmmoType.AmmoTypeEnum.AC_ULTRA_THB;
         shortRange = 4;
         mediumRange = 8;
         longRange = 12;

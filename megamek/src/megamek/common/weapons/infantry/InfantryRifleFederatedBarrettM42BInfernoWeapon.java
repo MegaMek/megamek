@@ -35,7 +35,7 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
         setInternalName("InfantryFederatedBarrettM42BInferno");
         addLookupName(name);
         addLookupName("Federated Barrett M42B Inferno");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1385;
         bv = 2.3;
         tonnage = .006;

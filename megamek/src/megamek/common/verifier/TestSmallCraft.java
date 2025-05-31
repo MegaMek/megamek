@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import megamek.common.*;
+import megamek.common.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
@@ -518,8 +519,8 @@ public class TestSmallCraft extends TestAero {
                 buff.append("Bay ").append(bay.getName()).append(" has no weapons\n");
                 illegal = true;
             }
-            Map<Integer, Integer> ammoWeaponCount = new HashMap<>();
-            Map<Integer, Integer> ammoTypeCount = new HashMap<>();
+            Map<AmmoTypeEnum, Integer> ammoWeaponCount = new HashMap<>();
+            Map<AmmoTypeEnum, Integer> ammoTypeCount = new HashMap<>();
             for (WeaponMounted w : bay.getBayWeapons()) {
                 if (w.isOneShot()) {
                     continue;
@@ -531,12 +532,12 @@ public class TestSmallCraft extends TestAero {
                 ammoTypeCount.merge(a.getType().getAmmoType(), a.getUsableShotsLeft(), Integer::sum);
             }
 
-            for (Integer at : ammoWeaponCount.keySet()) {
-                if (at != AmmoType.T_NA) {
+            for (AmmoTypeEnum at : ammoWeaponCount.keySet()) {
+                if (at != AmmoType.AmmoTypeEnum.NA) {
                     int needed = ammoWeaponCount.get(at) * 10;
-                    if ((at == AmmoType.T_AC_ULTRA) || (at == AmmoType.T_AC_ULTRA_THB)) {
+                    if ((at == AmmoType.AmmoTypeEnum.AC_ULTRA) || (at == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
                         needed *= 2;
-                    } else if ((at == AmmoType.T_AC_ROTARY)) {
+                    } else if ((at == AmmoType.AmmoTypeEnum.AC_ROTARY)) {
                         needed *= 6;
                     }
 
@@ -550,7 +551,7 @@ public class TestSmallCraft extends TestAero {
                 }
             }
 
-            for (Integer at : ammoTypeCount.keySet()) {
+            for (AmmoTypeEnum at : ammoTypeCount.keySet()) {
                 if (!ammoWeaponCount.containsKey(at)) {
                     buff.append("Bay ").append(bay.getName()).append(" has ammo for a weapon not in the bay\n");
                     illegal = true;
@@ -575,7 +576,7 @@ public class TestSmallCraft extends TestAero {
                 }
             } else if ((m.getType() instanceof AmmoType) &&
                              (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)) &&
-                             (((AmmoType) m.getType()).getAmmoType() == AmmoType.T_COOLANT_POD)) {
+                             (((AmmoType) m.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD)) {
                 buff.append("Cannot mount ").append(m.getType().getName()).append("\n");
                 illegal = true;
             } else if (m.getType() instanceof WeaponType) {

@@ -34,7 +34,7 @@ public class InfantrySniperRifleLRS53SniperRifle extends InfantryWeapon {
        name = "Sniper Rifle (LRS-53 Sniper Rifle)";
        setInternalName(name);
        addLookupName("LRS-53 Sniper Rifle");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .252;
        tonnage =  0.006;
        infantryDamage =  0.28;

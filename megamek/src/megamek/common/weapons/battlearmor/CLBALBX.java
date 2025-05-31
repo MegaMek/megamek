@@ -51,7 +51,7 @@ public class CLBALBX extends Weapon {
         criticals = 2;
         toHitModifier = -1;
         // TODO: refactor BA ammo-based weapons to use real AmmoTypes (but not track ammo use)
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         bv = 20;
         cost = 70000;
         // TODO: implement F_NO_COUNT_AMMO

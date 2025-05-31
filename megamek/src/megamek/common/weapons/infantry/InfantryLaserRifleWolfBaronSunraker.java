@@ -28,7 +28,7 @@ public class InfantryLaserRifleWolfBaronSunraker extends InfantryWeapon {
         name = "Laser Rifle (Wolf-Barron Sunraker)";
         setInternalName(name);
         addLookupName("SUNRAKER");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 2500;
         bv = 1.225;
         tonnage = 0.0067;

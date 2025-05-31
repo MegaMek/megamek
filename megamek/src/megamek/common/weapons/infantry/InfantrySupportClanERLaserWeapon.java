@@ -37,7 +37,7 @@ public class InfantrySupportClanERLaserWeapon extends InfantryWeapon {
 		addLookupName("InfantryClanERLaser");
 		addLookupName("InfantryClanERSmallLaser");
 		addLookupName("Infantry Clan ER Laser");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 11250;
 		bv = 10.27;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);

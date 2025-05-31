@@ -1247,8 +1247,8 @@ public class TestMek extends TestEntity {
                     buff.append("LAMs cannot mount artillery weapons.\n");
                     illegal = true;
                 } else if (m.getType() instanceof WeaponType
-                        && ((((WeaponType) m.getType()).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
-                                || (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY))) {
+                        && ((((WeaponType) m.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.GAUSS_HEAVY)
+                                || (((WeaponType) m.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.IGAUSS_HEAVY))) {
                     buff.append("LAMs cannot mount heavy gauss rifles.\n");
                     illegal = true;
                 } else if ((m.getType() instanceof MiscType)
@@ -1436,8 +1436,8 @@ public class TestMek extends TestEntity {
         }
 
         for (WeaponMounted m : mek.getWeaponList()) {
-            if ((m.getType().getAmmoType() == AmmoType.T_GAUSS_HEAVY)
-                    || (m.getType().getAmmoType() == AmmoType.T_IGAUSS_HEAVY)) {
+            if ((m.getType().getAmmoType() == AmmoType.AmmoTypeEnum.GAUSS_HEAVY)
+                    || (m.getType().getAmmoType() == AmmoType.AmmoTypeEnum.IGAUSS_HEAVY)) {
                 boolean torso = mek.locationIsTorso(m.getLocation());
                 if (m.getSecondLocation() != Entity.LOC_NONE) {
                     torso = torso && mek.locationIsTorso(m.getSecondLocation());
@@ -1682,8 +1682,8 @@ public class TestMek extends TestEntity {
                 }
                 return false;
             }
-            if (((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
-                    || ((WeaponType) eq).getAmmoType() == AmmoType.T_IGAUSS_HEAVY)
+            if (((((WeaponType) eq).getAmmoType() == AmmoType.AmmoTypeEnum.GAUSS_HEAVY)
+                    || ((WeaponType) eq).getAmmoType() == AmmoType.AmmoTypeEnum.IGAUSS_HEAVY)
                     && !mek.isSuperHeavy() && !mek.locationIsTorso(location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a torso location.\n");

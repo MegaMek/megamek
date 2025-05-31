@@ -38,7 +38,7 @@ public class InfantrySupportPortablePlasmaWeapon extends InfantryWeapon {
 		addLookupName("InfantryPlasmaPortable");
 		addLookupName("InfantryMPPR");
 		addLookupName("Portable Plasma Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 7500;
 		bv = 8.08;
 		flags = flags.or(F_DIRECT_FIRE).or(F_PLASMA).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);

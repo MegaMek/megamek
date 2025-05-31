@@ -38,7 +38,7 @@ public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
 		addLookupName("Portable Flamer");
 		addLookupName("Flamer (man-portable)");
 		addLookupName("Flamer (Man-Pack)");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 100;
 		bv = 0.50;
         tonnage = .015;

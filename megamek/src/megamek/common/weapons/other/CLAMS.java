@@ -43,7 +43,7 @@ public class CLAMS extends AmmoWeapon {
 		extremeRange = 1;
 		maxRange = RANGE_SHORT;
 		shortAV = 3;
-		ammoType = AmmoType.T_AMS;
+		ammoType = AmmoType.AmmoTypeEnum.AMS;
 		tonnage = 0.5;
 		criticals = 1;
 		bv = 32;

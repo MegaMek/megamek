@@ -43,7 +43,7 @@ public abstract class SRTWeapon extends MissileWeapon {
 
     public SRTWeapon() {
         super();
-        ammoType = AmmoType.T_SRM_TORPEDO;
+        ammoType = AmmoType.AmmoTypeEnum.SRM_TORPEDO;
         flags = flags.or(F_ARTEMIS_COMPATIBLE);
     }
 

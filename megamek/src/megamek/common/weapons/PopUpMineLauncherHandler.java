@@ -17,6 +17,7 @@ import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -151,7 +152,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
         for (int i = 0; i < nShots; i++) {
             if (ammo.getUsableShotsLeft() <= 0) {
                 ae.loadWeaponWithSameAmmo(weapon);
-                ammo = weapon.getLinked();
+                ammo = (AmmoMounted) weapon.getLinked();
             }
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
         }

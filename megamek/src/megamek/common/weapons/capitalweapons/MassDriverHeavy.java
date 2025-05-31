@@ -33,7 +33,7 @@ public class MassDriverHeavy extends MassDriverWeapon {
         this.shortName = "Heavy Mass Driver";
         this.heat = 90;
         this.damage = 140;
-        this.ammoType = AmmoType.T_HMASS;
+        this.ammoType = AmmoType.AmmoTypeEnum.HMASS;
         this.shortRange = 12;
         this.mediumRange = 24;
         this.longRange = 40;

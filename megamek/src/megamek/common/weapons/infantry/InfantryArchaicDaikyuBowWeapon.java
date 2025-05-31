@@ -36,7 +36,7 @@ public class InfantryArchaicDaikyuBowWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryDaikyuBow");
         addLookupName("Daikyu Bow");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 30;
         bv = 0.01;
         tonnage = .001; 

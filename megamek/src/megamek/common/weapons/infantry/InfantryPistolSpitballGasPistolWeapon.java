@@ -36,7 +36,7 @@ public class InfantryPistolSpitballGasPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantrySpitballGaspistol");
 		addLookupName("Spitball Gas Weapon");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 6;
 		bv = 0;
 		tonnage = .001;

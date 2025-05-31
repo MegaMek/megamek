@@ -38,7 +38,7 @@ public class InfantryArchaicDaggerWeapon extends InfantryWeapon {
         addLookupName("InfantryKnife");
         addLookupName("InfantryBayonet");
         addLookupName("Dagger");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 8;
         bv = 0.02;
         tonnage = .0025; 

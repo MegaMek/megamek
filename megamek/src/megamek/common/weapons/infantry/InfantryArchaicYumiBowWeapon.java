@@ -37,7 +37,7 @@ public class InfantryArchaicYumiBowWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryYumiBow");
         addLookupName("Yumi Bow");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 30;
         bv = 0.01;
         tonnage = .001; 

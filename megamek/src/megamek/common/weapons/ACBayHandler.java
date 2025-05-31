@@ -51,7 +51,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
         for (WeaponMounted bayW : weapon.getBayWeapons()) {
             WeaponType bayWType = bayW.getType();
             int ammoUsed = bayW.getCurrentShots();
-            if (bayWType.getAmmoType() == AmmoType.T_AC_ROTARY) {
+            if (bayWType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY) {
                 boolean jams = false;
                 switch (ammoUsed) {
                     case 6:
@@ -82,7 +82,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
                     vPhaseReport.addElement(r);
                     bayW.setJammed(true);
                 }
-            } else if (bayWType.getAmmoType() == AmmoType.T_AC_ULTRA) {
+            } else if (bayWType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) {
                 if (roll.getIntValue() == 2 && ammoUsed == 2) {
                     Report r = new Report();
                     r.subject = subjectId;

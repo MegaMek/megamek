@@ -37,7 +37,7 @@ public class DiveBombAttack extends Weapon {
         setInternalName(IBomber.DIVE_BOMB_ATTACK);
         heat = 0;
         damage = DAMAGE_SPECIAL;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         minimumRange = WEAPON_NA;
         shortRange = 0;
         mediumRange = 0;

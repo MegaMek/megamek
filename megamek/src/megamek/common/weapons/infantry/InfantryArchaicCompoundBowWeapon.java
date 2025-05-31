@@ -36,7 +36,7 @@ public class InfantryArchaicCompoundBowWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryCompoundBow");
         addLookupName("Compound Bow");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 15;
         bv = 0.01;
         tonnage = .001; 

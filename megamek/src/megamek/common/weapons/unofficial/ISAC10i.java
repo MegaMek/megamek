@@ -49,7 +49,7 @@ public class ISAC10i extends ACWeapon {
         explosionDamage = damage;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MEK_WEAPON)
                 .or(F_AERO_WEAPON).or(F_TANK_WEAPON);
-        ammoType = AmmoType.T_ACi;
+        ammoType = AmmoType.AmmoTypeEnum.ACi;
         atClass = CLASS_AC;
         // Since this is an unofficial Weapon I'm using the Normal AC10 Stats
         rulesRefs = "Unofficial";

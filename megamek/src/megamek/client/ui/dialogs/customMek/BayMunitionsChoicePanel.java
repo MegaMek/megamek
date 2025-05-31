@@ -21,6 +21,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import javax.swing.JLabel;
@@ -32,9 +33,11 @@ import javax.swing.event.ChangeListener;
 
 import megamek.client.ui.Messages;
 import megamek.common.AmmoType;
+import megamek.common.AmmoType.AmmoTypeEnum;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.Game;
+import megamek.common.ITechnology.TechBase;
 import megamek.common.LocationFullException;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -60,7 +63,9 @@ public class BayMunitionsChoicePanel extends JPanel {
     private final Entity entity;
     private final Game game;
     private final List<AmmoRowPanel> rows = new ArrayList<>();
-
+    
+    private record AmmoKey(AmmoTypeEnum ammoType, int rackSize) {}
+    
     public BayMunitionsChoicePanel(Entity entity, Game game) {
         this.entity = entity;
         this.game = game;
@@ -71,16 +76,15 @@ public class BayMunitionsChoicePanel extends JPanel {
         gbc.insets = new Insets(10, 0, 10, 0);
 
         for (WeaponMounted bay : entity.getWeaponBayList()) {
-            Map<List<Integer>, List<AmmoMounted>> ammoByType = new HashMap<>();
+            Map<AmmoKey, List<AmmoMounted>> ammoByType = new HashMap<>();
             for (AmmoMounted ammo : bay.getBayAmmo()) {
-                List<Integer> key = new ArrayList<>(2);
-                key.add(ammo.getType().getAmmoType());
-                key.add(ammo.getType().getRackSize());
-                ammoByType.putIfAbsent(key, new ArrayList<>());
-                ammoByType.get(key).add(ammo);
+                AmmoKey key = new AmmoKey(ammo.getType().getAmmoType(), ammo.getType().getRackSize());
+                ammoByType.computeIfAbsent(key, k -> new ArrayList<>()).add(ammo);
             }
-            for (List<Integer> key : ammoByType.keySet()) {
-                AmmoRowPanel row = new AmmoRowPanel(bay, key.get(0), key.get(1), ammoByType.get(key));
+            for (Entry<AmmoKey, List<AmmoMounted>> entry : ammoByType.entrySet()) {
+                AmmoKey key = entry.getKey();
+                List<AmmoMounted> ammoMounts = entry.getValue();
+                AmmoRowPanel row = new AmmoRowPanel(bay, key.ammoType(), key.rackSize(), ammoMounts);
                 gbc.gridy++;
                 add(row, gbc);
                 rows.add(row);
@@ -149,7 +153,7 @@ public class BayMunitionsChoicePanel extends JPanel {
         private final JLabel lblTonnage = new JLabel();
 
         private final WeaponMounted bay;
-        private final int at;
+        private final AmmoTypeEnum at;
         private final int rackSize;
         private final TechBase techBase;
         private final List<AmmoMounted> ammoMounts;
@@ -159,7 +163,7 @@ public class BayMunitionsChoicePanel extends JPanel {
 
         private double tonnage;
 
-        AmmoRowPanel(WeaponMounted bay, int at, int rackSize, List<AmmoMounted> ammoMounts) {
+        AmmoRowPanel(WeaponMounted bay, AmmoTypeEnum at, int rackSize, List<AmmoMounted> ammoMounts) {
             this.bay = bay;
             this.at = at;
             this.rackSize = rackSize;
@@ -266,7 +270,7 @@ public class BayMunitionsChoicePanel extends JPanel {
         }
 
         private String createMunitionLabel(AmmoType atype) {
-            if (atype.getAmmoType() == AmmoType.T_MML) {
+            if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) {
                 EnumSet<AmmoType.Munitions> artemisCapable = EnumSet.of(
                         AmmoType.Munitions.M_ARTEMIS_CAPABLE,
                         AmmoType.Munitions.M_ARTEMIS_V_CAPABLE);
@@ -308,11 +312,11 @@ public class BayMunitionsChoicePanel extends JPanel {
             }
 
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS)) {
-                if (atype.getAmmoType() == AmmoType.T_ARROW_IV
-                        || atype.getAmmoType() == AmmoType.T_LONG_TOM
-                        || atype.getAmmoType() == AmmoType.T_SNIPER
-                        || atype.getAmmoType() == AmmoType.T_THUMPER
-                        || atype.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
+                if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV
+                        || atype.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM
+                        || atype.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER
+                        || atype.getAmmoType() == AmmoType.AmmoTypeEnum.THUMPER
+                        || atype.getAmmoType() == AmmoType.AmmoTypeEnum.CRUISE_MISSILE) {
                     if (atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
                         return Messages.getString("CustomMekDialog.StandardMunition");
                     }

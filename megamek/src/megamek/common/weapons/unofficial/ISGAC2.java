@@ -54,7 +54,7 @@ public class ISGAC2 extends ACWeapon {
         toHitModifier = -1;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MEK_WEAPON)
                 .or(F_AERO_WEAPON).or(F_TANK_WEAPON).or(F_PULSE);
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.AmmoTypeEnum.AC;
         atClass = CLASS_AC;
         // Going to Assume these are like IS RACs
         rulesRefs = "Unofficial";

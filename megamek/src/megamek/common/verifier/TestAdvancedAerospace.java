@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import megamek.common.*;
+import megamek.common.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
@@ -650,8 +651,8 @@ public class TestAdvancedAerospace extends TestAero {
                 buff.append("Bay ").append(bay.getName()).append(" has no weapons\n");
                 illegal = true;
             }
-            Map<Integer, Integer> ammoWeaponCount = new HashMap<>();
-            Map<Integer, Integer> ammoTypeCount = new HashMap<>();
+            Map<AmmoTypeEnum, Integer> ammoWeaponCount = new HashMap<>();
+            Map<AmmoTypeEnum, Integer> ammoTypeCount = new HashMap<>();
             for (WeaponMounted w : bay.getBayWeapons()) {
                 if (w.isOneShot()) {
                     continue;
@@ -661,12 +662,12 @@ public class TestAdvancedAerospace extends TestAero {
             for (AmmoMounted a : bay.getBayAmmo()) {
                 ammoTypeCount.merge(a.getType().getAmmoType(), a.getUsableShotsLeft(), Integer::sum);
             }
-            for (Integer at : ammoWeaponCount.keySet()) {
-                if (at != AmmoType.T_NA) {
+            for (AmmoTypeEnum at : ammoWeaponCount.keySet()) {
+                if (at != AmmoType.AmmoTypeEnum.NA) {
                     int needed = ammoWeaponCount.get(at) * 10;
-                    if ((at == AmmoType.T_AC_ULTRA) || (at == AmmoType.T_AC_ULTRA_THB)) {
+                    if ((at == AmmoType.AmmoTypeEnum.AC_ULTRA) || (at == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
                         needed *= 2;
-                    } else if ((at == AmmoType.T_AC_ROTARY)) {
+                    } else if ((at == AmmoType.AmmoTypeEnum.AC_ROTARY)) {
                         needed *= 6;
                     }
                     if (!ammoTypeCount.containsKey(at) || ammoTypeCount.get(at) < needed) {
@@ -678,7 +679,7 @@ public class TestAdvancedAerospace extends TestAero {
                     }
                 }
             }
-            for (Integer at : ammoTypeCount.keySet()) {
+            for (AmmoTypeEnum at : ammoTypeCount.keySet()) {
                 if (!ammoWeaponCount.containsKey(at)) {
                     buff.append("Bay ").append(bay.getName()).append(" has ammo for a weapon not in the bay\n");
                     illegal = true;
@@ -741,18 +742,18 @@ public class TestAdvancedAerospace extends TestAero {
                 }
                 if ((m.getType().hasFlag(WeaponType.F_MASS_DRIVER) && !(m.getType() instanceof BayWeapon))) {
                     massDriversPerArc.merge(m.getLocation(), 1, Integer::sum);
-                    int at = ((WeaponType) m.getType()).getAmmoType();
-                    if ((at == AmmoType.T_HMASS) && vessel.getWeight() < 2000000) {
+                    AmmoTypeEnum at = ((WeaponType) m.getType()).getAmmoType();
+                    if ((at == AmmoType.AmmoTypeEnum.HMASS) && vessel.getWeight() < 2000000) {
                         buff.append("Minimum vessel tonnage for ")
                               .append(m.getType().getName())
                               .append(" is 2,000,000 tons\n");
                         illegal = true;
-                    } else if ((at == AmmoType.T_MMASS) && vessel.getWeight() < 1500000) {
+                    } else if ((at == AmmoType.AmmoTypeEnum.MMASS) && vessel.getWeight() < 1500000) {
                         buff.append("Minimum vessel tonnage for ")
                               .append(m.getType().getName())
                               .append(" is 1,500,000 tons\n");
                         illegal = true;
-                    } else if ((at == AmmoType.T_LMASS) && vessel.getWeight() < 750000) {
+                    } else if ((at == AmmoType.AmmoTypeEnum.LMASS) && vessel.getWeight() < 750000) {
                         buff.append("Minimum vessel tonnage for ")
                               .append(m.getType().getName())
                               .append(" is 750,000 tons\n");

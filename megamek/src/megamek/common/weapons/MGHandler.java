@@ -24,6 +24,7 @@ import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -144,14 +145,18 @@ public class MGHandler extends AmmoWeaponHandler {
 
             // TacOps p.102 Rapid Fire MG Rules
             switch (wtype.getAmmoType()) {
-                case AmmoType.T_MG:
+                case MG:
                     nDamPerHit = Compute.d6();
                     break;
-                case AmmoType.T_MG_HEAVY:
+                case MG_HEAVY:
                     nDamPerHit = Compute.d6() + 1;
                     break;
-                case AmmoType.T_MG_LIGHT:
+                case MG_LIGHT:
                     nDamPerHit = Math.max(1, Compute.d6() - 1);
+                    break;
+                default:
+                    // This should not happen for rapid fire MGs, but handle gracefully
+                    nDamPerHit = 1;
                     break;
             }
 
@@ -162,7 +167,7 @@ public class MGHandler extends AmmoWeaponHandler {
             for (int i = 0; i < ammoUsage; i++) {
                 if (ammo.getUsableShotsLeft() <= 0) {
                     ae.loadWeapon(weapon);
-                    ammo = weapon.getLinked();
+                    ammo = (AmmoMounted) weapon.getLinked();
                 }
                 ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
             }

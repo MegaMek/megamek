@@ -30,7 +30,7 @@ public class InfantryArchaicAxeWeapon extends InfantryWeapon {
         addLookupName("InfantryAxe");
         addLookupName("InfantryBladeAxe");
         addLookupName("Axe");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 25;
         bv = 0.10;
         tonnage = .004; 

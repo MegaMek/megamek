@@ -38,7 +38,7 @@ public class InfantryArchaicHatchetWeapon extends InfantryWeapon {
         addLookupName("InfantryHatchet");
         addLookupName("InfantryTomahawk");
         addLookupName("Hatchet");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 10;
         bv = 0.04;
         tonnage = .001; 

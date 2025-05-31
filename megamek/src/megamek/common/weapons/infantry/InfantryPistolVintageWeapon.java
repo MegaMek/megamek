@@ -29,7 +29,7 @@ public class InfantryPistolVintageWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryPistolVintage");
         addLookupName("Vintage Pistol");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 500;
         tonnage = .0005;
         bv = 0.0005;

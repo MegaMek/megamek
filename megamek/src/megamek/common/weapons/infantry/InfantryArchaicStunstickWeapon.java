@@ -36,7 +36,7 @@ public class InfantryArchaicStunstickWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryStunstick");
         addLookupName("Stun Stick");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 200;
         bv = 0.06;
         tonnage = .0002; 

@@ -47,7 +47,7 @@ public abstract class ACWeapon extends AmmoWeapon {
     public ACWeapon() {
         super();
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MEK_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON);
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.AmmoTypeEnum.AC;
         explosive = true; // when firing incendiary ammo
         atClass = CLASS_AC;
     }

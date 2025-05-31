@@ -28,7 +28,7 @@ public class InfantryLaserPistolAA75L extends InfantryWeapon {
         name = "Laser Pistol (AA-75L)";
         setInternalName(name);
         addLookupName("AA75L");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1500;
         bv = 0.021;
         tonnage = 0.0001;

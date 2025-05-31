@@ -37,7 +37,7 @@ public class InfantrySupportClanSemiPortablePulseLaserWeapon extends InfantryWea
 		addLookupName("InfantryClanSemiPortablePulseLaser");
 		addLookupName("InfantryClanMicroPulseLaser");
 		addLookupName("Infantry Clan Semi-Portable Pulse Laser");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 12500;
 		bv = 2.81;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_SUPPORT);

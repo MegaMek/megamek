@@ -35,7 +35,7 @@ public class InfantryRifleGyroslugCarbineWeapon extends InfantryWeapon {
 		name = "Gyroslug Carbine";
 		setInternalName(name);
 		addLookupName("InfantryGyroslugCarbine");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 800;
 		bv = 0.86;
 		tonnage = .004;

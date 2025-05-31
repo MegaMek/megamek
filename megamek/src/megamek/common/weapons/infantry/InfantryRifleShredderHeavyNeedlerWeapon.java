@@ -36,7 +36,7 @@ public class InfantryRifleShredderHeavyNeedlerWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryShredder");
 		addLookupName("Shredder Heavy Needler");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 150;
 		bv = 0.31;
 		tonnage = .001;

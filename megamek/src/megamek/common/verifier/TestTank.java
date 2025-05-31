@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.*;
+import megamek.common.AmmoType.AmmoTypeEnum;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
@@ -507,10 +508,10 @@ public class TestTank extends TestEntity {
                 return mode.isVTOL();
             }
         } else if (eq instanceof WeaponType) {
-            if (((WeaponType) eq).getAmmoType() == AmmoType.T_BPOD) {
+            if (((WeaponType) eq).getAmmoType() == AmmoType.AmmoTypeEnum.BPOD) {
                 return !mode.isMarine();
             }
-            if (((WeaponType) eq).getAmmoType() == AmmoType.T_NAIL_RIVET_GUN) {
+            if (((WeaponType) eq).getAmmoType() == AmmoType.AmmoTypeEnum.NAIL_RIVET_GUN) {
                 return !mode.isVTOL();
             }
         }
@@ -549,10 +550,10 @@ public class TestTank extends TestEntity {
             }
         }
         for (Mounted<?> mount : tank.getAmmo()) {
-            int ammoType = ((AmmoType) mount.getType()).getAmmoType();
+            AmmoTypeEnum ammoType = ((AmmoType) mount.getType()).getAmmoType();
             if ((mount.getLocation() == Entity.LOC_NONE) &&
                     (mount.getUsableShotsLeft() > 1
-                            || ammoType == AmmoType.T_CRUISE_MISSILE)) {
+                            || ammoType == AmmoTypeEnum.CRUISE_MISSILE)) {
                 unallocated.add(mount);
             }
         }
@@ -911,12 +912,12 @@ public class TestTank extends TestEntity {
                 return false;
             }
         } else if (eq instanceof WeaponType) {
-            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
+            if ((((WeaponType) eq).getAmmoType() == AmmoType.AmmoTypeEnum.GAUSS_HEAVY)
                     && (location != Tank.LOC_FRONT) && !isRearLocation) {
                 buffer.append(eq.getName()).append(" cannot be mounted on the sides or turret.\n");
                 return false;
             }
-            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_IGAUSS_HEAVY)
+            if ((((WeaponType) eq).getAmmoType() == AmmoType.AmmoTypeEnum.IGAUSS_HEAVY)
                     && isTurretLocation) {
                 buffer.append(eq.getName()).append(" cannot be mounted on a turret.\n");
                 return false;

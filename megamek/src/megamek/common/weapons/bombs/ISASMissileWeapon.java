@@ -21,6 +21,7 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.weapons.missiles.ThunderBoltWeapon;
 
 /**
@@ -37,7 +38,7 @@ public class ISASMissileWeapon extends ThunderBoltWeapon {
         super();
 
         name = "AS Missile";
-        setInternalName(BombType.getBombWeaponName(BombType.B_AS));
+        setInternalName(BombTypeEnum.AS.getWeaponName());
         heat = 0;
         damage = 30;
         rackSize = 1;
@@ -56,7 +57,7 @@ public class ISASMissileWeapon extends ThunderBoltWeapon {
         longAV = 30;
         flags = flags.or(F_ANTI_SHIP).or(F_MISSILE).or(F_LARGEMISSILE).or(F_BOMB_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         maxRange = RANGE_LONG;
-        ammoType = AmmoType.T_AS_MISSILE;
+        ammoType = AmmoType.AmmoTypeEnum.AS_MISSILE;
         capital = false;
         this.missileArmor = 30;
         rulesRefs = "358, TO";

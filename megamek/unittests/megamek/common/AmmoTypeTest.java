@@ -61,23 +61,23 @@ class AmmoTypeTest {
 
     @BeforeAll
     static void beforeAll() {
-        when(mockAC5.getAmmoType()).thenReturn(AmmoType.T_AC);
+        when(mockAC5.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.AC);
         when(mockAC5.getRackSize()).thenReturn(5);
-        when(mockPPC.getAmmoType()).thenReturn(AmmoType.T_NA);
-        when(mockSRM4.getAmmoType()).thenReturn(AmmoType.T_SRM);
+        when(mockPPC.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.NA);
+        when(mockSRM4.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.SRM);
         when(mockSRM4.getRackSize()).thenReturn(4);
 
-        when(mockAC5AmmoType.getAmmoType()).thenReturn(AmmoType.T_AC);
+        when(mockAC5AmmoType.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.AC);
         when(mockAC5AmmoType.getRackSize()).thenReturn(5);
-        when(mockSRM4AmmoType.getAmmoType()).thenReturn(AmmoType.T_SRM);
+        when(mockSRM4AmmoType.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.SRM);
         when(mockSRM4AmmoType.getRackSize()).thenReturn(4);
         when(mockSRM4AmmoType.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
-        when(mockInferno4AmmoType.getAmmoType()).thenReturn(AmmoType.T_SRM);
+        when(mockInferno4AmmoType.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.SRM);
         when(mockInferno4AmmoType.getRackSize()).thenReturn(4);
         when(mockInferno4AmmoType.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_INFERNO));
-        when(mockAC10AmmoType.getAmmoType()).thenReturn(AmmoType.T_AC);
+        when(mockAC10AmmoType.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.AC);
         when(mockAC10AmmoType.getRackSize()).thenReturn(10);
-        when(mockSRM6AmmoType.getAmmoType()).thenReturn(AmmoType.T_SRM);
+        when(mockSRM6AmmoType.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.SRM);
         when(mockSRM6AmmoType.getRackSize()).thenReturn(6);
         when(mockSRM6AmmoType.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
 

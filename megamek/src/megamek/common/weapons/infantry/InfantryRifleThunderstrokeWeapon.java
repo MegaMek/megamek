@@ -36,7 +36,7 @@ public class InfantryRifleThunderstrokeWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryThunderstroke");
 		addLookupName("Thunderstroke");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 2500;
 		bv = 0.79;
 		tonnage = .007;

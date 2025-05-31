@@ -37,7 +37,7 @@ public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
 		addLookupName("InfantryHellbore");
 		addLookupName("InfantryHellboreAssaultLaser");
 		addLookupName("Infantry Hellbore Assault Laser");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 2500;
 		bv = 3.22;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_ENCUMBER).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);

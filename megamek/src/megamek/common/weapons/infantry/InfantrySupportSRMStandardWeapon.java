@@ -38,7 +38,7 @@ public class InfantrySupportSRMStandardWeapon extends InfantryWeapon {
 		addLookupName("Infantry2ShotSRM");
 		addLookupName("Infantry Two-Shot SRM Launcher");
 		sortingName = "SRM Launcher C";
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1500;
 		bv = 5.83;
 		tonnage = .030;

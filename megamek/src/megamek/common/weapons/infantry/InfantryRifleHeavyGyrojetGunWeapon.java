@@ -36,7 +36,7 @@ public class InfantryRifleHeavyGyrojetGunWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryHeavyGyrojetGun");
 		addLookupName("Heavy Gyrojet Gun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 2500;
 		bv = 1.07;
 		tonnage = .010;

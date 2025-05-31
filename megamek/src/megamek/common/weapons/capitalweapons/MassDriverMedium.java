@@ -33,7 +33,7 @@ public class MassDriverMedium extends MassDriverWeapon {
         this.shortName = "Medium Mass Driver";
         this.heat = 60;
         this.damage = 100;
-        this.ammoType = AmmoType.T_MMASS;
+        this.ammoType = AmmoType.AmmoTypeEnum.MMASS;
         this.shortRange = 12;
         this.mediumRange = 24;
         this.longRange = 40;

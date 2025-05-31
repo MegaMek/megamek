@@ -36,7 +36,7 @@ public class InfantrySMGImperator2894A1Weapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryImperator2894A1");
 		addLookupName("Imperator 2894A1 SMG");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 100;
 		bv = 0.20;
 		tonnage = .004;

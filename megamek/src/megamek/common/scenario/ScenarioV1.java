@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
+import megamek.common.AmmoType.AmmoTypeEnum;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.Gender;
@@ -374,7 +375,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             return null;
         }
 
-        int weaponAmmoType = (currentWeaponType instanceof WeaponType weaponType) ? weaponType.getAmmoType() : 0;
+        AmmoTypeEnum weaponAmmoType = (currentWeaponType instanceof WeaponType weaponType) ? weaponType.getAmmoType() : null;
         if ((newAmmoType.getRackSize() == ((AmmoType) currentAmmoType).getRackSize()) &&
                   (newAmmoType.hasFlag(AmmoType.F_BATTLEARMOR) == currentAmmoType.hasFlag(AmmoType.F_BATTLEARMOR)) &&
                   (newAmmoType.hasFlag(AmmoType.F_ENCUMBERING) == currentAmmoType.hasFlag(AmmoType.F_ENCUMBERING)) &&

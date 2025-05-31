@@ -37,7 +37,7 @@ public class InfantrySupportSemiPortablePPCWeapon extends InfantryWeapon {
 		addLookupName("InfantrySemiPortablePPC");
 		addLookupName("InfantryManPackPPC");
 		addLookupName("Infantry Semi-Portable PPC");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 7000;
 		bv = 3.68;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PPC).or(F_INF_SUPPORT);

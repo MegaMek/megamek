@@ -583,10 +583,10 @@ public class ModelRecord extends AbstractUnitRecord {
                     }
                     // Some missile types are capable of being loaded with infernos, which are
                     // highly capable of setting fires
-                    if (((WeaponType) eq).getAmmoType() == AmmoType.T_SRM ||
-                            ((WeaponType) eq).getAmmoType() == AmmoType.T_SRM_IMP ||
-                            ((WeaponType) eq).getAmmoType() == AmmoType.T_MML ||
-                            ((WeaponType) eq).getAmmoType() == AmmoType.T_IATM) {
+                    if (((WeaponType) eq).getAmmoType() == AmmoType.AmmoTypeEnum.SRM ||
+                            ((WeaponType) eq).getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP ||
+                            ((WeaponType) eq).getAmmoType() == AmmoType.AmmoTypeEnum.MML ||
+                            ((WeaponType) eq).getAmmoType() == AmmoType.AmmoTypeEnum.IATM) {
                         incendiary = true;
                     }
                 }
@@ -603,13 +603,13 @@ public class ModelRecord extends AbstractUnitRecord {
                 // discount. Ignore small craft, DropShips, and large spacecraft. Ignore
                 // infantry weapons except for field guns.
                 if (unitType < UnitType.SMALL_CRAFT &&
-                        ((WeaponType) eq).getAmmoType() > AmmoType.T_NA &&
+                        (((WeaponType) eq).getAmmoType() != AmmoType.AmmoTypeEnum.NA) &&
                         !(eq instanceof InfantryWeapon)) {
                     double ammoFactor = 1.0;
 
                     if (eq instanceof StreakSRMWeapon ||
                             eq instanceof StreakLRMWeapon ||
-                            ((WeaponType) eq).getAmmoType() == AmmoType.T_IATM) {
+                            ((WeaponType) eq).getAmmoType() == AmmoType.AmmoTypeEnum.IATM) {
                         ammoFactor = 0.4;
                     }
 
@@ -989,9 +989,9 @@ public class ModelRecord extends AbstractUnitRecord {
         // Use a limited version for checking air-to-air capability, including potential
         // for thresholding heavily armored targets
         if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
-            if (checkWeapon.getAmmoType() == AmmoType.T_AC_LBX ||
-                    checkWeapon.getAmmoType() == AmmoType.T_HAG ||
-                    checkWeapon.getAmmoType() == AmmoType.T_SBGAUSS) {
+            if (checkWeapon.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX ||
+                    checkWeapon.getAmmoType() == AmmoType.AmmoTypeEnum.HAG ||
+                    checkWeapon.getAmmoType() == AmmoType.AmmoTypeEnum.SBGAUSS) {
                 return veryEffective;
             } else if (checkWeapon.getMedAV() >= 10 ||
                     checkWeapon.getShortAV() >= 15) {
@@ -1004,9 +1004,9 @@ public class ModelRecord extends AbstractUnitRecord {
         if (checkWeapon instanceof ArtilleryWeapon) {
             return somewhatEffective;
         }
-        if (checkWeapon.getAmmoType() == AmmoType.T_AC_LBX ||
-                checkWeapon.getAmmoType() == AmmoType.T_HAG ||
-                checkWeapon.getAmmoType() == AmmoType.T_SBGAUSS ||
+        if (checkWeapon.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX ||
+                checkWeapon.getAmmoType() == AmmoType.AmmoTypeEnum.HAG ||
+                checkWeapon.getAmmoType() == AmmoType.AmmoTypeEnum.SBGAUSS ||
                 checkWeapon instanceof InfantrySupportMk2PortableAAWeapon) {
             return veryEffective;
         } else if (checkWeapon instanceof InfantryWeapon ||

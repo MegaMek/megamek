@@ -36,7 +36,7 @@ public class InfantryGrenadeStandardWeapon extends InfantryWeapon {
         setInternalName("InfantryGrenade");
         addLookupName(name);
         addLookupName("Grenades");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 16;
         bv = 0.44;
         tonnage = .0006;

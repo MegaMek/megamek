@@ -31,7 +31,7 @@ public class ISTHBLB20XAC extends LBXACWeapon {
         heat = 6;
         damage = 20;
         rackSize = 20;
-        ammoType = AmmoType.T_AC_LBX_THB;
+        ammoType = AmmoType.AmmoTypeEnum.AC_LBX_THB;
         shortRange = 4;
         mediumRange = 7;
         longRange = 12;

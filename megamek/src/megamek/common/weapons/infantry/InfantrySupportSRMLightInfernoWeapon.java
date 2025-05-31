@@ -37,7 +37,7 @@ public class InfantrySupportSRMLightInfernoWeapon extends InfantryWeapon {
 		addLookupName(name);
 		addLookupName("Light SRM (Inferno)");
 		sortingName = "SRM Launcher BI";
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1500;
 		bv = 1.74;
 		flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);

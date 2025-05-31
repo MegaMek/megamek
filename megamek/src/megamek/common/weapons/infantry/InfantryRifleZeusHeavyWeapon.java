@@ -36,7 +36,7 @@ public class InfantryRifleZeusHeavyWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryZeusHeavyRifle");
 		addLookupName("Zeus Heavy Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 200;
 		bv = 0.67;
 		tonnage = .008;

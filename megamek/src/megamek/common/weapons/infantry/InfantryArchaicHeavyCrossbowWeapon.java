@@ -37,7 +37,7 @@ public class InfantryArchaicHeavyCrossbowWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryHeavyCrossbow");
         addLookupName("Heavy Crossbow");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 20;
         bv = 0.02;
         tonnage = .004;

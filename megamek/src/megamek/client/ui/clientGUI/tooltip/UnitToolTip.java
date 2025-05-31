@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.MiscMounted;
@@ -1101,9 +1103,9 @@ public final class UnitToolTip {
                 // Add ammo info if the weapon has ammo
                 // Check wpInfos for dual entries to avoid displaying ammo twice for
                 // non/rapid-fire
-                if ((wtype.getAmmoType() != AmmoType.T_NA) &&
+                if ((wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA) &&
                           (!wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_BA_INDIVIDUAL)) &&
-                          (wtype.getAmmoType() != AmmoType.T_INFANTRY)) {
+                          (wtype.getAmmoType() != AmmoType.AmmoTypeEnum.INFANTRY)) {
                     String msg_ammo = Messages.getString("BoardView1.Tooltip.Ammo");
 
                     if (wpInfos.containsKey(curWp.getName() + msg_ammo)) {
@@ -1374,7 +1376,7 @@ public final class UnitToolTip {
         String result = "";
 
         if (entity.isBomber()) {
-            int[] loadout = {};
+            BombLoadout loadout = new BombLoadout();
             String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
 
             if (entity.getGame().getPhase().isLounge()) {
@@ -1382,14 +1384,13 @@ public final class UnitToolTip {
             } else {
                 loadout = entity.getBombLoadout();
             }
-
-            for (int i = 0; i < loadout.length; i++) {
-                int count = loadout[i];
-
+            for (Map.Entry<BombTypeEnum, Integer> entry : loadout.entrySet()) {
+                BombTypeEnum bombType = entry.getKey();
+                int count = entry.getValue();
                 if (count > 0) {
                     col1 = String.valueOf(count);
                     col2 = "&nbsp;x&nbsp;";
-                    col3 = BombType.getBombName(i);
+                    col3 = bombType.getDisplayName();
 
                     String attr = String.format("FACE=Dialog COLOR=%s",
                           UIUtil.toColorHexString(GUIP.getUnitToolTipWeaponColor()));

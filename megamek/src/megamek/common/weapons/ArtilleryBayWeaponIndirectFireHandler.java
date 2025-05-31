@@ -408,11 +408,11 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         }
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
             int radius;
-            if (atype.getAmmoType() == AmmoType.T_ARROW_IV) {
+            if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV) {
                 radius = 4;
-            } else if (atype.getAmmoType() == AmmoType.T_LONG_TOM) {
+            } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM) {
                 radius = 3;
-            } else if (atype.getAmmoType() == AmmoType.T_SNIPER) {
+            } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER) {
                 radius = 2;
             } else {
                 radius = 1;

@@ -36,7 +36,7 @@ public class InfantryShotgunSawnoffDoubleBarrelWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryDoubleSawnOff");
 		addLookupName("Double Barrel Sawed-off Shotgun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 30;
 		bv = 0.03;
 		tonnage = .003;

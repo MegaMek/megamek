@@ -29,7 +29,7 @@ public class CapMissKillerWhaleWeapon extends CapitalMissileWeapon {
         this.shortName = "Killer Whale";
         this.heat = 20;
         this.damage = 4;
-        this.ammoType = AmmoType.T_KILLER_WHALE;
+        this.ammoType = AmmoType.AmmoTypeEnum.KILLER_WHALE;
         this.shortRange = 7;
         this.mediumRange = 14;
         this.longRange = 21;

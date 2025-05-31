@@ -565,7 +565,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         }
 
         if ((mounted.getLinked() != null)
-                && (mounted.getType().getAmmoType() != AmmoType.T_NA)
+                && (mounted.getType().getAmmoType() != AmmoType.AmmoTypeEnum.NA)
                 && (mounted.getLinked().getType() instanceof AmmoType)) {
             Mounted<?> ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
@@ -574,9 +574,9 @@ public class PointblankShotDisplay extends FiringDisplay {
             waa.setAmmoMunitionType(ammoMunitionType);
             waa.setAmmoCarrier(ammoMount.getEntity().getId());
             if (((ammoMunitionType.contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB))
-                    && ((ammoType.getAmmoType() == AmmoType.T_LRM)
-                            || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
-                            || (ammoType.getAmmoType() == AmmoType.T_MML)))
+                    && ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                            || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                            || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML)))
                     || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_VIBRABOMB_IV))) {
                 VibrabombSettingDialog vsd = new VibrabombSettingDialog(clientgui.getFrame());
                 vsd.setVisible(true);

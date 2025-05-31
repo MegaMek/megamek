@@ -28,6 +28,7 @@ import java.util.Enumeration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import megamek.common.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.WeaponMounted;
 
 class WeaponTypeTest {
@@ -44,18 +45,18 @@ class WeaponTypeTest {
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
             EquipmentType equipmentType = e.nextElement();
             if (equipmentType instanceof WeaponType weaponType) {
-                int ammoType = weaponType.getAmmoType();
+                AmmoTypeEnum ammoType = weaponType.getAmmoType();
 
                 assertEquals(equipmentType.hasFlag(WeaponType.F_ARTEMIS_COMPATIBLE),
-                        (ammoType == AmmoType.T_LRM)
-                                || (ammoType == AmmoType.T_LRM_IMP)
-                                || (ammoType == AmmoType.T_MML)
-                                || (ammoType == AmmoType.T_SRM)
-                                || (ammoType == AmmoType.T_SRM_IMP)
-                                || (ammoType == AmmoType.T_NLRM)
-                                || (ammoType == AmmoType.T_LRM_TORPEDO)
-                                || (ammoType == AmmoType.T_SRM_TORPEDO)
-                                || (ammoType == AmmoType.T_LRM_TORPEDO_COMBO));
+                        (ammoType == AmmoType.AmmoTypeEnum.LRM)
+                                || (ammoType == AmmoType.AmmoTypeEnum.LRM_IMP)
+                                || (ammoType == AmmoType.AmmoTypeEnum.MML)
+                                || (ammoType == AmmoType.AmmoTypeEnum.SRM)
+                                || (ammoType == AmmoType.AmmoTypeEnum.SRM_IMP)
+                                || (ammoType == AmmoType.AmmoTypeEnum.NLRM)
+                                || (ammoType == AmmoType.AmmoTypeEnum.LRM_TORPEDO)
+                                || (ammoType == AmmoType.AmmoTypeEnum.SRM_TORPEDO)
+                                || (ammoType == AmmoType.AmmoTypeEnum.LRM_TORPEDO_COMBO));
             }
         }
     }

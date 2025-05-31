@@ -1762,7 +1762,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         int infernos = 0;
                         for (Mounted<?> m : battleArmor.getEquipment()) {
                             if (m.getType() instanceof AmmoType at) {
-                                if (((at.getAmmoType() == AmmoType.T_SRM) || (at.getAmmoType() == AmmoType.T_MML)) &&
+                                if (((at.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) || (at.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) &&
                                           (at.getMunitionType().contains(Munitions.M_INFERNO))) {
                                     infernos += at.getRackSize() * m.getHittableShotsLeft();
                                 }

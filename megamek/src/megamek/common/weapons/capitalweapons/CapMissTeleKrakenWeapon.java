@@ -34,7 +34,7 @@ public class CapMissTeleKrakenWeapon extends CapitalMissileWeapon {
         setInstantModeSwitch(false);
         this.heat = 50;
         this.damage = 10;
-        this.ammoType = AmmoType.T_KRAKEN_T;
+        this.ammoType = AmmoType.AmmoTypeEnum.KRAKEN_T;
         this.shortRange = 11;
         this.mediumRange = 22;
         this.longRange = 34;

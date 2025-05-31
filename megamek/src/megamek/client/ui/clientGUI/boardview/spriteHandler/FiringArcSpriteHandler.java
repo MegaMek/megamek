@@ -390,12 +390,12 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         // gather underwater ranges
         ranges[1] = wtype.getWRanges();
         if (atype != null) {
-            if ((wtype.getAmmoType() == AmmoType.T_SRM)
-                    || (wtype.getAmmoType() == AmmoType.T_SRM_IMP)
-                    || (wtype.getAmmoType() == AmmoType.T_MRM)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
-                    || (wtype.getAmmoType() == AmmoType.T_MML)) {
+            if ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM)
+                    || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)
+                    || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.MRM)
+                    || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                    || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                    || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) {
                 if (atype.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)) {
                     ranges[1] = wtype.getRanges(weapon, ammoMounted);
                 } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_MULTI_PURPOSE)) {
@@ -431,7 +431,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
 
         // Override for the MML ammos
         if (atype != null) {
-            if (atype.getAmmoType() == AmmoType.T_MML) {
+            if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) {
                 if (atype.hasFlag(AmmoType.F_MML_LRM)) {
                     if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                         ranges[0] = new int[] { 4, 5, 10, 15, 20 };

@@ -38,7 +38,7 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         damage = 4;
         infDamageClass = WeaponType.WEAPON_BURST_6D6;
         rackSize = 2;
-        ammoType = AmmoType.T_HEAVY_FLAMER;
+        ammoType = AmmoType.AmmoTypeEnum.HEAVY_FLAMER;
         shortRange = 2;
         mediumRange = 3;
         longRange = 4;

@@ -29,7 +29,7 @@ public class CapMissKrakenWeapon extends CapitalMissileWeapon {
         this.shortName = "Kraken";
         this.heat = 50;
         this.damage = 10;
-        this.ammoType = AmmoType.T_KRAKENM;
+        this.ammoType = AmmoType.AmmoTypeEnum.KRAKENM;
         this.shortRange = 11;
         this.mediumRange = 22;
         this.longRange = 34;

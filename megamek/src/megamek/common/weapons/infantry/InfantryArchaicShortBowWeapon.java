@@ -36,7 +36,7 @@ public class InfantryArchaicShortBowWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryShortbow");
         addLookupName("Short Bow");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 10;
         bv = 0.0;
         tonnage = .0008; 

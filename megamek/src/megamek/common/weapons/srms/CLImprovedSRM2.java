@@ -37,7 +37,7 @@ public class CLImprovedSRM2 extends SRMWeapon {
         criticals = 1;
         bv = 28;
         flags = flags.or(F_NO_FIRES);
-        ammoType = AmmoType.T_SRM_IMP;
+        ammoType = AmmoType.AmmoTypeEnum.SRM_IMP;
         cost = 10000;
         this.shortAV = 3;
         this.medAV = 3;

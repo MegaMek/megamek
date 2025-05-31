@@ -44,7 +44,7 @@ public class CLImprovedAC10 extends ACWeapon {
         medAV = 10;
         maxRange = RANGE_MED;
         explosionDamage = damage;
-        ammoType = AmmoType.T_AC_IMP;
+        ammoType = AmmoType.AmmoTypeEnum.AC_IMP;
         rulesRefs = "96, IO";
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.D)
             .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.X, AvailabilityValue.X)

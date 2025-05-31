@@ -29,7 +29,7 @@ public class ISCruiseMissile120 extends ArtilleryWeapon {
         this.setInternalName("ISCruiseMissile120");
         this.heat = 120;
         this.rackSize = 120;
-        this.ammoType = AmmoType.T_CRUISE_MISSILE;
+        this.ammoType = AmmoType.AmmoTypeEnum.CRUISE_MISSILE;
         this.shortRange = 1;
         this.mediumRange = 2;
         this.longRange = 150;

@@ -37,7 +37,7 @@ public class CLImprovedGaussRifle extends GaussWeapon {
         sortingName = "Gauss Imp";
         heat = 1;
         damage = 15;
-        ammoType = AmmoType.T_GAUSS_IMP;
+        ammoType = AmmoType.AmmoTypeEnum.GAUSS_IMP;
         minimumRange = 2;
         shortRange = 7;
         mediumRange = 15;

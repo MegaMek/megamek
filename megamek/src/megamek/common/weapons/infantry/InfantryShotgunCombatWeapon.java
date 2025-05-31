@@ -36,7 +36,7 @@ public class InfantryShotgunCombatWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryCombatShotgun");
 		addLookupName("Combat Shotgun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 175;
 		bv = 0.25;
 		tonnage = .0045;

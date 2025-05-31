@@ -37,7 +37,7 @@ public class InfantrySupportMagshotGaussRifleWeapon extends InfantryWeapon {
 		addLookupName("InfantryMagshot");
 		addLookupName("InfantryMagshotGaussRifle");
 		addLookupName("Infantry Magshot Gauss Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 8500;
 		bv = 3.78;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);

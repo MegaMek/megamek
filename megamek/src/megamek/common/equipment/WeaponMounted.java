@@ -78,7 +78,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
             return 15;
         }
 
-        if ((getType().getAmmoType() == AmmoType.T_MPOD) && isFired()) {
+        if ((getType().getAmmoType() == AmmoType.AmmoTypeEnum.MPOD) && isFired()) {
             return 0;
         }
 
@@ -369,7 +369,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
                 && getType().getInternalName().equals("ISBAAPDS")) {
             return true;
         } else {
-            return getType().getAmmoType() == AmmoType.T_APDS;
+            return getType().getAmmoType() == AmmoType.AmmoTypeEnum.APDS;
         }
     }
 

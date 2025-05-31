@@ -37,7 +37,7 @@ public class InfantrySupportClanBearhunterAutocannonWeapon extends InfantryWeapo
         addLookupName("InfantryBearhunter");
         addLookupName("InfantryBearhunterAutocannon");
         addLookupName("Infantry Bearhunter Super-Heavy Autocannon");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 3000;
         bv = 2.13;
         tonnage = 0.040;

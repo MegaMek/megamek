@@ -20,7 +20,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.TechAdvancement;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
@@ -33,7 +33,7 @@ public class AlamoMissileWeapon extends CapitalMissileWeapon {
     public AlamoMissileWeapon() {
         super();
         name = "Alamo Missile";
-        setInternalName(BombType.getBombWeaponName(BombType.B_ALAMO));
+        setInternalName(BombTypeEnum.ALAMO.getWeaponName());
         flags = flags.or(F_BOMB_WEAPON).or(F_MISSILE);
         heat = 0;
         damage = 10;
@@ -51,7 +51,7 @@ public class AlamoMissileWeapon extends CapitalMissileWeapon {
         medAV = 10;
         missileArmor = 20;
         maxRange = RANGE_MED;
-        ammoType = AmmoType.T_ALAMO;
+        ammoType = AmmoType.AmmoTypeEnum.ALAMO;
         capital = true;
         techAdvancement.setTechBase(TechAdvancement.TechBase.IS)
             .setISAdvancement(3071, DATE_NONE, DATE_NONE)

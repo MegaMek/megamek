@@ -32,6 +32,7 @@ import megamek.common.Report;
 import megamek.common.Roll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
@@ -45,7 +46,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
 
     private static final MMLogger logger = MMLogger.create(AmmoWeaponHandler.class);
 
-    Mounted<?> ammo;
+    AmmoMounted ammo;
 
     public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
@@ -63,7 +64,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
 
         if (ammo.getUsableShotsLeft() <= 0) {
             ae.loadWeaponWithSameAmmo(weapon);
-            ammo = weapon.getLinked();
+            ammo = (AmmoMounted) weapon.getLinked();
         }
         ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
 
@@ -75,10 +76,15 @@ public class AmmoWeaponHandler extends WeaponHandler {
     }
 
     protected void checkAmmo() {
-        ammo = weapon.getLinked();
-        if (ammo == null) {
+        if (weapon.getLinked() instanceof AmmoMounted ammoMounted) {
+            ammo = ammoMounted;
+        } else {
             ae.loadWeapon(weapon);
-            ammo = weapon.getLinked();
+            if (weapon.getLinked() instanceof AmmoMounted ammoMounted) {
+                ammo = ammoMounted;
+            } else {
+                ammo = null;
+            }
         }
     }
 

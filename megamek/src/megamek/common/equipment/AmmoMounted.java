@@ -20,6 +20,7 @@
 package megamek.common.equipment;
 
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -55,7 +56,7 @@ public class AmmoMounted extends Mounted<AmmoType> {
         int damagePerShot = getType().getDamagePerShot();
         // Anti-ship EW bomb does no damage but deals a 5-point explosion if LAM bomb bay is hit
         if ((getType() instanceof BombType)
-                && (((BombType) getType()).getBombType() == BombType.B_ASEW)) {
+                && (((BombType) getType()).getBombType() == BombTypeEnum.ASEW)) {
             damagePerShot = 5;
         }
 
@@ -65,7 +66,7 @@ public class AmmoMounted extends Mounted<AmmoType> {
         }
 
         //Screen launchers need a racksize. Damage is 15 per TW p251
-        if (getType().getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
+        if (getType().getAmmoType() == AmmoType.AmmoTypeEnum.SCREEN_LAUNCHER) {
             rackSize = 1;
             damagePerShot = 15;
         }
@@ -77,11 +78,11 @@ public class AmmoMounted extends Mounted<AmmoType> {
         if ((mType.contains(AmmoType.Munitions.M_DEAD_FIRE))
                 || (mType.contains(AmmoType.Munitions.M_TANDEM_CHARGE))) {
             damagePerShot++;
-        } else if (getType().getAmmoType() == AmmoType.T_TASER) {
+        } else if (getType().getAmmoType() == AmmoType.AmmoTypeEnum.TASER) {
             damagePerShot = 6;
         }
 
-        if (getType().getAmmoType() == AmmoType.T_MEK_MORTAR) {
+        if (getType().getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR) {
             if ((mType.contains(AmmoType.Munitions.M_AIRBURST))
                     || (mType.contains(AmmoType.Munitions.M_FLARE))
                     || (mType.contains(AmmoType.Munitions.M_SMOKE_WARHEAD))) {

@@ -17,7 +17,9 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import megamek.common.*;
+import megamek.common.AmmoType.AmmoTypeEnum;
 import megamek.common.AmmoType.Munitions;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.annotations.Nullable;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -45,18 +47,18 @@ public class AreaEffectHelper {
     private static void initializeFuelAirBlastRadiusIndexData() {
         fuelAirBlastRadiusIndex = new HashMap<>();
 
-        fuelAirBlastRadiusIndex.put(BombType.getBombInternalName(BombType.B_FAE_SMALL), 2);
-        fuelAirBlastRadiusIndex.put(BombType.getBombInternalName(BombType.B_FAE_LARGE), 3);
+        fuelAirBlastRadiusIndex.put(BombTypeEnum.FAE_SMALL.getInternalName(), 2);
+        fuelAirBlastRadiusIndex.put(BombTypeEnum.FAE_LARGE.getInternalName(), 3);
 
         // the following ammo types have the capability to load FAE munitions:
         // Arrow IV, Thumper, Sniper, Long Tom
-        addFuelAirBlastRadiusIndex(AmmoType.T_ARROW_IV, 2);
-        addFuelAirBlastRadiusIndex(AmmoType.T_THUMPER, 1);
-        addFuelAirBlastRadiusIndex(AmmoType.T_THUMPER_CANNON, 1);
-        addFuelAirBlastRadiusIndex(AmmoType.T_SNIPER, 2);
-        addFuelAirBlastRadiusIndex(AmmoType.T_SNIPER_CANNON, 2);
-        addFuelAirBlastRadiusIndex(AmmoType.T_LONG_TOM_CANNON, 3);
-        addFuelAirBlastRadiusIndex(AmmoType.T_LONG_TOM, 3);
+        addFuelAirBlastRadiusIndex(AmmoTypeEnum.ARROW_IV, 2);
+        addFuelAirBlastRadiusIndex(AmmoTypeEnum.THUMPER, 1);
+        addFuelAirBlastRadiusIndex(AmmoTypeEnum.THUMPER_CANNON, 1);
+        addFuelAirBlastRadiusIndex(AmmoTypeEnum.SNIPER, 2);
+        addFuelAirBlastRadiusIndex(AmmoTypeEnum.SNIPER_CANNON, 2);
+        addFuelAirBlastRadiusIndex(AmmoTypeEnum.LONG_TOM_CANNON, 3);
+        addFuelAirBlastRadiusIndex(AmmoTypeEnum.LONG_TOM, 3);
     }
 
     /**
@@ -102,7 +104,7 @@ public class AreaEffectHelper {
     /**
      * Helper function that adds elements to the fuel blast radius index
      */
-    private static void addFuelAirBlastRadiusIndex(int ammoType, int blastRadius) {
+    private static void addFuelAirBlastRadiusIndex(AmmoTypeEnum ammoType, int blastRadius) {
         // this is relatively inefficient, but probably the least inefficient of the
         // options
         // to acquire a list of the ammo types
@@ -502,7 +504,7 @@ public class AreaEffectHelper {
                 } else {
                     if ((entity.getBARRating(1) < 5) && !entity.hasPatchworkArmor()) {
                         switch (ammo.getAmmoType()) {
-                            case AmmoType.T_LONG_TOM:
+                            case LONG_TOM:
                                 // hack: check if damage is still at 4, so
                                 // we're in
                                 // the
@@ -513,7 +515,7 @@ public class AreaEffectHelper {
                                     return;
                                 }
                                 break;
-                            case AmmoType.T_SNIPER:
+                            case SNIPER:
                                 // hack: check if damage is still at 2, so
                                 // we're in
                                 // the
@@ -524,7 +526,7 @@ public class AreaEffectHelper {
                                     return;
                                 }
                                 break;
-                            case AmmoType.T_THUMPER:
+                            case THUMPER:
                                 // no need to check for damage, because
                                 // falloff =
                                 // damage for the thumper
@@ -539,7 +541,7 @@ public class AreaEffectHelper {
                         // BAR-difference to BAR 5, per a rules question email
                         specialCaseFlechette = true;
                         switch (ammo.getAmmoType()) {
-                            case AmmoType.T_LONG_TOM:
+                            case LONG_TOM:
                                 // hack: check if damage is still at 4, so
                                 // we're in the center hex. otherwise, do no damage
                                 if (damage == 4) {
@@ -548,7 +550,7 @@ public class AreaEffectHelper {
                                     return;
                                 }
                                 break;
-                            case AmmoType.T_SNIPER:
+                            case SNIPER:
                                 // hack: check if damage is still at 2, so we're in
                                 // the center hex. otherwise, do no damage
                                 if (damage == 2) {
@@ -557,7 +559,7 @@ public class AreaEffectHelper {
                                     return;
                                 }
                                 break;
-                            case AmmoType.T_THUMPER:
+                            case THUMPER:
                                 // no need to check for damage, because
                                 // falloff = damage for the thumper
                                 damage = 10;
@@ -647,20 +649,20 @@ public class AreaEffectHelper {
         boolean clusterMunitionsFlag = false;
 
         if (List.of(
-                AmmoType.T_LONG_TOM, AmmoType.T_LONG_TOM_PRIM, AmmoType.T_LONG_TOM_CANNON,
-                AmmoType.T_SNIPER, AmmoType.T_SNIPER_CANNON,
-                AmmoType.T_THUMPER, AmmoType.T_THUMPER_CANNON,
-                AmmoType.T_ARROW_IV, AmmoType.T_ARROWIV_PROTO
+                AmmoType.AmmoTypeEnum.LONG_TOM, AmmoType.AmmoTypeEnum.LONG_TOM_PRIM, AmmoType.AmmoTypeEnum.LONG_TOM_CANNON,
+                AmmoType.AmmoTypeEnum.SNIPER, AmmoType.AmmoTypeEnum.SNIPER_CANNON,
+                AmmoType.AmmoTypeEnum.THUMPER, AmmoType.AmmoTypeEnum.THUMPER_CANNON,
+                AmmoType.AmmoTypeEnum.ARROW_IV, AmmoType.AmmoTypeEnum.ARROWIV_PROTO
             ).contains(ammo.getAmmoType())
         ) {
             radius = (int)(Math.ceil(1.0 * damage / falloff) - 1);
             // Fuel-Air munitions get special radius
             if (ammo.getMunitionType().contains(Munitions.M_FAE)) {
                 damage = switch(ammo.getAmmoType()) {
-                    case AmmoType.T_LONG_TOM, AmmoType.T_LONG_TOM_CANNON, AmmoType.T_LONG_TOM_PRIM -> 30;
-                    case AmmoType.T_SNIPER, AmmoType.T_SNIPER_CANNON -> 20;
-                    case AmmoType.T_THUMPER, AmmoType.T_THUMPER_CANNON -> 10;
-                    case AmmoType.T_ARROW_IV, AmmoType.T_ARROWIV_PROTO -> 20;
+                    case LONG_TOM, LONG_TOM_CANNON, LONG_TOM_PRIM -> 30;
+                    case SNIPER, SNIPER_CANNON -> 20;
+                    case THUMPER, THUMPER_CANNON -> 10;
+                    case ARROW_IV, ARROWIV_PROTO -> 20;
                     default -> 0; // Should not happen...
                 };
                 radius = getFuelAirBlastRadiusIndex(ammo.getInternalName());
@@ -668,54 +670,54 @@ public class AreaEffectHelper {
         }
 
         // Capital and Sub-capital missiles
-        if (ammo.getAmmoType() == AmmoType.T_KRAKEN_T
-                || ammo.getAmmoType() == AmmoType.T_KRAKENM
-                || ammo.getAmmoType() == AmmoType.T_MANTA_RAY) {
+        if (ammo.getAmmoType() == AmmoType.AmmoTypeEnum.KRAKEN_T
+                || ammo.getAmmoType() == AmmoType.AmmoTypeEnum.KRAKENM
+                || ammo.getAmmoType() == AmmoType.AmmoTypeEnum.MANTA_RAY) {
             damage = 50;
             falloff = 25;
             radius = 1;
         }
-        if (ammo.getAmmoType() == AmmoType.T_KILLER_WHALE
-                || ammo.getAmmoType() == AmmoType.T_KILLER_WHALE_T
-                || ammo.getAmmoType() == AmmoType.T_SWORDFISH
+        if (ammo.getAmmoType() == AmmoType.AmmoTypeEnum.KILLER_WHALE
+                || ammo.getAmmoType() == AmmoType.AmmoTypeEnum.KILLER_WHALE_T
+                || ammo.getAmmoType() == AmmoType.AmmoTypeEnum.SWORDFISH
                 || ammo.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
             damage = 40;
             falloff = 20;
             radius = 1;
         }
-        if (ammo.getAmmoType() == AmmoType.T_STINGRAY) {
+        if (ammo.getAmmoType() == AmmoType.AmmoTypeEnum.STINGRAY) {
             damage = 35;
             falloff = 17;
             radius = 2;
         }
-        if (ammo.getAmmoType() == AmmoType.T_WHITE_SHARK
-                || ammo.getAmmoType() == AmmoType.T_WHITE_SHARK_T
-                || ammo.getAmmoType() == AmmoType.T_PIRANHA
+        if (ammo.getAmmoType() == AmmoType.AmmoTypeEnum.WHITE_SHARK
+                || ammo.getAmmoType() == AmmoType.AmmoTypeEnum.WHITE_SHARK_T
+                || ammo.getAmmoType() == AmmoType.AmmoTypeEnum.PIRANHA
                 || ammo.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
             damage = 30;
             falloff = 15;
             radius = 1;
         }
-        if (ammo.getAmmoType() == AmmoType.T_BARRACUDA
-                || ammo.getAmmoType() == AmmoType.T_BARRACUDA_T
+        if (ammo.getAmmoType() == AmmoType.AmmoTypeEnum.BARRACUDA
+                || ammo.getAmmoType() == AmmoType.AmmoTypeEnum.BARRACUDA_T
                 || ammo.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
             damage = 20;
             falloff = 10;
             radius = 1;
         }
-        if (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
+        if (ammo.getAmmoType() == AmmoType.AmmoTypeEnum.CRUISE_MISSILE) {
             falloff = 25;
             radius = (int)(Math.ceil(1.0 * damage / falloff) - 1);
         }
 
         // BA specific
-        if (ammo.getAmmoType() == AmmoType.T_BA_TUBE) {
+        if (ammo.getAmmoType() == AmmoType.AmmoTypeEnum.BA_TUBE) {
             damage *= attackingBA;
             falloff = 2 * attackingBA;
             // All BA Tube attacks are R1
             radius = 1;
         }
-        if (ammo.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
+        if (ammo.getAmmoType() == AmmoType.AmmoTypeEnum.BA_MICRO_BOMB) {
             damage = 2 * attackingBA;
             falloff = 2 * attackingBA;
             // All BA Tube attacks are R1
@@ -724,7 +726,7 @@ public class AreaEffectHelper {
         }
 
         // Air-Defense Arrow IV missiles
-        if (ammo.getAmmoType() == AmmoType.T_ARROW_IV
+        if (ammo.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV
                 && ammo.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
             falloff = damage;
             // ADA does not have a radius as per normal Artillery / AE weapons.
@@ -733,20 +735,20 @@ public class AreaEffectHelper {
 
         // Bombs require specific handling
         if (ammo instanceof BombType bomb) {
-            if (List.of(BombType.B_FAE_SMALL, BombType.B_FAE_LARGE).contains(bomb.getBombType())) {
+            if (List.of(BombTypeEnum.FAE_SMALL, BombTypeEnum.FAE_LARGE).contains(bomb.getBombType())) {
                 radius = getFuelAirBlastRadiusIndex((bomb.getInternalName()));
             }
-            if (bomb.getBombType() == BombType.B_CLUSTER) {
+            if (bomb.getBombType() == BombTypeEnum.CLUSTER) {
                 falloff = 5;
                 radius = 1;
                 clusterMunitionsFlag = true;
             }
-            if (bomb.getBombType() == BombType.B_ARROW) {
+            if (bomb.getBombType() == BombTypeEnum.ARROW) {
                 damage = bomb.getRackSize();
                 falloff = 10;
                 radius = 1;
             }
-            if (bomb.getBombType() == BombType.B_HOMING) {
+            if (bomb.getBombType() == BombTypeEnum.HOMING) {
                 damage = bomb.getRackSize();
                 falloff = 20;
                 radius = -1;
@@ -755,11 +757,11 @@ public class AreaEffectHelper {
 
         if (ammo.getMunitionType().contains(Munitions.M_CLUSTER)) {
             // non-arrow-iv cluster does 5 less than standard
-            if (ammo.getAmmoType() != AmmoType.T_ARROW_IV) {
+            if (ammo.getAmmoType() != AmmoType.AmmoTypeEnum.ARROW_IV) {
                 damage -= 5;
             }
             // thumper gets falloff 9 for 1 damage at 1 hex range
-            if (ammo.getAmmoType() == AmmoType.T_THUMPER) {
+            if (ammo.getAmmoType() == AmmoType.AmmoTypeEnum.THUMPER) {
                 falloff = 9;
             }
 
@@ -772,17 +774,17 @@ public class AreaEffectHelper {
             falloff = switch (ammo.getAmmoType()) {
                 // for flechette, damage and falloff is number of d6, not absolute
                 // damage
-                case AmmoType.T_LONG_TOM -> {
+                case LONG_TOM -> {
                     damage = 4;
                     radius = 2;
                     yield 2;
                 }
-                case AmmoType.T_SNIPER -> {
+                case SNIPER -> {
                     damage = 2;
                     radius = 1;
                     yield 1;
                 }
-                case AmmoType.T_THUMPER -> {
+                case THUMPER -> {
                     damage = 1;
                     radius = 1;
                     yield 1;
@@ -1040,7 +1042,7 @@ public class AreaEffectHelper {
         // Falloff is defined separately for each weapon and ammo type, unfortunately.
         int baseDamage = falloff.damage;
         int radius = falloff.radius;
-        boolean isCruiseMissile = (ammo != null) && (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE);
+        boolean isCruiseMissile = (ammo != null) && (ammo.getAmmoType() == AmmoType.AmmoTypeEnum.CRUISE_MISSILE);
         boolean isFaeAmmo = (ammo != null) && ammo.getMunitionType().contains(AmmoType.Munitions.M_FAE);
         boolean isFaeBomb = (ammo instanceof BombType bombType) && bombType.isFaeBomb();
 

@@ -28,7 +28,7 @@ public class InfantryPistolAlamo17 extends InfantryWeapon {
        name = "Pistol (Alamo-17)";
        setInternalName(name);
        addLookupName("Alamo17");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = 0.28;
        tonnage = 0.001;
        infantryDamage =  0.28;

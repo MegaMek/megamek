@@ -30,7 +30,7 @@ public class InfantrySMGJ15Hagel extends InfantryWeapon {
        name = "SMG (J-15 Hagel)";
        setInternalName(name);
        addLookupName("J-15 Hagel");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .33;
        tonnage =  0.0027;
        infantryDamage =  0.33;

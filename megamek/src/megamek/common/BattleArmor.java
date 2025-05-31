@@ -1267,7 +1267,7 @@ public class BattleArmor extends Infantry {
         // This allows for squad weapons and individual trooper weapons
         // such as NARC and the support weapons in TW/TO
         AmmoType at = (AmmoType) mountedAmmo.getType();
-        if (!(at.getAmmoType() == AmmoType.T_MINE)
+        if (!(at.getAmmoType() == AmmoType.AmmoTypeEnum.MINE)
                 && (mounted.getLocation() != mountedAmmo.getLocation())) {
             return false;
         }
@@ -1281,7 +1281,7 @@ public class BattleArmor extends Infantry {
         // This allows for squad weapons and individual trooper weapons
         // such as NARC and the support weapons in TW/TO
         AmmoType at = (AmmoType) mountedAmmo.getType();
-        if (!(at.getAmmoType() == AmmoType.T_MINE)
+        if (!(at.getAmmoType() == AmmoType.AmmoTypeEnum.MINE)
                 && (mounted.getLocation() != mountedAmmo.getLocation())) {
             return false;
         }

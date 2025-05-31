@@ -28,7 +28,7 @@ public class InfantryProstheticBladeWeapon extends InfantryWeapon {
         name = "Prosthetic Blade";
         setInternalName(name);
         addLookupName("ProstheticBlade");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 400;
         bv = 0.0;
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC).or(F_INF_NONPENETRATING);

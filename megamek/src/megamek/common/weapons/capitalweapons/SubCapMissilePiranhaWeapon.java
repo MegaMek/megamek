@@ -33,7 +33,7 @@ public class SubCapMissilePiranhaWeapon extends SubCapMissileWeapon {
         this.shortName = "Piranha";
         heat = 9;
         damage = 3;
-        ammoType = AmmoType.T_PIRANHA;
+        ammoType = AmmoType.AmmoTypeEnum.PIRANHA;
         shortRange = 7;
         mediumRange = 14;
         longRange = 21;

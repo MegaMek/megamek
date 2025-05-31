@@ -34,7 +34,7 @@ public class InfantryPistolGyrojetPistolWeapon extends InfantryWeapon {
         name = "Gyrojet Pistol";
         setInternalName(name);
         addLookupName("InfantryGyrojetpistol");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 450;
         bv = 0.04;
         tonnage = .0025;

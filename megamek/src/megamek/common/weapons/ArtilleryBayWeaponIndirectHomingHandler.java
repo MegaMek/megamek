@@ -25,9 +25,13 @@ import java.util.Objects;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.common.AmmoType.AmmoTypeEnum;
+import megamek.common.AmmoType.Munitions;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -102,7 +106,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
         // Determine what ammo we're firing for reporting and (later) damage
-        Mounted<?> ammoUsed = ae.getEquipment(aaa.getAmmoId());
+        AmmoMounted ammoUsed = ae.getAmmo(aaa.getAmmoId());
         final AmmoType atype = (AmmoType) ammoUsed.getType();
         // Report weapon attack and its to-hit value.
         Report r = new Report(3124);
@@ -189,7 +193,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         nDamPerHit = atype.getRackSize();
 
         // copperhead gets 10 damage less than standard
-        if (atype != null && atype.getAmmoType() != AmmoType.T_ARROW_IV) {
+        if ((atype != null) && (atype.getAmmoType() != AmmoTypeEnum.ARROW_IV)) {
             nDamPerHit -= 10;
         }
 
@@ -203,8 +207,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         // this has to be called here or it triggers before the TAG shot and we have no
         // entityTarget
         // mounting AMS
-        if (atype != null
-                && atype.getAmmoType() == AmmoType.T_ARROW_IV) {
+        if ((atype != null) && (atype.getAmmoType() == AmmoTypeEnum.ARROW_IV)) {
             gameManager.assignAMS();
         }
         while (nweaponsHit > 0) {
@@ -444,87 +447,91 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
      *                     be intercepted by AMS
      * @return 1 hit if this missile survives any AMS fire, 0 if it is destroyed
      */
-    protected int handleAMS(Vector<Report> vPhaseReport, Mounted<?> ammoUsed) {
+    protected int handleAMS(Vector<Report> vPhaseReport, AmmoMounted ammoUsed) {
 
         int hits = 1;
-        if (((AmmoType) ammoUsed.getType()).getAmmoType() == AmmoType.T_ARROW_IV
-                || ((AmmoType) ammoUsed.getType()).getAmmoType() == BombType.B_HOMING) {
+        boolean isArrowIV = ((AmmoType) ammoUsed.getType()).getAmmoType() == AmmoTypeEnum.ARROW_IV;
+        boolean isHoming = ammoUsed.isHomingAmmoInHomingMode();
+        // TODO: this logic seems to be a bit off, rules need to be checked.
+        if (!isArrowIV && !isHoming) {
+            // If this is not an Arrow IV or an homing shot, we don't care about AMS
+            return hits;
+        }
 
-            // this has to be called here or it fires before the TAG shot and we have no
-            // target
-            gameManager.assignAMS();
-            calcCounterAV();
-            // Report AMS/Pointdefense failure due to Overheating.
-            if (pdOverheated
-                    && (!(amsBayEngaged
-                            || amsBayEngagedCap
-                            || amsBayEngagedMissile
-                            || pdBayEngaged
-                            || pdBayEngagedCap
-                            || pdBayEngagedMissile))) {
-                Report r = new Report(3359);
+        // this has to be called here or it fires before the TAG shot and we have no
+        // target
+        gameManager.assignAMS();
+        calcCounterAV();
+        // Report AMS/Pointdefense failure due to Overheating.
+        if (pdOverheated
+                && (!(amsBayEngaged
+                        || amsBayEngagedCap
+                        || amsBayEngagedMissile
+                        || pdBayEngaged
+                        || pdBayEngagedCap
+                        || pdBayEngagedMissile))) {
+            Report r = new Report(3359);
+            r.subject = subjectId;
+            r.indent();
+            vPhaseReport.addElement(r);
+        }
+        // PD/AMS bays should engage using AV and missile armor per SO Errata
+        if (amsBayEngagedCap || pdBayEngagedCap) {
+            CapMissileArmor = ((WeaponType) ammoUsed.getLinkedBy().getType()).getMissileArmor() - CounterAV;
+            CapMissileAMSMod = calcCapMissileAMSMod();
+            Report r = new Report(3235);
+            r.subject = subjectId;
+            r.indent(1);
+            vPhaseReport.add(r);
+            if (CapMissileArmor <= 0) {
+                r = new Report(3356);
                 r.subject = subjectId;
-                r.indent();
-                vPhaseReport.addElement(r);
+                vPhaseReport.add(r);
+                nDamPerHit = 0;
+                hits = 0;
+            } else {
+                r = new Report(3358);
+                r.subject = subjectId;
+                r.add(CapMissileAMSMod);
+                vPhaseReport.add(r);
+                toHit.addModifier(CapMissileAMSMod, "damage from AMS");
+                // If the damage was enough to make us miss, record it for reporting and set 0
+                // hits
+                if (roll.getIntValue() < toHit.getValue()) {
+                    bMissed = true;
+                    nDamPerHit = 0;
+                    hits = 0;
+                }
             }
-            // PD/AMS bays should engage using AV and missile armor per SO Errata
-            if (amsBayEngagedCap || pdBayEngagedCap) {
-                CapMissileArmor = ((WeaponType) ammoUsed.getLinkedBy().getType()).getMissileArmor() - CounterAV;
-                CapMissileAMSMod = calcCapMissileAMSMod();
-                Report r = new Report(3235);
-                r.subject = subjectId;
-                r.indent(1);
-                vPhaseReport.add(r);
-                if (CapMissileArmor <= 0) {
-                    r = new Report(3356);
-                    r.subject = subjectId;
-                    vPhaseReport.add(r);
-                    nDamPerHit = 0;
-                    hits = 0;
-                } else {
-                    r = new Report(3358);
-                    r.subject = subjectId;
-                    r.add(CapMissileAMSMod);
-                    vPhaseReport.add(r);
-                    toHit.addModifier(CapMissileAMSMod, "damage from AMS");
-                    // If the damage was enough to make us miss, record it for reporting and set 0
-                    // hits
-                    if (roll.getIntValue() < toHit.getValue()) {
-                        bMissed = true;
-                        nDamPerHit = 0;
-                        hits = 0;
-                    }
-                }
-            } else if (amsEngaged || apdsEngaged) {
-                // Single AMS/APDS should continue to engage per TW rules, which have not
-                // changed
-                bSalvo = true;
-                Report r = new Report(3235);
-                r.subject = subjectId;
-                vPhaseReport.add(r);
-                r = new Report(3230);
-                r.indent(1);
-                r.subject = subjectId;
-                vPhaseReport.add(r);
-                Roll diceRoll = Compute.rollD6(1);
+        } else if (amsEngaged || apdsEngaged) {
+            // Single AMS/APDS should continue to engage per TW rules, which have not
+            // changed
+            bSalvo = true;
+            Report r = new Report(3235);
+            r.subject = subjectId;
+            vPhaseReport.add(r);
+            r = new Report(3230);
+            r.indent(1);
+            r.subject = subjectId;
+            vPhaseReport.add(r);
+            Roll diceRoll = Compute.rollD6(1);
 
-                if (diceRoll.getIntValue() <= 3) {
-                    r = new Report(3240);
-                    r.subject = subjectId;
-                    r.add("missile");
-                    r.add(diceRoll);
-                    vPhaseReport.add(r);
-                    nDamPerHit = 0;
-                    hits = 0;
+            if (diceRoll.getIntValue() <= 3) {
+                r = new Report(3240);
+                r.subject = subjectId;
+                r.add("missile");
+                r.add(diceRoll);
+                vPhaseReport.add(r);
+                nDamPerHit = 0;
+                hits = 0;
 
-                } else {
-                    r = new Report(3241);
-                    r.add("missile");
-                    r.add(diceRoll);
-                    r.subject = subjectId;
-                    vPhaseReport.add(r);
-                    hits = 1;
-                }
+            } else {
+                r = new Report(3241);
+                r.add("missile");
+                r.add(diceRoll);
+                r.subject = subjectId;
+                vPhaseReport.add(r);
+                hits = 1;
             }
         }
         return hits;

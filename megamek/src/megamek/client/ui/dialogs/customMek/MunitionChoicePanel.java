@@ -107,7 +107,7 @@ public class MunitionChoicePanel extends JPanel {
         if ((entity instanceof BattleArmor) || (entity instanceof ProtoMek)) {
             shotsPerTon = ammoMounted.getOriginalShots();
             // BA tube artillery always comes in pairs
-            if (ammoType.getAmmoType() == AmmoType.T_BA_TUBE) {
+            if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.BA_TUBE) {
                 stepSize = 2;
             }
         }

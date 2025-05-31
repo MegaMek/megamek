@@ -1449,12 +1449,12 @@ public class MapMenu extends JPopupMenu {
         }
 
         if (isFiringDisplay) {
-            if (board.isSpace() && hasAmmoType(AmmoType.T_SCREEN_LAUNCHER)) {
+            if (board.isSpace() && hasAmmoType(AmmoType.AmmoTypeEnum.SCREEN_LAUNCHER)) {
                 menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_SCREEN)));
             } else {
-                if ((hasAmmoType(AmmoType.T_LRM)
-                        || hasAmmoType(AmmoType.T_LRM_IMP)
-                        || hasAmmoType(AmmoType.T_MML))
+                if ((hasAmmoType(AmmoType.AmmoTypeEnum.LRM)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.LRM_IMP)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.MML))
                         && (hasMunitionType(AmmoType.Munitions.M_FASCAM)
                                 || hasMunitionType(AmmoType.Munitions.M_THUNDER)
                                 || hasMunitionType(AmmoType.Munitions.M_THUNDER_ACTIVE)
@@ -1468,7 +1468,7 @@ public class MapMenu extends JPopupMenu {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_FLARE_DELIVER)));
                 }
 
-                if (hasAmmoType(AmmoType.T_BA_MICRO_BOMB)) {
+                if (hasAmmoType(AmmoType.AmmoTypeEnum.BA_MICRO_BOMB)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_BOMB)));
                 }
 
@@ -1477,14 +1477,14 @@ public class MapMenu extends JPopupMenu {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_AERO_BOMB)));
                 }
 
-                if (hasAmmoType(AmmoType.T_ARROW_IV)
-                        || hasAmmoType(AmmoType.T_SNIPER)
-                        || hasAmmoType(AmmoType.T_CRUISE_MISSILE)
-                        || hasAmmoType(AmmoType.T_ALAMO)
-                        || hasAmmoType(AmmoType.T_KILLER_WHALE)
-                        || hasAmmoType(AmmoType.T_LONG_TOM)
-                        || hasAmmoType(AmmoType.T_THUMPER)
-                        || hasAmmoType(AmmoType.T_BA_TUBE)) {
+                if (hasAmmoType(AmmoType.AmmoTypeEnum.ARROW_IV)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.SNIPER)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.CRUISE_MISSILE)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.ALAMO)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.KILLER_WHALE)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.LONG_TOM)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.THUMPER)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.BA_TUBE)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
                 }
                 if (canStartFires && hasFireExtinguisher()
@@ -1503,14 +1503,14 @@ public class MapMenu extends JPopupMenu {
         if (isTargetingDisplay
                 && !board.isSpace()
                 && !board.isLowAltitude()
-                && (hasAmmoType(AmmoType.T_ARROW_IV)
-                        || hasAmmoType(AmmoType.T_SNIPER)
-                        || hasAmmoType(AmmoType.T_CRUISE_MISSILE)
-                        || hasAmmoType(AmmoType.T_ALAMO)
-                        || hasAmmoType(AmmoType.T_KILLER_WHALE)
-                        || hasAmmoType(AmmoType.T_LONG_TOM)
-                        || hasAmmoType(AmmoType.T_THUMPER)
-                        || hasAmmoType(AmmoType.T_BA_TUBE))) {
+                && (hasAmmoType(AmmoType.AmmoTypeEnum.ARROW_IV)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.SNIPER)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.CRUISE_MISSILE)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.ALAMO)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.KILLER_WHALE)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.LONG_TOM)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.THUMPER)
+                        || hasAmmoType(AmmoType.AmmoTypeEnum.BA_TUBE))) {
             menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
         }
         // Check for adding TAG targeting buildings and hexes
@@ -1557,7 +1557,7 @@ public class MapMenu extends JPopupMenu {
         return new HexTarget(targetCoords, board, Integer.parseInt(target.nextToken()));
     }
 
-    private boolean hasAmmoType(int ammoType) {
+    private boolean hasAmmoType(AmmoType.AmmoTypeEnum ammoType) {
         if (myEntity.getAmmo().isEmpty()) {
             return false;
         }

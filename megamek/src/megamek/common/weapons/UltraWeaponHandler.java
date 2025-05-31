@@ -27,6 +27,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -46,8 +47,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         twoRollsUltra = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
-                && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
-                        || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB));
+                && ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
+                        || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB));
     }
 
     @Override
@@ -74,7 +75,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         // a previous attack burned through all the ammo, this attack may be SOL.
         if (ammo.getUsableShotsLeft() == 0) {
             ae.loadWeapon(weapon);
-            ammo = weapon.getLinked();
+            ammo = (AmmoMounted) weapon.getLinked();
         }
     }
 
@@ -142,8 +143,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             weapon.setJammed(true);
             isJammed = true;
-            if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
-                    || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+            if ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
+                    || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
                 r.messageId = 3160;
             } else {
                 r.messageId = 3170;

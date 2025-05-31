@@ -37,7 +37,7 @@ public class InfantryPistolSternsnachtPistolWeapon extends InfantryWeapon {
 		addLookupName("InfantrySternsnachtpistol");
 		addLookupName("InfantryClaymorePistol");
 		addLookupName("Sternsnacht Heavy Pistol");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 200;
 		bv = 0.08;
 		tonnage = .0025;

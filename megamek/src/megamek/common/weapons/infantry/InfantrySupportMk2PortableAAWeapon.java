@@ -36,7 +36,7 @@ public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryMk2PortableAA");
 		addLookupName("Infantry Mk 2 Man-Portable AA Weapon");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 3500;
 		bv = 4.14;
 		tonnage = .035;

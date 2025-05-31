@@ -29,7 +29,7 @@ public class InfantryArchaicBladeZweihanderSwordWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryZweihanderSword");
         addLookupName("ZweihanderSword");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 60;
         tonnage = 0.0051;
         bv = 0.0;

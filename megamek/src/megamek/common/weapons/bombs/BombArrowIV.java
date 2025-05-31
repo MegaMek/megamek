@@ -15,6 +15,7 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 
 /**
@@ -27,10 +28,10 @@ public class BombArrowIV extends ArtilleryWeapon {
     public BombArrowIV() {
         super();
         this.name = "Arrow IV Bomb Mount";
-        this.setInternalName(BombType.getBombWeaponName(BombType.B_ARROW));
+        this.setInternalName(BombTypeEnum.ARROW.getWeaponName());
         this.heat = 0;
         this.rackSize = 20;
-        this.ammoType = AmmoType.T_ARROW_IV_BOMB;
+        this.ammoType = AmmoType.AmmoTypeEnum.ARROW_IV_BOMB;
         this.shortRange = 1; //
         this.mediumRange = 2;
         this.longRange = 9;

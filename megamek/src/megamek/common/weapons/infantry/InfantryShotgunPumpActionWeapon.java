@@ -36,7 +36,7 @@ public class InfantryShotgunPumpActionWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryPumpShotgun");
 		addLookupName("Pump Action Shotgun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 40;
 		bv = 0.07;
 		tonnage = .004;

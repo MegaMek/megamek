@@ -29,7 +29,7 @@ public class InfantryRifleVSPLaserWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryVSPRifle");
 		addLookupName("VariablePulseLaserRifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 4500;
 		tonnage = 0.006;
 		bv = 0.0;

@@ -415,7 +415,7 @@ public class ASDamageConverter {
         // Get weapon counts
         for (Mounted<?> weapon : weaponsList) {
             WeaponType weaponType = (WeaponType) weapon.getType();
-            if ((weaponType.getAmmoType() != AmmoType.T_NA) &&
+            if ((weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA) &&
                       !weaponType.hasFlag(WeaponType.F_ONESHOT) &&
                       (!(entity instanceof BattleArmor) || weaponType instanceof MissileWeapon)) {
                 weaponCount.merge(weaponType, 1, Integer::sum);
@@ -432,10 +432,10 @@ public class ASDamageConverter {
                 }
             }
             int divisor = 1;
-            if (weaponType.getAmmoType() == AmmoType.T_AC_ROTARY) {
+            if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY) {
                 divisor = 6;
-            } else if (weaponType.getAmmoType() == AmmoType.T_AC_ULTRA ||
-                             weaponType.getAmmoType() == AmmoType.T_AC_ULTRA_THB) {
+            } else if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA ||
+                             weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB) {
                 divisor = 2;
             }
 
@@ -476,15 +476,15 @@ public class ASDamageConverter {
     }
 
     protected void processNarc(Mounted<?> weapon, WeaponType weaponType) {
-        if (weaponType.getAmmoType() == AmmoType.T_INARC) {
+        if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.INARC) {
             assignToLocations(weapon, INARC, 1);
-        } else if (weaponType.getAmmoType() == AmmoType.T_NARC) {
+        } else if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.NARC) {
             assignToLocations(weapon, SNARC, 1);
         }
     }
 
     protected void processTaser(Mounted<?> weapon, WeaponType weaponType) {
-        if (weaponType.getAmmoType() == AmmoType.T_TASER) {
+        if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.TASER) {
             assignToLocations(weapon, MTAS, 1);
         }
     }
@@ -839,9 +839,9 @@ public class ASDamageConverter {
     }
 
     protected static boolean isArtilleryCannon(WeaponType weapon) {
-        return (weapon.getAmmoType() == AmmoType.T_LONG_TOM_CANNON) ||
-                     (weapon.getAmmoType() == AmmoType.T_SNIPER_CANNON) ||
-                     (weapon.getAmmoType() == AmmoType.T_THUMPER_CANNON);
+        return (weapon.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM_CANNON) ||
+                     (weapon.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER_CANNON) ||
+                     (weapon.getAmmoType() == AmmoType.AmmoTypeEnum.THUMPER_CANNON);
     }
 
     /**
@@ -849,21 +849,21 @@ public class ASDamageConverter {
      */
     protected static BattleForceSUA getArtilleryType(WeaponType weaponType) {
         switch (weaponType.getAmmoType()) {
-            case AmmoType.T_ARROW_IV:
+            case ARROW_IV:
                 return (weaponType.getTechBase() == ITechnology.TechBase.CLAN) ? ARTAC : ARTAIS;
-            case AmmoType.T_LONG_TOM:
+            case LONG_TOM:
                 return ARTLT;
-            case AmmoType.T_SNIPER:
+            case SNIPER:
                 return ARTS;
-            case AmmoType.T_THUMPER:
+            case THUMPER:
                 return ARTT;
-            case AmmoType.T_LONG_TOM_CANNON:
+            case LONG_TOM_CANNON:
                 return ARTLTC;
-            case AmmoType.T_SNIPER_CANNON:
+            case SNIPER_CANNON:
                 return ARTSC;
-            case AmmoType.T_THUMPER_CANNON:
+            case THUMPER_CANNON:
                 return ARTTC;
-            case AmmoType.T_CRUISE_MISSILE:
+            case CRUISE_MISSILE:
                 switch (weaponType.getRackSize()) {
                     case 50:
                         return ARTCM5;
@@ -874,7 +874,7 @@ public class ASDamageConverter {
                     case 120:
                         return ARTCM12;
                 }
-            case AmmoType.T_BA_TUBE:
+            case BA_TUBE:
                 return ARTBA;
         }
         return UNKNOWN;
@@ -994,10 +994,10 @@ public class ASDamageConverter {
     }
 
     protected static int weaponHeat(WeaponType weaponType) {
-        int ammoType = weaponType.getAmmoType();
-        if (ammoType == AmmoType.T_AC_ROTARY) {
+        AmmoType.AmmoTypeEnum ammoType = weaponType.getAmmoType();
+        if (ammoType == AmmoType.AmmoTypeEnum.AC_ROTARY) {
             return weaponType.getAlphaStrikeHeat() * 6;
-        } else if ((ammoType == AmmoType.T_AC_ULTRA) || (ammoType == AmmoType.T_AC_ULTRA_THB)) {
+        } else if ((ammoType == AmmoType.AmmoTypeEnum.AC_ULTRA) || (ammoType == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
             return weaponType.getAlphaStrikeHeat() * 2;
         } else {
             return weaponType.getAlphaStrikeHeat();

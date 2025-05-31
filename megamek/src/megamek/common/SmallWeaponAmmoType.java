@@ -29,7 +29,7 @@ public class SmallWeaponAmmoType extends AmmoType {
     private final int bursts;
 
     public SmallWeaponAmmoType(InfantryWeapon weapon) {
-        ammoType = T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         setInternalName(generateInternalName(weapon));
         name = weapon.name + " Ammo";
         if (weapon.getInternalName().endsWith("Inferno")) {
@@ -69,7 +69,7 @@ public class SmallWeaponAmmoType extends AmmoType {
     public static void initializeTypes() {
         List<InfantryWeapon> weapons = allTypes.stream()
                 .filter(et -> (et instanceof InfantryWeapon)
-                    && (((InfantryWeapon) et).getAmmoType() == AmmoType.T_INFANTRY))
+                    && (((InfantryWeapon) et).getAmmoType() == AmmoType.AmmoTypeEnum.INFANTRY))
                 .map(et -> (InfantryWeapon) et).collect(Collectors.toList());
         for (InfantryWeapon weapon : weapons) {
             addType(new SmallWeaponAmmoType(weapon));

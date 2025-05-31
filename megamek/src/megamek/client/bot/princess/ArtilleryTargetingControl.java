@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import megamek.common.*;
+import megamek.common.AmmoType.Munitions;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
@@ -713,7 +714,7 @@ public class ArtilleryTargetingControl {
                 if (null == weapon) {
                     // The weaponId couldn't get us a weapon; probably a bomb Arrow IV dropped on a
                     // prior turn.
-                    BombType bombType = BombType.createBombByType(BombType.getBombTypeFromName("Arrow IV Missile"));
+                    BombType bombType = BombType.createBombByType(BombType.BombTypeEnum.ARROW);
                     damage = (bombType != null) ? bombType.getRackSize() : 0;
                 } else {
                     if (weapon.getType() instanceof BombType) {

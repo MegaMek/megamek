@@ -29,7 +29,7 @@ public class ISBAGaussRifleDavidLight extends Weapon {
         setInternalName("BADavidLightGaussRifle");
         addLookupName("ISBADavidLightGaussRifle");
         damage = 1;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         shortRange = 3;
         mediumRange = 5;
         longRange = 8;

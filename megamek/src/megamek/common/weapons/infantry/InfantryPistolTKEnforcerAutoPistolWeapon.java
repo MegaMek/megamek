@@ -36,7 +36,7 @@ public class InfantryPistolTKEnforcerAutoPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryTKEnforcerAutopistol");
 		addLookupName("TK Enforcer Auto Pistol");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 110;
 		bv = 0.18;
 		tonnage = .0016;

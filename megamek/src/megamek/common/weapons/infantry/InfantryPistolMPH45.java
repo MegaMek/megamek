@@ -28,7 +28,7 @@ public class InfantryPistolMPH45 extends InfantryWeapon {
        name = "Pistol (MPH-45)";
        setInternalName(name);
        addLookupName("MPH-45");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = 0.7;
        tonnage = 0.001;
        infantryDamage = 0.35;

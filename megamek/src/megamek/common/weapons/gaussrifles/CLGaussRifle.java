@@ -36,7 +36,7 @@ public class CLGaussRifle extends GaussWeapon {
         this.addLookupName("Clan Gauss Rifle");
         this.heat = 1;
         this.damage = 15;
-        this.ammoType = AmmoType.T_GAUSS;
+        this.ammoType = AmmoType.AmmoTypeEnum.GAUSS;
         this.minimumRange = 2;
         this.shortRange = 7;
         this.mediumRange = 15;

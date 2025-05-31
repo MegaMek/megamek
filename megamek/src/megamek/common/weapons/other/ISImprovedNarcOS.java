@@ -28,7 +28,7 @@ public class ISImprovedNarcOS extends NarcWeapon {
         addLookupName("IS OS iNarc Beacon");
         addLookupName("IS iNarc Missile Beacon (OS)");
         sortingName = "Narc X OS";
-        ammoType = AmmoType.T_INARC;
+        ammoType = AmmoType.AmmoTypeEnum.INARC;
         heat = 0;
         rackSize = 1;
         shortRange = 4;

@@ -32,7 +32,7 @@ public class CLAPGaussRifle extends GaussWeapon {
         heat = 1;
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;
-        ammoType = AmmoType.T_APGAUSS;
+        ammoType = AmmoType.AmmoTypeEnum.APGAUSS;
         shortRange = 3;
         mediumRange = 6;
         longRange = 9;

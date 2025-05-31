@@ -31,7 +31,7 @@ public class InfantryShotgunSDType31 extends InfantryWeapon {
        name = "Shotgun (SD Type-31)";
        setInternalName(name);
        addLookupName("SD Type-31");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .45;
        tonnage =  0.003;
        infantryDamage =  0.45;

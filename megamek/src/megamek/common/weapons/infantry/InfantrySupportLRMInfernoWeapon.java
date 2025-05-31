@@ -40,7 +40,7 @@ public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
         addLookupName("InfantryInfernoLRM");
         addLookupName("LRM Inferno Launcher");
         addLookupName("LRM Inferno Launcher (FarShot)");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 2000;
         bv = 1.36;
         tonnage = .03;

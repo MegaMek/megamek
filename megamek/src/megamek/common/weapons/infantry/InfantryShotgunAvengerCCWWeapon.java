@@ -36,7 +36,7 @@ public class InfantryShotgunAvengerCCWWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryAvengerCCW");
 		addLookupName("Avenger Crowd Control Weapon");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 345;
 		bv = 0.30;
 		tonnage = .0055;

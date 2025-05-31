@@ -30,7 +30,7 @@ public class ISLightMG extends MGWeapon {
         addLookupName("IS Light Machine Gun");
         addLookupName("ISLightMG");
         sortingName = "MG B";
-        ammoType = AmmoType.T_MG_LIGHT;
+        ammoType = AmmoType.AmmoTypeEnum.MG_LIGHT;
         heat = 0;
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;

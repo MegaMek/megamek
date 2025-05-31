@@ -39,6 +39,7 @@ import megamek.client.ui.panels.phaseDisplay.TowLinkWarning;
 import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.BulldozerMovePath.MPCostComparator;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.DisengageAction;
@@ -2878,7 +2879,7 @@ public class Princess extends BotClient {
                     // Only care about Laser-Guided bombs here; Homing Arrow IV handled separately.
                     if (((IBomber) f).getBombs()
                               .stream()
-                              .anyMatch(b -> b.getType().getBombType() == BombType.B_LG)) {
+                              .anyMatch(b -> (b.getType()).getBombType() == BombTypeEnum.LG)) {
                         candidateWeapons.add(m);
                     }
                 }

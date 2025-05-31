@@ -28,7 +28,7 @@ public class InfantrySupportMGVintageWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryVintageMachineGun");
 		addLookupName("VintageMachineGun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 6000;
 		tonnage = .011;
 		bv = 0.0;

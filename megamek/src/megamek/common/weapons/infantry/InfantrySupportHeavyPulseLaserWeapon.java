@@ -37,7 +37,7 @@ public class InfantrySupportHeavyPulseLaserWeapon extends InfantryWeapon {
 		addLookupName("InfantryHeavyPulseLaser");
 		addLookupName("Infantry Heavy Pulse Laser");
 		addLookupName("InfantryMediumPulseLaser");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 60000;
 		bv = 9.58;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_BURST).or(F_INF_SUPPORT);

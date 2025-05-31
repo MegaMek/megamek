@@ -210,7 +210,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             }
 
             // Coolant Pods (AmmoType with specific penality)
-            if (etype instanceof AmmoType && ((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
+            if (etype instanceof AmmoType && ((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) {
                 toSubtract = 1;
             }
 
@@ -301,7 +301,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
         long coolantPods = entity.getAmmo()
                                  .stream()
                                  .map(a -> ((AmmoType) a.getType()).getAmmoType())
-                                 .filter(t -> t == AmmoType.T_COOLANT_POD)
+                                 .filter(t -> t == AmmoType.AmmoTypeEnum.COOLANT_POD)
                                  .count();
         if (coolantPods > 0) {
             int coolantPodBonus = (int) Math.ceil((mek.getNumberOfSinks() * coolantPods) / 5d);

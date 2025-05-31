@@ -37,7 +37,7 @@ public class InfantrySupportFiredrakeNeedlerWeapon extends InfantryWeapon {
 		addLookupName("InfantryFiredrake");
 		addLookupName("InfantrySupportNeedler");
 		addLookupName("Infantry Firedrake Needler");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 500;
 		bv = 6.13;
 		flags = flags.or(F_INCENDIARY_NEEDLES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);

@@ -31,7 +31,7 @@ public class InfantryPistolType74Dpistol extends InfantryWeapon {
        name = "Pistol (Type 74D Pistol)";
        setInternalName(name);
        addLookupName("Type 74D Pistol");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .28;
        tonnage =  0.0007;
        infantryDamage =  0.28;

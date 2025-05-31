@@ -169,9 +169,9 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         if (null != ammoType) {
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
                 int radius;
-                if (ammoType.getAmmoType() == AmmoType.T_LONG_TOM) {
+                if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM) {
                     radius = 3;
-                } else if (ammoType.getAmmoType() == AmmoType.T_SNIPER) {
+                } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER) {
                     radius = 2;
                 } else {
                     radius = 1;

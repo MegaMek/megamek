@@ -33,8 +33,8 @@
 package megamek.common.battlevalue;
 
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.AmmoType.T_AMS;
-import static megamek.common.AmmoType.T_APDS;
+import static megamek.common.AmmoType.AmmoTypeEnum.AMS;
+import static megamek.common.AmmoType.AmmoTypeEnum.APDS;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -49,6 +49,8 @@ import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
+import megamek.common.AmmoType.AmmoTypeEnum;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.MiscMounted;
@@ -553,9 +555,9 @@ public abstract class BVCalculator {
                 ratio = Math.max(1, ammo.getUsableShotsLeft() / ammoType.getShots());
             }
 
-            if ((ammoType.getAmmoType() == T_AMS) || (ammoType.getAmmoType() == T_APDS)) {
+            if ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AMS) || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.APDS)) {
                 amsAmmoBV += ammoType.getBV(entity) * ratio;
-            } else if (ammoType.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
+            } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SCREEN_LAUNCHER) {
                 screenAmmoBV += ammoType.getBV(entity) * ratio;
             }
         }
@@ -595,7 +597,7 @@ public abstract class BVCalculator {
 
             if (equipmentType instanceof WeaponType weaponType) {
                 if (weaponType.hasFlag(WeaponType.F_AMS) &&
-                          ((weaponType.getAmmoType() == T_AMS) || (weaponType.getAmmoType() == T_APDS))) {
+                          ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AMS) || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.APDS))) {
                     amsBV += equipmentType.getBV(entity) * equipmentEntry.getValue();
                 }
             }
@@ -1038,7 +1040,7 @@ public abstract class BVCalculator {
         for (String key : keys) {
             if (!weaponsForExcessiveAmmo.containsKey(key)) {
                 // Coolant Pods have no matching weapon
-                if (key.equals(Integer.valueOf(AmmoType.T_COOLANT_POD).toString() + '1')) {
+                if (key.equals(AmmoTypeEnum.COOLANT_POD + ":1")) {
                     offensiveValue += ammoMap.getOrDefault(key, 0.0);
                 }
                 continue;
@@ -1124,9 +1126,9 @@ public abstract class BVCalculator {
     protected boolean ammoCounts(AmmoMounted ammo) {
         AmmoType ammoType = ammo.getType();
         return ammo.hasUsableShotsLeft() &&
-                     (ammoType.getAmmoType() != AmmoType.T_AMS) &&
-                     (ammoType.getAmmoType() != AmmoType.T_APDS) &&
-                     (ammoType.getAmmoType() != AmmoType.T_SCREEN_LAUNCHER) &&
+                     (ammoType.getAmmoType() != AmmoType.AmmoTypeEnum.AMS) &&
+                     (ammoType.getAmmoType() != AmmoType.AmmoTypeEnum.APDS) &&
+                     (ammoType.getAmmoType() != AmmoType.AmmoTypeEnum.SCREEN_LAUNCHER) &&
                      !ammo.isOneShot();
     }
 
@@ -1200,13 +1202,13 @@ public abstract class BVCalculator {
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
             if (!((wtype.hasFlag(WeaponType.F_ENERGY) &&
-                         !((wtype.getAmmoType() == AmmoType.T_PLASMA) ||
-                                 (wtype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER) ||
-                                 (wtype.getAmmoType() == AmmoType.T_HEAVY_FLAMER) ||
-                                 (wtype.getAmmoType() == AmmoType.T_CHEMICAL_LASER))) ||
+                         !((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.PLASMA) ||
+                                 (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.VEHICLE_FLAMER) ||
+                                 (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.HEAVY_FLAMER) ||
+                                 (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.CHEMICAL_LASER))) ||
                         wtype.hasFlag(WeaponType.F_ONESHOT) ||
                         wtype.hasFlag(WeaponType.F_INFANTRY) ||
-                        (wtype.getAmmoType() == AmmoType.T_NA))) {
+                        (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(entity));
@@ -1403,10 +1405,10 @@ public abstract class BVCalculator {
             }
             if (otherEntity instanceof IBomber) {
                 IBomber asBomber = (IBomber) otherEntity;
-                BombType bomb = BombType.createBombByType(BombType.B_HOMING);
-                int homingCount = asBomber.getBombChoices()[BombType.B_HOMING];
+                BombType bomb = BombType.createBombByType(BombTypeEnum.HOMING);
+                int homingCount = asBomber.getBombChoices().getCount(BombTypeEnum.HOMING);
                 if (homingCount > 0) {
-                    adjustedBV += bomb.getBV(otherEntity) * asBomber.getBombChoices()[BombType.B_HOMING] * tagCount;
+                    adjustedBV += bomb.getBV(otherEntity) * homingCount * tagCount;
                     bvReport.addLine("- " + bomb.getName(),
                           "+ " +
                                 tagCount +
@@ -1433,7 +1435,7 @@ public abstract class BVCalculator {
                               .count();
         if (entity instanceof IBomber) {
             IBomber asBomber = (IBomber) entity;
-            tagCount += asBomber.getBombChoices()[BombType.B_TAG];
+            tagCount += asBomber.getBombChoices().getCount(BombTypeEnum.HOMING);
         }
         return tagCount;
     }
@@ -1447,7 +1449,7 @@ public abstract class BVCalculator {
         if (entity instanceof IBomber) {
             IBomber asBomber = (IBomber) entity;
             for (BombType bombType : BombType.allBombTypes()) {
-                int bombCount = asBomber.getBombChoices()[BombType.getBombTypeFromInternalName(bombType.getInternalName())];
+                int bombCount = asBomber.getBombChoices().getCount(bombType.getBombType());
                 double bombTypeBV = bombType.getBV(entity);
                 if ((bombCount > 0) && (bombTypeBV > 0)) {
                     double bombBV = bombType.getBV(entity) * bombCount;

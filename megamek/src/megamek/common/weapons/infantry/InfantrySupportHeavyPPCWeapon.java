@@ -37,7 +37,7 @@ public class InfantrySupportHeavyPPCWeapon extends InfantryWeapon {
 		addLookupName("InfantrySupportPPC");
 		addLookupName("InfantryHeavyPPC");
 		addLookupName("Infantry Support PPC");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 45000;
 		bv = 11.32;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PPC).or(F_INF_SUPPORT);

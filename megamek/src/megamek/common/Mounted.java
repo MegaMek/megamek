@@ -774,20 +774,20 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public static int getNumShots(WeaponType weaponType, EquipmentMode mode, boolean ignoreMode) {
         // figure out # of shots for variable-shot weapons
-        if (((weaponType.getAmmoType() == AmmoType.T_AC_ULTRA) ||
-                   (weaponType.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) &&
+        if (((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) ||
+                   (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) &&
                   (ignoreMode || ((mode != null) && mode.equals(Weapon.MODE_UAC_ULTRA)))) {
             return 2;
         }
         // sets number of shots for AC rapid mode
-        else if (((weaponType.getAmmoType() == AmmoType.T_AC) ||
-                        (weaponType.getAmmoType() == AmmoType.T_LAC) ||
-                        (weaponType.getAmmoType() == AmmoType.T_AC_IMP) ||
-                        (weaponType.getAmmoType() == AmmoType.T_PAC)) &&
+        else if (((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
+                        (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
+                        (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
+                        (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.PAC)) &&
                        weaponType.hasModes() &&
                        (ignoreMode || ((mode != null) && mode.equals(Weapon.MODE_AC_RAPID)))) {
             return 2;
-        } else if ((weaponType.getAmmoType() == AmmoType.T_AC_ROTARY) ||
+        } else if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY) ||
                          weaponType.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
             if (ignoreMode || (mode == null) || mode.equals(Weapon.MODE_RAC_SIX_SHOT)) {
                 return 6;

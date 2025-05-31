@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
@@ -134,7 +135,7 @@ public class StreakHandler extends MissileWeaponHandler {
 
         if (ammo.getUsableShotsLeft() <= 0) {
             ae.loadWeaponWithSameAmmo(weapon);
-            ammo = weapon.getLinked();
+            ammo = (AmmoMounted) weapon.getLinked();
         }
 
         if (roll.getIntValue() >= toHit.getValue()) {

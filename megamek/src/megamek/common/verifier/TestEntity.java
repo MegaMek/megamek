@@ -893,11 +893,11 @@ public abstract class TestEntity implements TestEntityOption {
         int heat = 0;
         for (Mounted<?> m : entity.getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
-            if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
+            if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.AmmoTypeEnum.NA))
                     || wt.hasFlag(WeaponType.F_PPC)
                     || wt.hasFlag(WeaponType.F_PLASMA)
                     || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
-                    || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
+                    || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.AmmoTypeEnum.NA))) {
                 heat += wt.getHeat();
             }
             // laser insulator reduce heat by 1, to a minimum of 1
@@ -1557,7 +1557,7 @@ public abstract class TestEntity implements TestEntityOption {
         Map<Integer, List<EquipmentType>> physicalWeaponsByLocation = new HashMap<>();
 
         for (Mounted<?> m : getEntity().getAmmo()) {
-            if (((AmmoType) m.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
+            if (((AmmoType) m.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) {
                 hasCoolantPod = true;
             }
         }
@@ -1673,12 +1673,12 @@ public abstract class TestEntity implements TestEntityOption {
         Engine engine = getEntity().getEngine();
         if (!getEntity().hasEngine() || !(engine.isFusion() || engine.isFission())) {
             for (WeaponMounted m : getEntity().getWeaponList()) {
-                if ((m.getType().getAmmoType() == AmmoType.T_GAUSS_HEAVY)
-                        || (m.getType().getAmmoType() == AmmoType.T_IGAUSS_HEAVY)) {
+                if ((m.getType().getAmmoType() == AmmoType.AmmoTypeEnum.GAUSS_HEAVY)
+                        || (m.getType().getAmmoType() == AmmoType.AmmoTypeEnum.IGAUSS_HEAVY)) {
                     buff.append("Heavy Gauss Rifles require a fusion or fission engine\n");
                     illegal = true;
                 } else if (m.getType().hasFlag(WeaponType.F_FLAMER)
-                        && (m.getType().getAmmoType() == AmmoType.T_NA)
+                        && (m.getType().getAmmoType() == AmmoType.AmmoTypeEnum.NA)
                         && !(m.getType() instanceof BAFlamerWeapon)) {
                     buff.append("Standard flamers require a fusion or fission engine\n");
                     illegal = true;
@@ -1802,7 +1802,7 @@ public abstract class TestEntity implements TestEntityOption {
         }
         if (apollo > 0) {
             illegal |= checkIllegalArtemisApolloLinks(buff, apollo, "Apollo",
-                    w -> w.getAmmoType() == AmmoType.T_MRM);
+                    w -> w.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
         }
 
         return illegal;

@@ -43,7 +43,7 @@ public class ISAC5Primitive extends ACWeapon {
         addLookupName("IS Autocannon/5 Primitive");
         shortName = "AC/5p";
         sortingName = "Primitive Prototype Autocannon/05";
-        ammoType = AmmoType.T_AC_PRIMITIVE;
+        ammoType = AmmoType.AmmoTypeEnum.AC_PRIMITIVE;
         heat = 1;
         damage = 5;
         rackSize = 5;

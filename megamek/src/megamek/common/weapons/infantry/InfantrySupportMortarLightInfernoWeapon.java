@@ -38,7 +38,7 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
 		setInternalName("InfantryLightMortarInferno");
 		addLookupName(name);
 		addLookupName("Infantry Light Mortar Inferno");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1400;
 		bv = 0.79;
 		tonnage = .050;

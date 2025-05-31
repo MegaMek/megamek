@@ -33,7 +33,7 @@ public class CLHeavyMG extends MGWeapon {
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;
         rackSize = 3;
-        ammoType = AmmoType.T_MG_HEAVY;
+        ammoType = AmmoType.AmmoTypeEnum.MG_HEAVY;
         shortRange = 1;
         mediumRange = 2;
         longRange = 2;

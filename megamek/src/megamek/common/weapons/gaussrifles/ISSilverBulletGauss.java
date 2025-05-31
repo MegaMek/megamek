@@ -57,7 +57,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
         medAV = shortAV;
         longAV = shortAV;
         maxRange = RANGE_LONG;
-        ammoType = AmmoType.T_SBGAUSS;
+        ammoType = AmmoType.AmmoTypeEnum.SBGAUSS;
         // SB Gauss rifles can neither benefit from a targeting computer nor
         // do they add to its mass and size (TacOps pp. 314/5); thus, the
         // "direct fire" flag inherited from the superclass needs to go again.

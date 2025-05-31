@@ -110,7 +110,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
     protected int calcDamagePerHit() {
         AmmoType atype = (AmmoType) ammo.getType();
         double toReturn;
-        if (atype.getAmmoType() == AmmoType.T_INARC) {
+        if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.INARC) {
             toReturn = 6;
         } else {
             toReturn = 4;

@@ -29,7 +29,7 @@ public class InfantryArchaicPrimitiveBowWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryPrimitiveBow");
         addLookupName("Primitive Bow");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 5;
         tonnage = 0.001;
         bv = 0.0;

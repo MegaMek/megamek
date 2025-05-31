@@ -207,7 +207,7 @@ public class ATMHandler extends MissileWeaponHandler {
             } else {
                 nMissilesModifier += 2;
             }
-        } else if (atype.getAmmoType() == AmmoType.T_ATM) {
+        } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
             if (bECMAffected) {
                 // ECM prevents bonus
                 Report r = new Report(3330);
@@ -233,9 +233,9 @@ public class ATMHandler extends MissileWeaponHandler {
             boolean bTargetECMAffected = false;
             bTargetECMAffected = ComputeECM.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition());
-            if (((atype.getAmmoType() == AmmoType.T_LRM) || (atype
-                    .getAmmoType() == AmmoType.T_SRM))
-                    || ((atype.getAmmoType() == AmmoType.T_MML)
+            if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) || (atype
+                    .getAmmoType() == AmmoType.AmmoTypeEnum.SRM))
+                    || ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
                             && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE)) && ((weapon
                                     .curMode() == null) || !weapon.curMode().equals(
                                             "Indirect")))) {

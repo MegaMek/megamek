@@ -31,7 +31,7 @@ public class ISTHBUAC2 extends UACWeapon {
         this.heat = 1;
         this.damage = 2;
         this.rackSize = 2;
-        this.ammoType = AmmoType.T_AC_ULTRA_THB;
+        this.ammoType = AmmoType.AmmoTypeEnum.AC_ULTRA_THB;
         this.minimumRange = 3;
         this.shortRange = 9;
         this.mediumRange = 20;

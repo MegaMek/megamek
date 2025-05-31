@@ -36,7 +36,7 @@ public class InfantryArchaicMonowireWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryMonowire");
         addLookupName("Monowire");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 200;
         bv = 0.32;
         tonnage = .00025; 

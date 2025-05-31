@@ -28,7 +28,7 @@ public class InfantryPulseLaserRifleDWSL5C extends InfantryWeapon {
         name = "Pulse Laser Rifle (DWS L5C)";
         setInternalName(name);
         addLookupName("L5CPulse");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1800;
         bv = 0.252;
         tonnage = 0.0055;

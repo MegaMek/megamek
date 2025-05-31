@@ -34,7 +34,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
 
     public StreakLRMWeapon() {
         super();
-        this.ammoType = AmmoType.T_LRM_STREAK;
+        this.ammoType = AmmoType.AmmoTypeEnum.LRM_STREAK;
         flags = flags.or(F_PROTO_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);
         clearModes();
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS

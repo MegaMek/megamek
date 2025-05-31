@@ -36,7 +36,7 @@ public class InfantryPistolSunbeamLaserPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantrySunbeamLaserpistol");
 		addLookupName("Sunbeam Laser Pistol");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 750;
 		bv = 0.86;
 		tonnage = .001;

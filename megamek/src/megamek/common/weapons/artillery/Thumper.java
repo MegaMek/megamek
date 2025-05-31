@@ -35,7 +35,7 @@ public class Thumper extends ArtilleryWeapon {
         addLookupName("Clan Thumper");
         heat = 5;
         rackSize = 15;
-        ammoType = AmmoType.T_THUMPER;
+        ammoType = AmmoType.AmmoTypeEnum.THUMPER;
         shortRange = 1;
         mediumRange = 2;
         longRange = 21;

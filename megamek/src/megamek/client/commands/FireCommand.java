@@ -208,7 +208,7 @@ public class FireCommand extends ClientCommand {
         WeaponAttackAction waa = new WeaponAttackAction(cen, target
                 .getTargetType(), target.getId(), weaponNum);
 
-        if (mounted.getLinked() != null && ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA) {
+        if (mounted.getLinked() != null && ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.AmmoTypeEnum.NA) {
             Mounted<?> ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
             waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
@@ -216,9 +216,9 @@ public class FireCommand extends ClientCommand {
             waa.setAmmoMunitionType(ammoMunitionType);
             waa.setAmmoCarrier(ammoMount.getEntity().getId());
             if (((ammoMunitionType.contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB))
-                    && (ammoType.getAmmoType() == AmmoType.T_LRM
-                    || ammoType.getAmmoType() == AmmoType.T_MML
-                    || ammoType.getAmmoType() == AmmoType.T_LRM_IMP))
+                    && (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM
+                    || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML
+                    || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP))
                     || ammoType.getMunitionType().contains(AmmoType.Munitions.M_VIBRABOMB_IV)) {
 
                 waa.setOtherAttackInfo(50); // /hardcode VibroBomb setting for now.

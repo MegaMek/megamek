@@ -20,6 +20,7 @@
 package megamek.common;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.AmmoType.AmmoTypeEnum;
 
 /**
  * @author Jay Lawson
@@ -49,25 +50,25 @@ public class TeleMissile extends Aero {
         return false;
     }
 
-    public TeleMissile(Entity originalRide, int damageValue, int armorValue, double weight, int type, int capMisMod) {
+    public TeleMissile(Entity originalRide, int damageValue, int armorValue, double weight, AmmoTypeEnum type, int capMisMod) {
         this();
 
         String name;
         int fuel;
         switch (type) {
-            case AmmoType.T_KRAKEN_T:
+            case KRAKEN_T:
                 name = "Kraken-T Missile";
                 fuel = 25;
                 break;
-            case AmmoType.T_WHITE_SHARK_T:
+            case WHITE_SHARK_T:
                 name = "White Shark-T Missile";
                 fuel = 40;
                 break;
-            case AmmoType.T_KILLER_WHALE_T:
+            case KILLER_WHALE_T:
                 name = "Killer Whale-T Missile";
                 fuel = 30;
                 break;
-            case AmmoType.T_BARRACUDA_T:
+            case BARRACUDA_T:
                 name = "Barracuda-T Missile";
                 fuel = 30;
                 break;

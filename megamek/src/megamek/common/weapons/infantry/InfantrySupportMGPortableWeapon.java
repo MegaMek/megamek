@@ -37,7 +37,7 @@ public class InfantrySupportMGPortableWeapon extends InfantryWeapon {
 		addLookupName("InfantryMGPortable");
 		addLookupName("Infantry MG Portable");
 		addLookupName("InfantryMG");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1000;
 		bv = 1.99;
 		tonnage = .0115;

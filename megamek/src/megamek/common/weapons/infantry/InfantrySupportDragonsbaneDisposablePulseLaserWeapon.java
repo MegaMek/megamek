@@ -37,7 +37,7 @@ public class InfantrySupportDragonsbaneDisposablePulseLaserWeapon extends Infant
 		addLookupName("InfantryDragonsbane");
 		addLookupName("InfantryDragonsbanePulseLaser");
 		addLookupName("Infantry Dragonsbane Disposable Pulse Laser");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.AmmoTypeEnum.NA;
 		cost = 5000;
 		bv = 5.08;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);

@@ -38,7 +38,7 @@ public class InfantrySupportOneShotMRMInfernoWeapon extends InfantryWeapon {
 		addLookupName("InfantryInfernoMRM");
 		addLookupName("InfantryOneShotInfernoMRM");
 		addLookupName("Infantry One-Shot MRM Inferno Launcher");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 2500;
 		bv = 1.33;
 		tonnage = .03;

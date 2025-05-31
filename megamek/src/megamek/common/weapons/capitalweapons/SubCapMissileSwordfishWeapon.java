@@ -33,7 +33,7 @@ public class SubCapMissileSwordfishWeapon extends SubCapMissileWeapon {
 		this.shortName = "Swordfish";
 		this.heat = 15;
 		this.damage = 4;
-		this.ammoType = AmmoType.T_SWORDFISH;
+		this.ammoType = AmmoType.AmmoTypeEnum.SWORDFISH;
 		this.shortRange = 7;
 		this.mediumRange = 14;
 		this.longRange = 21;

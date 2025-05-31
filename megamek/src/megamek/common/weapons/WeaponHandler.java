@@ -836,8 +836,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         boolean heatAdded = false;
         int numAttacks = 1;
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
-                && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
-                        .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
+                && ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) || (wtype
+                        .getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB))
                 && !weapon.curMode().equals("Single")) {
             numAttacks = 2;
         }
@@ -866,13 +866,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
             String base = wtype.isClan() ? " (Clan)" : "";
             r.add(wtype.getName() + base + number);
             if (entityTarget != null) {
-                if ((wtype.getAmmoType() != AmmoType.T_NA)
+                if ((wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
                         && (weapon.getLinked() != null)
                         && (weapon.getLinked().getType() instanceof AmmoType)) {
                     if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)
-                            || atype.getAmmoType() == AmmoType.T_MML
-                            || atype.getAmmoType() == AmmoType.T_AC_LBX
-                            || atype.getAmmoType() == AmmoType.T_ATM) {
+                            || atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML
+                            || atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX
+                            || atype.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
                         r.messageId = 3116;
                         r.add(atype.getSubMunitionName());
                     }
@@ -1069,8 +1069,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
             if (bMissed && !missReported) {
                 if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
-                        && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
-                                .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
+                        && ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) || (wtype
+                                .getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB))
                         && (i == 2)) {
                     reportMiss(vPhaseReport, true);
                 } else {
@@ -1222,8 +1222,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
 
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
-                    && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
-                            .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
+                    && ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) || (wtype
+                            .getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB))
                     && (i == 2)) {
                 // Jammed weapon doesn't get 2nd shot...
                 if (isJammed) {

@@ -36,7 +36,7 @@ public class InfantryArchaicSingleStunStaffWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantrySingleStunStaff");
         addLookupName("Single Ended Stun Staff");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 300;
         bv = 0.06;
         tonnage = .0003; 

@@ -28,7 +28,7 @@ public class InfantryProstheticShotgunWeapon extends InfantryWeapon {
         name = "Prosthetic Shotgun";
         setInternalName(name);
         addLookupName("Prosthetic Shotgun");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 600;
         bv = 0.0;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);

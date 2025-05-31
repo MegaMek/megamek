@@ -35,7 +35,7 @@ public abstract class FlamerWeapon extends EnergyWeapon {
     public FlamerWeapon() {
         super();
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON).or(F_FLAMER).or(F_BURST_FIRE);
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         atClass = CLASS_POINT_DEFENSE;
     }
 

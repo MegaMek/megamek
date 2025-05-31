@@ -36,7 +36,7 @@ public class InfantryArchaicMedusaWhipWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryClanMedusaWhip");
         addLookupName("Medusa Whip");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 2200;
         bv = 0.15;
         tonnage = .00045; 

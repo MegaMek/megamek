@@ -41,7 +41,7 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
         setInternalName("ISC3RemoteSensorLauncher");
         addLookupName("C3RemoteSensorLauncher");
         flags = flags.or(F_NO_FIRES);
-        ammoType = AmmoType.T_C3_REMOTE_SENSOR;
+        ammoType = AmmoType.AmmoTypeEnum.C3_REMOTE_SENSOR;
         cost = 400000;
         criticals = 3;
         tankslots = 1;

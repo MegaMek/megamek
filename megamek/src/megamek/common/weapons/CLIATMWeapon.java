@@ -44,7 +44,7 @@ public abstract class CLIATMWeapon extends MissileWeapon {
 
     public CLIATMWeapon() {
         super();
-        ammoType = AmmoType.T_IATM; // the Artemis Bonus is Tied to the ATM ammo, but i think i can ignore it in the
+        ammoType = AmmoType.AmmoTypeEnum.IATM; // the Artemis Bonus is Tied to the ATM ammo, but i think i can ignore it in the
                                     // handler. However, i think i still need a new ammo type since i dont know if
                                     // the special ammo could get used with regular ATMs if i don#t change it. And i
                                     // assume bad things will happen.

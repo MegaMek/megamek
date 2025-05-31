@@ -19,6 +19,7 @@ import java.util.List;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.AmmoType.AmmoTypeEnum;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
 import megamek.common.weapons.DiveBombAttack;
@@ -330,7 +331,7 @@ public class WeaponType extends EquipmentType {
     protected int explosionDamage = 0;
 
     public int rackSize; // or AC size, or whatever
-    public int ammoType;
+    public AmmoTypeEnum ammoType;
 
     public int minimumRange;
     public int shortRange;
@@ -398,7 +399,7 @@ public class WeaponType extends EquipmentType {
         waterExtremeRange = ext;
     }
 
-    public void setAmmoType(int inAT) {
+    public void setAmmoType(AmmoTypeEnum inAT) {
         ammoType = inAT;
     }
 
@@ -459,7 +460,7 @@ public class WeaponType extends EquipmentType {
         return rackSize;
     }
 
-    public int getAmmoType() {
+    public AmmoTypeEnum getAmmoType() {
         return ammoType;
     }
 
@@ -476,16 +477,16 @@ public class WeaponType extends EquipmentType {
         int lRange = getLongRange();
         int eRange = getExtremeRange();
         boolean hasLoadedAmmo = (ammo != null);
-        if ((getAmmoType() == AmmoType.T_ATM) && hasLoadedAmmo) {
+        if ((getAmmoType() == AmmoTypeEnum.ATM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
-            if ((ammoType.getAmmoType() == AmmoType.T_ATM)
+            if ((ammoType.getAmmoType() == AmmoTypeEnum.ATM)
                     && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
                 sRange = 9;
                 mRange = 18;
                 lRange = 27;
                 eRange = 36;
-            } else if ((ammoType.getAmmoType() == AmmoType.T_ATM)
+            } else if ((ammoType.getAmmoType() == AmmoTypeEnum.ATM)
                     && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
                 minRange = 0;
                 sRange = 3;
@@ -494,16 +495,16 @@ public class WeaponType extends EquipmentType {
                 eRange = 12;
             }
         }
-        if ((getAmmoType() == AmmoType.T_IATM) && hasLoadedAmmo) {
+        if ((getAmmoType() == AmmoTypeEnum.IATM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
-            if ((ammoType.getAmmoType() == AmmoType.T_IATM)
+            if ((ammoType.getAmmoType() == AmmoTypeEnum.IATM)
                     && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
                 sRange = 9;
                 mRange = 18;
                 lRange = 27;
                 eRange = 36;
-            } else if ((ammoType.getAmmoType() == AmmoType.T_IATM)
+            } else if ((ammoType.getAmmoType() == AmmoTypeEnum.IATM)
                     && ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))
                             || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)))) {
                 minRange = 0;
@@ -513,9 +514,9 @@ public class WeaponType extends EquipmentType {
                 eRange = 12;
             }
         }
-        if ((getAmmoType() == AmmoType.T_MML) && hasLoadedAmmo) {
+        if ((getAmmoType() == AmmoTypeEnum.MML) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
-            if (ammoType.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
+            if (ammoType.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoTypeEnum.LRM_TORPEDO)) {
                 minRange = 6;
                 sRange = 7;
                 mRange = 14;
@@ -544,9 +545,9 @@ public class WeaponType extends EquipmentType {
                 }
             }
         }
-        if ((getAmmoType() == AmmoType.T_LRM) && hasLoadedAmmo) {
+        if ((getAmmoType() == AmmoTypeEnum.LRM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
-            if ((ammoType.getAmmoType() == AmmoType.T_LRM)
+            if ((ammoType.getAmmoType() == AmmoTypeEnum.LRM)
                     && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 4;
                 sRange = 5;
@@ -555,9 +556,9 @@ public class WeaponType extends EquipmentType {
                 eRange = 20;
             }
         }
-        if ((getAmmoType() == AmmoType.T_SRM) && hasLoadedAmmo) {
+        if ((getAmmoType() == AmmoTypeEnum.SRM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
-            if ((ammoType.getAmmoType() == AmmoType.T_SRM)
+            if ((ammoType.getAmmoType() == AmmoTypeEnum.SRM)
                     && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 0;
                 sRange = 2;
@@ -640,7 +641,7 @@ public class WeaponType extends EquipmentType {
     public int getMaxRange(WeaponMounted weapon, AmmoMounted ammo) {
         if (weapon.getType().getAtClass() == CLASS_ATM) {
             AmmoType ammoType = ammo.getType();
-            if (List.of(AmmoType.T_ATM, AmmoType.T_IATM).contains(ammoType.getAmmoType())) {
+            if (List.of(AmmoTypeEnum.ATM, AmmoTypeEnum.IATM).contains(ammoType.getAmmoType())) {
                 if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                     return RANGE_EXT;
                 } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
@@ -648,9 +649,9 @@ public class WeaponType extends EquipmentType {
                 }
             }
         }
-        if (getAmmoType() == AmmoType.T_MML) {
+        if (getAmmoType() == AmmoTypeEnum.MML) {
             AmmoType ammoType = ammo.getType();
-            if (ammoType.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
+            if (ammoType.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoTypeEnum.LRM_TORPEDO)) {
                 return RANGE_LONG;
             } else {
                 return RANGE_SHORT;

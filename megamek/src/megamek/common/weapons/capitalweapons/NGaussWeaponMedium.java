@@ -33,7 +33,7 @@ public class NGaussWeaponMedium extends NGaussWeapon {
         sortingName = "Gauss Naval C";
         heat = 15;
         damage = 25;
-        ammoType = AmmoType.T_MED_NGAUSS;
+        ammoType = AmmoType.AmmoTypeEnum.MED_NGAUSS;
         shortRange = 13;
         mediumRange = 26;
         longRange = 39;

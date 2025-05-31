@@ -26,6 +26,7 @@ import org.w3c.dom.NodeList;
 
 import megamek.client.generator.RandomNameGenerator;
 import megamek.codeUtilities.StringUtility;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;
 import megamek.common.equipment.AmmoMounted;
@@ -2339,23 +2340,23 @@ public class MULParser {
                 Element currEle = (Element) currNode;
                 String nodeName = currNode.getNodeName();
                 if (nodeName.equalsIgnoreCase(ELE_BOMB)) {
-                    int[] intBombChoices = ((IBomber) entity).getIntBombChoices();
-                    int[] extBombChoices = ((IBomber) entity).getExtBombChoices();
+                    BombLoadout intBombChoices = ((IBomber) entity).getIntBombChoices();
+                    BombLoadout extBombChoices = ((IBomber) entity).getExtBombChoices();
                     String type = currEle.getAttribute(ATTR_TYPE);
                     String load = currEle.getAttribute(ATTR_LOAD);
                     boolean internal = Boolean.parseBoolean(currEle.getAttribute(ATTR_INTERNAL));
                     if (!type.isBlank() && !load.isBlank()) {
-                        int bombType = BombType.getBombTypeFromInternalName(type);
-                        if ((bombType <= BombType.B_NONE) || (bombType >= BombType.B_NUM)) {
+                        BombTypeEnum bombType = BombTypeEnum.fromInternalName(type);
+                        if (bombType.getIndex() < 0) {
                             continue;
                         }
 
                         try {
                             if (internal) {
-                                intBombChoices[bombType] += Integer.parseInt(load);
+                                intBombChoices.addBombs(bombType, Integer.parseInt(load));
                                 ((IBomber) entity).setIntBombChoices(intBombChoices);
                             } else {
-                                extBombChoices[bombType] += Integer.parseInt(load);
+                                extBombChoices.addBombs(bombType, Integer.parseInt(load));
                                 ((IBomber) entity).setExtBombChoices(extBombChoices);
                             }
                         } catch (NumberFormatException ignore) {

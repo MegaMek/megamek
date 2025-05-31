@@ -33,7 +33,7 @@ public class NGaussWeaponLight extends NGaussWeapon {
         shortName = "Light NGauss";
         heat = 9;
         damage = 15;
-        ammoType = AmmoType.T_LIGHT_NGAUSS;
+        ammoType = AmmoType.AmmoTypeEnum.LIGHT_NGAUSS;
         shortRange = 14;
         mediumRange = 28;
         longRange = 40;

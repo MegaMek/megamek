@@ -36,7 +36,7 @@ public class InfantrySMGRuganWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryRuganSMG");
 		addLookupName("Rugan SMG");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 100;
 		bv = 0.18;
 		tonnage = .0035;

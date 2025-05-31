@@ -30,7 +30,7 @@ public class ISRailGun extends GaussWeapon {
         this.addLookupName("IS Rail Gun");
         this.heat = 1;
         this.damage = 22;
-        this.ammoType = AmmoType.T_RAIL_GUN;
+        this.ammoType = AmmoType.AmmoTypeEnum.RAIL_GUN;
         this.minimumRange = 1;
         this.shortRange = 6;
         this.mediumRange = 13;

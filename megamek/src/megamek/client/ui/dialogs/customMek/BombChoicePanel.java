@@ -21,7 +21,9 @@ import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -31,7 +33,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import megamek.common.BombLoadout;
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.IBomber;
 
 /**
@@ -47,34 +51,35 @@ public class BombChoicePanel extends JPanel implements ItemListener {
 
     private static final long serialVersionUID = 483782753790544050L;
 
-    private JPanel interiorPanel;
-    private JPanel exteriorPanel;
-    private HashMap<String, JComboBox<String>[]> b_choices = new HashMap<String, JComboBox<String>[]>();
-    private HashMap<String, JLabel[]> b_labels = new HashMap<String, JLabel[]>();
-    private HashMap<String, Integer> maxPoints = new HashMap<String, Integer>();
-    private HashMap<String, Integer> maxSize = new HashMap<String, Integer>();
-    private int maxRows = (int) Math.ceil(BombType.B_NUM / 2.0);
-
-    //Variable for MekHQ functionality
-    private int[] typeMax = null;
-
     private final String INTNAME = "Internal";
     private final String EXTNAME = "External";
+
+    private JPanel interiorPanel;
+    private JPanel exteriorPanel;
+    private Map<String, EnumMap<BombTypeEnum, JComboBox<String>>> b_choices = Map.of(
+        INTNAME, new EnumMap<>(BombTypeEnum.class),
+        EXTNAME, new EnumMap<>(BombTypeEnum.class)
+    );
+    private Map<String, EnumMap<BombTypeEnum, JLabel>> b_labels = Map.of(
+        INTNAME, new EnumMap<>(BombTypeEnum.class),
+        EXTNAME, new EnumMap<>(BombTypeEnum.class)
+    );
+    private HashMap<String, Integer> maxPoints = new HashMap<String, Integer>();
+    private HashMap<String, Integer> maxSize = new HashMap<String, Integer>();
+    private int maxRows = (int) Math.ceil(BombTypeEnum.values().length / 2.0);
+
+    //Variable for MekHQ functionality
+    private BombLoadout typeMax = null;
 
     //private BombChoicePanel m_bombs;
     //private JPanel panBombs = new JPanel();
 
     public BombChoicePanel(IBomber bomber, boolean at2Nukes, boolean allowAdvancedAmmo) {
-        this.bomber = bomber;
-        this.at2Nukes = at2Nukes;
-        this.allowAdvancedAmmo = allowAdvancedAmmo;
-
-        initArrays();
-        initPanel();
+        this(bomber, at2Nukes, allowAdvancedAmmo, null);
     }
 
     //Constructor to call from MekHQ to pass in typeMax
-    public BombChoicePanel(IBomber bomber, boolean at2Nukes, boolean allowAdvancedAmmo, int[] typeMax) {
+    public BombChoicePanel(IBomber bomber, boolean at2Nukes, boolean allowAdvancedAmmo, BombLoadout typeMax) {
         this.bomber = bomber;
         this.at2Nukes = at2Nukes;
         this.allowAdvancedAmmo = allowAdvancedAmmo;
@@ -86,20 +91,8 @@ public class BombChoicePanel extends JPanel implements ItemListener {
 
     private void initArrays(){
         // Initialize control arrays
-        b_choices.put(INTNAME, new JComboBox[BombType.B_NUM]);
-        b_choices.put(EXTNAME, new JComboBox[BombType.B_NUM]);
-        b_labels.put(INTNAME, new JLabel[BombType.B_NUM]);
-        b_labels.put(EXTNAME, new JLabel[BombType.B_NUM]);
         maxSize.put(INTNAME, 0);
         maxSize.put(EXTNAME, 0);
-    }
-
-    private int compileBombPoints(int[] choices) {
-        int currentPoints = 0;
-        for (int i = 0; i < choices.length; i++) {
-            currentPoints += choices[i] * BombType.getBombCost(i);
-        }
-        return currentPoints;
     }
 
     private void initPanel() {
@@ -109,8 +102,8 @@ public class BombChoicePanel extends JPanel implements ItemListener {
         maxSize.put(INTNAME, bomber.getMaxIntBombSize());
         maxSize.put(EXTNAME, bomber.getMaxExtBombSize());
 
-        int[] intBombChoices = bomber.getIntBombChoices();
-        int[] extBombChoices = bomber.getExtBombChoices();
+        BombLoadout intBombChoices = bomber.getIntBombChoices();
+        BombLoadout extBombChoices = bomber.getExtBombChoices();
 
         int columns = (maxPoints.get(INTNAME) > 0 ? 1 : 0) + (maxPoints.get(EXTNAME) > 0 ? 1 : 0);
         // Should not occur!
@@ -128,8 +121,8 @@ public class BombChoicePanel extends JPanel implements ItemListener {
         CompoundBorder compoundBorder = new CompoundBorder(titledBorder, emptyBorder);
         outer.setBorder(compoundBorder);
 
-        interiorPanel = initSubPanel(maxPoints.get(INTNAME) - compileBombPoints(intBombChoices), intBombChoices, INTNAME);
-        exteriorPanel = initSubPanel(maxPoints.get(EXTNAME) - compileBombPoints(extBombChoices), extBombChoices, EXTNAME);
+        interiorPanel = initSubPanel(maxPoints.get(INTNAME) - intBombChoices.getTotalBombCost(), intBombChoices, INTNAME);
+        exteriorPanel = initSubPanel(maxPoints.get(EXTNAME) - extBombChoices.getTotalBombCost(), extBombChoices, EXTNAME);
 
         if (maxPoints.get(INTNAME) != 0) {
             outer.add(interiorPanel);
@@ -140,7 +133,7 @@ public class BombChoicePanel extends JPanel implements ItemListener {
         add(outer);
     }
 
-    private JPanel initSubPanel(int availBombPoints, int[] bombChoices, String title){
+    private JPanel initSubPanel(int availBombPoints, BombLoadout bombChoices, String title){
 
         // Set up sub-panel
         JPanel inner = new JPanel();
@@ -158,29 +151,36 @@ public class BombChoicePanel extends JPanel implements ItemListener {
 
         int column = 0;
         int row = 0;
-        for (int type = 0; type < BombType.B_NUM; type++) {
-            b_labels.get(title)[type] = new JLabel();
-            b_choices.get(title)[type] = new JComboBox<String>();
+        for (BombTypeEnum type : BombTypeEnum.values()) {
+            if (type == BombTypeEnum.NONE) continue;
 
-            int maxNumBombs = Math.round(availBombPoints / BombType.getBombCost(type)) + bombChoices[type];
+            JLabel label = new JLabel();
+            JComboBox<String> comboBox = new JComboBox<>();
+            b_labels.get(title).put(type, label);
+            b_choices.get(title).put(type, comboBox);
 
-            if (BombType.getBombCost(type) > maxSize.get(title))  {
+            int currentCount = bombChoices.getCount(type);
+            int maxNumBombs = Math.round(availBombPoints / type.getCost()) + currentCount;
+
+            if (type.getCost() > maxSize.get(title))  {
                 maxNumBombs = 0;
             }
 
             // somehow too many bombs were added
-            if ((bombChoices[type] * BombType.getBombCost(type))  > maxSize.get(title)) {
-                bombChoices[type] = maxSize.get(title) / BombType.getBombCost(type);
+            if ((currentCount * type.getCost())  > maxSize.get(title)) {
+                currentCount = maxSize.get(title) / type.getCost();
+                bombChoices.put(type, currentCount);
             }
 
             if (typeMax != null) {
-                if ((maxNumBombs > 0) && (maxNumBombs > typeMax[type])) {
-                    maxNumBombs = typeMax[type];
+                int typeMaxCount = typeMax.getCount(type);
+                if ((maxNumBombs > 0) && (maxNumBombs > typeMaxCount)) {
+                    maxNumBombs = typeMaxCount;
                 }
             }
 
-            if (bombChoices[type] > maxNumBombs) {
-                maxNumBombs = bombChoices[type];
+            if (currentCount > maxNumBombs) {
+                maxNumBombs = currentCount;
             }
 
             if (maxNumBombs < 0) {
@@ -192,20 +192,19 @@ public class BombChoicePanel extends JPanel implements ItemListener {
             }
 
             for (int x = 0; x <= maxNumBombs; x++) {
-                b_choices.get(title)[type].addItem(Integer.toString(x));
+                comboBox.addItem(Integer.toString(x));
             }
 
-            b_choices.get(title)[type].setSelectedIndex(bombChoices[type]);
-            b_labels.get(title)[type].setText(BombType.getBombName(type));
-            b_choices.get(title)[type].addItemListener(this);
+            comboBox.setSelectedIndex(currentCount);
+            label.setText(type.getDisplayName());
+            comboBox.addItemListener(this);
 
-            if ((type == BombType.B_ALAMO) && !at2Nukes) {
-                b_choices.get(title)[type].setEnabled(false);
+            if ((type == BombTypeEnum.ALAMO) && !at2Nukes) {
+                comboBox.setEnabled(false);
             }
-            if ((type > BombType.B_TAG) && !allowAdvancedAmmo) {
-                b_choices.get(title)[type].setEnabled(false);
+            if (type.isAdvancedAmmo() && !allowAdvancedAmmo) {
+                comboBox.setEnabled(false);
             }
-
             if (row >= maxRows) {
                 row = 0;
                 column += 2;
@@ -214,14 +213,14 @@ public class BombChoicePanel extends JPanel implements ItemListener {
             c.gridx = column;
             c.gridy = row;
             c.anchor = GridBagConstraints.EAST;
-            g.setConstraints(b_labels.get(title)[type], c);
-            inner.add(b_labels.get(title)[type]);
+            g.setConstraints(label, c);
+            inner.add(label);
 
             c.gridx = column + 1;
             c.gridy = row;
             c.anchor = GridBagConstraints.WEST;
-            g.setConstraints(b_choices.get(title)[type], c);
-            inner.add(b_choices.get(title)[type]);
+            g.setConstraints(comboBox, c);
+            inner.add(comboBox);
             row++;
         }
         return inner;
@@ -231,28 +230,35 @@ public class BombChoicePanel extends JPanel implements ItemListener {
     public void itemStateChanged(ItemEvent ie) {
 
         for (String title: new String[]{INTNAME, EXTNAME}){
-            int[] current = new int[BombType.B_NUM];
-            int curPoints = 0;
-            for (int type = 0; type < BombType.B_NUM; type++) {
-                current[type] = b_choices.get(title)[type].getSelectedIndex();
-                curPoints += current[type] * BombType.getBombCost(type);
+            BombLoadout current = new BombLoadout();
+            for (BombTypeEnum type : BombTypeEnum.values()) {
+                if (type == BombTypeEnum.NONE) continue;
+                int selectedCount = b_choices.get(title).get(type).getSelectedIndex();
+                if (selectedCount > 0) {
+                    current.put(type, selectedCount);
+                }
             }
+            int availBombPoints = maxPoints.get(title) - current.getTotalBombCost();
 
-            int availBombPoints = maxPoints.get(title) - curPoints;
+            for (BombTypeEnum type : BombTypeEnum.values()) {
+                if (type == BombTypeEnum.NONE) continue;
+                
+                JComboBox<String> comboBox = b_choices.get(title).get(type);
+                comboBox.removeItemListener(this);
+                comboBox.removeAllItems();
 
-            for (int type = 0; type < BombType.B_NUM; type++) {
-                b_choices.get(title)[type].removeItemListener(this);
-                b_choices.get(title)[type].removeAllItems();
-                int maxNumBombs = Math.round(availBombPoints / BombType.getBombCost(type)) + current[type];
+                int currentCount = current.getCount(type);
+                int maxNumBombs = Math.round(availBombPoints / type.getCost()) + currentCount;
 
                 if (typeMax != null) {
-                    if ((maxNumBombs > 0) && (maxNumBombs > typeMax[type])) {
-                        maxNumBombs = typeMax[type];
+                    int typeMaxCount = typeMax.getCount(type);
+                    if ((maxNumBombs > 0) && (maxNumBombs > typeMaxCount)) {
+                        maxNumBombs = typeMaxCount;
                     }
                 }
 
-                if (current[type] > maxNumBombs) {
-                    maxNumBombs = current[type];
+                if (currentCount > maxNumBombs) {
+                    maxNumBombs = currentCount;
                 }
 
                 if (maxNumBombs < 0) {
@@ -265,10 +271,10 @@ public class BombChoicePanel extends JPanel implements ItemListener {
 
 
                 for (int x = 0; x <= maxNumBombs; x++) {
-                    b_choices.get(title)[type].addItem(Integer.toString(x));
+                    comboBox.addItem(Integer.toString(x));
                 }
-                b_choices.get(title)[type].setSelectedIndex(current[type]);
-                b_choices.get(title)[type].addItemListener(this);
+                comboBox.setSelectedIndex(currentCount);
+                comboBox.addItemListener(this);
             }
         }
     }
@@ -279,27 +285,43 @@ public class BombChoicePanel extends JPanel implements ItemListener {
             return;
         }
 
-        int[] choices = new int[BombType.B_NUM];
         // Internal bombs
-        for (int type = 0; type < BombType.B_NUM; type++) {
-            choices[type] = b_choices.get(INTNAME)[type].getSelectedIndex();
+        BombLoadout intChoices = new BombLoadout();
+        for (BombTypeEnum type : BombTypeEnum.values()) {
+            if (type == BombTypeEnum.NONE) continue;
+            int count = b_choices.get(INTNAME).get(type).getSelectedIndex();
+            if (count > 0) {
+                intChoices.put(type, count);
+            }
         }
-        bomber.setIntBombChoices(choices);
+        bomber.setIntBombChoices(intChoices);
+        
         // External bombs
-        for (int type = 0; type < BombType.B_NUM; type++) {
-            choices[type] = b_choices.get(EXTNAME)[type].getSelectedIndex();
+        BombLoadout extChoices = new BombLoadout();
+        for (BombTypeEnum type : BombTypeEnum.values()) {
+            if (type == BombTypeEnum.NONE) continue;
+            int count = b_choices.get(EXTNAME).get(type).getSelectedIndex();
+            if (count > 0) {
+                extChoices.put(type, count);
+            }
         }
-        bomber.setExtBombChoices(choices);
+        bomber.setExtBombChoices(extChoices);
     }
-    public int[] getChoice() {
-        int[] choices = new int[BombType.B_NUM];
-        Arrays.fill(choices, 0);
+
+    public BombLoadout getChoice() {
+        BombLoadout choices = new BombLoadout();
         if (empty) {
             return choices;
         }
 
-        for (int type = 0; type < BombType.B_NUM; type++) {
-            choices[type] += b_choices.get(INTNAME)[type].getSelectedIndex() + b_choices.get(EXTNAME)[type].getSelectedIndex();
+        for (BombTypeEnum type : BombTypeEnum.values()) {
+            if (type == BombTypeEnum.NONE) continue;
+            int intCount = b_choices.get(INTNAME).get(type).getSelectedIndex();
+            int extCount = b_choices.get(EXTNAME).get(type).getSelectedIndex();
+            int totalCount = intCount + extCount;
+            if (totalCount > 0) {
+                choices.put(type, totalCount);
+            }
         }
         return choices;
     }
@@ -307,19 +329,15 @@ public class BombChoicePanel extends JPanel implements ItemListener {
     @Override
     public void setEnabled(boolean enabled) {
         for (String title : new String[]{INTNAME, EXTNAME}) {
-            for (int type = 0; type < BombType.B_NUM; type++) {
-                if ((type == BombType.B_ALAMO)
-                        && !at2Nukes) {
-                    b_choices.get(title)[type].setEnabled(false);
-                } else if ((type > BombType.B_TAG)
-                        && !allowAdvancedAmmo) {
-                    b_choices.get(title)[type].setEnabled(false);
-                } else if ((type == BombType.B_ASEW)
-                        || (type == BombType.B_ALAMO)
-                        || (type == BombType.B_TAG)) {
-                    b_choices.get(title)[type].setEnabled(false);
+            for (BombTypeEnum type : BombTypeEnum.values()) {
+                if (type == BombTypeEnum.NONE) continue;
+                JComboBox<String> comboBox = b_choices.get(title).get(type);
+                if ((type == BombTypeEnum.ALAMO) && !at2Nukes) {
+                    comboBox.setEnabled(false);
+                } else if ((type.isAdvancedAmmo()) && !allowAdvancedAmmo) {
+                    comboBox.setEnabled(false);
                 } else {
-                    b_choices.get(title)[type].setEnabled(enabled);
+                    comboBox.setEnabled(enabled);
                 }
             }
         }

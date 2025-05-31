@@ -38,7 +38,7 @@ public class InfantrySupportSRMStandardInfernoWeapon extends InfantryWeapon {
 		addLookupName("Infantry2ShotSRMInferno");
 		addLookupName("Infantry Two-Shot SRM Launcher (Inferno)");
 		sortingName = "SRM Launcher CI";
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1500;
 		bv = 3.48;
         tonnage = .030;

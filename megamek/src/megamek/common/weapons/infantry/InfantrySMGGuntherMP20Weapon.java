@@ -36,7 +36,7 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryGuntherMP20");
 		addLookupName("Gunther MP-20");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 125;
 		bv = 0.30;
 		tonnage = .0025;

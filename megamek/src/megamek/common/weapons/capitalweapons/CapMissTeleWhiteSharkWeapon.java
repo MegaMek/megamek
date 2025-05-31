@@ -33,7 +33,7 @@ public class CapMissTeleWhiteSharkWeapon extends CapitalMissileWeapon {
         setInstantModeSwitch(false);
         this.heat = 15;
         this.damage = 3;
-        this.ammoType = AmmoType.T_WHITE_SHARK_T;
+        this.ammoType = AmmoType.AmmoTypeEnum.WHITE_SHARK_T;
         this.shortRange = 12;
         this.mediumRange = 24;
         this.longRange = 36;

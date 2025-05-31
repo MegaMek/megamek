@@ -29,7 +29,7 @@ public class InfantryRifleMGFlechetteNeedlerWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryMGFlechette");
 		addLookupName("M&G Flechette Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 200;
 		bv = 0.10;
 		tonnage = .0015;

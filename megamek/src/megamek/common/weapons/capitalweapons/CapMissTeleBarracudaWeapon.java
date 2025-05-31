@@ -33,7 +33,7 @@ public class CapMissTeleBarracudaWeapon extends CapitalMissileWeapon {
         setInstantModeSwitch(false);
         this.heat = 10;
         this.damage = 2;
-        this.ammoType = AmmoType.T_BARRACUDA_T;
+        this.ammoType = AmmoType.AmmoTypeEnum.BARRACUDA_T;
         this.shortRange = 20;
         this.mediumRange = 30;
         this.longRange = 40;

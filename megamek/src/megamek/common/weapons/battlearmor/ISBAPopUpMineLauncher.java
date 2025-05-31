@@ -38,7 +38,7 @@ public class ISBAPopUpMineLauncher extends Weapon {
         heat = 0;
         damage = DAMAGE_SPECIAL;
         rackSize = 1;
-        ammoType = AmmoType.T_MINE;
+        ammoType = AmmoType.AmmoTypeEnum.MINE;
         shortRange = 0;
         mediumRange = 0;
         longRange = 0;

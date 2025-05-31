@@ -37,7 +37,7 @@ public class InfantryArchaicWakizashiWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryWakizashi");
         addLookupName("Wakizashi");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 150;
         bv = 0.02;
         tonnage = .0002; 

@@ -36,7 +36,7 @@ public class InfantrySMGKA23SubgunWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryKA23");
 		addLookupName("KA-23 Subgun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 350;
 		bv = 0.20;
 		tonnage = .0025;

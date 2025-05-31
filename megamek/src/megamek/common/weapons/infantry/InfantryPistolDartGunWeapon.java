@@ -35,7 +35,7 @@ public class InfantryPistolDartGunWeapon extends InfantryWeapon {
         name = "Dart Gun";
         setInternalName(name);
         addLookupName("InfantryDartGun");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 40;
         bv = 0.01;
         tonnage = .00065;

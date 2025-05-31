@@ -31,7 +31,7 @@ public class InfantryShotgunCWIJianhuren extends InfantryWeapon {
        name = "Shotgun (CWI Jianhuren)";
        setInternalName(name);
        addLookupName("CWI Jianhuren");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .054;
        tonnage =  0.0027;
        infantryDamage =  0.14;

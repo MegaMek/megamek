@@ -33,7 +33,7 @@ public class MassDriverLight extends MassDriverWeapon {
         this.shortName = "Light Mass Driver";
         this.heat = 30;
         this.damage = 60;
-        this.ammoType = AmmoType.T_LMASS;
+        this.ammoType = AmmoType.AmmoTypeEnum.LMASS;
         this.shortRange = 12;
         this.mediumRange = 24;
         this.longRange = 40;

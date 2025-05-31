@@ -31,7 +31,7 @@ public class ISMagshotGaussRifle extends GaussWeapon {
         sortingName = "Gauss Z";
         heat = 1;
         damage = 2;
-        ammoType = AmmoType.T_MAGSHOT;
+        ammoType = AmmoType.AmmoTypeEnum.MAGSHOT;
         shortRange = 3;
         mediumRange = 6;
         longRange = 9;

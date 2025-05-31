@@ -35,7 +35,7 @@ public class InfantrySupportDavidLightGaussRifleWeapon extends InfantryWeapon {
 		name = "Gauss Rifle, Light (David)";
 		setInternalName(name);
 		addLookupName("Infantry David Light Gauss Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 6000;
 		bv = 4.01;
 		tonnage = .018;

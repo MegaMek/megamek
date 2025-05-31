@@ -37,7 +37,7 @@ public class InfantrySupportMGSupportWeapon extends InfantryWeapon {
 		addLookupName("InfantryHMG");
 		addLookupName("InfantrySupportMG");
 		addLookupName("InfantrySupportMachineGun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1750;
 		bv = 4.80;
 		tonnage = .044;

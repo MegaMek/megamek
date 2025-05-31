@@ -56,7 +56,7 @@ public class PrototypeISUltraWeaponHandler extends UltraWeaponHandler {
             Report r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);
-            if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+            if (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) {
                 r.messageId = 3160;
                 weapon.setHit(true);
             } else {

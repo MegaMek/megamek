@@ -45,7 +45,7 @@ public class ISGaussRiflePrototype extends GaussWeapon {
         sortingName = "Gauss PROTO";
         heat = 1;
         damage = 15;
-        ammoType = AmmoType.T_GAUSS;
+        ammoType = AmmoType.AmmoTypeEnum.GAUSS;
         minimumRange = 2;
         shortRange = 7;
         mediumRange = 15;

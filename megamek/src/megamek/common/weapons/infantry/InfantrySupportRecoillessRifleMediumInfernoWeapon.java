@@ -38,7 +38,7 @@ public class InfantrySupportRecoillessRifleMediumInfernoWeapon extends InfantryW
 		addLookupName("InfantryInfernoMRR");
 		addLookupName("InfantryMediumRecoillessRifleInferno");
 		addLookupName("Infantry InfernoMediumRecoillessRifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 2000;
 		bv = 1.33;
 		tonnage = .032;

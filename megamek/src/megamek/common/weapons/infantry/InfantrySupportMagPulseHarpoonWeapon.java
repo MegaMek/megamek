@@ -38,7 +38,7 @@ public class InfantrySupportMagPulseHarpoonWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryMagpulseHarpoonGun");
 		addLookupName("MagpulseHarpoonGun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 12000;
 		bv = 1.47;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);

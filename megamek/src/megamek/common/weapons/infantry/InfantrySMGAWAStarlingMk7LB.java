@@ -33,7 +33,7 @@ public class InfantrySMGAWAStarlingMk7LB extends InfantryWeapon {
        name = "SMG (AWA Starling Mk7-LB)";
        setInternalName(name);
        addLookupName("AWA Starling Mk7-LB");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .33;
        tonnage =  0.0031;
        infantryDamage =  0.33;

@@ -36,7 +36,7 @@ public class CLMGA extends AmmoWeapon {
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;
         rackSize = 2;
-        ammoType = AmmoType.T_MG;
+        ammoType = AmmoType.AmmoTypeEnum.MG;
         minimumRange = WEAPON_NA;
         shortRange = 1;
         mediumRange = 2;

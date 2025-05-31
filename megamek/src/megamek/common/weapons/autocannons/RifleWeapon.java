@@ -35,7 +35,7 @@ public abstract class RifleWeapon extends AmmoWeapon {
 
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MEK_WEAPON)
                 .or(F_AERO_WEAPON).or(F_TANK_WEAPON);
-        ammoType = AmmoType.T_RIFLE;
+        ammoType = AmmoType.AmmoTypeEnum.RIFLE;
         explosive = false; // when firing incendiary ammo
         atClass = CLASS_AC;
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS

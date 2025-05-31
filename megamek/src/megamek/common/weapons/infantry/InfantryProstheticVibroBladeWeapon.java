@@ -28,7 +28,7 @@ public class InfantryProstheticVibroBladeWeapon extends InfantryWeapon {
         name = "Prosthetic Vibro Blade";
         setInternalName(name);
         addLookupName("ProstheticVibroBlade");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 1000;
         bv = 0.0;
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);

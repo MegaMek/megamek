@@ -318,11 +318,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
         if (atype.getMunitionType().contains(Munitions.M_FLARE)) {
             int radius;
-            if (atype.getAmmoType() == AmmoType.T_ARROW_IV) {
+            if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV) {
                 radius = 4;
-            } else if (atype.getAmmoType() == AmmoType.T_LONG_TOM) {
+            } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM) {
                 radius = 3;
-            } else if (atype.getAmmoType() == AmmoType.T_SNIPER) {
+            } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER) {
                 radius = 2;
             } else {
                 radius = 1;
@@ -349,7 +349,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
         if (atype.getMunitionType().contains(Munitions.M_FASCAM)) {
             int rackSize = atype.getRackSize();
-            if (atype.getAmmoType() == AmmoType.T_ARROW_IV) {
+            if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV) {
                 rackSize = atype.isClan() ? 30 : 20;
             }
             gameManager.deliverFASCAMMinefield(finalPos, ae.getOwner().getId(), rackSize, ae.getId());

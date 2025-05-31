@@ -34,13 +34,9 @@ import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.eras.Era;
-import megamek.common.eras.Eras;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import megamek.common.preference.ClientPreferences;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DiscordFormat;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -277,29 +273,7 @@ public class MekView {
             sHead.add(new SingleLine(Messages.getString("MekView.DesignInvalid")));
         }
 
-        TableElement tpTable = new TableElement(3);
-        String tableSpacer = "&nbsp;&nbsp;&nbsp;&nbsp;";
-        tpTable.setColNames(Messages.getString("MekView.Availability"), tableSpacer,
-                Messages.getString("MekView.Era"));
-        tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
-        tpTable.addRow(Messages.getString("MekView.Prototype"), tableSpacer, entity.getPrototypeRangeDate()
-              .replace(", ", "<br>"));
-        tpTable.addRow(Messages.getString("MekView.Production"), tableSpacer, entity.getProductionDateRange()
-              .replace(", ", "<br>"));
-        tpTable.addRow(Messages.getString("MekView.Common"), tableSpacer, entity.getCommonDateRange()
-              .replace(", ", "<br>"));
-
-        String extinctRange = entity.getExtinctionRange();
-        if (extinctRange.length() > 1) {
-            tpTable.addRow(Messages.getString("MekView.Extinct"), tableSpacer,
-                  extinctRange.replace(", ", "<br>"));
-        }
-
-        sHead.add(tpTable);
-
-        sHead.add(new LabeledElement(Messages.getString("MekView.TechRating"), entity.getFullRatingName()));
-        sHead.add(new SingleLine());
-        sHead.add(new LabeledElement(Messages.getString("MekView.EarliestTechDate"), entity.getEarliestTechDateAndEra()));
+        makeHeaderTable(entity, formatting);
 
         if (!isInf) {
             sHead.add(new LabeledElement(Messages.getString("MekView.Weight"),
@@ -345,8 +319,8 @@ public class MekView {
             if (entity.getJumpMP() > 0) {
                 moveString.append("/").append(entity.getJumpMP());
                 if (entity.damagedJumpJets() > 0) {
-                    moveString.append("<font color='red'> (").append(entity.damagedJumpJets())
-                          .append(" damaged jump jets)</font>");
+                    moveString.append(warningStart()).append("(").append(entity.damagedJumpJets())
+                          .append(" damaged jump jets)").append(warningEnd());
                 }
             }
             if (entity instanceof Mek mek) {
@@ -367,9 +341,10 @@ public class MekView {
                 moveString.append("/")
                         .append(entity.getActiveUMUCount());
                 if ((entity.getAllUMUCount() - entity.getActiveUMUCount()) != 0) {
-                    moveString.append("<font color='red'> (")
-                            .append(entity.getAllUMUCount() - entity.getActiveUMUCount())
-                            .append(" damaged UMUs)</font>");
+                    moveString.append(warningStart()).append("(")
+                          .append(entity.getAllUMUCount() - entity.getActiveUMUCount())
+                          .append(" damaged UMUs)")
+                          .append(warningEnd());
                 }
             }
             if (isVehicle) {
@@ -401,14 +376,10 @@ public class MekView {
             }
         }
         if (isBA && ((BattleArmor) entity).isBurdened()) {
-            sBasic.add(new SingleLine(italicsStart()
-                    + Messages.getString("MekView.Burdened")
-                    + italicsEnd()));
+            sBasic.add(new SingleLine(italicize(Messages.getString("MekView.Burdened"))));
         }
         if (isBA && ((BattleArmor) entity).hasDWP()) {
-            sBasic.add(new SingleLine(italicsStart()
-                    + Messages.getString("MekView.DWPBurdened")
-                    + italicsEnd()));
+            sBasic.add(new SingleLine(italicize(Messages.getString("MekView.DWPBurdened"))));
         }
         if (entity instanceof QuadVee) {
             entity.setConversionMode(QuadVee.CONV_MODE_VEHICLE);
@@ -597,6 +568,45 @@ public class MekView {
                 sInvalid.add(errorList);
             }
         }
+    }
+
+    private void makeHeaderTable(Entity entity, ViewFormatting formatting) {
+        TableElement tpTable = new TableElement(3);
+
+        String tableSpacer = ViewFormatting.HTML.equals(formatting) ? "&nbsp;&nbsp;&nbsp;&nbsp;" : "    ";
+        tpTable.setColNames(Messages.getString("MekView.Availability"), tableSpacer,
+                Messages.getString("MekView.Era"));
+        tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
+
+        // Add rows to the table
+        tpTable.addRow(textWithTooltip(Messages.getString("MekView.Prototype"),
+              Messages.getString("MekView.Prototype.tooltip")), tableSpacer,
+              splitDateRange(entity.getPrototypeRangeDate()));
+        tpTable.addRow(textWithTooltip(Messages.getString("MekView.Production"),
+              Messages.getString("MekView.Production.tooltip")), tableSpacer,
+              splitDateRange(entity.getProductionDateRange()));
+        tpTable.addRow(textWithTooltip(Messages.getString("MekView.Common"),
+              Messages.getString("MekView.Common.tooltip")), tableSpacer,
+              splitDateRange(entity.getCommonDateRange()));
+        String extinctRange = splitDateRange(entity.getExtinctionRange());
+        if (extinctRange.length() > 1) {
+            tpTable.addRow(
+                  textWithTooltip(
+                        Messages.getString("MekView.Extinct"),
+                        Messages.getString("MekView.Extinct.tooltip")),
+                  tableSpacer,
+                  extinctRange);
+        }
+
+        // Add table to header
+        sHead.add(tpTable);
+
+        // Add tech rating and date
+        sHead.add(new LabeledElement(textWithTooltip(Messages.getString("MekView.TechRating"), Messages.getString("MekView.TechRating.tooltip")),
+              entity.getFullRatingName()));
+        sHead.add(new SingleLine());
+        sHead.add(new LabeledElement(textWithTooltip(Messages.getString("MekView.EarliestTechDate"), Messages.getString("MekView.EarliestTechDate.tooltip")),
+              entity.getEarliestTechDateAndEra()));
     }
 
     /** @return True when the unit requires an ammo block. */
@@ -1679,16 +1689,11 @@ public class MekView {
      * @return A String that is used to mark the beginning of a warning.
      */
     private String warningStart() {
-        switch (formatting) {
-            case HTML:
-                return "<font color=\"red\">";
-            case NONE:
-                return "*";
-            case DISCORD:
-                return DiscordFormat.RED.toString();
-            default:
-                throw new IllegalStateException("Impossible");
-        }
+        return switch (formatting) {
+            case HTML -> "<font color=\"red\">";
+            case NONE -> "*";
+            case DISCORD -> DiscordFormat.RED.toString();
+        };
     }
 
     /**
@@ -1697,16 +1702,25 @@ public class MekView {
      * @return A String that is used to mark the end of a warning.
      */
     private String warningEnd() {
-        switch (formatting) {
-            case HTML:
-                return "</font>";
-            case NONE:
-                return "*";
-            case DISCORD:
-                return DiscordFormat.RESET.toString();
-            default:
-                throw new IllegalStateException("Impossible");
-        }
+        return switch (formatting) {
+            case HTML -> "</font>";
+            case NONE -> "*";
+            case DISCORD -> DiscordFormat.RESET.toString();
+        };
+    }
+
+    private String textWithTooltip(String text, String tooltip) {
+        return switch (formatting) {
+            case HTML -> "<span title=\"" + tooltip + "\">" + text + "*</span>";
+            default -> text;
+        };
+    }
+
+    private String splitDateRange(String text) {
+        return switch (formatting) {
+            case HTML -> text.replace(", ", "<br>");
+            default -> text;
+        };
     }
 
     /**
@@ -1717,16 +1731,11 @@ public class MekView {
      * @return The starting element for italicized text.
      */
     private String italicsStart() {
-        switch (formatting) {
-            case HTML:
-                return "<i>";
-            case NONE:
-                return "";
-            case DISCORD:
-                return DiscordFormat.UNDERLINE.toString();
-            default:
-                throw new IllegalStateException("Impossible");
-        }
+        return switch (formatting) {
+            case HTML -> "<i>";
+            case NONE -> "";
+            case DISCORD -> DiscordFormat.UNDERLINE.toString();
+        };
     }
 
     /**
@@ -1735,15 +1744,20 @@ public class MekView {
      * @return The ending element for italicized text.
      */
     private String italicsEnd() {
-        switch (formatting) {
-            case HTML:
-                return "</i>";
-            case NONE:
-                return "";
-            case DISCORD:
-                return DiscordFormat.RESET.toString();
-            default:
-                throw new IllegalStateException("Impossible");
-        }
+        return switch (formatting) {
+            case HTML -> "</i>";
+            case NONE -> "";
+            case DISCORD -> DiscordFormat.RESET.toString();
+        };
+    }
+
+    /**
+     * Wraps the text in italics for html output. For plain text it returns the text unchanged.
+     * For discord output it adds the underline formatting.
+     * @param text The text to italicize.
+     * @return The text wrapped in italics for html or underlined for discord.
+     */
+    private String italicize(String text) {
+        return italicsStart() + text + italicsEnd();
     }
 }

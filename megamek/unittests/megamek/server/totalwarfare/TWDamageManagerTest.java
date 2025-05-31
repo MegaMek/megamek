@@ -35,6 +35,7 @@ package megamek.server.totalwarfare;
 
 import megamek.MMConstants;
 import megamek.common.*;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
@@ -43,6 +44,10 @@ import megamek.server.Server;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -192,36 +197,106 @@ class TWDamageManagerTest {
     }
 
     @Test
-    void destroySectionCritTransferComparison() throws FileNotFoundException {
-        // We need to show that both old and new damagers transfer crits correctly.
+    void destroySectionDamageTransferComparison() throws FileNotFoundException {
+        // We need to show that both old and new damagers transfer damage correctly.
 
-        String unit = "Crusader CRD-3R.mtf";
+        String unit = "Crab CRB-20.mtf";
         Mek mek = loadMek(unit);
 
         // Validate starting armor
-        assertEquals(20, mek.getArmor(Mek.LOC_LARM));
+        assertEquals(14, mek.getArmor(Mek.LOC_LARM));
 
-        // Deal damage with original method
+        // Deal damage with original method; have to explicitly set the damage manager
+        // for the game manager due to ping-pong callbacks during ammo explosions and such.
+        gameMan.setDamageManager(oldMan);
         HitData hit = new HitData(Mek.LOC_LARM);
-        DamageInfo damageInfo = new DamageInfo(mek, hit, 55);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 49);
         oldMan.damageEntity(damageInfo);
         // Armor is DOOMED on destroyed component
         assertEquals(IArmorState.ARMOR_DOOMED, mek.getArmor(Mek.LOC_LARM));
-        // Must have taken critical damage; may have exploded
-        assertNotEquals(15, mek.getInternal(Mek.LOC_LT));
+        // Internal Structure should be gone.
+        assertEquals(IArmorState.ARMOR_DOOMED, mek.getInternal(Mek.LOC_LARM));
+        // Should be marked as destroyed this phase, but not blown off (since already destroyed)
+        assertFalse(mek.isLocationBlownOff(Mek.LOC_LARM));
+        // LT also destroyed
+        assertEquals(IArmorState.ARMOR_DOOMED, mek.getArmor(Mek.LOC_LT));
+        assertEquals(IArmorState.ARMOR_DOOMED, mek.getInternal(Mek.LOC_LT));
+        // One damage transfers to CT
+        assertEquals(17, mek.getArmor(Mek.LOC_CT));
 
-        // Reset for new damage method
+        // Reset for new damage method; have to explicitly set the damage manager
+        // for the game manager due to ping-pong callbacks during ammo explosions and such.
+        gameMan.setDamageManager(newMan);
         Mek mek2 = loadMek(unit);
 
         // Validate starting armor
-        assertEquals(20, mek2.getArmor(Mek.LOC_LARM));
+        assertEquals(14, mek2.getArmor(Mek.LOC_LARM));
 
         // Deal damage with new method
         hit = new HitData(Mek.LOC_LARM);
-        damageInfo = new DamageInfo(mek2, hit, 55);
+        damageInfo = new DamageInfo(mek2, hit, 49);
         newMan.damageEntity(damageInfo);
         assertEquals(IArmorState.ARMOR_DOOMED, mek2.getArmor(Mek.LOC_LARM));
-        assertNotEquals(15, mek.getInternal(Mek.LOC_LT));
+        assertEquals(IArmorState.ARMOR_DOOMED, mek2.getInternal(Mek.LOC_LARM));
+        assertFalse(mek2.isLocationBlownOff(Mek.LOC_LARM));
+        assertEquals(IArmorState.ARMOR_DOOMED, mek2.getArmor(Mek.LOC_LT));
+        assertEquals(IArmorState.ARMOR_DOOMED, mek2.getInternal(Mek.LOC_LT));
+        assertEquals(17, mek2.getArmor(Mek.LOC_CT));
+    }
+
+    @ParameterizedTest()
+    @ValueSource(strings = { "Original", "Modular"})
+    void destroySectionCritTransferOriginal(String manager) throws FileNotFoundException {
+        // We need to show that both old and new damage managers transfer damage correctly.
+        TWDamageManager damageManager = (manager.equals("Original")) ? oldMan : newMan;
+
+        String unit = "Crab CRB-20.mtf";
+        Mek mek = loadMek(unit);
+
+        // Validate starting armor
+        assertEquals(14, mek.getArmor(Mek.LOC_LT));
+
+        // Deal damage with provided method; have to explicitly set the damage manager
+        // for the game manager due to ping-pong callbacks during ammo explosions and such.
+        gameMan.setDamageManager(damageManager);
+
+        // set phase to Firing
+        game.setPhase(GamePhase.FIRING);
+        
+        // Deal initial damage
+        // Destroy LT
+        HitData hit = new HitData(Mek.LOC_LT);
+        DamageInfo damageInfo = new DamageInfo(mek, hit, 26);
+        damageManager.damageEntity(damageInfo);
+        // Armor is DOOMED on destroyed component
+        assertEquals(IArmorState.ARMOR_DOOMED, mek.getArmor(Mek.LOC_LT));
+        // Internal Structure should be gone.
+        assertEquals(IArmorState.ARMOR_DOOMED, mek.getInternal(Mek.LOC_LT));
+        // Arm should be marked as blown off
+        assertTrue(mek.isLocationBlownOff(Mek.LOC_LARM));
+        // LT also destroyed
+        assertEquals(IArmorState.ARMOR_DOOMED, mek.getArmor(Mek.LOC_LT));
+        assertEquals(IArmorState.ARMOR_DOOMED, mek.getInternal(Mek.LOC_LT));
+        // No damage transfers to CT
+        assertEquals(18, mek.getArmor(Mek.LOC_CT));
+        
+        // Rest phase for mek entity to finalize damage (skip actual phase mgmt here)
+        gameMan.resetEntityPhase(GamePhase.PHYSICAL);
+        
+        // Now destroy the left leg plus 1
+        hit = new HitData(Mek.LOC_LLEG);
+        damageInfo = new DamageInfo(mek, hit, 35);
+        damageManager.damageEntity(damageInfo);
+        
+        // LL now destroyed
+        assertEquals(IArmorState.ARMOR_DOOMED, mek.getArmor(Mek.LOC_LLEG));
+        assertEquals(IArmorState.ARMOR_DOOMED, mek.getInternal(Mek.LOC_LLEG));
+
+        // 1 damage transfers to CT
+        assertEquals(17, mek.getArmor(Mek.LOC_CT));
+        
+        // Assert PSR for this unit exists
+        assertTrue(game.getPSRs().hasMoreElements());
     }
 
     @Test

@@ -1088,9 +1088,9 @@ public class Board implements Serializable {
         }
 
         // check data integrity
-        if (isValid(nd, nw, nh, errors) && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
+        if (isValid(nd, nw, nh, errors) && ((nw > 0) || (nh > 0) || (di == (nw * nh)))) {
             newData(nw, nh, nd, errors);
-        } else if (continueLoadOnError && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
+        } else if (continueLoadOnError && ((nw > 0) || (nh > 0) || (di == (nw * nh)))) {
             logger.error("Invalid board data!");
             newData(nw, nh, nd, errors);
         } else if (errors == null) {

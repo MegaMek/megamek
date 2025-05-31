@@ -360,6 +360,13 @@ jacocoTestReport {
     }
 }
 
+tasks.register('easyTest', Test) {
+    useJUnitPlatform()
+    jvmArgs = mmJvmOptions
+    group = 'verification'
+    description = 'Runs the easy tests.'
+}
+
 // Test task including GUI tests
 tasks.register('testWithGUITests', Test) {
     useJUnitPlatform()
@@ -472,6 +479,14 @@ tasks.register('entityVerifier', JavaExec) {
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.common.verifier.EntityVerifier'
+}
+
+tasks.register('mekDataForCaspar', JavaExec) {
+    dependsOn jar
+    description = 'Mek Data for Caspar'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.MekDataForCasparTrainingTool'
 }
 
 tasks.register('iconTest', JavaExec) {

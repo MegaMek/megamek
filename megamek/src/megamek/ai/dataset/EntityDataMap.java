@@ -38,7 +38,7 @@ import java.util.Map;
  * @param <F> The enum type representing field names
  * @author Luana Coppio
  */
-public abstract class EntityDataMap<F extends Enum<F>> {
+public abstract class EntityDataMap<F extends Enum<F>> implements VersionedData {
 
     // The class of the enum type F, used for creating EnumMap
     private final Class<F> fieldEnumClass;
@@ -119,5 +119,13 @@ public abstract class EntityDataMap<F extends Enum<F>> {
      */
     public Class<F> getFieldEnumClass() {
         return fieldEnumClass;
+    }
+
+    /**
+     * Gets the versioned class name for this data map.
+     * @return The class name with version appended
+     */
+    public String getVersionedClassName() {
+        return getClass().getSimpleName() + "." + version;
     }
 }

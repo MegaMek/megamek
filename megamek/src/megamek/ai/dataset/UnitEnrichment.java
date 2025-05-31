@@ -45,7 +45,6 @@ import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
  * @author Luana Coppio
  */
 public class UnitEnrichment extends EntityDataMap<UnitEnrichment.Field> {
-    private static final MMLogger LOGGER = MMLogger.create(UnitEnrichment.class);
 
     /**
      * Enum defining all available unit state fields.
@@ -74,12 +73,6 @@ public class UnitEnrichment extends EntityDataMap<UnitEnrichment.Field> {
         ARMOR_LEFT,
         ARMOR_RIGHT,
         ARMOR_BACK,
-        ARC_0,
-        ARC_1,
-        ARC_2,
-        ARC_3,
-        ARC_4,
-        ARC_5,
         WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE,
     }
 

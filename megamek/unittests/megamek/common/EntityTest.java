@@ -38,24 +38,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Vector;
 
 import megamek.common.actions.DfaAttackAction;
+import megamek.utils.EntityLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.battlevalue.BVCalculator;
-import megamek.common.equipment.WeaponMounted;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -63,31 +53,6 @@ import megamek.common.equipment.WeaponMounted;
  */
 class EntityTest {
 
-    private Entity setupGunEmplacement() {
-        Entity testEntity = mock(GunEmplacement.class);
-        when(testEntity.getBvCalculator()).thenReturn(BVCalculator.getBVCalculator(testEntity));
-        when(testEntity.calculateBattleValue()).thenCallRealMethod();
-        when(testEntity.calculateBattleValue(anyBoolean(), anyBoolean())).thenCallRealMethod();
-        when(testEntity.doBattleValueCalculation(anyBoolean(), anyBoolean(),
-                any(CalculationReport.class))).thenCallRealMethod();
-        when(testEntity.getTotalArmor()).thenReturn(100);
-        when(testEntity.getBARRating(anyInt())).thenCallRealMethod();
-        List<Mounted<?>> equipment = new ArrayList<>(2);
-        List<WeaponMounted> weapons = new ArrayList<>(2);
-        WeaponType ppcType = mock(WeaponType.class);
-        when(ppcType.getBV(any(Entity.class))).thenReturn(50.0);
-        WeaponMounted ppc = mock(WeaponMounted.class);
-        when(ppc.getType()).thenReturn(ppcType);
-        when(ppc.isDestroyed()).thenReturn(false);
-        equipment.add(ppc);
-        equipment.add(ppc);
-        weapons.add(ppc);
-        weapons.add(ppc);
-        when(testEntity.getEquipment()).thenReturn(equipment);
-        when(testEntity.getWeaponList()).thenReturn(weapons);
-        when(testEntity.getAmmo()).thenReturn(new ArrayList<>(0));
-        return testEntity;
-    }
 
     @BeforeAll
     static void beforeAll() {
@@ -97,53 +62,29 @@ class EntityTest {
     @Test
     void testCalculateBattleValue() {
         // Test a gun emplacement.
-        Entity testEntity = setupGunEmplacement();
-        int expected = 169;
+        Entity testEntity = EntityLoader.loadFromFile("Medium Blaze Turret 3025.blk");
+
+        int expected = 203;
         int actual = testEntity.calculateBattleValue(true, true);
+
+        // Hit its main weapon
+        testEntity.getEquipment(0).setHit(true);
         assertEquals(expected, actual);
-        when(testEntity.getTotalArmor()).thenReturn(0); // Gun Emplacement with no armor.
-        expected = 44;
-        actual = testEntity.calculateBattleValue(true, true);
-        assertEquals(expected, actual);
+        int expectedPostDamage = 105;
+        int actualPostDamage = testEntity.calculateBattleValue(true, true);
+        assertEquals(expectedPostDamage, actualPostDamage);
     }
 
     @Test
     void testCalculateWeight() {
-        File f;
-        MekFileParser mfp;
-        Entity e;
-        int expectedWeight, computedWeight;
-
-        // Test 1/1
-        try {
-            f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
-            mfp = new MekFileParser(f);
-            e = mfp.getEntity();
-            expectedWeight = 65;
-            computedWeight = (int) e.getWeight();
-            assertEquals(expectedWeight, computedWeight);
-        } catch (Exception ex) {
-            fail(ex.getMessage());
-        }
+        Entity e = EntityLoader.loadFromFile("Exterminator EXT-4A.mtf");
+        assertEquals(65, (int) e.getWeight());
     }
 
     @Test
     void testFormatHeat() {
-        File f;
-        MekFileParser mfp;
-        Entity e;
-        String expectedHeat, computedHeat;
-
-        try {
-            f = new File("testresources/megamek/common/units/Sagittaire SGT-14D.mtf");
-            mfp = new MekFileParser(f);
-            e = mfp.getEntity();
-            expectedHeat = "28, 42 with RHS";
-            computedHeat = e.formatHeat();
-            assertEquals(expectedHeat, computedHeat);
-        } catch (Exception ex) {
-            fail(ex.getMessage());
-        }
+        Entity e = EntityLoader.loadFromFile("Sagittaire SGT-14D.mtf");
+        assertEquals("28, 42 with RHS", e.formatHeat());
     }
 
     /**
@@ -152,22 +93,9 @@ class EntityTest {
      */
     @Test
     void testCanon() {
-        File f;
-        MekFileParser mfp;
-        Entity e;
-        Vector<String> unitNames = new Vector<>();
-        unitNames.add("Exterminator EXT-4A");
-        MekFileParser.setCanonUnitNames(unitNames);
-
-        // Test 1/1
-        try {
-            f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
-            mfp = new MekFileParser(f);
-            e = mfp.getEntity();
-            assertTrue(e.isCanon());
-        } catch (Exception ex) {
-            fail(ex.getMessage());
-        }
+        MekFileParser.setCanonUnitNames(new Vector<>(Collections.singleton("Exterminator EXT-4A")));
+        Entity e = EntityLoader.loadFromFile("Exterminator EXT-4A.mtf");
+        assertTrue(e.isCanon());
     }
 
     /**
@@ -176,21 +104,9 @@ class EntityTest {
      */
     @Test
     void testForceCanonicityFailure() {
-        File f;
-        MekFileParser mfp;
-        Entity e;
-        Vector<String> unitNames = new Vector<>();
-        unitNames.add("Beheadanator BHD-999.666Z");
-        MekFileParser.setCanonUnitNames(unitNames);
-
-        try {
-            f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
-            mfp = new MekFileParser(f);
-            e = mfp.getEntity();
-            assertFalse(e.isCanon());
-        } catch (Exception ex) {
-            fail(ex.getMessage());
-        }
+        MekFileParser.setCanonUnitNames(new Vector<>(Collections.singleton("foobar")));
+        Entity e = EntityLoader.loadFromFile("Exterminator EXT-4A.mtf");
+        assertFalse(e.isCanon());
     }
 
     /**
@@ -199,26 +115,11 @@ class EntityTest {
      */
     @Test
     void testCanonUnitInCanonUnitListFile() {
-        File f;
-        MekFileParser mfp;
-        Entity e;
-        File oulDir = new File("testresources/megamek/common/units/");
-        MekFileParser.initCanonUnitNames(oulDir, "mockOfficialUnitList.txt");
-
-        try {
-            // MTF file check
-            f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
-            mfp = new MekFileParser(f);
-            e = mfp.getEntity();
-            assertTrue(e.isCanon());
-            // BLK file check
-            f = new File("testresources/megamek/common/units/Kanga Medium Hovertank.blk");
-            mfp = new MekFileParser(f);
-            e = mfp.getEntity();
-            assertTrue(e.isCanon());
-        } catch (Exception ex) {
-            fail(ex.getMessage());
-        }
+        MekFileParser.initCanonUnitNames(EntityLoader.RESOURCE_FOLDER, "mockOfficialUnitList.txt");
+        Entity e = EntityLoader.loadFromFile("Exterminator EXT-4A.mtf");
+        assertTrue(e.isCanon());
+        e = EntityLoader.loadFromFile("Kanga Medium Hovertank.blk");
+        assertTrue(e.isCanon());
     }
 
     /**
@@ -228,54 +129,48 @@ class EntityTest {
      */
     @Test
     void testIsImmobilizedForJump() {
-        File f;
-        MekFileParser mfp;
-        Entity e;
-
         // Test 1/1
         try {
-            f = new File("testresources/megamek/common/units/Kanga Medium Hovertank.blk");
-            mfp = new MekFileParser(f);
-            e = mfp.getEntity();
-            Tank t = (Tank) e;
+            Tank t = EntityLoader.loadFromFile("Kanga Medium Hovertank.blk", Tank.class);
             Crew c = t.getCrew();
 
             // 1 Crew condition
             // 1.a Killed crew should prevent jumping; live crew should allow jumping
             c.setDead(true);
-            assertTrue(t.isImmobileForJump());
+            assertTrue(t.isImmobileForJump(), "Killed crew should prevent jumping");
             c.resetGameState();
-            assertFalse(t.isImmobileForJump());
+            assertFalse(t.isImmobileForJump(), "Live crew should allow jumping");
 
             // 1.b Unconscious crew should prevent jumping; conscious crew should allow
             // jumping
             c.setUnconscious(true);
-            assertTrue(t.isImmobileForJump());
+            assertTrue(t.isImmobileForJump(), "Unconscious crew should prevent jumping");
             c.resetGameState();
-            assertFalse(t.isImmobileForJump());
+            assertFalse(t.isImmobileForJump(), "Conscious crew should allow jumping");
 
             // 1.c Stunned crew should _not_ prevent jumping
             t.setStunnedTurns(1);
-            assertFalse(t.isImmobileForJump());
+            assertFalse(t.isImmobileForJump(), "Stunned crew should not prevent jumping");
             t.setStunnedTurns(0);
 
             // 2. Engine condition
             // 2.a Engine hit should prevent jumping; fixing engine should enable jumping
             t.engineHit();
-            assertTrue(t.isImmobileForJump());
+            assertTrue(t.isImmobileForJump(), "Engine hit should prevent jumping");
             t.engineFix();
-            assertFalse(t.isImmobileForJump());
+            assertFalse(t.isImmobileForJump(), "Engine working should enable jumping");
 
             // 2.b Shutdown should prevent jumping; restarting should enable jumping
             t.setShutDown(true);
-            assertTrue(t.isImmobileForJump());
+            assertTrue(t.isImmobileForJump(), "Shutdown should prevent jumping");
             t.setShutDown(false);
-            assertFalse(t.isImmobileForJump());
+            assertFalse(t.isImmobileForJump(), "Restarting should enable jumping");
 
             // 3. Immobilization due to massive damage motive hit / reducing MP to 0 should
             // _not_ prevent jumping
             t.setMotiveDamage(t.getOriginalWalkMP());
-            assertFalse(t.isImmobileForJump());
+            assertFalse(t.isImmobileForJump(),
+                  "Immobilization due to massive damage motive hit / reducing MP to 0 should not prevent jumping");
             t.setMotiveDamage(0);
 
         } catch (Exception ex) {

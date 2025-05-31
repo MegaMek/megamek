@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import megamek.ai.dataset.UnitEnrichment;
+import megamek.ai.dataset.UnitEnrichmentSerializer;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -59,37 +61,24 @@ public final class MekDataForCasparTrainingTool {
 
     // Excel import works better with the .txt extension instead of .csv
     private static final String FILE_NAME = "meks.tsv";
-    private static final String DELIM = "\t";
+    public static final String LINE_BREAK = "\n";
 
     public static void main(String... args) {
-        try (PrintWriter pw = new PrintWriter(FILE_NAME);
-                BufferedWriter bw = new BufferedWriter(pw)) {
+        UnitEnrichmentSerializer serializer = new UnitEnrichmentSerializer();
+        Game game = new Game();
+        try (PrintWriter pw = new PrintWriter(FILE_NAME); BufferedWriter bw = new BufferedWriter(pw)) {
             MekSummaryCache cache = MekSummaryCache.getInstance(true);
             MekSummary[] units = cache.getAllMeks();
-
-            StringBuilder csvLine = new StringBuilder();
-            csvLine.append(String.join(DELIM, HEADERS)).append("\n");
-            bw.write(csvLine.toString());
-
+            bw.write(serializer.getHeaderLine() + LINE_BREAK);
             for (MekSummary unit : units) {
-                csvLine = new StringBuilder();
-                csvLine.append(unit.getChassis()).append(DELIM);
-                csvLine.append(unit.getModel()).append(DELIM);
-
-                bw.write(csvLine.toString());
+                var entity = unit.loadEntity();
+                entity.setGame(game);
+                bw.write(serializer.serialize(UnitEnrichment.fromEntity(entity)) + LINE_BREAK);
             }
         } catch (FileNotFoundException e) {
             LOGGER.error(e, "Could not open file for output!");
         } catch (IOException e) {
             LOGGER.error(e, "IO Exception");
-        }
-    }
-
-    public static @Nullable Entity loadEntity(File f, String entityName) {
-        try {
-            return new MekFileParser(f, entityName).getEntity();
-        } catch (megamek.common.loaders.EntityLoadingException e) {
-            return null;
         }
     }
 

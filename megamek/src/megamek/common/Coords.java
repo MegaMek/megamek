@@ -820,4 +820,17 @@ public class Coords implements Serializable {
         }
         return String.format("%02d%02d", x, y);
     }
+
+    public static Coords fromHexCode(String hexCode) {
+        if (hexCode == null || hexCode.length() < 4) {
+            throw new IllegalArgumentException("Invalid hex code: " + hexCode);
+        }
+        int x = Integer.parseInt(hexCode.substring(0, 2)) - 1;
+        int y = Integer.parseInt(hexCode.substring(2, 4)) - 1;
+        return new Coords(x, y);
+    }
+
+    public static Coords of(int x, int y) {
+        return new Coords(x, y);
+    }
 }

@@ -43,8 +43,28 @@ import megamek.common.MekFileParser;
 public class EntityLoader {
 
     private static final String RESOURCE_PATH = "testresources/megamek/common/units/";
+    public static final File RESOURCE_FOLDER = new File(RESOURCE_PATH);
 
     private EntityLoader() {
+    }
+
+
+    /**
+     * Load the entity from the provided filename, the file must be present in the folder at
+     * {@link EntityLoader#RESOURCE_PATH}.
+     * @param filename name of the file with the file type extension
+     * @return instantiated entity in the specified class of the unit
+     */
+    public static Entity loadFromFile(String filename) {
+        EquipmentType.initializeTypes();
+        try {
+            File file = new File(RESOURCE_PATH + filename);
+            MekFileParser mfParser = new MekFileParser(file);
+            return mfParser.getEntity();
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        }
+        throw new RuntimeException();
     }
 
     /**

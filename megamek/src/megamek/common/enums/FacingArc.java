@@ -69,9 +69,9 @@ public enum FacingArc {
     ARC_LEFT_SPHERE_GROUND(23, 180, 360, arc -> ((arc.target() >= arc.start()) && (arc.target() < arc.end()))),
     ARC_RIGHT_SPHERE_GROUND(24, 0, 180, arc -> ((arc.target() >= arc.start()) && (arc.target() < arc.end()))),
     ARC_TURRET(25, 330, 30, arc -> ((arc.target() >= arc.start()) || (arc.target() <= arc.end()))),
-    ARC_SPONSON_TURRET_LEFT(26, 180, 360, arc -> ((arc.target() >= arc.start()) || (arc.target() == arc.end()))),
+    ARC_SPONSON_TURRET_LEFT(26, 180, 0, arc -> ((arc.target() >= arc.start()) || (arc.target() == arc.end()))),
     ARC_SPONSON_TURRET_RIGHT(27, 0, 180, arc -> ((arc.target() >= arc.start()) && (arc.target() <= arc.end()))),
-    ARC_PINTLE_TURRET_LEFT(28, 180, 360, arc -> ((arc.target() >= arc.start()) || (arc.target() == arc.end()))),
+    ARC_PINTLE_TURRET_LEFT(28, 180, 0, arc -> ((arc.target() >= arc.start()) || (arc.target() == arc.end()))),
     ARC_PINTLE_TURRET_RIGHT(29, 0, 180, arc -> ((arc.target() >= arc.start()) && (arc.target() <= arc.end()))),
     ARC_PINTLE_TURRET_FRONT(30, 270, 90, arc -> ((arc.target() >= arc.start()) || (arc.target() <= arc.end()))),
     ARC_PINTLE_TURRET_REAR(31, 90, 270, arc -> ((arc.target() >= arc.start()) && (arc.target() <= arc.end()))),
@@ -98,7 +98,7 @@ public enum FacingArc {
 
     private final int arcCode;
     private final int startAngle;
-    private final int engAngle;
+    private final int endAngle;
     private final Function<ArcTarget, Boolean> function;
 
     /**
@@ -109,10 +109,10 @@ public enum FacingArc {
      */
     private record ArcTarget(int start, int end, int target) {}
 
-    FacingArc(int arcCode, int startAngle, int engAngle, Function<ArcTarget, Boolean> function) {
+    FacingArc(int arcCode, int startAngle, int endAngle, Function<ArcTarget, Boolean> function) {
         this.arcCode = arcCode;
         this.startAngle = startAngle;
-        this.engAngle = engAngle;
+        this.endAngle = endAngle;
         this.function = function;
     }
 
@@ -120,8 +120,16 @@ public enum FacingArc {
         return arcCode;
     }
 
+    public int getStartAngle() {
+        return startAngle;
+    }
+
+    public int getEndAngle() {
+        return endAngle;
+    }
+
     public boolean isInsideArc(int angle) {
-        return this.function.apply(new ArcTarget(startAngle, engAngle, angle));
+        return this.function.apply(new ArcTarget(startAngle, endAngle, angle));
     }
 
     public boolean isInsideArc(Coords source, int facing, Targetable target) {

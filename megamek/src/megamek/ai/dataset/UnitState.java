@@ -38,6 +38,7 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.IAero;
+import megamek.common.LandAirMek;
 import megamek.common.UnitRole;
 import megamek.common.equipment.WeaponMounted;
 import megamek.logging.MMLogger;
@@ -47,7 +48,6 @@ import megamek.logging.MMLogger;
  * @author Luana Coppio
  */
 public class UnitState extends EntityDataMap<UnitState.Field> {
-    private static final MMLogger LOGGER = MMLogger.create(UnitState.class);
 
     /**
      * Enum defining all available unit state fields.
@@ -142,7 +142,7 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
               .put(Field.INTERNAL_P, entity.getInternalRemainingPercent())
               .put(Field.ARMOR, entity.getTotalArmor());
 
-        if (entity instanceof IAero aero) {
+        if ((entity instanceof IAero aero) && !entity.isMek()) {
             map.put(Field.INTERNAL, aero.getSI());
         } else {
             map.put(Field.INTERNAL, entity.getTotalInternal());
@@ -153,15 +153,15 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
               .put(Field.TOTAL_DAMAGE, Compute.computeTotalDamage(entity.getWeaponList()))
               .put(Field.BV, entity.getInitialBV());
 
-        // Equipment and capabilities
-        map.put(Field.IS_BOT, entity.getOwner().isBot())
-              .put(Field.HAS_ECM, entity.hasActiveECM());
-
         // Directional armor
         map.put(Field.ARMOR_FRONT_P, EntityFeatureUtils.getTargetFrontHealthStats(entity))
               .put(Field.ARMOR_LEFT_P, EntityFeatureUtils.getTargetLeftSideHealthStats(entity))
               .put(Field.ARMOR_RIGHT_P, EntityFeatureUtils.getTargetRightSideHealthStats(entity))
               .put(Field.ARMOR_BACK_P, EntityFeatureUtils.getTargetBackHealthStats(entity));
+
+        // Equipment and capabilities
+        map.put(Field.IS_BOT, entity.getOwner().isBot())
+              .put(Field.HAS_ECM, entity.hasActiveECM());
 
         // Weapon information
         List<Integer> weaponData = WeaponDataEncoder.getEncodedWeaponData(entity);

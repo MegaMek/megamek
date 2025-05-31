@@ -22,6 +22,7 @@ import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.SensorRangeSprite;
+import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -98,7 +99,7 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
             Compute.SensorRangeHelper srh = Compute.getSensorRanges(entity.getGame(), entity);
 
             if (srh != null) {
-                if (entity.isAirborne() && entity.getGame().getBoard().isGround()) {
+                if (entity.isAirborne() && game.isOnGroundMap(entity)) {
                     minSensorRange = srh.minGroundSensorRange;
                     maxSensorRange = srh.maxGroundSensorRange;
                     minAirSensorRange = srh.minSensorRange;
@@ -131,10 +132,11 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
         int j = 0;
 
         // find max range possible on map, no need to check beyond it
-        int rangeToCorner = (new Coords(0, game.getBoard().getHeight())).distance(assumedPosition);
+        Board board = game.getBoard(entity);
+        int rangeToCorner = (new Coords(0, board.getHeight())).distance(assumedPosition);
         rangeToCorner = Math.max(rangeToCorner, (new Coords(0, 0)).distance(assumedPosition));
-        rangeToCorner = Math.max(rangeToCorner, (new Coords(game.getBoard().getWidth(), 0)).distance(assumedPosition));
-        rangeToCorner = Math.max(rangeToCorner, (new Coords(game.getBoard().getWidth(), game.getBoard().getHeight())).distance(assumedPosition));
+        rangeToCorner = Math.max(rangeToCorner, (new Coords(board.getWidth(), 0)).distance(assumedPosition));
+        rangeToCorner = Math.max(rangeToCorner, (new Coords(board.getWidth(), board.getHeight())).distance(assumedPosition));
 
         for (RangeHelper rangeH : lBrackets) {
             sensorRanges.add(new HashSet<>());
@@ -149,13 +151,14 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
             }
 
             // Remove hexes that are not on the board
-            sensorRanges.get(j).removeIf(h -> !game.getBoard().contains(h));
+            sensorRanges.get(j).removeIf(h -> !board.contains(h));
             j++;
         }
 
         // create the sprites
 
         // for all available range
+        BoardView boardView = (BoardView) clientGUI.getBoardView(board.getBoardId());
         for (int b = 0; b < lBrackets.size(); b++) {
             if (sensorRanges.get(b) == null) {
                 continue;
@@ -175,11 +178,11 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
 
                 // create sprite if there's a border to paint
                 if (edgesToPaint > 0) {
-                    currentSprites.add(new SensorRangeSprite((BoardView) clientGUI.boardViews().get(0), b, loc, edgesToPaint));
+                    currentSprites.add(new SensorRangeSprite(boardView, b, loc, edgesToPaint));
                 }
             }
         }
-        clientGUI.boardViews().get(0).addSprites(currentSprites);
+        boardView.addSprites(currentSprites);
     }
 
     @Override
@@ -189,13 +192,5 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
         }
     }
 
-    private static class RangeHelper {
-        public int min;
-        public int max;
-
-        private RangeHelper(int min, int max) {
-            this.min = min;
-            this.max = max;
-        }
-    }
+    private record RangeHelper(int min, int max) { }
 }

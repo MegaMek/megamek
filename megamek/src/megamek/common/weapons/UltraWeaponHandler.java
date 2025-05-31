@@ -27,6 +27,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -74,7 +75,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         // a previous attack burned through all the ammo, this attack may be SOL.
         if (ammo.getUsableShotsLeft() == 0) {
             ae.loadWeapon(weapon);
-            ammo = weapon.getLinked();
+            ammo = (AmmoMounted) weapon.getLinked();
         }
     }
 

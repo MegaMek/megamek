@@ -22,6 +22,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -57,13 +58,15 @@ public class BombAttackHandler extends WeaponHandler {
         if (!ae.isBomber() || (null == payload)) {
             return;
         }
-        for (int type = 0; type < payload.length; type++) {
-            for (int i = 0; i < payload[type]; i++) {
+        for (Map.Entry<BombTypeEnum, Integer> entry : payload.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            int bombCount = entry.getValue();
+            for (int i = 0; i < bombCount; i++) {
                 // find the first mounted bomb of this type and drop it
                 for (Mounted<?> bomb : ae.getBombs()) {
                     if (!bomb.isDestroyed()
                             && (bomb.getUsableShotsLeft() > 0)
-                            && (((BombType) bomb.getType()).getBombType() == type)) {
+                            && (((BombType) bomb.getType()).getBombType() == bombType)) {
                         bomb.setShotsLeft(0);
                         if (bomb.isInternalBomb()) {
                             ((IBomber) ae).increaseUsedInternalBombs(1);
@@ -91,8 +94,11 @@ public class BombAttackHandler extends WeaponHandler {
         Vector<Integer> hitIds = null;
 
         // now go through the payload and drop the bombs one at a time
-        for (BombTypeEnum type : BombTypeEnum.values()) {
-            if (type.getIndex() < 0) continue;
+        for (Map.Entry<BombTypeEnum, Integer> entry : payload.entrySet()) {
+            BombTypeEnum type = entry.getKey();
+            int bombCount = entry.getValue();
+            
+            if (bombCount <= 0) continue;
             // to hit, adjusted for bomb-type specific rules
             ToHitData typeModifiedToHit = new ToHitData();
             typeModifiedToHit.append(toHit);
@@ -120,7 +126,7 @@ public class BombAttackHandler extends WeaponHandler {
                 }
             }
 
-            for (int i = 0; i < payload[type]; i++) {
+            for (int i = 0; i < bombCount; i++) {
                 // Report weapon attack and its to-hit value.
                 Report r;
 

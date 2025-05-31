@@ -9841,11 +9841,11 @@ public class TWGameManager extends AbstractGameManager {
             boolean isHomingMissile = false;
             if (wh instanceof ArtilleryWeaponIndirectHomingHandler ||
                       wh instanceof ArtilleryBayWeaponIndirectHomingHandler) {
-                Mounted<?> ammoUsed = artilleryFirer.getEquipment(waa.getAmmoId());
+                AmmoMounted ammoUsed = artilleryFirer.getAmmo(waa.getAmmoId());
                 AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
                 if (atype != null &&
                           (atype.getAmmoType() == AmmoTypeEnum.ARROW_IV 
-                          || atype.getAmmoType() == BombTypeEnum.HOMING)) {
+                          || ammoUsed.isHomingAmmoInHomingMode())) {
                     isHomingMissile = true;
                 }
             }

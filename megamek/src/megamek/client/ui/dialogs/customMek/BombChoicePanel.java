@@ -336,8 +336,6 @@ public class BombChoicePanel extends JPanel implements ItemListener {
                     comboBox.setEnabled(false);
                 } else if ((type.isAdvancedAmmo()) && !allowAdvancedAmmo) {
                     comboBox.setEnabled(false);
-                } else if ((type == BombTypeEnum.ASEW) || (type == BombTypeEnum.ALAMO) || (type == BombTypeEnum.TAG)) {
-                    comboBox.setEnabled(false);
                 } else {
                     comboBox.setEnabled(enabled);
                 }

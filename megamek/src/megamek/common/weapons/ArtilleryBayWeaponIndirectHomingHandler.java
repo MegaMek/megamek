@@ -26,10 +26,12 @@ import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.AmmoType.AmmoTypeEnum;
+import megamek.common.AmmoType.Munitions;
 import megamek.common.BombType.BombTypeEnum;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -104,7 +106,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
         // Determine what ammo we're firing for reporting and (later) damage
-        Mounted<?> ammoUsed = ae.getEquipment(aaa.getAmmoId());
+        AmmoMounted ammoUsed = ae.getAmmo(aaa.getAmmoId());
         final AmmoType atype = (AmmoType) ammoUsed.getType();
         // Report weapon attack and its to-hit value.
         Report r = new Report(3124);
@@ -445,16 +447,12 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
      *                     be intercepted by AMS
      * @return 1 hit if this missile survives any AMS fire, 0 if it is destroyed
      */
-    protected int handleAMS(Vector<Report> vPhaseReport, Mounted<AmmoType> ammoUsed) {
+    protected int handleAMS(Vector<Report> vPhaseReport, AmmoMounted ammoUsed) {
 
         int hits = 1;
         boolean isArrowIV = ((AmmoType) ammoUsed.getType()).getAmmoType() == AmmoTypeEnum.ARROW_IV;
-        
-        // if (
-        //         || ((AmmoType) ammoUsed.getType()).getAmmoType() == BombTypeEnum.HOMING) {
-
-        if (!isArrowIV && !isHoming) {
-            // If this is not an Arrow IV homing shot, we don't care about AMS
+        if (!isArrowIV && !ammoUsed.isHomingAmmoInHomingMode()) {
+            // If this is not an Arrow IV or an homing shot, we don't care about AMS
             return hits;
         }
 

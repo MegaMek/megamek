@@ -24,6 +24,7 @@ import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -166,7 +167,7 @@ public class MGHandler extends AmmoWeaponHandler {
             for (int i = 0; i < ammoUsage; i++) {
                 if (ammo.getUsableShotsLeft() <= 0) {
                     ae.loadWeapon(weapon);
-                    ammo = weapon.getLinked();
+                    ammo = (AmmoMounted) weapon.getLinked();
                 }
                 ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
             }

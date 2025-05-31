@@ -317,11 +317,19 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             StringTokenizer toks = new StringTokenizer(selected, "() ");
             toks.nextToken(); // Skip salvo count
             if (toks.hasMoreTokens()) {
-                return Integer.parseInt(toks.nextToken());
+                try {
+                    return Integer.parseInt(toks.nextToken());
+                } catch (NumberFormatException ignored) {
+                    // Will return 0
+                }
             }
             return 0;
         } else {
-            return Integer.parseInt(selected);
+            try {
+                return Integer.parseInt(selected);
+            } catch (NumberFormatException ignored) {
+                return 0; // If parsing fails, return 0
+            }
         }
     }
 
@@ -338,9 +346,13 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
                 if (item.contains("(") && item.contains(")")) {
                     StringTokenizer toks = new StringTokenizer(item, "() ");
                     toks.nextToken(); // Skip salvo count
-                    if (toks.hasMoreTokens() && Integer.parseInt(toks.nextToken()) == count) {
-                        comboBox.setSelectedIndex(i);
-                        return;
+                    try {
+                        if (toks.hasMoreTokens() && (Integer.parseInt(toks.nextToken()) == count)) {
+                            comboBox.setSelectedIndex(i);
+                            return;
+                        }
+                    } catch (NumberFormatException ignored) {
+                        // If parsing fails, continue to next item
                     }
                 }
             } else {

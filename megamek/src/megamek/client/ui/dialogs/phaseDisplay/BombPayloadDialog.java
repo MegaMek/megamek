@@ -88,7 +88,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         // super.setResizable(false);
 
         this.numFighters = numFighters;
-        this.availableBombs = new BombLoadout(availableBombs);;
+        this.availableBombs = new BombLoadout(availableBombs);
         this.limit = lim;
 
         GridBagLayout gridbag = new GridBagLayout();

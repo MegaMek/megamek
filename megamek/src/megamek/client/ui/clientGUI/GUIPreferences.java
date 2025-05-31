@@ -18,12 +18,12 @@
  * if not, see <https://www.gnu.org/licenses/>.
  *
  * NOTICE: The MegaMek organization is a non-profit group of volunteers
- * creating free software for the BattleTech community. 
+ * creating free software for the BattleTech community.
  *
- * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks 
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
  * of The Topps Company, Inc. All Rights Reserved.
- * 
- * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of 
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  *
  * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
@@ -32,6 +32,19 @@
  * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Window;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
@@ -42,13 +55,6 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 public class GUIPreferences extends PreferenceStoreProxy {
 
@@ -442,7 +448,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_CYAN = new Color(0, 228, 228);
     private static final Color DEFAULT_MAGENTA = new Color(228, 0, 228);
     private static final Color DEFAULT_PINK = new Color(228, 20, 147);
-    private static final Color DEFAULT_RED = new Color(196, 0, 0);
+    private static final Color DEFAULT_RED = new Color(225, 51, 51);
     private static final Color DEFAULT_GREEN = new Color(0, 212, 0);
     private static final Color DEFAULT_BLUE = new Color(64, 96, 228);
     private static final Color DEFAULT_MEDIUM_DARK_RED = new Color(150, 80, 80); // medium dark red
@@ -466,7 +472,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_PLANETARY_CONDITIONS_BACKGROUND_COLOR = new Color(80, 80, 80);
 
     // Report Color
-    private static final Color DEFAULT_REPORT_LINK_COLOR = new Color(73, 102, 230);
+    private static final Color DEFAULT_REPORT_LINK_COLOR = new Color(5, 160, 255);
 
     // Map colors
     private static final Color DEFAULT_MAP_BRIGHT_GREEN = new Color(80, 230, 80);
@@ -489,8 +495,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     protected GUIPreferences() {
-        store = PreferenceManager.getInstance().getPreferenceStore("GUIPreferences",
-              getClass().getName(), "megamek.client.ui.swing.GUIPreferences");
+        store = PreferenceManager.getInstance()
+              .getPreferenceStore("GUIPreferences", getClass().getName(), "megamek.client.ui.swing.GUIPreferences");
 
         store.setDefault(BOARDEDIT_RNDDIALOG_START, false);
         setDefault(ADVANCED_NO_SAVE_NAG, false);
@@ -604,7 +610,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB,
-                "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
+              "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
         store.setDefault(FOV_HIGHLIGHT, false);
         store.setDefault(FOV_HIGHLIGHT_ALPHA, 40);
         store.setDefault(FOV_DARKEN, true);
@@ -755,9 +761,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE, 0);
         store.setDefault(MINI_REPORT_LOCATION, 0);
         setDefault(MINI_REPORT_COLOR_LINK, DEFAULT_REPORT_LINK_COLOR);
-        setDefault(MINI_REPORT_COLOR_SUCCESS, new Color(0x008000));
-        setDefault(MINI_REPORT_COLOR_MISS, new Color(0x808080));
-        setDefault(MINI_REPORT_COLOR_INFO, new Color(0x0000FF));
+        setDefault(MINI_REPORT_COLOR_SUCCESS, new Color(51, 204, 0));
+        setDefault(MINI_REPORT_COLOR_MISS, new Color(128, 128, 128));
+        setDefault(MINI_REPORT_COLOR_INFO, new Color(51, 153, 255));
         setDefault(MINI_REPORT_FONT_TYPE, "Segoe UI");
         store.setDefault(MINI_ROUND_REPORT_SPRITES, true);
 
@@ -2165,6 +2171,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public int getBotCommandsAutoDisplayNonReportPhase() {
         return store.getInt(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE);
     }
+
     public int getBotCommandsAutoDisplayReportPhase() {
         return store.getInt(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE);
     }
@@ -3476,7 +3483,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
      * @return The color associated with a movement type
      */
     public Color getColorForMovement(EntityMovementType movementType, boolean isMASCOrSuperCharger,
-            boolean isBackwards) {
+          boolean isBackwards) {
         if (movementType != EntityMovementType.MOVE_ILLEGAL) {
             if (isMASCOrSuperCharger) {
                 return getColor(BOARD_MOVE_MASC_COLOR);
@@ -3552,8 +3559,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     // endregion Colours
 
     /**
-     * @return True when the MM suite supports the given laf, currently all formdev
-     *         "Flat ..." and the system default.
+     * @return True when the MM suite supports the given laf, currently all formdev "Flat ..." and the system default.
      */
     public static boolean isSupportedLookAndFeel(UIManager.LookAndFeelInfo lookAndFeelInfo) {
         return lookAndFeelInfo.getClassName().toLowerCase().contains("formdev");
@@ -3595,11 +3601,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setMovePathPersistenceOnMiniMap(int rounds) {
         store.setValue(MINI_MAP_MOVE_PATH_PERSISTENCE, rounds);
     }
-    
+
     /**
      * Returns the size and position of a saved named window.
+     *
      * @param name The name of the window.
-     * @return An Optional containing the Rectangle representing the size and position, or an empty Optional if not found.
+     *
+     * @return An Optional containing the Rectangle representing the size and position, or an empty Optional if not
+     *       found.
      */
     public Optional<Rectangle> getNamedWindowSizeAndPosition(String name) {
         final String storedData = getString(name + _WINDOW);
@@ -3615,7 +3624,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
             int y = Integer.parseInt(windowCoords[1]);
             int width = Integer.parseInt(windowCoords[2]);
             int height = Integer.parseInt(windowCoords[3]);
-            return Optional.of(new Rectangle(x,y,width,height));
+            return Optional.of(new Rectangle(x, y, width, height));
         } catch (NumberFormatException e) {
             return Optional.empty();
         }
@@ -3623,7 +3632,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     /**
      * Saves the size and position of a named window.
-     * @param name The name of the window.
+     *
+     * @param name      The name of the window.
      * @param component The component representing the window.
      */
     public void setNamedWindowSizeAndPosition(String name, Window component) {
@@ -3634,7 +3644,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     /**
      * Returns the tab order for a given saved name (for example: the name of a window).
+     *
      * @param name The name of the tab order.
+     *
      * @return A List of Strings representing the tab order, or null if not found.
      */
     public @Nullable List<String> getTabOrder(String name) {
@@ -3648,7 +3660,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     /**
      * Saves the tab order for a given name (for example: the name of a window).
-     * @param name The name of the tab order.
+     *
+     * @param name  The name of the tab order.
      * @param order A List of Strings representing the tab order.
      */
     public void setTabOrder(String name, List<String> order) {
@@ -3663,7 +3676,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setHighPerformanceGraphics(boolean value) {
         store.setValue(HIGH_PERFORMANCE_GRAPHICS, value);
     }
-  
+
     public boolean getNagForOddSizedBoard() {
         return getBoolean(NAG_FOR_ODD_SIZED_BOARD);
     }

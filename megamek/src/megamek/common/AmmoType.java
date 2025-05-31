@@ -154,7 +154,7 @@ public class AmmoType extends EquipmentType {
         SRM_IMP(106, "Improved SRM", AmmoCategory.Missile, true),
         LRM_IMP(107, "Improved LRM", AmmoCategory.Missile, true),
         LONG_TOM_PRIM(108, "Primitive Long Tom", AmmoCategory.Artillery, false),
-        ARROWIV_PROTO(109, "Prototype Arrow IV", AmmoCategory.Missile, false),
+        ARROWIV_PROTO(109, "Prototype Arrow IV", AmmoCategory.Artillery, false),
         KILLER_WHALE_T(110, "Killer Whale-T", AmmoCategory.Missile, false),
         WHITE_SHARK_T(111, "White Shark-T", AmmoCategory.Missile, false),
         BARRACUDA_T(112, "Barracuda-T", AmmoCategory.Missile, false),

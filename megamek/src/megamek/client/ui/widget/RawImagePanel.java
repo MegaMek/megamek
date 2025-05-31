@@ -35,13 +35,10 @@ package megamek.client.ui.widget;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
-import java.awt.image.VolatileImage;
-import megamek.common.util.ImageUtil;
+import megamek.common.util.ManagedVolatileImage;
 
 import javax.swing.JComponent;
 
@@ -52,7 +49,7 @@ import javax.swing.JComponent;
  */
 public class RawImagePanel extends JComponent {
     private Image originalImage;
-    private VolatileImage cachedImage;
+    private ManagedVolatileImage cachedImage;
     private Dimension lastSize;
 
     public RawImagePanel(Image image) {
@@ -91,40 +88,16 @@ public class RawImagePanel extends JComponent {
         Dimension currentSize = new Dimension(getWidth(), getHeight());
         if (cachedImage == null || lastSize == null || !lastSize.equals(currentSize)) {
             invalidateCache();
-            cachedImage = ImageUtil.convertToVolatileImage(originalImage, Transparency.OPAQUE, getWidth(), getHeight());
+            cachedImage = new ManagedVolatileImage(originalImage, Transparency.OPAQUE, getWidth(), getHeight());
             lastSize = currentSize;
         }
-        // Validate the cached image before drawing
+        // Draw
         if (cachedImage != null) {
-            GraphicsConfiguration gc = getGraphicsConfiguration();
-            if (gc != null) {
-                int validationCode = cachedImage.validate(gc);
-                if (validationCode == VolatileImage.IMAGE_RESTORED || 
-                    validationCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-                    // Recreate the image if it was lost or is incompatible
-                    cachedImage.flush();
-                    cachedImage = ImageUtil.convertToVolatileImage(originalImage, Transparency.OPAQUE, getWidth(), getHeight());
-                }
-            }
-        }
-
-        // Draw the cached image
-        if (cachedImage != null && !cachedImage.contentsLost()) {
             Graphics2D g2d = (Graphics2D) g.create();
             try {
-                // Final draw
+                // Enable high-quality rendering
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-                g2d.drawImage(cachedImage, 0, 0, null);
-            } finally {
-                g2d.dispose();
-            }
-        } else {
-            // Fallback to direct drawing if cached image is lost
-            Graphics2D g2d = (Graphics2D) g.create();
-            try {
-                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                g2d.drawImage(originalImage, 0, 0, getWidth(), getHeight(), null);
+                g2d.drawImage(cachedImage.getImage(), 0, 0, null);
             } finally {
                 g2d.dispose();
             }

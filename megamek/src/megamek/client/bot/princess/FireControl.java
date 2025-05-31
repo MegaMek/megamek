@@ -304,6 +304,11 @@ public class FireControl {
             return new ToHitData(TH_NULL_POSITION);
         }
 
+        // For now, can't shoot if not on the same board
+        if (shooter.getBoardId() != target.getBoardId()) {
+            return new ToHitData(TH_RNG_TOO_FAR);
+        }
+
         // Is the target in range at all?
         final int maxRange = owner.getMaxWeaponRange(shooter, target.isAirborne());
         if (distance > maxRange) {
@@ -361,7 +366,7 @@ public class FireControl {
         LosEffects los = LosEffects.calculateLOS(game, shooter, target);
 
         // We want to check the target hex _and_ the intervening hexes for woods, smoke, etc.
-        final Hex targetHex = game.getBoard().getHex(targetState.getPosition());
+        final Hex targetHex = game.getBoard(target.getBoardId()).getHex(targetState.getPosition());
         int woodsLevel = targetHex.terrainLevel(Terrains.WOODS) +
             ((los.thruWoods()) ? los.getLightWoods() + los.getHeavyWoods() + los.getUltraWoods() : 0);
         if (targetHex.terrainLevel(Terrains.JUNGLE) > woodsLevel) {
@@ -489,8 +494,8 @@ public class FireControl {
         }
 
         // Check elevation difference.
-        final Hex attackerHex = game.getBoard().getHex(shooterState.getPosition());
-        final Hex targetHex = game.getBoard().getHex(targetState.getPosition());
+        final Hex attackerHex = game.getBoard(target).getHex(shooterState.getPosition());
+        final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
         final int attackerElevation = shooter.getElevation() + attackerHex.getLevel();
         final int attackerHeight = shooter.relHeight() + attackerHex.getLevel();
         final int targetElevation = target.getElevation() + targetHex.getLevel();
@@ -789,7 +794,7 @@ public class FireControl {
 
         // Check range.
         int distance = shooterState.getPosition().distance(targetState.getPosition());
-        if (shooterState.isAirborne() && targetState.isAirborne() && game.getBoard().isGround()) {
+        if (shooterState.isAirborne() && targetState.isAirborne() && game.getBoard(target).isGround()) {
             // Aerospace firing at each on the ground map have immense range.
             distance /= 16;
         }
@@ -852,7 +857,7 @@ public class FireControl {
                 targetState.getPosition(), false);
 
         // water is a separate los effect
-        final Hex targetHex = game.getBoard().getHex(targetState.getPosition());
+        final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
         Entity targetEntity = null;
         if (target instanceof Entity) {
             targetEntity = (Entity) target;
@@ -1139,7 +1144,7 @@ public class FireControl {
             if (weapon.isGroundBomb()
                     && !(weapon.getType().hasFlag(WeaponType.F_TAG) || weapon.getType().hasFlag(WeaponType.F_MISSILE))
             ) {
-                Hex hex = game.getBoard().getHex(target.getPosition());
+                Hex hex = game.getHexOf(target);
                 // If somehow we get an off-board hex, it's impossible to hit.
                 if (hex == null) {
                     return new ToHitData(TH_NULL_POSITION);
@@ -1739,19 +1744,24 @@ public class FireControl {
 
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
-                !game.getBoard().contains(shooter.getPosition())) {
+                !game.getBoard(shooter).contains(shooter.getPosition())) {
             logger.error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
-        if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
+        if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard(target).contains(target.getPosition())) {
             logger.error("Target's position is NULL/Off Board!");
+            return myPlan;
+        }
+
+        // For now, no shooting at targets on other boards
+        if (shooter.getBoardId() != target.getBoardId()) {
             return myPlan;
         }
 
         if (shooter.isAirborne()
                 && shooter.isLargeCraft()
                 && shooter.isSpheroid()
-                && game.getBoard().isGround()
+                && game.getBoard(shooter).isGround()
                 && !target.isAirborne()) {
             // This process takes a long time for no reason; the likelihood of being able to
             // strike or hit an enemy (other than Aero) is next to nil.
@@ -1881,12 +1891,12 @@ public class FireControl {
 
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
-                !game.getBoard().contains(shooter.getPosition())) {
+                !game.getBoard(shooter).contains(shooter.getPosition())) {
             logger.error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
 
-        if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
+        if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard(target).contains(target.getPosition())) {
             logger.error("Target's position is NULL/Off Board!");
             return myPlan;
         }
@@ -1903,7 +1913,7 @@ public class FireControl {
             return myPlan;
         }
 
-        if (shooter.isAirborne() && shooter.isLargeCraft() && shooter.isSpheroid() && game.getBoard().isGround()) {
+        if (shooter.isAirborne() && shooter.isLargeCraft() && shooter.isSpheroid() && game.getBoard(shooter).isGround()) {
             // This process takes a long time for no reason; the likelihood of being able to
             // strike or hit an enemy Aero is next to nil.
             logger.debug(
@@ -2015,7 +2025,7 @@ public class FireControl {
         // 3. Target is Submarine too far below surface level
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity entity = (Entity) target;
-            Hex hex = game.getBoard().getHex(entity.getPosition());
+            Hex hex = game.getHexOf(entity);
             hexToBomb.setTargetLevel((hex != null) ? hex.getLevel() : 0);
 
             if (entity.isAirborne()) {
@@ -2115,11 +2125,11 @@ public class FireControl {
 
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
-                !game.getBoard().contains(shooter.getPosition())) {
+                !game.getBoard(shooter).contains(shooter.getPosition())) {
             logger.error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
-        if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
+        if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard(target).contains(target.getPosition())) {
             logger.error("Target's position is NULL/Off Board!");
             return myPlan;
         }
@@ -3720,7 +3730,7 @@ public class FireControl {
                     continue;
                 }
 
-                for (Entity ent : shooter.getGame().getEntitiesVector(intervening, true)) {
+                for (Entity ent : shooter.getGame().getEntitiesVector(intervening, shooter.getBoardId(), true)) {
                     // don't count ourselves, or the target if it's already lit itself up
                     // or the target if it will be lit up by a previously declared search light
                     if ((ent.getId() == shooter.getId()) || ent.isIlluminated()) {

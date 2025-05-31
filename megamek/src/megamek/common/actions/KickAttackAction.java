@@ -168,11 +168,6 @@ public class KickAttackAction extends PhysicalAttackAction {
                     "Leg must be one of LEFT, RIGHT, LEFTMULE, or RIGHTMULE");
         }
 
-        // non-meks can't kick
-        if (!(ae instanceof Mek)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-meks can't kick");
-        }
-
         // check if all legs are present & working
         if (ae.isLocationBad(Mek.LOC_LLEG) || ae.isLocationBad(Mek.LOC_RLEG)
                 || (ae.entityIsQuad()

@@ -105,6 +105,7 @@ import megamek.client.ui.panels.StartingScenarioPanel;
 import megamek.client.ui.panels.WaitingForServerPanel;
 import megamek.client.ui.tileset.EntityImage;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
+import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.BASE64ToolKit;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
@@ -391,6 +392,8 @@ public class ClientGUI extends AbstractClientGUI
 
     private boolean showFleeZone = false;
 
+    private final TilesetManager tilesetManager;
+
     // endregion Variable Declarations
 
     /**
@@ -413,6 +416,12 @@ public class ClientGUI extends AbstractClientGUI
         audioService.loadSoundFiles();
 
         unitDisplayPanel = new UnitDisplayPanel(this, controller);
+        try {
+            tilesetManager = new TilesetManager(client.getGame());
+        } catch (IOException e) {
+            // this is fatal
+            throw new RuntimeException(e);
+        }
 
         registerCommand(new HelpCommand(this));
         registerCommand(new MoveCommand(this));
@@ -2461,7 +2470,7 @@ public class ClientGUI extends AbstractClientGUI
                         miniMaps.get(boardId).dispose();
                     }
                     BoardView boardView = new BoardView(client.getGame(), controller, ClientGUI.this, boardId);
-                    MinimapDialog newMinimap = new MinimapDialog(frame,ClientGUI.this);
+                    MinimapDialog newMinimap = new MinimapDialog(frame);
                     newMinimap.add(new MinimapPanel(newMinimap, client.getGame(), boardView, ClientGUI.this, null,
                           boardId));
                     newMinimap.setVisible(true);
@@ -3530,5 +3539,9 @@ public class ClientGUI extends AbstractClientGUI
 
     public void activateBoardTooltips() {
         onAllBoardViews(BoardView::activateTooltip);
+    }
+
+    public TilesetManager getTilesetManager() {
+        return tilesetManager;
     }
 }

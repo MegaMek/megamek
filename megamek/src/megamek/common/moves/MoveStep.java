@@ -508,13 +508,11 @@ public class MoveStep implements Serializable {
             setElevation(getElevation() + 1);
         } else if (isJumping()) {
             Hex hex = game.getBoard(boardId).getHex(getPosition());
-            Optional<Building> optionalBuilding = Optional.ofNullable(game.getBoard()
-                                                                            .getBuildingAt(entity.getPosition()));
+            Optional<Building> optionalBuilding = game.getBuildingAt(entity.getPosition(), boardId);
 
             boolean isInsideTheSameBuilding = false;
             if (optionalBuilding.isPresent()) {
-                Optional<Building> optionalBuildingAtCurrentStep = Optional.ofNullable(game.getBoard()
-                                                                                             .getBuildingAt(getPosition()));
+                Optional<Building> optionalBuildingAtCurrentStep = game.getBuildingAt(getPosition(), boardId);
                 if (optionalBuildingAtCurrentStep.isPresent()) {
                     isInsideTheSameBuilding = optionalBuildingAtCurrentStep.get().equals(optionalBuilding.get());
                 }
@@ -1663,14 +1661,14 @@ public class MoveStep implements Serializable {
         } // end AERO stuff
 
         if (isInfantry && isJumping() && stepType == MoveStepType.DOWN) {
-            if (game.getBoard().getHex(curPos).containsTerrain(Terrains.BUILDING)) {
+            if (game.getBoard(boardId).getHex(curPos).containsTerrain(Terrains.BUILDING)) {
                 Coords startingPosition = entity.getPosition();
                 Coords adjacentCoords = curPos.translated(curPos.direction(startingPosition));
-                Hex adjacentHex = game.getBoard().getHex(adjacentCoords);
+                Hex adjacentHex = game.getHex(adjacentCoords, boardId);
 
                 boolean hasLOS = LosEffects.calculateLOS(game,
                       entity,
-                      new FloorTarget(curPos, game.getBoard(), getElevation())).canSee();
+                      new FloorTarget(curPos, game.getBoard(boardId), getElevation())).canSee();
 
                 if (adjacentHex.ceiling() >= getElevation() || !hasLOS) {
                     return; // can't enter the building from this direction

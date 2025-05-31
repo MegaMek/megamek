@@ -1534,6 +1534,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return getEntitiesVector(location.coords(), location.boardId(), ignoreTargetable);
     }
 
+    public List<Entity> getEntitiesVector(BoardLocation location) {
+        return getEntitiesVector(location.coords(), location.boardId(), true);
+    }
+
     public List<Entity> getEntitiesVector(Coords coord, int boardId, boolean ignoreTargetable) {
         return getEntitiesVector(coord, ignoreTargetable).stream()
                      .filter(entity -> entity.isOnBoard(boardId))
@@ -3601,7 +3605,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *       every 7th game round is a space round (TW p.78)
      */
     public boolean isSpaceRound() {
-        //FIXME only for testing:
+        //FIXME only for testing, so that space units can act every round
         return true;
         // This is correct:
 //        return !hasSpaceAndAtmosphericBoards() || ((getRoundCount() > 0) && (getRoundCount() % 7 == 0));
@@ -3614,5 +3618,12 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public boolean isAtmosphericRound() {
         return !hasSpaceAndAtmosphericBoards() || (getRoundCount() % 7 != 0) || getRoundCount() == 0;
+    }
+
+    /**
+     * @return True if any map in this game contains any bridges. Used for Princess calculations.
+     */
+    public boolean hasBridges() {
+        return getBoards().values().stream().anyMatch(Board::containsBridges);
     }
 }

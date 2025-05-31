@@ -53,6 +53,7 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.eras.Eras;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.hexarea.HexArea;
@@ -1188,6 +1189,10 @@ public abstract class Entity extends TurnOrdered
         return compositeTechLevel.isUnofficial();
     }
 
+    public String getIntroductionDateAndEra() {
+        return year + Eras.getEraText(year);
+    }
+
     @Override
     public int getIntroductionDate() {
         return year;
@@ -1203,6 +1208,26 @@ public abstract class Entity extends TurnOrdered
      */
     public int getEarliestTechDate() {
         return compositeTechLevel.getEarliestTechDate();
+    }
+
+    /**
+     * @return The earliest date this unit could be built, based on the latest intro date of the components.
+     */
+    public String getEarliestTechDateAndEra() {
+        return String.valueOf(compositeTechLevel.getEarliestTechDate()) +
+              Eras.getEraText(compositeTechLevel.getEarliestTechDate());
+    }
+
+    public String getPrototypeRangeDate() {
+        return compositeTechLevel.getPrototypeDateRange();
+    }
+
+    public String getProductionDateRange() {
+        return compositeTechLevel.getProductionDateRange();
+    }
+
+    public String getCommonDateRange() {
+        return compositeTechLevel.getCommonDateRange();
     }
 
     @Override

@@ -663,7 +663,7 @@ public class TWGameManager extends AbstractGameManager {
             send(connId, createArtilleryPacket(player));
             send(connId, createFlarePacket());
             for (int boardId : game.getBoardIds()) {
-                send(createSpecialHexDisplayPacket(connId, boardId));
+                send(connId, createSpecialHexDisplayPacket(connId, boardId));
             }
             send(connId, new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings()));
             send(connId, new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
@@ -10817,7 +10817,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Get the entity's current hex.
         Coords coords = entity.getPosition();
-        Hex curHex = game.getBoard().getHex(coords);
+        Hex curHex = game.getHexOf(entity);
 
         Report r;
 
@@ -11392,7 +11392,7 @@ TargetRoll nTargetRoll,
                                          ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        Building bldg = game.getBoard(target).getBuildingAt(target.getPosition());
 
         if (lastEntityId != paa.getEntityId()) {
             // report who is making the attacks
@@ -11690,7 +11690,7 @@ TargetRoll nTargetRoll,
                                          ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        Building bldg = game.getBoard(target).getBuildingAt(target.getPosition());
 
         if (lastEntityId != ae.getId()) {
             // who is making the attacks
@@ -11938,7 +11938,7 @@ TargetRoll nTargetRoll,
                                          ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        Building bldg = game.getBoard(target).getBuildingAt(target.getPosition());
 
         if (lastEntityId != ae.getId()) {
             // who is making the attacks
@@ -12145,7 +12145,7 @@ TargetRoll nTargetRoll,
         Report r;
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        Building bldg = game.getBoard(target).getBuildingAt(target.getPosition());
 
         if (lastEntityId != ae.getId()) {
             // who is making the attacks
@@ -12835,7 +12835,7 @@ TargetRoll nTargetRoll,
         Report r;
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        Building bldg = game.getBoard(target).getBuildingAt(target.getPosition());
 
         // restore club attack
         caa.getClub().restore();
@@ -13781,7 +13781,7 @@ TargetRoll nTargetRoll,
         Coords[] hexes = new Coords[6];
         int[] scores = new int[6];
 
-        Hex curHex = game.getBoard().getHex(ae.getPosition());
+        Hex curHex = game.getHexOf(ae);
         for (int i = 0; i < 6; i++) {
             hexes[i] = ae.getPosition().translated(i);
             scores[i] = 0;
@@ -14941,8 +14941,9 @@ TargetRoll nTargetRoll,
             return;
         }
 
-        final Hex aeHex = game.getBoard().getHex(ae.getPosition());
-        final Hex teHex = game.getBoard().getHex(daa.getTargetPos());
+        Board board = game.getBoard(ae);
+        final Hex aeHex = game.getHexOf(ae);
+        final Hex teHex = board.getHex(daa.getTargetPos());
         final Targetable target = game.getTarget(daa.getTargetType(), daa.getTargetId());
 
         if (target == null) {
@@ -14965,7 +14966,7 @@ TargetRoll nTargetRoll,
             // It's especially important to make sure it's done this way, because some units (Sylph, submarines) can
             // be at ANY elevation underwater, and VTOLs can be well above the surface.
             targetEntity = (Entity) target;
-            Hex hex = game.getBoard().getHex(targetEntity.getPosition());
+            Hex hex = board.getHex(targetEntity.getPosition());
             if (hex.containsTerrain(Terrains.WATER)) {
                 if (targetEntity.relHeight() < 0) {
                     damage = (int) Math.ceil(damage * 0.5f);
@@ -15146,7 +15147,7 @@ TargetRoll nTargetRoll,
         if ((target.getTargetType() == Targetable.TYPE_BUILDING) ||
                   (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             // Which building takes the damage?
-            Building bldg = game.getBoard().getBuildingAt(daa.getTargetPos());
+            Building bldg = board.getBuildingAt(daa.getTargetPos());
 
             // The building takes the full brunt of the attack.
             Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());

@@ -4111,7 +4111,7 @@ public class Compute {
         // Use firing solution if Advanced Sensors is on
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
                 && target.getTargetType() == Targetable.TYPE_ENTITY
-                && game.getBoard().isSpace()) {
+                && game.getBoard(target).isSpace()) {
             Entity te = (Entity) target;
             return hasAnyFiringSolution(game, te.getId());
         }
@@ -4126,7 +4126,8 @@ public class Compute {
 
         // Target may be in an illuminated hex
         if (!teIlluminated) {
-            teIlluminated = !IlluminationLevel.determineIlluminationLevel(game, target.getPosition()).isNone();
+            teIlluminated = !IlluminationLevel.determineIlluminationLevel(game, target.getBoardId(),
+                  target.getPosition()).isNone();
         }
 
         // if either does not have a position then return false
@@ -4167,7 +4168,7 @@ public class Compute {
                 // In Low Altitude, Airborne aeros can only see ground targets
                 // they overfly, and only at Alt <=8. It should also spot units
                 // next to this; Low-atmo board with ground units isn't implemented
-                if (game.getBoard().isLowAltitude()) {
+                if (game.isOnAtmosphericMap(attackingEntity)) {
                     if (attackingEntity.getAltitude() > 8) {
                         return false;
                     }
@@ -4783,7 +4784,7 @@ public class Compute {
         // For Space games with this option, return something different
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
                 && target.getTargetType() == Targetable.TYPE_ENTITY
-                && game.getBoard().isSpace()) {
+                && game.getBoard(target).isSpace()) {
             Entity te = (Entity) target;
             return hasSensorContact(ae, te.getId());
         }
@@ -4794,6 +4795,11 @@ public class Compute {
 
         // if either does not have a position then return false
         if ((ae.getPosition() == null) || (target.getPosition() == null)) {
+            return false;
+        }
+
+        // For now, units that are not on the same board are not is sensor range
+        if (!game.onTheSameBoard(ae, target)) {
             return false;
         }
 
@@ -4836,7 +4842,7 @@ public class Compute {
         // find an enemy aero on the map
         // but still won't be able to see it and shoot at it beyond normal visual
         // conditions.
-        if (isAirToAir(game, ae, target) && game.getBoard().isGround()) {
+        if (isAirToAir(game, ae, target) && game.getBoard(ae).isGround()) {
             distance = (int) Math.ceil(distance / 16.0);
         }
         return (distance > minSensorRange) && (distance <= maxSensorRange);

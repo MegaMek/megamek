@@ -58,6 +58,10 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             }
         }
 
+        if (!game.onTheSameBoard(ae, target)) {
+            return "Attacker and target are not on the same board.";
+        }
+
         // check range
         if (Compute.effectiveDistance(game, ae, target) > 1) {
             return "Target not in range";
@@ -105,12 +109,12 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             // target unit in building checks
             final boolean targetInBuilding = Compute.isInBuilding(game, te);
             if (targetInBuilding) {
-                Building TargBldg = game.getBoard().getBuildingAt(te.getPosition());
+                Building TargBldg = game.getBoard(target).getBuildingAt(te.getPosition());
 
                 // Can't target units in buildings (from the outside).
                 if (!Compute.isInBuilding(game, ae)) {
                     return "Target is inside building";
-                } else if (!game.getBoard().getBuildingAt(ae.getPosition()).equals(TargBldg)) {
+                } else if (!game.getBoard(target).getBuildingAt(ae.getPosition()).equals(TargBldg)) {
                     return "Target is inside different building";
                 }
             }
@@ -225,7 +229,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 }
             }
 
-            Hex targHex = game.getBoard().getHex(te.getPosition());
+            Hex targHex = game.getHexOf(te);
             // water partial cover?
             if ((te.height() > 0) && (te.getElevation() == -1)
                     && (targHex.terrainLevel(Terrains.WATER) == te.height())) {

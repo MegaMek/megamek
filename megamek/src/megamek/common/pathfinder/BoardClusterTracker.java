@@ -199,7 +199,7 @@ public class BoardClusterTracker {
         Set<Coords> retVal = Collections.emptySet();
 
         if (entityCluster != null) {
-            retVal = entityCluster.getIntersectingHexes(actualEdge, entity.getGame().getBoard());
+            retVal = entityCluster.getIntersectingHexes(actualEdge, entity.getGame().getBoard(entity));
         }
 
         // try with bridges
@@ -211,7 +211,7 @@ public class BoardClusterTracker {
             }
 
             if (entityCluster != null) {
-                retVal = entityCluster.getIntersectingHexes(actualEdge, entity.getGame().getBoard());
+                retVal = entityCluster.getIntersectingHexes(actualEdge, entity.getGame().getBoard(entity));
             }
         }
 
@@ -313,7 +313,7 @@ public class BoardClusterTracker {
             return clusters;
         }
 
-        Board board = entity.getGame().getBoard();
+        Board board = entity.getGame().getBoard(entity);
         int clusterID = 0;
 
         MovementType movementType = MovementType.getMovementType(entity);
@@ -427,7 +427,7 @@ public class BoardClusterTracker {
         // meks can climb over buildings that won't collapse under them
         // the relative height comparison is handled elsewhere
 
-        Board board = entity.getGame().getBoard();
+        Board board = entity.getGame().getBoard(entity);
         Hex hex = board.getHex(coords);
 
         if (!hex.containsTerrain(Terrains.BLDG_CF) && !hex.containsExit(Terrains.FUEL_TANK_CF)) {

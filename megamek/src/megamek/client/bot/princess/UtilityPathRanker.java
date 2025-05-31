@@ -350,8 +350,11 @@ public class UtilityPathRanker extends BasicPathRanker {
         UnitBehavior.BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner());
         double weight = getOwner().getBehaviorSettings().getSelfPreservationIndex() / 10.0;
         if (behaviorType == UnitBehavior.BehaviorType.ForcedWithdrawal || behaviorType == UnitBehavior.BehaviorType.MoveToDestination) {
-            int newDistanceToHome = distanceToHomeEdge(path.getFinalCoords(), getOwner().getHomeEdge(movingUnit), game);
-            int currentDistanceToHome = distanceToHomeEdge(path.getEntity().getPosition(), getOwner().getHomeEdge(movingUnit), game);
+            int newDistanceToHome = distanceToHomeEdge(path.getFinalCoords(), path.getFinalBoardId(),
+                  getOwner().getHomeEdge(movingUnit),
+                  game);
+            int currentDistanceToHome = distanceToHomeEdge(path.getEntity().getPosition(),
+                  path.getEntity().getBoardId(), getOwner().getHomeEdge(movingUnit), game);
 
             double deltaDistance = currentDistanceToHome - newDistanceToHome;
             double selfPreservationMod;

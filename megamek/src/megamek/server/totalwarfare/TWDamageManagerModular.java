@@ -343,9 +343,6 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         HitData nextHit = null;
         boolean damageIS = mods.damageIS;
 
-        // Accumulate crits here.
-        int crits = mods.crits;
-
         while (damage > 0) {
             // Apply damage to armor
             damage = applyEntityArmorDamage(proto, hit, damage, ammoExplosion, damageIS, areaSatArty, reportVec, mods);
@@ -361,7 +358,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // internal structure absorbs all damage
                         proto.setInternal(proto.getInternal(hit) - damage, hit);
                         // Triggers a critical hit on Vehicles and Meks.
-                        crits++;
+                        mods.crits++;
                         mods.tookInternalDamage = true;
                         // Alternate structures don't affect our damage total
                         // for later PSR purposes, so use the previously stored
@@ -375,7 +372,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         reportVec.addElement(report);
                     } else {
                         // Triggers a critical hit on Vehicles and Meks.
-                        crits++;
+                        mods.crits++;
                         // damage transfers, maybe
                         int absorbed = Math.max(proto.getInternal(hit), 0);
 
@@ -482,7 +479,6 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     mods.specCrits = mods.specCrits + 1;
                 }
             }
-            mods.crits = crits;
 
             // check for breaching
             reportVec.addAll(manager.breachCheck(proto, hit.getLocation(), null, underWater));
@@ -542,11 +538,10 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
         damage = manageDamageTypeReports(mek, reportVec, damage, damageType, hit, false, mods);
 
-        // Accumulate crits here.
-        int crits = mods.crits;
 
         // Allocate the damage
         while (damage > 0) {
+            
             // damage some cargo if we're taking damage
             // maybe move past "exterior passenger" check
             if (!ammoExplosion) {
@@ -741,7 +736,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // internal structure absorbs all damage
                         mek.setInternal(mek.getInternal(hit) - damage, hit);
                         // Triggers a critical hit on Vehicles and Meks.
-                        crits++;
+                        mods.crits++;
                         mods.tookInternalDamage = true;
                         // Alternate structures don't affect our damage total
                         // for later PSR purposes, so use the previously stored
@@ -756,7 +751,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         reportVec.addElement(report);
                     } else if (damage > 0) {
                         // Triggers a critical hit on Vehicles and Meks.
-                        crits++;
+                        mods.crits++;
                         // damage transfers, maybe
                         int absorbed = Math.max(mek.getInternal(hit), 0);
 
@@ -960,7 +955,6 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     mods.specCrits = mods.specCrits + 1;
                 }
             }
-            mods.crits = crits;
 
             // check for breaching
             reportVec.addAll(manager.breachCheck(mek, hit.getLocation(), null, underWater));
@@ -1323,9 +1317,6 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             damage = (damage + 9) / 10;
         }
 
-        // Accumulate crits here.
-        int crits = mods.crits;
-
         // Allocate the damage
         while (damage > 0) {
 
@@ -1413,7 +1404,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // internal structure absorbs all damage
                         tank.setInternal(tank.getInternal(hit) - damage, hit);
                         // Triggers a critical hit on Vehicles and Meks.
-                        crits++;
+                        mods.crits++;
                         mods.tookInternalDamage = true;
                         // Alternate structures don't affect our damage total
                         // for later PSR purposes, so use the previously stored
@@ -1427,7 +1418,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         reportVec.addElement(report);
                     } else {
                         // Triggers a critical hit on Vehicles and Meks.
-                        crits++;
+                        mods.crits++;
                         // damage transfers, maybe
                         int absorbed = Math.max(tank.getInternal(hit), 0);
 
@@ -1547,7 +1538,6 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     mods.specCrits = mods.specCrits + 1;
                 }
             }
-            mods.crits = crits;
 
             // check for breaching
             reportVec.addAll(manager.breachCheck(tank, hit.getLocation(), null, underWater));
@@ -1820,6 +1810,12 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     // potentials?
                     nextHit = battleArmor.getTransferLocation(hit);
                     if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
+
+                        // Entity destroyed.
+                        reportVec.addAll(
+                              manager.destroyEntity(battleArmor, "damage", true, false)
+                        );
+
                         // nowhere for further damage to go
                         damage = 0;
                     } else if (nextHit.getLocation() == Entity.LOC_NONE) {

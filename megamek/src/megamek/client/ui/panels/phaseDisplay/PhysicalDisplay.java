@@ -265,8 +265,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         // HACK : don't show the choice dialog.
         showTargetChoice = false;
 
-        clientgui.getBoardView().centerOnHex(targ.getPosition());
-        clientgui.getBoardView().select(targ.getPosition());
+        clientgui.centerOnUnit(targ);
+        clientgui.getCurrentBoardView().ifPresent(bv -> bv.select(targ.getPosition()));
 
         // HACK : show the choice dialog again.
         showTargetChoice = true;
@@ -1644,83 +1644,75 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     }
 
     @Override
-    public void hexSelected(BoardViewEvent b) {
-        // Are we ignoring events?
+    public void hexSelected(BoardViewEvent event) {
         if (isIgnoringEvents()) {
             return;
         }
 
-        if (clientgui.getClient().isMyTurn() && (b.getCoords() != null) && (ce() != null)) {
-            final Targetable targ = chooseTarget(b.getCoords());
-            target(targ);
+        if (isMyTurn() && (event.getCoords() != null) && (ce() != null)) {
+            Targetable target = chooseTarget(event);
+            target(target);
         }
     }
 
     /**
-     * Have the player select a target from the entities at the given coords.
+     * Returns a target that the player may choose from those at the position of the given event.
      *
-     * @param pos - the <code>Coords</code> containing targets.
+     * @param event The hex selection event
      */
-    private Targetable chooseTarget(Coords pos) {
-        // Assume that we have *no* choice.
-        Targetable choice = null;
+    private Targetable chooseTarget(BoardViewEvent event) {
+        Entity attacker = ce();
+        if (attacker == null) {
+            return null;
+        }
 
-        // Get the available choices.
-        Iterator<Entity> choices = game.getEntities(pos);
-
-        // Convert the choices into a List of targets.
         List<Targetable> targets = new ArrayList<>();
-        boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
-        while (choices.hasNext()) {
-            choice = choices.next();
-            if (!ce().equals(choice) && (friendlyFire || choice.isEnemyOf(ce()))) {
-                targets.add(choice);
+        boolean usingFriendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
+
+        for (Entity possibleTarget : game.getEntitiesVector(event.getBoardLocation())) {
+            if (!attacker.equals(possibleTarget) && (usingFriendlyFire || possibleTarget.isEnemyOf(attacker))) {
+                targets.add(possibleTarget);
             }
         }
+
         targets.sort((o1, o2) -> {
-            boolean enemy1 = o1.isEnemyOf(ce());
-            boolean enemy2 = o2.isEnemyOf(ce());
-            if (enemy1 && enemy2) {
-                return 0;
-            } else if (enemy1) {
-                return -1;
-            } else {
-                return 1;
-            }
+            boolean enemy1 = o1.isEnemyOf(attacker);
+            boolean enemy2 = o2.isEnemyOf(attacker);
+            return (enemy1 && enemy2) ? 0 : enemy1 ? -1 : 1;
         });
 
         // Is there a building in the hex?
-        Building bldg = game.getBoard().getBuildingAt(pos);
-        if (bldg != null) {
-            targets.add(new BuildingTarget(pos, game.getBoard(), false));
+        Coords pos = event.getCoords();
+        Board board = game.getBoard(event.getBoardId());
+        if (board.getBuildingAt(pos) != null) {
+            targets.add(new BuildingTarget(pos, board, false));
         }
 
-        // Is the attacker targeting its own hex?
-        if (ce().getPosition().equals(pos)) {
-            // Add any iNarc pods attached to the entity.
-            Iterator<INarcPod> pods = ce().getINarcPodsAttached();
+        // Add any iNarc pods attached to the entity if the attacker is targeting its own hex
+        if (attacker.getPosition().equals(pos)) {
+            Iterator<INarcPod> pods = attacker.getINarcPodsAttached();
             while (pods.hasNext()) {
-                choice = pods.next();
+                Targetable choice = pods.next();
                 targets.add(choice);
             }
         }
 
-        // Do we have a single choice?
         if (targets.size() == 1) {
-            // Return that choice.
-            choice = targets.get(0);
+            // Return the single choice
+            return targets.get(0);
+
         } else if (targets.size() > 1) {
             // If we have multiple choices, display a selection dialog.
-            choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
+            return TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
                   "PhysicalDisplay.ChooseTargetDialog.title",
                   Messages.getString("PhysicalDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
                   targets,
                   clientgui,
-                  ce());
-        }
+                  attacker);
 
-        // Return the chosen unit.
-        return choice;
+        } else {
+            return null;
+        }
     }
 
     //
@@ -1990,11 +1982,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             }
 
             if (canAim) {
-
-                final int attackerElevation = ce().getElevation() +
-                                                    ce().getGame().getBoard().getHex(ce().getPosition()).getLevel();
-                final int targetElevation = target.getElevation() +
-                                                  ce().getGame().getBoard().getHex(target.getPosition()).getLevel();
+                final int attackerElevation = ce().getElevation() + game.getHexOf(ce()).getLevel();
+                final int targetElevation = target.getElevation() + game.getHexOf(target).getLevel();
 
                 if ((target instanceof Mek) && (ce() instanceof Mek) && (attackerElevation == targetElevation)) {
                     String[] options = { "punch", "kick" };

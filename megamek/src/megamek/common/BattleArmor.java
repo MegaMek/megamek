@@ -620,7 +620,7 @@ public class BattleArmor extends Infantry {
     public HitData rollHitLocation(int side, int aimedLocation, AimingMode aimingMode,
             boolean isAttackingConvInfantry) {
         // If this squad was killed, target trooper 1 (just because).
-        if (isDoomed()) {
+        if (isDoomed() || getNumberActiverTroopers() <= 0) {
             return new HitData(1);
         }
 

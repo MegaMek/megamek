@@ -30,6 +30,7 @@ import javax.swing.ImageIcon;
 import megamek.common.BTObject;
 import megamek.common.Configuration;
 import megamek.common.Mek;
+import megamek.common.MekSummary;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
 
@@ -181,11 +182,18 @@ public final class FluffImageHelper {
         String sanitizedChassis = sanitize(unit.generalName());
         String sanitizedModel = sanitize(unit.specificName());
         nameCandidates.add((sanitizedChassis + " " + sanitizedModel).trim());
-        if (unit instanceof Mek && !((Mek) unit).getClanChassisName().isBlank()) {
-            Mek mek = (Mek) unit;
+        if (unit instanceof Mek mek && !mek.getClanChassisName().isBlank()) {
             String fullChassis = sanitize(mek.getFullChassis());
             nameCandidates.add((fullChassis + " " + sanitizedModel).trim());
             String clanChassis = sanitize(mek.getClanChassisName());
+            nameCandidates.add((clanChassis + " " + sanitizedModel).trim());
+            nameCandidates.add(fullChassis);
+            nameCandidates.add(clanChassis);
+        }
+        if (unit instanceof MekSummary mekSummary && mekSummary.isMek()) {
+            String fullChassis = sanitize(mekSummary.getFullChassis());
+            nameCandidates.add((fullChassis + " " + sanitizedModel).trim());
+            String clanChassis = sanitize(mekSummary.getClanChassisName());
             nameCandidates.add((clanChassis + " " + sanitizedModel).trim());
             nameCandidates.add(fullChassis);
             nameCandidates.add(clanChassis);

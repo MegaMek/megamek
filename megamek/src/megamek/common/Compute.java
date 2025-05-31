@@ -3589,6 +3589,7 @@ public class Compute {
                     }
                     fDamage = (float) (av * threat);
 
+                //TODO: rules need to be checked.
                 } else if ((wt.getAmmoType() == AmmoTypeEnum.ARROW_IV)
                         || wt.getAmmoType() == AmmoTypeEnum.ARROWIV_PROTO
                         || wt.getAmmoType() == AmmoTypeEnum.ARROW_IV_BOMB) {

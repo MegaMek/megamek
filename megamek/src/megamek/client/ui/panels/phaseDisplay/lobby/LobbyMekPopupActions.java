@@ -32,6 +32,7 @@ import megamek.client.generator.TeamLoadOutGenerator;
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.common.BombLoadout;
 import megamek.common.BombType;
 import megamek.common.Entity;
 import megamek.common.Game;
@@ -441,8 +442,8 @@ public class LobbyMekPopupActions implements ActionListener {
             if (entity.isBomber() && !entity.isVehicle()) {
                 IBomber bomber = (IBomber) entity;
                 // Clear existing bomb choices!
-                bomber.setIntBombChoices(new int[BombTypeEnum.NUM]);
-                bomber.setExtBombChoices(new int[BombTypeEnum.NUM]);
+                bomber.setIntBombChoices(new BombLoadout());
+                bomber.setExtBombChoices(new BombLoadout());
                 resetBombers.add(entity);
             }
         }

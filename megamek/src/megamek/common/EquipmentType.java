@@ -733,6 +733,9 @@ public class EquipmentType implements ITechnology {
     }
 
     public void setInternalName(String s) {
+        if (s == null || s.isEmpty()) {
+            throw new IllegalArgumentException("Internal name cannot be null or empty");
+        }
         internalName = s;
         addLookupName(s);
     }

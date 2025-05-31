@@ -24,25 +24,25 @@ import static java.util.stream.Collectors.toList;
 public class BombType extends AmmoType {
 
     public enum BombTypeEnum {
-        NONE(-1, "None", "None", null, 0, false, false, false),
-        HE(0, "HE Bomb", "HEBomb", null, 1, true, true, false),
-        CLUSTER(1, "Cluster Bomb", "ClusterBomb", null, 1, true, true, false),
-        LG(2, "Laser-guided Bomb", "LGBomb", null, 1, true, true, true),
-        RL(3, "Rocket", "RL 10 Ammo (Bomb)", "BombRL", 1, false, false, false),
-        TAG(4, "TAG", "TAGBomb", "BombTAG", 1, false, false, true),
-        AAA(5, "AAA Missile", "AAAMissile Ammo", "AAA Missile", 5, false, false, false),
-        AS(6, "AS Missile", "ASMissile Ammo", "AS Missile", 6, false, false, false),
-        ASEW(7, "ASEW Missile", "ASEWMissile Ammo", "ASEWMissile", 6, false, false, false),
-        ARROW(8, "Arrow IV Missile", "ArrowIVMissile Ammo", "BombArrowIV", 5, true, false, false),
-        HOMING(9, "Arrow IV Homing Missile", "ArrowIVHomingMissile Ammo", "BombArrowIV", 5, true, false, false),
-        INFERNO(10, "Inferno Bomb", "InfernoBomb", null, 1, false, true, false),
-        LAA(11, "LAA Missile", "LAAMissile Ammo", "LAAMissile", 2, false, false, false),
-        THUNDER(12, "Thunder Bomb", "ThunderBomb", null, 1, false, true, false),
-        TORPEDO(13, "Torpedo Bomb", "TorpedoBomb", null, 1, false, true, false),
-        ALAMO(14, "Alamo Missile", "AlamoMissile Ammo", "AlamoMissile", 10, false, false, false),
-        FAE_SMALL(15, "Fuel-Air Bomb (small)", "FABombSmall Ammo", null, 1, false, true, false),
-        FAE_LARGE(16, "Fuel-Air Bomb (large)", "FABombLarge Ammo", null, 2, false, true, false),
-        RLP(17, "Prototype Rocket", "RL-P 10 Ammo (Bomb)", "BombRLP", 1, false, false, false);
+        NONE(-1, "None", "None", null, false, 0, false, false, false),
+        HE(0, "HE Bomb", "HEBomb", null, false, 1, true, true, false),
+        CLUSTER(1, "Cluster Bomb", "ClusterBomb", null, false, 1, true, true, false),
+        LG(2, "Laser-guided Bomb", "LGBomb", null, false, 1, true, true, true),
+        RL(3, "Rocket", "RL 10 Ammo (Bomb)", "BombRL", false, 1, false, false, false),
+        TAG(4, "TAG", "TAGBomb", "BombTAG", false, 1, false, false, true),
+        AAA(5, "AAA Missile", "AAAMissile Ammo", "AAA Missile", true, 5, false, false, false),
+        AS(6, "AS Missile", "ASMissile Ammo", "AS Missile", true, 6, false, false, false),
+        ASEW(7, "ASEW Missile", "ASEWMissile Ammo", "ASEWMissile", true, 6, false, false, false),
+        ARROW(8, "Arrow IV Missile", "ArrowIVMissile Ammo", "BombArrowIV", true, 5, true, false, false),
+        HOMING(9, "Arrow IV Homing Missile", "ArrowIVHomingMissile Ammo", "BombArrowIV", true, 5, true, false, false),
+        INFERNO(10, "Inferno Bomb", "InfernoBomb", null, true, 1, false, true, false),
+        LAA(11, "LAA Missile", "LAAMissile Ammo", "LAAMissile", true, 2, false, false, false),
+        THUNDER(12, "Thunder Bomb", "ThunderBomb", null, true, 1, false, true, false),
+        TORPEDO(13, "Torpedo Bomb", "TorpedoBomb", null, true, 1, false, true, false),
+        ALAMO(14, "Alamo Missile", "AlamoMissile Ammo", "AlamoMissile", true, 10, false, false, false),
+        FAE_SMALL(15, "Fuel-Air Bomb (small)", "FABombSmall Ammo", null, true, 1, false, true, false),
+        FAE_LARGE(16, "Fuel-Air Bomb (large)", "FABombLarge Ammo", null, true, 2, false, true, false),
+        RLP(17, "Prototype Rocket", "RL-P 10 Ammo (Bomb)", "BombRLP", true, 1, false, false, false);
 
         private static final Map<Integer, BombTypeEnum> INDEX_LOOKUP = new HashMap<>();
         private static final Map<String, BombTypeEnum> INTERNAL_NAME_LOOKUP = new HashMap<>();
@@ -57,16 +57,18 @@ public class BombType extends AmmoType {
         private final String displayName;
         private final String internalName;
         private final String weaponName;
+        private final boolean advancedAmmo;
         private final int cost;
         private final boolean canSpaceBomb;
         private final boolean canGroundBomb;
         private final boolean isGuided;
 
-        BombTypeEnum(int index, String displayName, String internalName, String weaponName, int cost, boolean canSpaceBomb, boolean canGroundBomb, boolean isGuided) {
+        BombTypeEnum(int index, String displayName, String internalName, String weaponName, boolean advancedAmmo, int cost, boolean canSpaceBomb, boolean canGroundBomb, boolean isGuided) {
             this.index = index;
             this.displayName = displayName;
             this.internalName = internalName;
             this.weaponName = weaponName;
+            this.advancedAmmo = advancedAmmo;
             this.cost = cost;
             this.canSpaceBomb = canSpaceBomb;
             this.canGroundBomb = canGroundBomb;
@@ -103,6 +105,10 @@ public class BombType extends AmmoType {
 
         public boolean isGuided() {
             return isGuided;
+        }
+
+        public boolean isAdvancedAmmo() {
+            return advancedAmmo;
         }
 
         public static BombTypeEnum fromIndex(int index) {

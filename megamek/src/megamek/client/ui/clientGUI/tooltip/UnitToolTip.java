@@ -1384,14 +1384,13 @@ public final class UnitToolTip {
             } else {
                 loadout = entity.getBombLoadout();
             }
-
-            for (int i = 0; i < loadout.length; i++) {
-                int count = loadout[i];
-
+            for (Map.Entry<BombTypeEnum, Integer> entry : loadout.entrySet()) {
+                BombTypeEnum bombType = entry.getKey();
+                int count = entry.getValue();
                 if (count > 0) {
                     col1 = String.valueOf(count);
                     col2 = "&nbsp;x&nbsp;";
-                    col3 = BombTypeEnum.fromIndex(i).getDisplayName();
+                    col3 = bombType.getDisplayName();
 
                     String attr = String.format("FACE=Dialog COLOR=%s",
                           UIUtil.toColorHexString(GUIP.getUnitToolTipWeaponColor()));

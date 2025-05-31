@@ -843,7 +843,7 @@ public class WeaponFireInfo {
                 .append(":");
 
         // Set up the attack action and calculate the chance to hit.
-        if ((null == bombPayloads) || (0 == bombPayloads.get("external").length)) {
+        if ((null == bombPayloads) || (0 == bombPayloads.get("external").getTotalBombs())) {
             setAction(buildWeaponAttackAction());
         } else {
             setAction(buildBombAttackAction(bombPayloads));

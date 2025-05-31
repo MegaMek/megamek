@@ -133,8 +133,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     // Bomb choices
 
-    protected BombLoadout intBombChoices = new HashMap<>();
-    protected BombLoadout extBombChoices = new HashMap<>();
+    protected BombLoadout intBombChoices = new BombLoadout();
+    protected BombLoadout extBombChoices = new BombLoadout();
 
     private Targetable airmekBombTarget = null;
 
@@ -1103,12 +1103,12 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     @Override
     public BombLoadout getIntBombChoices() {
-        return new HashMap<>(intBombChoices);
+        return new BombLoadout(intBombChoices);
     }
 
     @Override
     public void setIntBombChoices(BombLoadout bc) {
-        intBombChoices = new HashMap<>(bc);
+        intBombChoices = new BombLoadout(bc);
     }
 
     @Override
@@ -1129,7 +1129,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     @Override
     public BombLoadout getExtBombChoices() {
-        return new HashMap<>(extBombChoices);
+        return new BombLoadout(extBombChoices);
     }
 
     @Override

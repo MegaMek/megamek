@@ -26,6 +26,8 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Serial;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 import javax.swing.JButton;
@@ -36,6 +38,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import megamek.client.ui.Messages;
+import megamek.common.BombLoadout;
 import megamek.common.BombType;
 import megamek.common.BombType.BombTypeEnum;
 
@@ -52,15 +55,15 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
     private int limit;
     private int internalBombLimit = 6;
     private int internalBombCount = 0;
-    private int[] bombs;
+    private BombLoadout availableBombs;
 
     private final JPanel panButtons = new JPanel();
     private final JButton butOK = new JButton(Messages.getString("Okay"));
     private final JButton butCancel = new JButton(Messages.getString("Cancel"));
 
-    @SuppressWarnings("rawtypes")
-    private JComboBox[] b_choices;
-    private JLabel[] b_labels;
+
+    private EnumMap<BombTypeEnum, JComboBox<String>> b_choices = new EnumMap<>(BombTypeEnum.class);
+    private EnumMap<BombTypeEnum, JLabel> b_labels = new EnumMap<>(BombTypeEnum.class);
     private JLabel description;
 
     /**
@@ -73,20 +76,20 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
      *
      * @param parent      - the <code>Frame</code> that is locked by this dialog.
      * @param title       - the title <code>String</code> for this dialog.
-     * @param b           The bomb choice list
+     * @param availableBombs The bomb choice list
      * @param spaceBomb   Flag for whether this is space bombing
      * @param bombDump
      * @param lim
      * @param numFighters The number of fighters in a squadron, 0 implies a single fighter not in a squadron.
      */
     @SuppressWarnings("unchecked")
-    private void initialize(JFrame parent, String title, int[] b, boolean spaceBomb, boolean bombDump, int lim,
+    private void initialize(JFrame parent, String title, BombLoadout availableBombs, boolean spaceBomb, boolean bombDump, int lim,
                             int numFighters) {
         // super.setResizable(false);
 
         this.numFighters = numFighters;
-        bombs = b;
-        limit = lim;
+        this.availableBombs = new BombLoadout(availableBombs);;
+        this.limit = lim;
 
         GridBagLayout gridbag = new GridBagLayout();
         setLayout(gridbag);
@@ -112,55 +115,59 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         c.gridx = 1;
         c.gridy = 1;
 
-        b_choices = new JComboBox[bombs.length];
-        b_labels = new JLabel[bombs.length];
         //initialize the bomb choices
-        for (int i = 0; i < bombs.length; i++) {
-            b_choices[i] = new JComboBox<String>();
-            b_labels[i] = new JLabel(BombTypeEnum.fromIndex(i).getDisplayName());
-            int max = bombs[i];
-            if ((limit > -1) && (max > limit)) {
-                max = limit;
+        int currentRow = 1;
+        for (BombTypeEnum bombType : BombTypeEnum.values()) {
+            if (bombType == BombTypeEnum.NONE) continue;
+
+            int availableCount = availableBombs.getCount(bombType);
+            if (availableCount == 0) continue;
+            if (spaceBomb && !bombType.canSpaceBomb()) continue;
+            if (!spaceBomb && !bombDump && !bombType.canGroundBomb()) continue;
+
+            JComboBox<String> comboBox = new JComboBox<>();
+            JLabel label = new JLabel(bombType.getDisplayName());
+            
+            b_choices.put(bombType, comboBox);
+            b_labels.put(bombType, label);
+
+            int maxSelectable = availableCount;
+            if ((limit > -1) && (maxSelectable > limit)) {
+                maxSelectable = limit;
             }
+
             if (numFighters != 0) {
                 // Squadrons give the salvo size, and the whole salvo must be
                 //  fired
 
                 // Add 0 bombs
-                b_choices[i].addItem(Integer.toString(0));
-                int maxNumSalvos = (int) Math.ceil(bombs[i] / this.numFighters);
+                comboBox.addItem("0");
+                int maxNumSalvos = (int) Math.ceil(availableCount / this.numFighters);
                 // Add the full-squadron salvos
                 for (int j = 1; j < maxNumSalvos; j++) {
-                    int numBombs = j * numFighters;
-                    b_choices[i].addItem(j + " (" + numBombs + ")");
+                    int numBombs = (int) (j * numFighters);
+                    comboBox.addItem(j + " (" + numBombs + ")");
                 }
                 // Add the maximum number of salvos
-                b_choices[i].addItem((int) maxNumSalvos + " (" + bombs[i] + ")");
+                comboBox.addItem(maxNumSalvos + " (" + availableCount + ")");
             } else {
-                for (int x = 0; x <= max; x++) {
-                    b_choices[i].addItem(Integer.toString(x));
+                for (int x = 0; x <= maxSelectable; x++) {
+                    comboBox.addItem(Integer.toString(x));
                 }
             }
-            b_choices[i].setSelectedIndex(0);
-            b_choices[i].addItemListener(this);
-            //only display eligible bomb drops
-            if (spaceBomb && !BombType.canSpaceBomb(i)) {
-                continue;
-            } else if (!spaceBomb && !bombDump && !BombType.canGroundBomb(i)) {
-                continue;
-            } else if (bombs[i] == 0) {
-                continue;
-            }
+            comboBox.setSelectedIndex(0);
+            comboBox.addItemListener(this);
+
             c.gridx = 1;
-            c.gridy = i + 1;
+            c.gridy = currentRow + 1;
             c.anchor = GridBagConstraints.EAST;
-            add(b_labels[i], c);
-            gridbag.setConstraints(b_labels[i], c);
+            add(label, c);
+            gridbag.setConstraints(label, c);
             c.gridx = 2;
-            c.gridy = i + 1;
+            c.gridy = currentRow + 1;
             c.anchor = GridBagConstraints.WEST;
-            add(b_choices[i], c);
-            gridbag.setConstraints(b_choices[i], c);
+            add(comboBox, c);
+            gridbag.setConstraints(comboBox, c);
         }
 
         // Allow the player to confirm or abort the choice.
@@ -221,7 +228,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
      * @param limit
      * @param numFighters
      */
-    public BombPayloadDialog(JFrame parent, String title, int[] bombs, boolean spaceBomb, boolean bombDump, int limit,
+    public BombPayloadDialog(JFrame parent, String title, BombLoadout bombs, boolean spaceBomb, boolean bombDump, int limit,
                              int numFighters) {
         super(parent, title, true);
         initialize(parent, title, bombs, spaceBomb, bombDump, limit, numFighters);
@@ -245,34 +252,103 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             return;
         }
 
-        int[] current = new int[b_choices.length];
-        for (int i = 0; i < b_choices.length; i++) {
-            current[i] = b_choices[i].getSelectedIndex();
+        BombLoadout currentSelections = new BombLoadout();
+        for (Map.Entry<BombTypeEnum, JComboBox<String>> entry : b_choices.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            JComboBox<String> comboBox = entry.getValue();
+            
+            int selectedCount = getSelectedCount(comboBox);
+            if (selectedCount > 0) {
+                currentSelections.put(bombType, selectedCount);
+            }
         }
-
+        
+        // Calculate remaining capacity for each bomb type
         // don't factor in your own choice when determining how much is left
-        int[] left = new int[b_choices.length];
-        for (int i = 0; i < left.length; i++) {
-            left[i] = limit;
-            for (int j = 0; j < current.length; j++) {
-                if (i != j) {
-                    left[i] -= current[j];
+        int totalSelected = currentSelections.getTotalBombs();
+        for (Map.Entry<BombTypeEnum, JComboBox<String>> entry : b_choices.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            JComboBox<String> comboBox = entry.getValue();
+            
+            comboBox.removeItemListener(this);
+            comboBox.removeAllItems();
+            
+            int currentSelected = currentSelections.getCount(bombType);
+            int remainingCapacity = limit - (totalSelected - currentSelected);
+            int available = availableBombs.getCount(bombType);
+            int maxSelectable = Math.min(available, remainingCapacity);
+            
+            if (numFighters != 0) {
+                // Squadron logic
+                comboBox.addItem("0");
+                int maxNumSalvos = (int) Math.ceil(maxSelectable / this.numFighters);
+                
+                for (int j = 1; j <= maxNumSalvos; j++) {
+                    int numBombs = (int) Math.min(j * numFighters, available);
+                    if (numBombs <= maxSelectable) {
+                        comboBox.addItem(j + " (" + numBombs + ")");
+                    }
+                }
+            } else {
+                for (int x = 0; x <= maxSelectable; x++) {
+                    comboBox.addItem(Integer.toString(x));
                 }
             }
+            
+            // Restore selection if possible
+            if (currentSelected <= maxSelectable) {
+                setSelectedCount(comboBox, currentSelected);
+            } else {
+                comboBox.setSelectedIndex(0);
+            }
+            
+            comboBox.addItemListener(this);
         }
+    }
 
-        for (int i = 0; i < b_choices.length; i++) {
-            b_choices[i].removeItemListener(this);
-            b_choices[i].removeAllItems();
-            int max = bombs[i];
-            if (max > left[i]) {
-                max = left[i];
+    private int getSelectedCount(JComboBox<String> comboBox) {
+        String selected = (String) comboBox.getSelectedItem();
+        if (selected == null || "0".equals(selected)) {
+            return 0;
+        }
+        
+        if (numFighters != 0) {
+            // Parse squadron format: "# (#)"
+            StringTokenizer toks = new StringTokenizer(selected, "() ");
+            toks.nextToken(); // Skip salvo count
+            if (toks.hasMoreTokens()) {
+                return Integer.parseInt(toks.nextToken());
             }
-            for (int x = 0; x <= max; x++) {
-                b_choices[i].addItem(Integer.toString(x));
+            return 0;
+        } else {
+            return Integer.parseInt(selected);
+        }
+    }
+
+    private void setSelectedCount(JComboBox<String> comboBox, int count) {
+        if (count == 0) {
+            comboBox.setSelectedIndex(0);
+            return;
+        }
+        
+        for (int i = 0; i < comboBox.getItemCount(); i++) {
+            String item = comboBox.getItemAt(i);
+            if (numFighters != 0) {
+                // Squadron format
+                if (item.contains("(") && item.contains(")")) {
+                    StringTokenizer toks = new StringTokenizer(item, "() ");
+                    toks.nextToken(); // Skip salvo count
+                    if (toks.hasMoreTokens() && Integer.parseInt(toks.nextToken()) == count) {
+                        comboBox.setSelectedIndex(i);
+                        return;
+                    }
+                }
+            } else {
+                if (Integer.toString(count).equals(item)) {
+                    comboBox.setSelectedIndex(i);
+                    return;
+                }
             }
-            b_choices[i].setSelectedIndex(current[i]);
-            b_choices[i].addItemListener(this);
         }
     }
 
@@ -284,7 +360,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
      *       select a choice, or if no choices were available.
      */
     public boolean getAnswer() {
-        return (null != getChoices());
+        return confirm && (getChoices() != null);
     }
 
     /**
@@ -294,32 +370,23 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
      *       player canceled the choice, a <code>null</code> value is returned, otherwise an array of the
      *       <code>int</code> indexes from the input array that match the selected choices is returned.
      */
-    public int[] getChoices() {
-        int[] choices = null;
-        if (confirm) {
-            choices = new int[b_choices.length];
-            // Squadrons have to parse values differently
-            if (numFighters != 0) {
-                for (int i = 0; i < b_choices.length; i++) {
-                    // Selected items look like # (#)
-                    String bombString = (String) b_choices[i].getSelectedItem();
-                    StringTokenizer toks = new StringTokenizer(bombString, "() ");
-                    // Peel off the salvo size
-                    int numSalvos = Integer.parseInt(toks.nextToken());
-                    if (numSalvos != 0) {
-                        choices[i] = Integer.parseInt(toks.nextToken());
-                    } else {
-                        choices[i] = 0;
-                    }
-                }
-            } else {
-                for (int i = 0; i < b_choices.length; i++) {
-                    choices[i] = Integer.parseInt((String) Objects.requireNonNull(b_choices[i].getSelectedItem()));
-                }
-            }
+    public BombLoadout getChoices() {
+        if (!confirm) {
+            return null;
         }
 
-        return choices;
+        BombLoadout choices = new BombLoadout();
+        for (Map.Entry<BombTypeEnum, JComboBox<String>> entry : b_choices.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            JComboBox<String> comboBox = entry.getValue();
+            
+            int selectedCount = getSelectedCount(comboBox);
+            if (selectedCount > 0) {
+                choices.put(bombType, selectedCount);
+            }
+        }
+        
+        return choices.isEmpty() ? null : choices;
     }
 
     public int getInternalBombLimit() {

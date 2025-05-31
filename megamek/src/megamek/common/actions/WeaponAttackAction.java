@@ -165,8 +165,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
         swarmingMissiles = other.swarmingMissiles;
         swarmMissiles = other.swarmMissiles;
         weaponId = other.weaponId;
-        this.bombPayloads.put("internal", Arrays.copyOf(other.bombPayloads.get("internal"), BombTypeEnum.NUM));
-        this.bombPayloads.put("external", Arrays.copyOf(other.bombPayloads.get("external"), BombTypeEnum.NUM));
+        this.bombPayloads.put("internal", new BombLoadout(other.bombPayloads.get("internal")));
+        this.bombPayloads.put("external", new BombLoadout(other.bombPayloads.get("external")));
     }
 
     public int getWeaponId() {
@@ -3302,8 +3302,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
     }
 
     public BombLoadout getBombPayload() {
-        BombLoadout combined = new HashMap<>(bombPayloads.get("internal"));
-        bombPayloads.get("external").forEach((type, count) -> 
+        BombLoadout combined = new BombLoadout(bombPayloads.get("internal"));
+        bombPayloads.get("external").forEach((type, count) ->
             combined.merge(type, count, Integer::sum));
         return combined;
     }
@@ -3320,7 +3320,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     public void setBombPayloads(HashMap<String, BombLoadout> bpls) {
         bombPayloads = new HashMap<>();
         for (Map.Entry<String, BombLoadout> entry : bpls.entrySet()) {
-            bombPayloads.put(entry.getKey(), new HashMap<>(entry.getValue()));
+            bombPayloads.put(entry.getKey(), new BombLoadout(entry.getValue()));
         }
     }
 

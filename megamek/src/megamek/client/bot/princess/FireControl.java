@@ -2071,11 +2071,11 @@ public class FireControl {
                     BombTypeEnum bType = bomb.getType().getBombType();
                     if (bomb.isInternalBomb()) {
                         // Can only drop 6 internal bombs in one turn.
-                        if (bombPayloads.get("internal")[bType] < 6) {
-                            bombPayloads.get("internal")[bType]++;
+                        if (bombPayloads.get("internal").getCount(bType) < 6) {
+                            bombPayloads.get("internal").addBombs(bType, 1);
                         }
                     } else {
-                        bombPayloads.get("external")[bType]++;
+                            bombPayloads.get("external").addBombs(bType, 1);
                     }
                 }
 

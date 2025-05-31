@@ -119,7 +119,7 @@ public interface IBomber {
      * @return summed combination of internal and external choices
      */
     default BombLoadout getBombChoices() {
-        BombLoadout combined = new HashMap<>(getIntBombChoices());
+        BombLoadout combined = new BombLoadout(getIntBombChoices());
         getExtBombChoices().forEach((type, count) -> 
             combined.merge(type, count, Integer::sum));
         return combined;
@@ -246,8 +246,7 @@ public interface IBomber {
                         && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                     continue;
                 }
-                if ((bombType.ordinal() > BombTypeEnum.TAG.ordinal())
-                        && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
+                if (bombType.isAdvancedAmmo() && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
                     continue;
                 }
                 // some bombs need an associated weapon and if so
@@ -270,8 +269,7 @@ public interface IBomber {
                         && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                     continue;
                 }
-                if ((bombType.ordinal() > BombTypeEnum.TAG.ordinal())
-                        && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
+                if (bombType.isAdvancedAmmo() && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
                     continue;
                 }
 

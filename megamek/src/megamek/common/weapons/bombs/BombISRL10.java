@@ -14,6 +14,7 @@
 package megamek.common.weapons.bombs;
 
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrototypeRLHandler;
@@ -31,7 +32,7 @@ public class BombISRL10 extends MissileWeapon {
         super();
 
         this.name = "Rocket Launcher Pod";
-        this.setInternalName(BombType.getBombWeaponName(BombTypeEnum.RL));
+        this.setInternalName(BombTypeEnum.RL.getWeaponName());
         addLookupName("RL 10 (Bomb)");
         this.heat = 0;
         this.rackSize = 10;

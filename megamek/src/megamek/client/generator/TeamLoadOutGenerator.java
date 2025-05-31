@@ -1639,7 +1639,7 @@ public class TeamLoadOutGenerator {
                 }
 
             } else {
-                int replacementBomb = airOnly ?
+                BombTypeEnum replacementBomb = airOnly ?
                                             BombTypeEnum.RL :
                                             Compute.randomInt(castPropertyInt("bombReplacementIntRange", 2)) <=
                                                   castPropertyInt("bombReplacementRLThreshold", 0) ?
@@ -1659,7 +1659,7 @@ public class TeamLoadOutGenerator {
         BombTypeEnum selectedBombType = BombTypeEnum.NONE;
         int loopSafety = 0;
 
-        List<Integer> ordnanceIDs = new ArrayList<>();
+        List<BombTypeEnum> ordnanceIDs = new ArrayList<>();
         List<Integer> ordnanceRandomWeights = new ArrayList<>();
         for (BombTypeEnum curID : workingBombMap.keySet()) {
             ordnanceIDs.add(curID);
@@ -1688,8 +1688,8 @@ public class TeamLoadOutGenerator {
 
                 // If the selected ordnance doesn't exceed the provided limit increment the counter, otherwise skip
                 // it and keep trying with some safeties to prevent infinite loops.
-                if (selectedBombType >= 0 && curLoad + selectedBombType.getCost() <= bombUnits) {
-                    bombLoad[selectedBombType]++;
+                if ((selectedBombType != BombTypeEnum.NONE) && (curLoad + selectedBombType.getCost() <= bombUnits)) {
+                    bombLoad.addBombs(selectedBombType, 1);
                     curLoad += selectedBombType.getCost();
                 } else {
                     loopSafety++;
@@ -1701,12 +1701,12 @@ public class TeamLoadOutGenerator {
         if (bombLoad.getTotalBombs() == 0) {
             // Rocket Launchers are a good option after CI era
             if (checkLegality(BombType.createBombByType(BombTypeEnum.RL), faction, techBase, mixedTech)) {
-                bombLoad[BombTypeEnum.RL] = bombUnits;
+                bombLoad.put(BombTypeEnum.RL, bombUnits);
                 return bombLoad;
             }
             // Otherwise, Prototype Rocket Launchers are almost always in style.
             if (checkLegality(BombType.createBombByType(BombTypeEnum.RLP), faction, techBase, mixedTech)) {
-                bombLoad[BombTypeEnum.RLP] = bombUnits;
+                bombLoad.put(BombTypeEnum.RLP, bombUnits);
                 return bombLoad;
             }
         }
@@ -1741,14 +1741,15 @@ public class TeamLoadOutGenerator {
             for (int i = 0; i < loadCount; i++) {
                 if (Compute.randomInt(100) < randomThreshold) {
                     if (airOnly) {
-                        bombLoad[BombTypeEnum.RL]++;
+                        bombLoad.addBombs(BombTypeEnum.RL, 1);
                     } else {
-                        bombLoad[Compute.randomInt(castPropertyInt("bombReplacementIntRange", 2)) <=
+                        BombTypeEnum replacementBomb = Compute.randomInt(castPropertyInt("bombReplacementIntRange", 2)) <=
                                        castPropertyInt("bombReplacementRLThreshold", 0) ?
                                        BombTypeEnum.RL :
-                                       BombTypeEnum.HE]++;
+                                       BombTypeEnum.HE;
+                        bombLoad.addBombs(replacementBomb, 1);
                     }
-                    bombLoad[curBomb]--;
+                    bombLoad.addBombs(curBomb, -1);
                 }
             }
         }
@@ -1767,29 +1768,22 @@ public class TeamLoadOutGenerator {
      * @return true, if TAG was added, false otherwise
      */
     private static boolean addExternalTAG(BombLoadout bombLoad, boolean skipGuided, int maxLoad) {
-        if (bombLoad.length < BombTypeEnum.NUM) {
-            throw new IllegalArgumentException("Invalid array length for bombLoad parameter.");
-        }
-
         if (!skipGuided || !bombLoad.hasGuidedOrdnance()) {
-
-            // If there's enough room, add it
-            int totalLoad = IntStream.range(0, bombLoad.length)
-                                  .map(i -> BombType.getBombCost(i) * Math.max(bombLoad[i], 0))
-                                  .sum();
+            int totalLoad = bombLoad.getTotalBombCost();
             if (totalLoad < maxLoad) {
-                bombLoad[BombTypeEnum.TAG]++;
+                bombLoad.addBombs(BombTypeEnum.TAG, 1);
                 return true;
             } else if (totalLoad == maxLoad) {
-
-                List<BombTypeEnum> replaceableTypes = Arrays.asList(BombTypeEnum.RL,
-                      BombTypeEnum.HE,
-                      BombTypeEnum.INFERNO,
-                      BombTypeEnum.CLUSTER);
-                for (int i = 0; i < replaceableTypes.size(); i++) {
-                    if (bombLoad[i] > 0) {
-                        bombLoad[i]--;
-                        bombLoad[BombTypeEnum.TAG]++;
+                Set<BombTypeEnum> replaceableTypes = Set.of(
+                    BombTypeEnum.RL,
+                    BombTypeEnum.HE,
+                    BombTypeEnum.INFERNO,
+                    BombTypeEnum.CLUSTER
+                );
+                for (BombTypeEnum curType : replaceableTypes) {
+                    if (bombLoad.getCount(curType) > 0) {
+                        bombLoad.addBombs(curType, -1);
+                        bombLoad.addBombs(BombTypeEnum.TAG, 1);
                         return true;
                     }
                 }
@@ -1798,8 +1792,7 @@ public class TeamLoadOutGenerator {
                 // Already overloaded, don't bother
                 return false;
             }
-
-            bombLoad[BombTypeEnum.TAG]++;
+            bombLoad.addBombs(BombTypeEnum.TAG, 1);
             return true;
         }
 

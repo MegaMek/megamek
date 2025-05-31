@@ -15,6 +15,7 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.weapons.missiles.ThunderBoltWeapon;
 
 /**
@@ -31,7 +32,7 @@ public class ISAAAMissileWeapon extends ThunderBoltWeapon {
         super();
 
         this.name = "AAA Missile";
-        this.setInternalName(BombType.getBombWeaponName(BombTypeEnum.AAA));
+        this.setInternalName(BombTypeEnum.AAA.getWeaponName());
         this.heat = 0;
         this.damage = 20;
         this.rackSize = 1;

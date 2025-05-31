@@ -21,6 +21,7 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.missiles.ThunderBoltWeapon;
 
@@ -37,7 +38,7 @@ public class CLASMissileWeapon extends ThunderBoltWeapon {
     public CLASMissileWeapon() {
         super();
         name = "AS Missile";
-        setInternalName(BombType.getBombWeaponName(BombTypeEnum.AS));
+        setInternalName(BombTypeEnum.AS.getWeaponName());
         heat = 0;
         damage = 30;
         rackSize = 1;

@@ -15,6 +15,7 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -37,7 +38,7 @@ public class ISASEWMissileWeapon extends ThunderBoltWeapon {
         super();
 
         this.name = "Anti-Ship Electronic Warfare (ASEW) Missiles";
-        this.setInternalName(BombType.getBombWeaponName(BombTypeEnum.ASEW));
+        this.setInternalName(BombTypeEnum.ASEW.getWeaponName());
         this.heat = 0;
         this.damage = 0;
         this.rackSize = 1;

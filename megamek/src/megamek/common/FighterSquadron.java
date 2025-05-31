@@ -547,7 +547,7 @@ public class FighterSquadron extends AeroSpaceFighter {
                 if ((type == BombTypeEnum.ALAMO)
                         && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                     continue;
-                } else if ((type > BombTypeEnum.TAG) && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
+                } else if (type.isAdvancedAmmo() && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
                     continue;
                 }
 

@@ -14,6 +14,7 @@
 package megamek.common.weapons.bombs;
 
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.weapons.tag.TAGWeapon;
 
 /**
@@ -27,7 +28,7 @@ public class CLBombTAG extends TAGWeapon {
         super();
 
         this.name = "TAG Pod";
-        this.setInternalName(BombType.getBombWeaponName(BombTypeEnum.TAG));
+        this.setInternalName(BombTypeEnum.TAG.getWeaponName());
         this.tonnage = 1;
         this.criticals = 0;
         this.hittable = false;

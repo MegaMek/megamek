@@ -114,6 +114,8 @@ import megamek.client.ui.dialogs.minimap.MinimapPanel;
 import megamek.client.ui.panels.phaseDisplay.AbstractPhaseDisplay;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
+import megamek.client.ui.util.UIUtil.FixedXPanel;
+import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.client.ui.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -1512,13 +1514,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (carrier instanceof FighterSquadron fSquad) {
             // We can't use Aero.getBombPoints() because the bombs haven't been loaded yet, only selected, so we have
             // to count the choices
-            int[] bombChoice = fSquad.getBombChoices();
-            int numLoadedBombs = 0;
-            for (int j : bombChoice) {
-                numLoadedBombs += j;
-            }
+            BombLoadout bombChoices = fSquad.getBombChoices();
             // We can't load all the squadrons bombs
-            if (numLoadedBombs > ((IBomber) carried).getMaxBombPoints()) {
+            if (bombChoices.getTotalBombCost() > ((IBomber) carried).getMaxBombPoints()) {
                 JOptionPane.showMessageDialog(clientgui.getFrame(),
                       Messages.getString("FighterSquadron.bomberror"),
                       Messages.getString("FighterSquadron.bomberror"),

@@ -84,8 +84,7 @@ public class VTOL extends Tank implements IBomber {
         return LOC_TURRET_2;
     }
 
-    protected BombLoadout intBombChoices = new HashMap<>();
-    protected BombLoadout extBombChoices = new HashMap<>();
+    protected BombLoadout extBombChoices = new BombLoadout();
 
     private Targetable bombTarget = null;
     private final List<Coords> strafingCoords = new ArrayList<>();
@@ -277,29 +276,27 @@ public class VTOL extends Tank implements IBomber {
 
     @Override
     public BombLoadout getIntBombChoices() {
-        return new HashMap<>(intBombChoices);
-        return intBombChoices.clone();
+        return new BombLoadout(); // Always empty, VTOLs don't have internal bombs
     }
 
     @Override
     public void setIntBombChoices(BombLoadout bc) {
+        // Internal bomb choices are not supported for VTOLs
     }
 
     @Override
     public BombLoadout getExtBombChoices() {
-        return extBombChoices.clone();
+        return new BombLoadout(extBombChoices);
     }
 
     @Override
     public void setExtBombChoices(BombLoadout bc) {
-        if (bc.length == extBombChoices.length) {
-            extBombChoices = bc;
-        }
+        extBombChoices = new BombLoadout(bc);
     }
 
     @Override
     public void clearBombChoices() {
-        Arrays.fill(extBombChoices, 0);
+        extBombChoices.clear();
     }
 
     @Override

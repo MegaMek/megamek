@@ -15,6 +15,7 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.weapons.missiles.ThunderBoltWeapon;
 
 /**
@@ -32,7 +33,7 @@ public class CLLAAMissileWeapon extends ThunderBoltWeapon {
         super();
 
         this.name = "Light Air-to-Air (LAA) Missiles";
-        this.setInternalName(BombType.getBombWeaponName(BombTypeEnum.LAA));
+        this.setInternalName(BombTypeEnum.LAA.getWeaponName());
         this.heat = 0;
         this.damage = 6;
         this.rackSize = 1;

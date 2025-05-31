@@ -335,6 +335,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private JTextField playersRemainingToShow;
 
     private JComboBox<String> tmmPipModeCbo;
+    private final JCheckBox tmmPipBiggerChk = new JCheckBox(Messages.getString("CommonSettingsDialog.tmmPipBigger"));
     private final JCheckBox darkenMapAtNight = new JCheckBox(Messages.getString("CommonSettingsDialog.darkenMapAtNight"));
     private final JCheckBox translucentHiddenUnits = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.translucentHiddenUnits"));
@@ -874,6 +875,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         row.add(tmmPipModeLabel);
         row.add(tmmPipModeCbo);
         comps.add(row);
+
+        comps.add(checkboxEntry(tmmPipBiggerChk, null));
+        tmmPipBiggerChk.setSelected(GUIP.getTMMPipBigger());
 
         addLineSpacer(comps);
 
@@ -2435,6 +2439,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         buttonsPerRow.setText(String.format("%d", GUIP.getButtonsPerRow()));
         playersRemainingToShow.setText(String.format("%d", GUIP.getPlayersRemainingToShow()));
         tmmPipModeCbo.setSelectedIndex(GUIP.getTMMPipMode());
+        tmmPipBiggerChk.setSelected(GUIP.getTMMPipBigger());
         fontTypeChooserMoveFont.setSelectedItem(GUIP.getMoveFontType());
         moveFontSize.setText(String.format("%d", GUIP.getMoveFontSize()));
         fontStyleChooserMoveFont.setSelectedIndex(GUIP.getMoveFontStyle());
@@ -2647,6 +2652,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         }
 
         GUIP.setTMMPipMode(tmmPipModeCbo.getSelectedIndex());
+        GUIP.setTMMPipBigger(tmmPipBiggerChk.isSelected());
         GUIP.setDarkenMapAtNight(darkenMapAtNight.isSelected());
         GUIP.setTranslucentHiddenUnits(translucentHiddenUnits.isSelected());
 

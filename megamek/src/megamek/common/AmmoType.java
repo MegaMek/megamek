@@ -134,7 +134,8 @@ public class AmmoType extends EquipmentType {
         NAIL_RIVET_GUN(87, "Nail/Rivet Gun", AmmoCategory.Ballistic, false),
         ACi(88, "ACi", AmmoCategory.Ballistic, false),
         KRAKENM(89, "Kraken-M", AmmoCategory.Missile, false),
-        PAC(90, "ProtoMek AC", AmmoCategory.Ballistic, false),
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
+        PAC(90, "ProtoMech AC", AmmoCategory.Ballistic, false),
         NLRM(91, "NLRM", AmmoCategory.Missile, true),
         RIFLE(92, "Rifle", AmmoCategory.Ballistic, false),
         VGL(93, "Vehicle Grenade Launcher", AmmoCategory.Special, false),

@@ -2353,10 +2353,10 @@ public class MULParser {
 
                         try {
                             if (internal) {
-                                intBombChoices[bombType] += Integer.parseInt(load);
+                                intBombChoices.addBombs(bombType, Integer.parseInt(load));
                                 ((IBomber) entity).setIntBombChoices(intBombChoices);
                             } else {
-                                extBombChoices[bombType] += Integer.parseInt(load);
+                                extBombChoices.addBombs(bombType, Integer.parseInt(load));
                                 ((IBomber) entity).setExtBombChoices(extBombChoices);
                             }
                         } catch (NumberFormatException ignore) {

@@ -17,6 +17,7 @@ import java.io.Serial;
 import java.util.List;
 
 import megamek.common.Aero;
+import megamek.common.BombLoadout;
 import megamek.common.BombType;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
@@ -57,15 +58,11 @@ public class SpaceBombAttackHandler extends WeaponHandler {
      */
     @Override
     protected int calcAttackValue() {
-        int[] payload = waa.getBombPayload();
+        BombLoadout payload = waa.getBombPayload();
         if (null == payload) {
             return 0;
         }
-        int numberOfBombs = 0;
-
-        for (int j : payload) {
-            numberOfBombs += j;
-        }
+        int numberOfBombs = payload.getTotalBombs();
 
         if (bDirect) {
             numberOfBombs = Math.min(numberOfBombs + (toHit.getMoS() / 3), numberOfBombs * 2);

@@ -1406,9 +1406,9 @@ public abstract class BVCalculator {
             if (otherEntity instanceof IBomber) {
                 IBomber asBomber = (IBomber) otherEntity;
                 BombType bomb = BombType.createBombByType(BombTypeEnum.HOMING);
-                int homingCount = asBomber.getBombChoices()[BombTypeEnum.HOMING];
+                int homingCount = asBomber.getBombChoices().getCount(BombTypeEnum.HOMING);
                 if (homingCount > 0) {
-                    adjustedBV += bomb.getBV(otherEntity) * asBomber.getBombChoices()[BombTypeEnum.HOMING] * tagCount;
+                    adjustedBV += bomb.getBV(otherEntity) * homingCount * tagCount;
                     bvReport.addLine("- " + bomb.getName(),
                           "+ " +
                                 tagCount +
@@ -1435,7 +1435,7 @@ public abstract class BVCalculator {
                               .count();
         if (entity instanceof IBomber) {
             IBomber asBomber = (IBomber) entity;
-            tagCount += asBomber.getBombChoices()[BombTypeEnum.TAG];
+            tagCount += asBomber.getBombChoices().getCount(BombTypeEnum.HOMING);
         }
         return tagCount;
     }
@@ -1449,7 +1449,7 @@ public abstract class BVCalculator {
         if (entity instanceof IBomber) {
             IBomber asBomber = (IBomber) entity;
             for (BombType bombType : BombType.allBombTypes()) {
-                int bombCount = asBomber.getBombChoices()[BombTypeEnum.fromInternalName(bombType.getInternalName())];
+                int bombCount = asBomber.getBombChoices().getCount(bombType.getBombType());
                 double bombTypeBV = bombType.getBV(entity);
                 if ((bombCount > 0) && (bombTypeBV > 0)) {
                     double bombBV = bombType.getBV(entity) * bombCount;

@@ -58,6 +58,7 @@ public class BombLoadout extends HashMap<BombTypeEnum, Integer> {
         if (key == BombTypeEnum.NONE) {
             throw new IllegalArgumentException("Cannot add NONE bomb type");
         }
+        // If count is zero or negative, remove the bomb type from the loadout
         if (count <= 0) {
             return remove(key);
         }

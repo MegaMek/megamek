@@ -53,7 +53,7 @@ public class BombAttackHandler extends WeaponHandler {
 
     @Override
     protected void useAmmo() {
-        int[] payload = waa.getBombPayload();
+        BombLoadout payload = waa.getBombPayload();
         if (!ae.isBomber() || (null == payload)) {
             return;
         }
@@ -83,7 +83,7 @@ public class BombAttackHandler extends WeaponHandler {
      */
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
-        int[] payload = waa.getBombPayload();
+        BombLoadout payload = waa.getBombPayload();
         Coords coords = target.getPosition();
         Coords drop;
         Player player = game.getEntity(waa.getEntityId()).getOwner();

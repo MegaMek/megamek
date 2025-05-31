@@ -33,122 +33,131 @@ import org.apache.commons.lang3.ArrayUtils;
 public class AmmoType extends EquipmentType {
     private static final MMLogger LOGGER = MMLogger.create(AmmoType.class);
 
+    public enum AmmoCategory {
+        Ballistic,
+        Missile,
+        Energy,
+        Artillery,
+        Bomb,
+        Chemical,
+        Special
+    }
     
     public enum AmmoTypeEnum {
-        NA(-1, "N/A"),
-        AC(1, "Autocannon"),
-        VEHICLE_FLAMER(2, "Vehicle Flamer"),
-        MG(3, "Machine Gun"),
-        MG_HEAVY(4, "Heavy Machine Gun"),
-        MG_LIGHT(5, "Light Machine Gun"),
-        GAUSS(6, "Gauss Rifle"),
-        LRM(7, "Long Range Missile"),
-        LRM_TORPEDO(8, "LRM Torpedo"),
-        SRM(9, "Short Range Missile"),
-        SRM_TORPEDO(10, "SRM Torpedo"),
-        SRM_STREAK(11, "Streak SRM"),
-        MRM(12, "Medium Range Missile"),
-        NARC(13, "NARC"),
-        AMS(14, "Anti-Missile System"),
-        ARROW_IV(15, "Arrow IV"),
-        LONG_TOM(16, "Long Tom"),
-        SNIPER(17, "Sniper"),
-        THUMPER(18, "Thumper"),
-        AC_LBX(19, "LB-X Autocannon"),
-        AC_ULTRA(20, "Ultra Autocannon"),
-        GAUSS_LIGHT(21, "Light Gauss Rifle"),
-        GAUSS_HEAVY(22, "Heavy Gauss Rifle"),
-        AC_ROTARY(23, "Rotary Autocannon"),
-        SRM_ADVANCED(24, "Advanced SRM"),
-        BA_MICRO_BOMB(25, "BA Micro Bomb"),
-        LRM_TORPEDO_COMBO(26, "LRM Torpedo Combo"),
-        MINE(27, "Mine"),
-        ATM(28, "Advanced Tactical Missile"),
-        ROCKET_LAUNCHER(29, "Rocket Launcher"),
-        INARC(30, "iNARC"),
-        LRM_STREAK(31, "Streak LRM"),
-        AC_LBX_THB(32, "LB-X Autocannon THB"),
-        AC_ULTRA_THB(33, "Ultra Autocannon THB"),
-        LAC(34, "Light Autocannon"),
-        HEAVY_FLAMER(35, "Heavy Flamer"),
-        COOLANT_POD(36, "Coolant Pod"),
-        EXLRM(37, "Extended LRM"),
-        APGAUSS(38, "AP Gauss Rifle"),
-        MAGSHOT(39, "MagShot Gauss Rifle"),
-        // PXLRM(40, "Prototype Extended LRM"),
-        // HSRM(41, "Heavy SRM"),
-        // MRM_STREAK(42, "Streak Medium Range Missile"),
-        MPOD(43, "M-Pod"),
-        HAG(44, "Hyper Assault Gauss"),
-        MML(45, "Multi-Missile Launcher"),
-        PLASMA(46, "Plasma Rifle"),
-        SBGAUSS(47, "Silver Bullet Gauss"),
-        RAIL_GUN(48, "Rail Gun"),
-        TBOLT_5(49, "Thunderbolt 5"),
-        TBOLT_10(50, "Thunderbolt 10"),
-        TBOLT_15(51, "Thunderbolt 15"),
-        TBOLT_20(52, "Thunderbolt 20"),
-        NAC(53, "Naval Autocannon"),
-        LIGHT_NGAUSS(54, "Light Naval Gauss"),
-        MED_NGAUSS(55, "Medium Naval Gauss"),
-        HEAVY_NGAUSS(56, "Heavy Naval Gauss"),
-        KILLER_WHALE(57, "Killer Whale"),
-        WHITE_SHARK(58, "White Shark"),
-        BARRACUDA(59, "Barracuda"),
-        KRAKEN_T(60, "Kraken-T"),
-        AR10(61, "AR10"),
-        SCREEN_LAUNCHER(62, "Screen Launcher"),
-        ALAMO(63, "Alamo"),
-        IGAUSS_HEAVY(64, "Heavy iGauss"),
-        CHEMICAL_LASER(65, "Chemical Laser"),
-        HYPER_VELOCITY(66, "Hyper Velocity AC"),
-        MEK_MORTAR(67, "Mek Mortar"),
-        CRUISE_MISSILE(68, "Cruise Missile"),
-        BPOD(69, "B-Pod"),
-        SCC(70, "Sub-Capital Cannon"),
-        MANTA_RAY(71, "Manta Ray"),
-        SWORDFISH(72, "Swordfish"),
-        STINGRAY(73, "Stingray"),
-        PIRANHA(74, "Piranha"),
-        TASER(75, "Taser"),
-        BOMB(76, "Bomb"),
-        AAA_MISSILE(77, "AAA Missile"),
-        AS_MISSILE(78, "AS Missile"),
-        ASEW_MISSILE(79, "ASEW Missile"),
-        LAA_MISSILE(80, "LAA Missile"),
-        RL_BOMB(81, "RL Bomb"),
-        ARROW_IV_BOMB(82, "Arrow IV Bomb"),
-        FLUID_GUN(83, "Fluid Gun"),
-        SNIPER_CANNON(84, "Sniper Cannon"),
-        THUMPER_CANNON(85, "Thumper Cannon"),
-        LONG_TOM_CANNON(86, "Long Tom Cannon"),
-        NAIL_RIVET_GUN(87, "Nail/Rivet Gun"),
-        ACi(88, "ACi"),
-        KRAKENM(89, "Kraken-M"),
-        PAC(90, "ProtoMech AC"),
-        NLRM(91, "NLRM"),
-        RIFLE(92, "Rifle"),
-        VGL(93, "Vehicle Grenade Launcher"),
-        C3_REMOTE_SENSOR(94, "C3 Remote Sensor"),
-        AC_PRIMITIVE(95, "Primitive Autocannon"),
-        LRM_PRIMITIVE(96, "Primitive LRM"),
-        SRM_PRIMITIVE(97, "Primitive SRM"),
-        BA_TUBE(98, "BA Tube Artillery"),
-        IATM(99, "Improved ATM"),
-        LMASS(100, "Light Mass Driver"),
-        MMASS(101, "Medium Mass Driver"),
-        HMASS(102, "Heavy Mass Driver"),
-        APDS(103, "APDS"),
-        AC_IMP(104, "Improved Autocannon"),
-        GAUSS_IMP(105, "Improved Gauss"),
-        SRM_IMP(106, "Improved SRM"),
-        LRM_IMP(107, "Improved LRM"),
-        LONG_TOM_PRIM(108, "Primitive Long Tom"),
-        ARROWIV_PROTO(109, "Prototype Arrow IV"),
-        KILLER_WHALE_T(110, "Killer Whale-T"),
-        WHITE_SHARK_T(111, "White Shark-T"),
-        BARRACUDA_T(112, "Barracuda-T"),
-        INFANTRY(113, "Infantry");
+        NA(-1, "N/A", AmmoCategory.Special),
+        AC(1, "Autocannon", AmmoCategory.Ballistic),
+        VEHICLE_FLAMER(2, "Vehicle Flamer", AmmoCategory.Chemical),
+        MG(3, "Machine Gun", AmmoCategory.Ballistic),
+        MG_HEAVY(4, "Heavy Machine Gun", AmmoCategory.Ballistic),
+        MG_LIGHT(5, "Light Machine Gun", AmmoCategory.Ballistic),
+        GAUSS(6, "Gauss Rifle", AmmoCategory.Ballistic),
+        LRM(7, "Long Range Missile", AmmoCategory.Missile),
+        LRM_TORPEDO(8, "LRM Torpedo", AmmoCategory.Missile),
+        SRM(9, "Short Range Missile", AmmoCategory.Missile),
+        SRM_TORPEDO(10, "SRM Torpedo", AmmoCategory.Missile),
+        SRM_STREAK(11, "Streak SRM", AmmoCategory.Missile),
+        MRM(12, "Medium Range Missile", AmmoCategory.Missile),
+        NARC(13, "NARC", AmmoCategory.Special),
+        AMS(14, "Anti-Missile System", AmmoCategory.Special),
+        ARROW_IV(15, "Arrow IV", AmmoCategory.Artillery),
+        LONG_TOM(16, "Long Tom", AmmoCategory.Artillery),
+        SNIPER(17, "Sniper", AmmoCategory.Artillery),
+        THUMPER(18, "Thumper", AmmoCategory.Artillery),
+        AC_LBX(19, "LB-X Autocannon", AmmoCategory.Ballistic),
+        AC_ULTRA(20, "Ultra Autocannon", AmmoCategory.Ballistic),
+        GAUSS_LIGHT(21, "Light Gauss Rifle", AmmoCategory.Ballistic),
+        GAUSS_HEAVY(22, "Heavy Gauss Rifle", AmmoCategory.Ballistic),
+        AC_ROTARY(23, "Rotary Autocannon", AmmoCategory.Ballistic),
+        SRM_ADVANCED(24, "Advanced SRM", AmmoCategory.Missile),
+        BA_MICRO_BOMB(25, "BA Micro Bomb", AmmoCategory.Bomb),
+        LRM_TORPEDO_COMBO(26, "LRM Torpedo Combo", AmmoCategory.Missile),
+        MINE(27, "Mine", AmmoCategory.Special),
+        ATM(28, "Advanced Tactical Missile", AmmoCategory.Missile),
+        ROCKET_LAUNCHER(29, "Rocket Launcher", AmmoCategory.Missile),
+        INARC(30, "iNARC", AmmoCategory.Special),
+        LRM_STREAK(31, "Streak LRM", AmmoCategory.Missile),
+        AC_LBX_THB(32, "LB-X Autocannon THB", AmmoCategory.Ballistic),
+        AC_ULTRA_THB(33, "Ultra Autocannon THB", AmmoCategory.Ballistic),
+        LAC(34, "Light Autocannon", AmmoCategory.Ballistic),
+        HEAVY_FLAMER(35, "Heavy Flamer", AmmoCategory.Chemical),
+        COOLANT_POD(36, "Coolant Pod", AmmoCategory.Special),
+        EXLRM(37, "Extended LRM", AmmoCategory.Missile),
+        APGAUSS(38, "AP Gauss Rifle", AmmoCategory.Ballistic),
+        MAGSHOT(39, "MagShot Gauss Rifle", AmmoCategory.Ballistic),
+        // PXLRM(40, "Prototype Extended LRM", AmmoCategory.Missile),
+        // HSRM(41, "Heavy SRM", AmmoCategory.Missile),
+        // MRM_STREAK(42, "Streak Medium Range Missile", AmmoCategory.Missile),
+        MPOD(43, "M-Pod", AmmoCategory.Special),
+        HAG(44, "Hyper Assault Gauss", AmmoCategory.Ballistic),
+        MML(45, "Multi-Missile Launcher", AmmoCategory.Missile),
+        PLASMA(46, "Plasma Rifle", AmmoCategory.Energy),
+        SBGAUSS(47, "Silver Bullet Gauss", AmmoCategory.Ballistic),
+        RAIL_GUN(48, "Rail Gun", AmmoCategory.Ballistic),
+        TBOLT_5(49, "Thunderbolt 5", AmmoCategory.Missile),
+        TBOLT_10(50, "Thunderbolt 10", AmmoCategory.Missile),
+        TBOLT_15(51, "Thunderbolt 15", AmmoCategory.Missile),
+        TBOLT_20(52, "Thunderbolt 20", AmmoCategory.Missile),
+        NAC(53, "Naval Autocannon", AmmoCategory.Ballistic),
+        LIGHT_NGAUSS(54, "Light Naval Gauss", AmmoCategory.Ballistic),
+        MED_NGAUSS(55, "Medium Naval Gauss", AmmoCategory.Ballistic),
+        HEAVY_NGAUSS(56, "Heavy Naval Gauss", AmmoCategory.Ballistic),
+        KILLER_WHALE(57, "Killer Whale", AmmoCategory.Missile),
+        WHITE_SHARK(58, "White Shark", AmmoCategory.Missile),
+        BARRACUDA(59, "Barracuda", AmmoCategory.Missile),
+        KRAKEN_T(60, "Kraken-T", AmmoCategory.Missile),
+        AR10(61, "AR10", AmmoCategory.Missile),
+        SCREEN_LAUNCHER(62, "Screen Launcher", AmmoCategory.Special),
+        ALAMO(63, "Alamo", AmmoCategory.Missile),
+        IGAUSS_HEAVY(64, "Heavy iGauss", AmmoCategory.Ballistic),
+        CHEMICAL_LASER(65, "Chemical Laser", AmmoCategory.Energy),
+        HYPER_VELOCITY(66, "Hyper Velocity AC", AmmoCategory.Ballistic),
+        MEK_MORTAR(67, "Mek Mortar", AmmoCategory.Artillery),
+        CRUISE_MISSILE(68, "Cruise Missile", AmmoCategory.Missile),
+        BPOD(69, "B-Pod", AmmoCategory.Special),
+        SCC(70, "Sub-Capital Cannon", AmmoCategory.Ballistic),
+        MANTA_RAY(71, "Manta Ray", AmmoCategory.Missile),
+        SWORDFISH(72, "Swordfish", AmmoCategory.Missile),
+        STINGRAY(73, "Stingray", AmmoCategory.Missile),
+        PIRANHA(74, "Piranha", AmmoCategory.Missile),
+        TASER(75, "Taser", AmmoCategory.Special),
+        BOMB(76, "Bomb", AmmoCategory.Bomb),
+        AAA_MISSILE(77, "AAA Missile", AmmoCategory.Missile),
+        AS_MISSILE(78, "AS Missile", AmmoCategory.Missile),
+        ASEW_MISSILE(79, "ASEW Missile", AmmoCategory.Missile),
+        LAA_MISSILE(80, "LAA Missile", AmmoCategory.Missile),
+        RL_BOMB(81, "RL Bomb", AmmoCategory.Bomb),
+        ARROW_IV_BOMB(82, "Arrow IV Bomb", AmmoCategory.Bomb),
+        FLUID_GUN(83, "Fluid Gun", AmmoCategory.Chemical),
+        SNIPER_CANNON(84, "Sniper Cannon", AmmoCategory.Artillery),
+        THUMPER_CANNON(85, "Thumper Cannon", AmmoCategory.Artillery),
+        LONG_TOM_CANNON(86, "Long Tom Cannon", AmmoCategory.Artillery),
+        NAIL_RIVET_GUN(87, "Nail/Rivet Gun", AmmoCategory.Ballistic),
+        ACi(88, "ACi", AmmoCategory.Ballistic),
+        KRAKENM(89, "Kraken-M", AmmoCategory.Missile),
+        PAC(90, "ProtoMech AC", AmmoCategory.Ballistic),
+        NLRM(91, "NLRM", AmmoCategory.Missile),
+        RIFLE(92, "Rifle", AmmoCategory.Ballistic),
+        VGL(93, "Vehicle Grenade Launcher", AmmoCategory.Special),
+        C3_REMOTE_SENSOR(94, "C3 Remote Sensor", AmmoCategory.Special),
+        AC_PRIMITIVE(95, "Primitive Autocannon", AmmoCategory.Ballistic),
+        LRM_PRIMITIVE(96, "Primitive LRM", AmmoCategory.Missile),
+        SRM_PRIMITIVE(97, "Primitive SRM", AmmoCategory.Missile),
+        BA_TUBE(98, "BA Tube Artillery", AmmoCategory.Artillery),
+        IATM(99, "Improved ATM", AmmoCategory.Missile),
+        LMASS(100, "Light Mass Driver", AmmoCategory.Ballistic),
+        MMASS(101, "Medium Mass Driver", AmmoCategory.Ballistic),
+        HMASS(102, "Heavy Mass Driver", AmmoCategory.Ballistic),
+        APDS(103, "APDS", AmmoCategory.Ballistic),
+        AC_IMP(104, "Improved Autocannon", AmmoCategory.Ballistic),
+        GAUSS_IMP(105, "Improved Gauss", AmmoCategory.Ballistic),
+        SRM_IMP(106, "Improved SRM", AmmoCategory.Missile),
+        LRM_IMP(107, "Improved LRM", AmmoCategory.Missile),
+        LONG_TOM_PRIM(108, "Primitive Long Tom", AmmoCategory.Artillery),
+        ARROWIV_PROTO(109, "Prototype Arrow IV", AmmoCategory.Artillery),
+        KILLER_WHALE_T(110, "Killer Whale-T", AmmoCategory.Missile),
+        WHITE_SHARK_T(111, "White Shark-T", AmmoCategory.Missile),
+        BARRACUDA_T(112, "Barracuda-T", AmmoCategory.Missile),
+        INFANTRY(113, "Infantry", AmmoCategory.Special);
 
         private static final Map<Integer, AmmoTypeEnum> INDEX_LOOKUP = new HashMap<>();
         static {
@@ -159,10 +168,12 @@ public class AmmoType extends EquipmentType {
 
         private final int index;
         private final String name;
+        private final AmmoCategory category;
 
-        AmmoTypeEnum(int index, String name) {
+        AmmoTypeEnum(int index, String name, AmmoCategory category) {
             this.index = index;
             this.name = name;
+            this.category = category;
         }
 
         public int getIndex() {
@@ -171,6 +182,10 @@ public class AmmoType extends EquipmentType {
 
         public String getName() {
             return name;
+        }
+
+        public AmmoCategory getCategory() {
+            return category;
         }
 
         /**
@@ -2136,6 +2151,18 @@ public class AmmoType extends EquipmentType {
      */
     public boolean is(AmmoTypeEnum ammoType) {
         return getAmmoType() == ammoType;
+    }
+
+    /**
+     * Checks if this ammo is affected by AMS.
+     * 
+     * @return true if this ammo is affected by AMS, false otherwise.
+     */
+    public boolean isAffectedByAMS() {
+      if (this.getAmmoType() == AmmoTypeEnum.ARROW_IV) {
+          // Arrow IV is not affected by AMS, but Arrow IV ADA is.
+          return this.getMunitionType().contains(Munitions.M_ADA);
+      }
     }
 
     /**

@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
+
 import static java.util.stream.Collectors.toList;
 
 public class BombType extends AmmoType {
@@ -109,6 +112,25 @@ public class BombType extends AmmoType {
 
         public boolean isAdvancedAmmo() {
             return advancedAmmo;
+        }
+
+        /**
+         * Checks if a bomb type is allowed given current game settings.
+         * @param gameOptions the current game options
+         * @return true if the bomb type is allowed, false otherwise
+         */
+        public boolean isAllowedByGameOptions(GameOptions gameOptions) {
+            if (this == BombTypeEnum.ALAMO && 
+                !gameOptions.booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
+                return false;
+            }
+            int gameTL = TechConstants.getSimpleLevel(
+                gameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)
+            );
+            if (this.isAdvancedAmmo() && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
+                return false;
+            }
+            return true;
         }
 
         public static BombTypeEnum fromIndex(int index) {

@@ -241,14 +241,10 @@ public interface IBomber {
         for (BombTypeEnum bombType : sortedBySize) {
             int count = intBombs.getOrDefault(bombType, 0);
             for (int i = 0; i < count; i++) {
+                if (!bombType.isAllowedByGameOptions(game.getOptions())) {
+                    continue;
+                }
                 int loc = availableBombLocation(bombType.getCost());
-                if ((bombType == BombTypeEnum.ALAMO)
-                        && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
-                    continue;
-                }
-                if (bombType.isAdvancedAmmo() && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
-                    continue;
-                }
                 // some bombs need an associated weapon and if so
                 // they need a weapon for each bomb
                 if (null != bombType.getWeaponName()) {
@@ -264,15 +260,10 @@ public interface IBomber {
         for (BombTypeEnum bombType : sortedBySize) {
             int count = extBombs.getOrDefault(bombType, 0);
             for (int i = 0; i < count; i++) {
+                if (!bombType.isAllowedByGameOptions(game.getOptions())) {
+                    continue;
+                }
                 int loc = availableBombLocation(bombType.getCost());
-                if ((bombType == BombTypeEnum.ALAMO)
-                        && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
-                    continue;
-                }
-                if (bombType.isAdvancedAmmo() && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
-                    continue;
-                }
-
                 // some bombs need an associated weapon and if so
                 // they need a weapon for each bomb
                 if (null != bombType.getWeaponName()) {

@@ -52,6 +52,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.common.*;
+import megamek.common.AmmoType.AmmoTypeEnum;
 import megamek.common.AmmoType.Munitions;
 import megamek.common.BombType.BombTypeEnum;
 import megamek.common.Building.DemolitionCharge;
@@ -9843,7 +9844,8 @@ public class TWGameManager extends AbstractGameManager {
                 Mounted<?> ammoUsed = artilleryFirer.getEquipment(waa.getAmmoId());
                 AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
                 if (atype != null &&
-                          (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV || atype.getAmmoType() == BombTypeEnum.HOMING)) {
+                          (atype.getAmmoType() == AmmoTypeEnum.ARROW_IV 
+                          || atype.getAmmoType() == BombTypeEnum.HOMING)) {
                     isHomingMissile = true;
                 }
             }
@@ -28619,7 +28621,7 @@ TargetRoll nTargetRoll,
         return alreadyHit;
     }
 
-    public Vector<Integer> deliverBombDamage(HexTarget targetHex, int type, int subjectId, Entity killer,
+    public Vector<Integer> deliverBombDamage(HexTarget targetHex, BombTypeEnum type, int subjectId, Entity killer,
           Vector<Report> vPhaseReport) {
         Coords center = targetHex.getPosition();
         Vector<Integer> alreadyHit = new Vector<>();

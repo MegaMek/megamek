@@ -240,13 +240,13 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
               game);
     }
 
-    void loadBombOnASF(Entity bomber, int bombType) {
+    void loadBombOnASF(Entity bomber, BombTypeEnum bombType) {
         loadBombsOnASF(bomber, bombType, 1);
     }
 
-    void loadBombsOnASF(Entity bomber, int bombType, int count) {
-        int[] bombsArray = new int[BombTypeEnum.NUM];
-        bombsArray[bombType] = count;
+    void loadBombsOnASF(Entity bomber, BombTypeEnum bombType, int count) {
+        BombLoadout bombsArray = new BombLoadout();
+        bombsArray.put(bombType, count);
         ((IBomber) bomber).setExtBombChoices(bombsArray);
         ((IBomber) bomber).applyBombs();
     }

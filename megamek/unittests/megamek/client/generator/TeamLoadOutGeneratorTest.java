@@ -18,11 +18,7 @@
  */
 package megamek.client.generator;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -33,12 +29,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import megamek.client.Client;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.*;
 import megamek.common.AmmoType.Munitions;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.containers.MunitionTree;
 import megamek.common.options.GameOptions;
 import megamek.common.options.Option;
@@ -632,7 +630,7 @@ class TeamLoadOutGeneratorTest {
         String faction = "PIR";
         String techBase = "IS";
         boolean mixedTech = false;
-        int[] generatedBombs = tlg.generateExternalOrdnance(bombUnits,
+        BombLoadout generatedBombs = tlg.generateExternalOrdnance(bombUnits,
               airOnly,
               isPirate,
               quality,
@@ -640,10 +638,37 @@ class TeamLoadOutGeneratorTest {
               faction,
               techBase,
               mixedTech);
-        int[] expected = new int[BombTypeEnum.NUM];
-        expected[BombTypeEnum.RLP] = bombUnits;
-        assertArrayEquals(expected, generatedBombs);
+        BombLoadout expected = new BombLoadout();
+        expected.put(BombTypeEnum.RLP, bombUnits);
+        assertBombLoadoutEquals(expected, generatedBombs);
+        if (!expected.equals(generatedBombs)) {
+            fail(String.format("Expected %s, but got %s", expected, generatedBombs));
+        }
     }
+
+    private void assertBombLoadoutEquals(BombLoadout expected, BombLoadout actual) {
+        assertEquals(expected.size(), actual.size(), "BombLoadout sizes don't match");
+        
+        for (Map.Entry<BombTypeEnum, Integer> entry : expected.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            int expectedCount = entry.getValue();
+            int actualCount = actual.getCount(bombType);
+            
+            assertEquals(expectedCount, actualCount, 
+                String.format("Bomb count mismatch for %s: expected %d, got %d", 
+                    bombType.getDisplayName(), expectedCount, actualCount));
+        }
+        
+        // Check for unexpected bomb types in actual
+        for (BombTypeEnum bombType : actual.keySet()) {
+            if (!expected.containsKey(bombType)) {
+                assertEquals(0, actual.getCount(bombType), 
+                    String.format("Unexpected bomb type %s with count %d", 
+                        bombType.getDisplayName(), actual.getCount(bombType)));
+            }
+        }
+    }
+    
 
     /**
      * We expect CAP Pirate flights in the 3SW era to mount ordnance only RL-P pods.
@@ -662,7 +687,7 @@ class TeamLoadOutGeneratorTest {
         String faction = "PIR";
         String techBase = "IS";
         boolean mixedTech = false;
-        int[] generatedBombs = tlg.generateExternalOrdnance(bombUnits,
+        BombLoadout generatedBombs = tlg.generateExternalOrdnance(bombUnits,
               airOnly,
               isPirate,
               quality,
@@ -671,9 +696,9 @@ class TeamLoadOutGeneratorTest {
               techBase,
               mixedTech);
         // Should always get some regular rocket launchers
-        assertTrue(generatedBombs[BombTypeEnum.RL] > 0);
+        assertTrue(generatedBombs.getCount(BombTypeEnum.RL) > 0);
         // Should not use RL-Ps when RLs are available
-        assertEquals(0, generatedBombs[BombTypeEnum.RLP]);
+        assertEquals(0, generatedBombs.getCount(BombTypeEnum.RLP));
     }
 
     /**
@@ -693,7 +718,7 @@ class TeamLoadOutGeneratorTest {
         String faction = "CSJ";
         String techBase = "CL";
         boolean mixedTech = false;
-        int[] generatedBombs = tlg.generateExternalOrdnance(bombUnits,
+        BombLoadout generatedBombs = tlg.generateExternalOrdnance(bombUnits,
               airOnly,
               isPirate,
               quality,
@@ -702,6 +727,6 @@ class TeamLoadOutGeneratorTest {
               techBase,
               mixedTech);
         // Pre-2823, Clan units can take RL-P bombs
-        assertTrue(generatedBombs[BombTypeEnum.RLP] > 0);
+        assertTrue(generatedBombs.getCount(BombTypeEnum.RLP) > 0);
     }
 }

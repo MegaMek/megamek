@@ -311,7 +311,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         if (selected == null || "0".equals(selected)) {
             return 0;
         }
-        
+        // Squadrons have to parse values differently
         if (numFighters != 0) {
             // Parse squadron format: "# (#)"
             StringTokenizer toks = new StringTokenizer(selected, "() ");

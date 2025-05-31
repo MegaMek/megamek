@@ -1099,18 +1099,22 @@ public class MekView {
     private List<ViewElement> getBombs() {
         List<ViewElement> retVal = new ArrayList<>();
         IBomber b = (IBomber) entity;
-        BombLoadout choices = b.getIntBombChoices();
-        for (BombTypeEnum type : BombTypeEnum.values()) {
-            if ((type.getIndex()< 0)) continue;
-            if (choices[type.getIndex()] > 0) {
-                retVal.add(new SingleLine(type.getDisplayName() + " (" + choices[type.getIndex()] + ") [Int. Bay]"));
+        BombLoadout intChoices = b.getIntBombChoices();
+        // Get internal bomb choices
+        for (Map.Entry<BombTypeEnum, Integer> entry : intChoices.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            int count = entry.getValue();
+            if (count > 0) {
+                retVal.add(new SingleLine(bombType.getDisplayName() + " (" + count + ") [Int. Bay]"));
             }
         }
-        choices = b.getExtBombChoices();
-        for (BombTypeEnum type : BombTypeEnum.values()) {
-            if ((type.getIndex()< 0)) continue;
-            if (choices[type.getIndex()] > 0) {
-                retVal.add(new SingleLine(type.getDisplayName() + " (" + choices[type.getIndex()] + ")"));
+        // Get external bomb choices
+        BombLoadout extChoices = b.getExtBombChoices();
+        for (Map.Entry<BombTypeEnum, Integer> entry : extChoices.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            int count = entry.getValue();
+            if (count > 0) {
+                retVal.add(new SingleLine(bombType.getDisplayName() + " (" + count + ")"));
             }
         }
         return retVal;

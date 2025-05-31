@@ -1013,33 +1013,38 @@ public class EntityListFile {
                 IBomber b = (IBomber) entity;
                 BombLoadout intBombChoices = b.getIntBombChoices();
                 BombLoadout extBombChoices = b.getExtBombChoices();
-                if (intBombChoices.length > 0 || extBombChoices.length > 0) {
+                if (intBombChoices.getTotalBombs() > 0 || extBombChoices.getTotalBombs() > 0) {
                     output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_BOMBS + ">\n");
-                    for (int type = 0; type < BombTypeEnum.NUM; type++) {
-                        String typeName = type.getInternalName();
-                        if (intBombChoices[type] > 0) {
+                        for (Map.Entry<BombTypeEnum, Integer> entry : intBombChoices.entrySet()) {
+                            BombTypeEnum bombType = entry.getKey();
+                            int count = entry.getValue();
+                            if (count > 0) {
                             output.write(indentStr(indentLvl + 2) +
                                                '<' +
                                                MULParser.ELE_BOMB +
                                                ' ' +
                                                MULParser.ATTR_TYPE +
                                                "=\"");
-                            output.write(typeName);
+                            output.write(bombType.getInternalName());
                             output.write("\" " + MULParser.ATTR_LOAD + "=\"");
-                            output.write(String.valueOf(intBombChoices[type]));
+                            output.write(String.valueOf(count));
                             output.write("\" " + MULParser.ATTR_INTERNAL + "=\"true");
                             output.write("\"/>\n");
                         }
-                        if (extBombChoices[type] > 0) {
+                    }
+                    for (Map.Entry<BombTypeEnum, Integer> entry : extBombChoices.entrySet()) {
+                        BombTypeEnum bombType = entry.getKey();
+                        int count = entry.getValue();
+                        if (count > 0) {
                             output.write(indentStr(indentLvl + 2) +
                                                '<' +
                                                MULParser.ELE_BOMB +
                                                ' ' +
                                                MULParser.ATTR_TYPE +
                                                "=\"");
-                            output.write(typeName);
+                            output.write(bombType.getInternalName());
                             output.write("\" " + MULParser.ATTR_LOAD + "=\"");
-                            output.write(String.valueOf(extBombChoices[type]));
+                            output.write(String.valueOf(count));
                             output.write("\" " + MULParser.ATTR_INTERNAL + "=\"false");
                             output.write("\"/>\n");
                         }

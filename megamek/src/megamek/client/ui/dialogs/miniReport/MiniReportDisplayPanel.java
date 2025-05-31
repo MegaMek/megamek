@@ -231,11 +231,19 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
     private void filterReport(String selectedKeyword) {
         String filterResult = "";
         String[] keywords = selectedKeyword.split(" ");
-        String[] htmlLines = currentClient.phaseReport.split("\r\n|\n|\r");
-        for (String htmlLine : htmlLines) {
-            for (String word : keywords) {
+        String[] htmlLines = currentClient.phaseReport.split("<br>");
+        for (int i = 0; i < htmlLines.length; i++) {
+            String htmlLine = htmlLines[i];
+            for (int j = 0; j < keywords.length; j++) {
+                String word = keywords[j];
                 if (htmlLine.replaceAll("<[^>]*>", "").toUpperCase().contains(word.toUpperCase())) {
-                    filterResult += htmlLine + System.lineSeparator();
+                    if (i > 0 && htmlLines[i - 1].contains("<img")) {
+                        filterResult += htmlLines[i - 1] + "<br>"; // get image from line above
+                    }
+                    filterResult += htmlLine + "<br>";
+                    if (i < htmlLines.length - 1 && htmlLines[i + 1].contains("</div>")) {
+                        filterResult += "</div>"; // close div tag
+                    }
                     break;
                 }
             }
@@ -440,17 +448,19 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
     }
 
     private JScrollPane loadHtmlScrollPane(String t) {
-        filterButtonReset();
 
         JTextPane ta = new JTextPane();
         Report.setupStylesheet(ta);
         ta.addHyperlinkListener(this);
         BASE64ToolKit toolKit = new BASE64ToolKit();
         ta.setEditorKit(toolKit);
-        ta.setText("<pre>" + t + "</pre>");
+
+        ta.setText("<div class='report'>" + t + "</div>");
+
         ta.setEditable(false);
         ta.setOpaque(false);
         ta.setCaretPosition(0);
+        filterButtonReset();
         return new JScrollPane(ta);
     }
 

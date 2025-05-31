@@ -59,7 +59,7 @@ public class AmmoType extends EquipmentType {
         MRM(12, "Medium Range Missile", AmmoCategory.Missile, true),
         NARC(13, "NARC", AmmoCategory.Special, false),
         AMS(14, "Anti-Missile System", AmmoCategory.Special, false),
-        ARROW_IV(15, "Arrow IV", AmmoCategory.Missile, false),
+        ARROW_IV(15, "Arrow IV", AmmoCategory.Artillery, false),
         LONG_TOM(16, "Long Tom", AmmoCategory.Artillery, false),
         SNIPER(17, "Sniper", AmmoCategory.Artillery, false),
         THUMPER(18, "Thumper", AmmoCategory.Artillery, false),

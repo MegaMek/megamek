@@ -9843,6 +9843,7 @@ public class TWGameManager extends AbstractGameManager {
                       wh instanceof ArtilleryBayWeaponIndirectHomingHandler) {
                 AmmoMounted ammoUsed = artilleryFirer.getAmmo(waa.getAmmoId());
                 AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
+                // TODO: this logic seems to be a bit off, rules need to be checked.
                 if (atype != null &&
                           (atype.getAmmoType() == AmmoTypeEnum.ARROW_IV 
                           || ammoUsed.isHomingAmmoInHomingMode())) {

@@ -451,7 +451,9 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
 
         int hits = 1;
         boolean isArrowIV = ((AmmoType) ammoUsed.getType()).getAmmoType() == AmmoTypeEnum.ARROW_IV;
-        if (!isArrowIV && !ammoUsed.isHomingAmmoInHomingMode()) {
+        boolean isHoming = ammoUsed.isHomingAmmoInHomingMode();
+        // TODO: this logic seems to be a bit off, rules need to be checked.
+        if (!isArrowIV && !isHoming) {
             // If this is not an Arrow IV or an homing shot, we don't care about AMS
             return hits;
         }

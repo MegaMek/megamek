@@ -663,8 +663,8 @@ public class Report implements ReportEntry {
             Report.mark(text);
         }
 
-        if (messageId == 3100 || messageId == 3101 || messageId == 3102 || messageId == 4005) {
-            String clrStr = getTag(1).substring(getTag(1).indexOf("#"), getTag(1).indexOf("'>")); // get player color
+        if (messageId == 3100 || messageId == 3101 || messageId == 3102 || messageId == 4005) { // if new attack
+            String clrStr = getTag(1).substring(getTag(1).indexOf("#"), getTag(1).indexOf("'>")); // get attacker color
             Color clr = Color.decode(clrStr);
             return "<div style='padding: 2px; background-color: rgba("
                   + clr.getRed()

@@ -664,7 +664,19 @@ public class Report implements ReportEntry {
         }
 
         if (messageId == 3100 || messageId == 3101 || messageId == 3102 || messageId == 4005) {
-            return "<div class=bgshade>" + text.toString() + "</div>"; //shade lines of each attacker
+            String clrStr = getTag(1).substring(getTag(1).indexOf("#"), getTag(1).indexOf("'>"));
+            Color clr = Color.decode(clrStr);
+            return "<div style='background-color: rgba("
+                  + clr.getRed()
+                  + ","
+                  + clr.getGreen()
+                  + ","
+                  + clr.getBlue()
+                  + ","
+                  + "0.15)'>"
+                  + text.toString()
+                  + "</div>";
+            //shade lines of each attacker in its player color
         } else {
             return text.toString();
         }

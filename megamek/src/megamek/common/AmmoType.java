@@ -191,7 +191,7 @@ public class AmmoType extends EquipmentType {
             return category;
         }
                 
-        public boolean canBeInterceptedByAMS() {
+        private boolean canBeInterceptedByAMS() {
             return canBeInterceptedByAMS;
         }
 
@@ -2162,6 +2162,7 @@ public class AmmoType extends EquipmentType {
 
     /**
      * Checks if this ammo is affected by AMS.
+     * TODO: rules need to be checked
      * 
      * @return true if this ammo is affected by AMS, false otherwise.
      */

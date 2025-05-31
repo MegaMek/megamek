@@ -52,13 +52,18 @@ public class YamlEncDec {
     private static final MMLogger logger = MMLogger.create(YamlEncDec.class);
 
     /**
-     * Serializes an EquipmentType to a Map<String, Object> using the ideal serializer.
+     * Serializes an EquipmentType using the ideal serializer.
      *
      * @param equipmentType The EquipmentType to serialize.
      * @return A Map containing the serialized data.
      */
     public static Map<String, Object> serialize(EquipmentType equipmentType) {
-        YamlSerializerEquipmentType serializer = new YamlSerializerEquipmentType();
+        YamlSerializerEquipmentType serializer;
+        if (equipmentType instanceof AmmoType) {
+            serializer = new YamlSerializerAmmoType();
+        } else {
+            serializer = new YamlSerializerEquipmentType();
+        }
         return serializer.serialize(equipmentType);
     }
 

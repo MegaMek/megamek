@@ -664,9 +664,9 @@ public class Report implements ReportEntry {
         }
 
         if (messageId == 3100 || messageId == 3101 || messageId == 3102 || messageId == 4005) {
-            String clrStr = getTag(1).substring(getTag(1).indexOf("#"), getTag(1).indexOf("'>"));
+            String clrStr = getTag(1).substring(getTag(1).indexOf("#"), getTag(1).indexOf("'>")); // get player color
             Color clr = Color.decode(clrStr);
-            return "<div style='background-color: rgba("
+            return "<div style='padding: 2px; background-color: rgba("
                   + clr.getRed()
                   + ","
                   + clr.getGreen()
@@ -700,7 +700,7 @@ public class Report implements ReportEntry {
                 continue;
             }
         }
-        if (indentation > DEFAULT_INDENTATION * 2) {
+        if (indentation > DEFAULT_INDENTATION * 2) { // limit indentation to 2 steps max
             indentation = DEFAULT_INDENTATION * 2;
         }
         sb.insert(i, getSpaces());
@@ -759,7 +759,7 @@ public class Report implements ReportEntry {
         styleSheet.addRule("span.small { font-size: small; }");
         styleSheet.addRule("span.x-small { font-size: x-small; }");
         styleSheet.addRule("span.xx-small { font-size: xx-small; }");
-        styleSheet.addRule("div.bgshade { background-color: rgba(0,0,0,0.2); }");
+        //styleSheet.addRule("div.bgshade { background-color: rgba(0,0,0,0.2); }");
     }
 
     public String span(String name, String text) {

@@ -233,33 +233,29 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void turnLeft() {
-        if (buttons.get(MoveCommand.MOVE_TURN).isEnabled()) {
-            int finalFacing = cmd.getFinalFacing();
-            finalFacing = (finalFacing + 5) % 6;
-            Coords curPos = cmd.getFinalCoords();
-            Coords target = curPos.translated(finalFacing);
-
-            // We need to set this to get the rotated behavior
-            shiftHeld = true;
-            currentMove(target, cmd.getFinalBoardId());
-            shiftHeld = false;
-            updateMove();
+        if (buttons.get(MoveCommand.MOVE_TURN).isEnabled()) {            
+            currentMoveHoldingShift(target, (cmd.getFinalFacing() + 5) % 6, cmd.getFinalBoardId());
         }
     }
 
     private void turnRight() {
         if (buttons.get(MoveCommand.MOVE_TURN).isEnabled()) {
-            int finalFacing = cmd.getFinalFacing();
-            finalFacing = (finalFacing + 7) % 6;
-            Coords curPos = cmd.getFinalCoords();
-            Coords target = curPos.translated(finalFacing);
-
-            // We need to set this to get the rotated behavior
-            shiftHeld = true;
-            currentMove(target, cmd.getFinalBoardId());
-            shiftHeld = false;
-            updateMove();
+            currentMoveHoldingShift(target, (cmd.getFinalFacing() + 7) % 6, cmd.getFinalBoardId());
         }
+    }
+
+    /**
+     * Some types of movement require that shift is considered enabled/held
+     * @param target target coordinate to which this movement is being executed
+     * @param finalBoardId id of the final board where the movement ends
+     */
+    private void currentMoveHoldingShift(Coords target, int finalFacing, int finalBoardId) {
+        Coords curPos = cmd.getFinalCoords();
+        Coords target = curPos.translated(finalFacing);
+        shiftHeld = true;
+        currentMove(target, finalBoardId);
+        shiftHeld = false;
+        updateMove();
     }
 
     private void undoIllegalStep() {

@@ -66,6 +66,7 @@ public class YamlSerializerAmmoType extends YamlSerializerEquipmentType {
         EquipmentType defaultAmmo = new AmmoType();
         Map<String, Object> details = new LinkedHashMap<>();
         details.put("type", ammo.getAmmoType().name());
+        //TODO: work in progress!
 
         data.put("details", details);
     }

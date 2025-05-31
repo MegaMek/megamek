@@ -125,7 +125,7 @@ public class Report implements ReportEntry {
     /**
      * Number of spaces to use per indentation level.
      */
-    public static final int DEFAULT_INDENTATION = 4;
+    public static final int DEFAULT_INDENTATION = 8; // was 4 previously
 
     /**
      * Prefix for entity hyperlinks
@@ -645,12 +645,17 @@ public class Report implements ReportEntry {
                 }
                 i++;
             }
+
+            if (indentation > DEFAULT_INDENTATION) { // limit indentation to 1 step max
+                indentation = DEFAULT_INDENTATION;
+            }
+
             // add the sprite code at the beginning of the line
             if (imageCode != null && !imageCode.isEmpty()) {
                 if (text.toString().startsWith("<br>")) {
-                    text.insert(4, imageCode);
+                    text.insert(4, imageCode + "<br>" + getSpaces());
                 } else {
-                    text.insert(0, imageCode);
+                    text.insert(0, imageCode + "<br>" + getSpaces());
                 }
             }
             text.append(raw.substring(mark));
@@ -699,9 +704,6 @@ public class Report implements ReportEntry {
             if (i == sb.length()) {
                 continue;
             }
-        }
-        if (indentation > DEFAULT_INDENTATION * 2) { // limit indentation to 2 steps max
-            indentation = DEFAULT_INDENTATION * 2;
         }
         sb.insert(i, getSpaces());
     }

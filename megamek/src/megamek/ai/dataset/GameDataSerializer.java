@@ -75,7 +75,7 @@ public class GameDataSerializer extends EntityDataSerializer<GameData.Field, Gam
         List<MinefieldData> minefields = data.getMinefields();
         if (minefields != null && !minefields.isEmpty()) {
             // Add a header for minefields
-            lines.add("ROUND\tPHASE\tOBJECT\tX\tY\tTYPE\tPLAYER_ID\tDAMAGE");
+            lines.add("VERSION\tROUND\tPHASE\tOBJECT\tX\tY\tTYPE\tPLAYER_ID\tDAMAGE");
 
             // Add each minefield
             String round = String.valueOf(data.get(Field.ROUND));
@@ -83,6 +83,7 @@ public class GameDataSerializer extends EntityDataSerializer<GameData.Field, Gam
 
             for (MinefieldData minefield : minefields) {
                 lines.add(String.join("\t",
+                      data.getVersionedClassName(),
                       round,
                       phase,
                       MINEFIELD,

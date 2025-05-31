@@ -1931,23 +1931,12 @@ public abstract class Mek extends Entity {
             return Compute.ARC_REAR;
         }
         // front mounted
-        switch (mounted.getLocation()) {
-            case LOC_HEAD:
-            case LOC_CT:
-            case LOC_RT:
-            case LOC_LT:
-            case LOC_RLEG:
-            case LOC_LLEG:
-                return Compute.ARC_FORWARD;
-            case LOC_RARM:
-                return getArmsFlipped() ? Compute.ARC_REAR
-                        : Compute.ARC_RIGHTARM;
-            case LOC_LARM:
-                return getArmsFlipped() ? Compute.ARC_REAR
-                        : Compute.ARC_LEFTARM;
-            default:
-                return Compute.ARC_360;
-        }
+        return switch (mounted.getLocation()) {
+            case LOC_HEAD, LOC_CT, LOC_RT, LOC_LT, LOC_RLEG, LOC_LLEG -> Compute.ARC_FORWARD;
+            case LOC_RARM -> getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_RIGHTARM;
+            case LOC_LARM -> getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_LEFTARM;
+            default -> Compute.ARC_360;
+        };
     }
 
     /**

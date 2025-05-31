@@ -442,6 +442,16 @@ public class Coords implements Serializable {
      *
      * @return the degree direction of another Coords
      */
+    public int dotProduct(Coords d) {
+        return (int) Math.round((180 / Math.PI) * radian(d));
+    }
+
+
+    /**
+     * @param d the destination coordinate.
+     *
+     * @return the degree direction of another Coords
+     */
     public int degree(Coords d) {
         return (int) Math.round((180 / Math.PI) * radian(d));
     }
@@ -809,5 +819,18 @@ public class Coords implements Serializable {
             return String.format("%03d%03d", x, y);
         }
         return String.format("%02d%02d", x, y);
+    }
+
+    public static Coords fromHexCode(String hexCode) {
+        if (hexCode == null || hexCode.length() < 4) {
+            throw new IllegalArgumentException("Invalid hex code: " + hexCode);
+        }
+        int x = Integer.parseInt(hexCode.substring(0, 2)) - 1;
+        int y = Integer.parseInt(hexCode.substring(2, 4)) - 1;
+        return new Coords(x, y);
+    }
+
+    public static Coords of(int x, int y) {
+        return new Coords(x, y);
     }
 }

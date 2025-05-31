@@ -58,6 +58,10 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             }
         }
 
+        if (!game.onTheSameBoard(ae, target)) {
+            return "Attacker and target are not on the same board.";
+        }
+
         // check range
         if (Compute.effectiveDistance(game, ae, target) > 1) {
             return "Target not in range";

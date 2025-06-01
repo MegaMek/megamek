@@ -26,6 +26,7 @@ import java.util.Vector;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 import megamek.logging.MMLogger;
@@ -2156,13 +2157,14 @@ public class AmmoType extends EquipmentType {
     }
 
     /**
-     * Checks if this ammo is affected by AMS.
+     * Checks if this ammo can be intercepted by AMS (or PD).
      * TODO: rules need to be checked
      * 
-     * @param amsWeapon The AMS weapon to check against, or null to check for any AMS
+     * @param amsWeapon The AMS weapon to check against, if null an AMS is assumed to be available.
+     * @param gameOptions The game options, used to check for special rules. If null, standard rules are assumed.
      * @return true if this ammo is affected by AMS, false otherwise
      */
-    public boolean isAffectedByAMS(WeaponType amsWeapon) {
+    public boolean canBeInterceptedBy(@Nullable WeaponType amsWeapon, @Nullable GameOptions gameOptions) {
         // Only missile category ammo can be affected by AMS
         if (this.getAmmoType().getCategory() != AmmoCategory.Missile) {
             return false;
@@ -2173,7 +2175,15 @@ public class AmmoType extends EquipmentType {
         }
         // Capital missiles require AMS Bay to counter
         if (this.capital) {
-            return amsWeapon != null && amsWeapon.hasFlag(WeaponType.F_AMSBAY);
+            // Standard rules do not allow AMS to counter capital missiles (TW, p130)
+            if (gameOptions == null) {
+                  return false;
+            }
+            // Only with Advanced Point Defense rules AMS Bay can counter capital missiles
+            if (!gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF)) {
+                  return false;
+            }
+            return amsWeapon != null && (amsWeapon.hasFlag(WeaponType.F_AMSBAY)  || amsWeapon.hasFlag(WeaponType.F_PDBAY));
         }
         // Standard missiles can be countered by regular AMS or AMS Bay
         // If no specific AMS weapon provided, assume any AMS can affect it
@@ -2181,7 +2191,12 @@ public class AmmoType extends EquipmentType {
             return true;
         }
         // Check if the weapon has AMS capabilities
-        return amsWeapon.hasFlag(WeaponType.F_AMS) || amsWeapon.hasFlag(WeaponType.F_AMSBAY);
+        if (amsWeapon.hasFlag(WeaponType.F_AMS) || amsWeapon.hasFlag(WeaponType.F_AMSBAY) || amsWeapon.hasFlag(WeaponType.F_PDBAY)) {
+            return true;
+        }
+
+        // If the weapon is not an AMS or AMS Bay, it cannot intercept this ammo
+        return false;
     }
 
     /**

@@ -25,6 +25,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JTextPane;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
@@ -126,6 +128,12 @@ public class Report implements ReportEntry {
      * Number of spaces to use per indentation level.
      */
     public static final int DEFAULT_INDENTATION = 8; // was 4 previously
+
+    /**
+     * Number of indentation levels allowed. Currently the same as the DEFAULT_INDENTATION value, to limit indentations
+     * to one level for a cleaner look of the report.
+     */
+    public static final int MAX_INDENTATION = 8;
 
     /**
      * Prefix for entity hyperlinks
@@ -646,8 +654,8 @@ public class Report implements ReportEntry {
                 i++;
             }
 
-            if (indentation > DEFAULT_INDENTATION) { // limit indentation to 1 step max
-                indentation = DEFAULT_INDENTATION;
+            if (indentation > MAX_INDENTATION) { // limit indentation for a cleaner look of the report
+                indentation = MAX_INDENTATION;
             }
 
             // add the sprite code at the beginning of the line
@@ -670,8 +678,15 @@ public class Report implements ReportEntry {
         }
 
         if (messageId == 3100 || messageId == 3101 || messageId == 3102 || messageId == 4005) { // if new attack
-            String clrStr = getTag(1).substring(getTag(1).indexOf("#"), getTag(1).indexOf("'>")); // get attacker color
-            Color clr = Color.decode(clrStr);
+            Color clr = new Color(0, 0, 0);
+
+            // get attacker color
+            Pattern clrRegex = Pattern.compile("#([A-Fa-f0-9]{6})");
+            Matcher matcher = clrRegex.matcher(getTag(1));
+            if (matcher.find()) {
+                clr = Color.decode(matcher.group());
+            }
+
             return "<div style='padding: 2px; background-color: rgba("
                   + clr.getRed()
                   + ","

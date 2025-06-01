@@ -16395,6 +16395,7 @@ TargetRoll nTargetRoll,
         r.add(reasons.toString());
         vPhaseReport.add(r);
         r = new Report(2285);
+        r.indent();
         r.subject = entity.getId();
         r.add(base);
         vPhaseReport.add(r);
@@ -16615,6 +16616,7 @@ TargetRoll nTargetRoll,
                 r.add(reasons.toString());
                 vReport.add(r);
                 r = new Report(2285);
+                r.indent();
                 r.subject = e.getId();
                 r.add(target);
                 vReport.add(r);

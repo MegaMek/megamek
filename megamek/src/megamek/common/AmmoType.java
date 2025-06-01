@@ -2175,15 +2175,11 @@ public class AmmoType extends EquipmentType {
         }
         // Capital missiles require AMS Bay to counter
         if (this.capital) {
-            // Standard rules do not allow AMS to counter capital missiles (TW, p130)
-            if (gameOptions == null) {
-                  return false;
+            // Only with Advanced Point Defense rules AMS Bay can counter capital missiles. Standard rules don't (TW, p130)
+            if ((gameOptions == null) || !gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF)) {
+                return false;
             }
-            // Only with Advanced Point Defense rules AMS Bay can counter capital missiles
-            if (!gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF)) {
-                  return false;
-            }
-            return amsWeapon != null && (amsWeapon.hasFlag(WeaponType.F_AMSBAY)  || amsWeapon.hasFlag(WeaponType.F_PDBAY));
+            return (amsWeapon != null) && (amsWeapon.hasFlag(WeaponType.F_AMSBAY)  || amsWeapon.hasFlag(WeaponType.F_PDBAY));
         }
         // Standard missiles can be countered by regular AMS or AMS Bay
         // If no specific AMS weapon provided, assume any AMS can affect it
@@ -2194,7 +2190,6 @@ public class AmmoType extends EquipmentType {
         if (amsWeapon.hasFlag(WeaponType.F_AMS) || amsWeapon.hasFlag(WeaponType.F_AMSBAY) || amsWeapon.hasFlag(WeaponType.F_PDBAY)) {
             return true;
         }
-
         // If the weapon is not an AMS or AMS Bay, it cannot intercept this ammo
         return false;
     }

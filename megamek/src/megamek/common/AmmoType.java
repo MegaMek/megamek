@@ -2165,18 +2165,23 @@ public class AmmoType extends EquipmentType {
      * @return true if this ammo is affected by AMS, false otherwise
      */
     public boolean canBeInterceptedBy(@Nullable WeaponType amsWeapon, @Nullable GameOptions gameOptions) {
+        // Arrow IV Missiles (bombs) can be affected by AMS, but only with Advanced Point Defense rules and AMS/PD Bay.
+        if ((this.getAmmoType() == AmmoTypeEnum.ARROW_IV_BOMB)
+        && (gameOptions != null)
+        && (amsWeapon != null)
+        && (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF))
+        && (amsWeapon.hasFlag(WeaponType.F_AMSBAY) || amsWeapon.hasFlag(WeaponType.F_PDBAY))) {
+            return true;
+        }
         // Only missile category ammo can be affected by AMS
         if (this.getAmmoType().getCategory() != AmmoCategory.Missile) {
-            return false;
-        }
-        // ADA munitions are specifically designed to counter artillery and are not affected by AMS
-        if (this.getMunitionType().contains(Munitions.M_ADA)) {
             return false;
         }
         // Capital missiles require AMS Bay to counter
         if (this.capital) {
             // Only with Advanced Point Defense rules AMS Bay can counter capital missiles. Standard rules don't (TW, p130)
-            if ((gameOptions == null) || !gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF)) {
+            if ((gameOptions == null) 
+            || !gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF)) {
                 return false;
             }
             return (amsWeapon != null) && (amsWeapon.hasFlag(WeaponType.F_AMSBAY)  || amsWeapon.hasFlag(WeaponType.F_PDBAY));
@@ -2187,7 +2192,9 @@ public class AmmoType extends EquipmentType {
             return true;
         }
         // Check if the weapon has AMS capabilities
-        if (amsWeapon.hasFlag(WeaponType.F_AMS) || amsWeapon.hasFlag(WeaponType.F_AMSBAY) || amsWeapon.hasFlag(WeaponType.F_PDBAY)) {
+        if (amsWeapon.hasFlag(WeaponType.F_AMS)
+        || amsWeapon.hasFlag(WeaponType.F_AMSBAY)
+        || amsWeapon.hasFlag(WeaponType.F_PDBAY)) {
             return true;
         }
         // If the weapon is not an AMS or AMS Bay, it cannot intercept this ammo

@@ -2159,7 +2159,8 @@ public class AmmoType extends EquipmentType {
      * Checks if this ammo is affected by AMS.
      * TODO: rules need to be checked
      * 
-     * @return true if this ammo is affected by AMS, false otherwise.
+     * @param amsWeapon The AMS weapon to check against, or null to check for any AMS
+     * @return true if this ammo is affected by AMS, false otherwise
      */
     public boolean isAffectedByAMS(WeaponType amsWeapon) {
         // Only missile category ammo can be affected by AMS

@@ -665,7 +665,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                     LOGGER.error("Scenario loading: Unit declaration {} found {} times",
                           key,
                           scenarioV1.getNumValues(key));
-                    throw new ScenarioLoaderException("ScenarioLoaderException.multipleUnitDeclarations", key);
+                    throw new ScenarioLoaderException("Multiple unit declarations");
                 }
                 entities.put(key, parseEntityLine(scenarioV1.getString(key)));
             }
@@ -775,7 +775,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             MekSummary mekSummary = MekSummaryCache.getInstance().getMek(parts[0]);
 
             if (mekSummary == null) {
-                throw new ScenarioLoaderException("ScenarioLoaderException.missingRequiredEntity", parts[0]);
+                throw new ScenarioLoaderException("Scenario requires missing entity: " + parts[0]);
             }
 
             LOGGER.debug("Loading {}", mekSummary.getName());
@@ -841,7 +841,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
             return entity;
         } catch (NumberFormatException | IndexOutOfBoundsException | EntityLoadingException ex) {
             LOGGER.error("", ex);
-            throw new ScenarioLoaderException("ScenarioLoaderException.unparsableEntityLine", line);
+            throw new ScenarioLoaderException("Unparsable entity line: " + line);
         }
     }
 
@@ -898,7 +898,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
     private Collection<Player> createPlayers(ScenarioV1 scenarioV1) throws ScenarioLoaderException {
         String sFactions = scenarioV1.getString(PARAM_FACTIONS);
         if ((sFactions == null) || sFactions.isEmpty()) {
-            throw new ScenarioLoaderException("ScenarioLoaderException.missingFactions");
+            throw new ScenarioLoaderException("The scenario does not contain any factions (players)!");
         }
         String[] factions = sFactions.split(SEPARATOR_COMMA, -1);
         List<Player> result = new ArrayList<>(factions.length);
@@ -1055,7 +1055,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
                 File fBoard = new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile();
 
                 if (!fBoard.exists()) {
-                    throw new ScenarioLoaderException("ScenarioLoaderException.nonexistentBoard", board);
+                    throw new ScenarioLoaderException("Couldn't find board file " + board);
                 }
 
                 ba[n] = new Board();

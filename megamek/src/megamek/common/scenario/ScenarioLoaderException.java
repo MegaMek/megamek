@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,34 +18,13 @@
  */
 package megamek.common.scenario;
 
-import megamek.client.ui.dialogs.scenario.Messages;
+/**
+ * An exception for scenario loading. (This replaces the old class that used localized error messages - I do not think
+ * that an exception for scenario writers needs localized error messages, even if they are shown in MM's GUI.)
+ */
+public class ScenarioLoaderException extends RuntimeException {
 
-import java.util.IllegalFormatException;
-
-public class ScenarioLoaderException extends Exception {
-
-    private final Object[] params;
-
-    public ScenarioLoaderException(String errorKey) {
-        super(errorKey);
-        this.params = null;
-    }
-
-    public ScenarioLoaderException(String errorKey, Object... params) {
-        super(errorKey);
-        this.params = params;
-    }
-
-    @Override
-    public String getMessage() {
-        String result = Messages.getString(super.getMessage());
-        if (params != null) {
-            try {
-                return String.format(result, params);
-            } catch (IllegalFormatException ignored) {
-                // Ignore, return the base translation instead
-            }
-        }
-        return result;
+    public ScenarioLoaderException(String message) {
+        super(message);
     }
 }

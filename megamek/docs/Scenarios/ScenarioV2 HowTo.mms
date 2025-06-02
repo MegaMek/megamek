@@ -431,14 +431,33 @@ factions:
           piloting: 4
           gunnery: 3
 
-events:
-  - type: princesssettings
-    trigger:
-      - type: unitkilled
-        unit: 103
-    destination: south
-    flee: true
+#events:
+#  - type: princesssettings
+#    trigger:
+#      - type: unitkilled
+#        unit: 103
+#    destination: south
+#    flee: true
 
+# ###############################################
+# C3 networks:
+# As there can be more than one network, c3 networks must always be given as a list (preceded with hyphen), even
+# if there is only a single C3 network
+# The type of C3 network is determined by the scenario loader
+# The order of the units does not matter (even with standard C3)
+c3:
+  # C3 networks without a master can be given as a single list; the loader will determine if they are C3i, NC3 or Nova
+  - [101, 102]
+  - [2, 3, 6, 8]
+  - [5, 9, 12]
+  # Standard C3 must explicitly give the master as a single ID and the connected units as a list; the connected units
+  # can be C3S or C3M (in this case the master will be set to company commander mode), note the rules TW p.132
+  - c3m: 208
+    connected: [ 202, 203 ]
+  # 301 is next connected to 302 and 208 which are both C3M; 301 is set to CC mode and the network contains 5 units:
+  - c3m: 301
+    connected: [ 302, 208 ]
+  # atm, double master units are not supported
 
 
 # ###############################################

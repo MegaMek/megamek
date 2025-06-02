@@ -2164,13 +2164,16 @@ public class AmmoType extends EquipmentType {
      * @param gameOptions The game options, used to check for special rules. If null, standard rules are assumed.
      * @return true if this ammo is affected by AMS, false otherwise
      */
-    public boolean canBeInterceptedBy(@Nullable WeaponType amsWeapon, @Nullable GameOptions gameOptions) {
-        // Arrow IV Missiles (bombs) can be affected by AMS, but only with Advanced Point Defense rules and AMS/PD Bay.
-        if ((this.getAmmoType() == AmmoTypeEnum.ARROW_IV_BOMB)
+    public boolean canBeInterceptedBy(@Nullable WeaponMounted amsWeapon, @Nullable GameOptions gameOptions) {
+        // Arrow IV Missiles can be affected by AMS/PD BAY, but only with Advanced Point Defense rules in space combat.
+        if (((this.getAmmoType() == AmmoTypeEnum.ARROW_IV_BOMB)
+            || (this.getAmmoType() == AmmoTypeEnum.ARROW_IV)
+            || (this.getAmmoType() == AmmoTypeEnum.ARROWIV_PROTO))
         && (gameOptions != null)
         && (amsWeapon != null)
         && (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF))
-        && (amsWeapon.hasFlag(WeaponType.F_AMSBAY) || amsWeapon.hasFlag(WeaponType.F_PDBAY))) {
+        && (amsWeapon.getType().hasFlag(WeaponType.F_AMSBAY)
+            || (amsWeapon.getType().hasFlag(WeaponType.F_PDBAY) && amsWeapon.hasModes() && amsWeapon.curMode().equals(Weapon.MODE_POINT_DEFENSE)))) {
             return true;
         }
         // Only missile category ammo can be affected by AMS
@@ -2180,11 +2183,14 @@ public class AmmoType extends EquipmentType {
         // Capital missiles require AMS Bay to counter
         if (this.capital) {
             // Only with Advanced Point Defense rules AMS Bay can counter capital missiles. Standard rules don't (TW, p130)
-            if ((gameOptions == null) 
+            if ((gameOptions == null)
             || !gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF)) {
                 return false;
             }
-            return (amsWeapon != null) && (amsWeapon.hasFlag(WeaponType.F_AMSBAY)  || amsWeapon.hasFlag(WeaponType.F_PDBAY));
+            return (amsWeapon != null)
+                  && (amsWeapon.getType().hasFlag(WeaponType.F_AMSBAY)
+                  || (amsWeapon.getType().hasFlag(WeaponType.F_PDBAY) && amsWeapon.hasModes() && amsWeapon.curMode().equals(Weapon.MODE_POINT_DEFENSE)));
+
         }
         // Standard missiles can be countered by regular AMS or AMS Bay
         // If no specific AMS weapon provided, assume any AMS can affect it
@@ -2192,9 +2198,9 @@ public class AmmoType extends EquipmentType {
             return true;
         }
         // Check if the weapon has AMS capabilities
-        if (amsWeapon.hasFlag(WeaponType.F_AMS)
-        || amsWeapon.hasFlag(WeaponType.F_AMSBAY)
-        || amsWeapon.hasFlag(WeaponType.F_PDBAY)) {
+        if (amsWeapon.getType().hasFlag(WeaponType.F_AMS)
+        || amsWeapon.getType().hasFlag(WeaponType.F_AMSBAY)
+        || (amsWeapon.getType().hasFlag(WeaponType.F_PDBAY) && amsWeapon.hasModes() && amsWeapon.curMode().equals(Weapon.MODE_POINT_DEFENSE))) {
             return true;
         }
         // If the weapon is not an AMS or AMS Bay, it cannot intercept this ammo

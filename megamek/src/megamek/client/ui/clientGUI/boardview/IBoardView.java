@@ -18,6 +18,18 @@
  */
 package megamek.client.ui.clientGUI.boardview;
 
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.image.RenderedImage;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import javax.swing.JPanel;
+import javax.swing.Scrollable;
+
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
@@ -25,18 +37,10 @@ import megamek.client.ui.clientGUI.boardview.toolTip.BoardViewTooltipProvider;
 import megamek.common.Coords;
 import megamek.common.Player;
 
-import java.util.List;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.RenderedImage;
-import java.util.Collection;
-import java.util.Set;
-
 public interface IBoardView {
 
     /**
-     * This method should be overridden to do the actual drawing of the board image into the provided
-     * Graphics.
+     * This method should be overridden to do the actual drawing of the board image into the provided Graphics.
      *
      * @param graphics The Graphics object to draw the board onto
      */
@@ -53,8 +57,13 @@ public interface IBoardView {
     void zoomIn();
 
     /**
-     * Returns the pixel size of the entire board if drawn at the current zoom level. This should not include
-     * any padding, just the board itself.
+     * Toggles between two Zoom levels.
+     */
+    void zoomToggle();
+
+    /**
+     * Returns the pixel size of the entire board if drawn at the current zoom level. This should not include any
+     * padding, just the board itself.
      *
      * @return The pixel size of the entire board at the current zoom level
      */
@@ -66,9 +75,9 @@ public interface IBoardView {
     Component getComponent();
 
     /**
-     * Sets this BoardView to show or hide a warning in fields (hexes) that contain invalid information such
-     * as terrains that cannot be used together in a single hex. Usually this warning is shown in the board
-     * editor but not in a game.
+     * Sets this BoardView to show or hide a warning in fields (hexes) that contain invalid information such as terrains
+     * that cannot be used together in a single hex. Usually this warning is shown in the board editor but not in a
+     * game.
      *
      * @param displayInvalidFields True when the invaliud marker should be shown
      */
@@ -79,9 +88,9 @@ public interface IBoardView {
     }
 
     /**
-     * Sets the boardview to use the given player ID as the player in whose client this boardview is shown.
-     * This may affect what is shown and what is hidden in this boardview; it will also affect what is
-     * considered an enemy and ally.
+     * Sets the boardview to use the given player ID as the player in whose client this boardview is shown. This may
+     * affect what is shown and what is hidden in this boardview; it will also affect what is considered an enemy and
+     * ally.
      *
      * @param playerId The local player's ID as stored in the game.
      */
@@ -90,9 +99,9 @@ public interface IBoardView {
     Player getLocalPlayer();
 
     /**
-     * Frees the resources this boardview uses and removes listeners. Call when this boardview is not
-     * used anymore. The boardview will no longer be functional after calling this method. When overriding
-     * this method, include a call to super.dispose().
+     * Frees the resources this boardview uses and removes listeners. Call when this boardview is not used anymore. The
+     * boardview will no longer be functional after calling this method. When overriding this method, include a call to
+     * super.dispose().
      */
     void dispose();
 
@@ -104,8 +113,7 @@ public interface IBoardView {
     JPanel getPanel();
 
     /**
-     * Adds the specified board listener to receive board events from this
-     * board.
+     * Adds the specified board listener to receive board events from this board.
      *
      * @param listener the board listener.
      */
@@ -119,8 +127,8 @@ public interface IBoardView {
     void removeBoardViewListener(BoardViewListener listener);
 
     /**
-     * Adds the given overlay to this boardview. Overlays are displayed above the actual board and fixed
-     * with respect to the screen, like the chatbox or unit overview.
+     * Adds the given overlay to this boardview. Overlays are displayed above the actual board and fixed with respect to
+     * the screen, like the chatbox or unit overview.
      *
      * @param overlay The overlay to add
      */
@@ -130,6 +138,7 @@ public interface IBoardView {
      * Removes the given overlay from this boardview.
      *
      * @param overlay The overlay to add
+     *
      * @see #addOverlay(IDisplayable)
      */
     void removeOverlay(IDisplayable overlay);
@@ -139,66 +148,70 @@ public interface IBoardView {
     }
 
     /**
-     * Placeholder: this is only an idea; can we make draw modifications modular? Like field of fire,
-     * field of view...
-     * Adds the given field modifier to this boardview. Field modifiers modify the drawing of the board's
-     * fields, e.g. hexes.
+     * Placeholder: this is only an idea; can we make draw modifications modular? Like field of fire, field of view...
+     * Adds the given field modifier to this boardview. Field modifiers modify the drawing of the board's fields, e.g.
+     * hexes.
      */
-    default void addFieldModifier() {} // (FieldModifier modifier);
+    default void addFieldModifier() {
+    } // (FieldModifier modifier);
 
     /**
-     * Returns an image of the entire board. Depending on parameters, the board may contain any currently present
-     * units or other game objects and it may be drawn at zoom 1 or the current zoom level.
+     * Returns an image of the entire board. Depending on parameters, the board may contain any currently present units
+     * or other game objects and it may be drawn at zoom 1 or the current zoom level.
      *
-     * @param hideUnits If true, no units are drawn, only the board
+     * @param hideUnits   If true, no units are drawn, only the board
      * @param useBaseZoom If true, zoom = 1 is used, otherwise the current board zoom
+     *
      * @return an image of the whole board
      */
     RenderedImage getEntireBoardImage(boolean hideUnits, boolean useBaseZoom);
 
     /**
-     * Notifies this BoardView to center itself on the given Coords.
-     * Override this to be safe for null Coords.
+     * Notifies this BoardView to center itself on the given Coords. Override this to be safe for null Coords.
      *
      * @param coords The coordinates to center on
      */
     void centerOnHex(Coords coords);
 
     /**
-     * @return A set of hashCodes of those image that are animated (such as animated tileset images) and
-     * therefore should prevent the hex image from being cached.
+     * @return A set of hashCodes of those image that are animated (such as animated tileset images) and therefore
+     *       should prevent the hex image from being cached.
      */
     Set<Integer> getAnimatedImages();
 
     /**
      * Override this to provide a return value exactly as the Scrollable interface methodof the same name.
+     *
      * @see Scrollable#getScrollableUnitIncrement(Rectangle, int, int)
      */
     int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2);
 
     /**
      * Override this to provide a return value exactly as the Scrollable interface methodof the same name.
+     *
      * @see Scrollable#getScrollableBlockIncrement(Rectangle, int, int)
      */
     int getScrollableBlockIncrement(Rectangle arg0, int arg1, int arg2);
 
     /**
-     * @return the coords at the specified point in the BoardView's image area. The point may be given
-     * e.g. as part of a MouseEvent.
+     * @return the coords at the specified point in the BoardView's image area. The point may be given e.g. as part of a
+     *       MouseEvent.
      */
     Coords getCoordsAt(Point point);
 
     /**
-     * Adds the given BoardViewTooltipProvider to this BoardView to provide the tooltips that are shown,
-     * replacing the previous BoardViewTooltipProvider, if any.
+     * Adds the given BoardViewTooltipProvider to this BoardView to provide the tooltips that are shown, replacing the
+     * previous BoardViewTooltipProvider, if any.
      *
      * @param provider The BoardViewTooltipProvider
+     *
      * @see BoardViewTooltipProvider
      */
     void setTooltipProvider(BoardViewTooltipProvider provider);
 
     /**
      * Schedules a repaint of the BoardView.
+     *
      * @see JPanel#repaint()
      */
     void repaint();
@@ -252,8 +265,8 @@ public interface IBoardView {
     void select(Coords coords);
 
     /**
-     * Places a cursor on the given coords, if they are on the board. When coords is null, remove the cursor. Note
-     * that a BoardView implementation may choose to do nothing.
+     * Places a cursor on the given coords, if they are on the board. When coords is null, remove the cursor. Note that
+     * a BoardView implementation may choose to do nothing.
      *
      * @param coords the Coords to cursor
      */
@@ -276,8 +289,8 @@ public interface IBoardView {
     }
 
     /**
-     * Returns true when this boardview is showing some animation and should not be centered on another hex or be
-     * hidden right now. An example is showing a unit's move animation.
+     * Returns true when this boardview is showing some animation and should not be centered on another hex or be hidden
+     * right now. An example is showing a unit's move animation.
      *
      * @return True when this BoardView is in the process of showing some animation
      */

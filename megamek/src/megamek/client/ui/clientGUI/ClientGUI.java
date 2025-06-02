@@ -63,28 +63,12 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.event.MekDisplayListener;
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.*;
-import megamek.client.ui.dialogs.BotCommands.BotCommandsDialog;
-import megamek.client.ui.dialogs.BotCommands.BotCommandsPanel;
-import megamek.client.ui.dialogs.minimap.MinimapDialog;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
-import megamek.client.ui.dialogs.unitSelectorDialogs.MegaMekUnitSelectorDialog;
-import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
-import megamek.client.ui.dialogs.buttonDialogs.EditBotsDialog;
-import megamek.client.ui.dialogs.buttonDialogs.GameOptionsDialog;
-import megamek.client.ui.dialogs.buttonDialogs.LOSDialog;
-import megamek.client.ui.dialogs.helpDialogs.HelpDialog;
-import megamek.client.ui.dialogs.miniReport.MiniReportDisplayPanel;
-import megamek.client.ui.dialogs.miniReport.MiniReportDisplayDialog;
-import megamek.client.ui.dialogs.unitDisplay.IHasUnitDisplay;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
-import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
-import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
-import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.clientGUI.audio.AudioService;
 import megamek.client.ui.clientGUI.audio.SoundManager;
 import megamek.client.ui.clientGUI.audio.SoundType;
-import megamek.client.ui.clientGUI.boardview.*;
+import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.CollapseWarning;
+import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ChatterBoxOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.KeyBindingsOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.OffBoardTargetOverlay;
@@ -93,16 +77,42 @@ import megamek.client.ui.clientGUI.boardview.overlay.TurnDetailsOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.UnitOverviewOverlay;
 import megamek.client.ui.clientGUI.boardview.spriteHandler.*;
 import megamek.client.ui.clientGUI.boardview.toolTip.TWBoardViewTooltip;
-import megamek.client.ui.dialogs.randomArmy.RandomArmyDialog;
+import megamek.client.ui.dialogs.AccessibilityDialog;
+import megamek.client.ui.dialogs.BotCommands.BotCommandsDialog;
+import megamek.client.ui.dialogs.BotCommands.BotCommandsPanel;
+import megamek.client.ui.dialogs.ChoiceDialog;
+import megamek.client.ui.dialogs.CommonAboutDialog;
+import megamek.client.ui.dialogs.ConfirmDialog;
+import megamek.client.ui.dialogs.InformDialog;
+import megamek.client.ui.dialogs.PlayerListDialog;
+import megamek.client.ui.dialogs.RandomNameDialog;
+import megamek.client.ui.dialogs.RulerDialog;
+import megamek.client.ui.dialogs.UnitLoadingDialog;
+import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
+import megamek.client.ui.dialogs.buttonDialogs.EditBotsDialog;
+import megamek.client.ui.dialogs.buttonDialogs.GameOptionsDialog;
+import megamek.client.ui.dialogs.buttonDialogs.LOSDialog;
 import megamek.client.ui.dialogs.forceDisplay.ForceDisplayDialog;
 import megamek.client.ui.dialogs.forceDisplay.ForceDisplayPanel;
-import megamek.client.ui.panels.phaseDisplay.*;
-import megamek.client.ui.panels.phaseDisplay.lobby.ChatLounge;
-import megamek.client.ui.panels.phaseDisplay.lobby.PlayerSettingsDialog;
+import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
+import megamek.client.ui.dialogs.helpDialogs.HelpDialog;
+import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
+import megamek.client.ui.dialogs.miniReport.MiniReportDisplayDialog;
+import megamek.client.ui.dialogs.miniReport.MiniReportDisplayPanel;
+import megamek.client.ui.dialogs.minimap.MinimapDialog;
 import megamek.client.ui.dialogs.minimap.MinimapPanel;
+import megamek.client.ui.dialogs.randomArmy.RandomArmyDialog;
+import megamek.client.ui.dialogs.unitDisplay.IHasUnitDisplay;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
+import megamek.client.ui.dialogs.unitSelectorDialogs.MegaMekUnitSelectorDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.ReceivingGameDataPanel;
 import megamek.client.ui.panels.StartingScenarioPanel;
 import megamek.client.ui.panels.WaitingForServerPanel;
+import megamek.client.ui.panels.phaseDisplay.*;
+import megamek.client.ui.panels.phaseDisplay.lobby.ChatLounge;
+import megamek.client.ui.panels.phaseDisplay.lobby.PlayerSettingsDialog;
 import megamek.client.ui.tileset.EntityImage;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.tileset.TilesetManager;
@@ -110,8 +120,6 @@ import megamek.client.ui.util.BASE64ToolKit;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.*;
-import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
@@ -120,6 +128,8 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.options.GameOptions;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -130,8 +140,8 @@ import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
 public class ClientGUI extends AbstractClientGUI
-      implements BoardViewListener, ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots, IDisconnectSilently,
-                 IHasUnitDisplay, IHasBoardView, IHasMenuBar, IHasCurrentPanel {
+      implements BoardViewListener, ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots,
+                 IDisconnectSilently, IHasUnitDisplay, IHasBoardView, IHasMenuBar, IHasCurrentPanel {
     private final static MMLogger logger = MMLogger.create(ClientGUI.class);
 
     // region Variable Declarations
@@ -200,6 +210,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview";
     public static final String VIEW_ZOOM_IN = "viewZoomIn";
     public static final String VIEW_ZOOM_OUT = "viewZoomOut";
+    public static final String VIEW_ZOOM_TOGGLE = "viewZoomToggle";
     public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric";
     public static final String VIEW_TOGGLE_HEXCOORDS = "viewToggleHexCoords";
     public static final String VIEW_LABELS = "viewLabels";
@@ -768,9 +779,8 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     public void reportDisplayResetRerollInitiative() {
-        if ((reportDisplay != null) &&
-                  (!getClient().getLocalPlayer().isDone()) &&
-                  (getClient().getGame().hasTacticalGenius(getClient().getLocalPlayer()))) {
+        if ((reportDisplay != null) && (!getClient().getLocalPlayer().isDone()) && (getClient().getGame()
+              .hasTacticalGenius(getClient().getLocalPlayer()))) {
             reportDisplay.resetRerollInitiativeEnabled();
         }
     }
@@ -975,6 +985,9 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case VIEW_ZOOM_OUT:
                 boardViews.get(0).zoomOut();
+                break;
+            case VIEW_ZOOM_TOGGLE:
+                boardViews.get(0).zoomToggle();
                 break;
             case VIEW_TOGGLE_ISOMETRIC:
                 GUIP.setIsometricEnabled(!GUIP.getIsometricEnabled());
@@ -1490,8 +1503,9 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Requests focus for the board view if the board was previously focused and the specified visibility condition
-     * is met.
+     * Requests focus for the board view if the board was previously focused and the specified visibility condition is
+     * met.
+     *
      * @param visible a boolean indicating whether the board view should be visible. If true and the board was
      *                previously focused, focus will be requested.
      */
@@ -1690,10 +1704,8 @@ public class ClientGUI extends AbstractClientGUI
     public void setUnitDisplayVisible(boolean visible) {
         // If no unit displayed, select a unit so display can be safely shown
         // This can happen when using mouse button 4
-        if (visible &&
-                  (getUnitDisplay().getCurrentEntity() == null) &&
-                  (getClient() != null) &&
-                  (getClient().getGame() != null)) {
+        if (visible && (getUnitDisplay().getCurrentEntity() == null) && (getClient() != null) && (getClient().getGame()
+              != null)) {
             List<Entity> es = getClient().getGame().getEntitiesVector();
             if (!es.isEmpty()) {
                 getUnitDisplay().displayEntity(es.get(0));
@@ -1913,20 +1925,21 @@ public class ClientGUI extends AbstractClientGUI
 
 
     /**
-     * Brings up a dialog that displays a message using a default
-     * icon determined by the <code>messageType</code> parameter.
+     * Brings up a dialog that displays a message using a default icon determined by the <code>messageType</code>
+     * parameter.
      *
-     * @param message   the <code>Object</code> to display
-     * @param title     the title string for the dialog
+     * @param message     the <code>Object</code> to display
+     * @param title       the title string for the dialog
      * @param messageType the type of message to be displayed:
-     *                  <code>ERROR_MESSAGE</code>,
-     *                  <code>INFORMATION_MESSAGE</code>,
-     *                  <code>WARNING_MESSAGE</code>,
-     *                  <code>QUESTION_MESSAGE</code>,
-     *                  or <code>PLAIN_MESSAGE</code>
-     * @exception HeadlessException if
-     *   <code>GraphicsEnvironment.isHeadless</code> returns
-     *   <code>true</code>
+     *                    <code>ERROR_MESSAGE</code>,
+     *                    <code>INFORMATION_MESSAGE</code>,
+     *                    <code>WARNING_MESSAGE</code>,
+     *                    <code>QUESTION_MESSAGE</code>,
+     *                    or <code>PLAIN_MESSAGE</code>
+     *
+     * @throws HeadlessException if
+     *                           <code>GraphicsEnvironment.isHeadless</code> returns
+     *                           <code>true</code>
      * @see java.awt.GraphicsEnvironment#isHeadless
      */
     public void doAlertDialog(String title, String message, int messageType) {
@@ -1945,12 +1958,13 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Pops up a dialog box giving the player information on a subject. It also includes a checkbox if they don't
-     * want to be bothered again by it.
+     * Pops up a dialog box giving the player information on a subject. It also includes a checkbox if they don't want
+     * to be bothered again by it.
      *
-     * @param title the <code>String</code> title of the dialog box.
-     * @param message the <code>String</code> message to display.
+     * @param title           the <code>String</code> title of the dialog box.
+     * @param message         the <code>String</code> message to display.
      * @param includeCheckBox if <code>true</code>, a checkbox will be included in the dialog box
+     *
      * @return {@link InformDialog} containing the player's responses. The dialog will already have been shown
      */
     public InformDialog doInformBotherDialog(String title, String message, boolean includeCheckBox) {
@@ -2083,8 +2097,8 @@ public class ClientGUI extends AbstractClientGUI
 
                 // in the Lounge, set default deployment to "Before Game Start", round 0
                 // but in a game in-progress, deploy at the start of next round
-                final int deployRound = client.getGame().getRoundCount() +
-                                              ((client.getGame().getPhase() == GamePhase.LOUNGE) ? 0 : 1);
+                final int deployRound = client.getGame().getRoundCount() + ((client.getGame().getPhase()
+                      == GamePhase.LOUNGE) ? 0 : 1);
 
                 // Add the units from the file.
                 for (Entity entity : loadedUnits) {
@@ -2107,12 +2121,12 @@ public class ClientGUI extends AbstractClientGUI
 
                 if (!loadedUnits.isEmpty()) {
                     client.sendAddEntity(loadedUnits);
-                    String msg = client.getLocalPlayer() +
-                                       " loaded MUL file for player: " +
-                                       player.getName() +
-                                       " [" +
-                                       loadedUnits.size() +
-                                       " units]";
+                    String msg = client.getLocalPlayer()
+                          + " loaded MUL file for player: "
+                          + player.getName()
+                          + " ["
+                          + loadedUnits.size()
+                          + " units]";
                     client.sendServerChat(Player.PLAYER_NONE, msg);
                     addedUnits = true;
                 }
@@ -2200,8 +2214,9 @@ public class ClientGUI extends AbstractClientGUI
         // Did the player select a file?
         File unitFile = dlgSaveList.getSelectedFile();
         if (unitFile != null) {
-            if (!(unitFile.getName().toLowerCase().endsWith(CG_FILEEXTENTIONMUL) ||
-                        unitFile.getName().toLowerCase().endsWith(CG_FILEEXTENTIONXML))) {
+            if (!(unitFile.getName().toLowerCase().endsWith(CG_FILEEXTENTIONMUL) || unitFile.getName()
+                  .toLowerCase()
+                  .endsWith(CG_FILEEXTENTIONXML))) {
                 try {
                     unitFile = new File(unitFile.getCanonicalPath() + CG_FILEEXTENTIONMUL);
                 } catch (Exception ignored) {
@@ -2244,12 +2259,12 @@ public class ClientGUI extends AbstractClientGUI
                 String dialogTitle = "Error printing unit list";
                 if (autodetected) {
                     logger.errorDialog(dialogTitle,
-                          "Could not auto-detect MegaMekLab! Please configure the " +
-                                "path to the MegaMekLab executable in the settings.");
+                          "Could not auto-detect MegaMekLab! Please configure the "
+                                + "path to the MegaMekLab executable in the settings.");
                 } else {
                     logger.errorDialog(dialogTitle,
-                          "{} does not appear to be an executable! You may need to set execute permission or " +
-                                "configure the path to the MegaMekLab executable in the settings.",
+                          "{} does not appear to be an executable! You may need to set execute permission or "
+                                + "configure the path to the MegaMekLab executable in the settings.",
                           mmlExecutable.getName());
                 }
                 return null;
@@ -2271,12 +2286,12 @@ public class ClientGUI extends AbstractClientGUI
 
                 if (autodetected) {
                     logger.errorDialog(dialogTitle,
-                          "Could not auto-detect MegaMekLab! Please configure the path to the MegaMekLab executable " +
-                                "in the settings.");
+                          "Could not auto-detect MegaMekLab! Please configure the path to the MegaMekLab executable "
+                                + "in the settings.");
                 } else {
                     logger.errorDialog(dialogTitle,
-                          "{} does not appear to exist! Please configure the path to the MegaMekLab executable in " +
-                                "the settings.",
+                          "{} does not appear to exist! Please configure the path to the MegaMekLab executable in "
+                                + "the settings.",
                           mmlExecutable.getName());
                 }
                 return null;
@@ -2377,8 +2392,9 @@ public class ClientGUI extends AbstractClientGUI
         // Did the player select a file?
         File unitFile = dlgSaveList.getSelectedFile();
         if (unitFile != null) {
-            if (!(unitFile.getName().toLowerCase().endsWith(CG_FILEEXTENTIONMUL) ||
-                        unitFile.getName().toLowerCase().endsWith(CG_FILEEXTENTIONXML))) {
+            if (!(unitFile.getName().toLowerCase().endsWith(CG_FILEEXTENTIONMUL) || unitFile.getName()
+                  .toLowerCase()
+                  .endsWith(CG_FILEEXTENTIONXML))) {
                 try {
                     unitFile = new File(unitFile.getCanonicalPath() + CG_FILEEXTENTIONMUL);
                 } catch (Exception ignored) {
@@ -2443,9 +2459,9 @@ public class ClientGUI extends AbstractClientGUI
 
     private void setWeaponOrderPrefs(boolean prefChange) {
         for (Entity entity : client.getGame().getEntitiesVector()) {
-            if ((entity.getOwner().equals(client.getLocalPlayer())) &&
-                      (!entity.getWeaponSortOrder().isCustom()) &&
-                      ((!entity.isDeployed()) || (prefChange))) {
+            if ((entity.getOwner().equals(client.getLocalPlayer()))
+                  && (!entity.getWeaponSortOrder().isCustom())
+                  && ((!entity.isDeployed()) || (prefChange))) {
                 entity.setWeaponSortOrder(GUIP.getDefaultWeaponSortOrder());
                 client.sendEntityWeaponOrderUpdate(entity);
             }
@@ -2471,7 +2487,11 @@ public class ClientGUI extends AbstractClientGUI
                     }
                     BoardView boardView = new BoardView(client.getGame(), controller, ClientGUI.this, boardId);
                     MinimapDialog newMinimap = new MinimapDialog(frame);
-                    newMinimap.add(new MinimapPanel(newMinimap, client.getGame(), boardView, ClientGUI.this, null,
+                    newMinimap.add(new MinimapPanel(newMinimap,
+                          client.getGame(),
+                          boardView,
+                          ClientGUI.this,
+                          null,
                           boardId));
                     newMinimap.setVisible(true);
                     miniMaps.put(boardId, newMinimap);
@@ -2489,8 +2509,7 @@ public class ClientGUI extends AbstractClientGUI
                     boardView.addOverlay(new KeyBindingsOverlay(boardView));
                     boardView.addOverlay(new PlanetaryConditionsOverlay(boardView));
                     boardView.addOverlay(new TurnDetailsOverlay(boardView));
-                    boardView.setTooltipProvider(
-                          new TWBoardViewTooltip(client.getGame(), ClientGUI.this, boardView));
+                    boardView.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), ClientGUI.this, boardView));
                     boardViewsContainer.updateMapTabs();
                     ruler = new RulerDialog(frame, client, boardView, client.getGame());
                     ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
@@ -2566,10 +2585,10 @@ public class ClientGUI extends AbstractClientGUI
 
         @Override
         public void gameEntityChange(GameEntityChangeEvent e) {
-            if ((unitDisplayPanel != null) &&
-                      (unitDisplayPanel.getCurrentEntity() != null) &&
-                      (e.getEntity() != null) &&
-                      (unitDisplayPanel.getCurrentEntity().getId() == e.getEntity().getId())) {
+            if ((unitDisplayPanel != null)
+                  && (unitDisplayPanel.getCurrentEntity() != null)
+                  && (e.getEntity() != null)
+                  && (unitDisplayPanel.getCurrentEntity().getId() == e.getEntity().getId())) {
                 // underlying object may have changed, so reset
                 unitDisplayPanel.displayEntity(e.getEntity());
             }
@@ -2781,16 +2800,16 @@ public class ClientGUI extends AbstractClientGUI
                         String waaMsg;
                         if (ae != null) {
                             Mounted<?> weapon = ae.getEquipment(waa.getWeaponId());
-                            waaMsg = weapon.getDesc() +
-                                           " " +
-                                           Messages.getString("FROM") +
-                                           " " +
-                                           ae.getDisplayName() +
-                                           " (" +
-                                           Messages.getString("ClientGUI.distance") +
-                                           " " +
-                                           dist +
-                                           ")";
+                            waaMsg = weapon.getDesc()
+                                  + " "
+                                  + Messages.getString("FROM")
+                                  + " "
+                                  + ae.getDisplayName()
+                                  + " ("
+                                  + Messages.getString("ClientGUI.distance")
+                                  + " "
+                                  + dist
+                                  + ")";
                         } else {
                             waaMsg = Messages.getString("ClientGUI.missilesFromAnUnknownAttacker");
                         }
@@ -3031,7 +3050,9 @@ public class ClientGUI extends AbstractClientGUI
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
         try {
-            ImageIO.write(boardViews.get(0).getEntireBoardImage(ignoreUnits, false), CG_FILEFORMATNAMEPNG, curfileBoardImage);
+            ImageIO.write(boardViews.get(0).getEntireBoardImage(ignoreUnits, false),
+                  CG_FILEFORMATNAMEPNG,
+                  curfileBoardImage);
         } catch (IOException e) {
             logger.error(e, "boardSaveImage");
         }
@@ -3148,12 +3169,12 @@ public class ClientGUI extends AbstractClientGUI
 
     @Override
     public boolean shouldIgnoreHotKeys() {
-        return ignoreHotKeys ||
-                     ((gameOptionsDialog != null) && gameOptionsDialog.isVisible()) ||
-                     UIUtil.isModalDialogDisplayed() ||
-                     ((help != null) && help.isVisible()) ||
-                     ((setdlg != null) && setdlg.isVisible()) ||
-                     ((aw != null) && aw.isVisible());
+        return ignoreHotKeys
+              || ((gameOptionsDialog != null) && gameOptionsDialog.isVisible())
+              || UIUtil.isModalDialogDisplayed()
+              || ((help != null) && help.isVisible())
+              || ((setdlg != null) && setdlg.isVisible())
+              || ((aw != null) && aw.isVisible());
     }
 
     private final ComponentListener resizeListener = new ComponentAdapter() {
@@ -3240,9 +3261,9 @@ public class ClientGUI extends AbstractClientGUI
         } else if (e.getName().equals(GUIPreferences.DEFAULT_WEAPON_SORT_ORDER)) {
             setWeaponOrderPrefs(true);
             getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());
-        } else if ((e.getName().equals(GUIPreferences.SOUND_BING_FILENAME_CHAT)) ||
-                         (e.getName().equals(GUIPreferences.SOUND_BING_FILENAME_MY_TURN)) ||
-                         (e.getName().equals(GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN))) {
+        } else if ((e.getName().equals(GUIPreferences.SOUND_BING_FILENAME_CHAT)) || (e.getName()
+              .equals(GUIPreferences.SOUND_BING_FILENAME_MY_TURN)) || (e.getName()
+              .equals(GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN))) {
             audioService.loadSoundFiles();
         } else if (e.getName().equals(GUIPreferences.MASTER_VOLUME)) {
             audioService.setVolume();
@@ -3260,7 +3281,8 @@ public class ClientGUI extends AbstractClientGUI
      * @param gear      The move gear, MovementDisplay.GEAR_LAND or GEAR_JUMP
      */
     public void showMovementEnvelope(Entity entity, Map<Coords, Integer> mvEnvData, int gear) {
-        movementEnvelopeHandler.setMovementEnvelope(mvEnvData, entity.getBoardId(),
+        movementEnvelopeHandler.setMovementEnvelope(mvEnvData,
+              entity.getBoardId(),
               entity.getWalkMP(),
               entity.getRunMP(),
               entity.getAnyTypeMaxJumpMP(),
@@ -3367,9 +3389,8 @@ public class ClientGUI extends AbstractClientGUI
      */
     public Optional<WeaponMounted> getDisplayedWeapon() {
         WeaponMounted weapon = unitDisplayPanel.wPan.getSelectedWeapon();
-        if ((getDisplayedUnit() == null) ||
-                  (weapon == null) ||
-                  (client.getGame().getEntity(getDisplayedUnit().getId()) == null)) {
+        if ((getDisplayedUnit() == null) || (weapon == null) || (client.getGame().getEntity(getDisplayedUnit().getId())
+              == null)) {
             return Optional.empty();
         }
         Mounted<?> weaponOnUnit = getDisplayedUnit().getEquipment(unitDisplayPanel.wPan.getSelectedWeaponNum());

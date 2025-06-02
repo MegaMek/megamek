@@ -33,7 +33,6 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -51,9 +50,7 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.logging.MMLogger;
 
 /**
- * The menu bar that is used across MM, i.e. in the main menu, the board editor
- * and
- * the lobby and game.
+ * The menu bar that is used across MM, i.e. in the main menu, the board editor and the lobby and game.
  */
 public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferenceChangeListener {
     private final static MMLogger logger = MMLogger.create(CommonMenuBar.class);
@@ -123,43 +120,42 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     // The View menu
     private final JCheckBoxMenuItem viewMinimap = new JCheckBoxMenuItem(getString("CommonMenuBar.viewMinimap"));
     private final JCheckBoxMenuItem viewMekDisplay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewMekDisplay"));
-    private final JCheckBoxMenuItem viewForceDisplay = new JCheckBoxMenuItem(
-            getString("CommonMenuBar.viewForceDisplay"));
+    private final JCheckBoxMenuItem viewForceDisplay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewForceDisplay"));
     private final JMenuItem viewAccessibilityWindow = new JMenuItem(getString("CommonMenuBar.viewAccessibilityWindow"));
-    private final JCheckBoxMenuItem viewKeybindsOverlay = new JCheckBoxMenuItem(
-            getString("CommonMenuBar.viewKeyboardShortcuts"));
-    private final JCheckBoxMenuItem viewPlanetaryConditionsOverlay = new JCheckBoxMenuItem(
-            getString("CommonMenuBar.viewPlanetaryConditions"));
+    private final JCheckBoxMenuItem viewKeybindsOverlay = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.viewKeyboardShortcuts"));
+    private final JCheckBoxMenuItem viewPlanetaryConditionsOverlay = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.viewPlanetaryConditions"));
     private final JMenuItem viewZoomIn = new JMenuItem(getString("CommonMenuBar.viewZoomIn"));
     private final JMenuItem viewZoomOut = new JMenuItem(getString("CommonMenuBar.viewZoomOut"));
+    private final JMenuItem viewZoomToggle = new JMenuItem(getString("CommonMenuBar.viewZoomToggle"));
     private final JMenuItem viewLabels = new JMenuItem(getString("CommonMenuBar.viewLabels"));
     private final JCheckBoxMenuItem viewBotCommands = new JCheckBoxMenuItem(getString("CommonMenuBar.viewBotCommands"));
     private final JMenuItem viewResetWindowPositions = new JMenuItem(getString("CommonMenuBar.viewResetWindowPos"));
-    private final JCheckBoxMenuItem toggleIsometric = new JCheckBoxMenuItem(
-            getString("CommonMenuBar.viewToggleIsometric"));
-    private final JCheckBoxMenuItem toggleHexCoords = new JCheckBoxMenuItem(
-            getString("CommonMenuBar.viewToggleHexCoords"));
-    private final JCheckBoxMenuItem toggleSensorRange = new JCheckBoxMenuItem(
-            getString("CommonMenuBar.viewToggleSensorRange"));
-    private final JCheckBoxMenuItem toggleFieldOfFire = new JCheckBoxMenuItem(
-            getString("CommonMenuBar.viewToggleFieldOfFire"));
+    private final JCheckBoxMenuItem toggleIsometric = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.viewToggleIsometric"));
+    private final JCheckBoxMenuItem toggleHexCoords = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.viewToggleHexCoords"));
+    private final JCheckBoxMenuItem toggleSensorRange = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.viewToggleSensorRange"));
+    private final JCheckBoxMenuItem toggleFieldOfFire = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.viewToggleFieldOfFire"));
     private final JMenuItem toggleFleeZone = new JMenuItem(getString("CommonMenuBar.viewToggleFleeZone"));
-    private final JCheckBoxMenuItem toggleFovHighlight = new JCheckBoxMenuItem(
-            getString("CommonMenuBar.viewToggleFovHighlight"));
-    private final JCheckBoxMenuItem toggleFovDarken = new JCheckBoxMenuItem(
-            getString("CommonMenuBar.viewToggleFovDarken"));
-    private final JCheckBoxMenuItem toggleFiringSolutions = new JCheckBoxMenuItem(
-            getString("CommonMenuBar.viewToggleFiringSolutions"));
-    private final JCheckBoxMenuItem toggleCFWarning = new JCheckBoxMenuItem(
-            getString("CommonMenuBar.viewToggleCFWarning"));
-    private final JCheckBoxMenuItem viewMovementEnvelope = new JCheckBoxMenuItem(
-            getString("CommonMenuBar.movementEnvelope"));
-    private final JCheckBoxMenuItem viewTurnDetailsOverlay = new JCheckBoxMenuItem(
-            getString("CommonMenuBar.turnDetailsOverlay"));
+    private final JCheckBoxMenuItem toggleFovHighlight = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.viewToggleFovHighlight"));
+    private final JCheckBoxMenuItem toggleFovDarken = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.viewToggleFovDarken"));
+    private final JCheckBoxMenuItem toggleFiringSolutions = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.viewToggleFiringSolutions"));
+    private final JCheckBoxMenuItem toggleCFWarning = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.viewToggleCFWarning"));
+    private final JCheckBoxMenuItem viewMovementEnvelope = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.movementEnvelope"));
+    private final JCheckBoxMenuItem viewTurnDetailsOverlay = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.turnDetailsOverlay"));
     private final JMenuItem viewMovModEnvelope = new JMenuItem(getString("CommonMenuBar.movementModEnvelope"));
     private final JMenuItem viewLOSSetting = new JMenuItem(getString("CommonMenuBar.viewLOSSetting"));
-    private final JCheckBoxMenuItem viewUnitOverview = new JCheckBoxMenuItem(
-            getString("CommonMenuBar.viewUnitOverview"));
+    private final JCheckBoxMenuItem viewUnitOverview = new JCheckBoxMenuItem(getString("CommonMenuBar.viewUnitOverview"));
     private final JMenuItem viewClientSettings = new JMenuItem(getString("CommonMenuBar.viewClientSettings"));
     private final JMenuItem viewIncGUIScale = new JMenuItem(getString("CommonMenuBar.viewIncGUIScale"));
     private final JMenuItem viewDecGUIScale = new JMenuItem(getString("CommonMenuBar.viewDecGUIScale"));
@@ -174,8 +170,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JMenuItem fireSaveWeaponOrder = new JMenuItem(getString("CommonMenuBar.fireSaveWeaponOrder"));
 
     /**
-     * Contains all ActionListeners that have registered themselves with this menu
-     * bar.
+     * Contains all ActionListeners that have registered themselves with this menu bar.
      */
     private final List<ActionListener> actionListeners = new ArrayList<>();
 
@@ -306,7 +301,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.addSeparator();
 
         initMenuItem(viewKeybindsOverlay, menu, VIEW_KEYBINDS_OVERLAY, GUIP.getShowKeybindsOverlay());
-        initMenuItem(viewPlanetaryConditionsOverlay, menu, VIEW_PLANETARYCONDITIONS_OVERLAY, GUIP.getShowPlanetaryConditionsOverlay());
+        initMenuItem(viewPlanetaryConditionsOverlay,
+              menu,
+              VIEW_PLANETARYCONDITIONS_OVERLAY,
+              GUIP.getShowPlanetaryConditionsOverlay());
         initMenuItem(viewTurnDetailsOverlay, menu, VIEW_TURN_DETAILS_OVERLAY, GUIP.getTurnDetailsOverlay());
         initMenuItem(viewUnitOverview, menu, VIEW_UNIT_OVERVIEW, GUIP.getShowUnitOverview());
         menu.addSeparator();
@@ -318,6 +316,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
         initMenuItem(viewZoomIn, menu, VIEW_ZOOM_IN);
         initMenuItem(viewZoomOut, menu, VIEW_ZOOM_OUT);
+        initMenuItem(viewZoomToggle, menu, VIEW_ZOOM_TOGGLE);
         initMenuItem(toggleIsometric, menu, VIEW_TOGGLE_ISOMETRIC, VK_T, GUIP.getIsometricEnabled());
         initMenuItem(toggleHexCoords, menu, VIEW_TOGGLE_HEXCOORDS, VK_G, GUIP.getCoordsEnabled());
         initMenuItem(viewLabels, menu, VIEW_LABELS);
@@ -384,6 +383,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         gameRoundReport.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.ROUND_REPORT));
         viewZoomIn.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.ZOOM_IN));
         viewZoomOut.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.ZOOM_OUT));
+        viewZoomToggle.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.ZOOM_TOGGLE));
         gameQLoad.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.QUICK_LOAD));
         gameQSave.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.QUICK_SAVE));
         gameSave.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOCAL_SAVE));
@@ -442,42 +442,39 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     }
 
     /**
-     * Register an object that wishes to be alerted when an item on this menu
-     * bar has been selected.
+     * Register an object that wishes to be alerted when an item on this menu bar has been selected.
      * <p>
-     * Please note, the ActionCommand property of
-     * the action event will inform the listener as to which menu item that has
-     * been selected. Not all listeners will be interested in all menu items.
+     * Please note, the ActionCommand property of the action event will inform the listener as to which menu item that
+     * has been selected. Not all listeners will be interested in all menu items.
      *
-     * @param listener - the <code>ActionListener</code> that wants to
-     *                 register itself.
+     * @param listener - the <code>ActionListener</code> that wants to register itself.
      */
     public void addActionListener(ActionListener listener) {
         actionListeners.add(listener);
     }
 
     /**
-     * Remove an object that was being alerted when an item on this menu bar was
-     * selected.
+     * Remove an object that was being alerted when an item on this menu bar was selected.
      *
-     * @param listener - the <code>ActionListener</code> that wants to be
-     *                 removed.
+     * @param listener - the <code>ActionListener</code> that wants to be removed.
      */
     public void removeActionListener(ActionListener listener) {
         actionListeners.remove(listener);
     }
 
     /**
-     * Manages the enabled states of the menu items depending on where the menu is
-     * employed.
+     * Manages the enabled states of the menu items depending on where the menu is employed.
      */
     private synchronized void updateEnabledStates() {
         boolean isLobby = isGame && phase.isLounge();
         boolean isInGame = isGame && phase.isDuringOrAfter(GamePhase.DEPLOYMENT);
         boolean isInGameBoardView = isInGame && phase.isOnMap();
         boolean isBoardView = isInGameBoardView || isBoardEditor;
-        boolean canSave = !phase.isUnknown() && !phase.isSelection() && !phase.isExchange()
-                && !phase.isVictory() && !phase.isStartingScenario();
+        boolean canSave = !phase.isUnknown()
+              && !phase.isSelection()
+              && !phase.isExchange()
+              && !phase.isVictory()
+              && !phase.isStartingScenario();
         boolean isNotVictory = !phase.isVictory();
 
         viewAccessibilityWindow.setEnabled(false);
@@ -529,6 +526,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewMinimap.setEnabled(isBoardView);
         viewZoomIn.setEnabled(isBoardView);
         viewZoomOut.setEnabled(isBoardView);
+        viewZoomToggle.setEnabled(isBoardView);
         toggleIsometric.setEnabled(isBoardView);
         viewKeybindsOverlay.setEnabled(isBoardView);
         viewPlanetaryConditionsOverlay.setEnabled(isInGameBoardView);
@@ -556,8 +554,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     /**
      * Identify to the menu bar which phase is currently in progress
      *
-     * @param current - the <code>int</code> value of the current phase (the
-     *                valid values for this argument are defined as constants in the
+     * @param current - the <code>int</code> value of the current phase (the valid values for this argument are defined
+     *                as constants in the
      *                <code>Game</code> class).
      */
     public synchronized void setPhase(GamePhase current) {

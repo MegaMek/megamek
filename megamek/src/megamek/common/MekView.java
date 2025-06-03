@@ -254,6 +254,8 @@ public class MekView {
         }
 
         sHead.add(new Title(entity.getShortNameRaw()));
+        sHead.add(new SingleLine(unitTypeAsString(entity)));
+        sHead.add(new SingleLine());
         String techLevel = entity.getStaticTechLevel().toString();
         if (entity.isMixedTech()) {
             if (entity.isClan()) {
@@ -1759,5 +1761,98 @@ public class MekView {
      */
     private String italicize(String text) {
         return italicsStart() + text + italicsEnd();
+    }
+
+    private String unitTypeAsString(Entity entity) {
+        String result = "";
+        if (entity.isPrimitive()) {
+            result += Messages.getString("MekView.unitType.primitive") + " ";
+        }
+        if ((entity.isDropShip() || entity.isSmallCraft())) {
+            if (!entity.isMilitary()) {
+                result += Messages.getString("MekView.unitType.civilian") + " ";
+            }
+            if (entity.isAerodyne()) {
+                result += Messages.getString("MekView.unitType.aerodyne") + " ";
+            } else {
+                result += Messages.getString("MekView.unitType.spheroid") + " ";
+            }
+        }
+        if (entity.isSuperHeavy()) {
+            result += Messages.getString("MekView.unitType.superHeavy") + " ";
+        }
+        if (entity.isTripodMek()) {
+            result += Messages.getString("MekView.unitType.tripod") + " ";
+        } else if (entity instanceof QuadVee) {
+            result += Messages.getString("MekView.unitType.quadVee") + " ";
+        } else if (entity.isQuadMek() || (entity instanceof ProtoMek pm && pm.isQuad())) {
+            result += Messages.getString("MekView.unitType.quad") + " ";
+        }
+        if (entity.isIndustrialMek()) {
+            result += Messages.getString("MekView.unitType.industrial") + " ";
+        }
+        if (entity.isConventionalFighter()) {
+            result += Messages.getString("MekView.unitType.conventional") + " ";
+        } else if (entity.isAerospaceFighter()) {
+            result += Messages.getString("MekView.unitType.aerospace") + " ";
+        }
+        if (entity.isCombatVehicle() && !(entity instanceof GunEmplacement)) {
+            result += Messages.getString("MekView.unitType.combat") + " ";
+        } else if (entity.isFixedWingSupport()) {
+            result += Messages.getString("MekView.unitType.fixedWingSupport") + " ";
+        } else if (entity.isSupportVehicle()) {
+            result += Messages.getString("MekView.unitType.support") + " ";
+        }
+
+        if (entity.isSpaceStation()) {
+            if (entity.isMilitary()) {
+                result += Messages.getString("MekView.unitType.military") + " ";
+            } else {
+                result += Messages.getString("MekView.unitType.civilian") + " ";
+            }
+            result += Messages.getString("MekView.unitType.spaceStation");
+        } else if (entity.isJumpShip()) {
+            result += Messages.getString("MekView.unitType.jumpShip");
+        } else if (entity.isWarShip()) {
+            result += Messages.getString("MekView.unitType.warShip");
+        } else if (entity.isDropShip()) {
+            result += Messages.getString("MekView.unitType.dropShip");
+        } else if (entity.isSmallCraft()) {
+            result += Messages.getString("MekView.unitType.smallCraft");
+        } else if (entity.isProtoMek()) {
+            result += Messages.getString("MekView.unitType.protoMek");
+        } else if (entity.isBattleArmor()) {
+            result += Messages.getString("MekView.unitType.battleArmor");
+        } else if (entity.isConventionalInfantry()) {
+            result += Messages.getString("MekView.unitType.infantry");
+        } else if (entity.isMek() && !entity.isIndustrialMek()) {
+            result += Messages.getString("MekView.unitType.battleMek");
+        } else if (entity instanceof GunEmplacement) {
+            result += Messages.getString("MekView.unitType.gunEmplacement");
+        } else if (entity.isIndustrialMek()) {
+            result += Messages.getString("MekView.unitType.onlyMek");
+        } else if (entity.isVehicle() || entity.isFixedWingSupport()) {
+            result += Messages.getString("MekView.unitType.vehicle");
+        } else if (entity.isFighter() && !entity.isSupportVehicle()) {
+            result += Messages.getString("MekView.unitType.fighter");
+        } else if (entity instanceof HandheldWeapon) {
+            result += Messages.getString("MekView.unitType.handHeld");
+        }
+        String addendum = "";
+        if (entity.isVehicle()) {
+            if (entity.getMovementMode().isSubmarine()) {
+                addendum += Messages.getString("MekView.unitType.submarine");
+            } else if (entity.getMovementMode().isVTOL()) {
+                addendum += Messages.getString("MekView.unitType.vtol");
+            } else if (entity.getMovementMode().isHover()) {
+                addendum += Messages.getString("MekView.unitType.hover");
+            } else if (entity.getMovementMode().isRail()) {
+                addendum += Messages.getString("MekView.unitType.rail");
+            } else if (entity.getMovementMode().isNaval() || entity.getMovementMode().isHydrofoil()) {
+                addendum += Messages.getString("MekView.unitType.naval");
+            } else if (entity.getMovementMode().isWiGE()) {
+                addendum += Messages.getString("MekView.unitType.wige");
+            }
+        } return result + (addendum.isBlank() ? "" : " (%s)".formatted(addendum));
     }
 }

@@ -449,7 +449,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_CYAN = new Color(0, 228, 228);
     private static final Color DEFAULT_MAGENTA = new Color(228, 0, 228);
     private static final Color DEFAULT_PINK = new Color(228, 20, 147);
-    private static final Color DEFAULT_RED = new Color(196, 0, 0);
+    private static final Color DEFAULT_RED = new Color(225, 51, 51);
     private static final Color DEFAULT_GREEN = new Color(0, 212, 0);
     private static final Color DEFAULT_BLUE = new Color(64, 96, 228);
     private static final Color DEFAULT_MEDIUM_DARK_RED = new Color(150, 80, 80); // medium dark red
@@ -473,7 +473,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_PLANETARY_CONDITIONS_BACKGROUND_COLOR = new Color(80, 80, 80);
 
     // Report Color
-    private static final Color DEFAULT_REPORT_LINK_COLOR = new Color(73, 102, 230);
+    private static final Color DEFAULT_REPORT_LINK_COLOR = new Color(5, 160, 255);
 
     // Map colors
     private static final Color DEFAULT_MAP_BRIGHT_GREEN = new Color(80, 230, 80);
@@ -763,9 +763,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE, 0);
         store.setDefault(MINI_REPORT_LOCATION, 0);
         setDefault(MINI_REPORT_COLOR_LINK, DEFAULT_REPORT_LINK_COLOR);
-        setDefault(MINI_REPORT_COLOR_SUCCESS, new Color(0x008000));
-        setDefault(MINI_REPORT_COLOR_MISS, new Color(0x808080));
-        setDefault(MINI_REPORT_COLOR_INFO, new Color(0x0000FF));
+        setDefault(MINI_REPORT_COLOR_SUCCESS, new Color(51, 204, 0));
+        setDefault(MINI_REPORT_COLOR_MISS, new Color(128, 128, 128));
+        setDefault(MINI_REPORT_COLOR_INFO, new Color(51, 153, 255));
         setDefault(MINI_REPORT_FONT_TYPE, "Segoe UI");
         store.setDefault(MINI_ROUND_REPORT_SPRITES, true);
 

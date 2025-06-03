@@ -5030,7 +5030,6 @@ public final class BoardView extends AbstractBoardView
             zoomIndex = GUIP.getMapZoomLevelA();
             zoomLevelA = true;
         }
-        System.out.println("A = " + zoomLevelA);
         zoom();
 
     }
@@ -5049,19 +5048,28 @@ public final class BoardView extends AbstractBoardView
      * Changes hex dimensions and refreshes the map with the new scale
      */
     private void zoom() {
-        double oldPtX;
-        double oldPtY;
-        try { // try to get mouse position and zoom centered on the hex below the cursor
-            Point oldCenterPt = new Point(getCentreHexLocation(getCoordsAt(boardPanel.getMousePosition())));
-            oldPtX = oldCenterPt.getX() / boardSize.getWidth();
-            oldPtY = oldCenterPt.getY() / boardSize.getHeight();
-        } catch (Exception e) { // zoom on screen center, if mouse position is outside of the map
-            oldPtX = (double) (scrollPane.getHorizontalScrollBar().getValue()
-                  + scrollPane.getHorizontalScrollBar().getVisibleAmount() / 2) / scrollPane.getHorizontalScrollBar()
-                  .getMaximum();
-            oldPtY = (double) (scrollPane.getVerticalScrollBar().getValue()
-                  + scrollPane.getVerticalScrollBar().getVisibleAmount() / 2) / scrollPane.getVerticalScrollBar()
-                  .getMaximum();
+        Point dispPoint;
+        double inHexDeltaX = 0;
+        double inHexDeltaY = 0;
+        Coords zoomCenter;
+
+        try { // try to get mouse position and zoom centered on the cursor
+            Point mouseP = new Point(boardPanel.getMousePosition());
+            dispPoint = new Point(mouseP.x + boardPanel.getBounds().x, mouseP.y + boardPanel.getBounds().y);
+            zoomCenter = new Coords(getCoordsAt(boardPanel.getMousePosition()));
+            Point hexL = getCentreHexLocation(zoomCenter);
+            Point inHexDelta = new Point(boardPanel.getMousePosition());
+            inHexDelta.translate(-HEX_W, -HEX_H);
+            inHexDelta.translate(-hexL.x, -hexL.y);
+            inHexDeltaX = ((double) inHexDelta.x) / ((double) HEX_W) / scale;
+            inHexDeltaY = ((double) inHexDelta.y) / ((double) HEX_H) / scale;
+
+        } catch (Exception e) { // zoom on view center, if mouse position is outside of the map
+            Point viewCenter = new Point(boardPanel.getVisibleRect().getLocation().x
+                  + boardPanel.getVisibleRect().width / 2,
+                  boardPanel.getVisibleRect().getLocation().y + boardPanel.getVisibleRect().height / 2);
+            dispPoint = new Point(viewCenter.x + boardPanel.getBounds().x, viewCenter.y + boardPanel.getBounds().y);
+            zoomCenter = new Coords(getCoordsAt(viewCenter));
         }
 
         checkZoomIndex();
@@ -5095,10 +5103,12 @@ public final class BoardView extends AbstractBoardView
         boardPanel.setSize(boardSize);
         clearHexImageCache();
 
-        centerOnPointRel(oldPtX, oldPtY);
-        //boardPanel.repaint();
+        adjustVisiblePosition(zoomCenter, dispPoint, inHexDeltaX, inHexDeltaY);
 
-        pingMinimap();
+
+        //boardPanel.repaint();
+        //pingMinimap();
+
         if (zoomLevelA) {
             GUIP.setMapZoomLevelA(zoomIndex);
         } else {

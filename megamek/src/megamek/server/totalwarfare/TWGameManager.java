@@ -16395,6 +16395,7 @@ TargetRoll nTargetRoll,
         r.add(reasons.toString());
         vPhaseReport.add(r);
         r = new Report(2285);
+        r.indent();
         r.subject = entity.getId();
         r.add(base);
         vPhaseReport.add(r);
@@ -16615,6 +16616,7 @@ TargetRoll nTargetRoll,
                 r.add(reasons.toString());
                 vReport.add(r);
                 r = new Report(2285);
+                r.indent();
                 r.subject = e.getId();
                 r.add(target);
                 vReport.add(r);
@@ -21425,7 +21427,9 @@ TargetRoll nTargetRoll,
             boolean reactiveArmorCrit = false;
             if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) && (slot.getMount() != null)) {
                 Mounted<?> eq = slot.getMount();
-                if (eq.getType().hasFlag(MiscType.F_REACTIVE) && (en.getArmor(loc) > 0)) {
+                if ((eq.getType() instanceof MiscType miscType) &&
+                      miscType.hasFlag(MiscType.F_REACTIVE) &&
+                      (en.getArmor(loc) > 0)) {
                     reactiveArmorCrit = true;
                 }
             }

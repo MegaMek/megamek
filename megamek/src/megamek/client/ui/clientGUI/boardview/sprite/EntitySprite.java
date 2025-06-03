@@ -42,7 +42,7 @@ public class EntitySprite extends Sprite {
 
     // Statics
     private static final int SMALL = 0;
-    private static final int STATUS_BAR_LENGTH = 30; // was 24 previously
+    private static final int STATUS_BAR_LENGTH = 24;
     private static final int STATUS_BAR_X = 55;
     private static final int MAX_TMM_PIPS = 6;
     private static final int TMM_PIP_SIZE = STATUS_BAR_LENGTH / MAX_TMM_PIPS;
@@ -868,15 +868,15 @@ public class EntitySprite extends Sprite {
                 int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
                 Color tmmColor = (pipOption == 1) ? Color.WHITE : GUIP.getColorForMovement(entity.moved);
                 graph.setColor(Color.darkGray);
-                graph.fillRect(STATUS_BAR_X, 12 + TMM_PIP_SIZE, STATUS_BAR_LENGTH, TMM_PIP_SIZE * pipMult);
+                graph.fillRect(STATUS_BAR_X, 12 + TMM_PIP_SIZE, STATUS_BAR_LENGTH * pipMult, TMM_PIP_SIZE * pipMult);
                 if (tmm >= 0) {
                     // draw left to right for positive TMM
                     for (int i = 0; i < MAX_TMM_PIPS; i++) {
                         graph.setColor(Color.DARK_GRAY);
                         graph.setColor(i < tmm ? tmmColor : Color.BLACK);
-                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE),
+                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE * pipMult),
                               12 + TMM_PIP_SIZE,
-                              TMM_PIP_SIZE - pipMult,
+                              TMM_PIP_SIZE * pipMult - pipMult,
                               TMM_PIP_SIZE * pipMult - pipMult);
                     }
                 } else {
@@ -884,9 +884,9 @@ public class EntitySprite extends Sprite {
                     for (int i = 0; i < MAX_TMM_PIPS; i++) {
                         graph.setColor(Color.DARK_GRAY);
                         graph.setColor(i >= (MAX_TMM_PIPS + tmm) ? tmmColor : Color.BLACK);
-                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE),
+                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE * pipMult),
                               12 + TMM_PIP_SIZE,
-                              TMM_PIP_SIZE - pipMult,
+                              TMM_PIP_SIZE * pipMult - pipMult,
                               TMM_PIP_SIZE * pipMult - pipMult);
                     }
                 }

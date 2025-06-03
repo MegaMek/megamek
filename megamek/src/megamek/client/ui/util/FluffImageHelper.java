@@ -173,7 +173,8 @@ public final class FluffImageHelper {
         candidates.add((sanitizedChassis + " " + sanitizedModel).trim());
         if (unit instanceof Mek mek && !mek.getClanChassisName().isBlank()) {
             addClanChassisVariants(mek.getFullChassis(), candidates, sanitizedModel, mek.getClanChassisName());
-        } else if (unit instanceof MekSummary mekSummary && mekSummary.isMek()) {
+        } else if (unit instanceof MekSummary mekSummary && mekSummary.isMek()
+              && !mekSummary.getClanChassisName().isBlank()) {
             addClanChassisVariants(mekSummary.getFullChassis(), candidates, sanitizedModel,
                   mekSummary.getClanChassisName());
         }

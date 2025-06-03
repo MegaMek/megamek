@@ -21425,7 +21425,9 @@ TargetRoll nTargetRoll,
             boolean reactiveArmorCrit = false;
             if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) && (slot.getMount() != null)) {
                 Mounted<?> eq = slot.getMount();
-                if (eq.getType().hasFlag(MiscType.F_REACTIVE) && (en.getArmor(loc) > 0)) {
+                if ((eq.getType() instanceof MiscType miscType) &&
+                      miscType.hasFlag(MiscType.F_REACTIVE) &&
+                      (en.getArmor(loc) > 0)) {
                     reactiveArmorCrit = true;
                 }
             }

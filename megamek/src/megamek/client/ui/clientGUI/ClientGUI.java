@@ -210,7 +210,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview";
     public static final String VIEW_ZOOM_IN = "viewZoomIn";
     public static final String VIEW_ZOOM_OUT = "viewZoomOut";
-    public static final String VIEW_ZOOM_TOGGLE = "viewZoomToggle";
+    public static final String VIEW_ZOOM_OVERVIEW_TOGGLE = "viewZoomOverviewToggle";
     public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric";
     public static final String VIEW_TOGGLE_HEXCOORDS = "viewToggleHexCoords";
     public static final String VIEW_LABELS = "viewLabels";
@@ -986,8 +986,8 @@ public class ClientGUI extends AbstractClientGUI
             case VIEW_ZOOM_OUT:
                 boardViews.get(0).zoomOut();
                 break;
-            case VIEW_ZOOM_TOGGLE:
-                boardViews.get(0).zoomToggle();
+            case VIEW_ZOOM_OVERVIEW_TOGGLE:
+                boardViews.get(0).zoomOverviewToggle();
                 break;
             case VIEW_TOGGLE_ISOMETRIC:
                 GUIP.setIsometricEnabled(!GUIP.getIsometricEnabled());

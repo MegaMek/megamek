@@ -59,7 +59,7 @@ public interface IBoardView {
     /**
      * Toggles between two Zoom levels.
      */
-    void zoomToggle();
+    void zoomOverviewToggle();
 
     /**
      * Returns the pixel size of the entire board if drawn at the current zoom level. This should not include any

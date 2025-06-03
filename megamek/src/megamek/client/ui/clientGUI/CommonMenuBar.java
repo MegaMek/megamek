@@ -128,7 +128,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
           "CommonMenuBar.viewPlanetaryConditions"));
     private final JMenuItem viewZoomIn = new JMenuItem(getString("CommonMenuBar.viewZoomIn"));
     private final JMenuItem viewZoomOut = new JMenuItem(getString("CommonMenuBar.viewZoomOut"));
-    private final JMenuItem viewZoomToggle = new JMenuItem(getString("CommonMenuBar.viewZoomToggle"));
+    private final JMenuItem viewZoomOverviewToggle = new JMenuItem(getString("CommonMenuBar.viewZoomOverviewToggle"));
     private final JMenuItem viewLabels = new JMenuItem(getString("CommonMenuBar.viewLabels"));
     private final JCheckBoxMenuItem viewBotCommands = new JCheckBoxMenuItem(getString("CommonMenuBar.viewBotCommands"));
     private final JMenuItem viewResetWindowPositions = new JMenuItem(getString("CommonMenuBar.viewResetWindowPos"));
@@ -316,7 +316,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
         initMenuItem(viewZoomIn, menu, VIEW_ZOOM_IN);
         initMenuItem(viewZoomOut, menu, VIEW_ZOOM_OUT);
-        initMenuItem(viewZoomToggle, menu, VIEW_ZOOM_TOGGLE);
+        initMenuItem(viewZoomOverviewToggle, menu, VIEW_ZOOM_OVERVIEW_TOGGLE);
         initMenuItem(toggleIsometric, menu, VIEW_TOGGLE_ISOMETRIC, VK_T, GUIP.getIsometricEnabled());
         initMenuItem(toggleHexCoords, menu, VIEW_TOGGLE_HEXCOORDS, VK_G, GUIP.getCoordsEnabled());
         initMenuItem(viewLabels, menu, VIEW_LABELS);
@@ -383,7 +383,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         gameRoundReport.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.ROUND_REPORT));
         viewZoomIn.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.ZOOM_IN));
         viewZoomOut.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.ZOOM_OUT));
-        viewZoomToggle.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.ZOOM_TOGGLE));
+        viewZoomOverviewToggle.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.ZOOM_OVERVIEW_TOGGLE));
         gameQLoad.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.QUICK_LOAD));
         gameQSave.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.QUICK_SAVE));
         gameSave.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOCAL_SAVE));
@@ -526,7 +526,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewMinimap.setEnabled(isBoardView);
         viewZoomIn.setEnabled(isBoardView);
         viewZoomOut.setEnabled(isBoardView);
-        viewZoomToggle.setEnabled(isBoardView);
+        viewZoomOverviewToggle.setEnabled(isBoardView);
         toggleIsometric.setEnabled(isBoardView);
         viewKeybindsOverlay.setEnabled(isBoardView);
         viewPlanetaryConditionsOverlay.setEnabled(isInGameBoardView);

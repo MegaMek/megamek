@@ -137,8 +137,8 @@ public final class BoardView extends AbstractBoardView
     // Initial zoom index
     public int zoomIndex = BASE_ZOOM_INDEX;
 
-    // Set Zoom Level A active.
-    public boolean zoomLevelA = true;
+    // Set Zoom Out Overview Toggle inactive.
+    public boolean zoomOverview = false;
 
     // line width of the c3 network lines
     public static final int C3_LINE_WIDTH = 1;
@@ -178,6 +178,9 @@ public final class BoardView extends AbstractBoardView
     private JScrollBar horizontalBar;
     private int scrollXDifference = 0;
     private int scrollYDifference = 0;
+    private int preZoomOverivewIndex = 0;
+    private int preZoomOverviewViewX = 0;
+    private int preZoomOverviewViewY = 0;
     // are we drag-scrolling?
     private boolean dragging = false;
     private boolean wantsPopup = false;
@@ -5022,16 +5025,21 @@ public final class BoardView extends AbstractBoardView
     }
 
     @Override
-    public void zoomToggle() {
-        if (zoomLevelA) {
-            zoomIndex = GUIP.getMapZoomLevelB();
-            zoomLevelA = false;
+    public void zoomOverviewToggle() {
+        if (!zoomOverview) {
+            preZoomOverivewIndex = zoomIndex;
+            preZoomOverviewViewX = scrollPane.getHorizontalScrollBar().getValue();
+            preZoomOverviewViewY = scrollPane.getVerticalScrollBar().getValue();
+            zoomIndex = 0;
+            zoomOverview = true;
+            zoom();
         } else {
-            zoomIndex = GUIP.getMapZoomLevelA();
-            zoomLevelA = true;
+            zoomIndex = preZoomOverivewIndex;
+            zoomOverview = false;
+            zoom();
+            scrollPane.getHorizontalScrollBar().setValue(preZoomOverviewViewX);
+            scrollPane.getVerticalScrollBar().setValue(preZoomOverviewViewY);
         }
-        zoom();
-
     }
 
     private void checkZoomIndex() {
@@ -5105,14 +5113,8 @@ public final class BoardView extends AbstractBoardView
 
         adjustVisiblePosition(zoomCenter, dispPoint, inHexDeltaX, inHexDeltaY);
 
-
-        //boardPanel.repaint();
-        //pingMinimap();
-
-        if (zoomLevelA) {
-            GUIP.setMapZoomLevelA(zoomIndex);
-        } else {
-            GUIP.setMapZoomLevelB(zoomIndex);
+        if (zoomIndex != 0) {
+            zoomOverview = false;
         }
     }
 

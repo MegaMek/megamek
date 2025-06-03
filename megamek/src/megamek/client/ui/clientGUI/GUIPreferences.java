@@ -278,8 +278,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String LOBBY_MEKTABLE_PLAYER_WIDTH = "LobbyMektablePlayerWidth";
     public static final String LOBBY_MEKTABLE_BV_WIDTH = "LobbyMektableBVWidth";
     public static final String MAP_ZOOM_INDEX = "MapZoomIndex";
-    public static final String MAP_ZOOM_LEVEL_A = "MapZoomLevelA";
-    public static final String MAP_ZOOM_LEVEL_B = "MapZoomLevelB";
     public static final String MEK_SELECTOR_INCLUDE_MODEL = "MekSelectorIncludeModel";
     public static final String MEK_SELECTOR_INCLUDE_NAME = "MekSelectorIncludeName";
     public static final String MEK_SELECTOR_INCLUDE_TONS = "MekSelectorIncludeTons";
@@ -711,8 +709,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(LOBBY_MEKTABLE_PLAYER_WIDTH, 50);
         store.setDefault(LOBBY_MEKTABLE_BV_WIDTH, 50);
         store.setDefault(MAP_ZOOM_INDEX, 7);
-        store.setDefault(MAP_ZOOM_LEVEL_A, 0);
-        store.setDefault(MAP_ZOOM_LEVEL_B, 0);
         store.setDefault(MEK_SELECTOR_INCLUDE_MODEL, true);
         store.setDefault(MEK_SELECTOR_INCLUDE_NAME, true);
         store.setDefault(MEK_SELECTOR_INCLUDE_TONS, true);
@@ -1209,14 +1205,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getMapZoomIndex() {
         return store.getInt(MAP_ZOOM_INDEX);
-    }
-
-    public int getMapZoomLevelA() {
-        return store.getInt(MAP_ZOOM_LEVEL_A);
-    }
-
-    public int getMapZoomLevelB() {
-        return store.getInt(MAP_ZOOM_LEVEL_B);
     }
 
     public boolean getMekSelectorIncludeModel() {
@@ -2074,14 +2062,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMapZoomIndex(int zoomIndex) {
         store.setValue(MAP_ZOOM_INDEX, zoomIndex);
-    }
-
-    public void setMapZoomLevelA(int zoomLevelA) {
-        store.setValue(MAP_ZOOM_LEVEL_A, zoomLevelA);
-    }
-
-    public void setMapZoomLevelB(int zoomLevelB) {
-        store.setValue(MAP_ZOOM_LEVEL_B, zoomLevelB);
     }
 
     public void setMekSelectorIncludeModel(boolean includeModel) {

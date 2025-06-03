@@ -7268,7 +7268,7 @@ public class Compute {
         } else if (entity instanceof Infantry) {
             return ((Infantry) entity).getSquadCount() * ((Infantry) entity).getSquadSize();
         } else if (entity instanceof Jumpship || entity instanceof SmallCraft) {
-            return getAeroCrewNeeds(entity) + getTotalGunnerNeeds(entity);
+            return getAeroCrewNeeds(entity) + getTotalGunnerNeeds(entity) + getAdditionalNonGunner(entity);
         } else if (entity.isSuperHeavy() || entity.isTripodMek()) {
             return getTotalDriverNeeds(entity) + getTotalGunnerNeeds(entity) + getAdditionalNonGunner(entity);
         } else {

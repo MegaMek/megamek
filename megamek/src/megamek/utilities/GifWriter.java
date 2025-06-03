@@ -13,13 +13,11 @@
  */
 package megamek.utilities;
 
-import com.squareup.gifencoder.GifEncoder;
-import com.squareup.gifencoder.ImageOptions;
-import megamek.logging.MMLogger;
+import static megamek.common.Configuration.gameSummaryImagesMMDir;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,8 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import javax.imageio.ImageIO;
 
-import static megamek.common.Configuration.gameSummaryImagesMMDir;
+import com.squareup.gifencoder.GifEncoder;
+import com.squareup.gifencoder.ImageOptions;
+import megamek.logging.MMLogger;
 
 /**
  * GifWriter
@@ -36,9 +37,9 @@ import static megamek.common.Configuration.gameSummaryImagesMMDir;
  * @author Luana Coppio
  */
 public class GifWriter {
-
-    private static final MMLogger logger = MMLogger.create(GifWriter.class);
-
+    private static final MMLogger LOGGER = MMLogger.create(GifWriter.class);
+    private static final int START_OFFSET = 0;
+    private static final int LOOP_COUNT = 0;
     private final File folder;
     private final File outputFile;
     private int height = -1;
@@ -46,6 +47,7 @@ public class GifWriter {
     private GifEncoder encoder = null;
     private boolean isEncoding = false;
     private boolean isLive = true;
+
     /**
      * Creates a gif from a series of images of a game summary.
      * @param gameSummary the game summary to create the gif from, its commonly a UUID inside the /logs/gameSummary/minimap folder
@@ -73,25 +75,51 @@ public class GifWriter {
      * @throws IOException if an I/O error occurs
      */
     public void appendFrame(BufferedImage image, long duration) throws IOException {
-        if (outputStream == null) {
-            outputStream = new FileOutputStream(outputFile);
+        ensureImageSize(image);
+        int[] rgbData = image.getRGB(
+              START_OFFSET,
+              START_OFFSET,
+              width,
+              height,
+              null,
+              START_OFFSET,
+              width);
+        getEncoder().addImage(rgbData, width, getImageOptions(duration));
+        LOGGER.info("Appended frame with duration {} ms, image size: {}x{}",
+              duration, width, height);
+    }
+
+    private ImageOptions getImageOptions(long duration) {
+        ImageOptions options = new ImageOptions();
+        options.setDelay(duration, TimeUnit.MILLISECONDS);
+        return options;
+    }
+
+    private GifEncoder getEncoder() throws IOException {
+        if (encoder == null) {
+            encoder = new GifEncoder(getOutputStream(), width, height, LOOP_COUNT);
+            isEncoding = true;
+            LOGGER.info("Starting GIF encoding with dimensions: {}x{}", width, height);
         }
+        return encoder;
+    }
+
+    private void ensureImageSize(BufferedImage image) {
         if (width == -1 || height == -1) {
             width = image.getWidth();
             height = image.getHeight();
+            LOGGER.info("Setting GIF dimensions to: {}x{}", width, height);
         } else if (width != image.getWidth() || height != image.getHeight()) {
             throw new IllegalArgumentException("Image dimensions do not match previous images");
         }
-        if (encoder == null) {
-            encoder = new GifEncoder(outputStream, width, height, 0);
-            isEncoding = true;
-        }
-        ImageOptions options = new ImageOptions();
-        options.setDelay(duration, TimeUnit.MILLISECONDS);
-        int[] rgbData;
+    }
 
-        rgbData = image.getRGB(0, 0, width, height, null, 0, width);
-        encoder.addImage(rgbData, width, options);
+    private OutputStream getOutputStream() throws FileNotFoundException {
+        if (outputStream == null) {
+            outputStream = new FileOutputStream(outputFile);
+            LOGGER.info("Output stream created for GIF file: {}", outputFile.getAbsolutePath());
+        }
+        return outputStream;
     }
 
     /**
@@ -101,16 +129,18 @@ public class GifWriter {
         if (encoder != null && isEncoding) {
             try {
                 encoder.finishEncoding();
+                LOGGER.info("Added the end block on the GIF encoding");
             } catch (IOException e) {
-                logger.error(e, "Error finishing encoding");
+                LOGGER.error(e, "Error finishing encoding");
             }
             encoder = null;
         }
         if (outputStream != null) {
             try {
                 outputStream.close();
+                LOGGER.info("Output stream closed for GIF file: {}", outputFile.getAbsolutePath());
             } catch (IOException e) {
-                logger.error(e, "Error closing output stream");
+                LOGGER.error(e, "Error closing output stream for GIF file {}", outputFile.getAbsolutePath());
             }
         }
         outputStream = null;
@@ -147,16 +177,14 @@ public class GifWriter {
         var width = firstImage.getWidth();
         var height = firstImage.getHeight();
 
-        var encoder = new GifEncoder(outputStream, width, height, 0);
-        ImageOptions moveOption = new ImageOptions();
-        moveOption.setDelay(200, TimeUnit.MILLISECONDS);
-        ImageOptions attackOption = new ImageOptions();
-        attackOption.setDelay(400, TimeUnit.MILLISECONDS);
+        var encoder = new GifEncoder(outputStream, width, height, LOOP_COUNT);
+        ImageOptions moveOption = getImageOptions(200);
+        ImageOptions attackOption = getImageOptions(400);
         int[] rgbData;
         boolean odd = true;
         for (File imageFile : files) {
             BufferedImage nextImage = ImageIO.read(imageFile);
-            rgbData = nextImage.getRGB(0, 0, width, height, null, 0, width);
+            rgbData = nextImage.getRGB(START_OFFSET, START_OFFSET, width, height, null, START_OFFSET, width);
             if (odd) {
                 encoder.addImage(rgbData, width, moveOption);
             } else {

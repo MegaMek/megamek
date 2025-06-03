@@ -30,13 +30,13 @@ import javax.swing.ImageIcon;
 import megamek.common.BTObject;
 import megamek.common.Configuration;
 import megamek.common.Mek;
+import megamek.common.MekSummary;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
 
 /**
- * This class provides methods for retrieving fluff images, for use in MM, MML
- * and MHQ; also
- * for record sheets (where the fallback image "hud.png" is used).
+ * This class provides methods for retrieving fluff images, for use in MM, MML and MHQ; also for record sheets (where
+ * the fallback image "hud.png" is used).
  */
 public final class FluffImageHelper {
 
@@ -56,30 +56,23 @@ public final class FluffImageHelper {
             ".JPEG", ".jpg", ".jpeg", ".GIF", ".gif" };
 
     /**
-     * Returns a fluff image for the given unit/object to be shown e.g. in the unit
-     * summary.
+     * Returns a fluff image for the given unit/object to be shown e.g. in the unit summary.
      *
-     * <P>
-     * If a fluff image is stored in the unit/object itself, e.g. if it was part of
-     * the
-     * unit's file or is created by the unit itself, this is returned. Note that
-     * this
-     * is not used for canon units, but may be used in custom ones by adding a fluff
-     * image to the unit in MML.
+     * <p>
+     * If a fluff image is stored in the unit/object itself, e.g. if it was part of the unit's file or is created by the
+     * unit itself, this is returned. Note that this is not used for canon units, but may be used in custom ones by
+     * adding a fluff image to the unit in MML.
      *
-     * <P>
-     * Otherwise, the fluff images directories are searched. First searches the user
-     * dir,
-     * then the internal dir. Tries to match the image by chassis + model or chassis
-     * alone.
-     * Chassis and model names are cleaned from " and / characters before matching.
-     * For
-     * Meks with clan names, both names and the combinations are searched. The model
+     * <p>
+     * Otherwise, the fluff images directories are searched. First searches the user dir, then the internal dir. Tries
+     * to match the image by chassis + model or chassis alone. Chassis and model names are cleaned from " and /
+     * characters before matching. For Meks with clan names, both names and the combinations are searched. The model
      * alone is not used to search.
-     *
+     * <p>
      * Returns null if no fluff image can be found.
      *
      * @param unit The unit
+     *
      * @return a fluff image or null, if no match is found
      */
     public static @Nullable Image getFluffImage(@Nullable BTObject unit) {
@@ -87,15 +80,12 @@ public final class FluffImageHelper {
     }
 
     /**
-     * Returns a fluff image for the given unit for the record sheet, with a
-     * fallback
-     * file named "hud.png" if that is present in the right fluff directory, or null
-     * if nothing
-     * can be found. See {@link #getFluffImage(BTObject)} for further comments on
-     * how the fluff
-     * image is searched.
+     * Returns a fluff image for the given unit for the record sheet, with a fallback file named "hud.png" if that is
+     * present in the right fluff directory, or null if nothing can be found. See {@link #getFluffImage(BTObject)} for
+     * further comments on how the fluff image is searched.
      *
      * @param unit The unit
+     *
      * @return a fluff image or null, if no match is found
      */
     public static @Nullable Image getRecordSheetFluffImage(@Nullable BTObject unit) {
@@ -176,26 +166,33 @@ public final class FluffImageHelper {
     }
 
     private static List<String> nameCandidates(BTObject unit) {
-        List<String> nameCandidates = new ArrayList<>();
+        List<String> candidates = new ArrayList<>();
 
         String sanitizedChassis = sanitize(unit.generalName());
         String sanitizedModel = sanitize(unit.specificName());
-        nameCandidates.add((sanitizedChassis + " " + sanitizedModel).trim());
-        if (unit instanceof Mek && !((Mek) unit).getClanChassisName().isBlank()) {
-            Mek mek = (Mek) unit;
-            String fullChassis = sanitize(mek.getFullChassis());
-            nameCandidates.add((fullChassis + " " + sanitizedModel).trim());
-            String clanChassis = sanitize(mek.getClanChassisName());
-            nameCandidates.add((clanChassis + " " + sanitizedModel).trim());
-            nameCandidates.add(fullChassis);
-            nameCandidates.add(clanChassis);
+        candidates.add((sanitizedChassis + " " + sanitizedModel).trim());
+        if (unit instanceof Mek mek && !mek.getClanChassisName().isBlank()) {
+            addClanChassisVariants(mek.getFullChassis(), candidates, sanitizedModel, mek.getClanChassisName());
+        } else if (unit instanceof MekSummary mekSummary && mekSummary.isMek()
+              && !mekSummary.getClanChassisName().isBlank()) {
+            addClanChassisVariants(mekSummary.getFullChassis(), candidates, sanitizedModel,
+                  mekSummary.getClanChassisName());
         }
-        nameCandidates.add(sanitizedChassis);
-        return nameCandidates;
+        candidates.add(sanitizedChassis);
+        return candidates;
     }
 
-    private FluffImageHelper() {
+    private static void addClanChassisVariants(String fullChassis, List<String> candidates, String sanitizedModel,
+          String clanChassis) {
+        String sanitizedFullChassis = sanitize(fullChassis);
+        candidates.add((sanitizedFullChassis + " " + sanitizedModel).trim());
+        String sanitizedClanChassis = sanitize(clanChassis);
+        candidates.add((sanitizedClanChassis + " " + sanitizedModel).trim());
+        candidates.add(sanitizedFullChassis);
+        candidates.add(sanitizedClanChassis);
     }
+
+    private FluffImageHelper() { }
 
     /**
      * Returns the subdirectory in the fluff images directory suitable for the given

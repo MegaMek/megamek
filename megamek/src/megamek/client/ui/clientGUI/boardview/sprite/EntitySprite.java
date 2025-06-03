@@ -860,34 +860,39 @@ public class EntitySprite extends Sprite {
             // TMM pips show if done in movement, or on all units during firing
             int pipOption = GUIP.getTMMPipMode();
             int pipMult = 1;
+            int pipAdd = 0;
             if (GUIP.getTMMPipBigger()) {
                 pipMult = 2;
+                pipAdd = 1;
             }
             if ((pipOption != 0) && !isGunEmplacement && !entity.isAero() && ((entity.isDone() && bv.game.getPhase()
                   .isMovement()) || bv.game.getPhase().isFiring())) {
                 int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
                 Color tmmColor = (pipOption == 1) ? Color.WHITE : GUIP.getColorForMovement(entity.moved);
                 graph.setColor(Color.darkGray);
-                graph.fillRect(STATUS_BAR_X, 12 + TMM_PIP_SIZE, STATUS_BAR_LENGTH * pipMult, TMM_PIP_SIZE * pipMult);
+                graph.fillRect(STATUS_BAR_X - (pipAdd * (MAX_TMM_PIPS - 1)),
+                      12 + TMM_PIP_SIZE,
+                      STATUS_BAR_LENGTH + (pipAdd * MAX_TMM_PIPS),
+                      TMM_PIP_SIZE * pipMult + 1);
                 if (tmm >= 0) {
                     // draw left to right for positive TMM
                     for (int i = 0; i < MAX_TMM_PIPS; i++) {
                         graph.setColor(Color.DARK_GRAY);
                         graph.setColor(i < tmm ? tmmColor : Color.BLACK);
-                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE * pipMult),
-                              12 + TMM_PIP_SIZE,
-                              TMM_PIP_SIZE * pipMult - pipMult,
-                              TMM_PIP_SIZE * pipMult - pipMult);
+                        graph.fillRect(STATUS_BAR_X - (pipAdd * (MAX_TMM_PIPS - 1)) + 1 + i * (TMM_PIP_SIZE + pipAdd),
+                              13 + TMM_PIP_SIZE,
+                              TMM_PIP_SIZE - pipMult + pipAdd,
+                              TMM_PIP_SIZE * pipMult - 1);
                     }
                 } else {
                     // draw pips right to left for negative TMM
                     for (int i = 0; i < MAX_TMM_PIPS; i++) {
                         graph.setColor(Color.DARK_GRAY);
                         graph.setColor(i >= (MAX_TMM_PIPS + tmm) ? tmmColor : Color.BLACK);
-                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE * pipMult),
-                              12 + TMM_PIP_SIZE,
-                              TMM_PIP_SIZE * pipMult - pipMult,
-                              TMM_PIP_SIZE * pipMult - pipMult);
+                        graph.fillRect(STATUS_BAR_X - (pipAdd * MAX_TMM_PIPS - 1) + 1 + i * (TMM_PIP_SIZE + pipAdd),
+                              13 + TMM_PIP_SIZE,
+                              TMM_PIP_SIZE - pipMult + pipAdd,
+                              TMM_PIP_SIZE * pipMult - 1);
                     }
                 }
             }

@@ -34,7 +34,6 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -48,6 +47,8 @@ import java.util.function.Function;
 import megamek.common.annotations.Nullable;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
+import megamek.utils.BoardLoader;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
@@ -65,7 +66,7 @@ public abstract class GameBoardTestCase {
     }
 
     /**
-     * Map of all boards used in the tests.
+     * Map of all boards used in the move path tests.
      * The BOARDS should be initialized in the static block of the test class.
      * Example:
      * <pre>
@@ -89,31 +90,8 @@ public abstract class GameBoardTestCase {
      * @param data the board as a string
      */
     protected static void initializeBoard(String name, String data) {
-        int[] size = parseBoardSize(data);
-        Board board = new Board(size[0], size[1]);
-        List<String> errors = new ArrayList<>();
-        board.load(data, errors);
-        if (!errors.isEmpty()) {
-            throw new IllegalArgumentException("Errors loading board " + name + ": " + errors);
-        }
+        Board board = BoardLoader.initializeBoard(data);
         BOARDS.put(name, board);
-    }
-
-    /**
-     * Parse the board size from the data string
-     * @param data the data string
-     * @return an array with the width and height of the board
-     */
-    private static int[] parseBoardSize(String data) {
-        try {
-            String[] lines = data.split("\n");
-            String[] size = lines[0].split(" ");
-            int width = Integer.parseInt(size[1]);
-            int height = Integer.parseInt(size[2]);
-            return new int[]{width, height};
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid board size in data: " + data, e);
-        }
     }
 
     /**
@@ -122,11 +100,15 @@ public abstract class GameBoardTestCase {
      * @return the board
      * @throws IllegalArgumentException if the board is not found
      */
-    protected Board getBoard(String name) {
+    protected static Board getBoard(String name) {
         if (!BOARDS.containsKey(name)) {
             throw new IllegalArgumentException("Board " + name + " not found");
         }
         return BOARDS.get(name);
+    }
+
+    protected static void clearBoards() {
+        BOARDS.clear();
     }
 
     /**
@@ -365,5 +347,11 @@ public abstract class GameBoardTestCase {
     void setUpEach() {
         entity = null;
         game = new Game();
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        // Clear the boards after all tests are done
+        GameBoardTestCase.clearBoards();
     }
 }

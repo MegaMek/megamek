@@ -238,11 +238,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             finalFacing = (finalFacing + 5) % 6;
             Coords curPos = cmd.getFinalCoords();
             Coords target = curPos.translated(finalFacing);
-
-            // We need to set this to get the rotated behavior
-            shiftHeld = true;
-            currentMove(target, cmd.getFinalBoardId());
-            shiftHeld = false;
+            currentMoveHoldingShift(target, cmd.getFinalBoardId());
             updateMove();
         }
     }
@@ -253,13 +249,20 @@ public class MovementDisplay extends ActionPhaseDisplay {
             finalFacing = (finalFacing + 7) % 6;
             Coords curPos = cmd.getFinalCoords();
             Coords target = curPos.translated(finalFacing);
-
-            // We need to set this to get the rotated behavior
-            shiftHeld = true;
-            currentMove(target, cmd.getFinalBoardId());
-            shiftHeld = false;
+            currentMoveHoldingShift(target, cmd.getFinalBoardId());
             updateMove();
         }
+    }
+
+    /**
+     * Some types of movement require that shift is considered enabled/held
+     * @param target target coordinate to which this movement is being executed
+     * @param finalBoardId id of the final board where the movement ends
+     */
+    private void currentMoveHoldingShift(Coords target, int finalBoardId) {
+        shiftHeld = true;
+        currentMove(target, finalBoardId);
+        shiftHeld = false;
     }
 
     private void undoIllegalStep() {

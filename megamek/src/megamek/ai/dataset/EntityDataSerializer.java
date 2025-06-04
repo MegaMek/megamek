@@ -3,7 +3,6 @@
  *
  * This file is part of MegaMek.
  *
- *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
  * version 3 or (at your option) any later version,
@@ -25,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.dataset;
 
@@ -53,25 +57,27 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
 
     protected static final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
 
-        // Shared format handlers for special types that need custom serialization
-        protected static final Map<Class<?>, Function<Object, String>> FORMAT_HANDLERS = new HashMap<>();
+    // Shared format handlers for special types that need custom serialization
+    protected static final Map<Class<?>, Function<Object, String>> FORMAT_HANDLERS = new HashMap<>();
+    public static final String TAB = "\t";
+    public static final String VERSION = "VERSION";
 
-        // Initialize default formatters for common types
-        static {
-            // Boolean values
-            FORMAT_HANDLERS.put(Boolean.class, value -> (Boolean) value ? "1" : "0");
-            FORMAT_HANDLERS.put(boolean.class, value -> (Boolean) value ? "1" : "0");
+    // Initialize default formatters for common types
+    static {
+        // Boolean values
+        FORMAT_HANDLERS.put(Boolean.class, value -> (Boolean) value ? "1" : "0");
+        FORMAT_HANDLERS.put(boolean.class, value -> (Boolean) value ? "1" : "0");
 
-            // Numeric values with decimal formatting
-            FORMAT_HANDLERS.put(Double.class, LOG_DECIMAL::format);
-            FORMAT_HANDLERS.put(double.class, LOG_DECIMAL::format);
-            FORMAT_HANDLERS.put(Float.class, LOG_DECIMAL::format);
-            FORMAT_HANDLERS.put(float.class, LOG_DECIMAL::format);
+        // Numeric values with decimal formatting
+        FORMAT_HANDLERS.put(Double.class, LOG_DECIMAL::format);
+        FORMAT_HANDLERS.put(double.class, LOG_DECIMAL::format);
+        FORMAT_HANDLERS.put(Float.class, LOG_DECIMAL::format);
+        FORMAT_HANDLERS.put(float.class, LOG_DECIMAL::format);
 
-            // Common enum types
-            FORMAT_HANDLERS.put(UnitRole.class, value -> ((UnitRole) value).name());
-            FORMAT_HANDLERS.put(GamePhase.class, value -> ((GamePhase) value).name());
-            FORMAT_HANDLERS.put(AimingMode.class, value -> ((AimingMode) value).name());
+        // Common enum types
+        FORMAT_HANDLERS.put(UnitRole.class, value -> ((UnitRole) value).name());
+        FORMAT_HANDLERS.put(GamePhase.class, value -> ((GamePhase) value).name());
+        FORMAT_HANDLERS.put(AimingMode.class, value -> ((AimingMode) value).name());
 
         // Lists with space-separated values
         FORMAT_HANDLERS.put(List.class, value -> {
@@ -108,10 +114,11 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
     }
 
     public String serialize(T entityData) {
-        List<String> values = new ArrayList<>(fieldOrder.size());
+        List<String> values = new ArrayList<>(fieldOrder.size() + 1); // +1 for version column
 
         // Get all fields from the map
         Map<F, Object> allFields = entityData.getAllFields();
+        values.add(entityData.getVersionedClassName());
 
         // Process each field in the defined order
         for (F field : fieldOrder) {
@@ -139,13 +146,13 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
             }
         }
 
-        return String.join("\t", values);
+        return String.join(TAB, values);
     }
 
     public String getHeaderLine() {
-        return fieldOrder.stream()
+        return VERSION + TAB + fieldOrder.stream()
                      .map(Enum::name)
-                     .collect(Collectors.joining("\t"));
+                     .collect(Collectors.joining(TAB));
     }
 
     /**

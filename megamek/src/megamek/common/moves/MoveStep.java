@@ -745,23 +745,37 @@ public class MoveStep implements Serializable {
         compileIllegal(game, entity, prev, cachedEntityState);
     }
 
+    /**
+     * Checks if this is counted to be the first step in a move path, which is the case when the given previous move
+     * step is null or does not count as an actual action. Returns the previous move step if it is not null and a fake
+     * "F" (forward move) first move step otherwise.
+     *
+     * @param prev The previous move step in the path, if any
+     *
+     * @return The previous move step if it is not null, a fake forward move step otherwise
+     */
     private MoveStep evaluateFirstStep(Game game, Entity entity, MoveStep prev) {
         if (prev == null) {
-            prev = createFakeFirstStep(game, entity);
-            setFirstStep(true);
+            setFirstStep();
+            return createFakeFirstStep(game, entity);
+
         } else if (prev.isFirstStep() && prev.isClimbMode()) {
-            // A climb mode change is only meta info and does not count as any action
-            setFirstStep(true);
-        } else if (prev.isFirstStep() && prev.isTurning && entity.isConventionalInfantry()) {
-            // A climb mode change is only meta info and does not count as any action
-            setFirstStep(true);
+            // A climb mode change is only meta info and does not count as an action
+            setFirstStep();
+
+        } else if (prev.isFirstStep()
+              && prev.isTurning
+              && entity instanceof Infantry infantry
+              && !entity.isBattleArmor()
+              && !infantry.hasActiveFieldArtillery()) {
+            // For CI, turning is only a graphical distinction unless they are field artillery
+            setFirstStep();
         }
         return prev;
     }
 
     private MoveStep createFakeFirstStep(Game game, Entity entity) {
-        MoveStep prev;
-        prev = new MoveStep(null, MoveStepType.FORWARDS);
+        MoveStep prev = new MoveStep(null, MoveStepType.FORWARDS);
         prev.setFromEntity(entity, game);
         prev.isCarefulPath = isCareful();
         prev.isJumpingPath = isJumping();
@@ -1287,8 +1301,8 @@ public class MoveStep implements Serializable {
         facing = i;
     }
 
-    protected void setFirstStep(boolean b) {
-        firstStep = b;
+    protected void setFirstStep() {
+        firstStep = true;
     }
 
     protected void setHasJustStood(boolean b) {
@@ -1429,20 +1443,6 @@ public class MoveStep implements Serializable {
         prevStepOnPavement = prev.isPavementStep();
         isTurning = prev.isTurning();
         isUnloaded = prev.isUnloaded();
-
-        // Infantry get a first step if all they've done is spin on the spot.
-        if (isInfantry && ((getMpUsed() - getMp()) == 0) && isTurning) {
-            setFirstStep(true);
-
-            // Infantry can have 0/0 move and move to the next hex using 0 MP; after that it's not a first step.
-            // Leaving this for now but only ignore turning move steps. Maybe this should be removed entirely and/or
-            // handled in evaluateFirstStep()
-
-            // getMpUsed() is the MPs used in the whole MovePath
-            // getMp() is the MPs used in the last (illegal) step (this step)
-            // if the difference between the whole path and this step is 0
-            // then this must be their first step
-        }
 
         // guilty until proven innocent
         movementType = EntityMovementType.MOVE_ILLEGAL;

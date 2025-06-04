@@ -181,6 +181,7 @@ public final class BoardView extends AbstractBoardView
     private int preZoomOverivewIndex = 0;
     private int preZoomOverviewViewX = 0;
     private int preZoomOverviewViewY = 0;
+    private int bestZoomFactor = 0;
     // are we drag-scrolling?
     private boolean dragging = false;
     private boolean wantsPopup = false;
@@ -5030,7 +5031,25 @@ public final class BoardView extends AbstractBoardView
             preZoomOverivewIndex = zoomIndex;
             preZoomOverviewViewX = scrollPane.getHorizontalScrollBar().getValue();
             preZoomOverviewViewY = scrollPane.getVerticalScrollBar().getValue();
-            zoomIndex = 0;
+
+            for (int i = ZOOM_FACTORS.length - 1; i > 0; i--) {
+                if (getComponent().getWidth() / getComponent().getHeight() < 1) {
+                    if (((boardSize.width / ZOOM_FACTORS[zoomIndex]) + HEX_W * 2) * ZOOM_FACTORS[i]
+                          < getComponent().getWidth()) {
+                        bestZoomFactor = i;
+                        break;
+                    }
+                    bestZoomFactor = 0;
+                } else {
+                    if (((boardSize.height / ZOOM_FACTORS[zoomIndex]) + HEX_H * 2) * ZOOM_FACTORS[i]
+                          < getComponent().getHeight()) {
+                        bestZoomFactor = i;
+                        break;
+                    }
+                    bestZoomFactor = 0;
+                }
+            }
+            zoomIndex = bestZoomFactor;
             zoomOverview = true;
             zoom();
         } else {
@@ -5113,7 +5132,7 @@ public final class BoardView extends AbstractBoardView
 
         adjustVisiblePosition(zoomCenter, dispPoint, inHexDeltaX, inHexDeltaY);
 
-        if (zoomIndex != 0) {
+        if (zoomIndex != bestZoomFactor) {
             zoomOverview = false;
         }
     }

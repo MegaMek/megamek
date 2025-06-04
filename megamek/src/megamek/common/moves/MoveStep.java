@@ -706,7 +706,7 @@ public class MoveStep implements Serializable {
         copy(game, prev);
 
         // Is this the first step?
-        prev = firstStepEval(game, entity, prev);
+        prev = evaluateFirstStep(game, entity, prev);
 
         PhasePass phasePass = PhasePassSelector.getPhasePass(getType());
         phasePass.execute(this, game, entity, prev, cachedEntityState);
@@ -745,24 +745,26 @@ public class MoveStep implements Serializable {
         compileIllegal(game, entity, prev, cachedEntityState);
     }
 
-    private MoveStep firstStepEval(Game game, Entity entity, MoveStep prev) {
+    private MoveStep evaluateFirstStep(Game game, Entity entity, MoveStep prev) {
         if (prev == null) {
-            prev = initializePrevStepForFirstStep(game, entity);
-        } else if (prev.isFirstStep() &&
-                         ((prev.getType() == MoveStepType.CLIMB_MODE_ON) ||
-                                (prev.getType() == MoveStepType.CLIMB_MODE_OFF))) {
+            prev = createFakeFirstStep(game, entity);
+            setFirstStep(true);
+        } else if (prev.isFirstStep() && prev.isClimbMode()) {
+            // A climb mode change is only meta info and does not count as any action
+            setFirstStep(true);
+        } else if (prev.isFirstStep() && prev.isTurning && entity.isConventionalInfantry()) {
+            // A climb mode change is only meta info and does not count as any action
             setFirstStep(true);
         }
         return prev;
     }
 
-    private MoveStep initializePrevStepForFirstStep(Game game, Entity entity) {
+    private MoveStep createFakeFirstStep(Game game, Entity entity) {
         MoveStep prev;
         prev = new MoveStep(null, MoveStepType.FORWARDS);
         prev.setFromEntity(entity, game);
         prev.isCarefulPath = isCareful();
         prev.isJumpingPath = isJumping();
-        setFirstStep(prev.mpUsed == 0); // Bug 1519330 - it's not a first step when continuing after a fall
         return prev;
     }
 
@@ -1429,8 +1431,12 @@ public class MoveStep implements Serializable {
         isUnloaded = prev.isUnloaded();
 
         // Infantry get a first step if all they've done is spin on the spot.
-        if (isInfantry && ((getMpUsed() - getMp()) == 0)) {
+        if (isInfantry && ((getMpUsed() - getMp()) == 0) && isTurning) {
             setFirstStep(true);
+
+            // Infantry can have 0/0 move and move to the next hex using 0 MP; after that it's not a first step.
+            // Leaving this for now but only ignore turning move steps. Maybe this should be removed entirely and/or
+            // handled in evaluateFirstStep()
 
             // getMpUsed() is the MPs used in the whole MovePath
             // getMp() is the MPs used in the last (illegal) step (this step)
@@ -3789,5 +3795,12 @@ public class MoveStep implements Serializable {
 
     public int getBoardId() {
         return boardId;
+    }
+
+    /**
+     * @return True if this move step is a climb mode change (on or off)
+     */
+    public boolean isClimbMode() {
+        return (type == MoveStepType.CLIMB_MODE_ON) || (type == MoveStepType.CLIMB_MODE_OFF);
     }
 }

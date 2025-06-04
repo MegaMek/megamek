@@ -1684,7 +1684,7 @@
             </model>
 		</chassis>
 		<chassis name='Falcon' unitType='Mek'>
-			<availability>CGS:6+,PP:4+,CC:5,LA:7,FWL:5,FS:5,MERC:5,TC:4,MOC:4,OA:4</availability>
+			<availability>FS:5,LA:7,FWL:5,CC:5,MERC:5,CGS:6+,PP:4+,TC:4,MOC:4,OA:4</availability>
 			<model name='FLC-4N'>
 				<availability>IS:8,CGS:4,PP:8,Periphery:8,Periphery.Deep:8</availability>
 			</model>
@@ -1739,10 +1739,10 @@
 			</model>
 		</chassis>
 		<chassis name='Firefly' unitType='Mek'>
-			<availability>CC:4,FS:4,CLAN:4+,CBS:3+,CB:5+,CCC:3+,CGB:7+,CGS:3+,CHH:5+,CIH:3-,CMG:3-,CDS:3,CSV:5-,CWOV:3+,PP:8+,OA:2+</availability>
+			<availability>FS:4,CC:4,CLAN:4+,CBS:3+,CB:5+,CCC:3+,CGB:7+,CGS:3+,CHH:5+,CIH:3-,CMG:3-,CDS:3,CSV:5-,CWOV:3+,PP:8+,OA:2+</availability>
 			<model name='FFL-3A'>
 				<roles>spotter</roles>
-				<availability>CC:8,FS:8,CFM:6,CHH:4,CSR:5,PP:4</availability>
+				<availability>FS:8,CC:8,CFM:6,CHH:4,CSR:5,PP:4</availability>
 			</model>
 			<model name='FFL-3PP'>
 				<availability>PP:2</availability>
@@ -1758,7 +1758,7 @@
 			</model>
 		</chassis>
 		<chassis name='Firestarter' unitType='Mek'>
-			<availability>IS:7,CS:3,LA:8,CFM:4-,CHH:3,PP:5,NIOPS:3,Periphery:7,Periphery.Deep:7</availability>
+			<availability>IS:7,CS:3,LA:8,CFM:4-,CHH:3,PP:5,Periphery:7,NIOPS:3,Periphery.Deep:7</availability>
 			<model name='FS9-A'>
                 <roles>anti_infantry,recon</roles>
 				<deployedWith>Vulcan</deployedWith>
@@ -2380,7 +2380,7 @@
 			</model>
 		</chassis>
 		<chassis name='Hussar' unitType='Mek'>
-			<availability>FS:2,DC:1,CS:4,LA:2,CLAN:3+,CGB:2+,CIH:6+,CMG:4+,CDS:4+,CSV:4+,CWI:4+,PP:9+,NIOPS:4</availability>
+			<availability>FS:2,LA:2,DC:1,CS:4,CLAN:3+,CGB:2+,CIH:6+,CMG:4+,CDS:4+,CSV:4+,CWI:4+,PP:9+,NIOPS:4</availability>
 			<model name='HSR-200-D'>
 				<roles>recon</roles>
 				<availability>FS:8,DC:8,CS:8,LA:8,CLAN:5,PP:8,NIOPS:8</availability>
@@ -3459,7 +3459,7 @@
 			</model>
 		</chassis>
 		<chassis name='Night Hawk' unitType='Mek'>
-			<availability>LA:5+,FWL:5+,FS:5+,CLAN:4+,CBS:5+,CB:5+,CCO:5+,CGB:5+,CJF:5+,CNC:5+,CSJ:5+,CSR:3+,CSV:5+,CW:5+,PP:6+</availability>
+			<availability>FS:5+,LA:5+,FWL:5+,CLAN:4+,CBS:5+,CB:5+,CCO:5+,CGB:5+,CJF:5+,CNC:5+,CSJ:5+,CSR:3+,CSV:5+,CW:5+,PP:6+</availability>
 			<model name='NTK-2Q'>
 				<roles>raider</roles>
 				<availability>IS:8,CLAN:8,PP:8</availability>
@@ -3576,7 +3576,7 @@
 			</model>
 		</chassis>
 		<chassis name='Panther' unitType='Mek'>
-			<availability>FS:3,FS.RR:3,FS.DMM:3,DC:8,FWL:3,CC:3,CS:2,LA:3,MERC:4,CSJ:4,PP:6,Periphery:3,Periphery.DD:4,Periphery.OS:4,NIOPS:2</availability>
+			<availability>FS:3,FS.RR:3,FS.DMM:3,LA:3,DC:8,FWL:3,CC:3,MERC:4,CS:2,CSJ:4,PP:6,Periphery:3,Periphery.DD:4,Periphery.OS:4,NIOPS:2</availability>
 			<model name='PNT-8Z'>
 				<availability>CC:8,LA:8,DC:1,TC:8</availability>
 			</model>
@@ -4211,7 +4211,7 @@
 			</model>
 		</chassis>
 		<chassis name='Spider' unitType='Mek'>
-			<availability>IS:4,FS:6,DC:7,CC:5,MERC:4,CS:4,OA:2,FWL:7,CIH:3+,CMG:3+,PP:4+,TC:2,NIOPS:4</availability>
+			<availability>IS:4,FS:6,DC:7,FWL:7,CC:5,MERC:4,CS:4,CIH:3+,CMG:3+,PP:4+,TC:2,OA:2,NIOPS:4</availability>
 			<model name='SDR-5V'>
 				<availability>IS:8,CIH:8,CMG:8,PP:8,Periphery:8,Periphery.Deep:8</availability>
 			</model>
@@ -4262,7 +4262,7 @@
 			</model>
 		</chassis>
 		<chassis name='Stinger' unitType='Mek'>
-			<availability>IS:9,DC:6,MERC:5,CS:4-,CLAN:4,CB:5,CCO:5,CWOV:5,PP:5,NIOPS:4-,Periphery:5,Periphery.Deep:5</availability>
+			<availability>IS:9,DC:6,MERC:5,CS:4-,CLAN:4,CB:5,CCO:5,CWOV:5,PP:5,Periphery:5,NIOPS:4-,Periphery.Deep:5</availability>
 			<model name='STG-3G'>
 				<roles>recon</roles>
 				<availability>IS:4,PP:4,Periphery:4,Periphery.Deep:4</availability>
@@ -4318,7 +4318,7 @@
 			</model>
 		</chassis>
 		<chassis name='Talon' unitType='Mek'>
-			<availability>LA:5+,FWL:5+,FS:5+,CLAN:5+,CB:4+,CFM:4+,CGS:3+,CIH:4+,CJF:7+,CNC:7+,CDS:7+,CSJ:6+,CSR:3+,CSV:6+,CW:8+,CWOV:6+,PP:7+</availability>
+			<availability>FS:5+,LA:5+,FWL:5+,CLAN:5+,CB:4+,CFM:4+,CGS:3+,CIH:4+,CJF:7+,CNC:7+,CDS:7+,CSJ:6+,CSR:3+,CSV:6+,CW:8+,CWOV:6+,PP:7+</availability>
 			<model name='TLN-5V'>
 				<availability>FWL:8,FS:8,CIH:6,CMG:6,CNC:6,CDS:6,CW:6,PP:8</availability>
 			</model>

@@ -3,7 +3,6 @@
  *
  * This file is part of MegaMek.
  *
- *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
  * version 3 or (at your option) any later version,
@@ -25,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.dataset;
 
@@ -53,20 +57,14 @@ public class BoardData extends EntityDataMap<BoardData.Field> {
     /**
      * Nested class to represent a single row of hex data
      */
-    public static class HexRow {
-        private final int rowIndex;
-        private final List<Hex> hexes;
-
+    public record HexRow(int rowIndex, List<Hex> hexes) {
         public HexRow(int rowIndex, List<Hex> hexes) {
             this.rowIndex = rowIndex;
             this.hexes = new ArrayList<>(hexes);
         }
 
-        public int getRowIndex() {
-            return rowIndex;
-        }
-
-        public List<Hex> getHexes() {
+        @Override
+        public List<Hex> hexes() {
             return new ArrayList<>(hexes);
         }
     }

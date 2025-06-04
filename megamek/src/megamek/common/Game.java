@@ -173,6 +173,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         setBoard(0, new Board());
     }
 
+    public Game(Board board) {
+        setBoard(0, board);
+    }
+
     // Added public accessors for external game id
     public int getExternalGameId() {
         return externalGameId;

@@ -3,7 +3,6 @@
  *
  * This file is part of MegaMek.
  *
- *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
  * version 3 or (at your option) any later version,
@@ -25,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.dataset;
 
@@ -75,7 +79,7 @@ public class GameDataSerializer extends EntityDataSerializer<GameData.Field, Gam
         List<MinefieldData> minefields = data.getMinefields();
         if (minefields != null && !minefields.isEmpty()) {
             // Add a header for minefields
-            lines.add("ROUND\tPHASE\tOBJECT\tX\tY\tTYPE\tPLAYER_ID\tDAMAGE");
+            lines.add("VERSION\tROUND\tPHASE\tOBJECT\tX\tY\tTYPE\tPLAYER_ID\tDAMAGE");
 
             // Add each minefield
             String round = String.valueOf(data.get(Field.ROUND));
@@ -83,6 +87,7 @@ public class GameDataSerializer extends EntityDataSerializer<GameData.Field, Gam
 
             for (MinefieldData minefield : minefields) {
                 lines.add(String.join("\t",
+                      data.getVersionedClassName(),
                       round,
                       phase,
                       MINEFIELD,

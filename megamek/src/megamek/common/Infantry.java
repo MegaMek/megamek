@@ -714,16 +714,6 @@ public class Infantry extends Entity {
     }
 
     @Override
-    public int getDependentLocation(int loc) {
-        return Entity.LOC_NONE;
-    }
-
-    @Override
-    public boolean hasRearArmor(int loc) {
-        return false;
-    }
-
-    @Override
     public int getInternal(int loc) {
         if (!isConventionalInfantry()) {
             return super.getInternal(loc);
@@ -797,21 +787,6 @@ public class Infantry extends Entity {
     @Override
     public boolean isSecondaryArcWeapon(int wn) {
         return isFieldWeapon((getEquipment(wn))) && !hasActiveFieldArtillery();
-    }
-
-    @Override
-    public int getHeatCapacity(boolean radicalHeatSinks) {
-        return DOES_NOT_TRACK_HEAT;
-    }
-
-    @Override
-    public int getHeatCapacityWithWater() {
-        return getHeatCapacity();
-    }
-
-    @Override
-    public int getEngineCritHeat() {
-        return 0;
     }
 
     @Override

@@ -440,20 +440,6 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public int getHeatCapacityWithWater() {
-        return getHeatCapacity();
-    }
-
-    /**
-     * Returns the amount of heat that the entity can sink each turn. PMeks have no heat.
-     * FIXME However, the number of heat sinks they have IS important... For cost and validation purposes.
-     */
-    @Override
-    public int getHeatCapacity(boolean radicalHeatSinks) {
-        return DOES_NOT_TRACK_HEAT;
-    }
-
-    @Override
     public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
@@ -486,11 +472,6 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    public int getEngineCritHeat() {
-        return 0;
-    }
-
-    @Override
     public boolean isValidSecondaryFacing(int dir) {
         int rotate = dir - getFacing();
         if (canChangeSecondaryFacing()) {
@@ -515,11 +496,6 @@ public class ProtoMek extends Entity {
     @Override
     public double getArmorWeight() {
         return RoundWeight.standard(ArmorType.forEntity(this).getWeightPerPoint() * getTotalOArmor(), this);
-    }
-
-    @Override
-    public boolean hasRearArmor(int loc) {
-        return false;
     }
 
     @Override
@@ -727,11 +703,6 @@ public class ProtoMek extends Entity {
                   hit.glancingMod());
             default -> new HitData(LOC_DESTROYED);
         };
-    }
-
-    @Override
-    public int getDependentLocation(int loc) {
-        return LOC_NONE;
     }
 
     @Override
@@ -1011,16 +982,6 @@ public class ProtoMek extends Entity {
     @Override
     public double getPriceMultiplier() {
         return 1 + (weight / 100.0);
-    }
-
-    @Override
-    public boolean doomedInExtremeTemp() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedInVacuum() {
-        return false;
     }
 
     @Override

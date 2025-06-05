@@ -194,16 +194,6 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public int getHeatCapacity() {
-        return DOES_NOT_TRACK_HEAT;
-    }
-
-    @Override
-    public int getHeatCapacityWithWater() {
-        return getHeatCapacity();
-    }
-
-    @Override
     public void autoSetInternal() {
         initializeInternal(0, LOC_GUNS);
     }

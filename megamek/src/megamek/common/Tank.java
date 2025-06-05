@@ -998,11 +998,6 @@ public class Tank extends Entity {
     }
 
     @Override
-    public boolean hasRearArmor(int loc) {
-        return false;
-    }
-
-    @Override
     public int firstArmorIndex() {
         return LOC_FRONT;
     }
@@ -1351,14 +1346,6 @@ public class Tank extends Entity {
         return new HitData(LOC_DESTROYED);
     }
 
-    /**
-     * Gets the location that is destroyed recursively
-     */
-    @Override
-    public int getDependentLocation(int loc) {
-        return LOC_NONE;
-    }
-
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
         if (motivePenalty > 0) {
@@ -1474,21 +1461,6 @@ public class Tank extends Entity {
         } else {
             return getRunMP(MPCalculationSetting.NO_GRAVITY);
         }
-    }
-
-    @Override
-    public int getHeatCapacity(boolean radicalHeatSinks) {
-        return DOES_NOT_TRACK_HEAT;
-    }
-
-    @Override
-    public int getHeatCapacityWithWater() {
-        return getHeatCapacity();
-    }
-
-    @Override
-    public int getEngineCritHeat() {
-        return 0;
     }
 
     @Override
@@ -1747,11 +1719,6 @@ public class Tank extends Entity {
             }
         }
         return Math.max(0, caseLocations.size() - explicit);
-    }
-
-    @Override
-    public boolean doomedInExtremeTemp() {
-        return false;
     }
 
     @Override

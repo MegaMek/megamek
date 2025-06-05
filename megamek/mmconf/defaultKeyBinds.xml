@@ -400,7 +400,14 @@
     </KeyBind>
 
     <KeyBind>
-        <command>reportKeyFilter</command> <!-- Shift-F -->
+        <command>reportFilterKeySelNext</command> <!-- Ctrl-Shift-F -->
+        <keyCode>70</keyCode>
+        <modifier>192</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+        <command>reportFilterKey</command> <!-- Shift-F -->
         <keyCode>70</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>

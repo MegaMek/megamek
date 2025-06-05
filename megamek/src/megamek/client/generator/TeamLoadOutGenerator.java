@@ -1761,7 +1761,7 @@ public class TeamLoadOutGenerator {
      * i.e. Arrow IV counts as multiple units), then one of the basic one-slot types is removed and the TAG system is
      * added in its place.
      *
-     * @param bombLoad   array of size BombTypeEnum.NUM, suitable for setting bombs on IBomber entities
+     * @param bombLoad   a BombLoadout to update with TAG
      * @param skipGuided true to only select external TAG for units without guided ordnance
      * @param maxLoad    Maximum external ordnance load in total bomb units (NOT bomb count)
      *

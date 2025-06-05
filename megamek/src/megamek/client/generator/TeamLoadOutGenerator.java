@@ -1614,7 +1614,7 @@ public class TeamLoadOutGenerator {
         boolean guidedAndArrowAvailable = ((year >= 2600) && (year <= 2835)) || (year > 3044);
 
         // Generate a working map with all the unavailable ordnance replaced with rockets or HE
-        BombLoadout workingBombMap =  new BombLoadout();
+        BombLoadout workingBombMap = new BombLoadout();
         for (BombTypeEnum curBombType : bombMap.keySet()) {
             // Make sure the bomb type is even legal for the current scenario
             if (!checkLegality(BombType.createBombByType(curBombType), faction, techBase, mixedTech)) {

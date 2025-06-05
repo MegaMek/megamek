@@ -586,45 +586,45 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void updateButtons() {
         final GameOptions gameOptions = game.getOptions();
-        final Entity currentlySelectedEntity = ce();
-        if (currentlySelectedEntity == null) {
+        final Entity selectedUnit = ce();
+        if (selectedUnit == null) {
             LOGGER.error("Cannot update buttons based on a null entity");
             return;
         }
-        boolean isMEK = (currentlySelectedEntity instanceof Mek);
-        boolean isInfantry = (currentlySelectedEntity instanceof Infantry);
-        boolean isTank = (currentlySelectedEntity instanceof Tank);
-        boolean isAero = currentlySelectedEntity.isAero();
+        boolean isMEK = (selectedUnit instanceof Mek);
+        boolean isInfantry = (selectedUnit instanceof Infantry);
+        boolean isTank = (selectedUnit instanceof Tank);
+        boolean isAero = selectedUnit.isAero();
 
         if (numButtonGroups > 1) {
             getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
         }
 
-        setWalkEnabled(!currentlySelectedEntity.isImmobile() &&
-                             ((currentlySelectedEntity.getWalkMP() > 0) || (currentlySelectedEntity.getRunMP() > 0)) &&
-                             !currentlySelectedEntity.isStuck());
+        setWalkEnabled(!selectedUnit.isImmobile() &&
+                             ((selectedUnit.getWalkMP() > 0) || (selectedUnit.getRunMP() > 0)) &&
+                             !selectedUnit.isStuck());
 
         // Conventional infantry also uses jump MP for VTOL and UMU MP
         setJumpEnabled(!isAero &&
-                             !currentlySelectedEntity.isImmobileForJump() &&
-                             !currentlySelectedEntity.isProne() &&
+                             !selectedUnit.isImmobileForJump() &&
+                             !selectedUnit.isProne() &&
                              (hasJumpMP() &&
-                                    (!currentlySelectedEntity.isConventionalInfantry() ||
-                                           currentlySelectedEntity.getMovementMode().isJumpInfantry())) &&
-                             !(currentlySelectedEntity.isStuck() && !currentlySelectedEntity.canUnstickByJumping()));
+                                    (!selectedUnit.isConventionalInfantry() ||
+                                           selectedUnit.getMovementMode().isJumpInfantry())) &&
+                             !(selectedUnit.isStuck() && !selectedUnit.canUnstickByJumping()));
 
         setSwimEnabled(!isAero &&
-                             !currentlySelectedEntity.isImmobile() &&
-                             (currentlySelectedEntity.getActiveUMUCount() > 0) &&
-                             currentlySelectedEntity.isUnderwater());
+                             !selectedUnit.isImmobile() &&
+                             (selectedUnit.getActiveUMUCount() > 0) &&
+                             selectedUnit.isUnderwater());
 
         setBackUpEnabled(!isAero && isEnabled(MoveCommand.MOVE_WALK));
-        setChargeEnabled(currentlySelectedEntity.canCharge());
-        setDFAEnabled(currentlySelectedEntity.canDFA());
-        setRamEnabled(currentlySelectedEntity.canRam());
+        setChargeEnabled(selectedUnit.canCharge());
+        setDFAEnabled(selectedUnit.canDFA());
+        setRamEnabled(selectedUnit.canRam());
 
         if (isInfantry) {
-            setClearEnabled(game.containsMinefield(currentlySelectedEntity.getPosition()));
+            setClearEnabled(game.containsMinefield(selectedUnit.getPosition()));
         } else {
             setClearEnabled(false);
         }
@@ -636,7 +636,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     EntityMovementMode.VTOL,
                     EntityMovementMode.BIPED_SWIM,
                     EntityMovementMode.QUAD_SWIM)
-                                             .noneMatch(entityMovementMode -> (currentlySelectedEntity.getMovementMode() ==
+                                             .noneMatch(entityMovementMode -> (selectedUnit.getMovementMode() ==
                                                                                      entityMovementMode));
 
         getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(entityNotAbleToClimb);
@@ -678,37 +678,33 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateBombButton();
 
         // Infantry and Tank - Fortify
-        if (isInfantry && currentlySelectedEntity.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
+        if (isInfantry && selectedUnit.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
             // Crews adrift in space or atmosphere can't do this
-            if (currentlySelectedEntity instanceof EjectedCrew &&
-                      (currentlySelectedEntity.isSpaceborne() || currentlySelectedEntity.isAirborne())) {
+            if (selectedUnit instanceof EjectedCrew &&
+                      (selectedUnit.isSpaceborne() || selectedUnit.isAirborne())) {
                 getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
             } else {
                 getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(true);
             }
         } else {
             getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(isTank &&
-                                                              currentlySelectedEntity.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE));
+                                                              selectedUnit.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE));
         }
 
-        // Infantry - Digging in
-        if (isInfantry && gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_DIG_IN)) {
-            // Crews adrift in space or atmosphere can't do this
-            if (currentlySelectedEntity instanceof EjectedCrew &&
-                      (currentlySelectedEntity.isSpaceborne() || currentlySelectedEntity.isAirborne())) {
-                getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
-            } else {
-                // Allow infantry to dig in if they aren't currently dug in
-                int dugInState = ((Infantry) currentlySelectedEntity).getDugIn();
-                getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(dugInState == Infantry.DUG_IN_NONE);
-            }
-        } else {
-            getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
-        }
+        // Infantry - Digging in, TO:AR p.106; could add terrain checking and restrict to first action here
+        boolean canDigIn = (selectedUnit instanceof Infantry infantry)
+              && gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_DIG_IN)
+              && game.isOnGroundMap(selectedUnit)
+              && (selectedUnit.getAltitude() == 0)
+              && (selectedUnit.getElevation() == 0)
+              && !infantry.isMechanized()
+              && (infantry.getDugIn() == Infantry.DUG_IN_NONE);
+        getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(canDigIn);
+
         // Infantry - Take Cover
         // Crews adrift in space or atmosphere can't do this
-        if (currentlySelectedEntity instanceof EjectedCrew &&
-                  (currentlySelectedEntity.isSpaceborne() || currentlySelectedEntity.isAirborne())) {
+        if (selectedUnit instanceof EjectedCrew &&
+                  (selectedUnit.isSpaceborne() || selectedUnit.isAirborne())) {
             getBtn(MoveCommand.MOVE_TAKE_COVER).setEnabled(false);
         } else {
             updateTakeCoverButton();
@@ -716,17 +712,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Infantry - Urban Guerrilla calling for support
         getBtn(MoveCommand.MOVE_CALL_SUPPORT).setEnabled(isInfantry &&
-                                                               currentlySelectedEntity.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA) &&
-                                                               ((Infantry) currentlySelectedEntity).getCanCallSupport());
+                                                               selectedUnit.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA) &&
+                                                               ((Infantry) selectedUnit).getCanCallSupport());
 
-        getBtn(MoveCommand.MOVE_SHAKE_OFF).setEnabled((currentlySelectedEntity instanceof Tank) &&
-                                                            (currentlySelectedEntity.getSwarmAttackerId() !=
+        getBtn(MoveCommand.MOVE_SHAKE_OFF).setEnabled((selectedUnit instanceof Tank) &&
+                                                            (selectedUnit.getSwarmAttackerId() !=
                                                                    Entity.NONE));
 
         updateFleeButton();
 
         if (gameOptions.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT) &&
-                  (currentlySelectedEntity instanceof Tank)) {
+                  (selectedUnit instanceof Tank)) {
             // Vehicles don't have ejection systems, so crews abandon, and must enter a valid hex. If they cannot,
             // they can't abandon as per TO pg 197.
             Coords position = ce().getPosition();
@@ -740,19 +736,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setEjectEnabled(hasLegalHex);
         } else {
             setEjectEnabled(((isMEK &&
-                                    (((Mek) currentlySelectedEntity).getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED)) ||
+                                    (((Mek) selectedUnit).getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED)) ||
                                    isAero) &&
-                                  currentlySelectedEntity.isActive() &&
-                                  !currentlySelectedEntity.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
+                                  selectedUnit.isActive() &&
+                                  !selectedUnit.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
         }
 
         // if dropping unit only allows turning
-        if (!currentlySelectedEntity.isAero() && cmd.getFinalAltitude() > 0) {
+        if (!selectedUnit.isAero() && cmd.getFinalAltitude() > 0) {
             disableButtons();
-            if (currentlySelectedEntity instanceof LandAirMek) {
+            if (selectedUnit instanceof LandAirMek) {
                 updateConvertModeButton();
-                if (currentlySelectedEntity.getMovementMode().isWiGE() &&
-                          (currentlySelectedEntity.getAltitude() <= 3)) {
+                if (selectedUnit.getMovementMode().isWiGE() &&
+                          (selectedUnit.getAltitude() <= 3)) {
                     updateHoverButton();
                 }
                 getBtn(MoveCommand.MOVE_MORE).setEnabled(numButtonGroups > 1);
@@ -761,7 +757,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // If a Small Craft / DropShip that has unloaded units, then only allowed to unload more
-        if (currentlySelectedEntity.hasUnloadedUnitsFromBays()) {
+        if (selectedUnit.hasUnloadedUnitsFromBays()) {
             disableButtons();
             updateLoadButtons();
         }

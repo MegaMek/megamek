@@ -1778,6 +1778,11 @@ public class MekView {
                 result += Messages.getString("MekView.unitType.spheroid") + " ";
             }
         }
+        if (entity instanceof Infantry inf && !entity.isBattleArmor() && inf.isMechanized()) {
+            result += Messages.getString("MekView.unitType.mechanized") + " ";
+        } else if (entity.getMovementMode().isMotorizedInfantry()) {
+            result += Messages.getString("MekView.unitType.motorized") + " ";
+        }
         if (entity.isSuperHeavy()) {
             result += Messages.getString("MekView.unitType.superHeavy") + " ";
         }

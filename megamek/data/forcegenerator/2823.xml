@@ -1504,7 +1504,7 @@
 			<model name='COM-2D'>
 				<roles>recon</roles>
 				<deployedWith>Commando</deployedWith>
-				<availability>IS:8,MERC:8,CGS:8,CSJ:8,Periphery:8,Periphery.Deep:8</availability>
+				<availability>LA:8,MERC:8,CGS:8,CSJ:8,Periphery:8,Periphery.Deep:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Commonwealth Light Cruiser' unitType='Warship'>
@@ -5259,7 +5259,7 @@
 			<availability>IS:3-,CC:5-,CLAN:1-,PP:4-,Periphery:2-,CS:4-,FS.CMM:4-,FWL:4-,NIOPS:4-,DC:4-</availability>
 			<model name='UM-R60'>
 				<roles>urban</roles>
-				<availability>IS:8,MERC:8,CLAN:8,PP:8,Periphery.Deep:8,Periphery:8</availability>
+				<availability>IS:8,MERC:8,CLAN:8,PP:8,Periphery:8,Periphery.Deep:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Valkyrie' unitType='Mek'>

@@ -168,6 +168,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             c.anchor = GridBagConstraints.WEST;
             add(comboBox, c);
             gridbag.setConstraints(comboBox, c);
+            currentRow++;
         }
 
         // Allow the player to confirm or abort the choice.

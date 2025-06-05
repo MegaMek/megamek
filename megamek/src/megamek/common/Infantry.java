@@ -1232,9 +1232,7 @@ public class Infantry extends Entity {
     }
 
     public boolean isMechanized() {
-        return (getMovementMode().isTrackedWheeledOrHover()) ||
-                     (getMovementMode().isSubmarine()) ||
-                     (getMovementMode().isVTOL());
+        return movementMode.isTrackedWheeledOrHover() || movementMode.isVTOL() || movementMode.isSubmarine();
     }
 
     public boolean isXCT() {

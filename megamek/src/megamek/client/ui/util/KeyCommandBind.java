@@ -107,7 +107,8 @@ public enum KeyCommandBind {
     REPORT_KEY_PREV("reportKeyPrev", VK_N, SHIFT_DOWN_MASK),
     REPORT_KEY_SELNEXT("reportKeySelNext", VK_N, CTRL_DOWN_MASK),
     REPORT_KEY_SELPREV("reportKeySelPrev", VK_N, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
-    REPORT_KEY_FILTER("reportKeyFilter", VK_F, SHIFT_DOWN_MASK),
+    REPORT_FILTER_KEY_SELNEXT("reportFilterKeySelNext", VK_F, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    REPORT_FILTER("reportFilterKey", VK_F, SHIFT_DOWN_MASK),
 
     // --------- The following binds are used by the CommonMenuBar:
     // Toggles isometric view on/off
@@ -214,10 +215,10 @@ public enum KeyCommandBind {
      */
     public static List<KeyCommandBind> getBindByKey(int keycode, int modifiers) {
         return Stream.of(values())
-                     .filter(bind -> !bind.isMenuBar)
-                     .filter(bind -> bind.key == keycode)
-                     .filter(bind -> bind.modifiers == modifiers)
-                     .collect(Collectors.toList());
+              .filter(bind -> !bind.isMenuBar)
+              .filter(bind -> bind.key == keycode)
+              .filter(bind -> bind.modifiers == modifiers)
+              .collect(Collectors.toList());
     }
 
     /** Returns the bind identified by the given cmd or null if there is no such bind. */

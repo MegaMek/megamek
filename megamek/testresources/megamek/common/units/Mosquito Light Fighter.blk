@@ -1,0 +1,140 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+FixedWingSupport
+</UnitType>
+
+<Name>
+Mosquito Light Fighter
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+5591
+</mul id:>
+
+<year>
+2302
+</year>
+
+<originalBuildYear>
+2302
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Fire Support
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+150
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+9
+6
+6
+3
+</armor>
+
+<Nose Equipment>
+LRM 5
+</Nose Equipment>
+
+<Left Wing Equipment>
+Machine Gun
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Machine Gun
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Body Equipment>
+IS Ammo LRM-5
+IS Ammo MG - Full
+Advanced Fire Control
+External Stores Hardpoint
+External Stores Hardpoint
+</Body Equipment>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
+<source>
+XTR: Primitives II
+</source>
+
+<tonnage>
+20.0
+</tonnage>
+
+<quirks>
+atmo_flyer
+easy_maintain
+obsolete
+</quirks>
+

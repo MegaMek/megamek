@@ -3,7 +3,6 @@
  *
  * This file is part of MegaMek.
  *
- *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
  * version 3 or (at your option) any later version,
@@ -25,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.dataset;
 
@@ -48,6 +52,8 @@ public abstract class EntityDataMap<F extends Enum<F>> {
 
     // Keep track of insertion order separately
     private final List<F> fieldOrder = new ArrayList<>();
+
+    private static final String VERSION = "31052025";
 
     /**
      * Creates an empty EntityDataMap.
@@ -119,5 +125,13 @@ public abstract class EntityDataMap<F extends Enum<F>> {
      */
     public Class<F> getFieldEnumClass() {
         return fieldEnumClass;
+    }
+
+    /**
+     * Gets the versioned class name for this data map.
+     * @return The class name with version appended
+     */
+    public String getVersionedClassName() {
+        return getClass().getSimpleName() + "." + VERSION;
     }
 }

@@ -3,7 +3,6 @@
  *
  * This file is part of MegaMek.
  *
- *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
  * version 3 or (at your option) any later version,
@@ -25,12 +24,16 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.dataset;
 
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import megamek.ai.utility.EntityFeatureUtils;
@@ -39,15 +42,12 @@ import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.IAero;
 import megamek.common.UnitRole;
-import megamek.common.equipment.WeaponMounted;
-import megamek.logging.MMLogger;
 
 /**
  * Flexible container for unit state data using a map-based approach with enum keys.
  * @author Luana Coppio
  */
 public class UnitState extends EntityDataMap<UnitState.Field> {
-    private static final MMLogger logger = MMLogger.create(UnitState.class);
 
     /**
      * Enum defining all available unit state fields.
@@ -142,7 +142,7 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
               .put(Field.INTERNAL_P, entity.getInternalRemainingPercent())
               .put(Field.ARMOR, entity.getTotalArmor());
 
-        if (entity instanceof IAero aero) {
+        if ((entity instanceof IAero aero) && !entity.isMek()) {
             map.put(Field.INTERNAL, aero.getSI());
         } else {
             map.put(Field.INTERNAL, entity.getTotalInternal());
@@ -153,15 +153,15 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
               .put(Field.TOTAL_DAMAGE, Compute.computeTotalDamage(entity.getWeaponList()))
               .put(Field.BV, entity.getInitialBV());
 
-        // Equipment and capabilities
-        map.put(Field.IS_BOT, entity.getOwner().isBot())
-              .put(Field.HAS_ECM, entity.hasActiveECM());
-
         // Directional armor
         map.put(Field.ARMOR_FRONT_P, EntityFeatureUtils.getTargetFrontHealthStats(entity))
               .put(Field.ARMOR_LEFT_P, EntityFeatureUtils.getTargetLeftSideHealthStats(entity))
               .put(Field.ARMOR_RIGHT_P, EntityFeatureUtils.getTargetRightSideHealthStats(entity))
               .put(Field.ARMOR_BACK_P, EntityFeatureUtils.getTargetBackHealthStats(entity));
+
+        // Equipment and capabilities
+        map.put(Field.IS_BOT, entity.getOwner().isBot())
+              .put(Field.HAS_ECM, entity.hasActiveECM());
 
         // Weapon information
         List<Integer> weaponData = WeaponDataEncoder.getEncodedWeaponData(entity);

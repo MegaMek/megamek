@@ -481,6 +481,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     // Report
     private JTextPane reportKeywordsTextPane;
+    private JTextPane reportFilterKeywordsTextPane;
     private ColourSelectorButton csbReportLinkColor;
     private ColourSelectorButton csbReportSuccessColor;
     private ColourSelectorButton csbReportMissColor;
@@ -1595,6 +1596,17 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         row.add(reportKeywordsTextPane);
         comps.add(row);
 
+        addLineSpacer(comps);
+
+        JLabel reportFilterKeywordsLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportFilterKeywords")
+              + ":"
+              + " ");
+        reportFilterKeywordsTextPane = new JTextPane();
+        row = new ArrayList<>();
+        row.add(reportFilterKeywordsLabel);
+        row.add(reportFilterKeywordsTextPane);
+        comps.add(row);
+
         return createSettingsPanel(comps);
     }
 
@@ -2250,6 +2262,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             stampFormat.setEnabled(stampFilenames.isSelected());
             stampFormat.setText(CLIENT_PREFERENCES.getStampFormat());
             reportKeywordsTextPane.setText(CLIENT_PREFERENCES.getReportKeywords());
+            reportFilterKeywordsTextPane.setText(CLIENT_PREFERENCES.getReportFilterKeywords());
             showIPAddressesInChat.setSelected(CLIENT_PREFERENCES.getShowIPAddressesInChat());
             startSearchlightsOn.setSelected(CLIENT_PREFERENCES.getStartSearchlightsOn());
 
@@ -2743,6 +2756,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         CLIENT_PREFERENCES.setStampFilenames(stampFilenames.isSelected());
         CLIENT_PREFERENCES.setStampFormat(stampFormat.getText());
         CLIENT_PREFERENCES.setReportKeywords(reportKeywordsTextPane.getText());
+        CLIENT_PREFERENCES.setReportFilterKeywords(reportFilterKeywordsTextPane.getText());
         CLIENT_PREFERENCES.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
         CLIENT_PREFERENCES.setStartSearchlightsOn(startSearchlightsOn.isSelected());
         CLIENT_PREFERENCES.setEnableExperimentalBotFeatures(enableExperimentalBotFeatures.isSelected());

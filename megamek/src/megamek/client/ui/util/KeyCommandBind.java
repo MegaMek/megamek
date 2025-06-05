@@ -122,6 +122,7 @@ public enum KeyCommandBind {
     REPORT_KEY_PREV("reportKeyPrev", VK_N, SHIFT_DOWN_MASK),
     REPORT_KEY_SELECT_NEXT("reportKeySelNext", VK_N, CTRL_DOWN_MASK),
     REPORT_KEY_SELECT_PREVIOUS("reportKeySelPrev", VK_N, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    REPORT_FILTER_KEY_SELECT_NEXT("reportFilterKeySelNext", VK_F, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     REPORT_KEY_FILTER("reportKeyFilter", VK_F, SHIFT_DOWN_MASK),
 
     // --------- The following binds are used by the CommonMenuBar:

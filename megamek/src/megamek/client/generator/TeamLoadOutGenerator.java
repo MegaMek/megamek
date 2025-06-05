@@ -1494,7 +1494,7 @@ public class TeamLoadOutGenerator {
             }
 
             // Load the provided ordnance onto the unit
-            if (generatedBombs != null && generatedBombs.getTotalBombs() > 0) {
+            if (generatedBombs.getTotalBombs() > 0) {
                 ((IBomber) curBomber).setBombChoices(generatedBombs);
             }
         }

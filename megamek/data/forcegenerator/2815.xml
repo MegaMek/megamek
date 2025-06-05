@@ -2036,7 +2036,7 @@
 			</model>
 		</chassis>
 		<chassis name='Firestarter' unitType='Mek'>
-			<availability>IS:7,CS:3,LA:8,CFM:4-,CHH:3,PP:5,Periphery:7,NIOPS:3,Periphery.Deep:7</availability>
+			<availability>IS:7,LA:8,CS:3,CFM:4-,CHH:3,PP:5,Periphery:7,NIOPS:3,Periphery.Deep:7</availability>
 			<model name='FS9-A'>
                 <roles>anti_infantry,recon</roles>
 				<deployedWith>Vulcan</deployedWith>
@@ -3121,7 +3121,7 @@
 			</model>
 			<model name='LCT-1V'>
 				<roles>recon</roles>
-				<availability>IS:8,MERC:8,LA:4,FS:7,PP:8,Periphery:8</availability>
+				<availability>IS:8,MERC:8,FS:7,LA:4,PP:8,Periphery:8</availability>
 			</model>
 			<model name='LCT-1Vb'>
 				<roles>recon</roles>
@@ -3819,7 +3819,7 @@
 			</model>
 			<model name='OTT-7Jb'>
 				<roles>recon</roles>
-				<availability>CLAN:8+,PP:2+</availability>
+				<availability>CLAN:8,PP:2+</availability>
 			</model>
 		</chassis>
 		<chassis name='Ostsol' unitType='Mek'>
@@ -4484,10 +4484,10 @@
 			</model>
 		</chassis>
 		<chassis name='Sling' unitType='Mek'>
-			<availability>CC:4+,LA:4+,CSJ:5+,PP:2+</availability>
+			<availability>LA:4+,CC:4+,CSJ:5+,PP:2+</availability>
 			<model name='SL-1G'>
 				<roles>spotter</roles>
-				<availability>CC:8,LA:8,CSJ:8,PP:8</availability>
+				<availability>LA:8,CC:8,CSJ:8,PP:8</availability>
 			</model>
 			<model name='SL-1H'>
 				<roles>spotter</roles>
@@ -4676,7 +4676,7 @@
 				<availability>LA:8,CLAN:8,CIH:6+,CMG:4+,CNC:6+,CDS:7+,CW:8+,PP:3+</availability>
 			</model>
 			<model name='TLN-5W-EC'>
-				<availability>CIH:1+</availability>
+				<availability>CIH!Keshik:3</availability>
 			</model>
 		</chassis>
 		<chassis name='Texas Battleship' unitType='Warship'>
@@ -4706,7 +4706,7 @@
 		<chassis name='Thorn' unitType='Mek'>
 			<availability>FS:4,CC:4,FWL:6,MERC:4,CS:6,CLAN:4,CGB:5,CHH:6,CIH:4-,CMG:3,CNC:5,CW:5,CWOV:3,PP:6,TC:4+,MOC:4+,OA:4+,NIOPS:6</availability>
 			<model name='THE-F'>
-				<availability>CC:2,FWL:2,FS:2</availability>
+				<availability>CC:2,FWL:2,FS:2,Periphery:8</availability>
 			</model>
 			<model name='THE-N'>
 				<availability>IS:6+,CS:8,CLAN:8,CB:7,CGB:7,CIH:7,CJF:7,CMG:7,CNC:7,CDS:7,CSR:7,CW:7,PP:6,NIOPS:8</availability>
@@ -4965,7 +4965,7 @@
 			<availability>PP:5,CC:6-,IS:3-,Periphery:2-,CS:4-,FS.CMM:5-,FWL:5-,NIOPS:4-,DC:5-</availability>
 			<model name='UM-R60'>
 				<roles>urban</roles>
-				<availability>CC:8,General:8,Periphery.Deep:8,Periphery:8</availability>
+				<availability>IS:8,MERC:8,Periphery.Deep:8,Periphery:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Valkyrie' unitType='Mek'>

@@ -4353,7 +4353,7 @@
 		<chassis name='Thorn' unitType='Mek'>
 			<availability>FS:4,CC:4,FWL:6,MERC:4,CS:6,CLAN:4,CGB:5,CHH:6,CIH:4-,CMG:3,CNC:5,CW:5,CWOV:3,PP:6,TC:4+,MOC:4+,OA:4+,NIOPS:6</availability>
 			<model name='THE-F'>
-				<availability>CC:2,FWL:2,FS:2</availability>
+				<availability>CC:2,FWL:2,FS:2,Periphery:8</availability>
 			</model>
 			<model name='THE-N'>
 				<availability>IS:6+,CS:8,CLAN:8,CB:7,CGB:7,CIH:7,CJF:7,CMG:7,CNC:7,CDS:7,CSR:7,CW:7,PP:6,NIOPS:8</availability>
@@ -4603,10 +4603,10 @@
 			</model>
 		</chassis>
 		<chassis name='UrbanMech' unitType='Mek'>
-			<availability>PP:5,CC:6-,IS:3-,Periphery:2-,CS:4-,FS.CMM:5-,FWL:5-,NIOPS:4-,DC:5-</availability>
+			<availability>PP:5-,CC:6-,IS:3-,Periphery:2-,CS:4-,FS.CMM:5-,FWL:5-,NIOPS:4-,DC:5-</availability>
 			<model name='UM-R60'>
 				<roles>urban</roles>
-				<availability>CC:8,General:8,Periphery.Deep:8,Periphery:8</availability>
+				<availability>IS:8,MERC:8,PP:8,Periphery.Deep:8,Periphery:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Valkyrie' unitType='Mek'>

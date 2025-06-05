@@ -3,7 +3,6 @@
  *
  * This file is part of MegaMek.
  *
- *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
  * version 3 or (at your option) any later version,
@@ -25,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.dataset;
 
@@ -54,6 +58,7 @@ public class BoardDataSerializer extends EntityDataSerializer<Field, BoardData> 
         lines.add(getHeaderLine());
 
         String mainData = String.join("\t",
+              data.getVersionedClassName(),
               String.valueOf(data.get(Field.BOARD_NAME)),
               String.valueOf(data.get(Field.WIDTH)),
               String.valueOf(data.get(Field.HEIGHT)));
@@ -64,17 +69,18 @@ public class BoardDataSerializer extends EntityDataSerializer<Field, BoardData> 
         if (hexRows != null && !hexRows.isEmpty()) {
             // Add the column header row (COL_0, COL_1, etc.)
             int width = ((Integer) data.get(Field.WIDTH));
-            String colHeader = IntStream.range(0, width)
+            String colHeader = VERSION + TAB + IntStream.range(0, width)
                                      .mapToObj(i -> "COL_" + i)
                                      .collect(Collectors.joining("\t"));
             lines.add(colHeader);
 
             // Add each row of hex data
             for (HexRow row : hexRows) {
-                StringBuilder sb = new StringBuilder("ROW_").append(row.getRowIndex()).append("\t");
-                sb.append(row.getHexes().stream()
+                StringBuilder sb =
+                      new StringBuilder(data.getVersionedClassName()).append(TAB).append("ROW_").append(row.rowIndex()).append(TAB);
+                sb.append(row.hexes().stream()
                                 .map(hex -> hex == null ? "" : hex.toString())
-                                .collect(Collectors.joining("\t")));
+                                .collect(Collectors.joining(TAB)));
                 lines.add(sb.toString());
             }
         }
@@ -84,6 +90,6 @@ public class BoardDataSerializer extends EntityDataSerializer<Field, BoardData> 
 
     @Override
     public String getHeaderLine() {
-        return String.join("\t", Field.BOARD_NAME.name(), Field.WIDTH.name(), Field.HEIGHT.name());
+        return String.join(TAB, VERSION, Field.BOARD_NAME.name(), Field.WIDTH.name(), Field.HEIGHT.name());
     }
 }

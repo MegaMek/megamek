@@ -72,6 +72,17 @@ public enum Facing {
     }
 
     /**
+     * @return Facing in degrees, e.g. N.getAngle() returns 0, NE.getAngle() returns 30
+     *         and S.getAngle() returns 180.
+     */
+    public int getAngle() {
+        if (this == NONE) {
+            return 0;
+        }
+        return intValue * 60;
+    }
+
+    /**
      * @return Facing in the opposite direction e.g. N.getOpposite returns S
      */
     public Facing getOpposite() {

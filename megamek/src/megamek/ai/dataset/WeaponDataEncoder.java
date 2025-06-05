@@ -3,7 +3,6 @@
  *
  * This file is part of MegaMek.
  *
- *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
  * version 3 or (at your option) any later version,
@@ -25,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.ai.dataset;
 
@@ -33,6 +37,7 @@ import java.util.List;
 
 import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.enums.FacingArc;
 import megamek.common.equipment.WeaponMounted;
 import megamek.logging.MMLogger;
 
@@ -47,7 +52,7 @@ public class WeaponDataEncoder {
      * Encodes the weapons of an entity into a List of Integers, each weapon is encoded as a sequence of 5 integers
      * which represents the max damage it causes, its arc, short range, medium range and long range.
      * @param entity The entity from which to encode the weapon data
-     * @return the encoded list
+     * @return the encoded list [max damage, arc code, short range, medium range, long range]
      */
     public static List<Integer> getEncodedWeaponData(Entity entity) {
         List<Integer> weaponData = new ArrayList<>();

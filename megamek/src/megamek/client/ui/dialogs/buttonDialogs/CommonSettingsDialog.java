@@ -1630,6 +1630,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               "CommonSettingsDialog.showReportFilterList.tooltip"));
         chkReportShowFilter.setSelected(GUIP.getMiniReportShowFilter());
         comps.add(row);
+        addLineSpacer(comps);
 
         JLabel reportFilterKeywordsLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportFilterKeywords")
               + ":"

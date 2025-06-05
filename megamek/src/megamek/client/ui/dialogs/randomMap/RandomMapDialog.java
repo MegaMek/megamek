@@ -31,7 +31,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.*;
@@ -52,17 +51,15 @@ import megamek.logging.MMLogger;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @since 3/13/14 2:41 PM
  */
 public class RandomMapDialog extends JDialog implements ActionListener {
-    private static final MMLogger logger = MMLogger.create(RandomMapDialog.class);
 
-    private static final long serialVersionUID = 7758433698878123806L;
+    private static final MMLogger LOGGER = MMLogger.create(RandomMapDialog.class);
 
     // External helpers.
-    private final JFrame PARENT;
-    private final IMapSettingsObserver MAP_SETTINGS_OBSERVER;
-    private final Client CLIENT;
+    private final JFrame parentFrame;
+    private final IMapSettingsObserver mapSettingsObserver;
+    private final Client client;
     private final GUIPreferences guip = GUIPreferences.getInstance();
 
     // How the map will be set up.
@@ -97,41 +94,20 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     /**
      * Constructor for this dialog.
      *
-     * @param parent              The parent {@link JFrame} invoking this dialog.
-     * @param mapSettingsObserver The {@link IMapSettingsObserver} objects to which
-     *                            the map setting will be passed if
+     * @param parent              The parent JFrame invoking this dialog.
+     * @param mapSettingsObserver The {@link IMapSettingsObserver} objects to which the map setting will be passed if
      *                            this is a local only game.
-     * @param client              The {@link Client} that will send the map settings
-     *                            to the server if this is a
+     * @param client              The {@link Client} that will send the map settings to the server if this is a
      *                            server-based game.
-     * @param mapSettings         The {@link MapSettings} describing the map to be
-     *                            generated.
+     * @param mapSettings         The {@link MapSettings} describing the map to be generated.
      */
     public RandomMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, Client client,
             MapSettings mapSettings) {
-        this(parent, mapSettingsObserver, client, mapSettings, Messages.getString("RandomMapDialog.title"));
-    }
-
-    /**
-     * Constructor for this dialog.
-     *
-     * @param parent              The parent {@link JFrame} invoking this dialog.
-     * @param mapSettingsObserver The {@link IMapSettingsObserver} objects to which
-     *                            the map setting will be passed if
-     *                            this is a local only game.
-     * @param client              The {@link Client} that will send the map settings
-     *                            to the server if this is a
-     *                            server-based game.
-     * @param mapSettings         The {@link MapSettings} describing the map to be
-     *                            generated.
-     */
-    public RandomMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, Client client,
-            MapSettings mapSettings, String title) {
-        super(parent, title, true);
+        super(parent, Messages.getString("RandomMapDialog.title"), true);
         this.mapSettings = mapSettings;
-        PARENT = parent;
-        MAP_SETTINGS_OBSERVER = mapSettingsObserver;
-        CLIENT = client;
+        parentFrame = parent;
+        this.mapSettingsObserver = mapSettingsObserver;
+        this.client = client;
         basicPanel = new RandomMapPanelBasicPanel(mapSettings);
         advancedPanel = new RandomMapPanelAdvancedPanel(mapSettings);
 
@@ -148,7 +124,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         pack();
         validate();
         setSize(new Dimension(600, 600));
-        setLocationRelativeTo(PARENT);
+        setLocationRelativeTo(parentFrame);
 
         String closeAction = "closeAction";
         final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
@@ -287,7 +263,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
 
         // Add the option only when in the Map Editor
-        if (CLIENT == null) {
+        if (client == null) {
             showAtStartButton.addActionListener(this);
             showAtStartButton.setMnemonic(showAtStartButton.getText().charAt(0));
             showAtStartButton.setSelected(guip.getBoardEdRndStart());
@@ -297,7 +273,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         // The main panel with the Okay, Cancel etc. buttons
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
 
-        loadButton.addActionListener(this);
+        loadButton.addActionListener(e -> doLoad());
         loadButton.setMnemonic(loadButton.getText().charAt(0));
         panel.add(loadButton);
 
@@ -373,30 +349,27 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     }
 
     private void doLoad() {
-
         // Get the user-selected file.
         File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
                 "data" + File.separator + "mapgen", null, ".xml", "(*.xml)", false);
-
-        // If we don't have a file, there's nothing to load.
         if (selectedFile == null) {
             return;
         }
 
-        // Cache the selected boards if they exist, so we can restore them
-        List<String> selectedBoards = mapSettings != null ? mapSettings.getBoardsSelectedVector() : null;
-
         // Load the file. If there is an error, log it and return.
+        MapSettings newMapSettings;
         try (InputStream is = new FileInputStream(selectedFile)) {
-            mapSettings = MapSettings.getInstance(is);
+            newMapSettings = MapSettings.getInstance(is);
         } catch (Exception e) {
-            logger.error(e, "");
+            LOGGER.error(e, "");
             return;
         }
 
-        if (selectedBoards != null) {
-            mapSettings.setBoardsSelectedVector(selectedBoards);
+        if (mapSettings != null) {
+            newMapSettings.setMapSize(mapSettings.getMapWidth(), mapSettings.getMapHeight());
+            newMapSettings.setBoardsSelectedVector(mapSettings.getBoardsSelectedVector());
         }
+        mapSettings = newMapSettings;
 
         // Pass the loaded settings into the two different views.
         choTheme.setSelectedItem(mapSettings.getTheme());
@@ -427,7 +400,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         try (OutputStream os = new FileOutputStream(selectedFile)) {
             mapSettings.save(os);
         } catch (Exception ex) {
-            logger.error(ex, "");
+            LOGGER.error(ex, "");
         }
         return true;
     }
@@ -452,14 +425,14 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         // Get the general settings from this panel.
         newMapSettings.setBoardSize(mapWidthField.getAsInt(), mapHeightField.getAsInt());
         newMapSettings.setTheme((String) choTheme.getSelectedItem());
-        this.mapSettings = newMapSettings;
+        mapSettings = newMapSettings;
 
         // Sent the map settings to either the server or the observer as needed.
-        if (CLIENT != null) {
-            CLIENT.sendMapSettings(newMapSettings);
+        if (client != null) {
+            client.sendMapSettings(newMapSettings);
             return true;
         }
-        MAP_SETTINGS_OBSERVER.updateMapSettings(newMapSettings);
+        mapSettingsObserver.updateMapSettings(newMapSettings);
         return true;
     }
 
@@ -484,8 +457,6 @@ public class RandomMapDialog extends JDialog implements ActionListener {
             switchView(false, false);
         } else if (advancedButton.equals(e.getSource())) {
             switchView(true, false);
-        } else if (loadButton.equals(e.getSource())) {
-            doLoad();
         } else if (saveButton.equals(e.getSource())) {
             if (doSave()) {
                 setVisible(false);

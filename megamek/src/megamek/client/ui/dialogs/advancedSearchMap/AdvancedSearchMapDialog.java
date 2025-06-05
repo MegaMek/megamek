@@ -356,12 +356,12 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
     }
 
     private boolean matchTag(List<String> tags) {
-        List<String> include = listBoardTags.getSelectedValuesList();
-
         if (listBoardTags.isSelectionEmpty()) {
             return true;
         }
 
+        List<String> include = listBoardTags.getSelectedValuesList();
+        
         if (boardTagsAllCheckBox.isSelected()) {
             return !include.isEmpty() && include.stream().allMatch(tags::contains);
         } else {

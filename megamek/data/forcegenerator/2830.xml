@@ -28,17 +28,17 @@
 			<weightDistribution era='2830' unitType='AeroSpaceFighter'>1,1,1</weightDistribution>
 		</faction>
 		<faction key='CBS'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,0,5,0</pctClan>
-			<pctSL>100,100,100,95,100</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,0,5,0 -->
+            <!-- Star League percentages: 100,100,100,95,100 -->
 			<pctClan unitType='Vehicle'>0,0,0,5,10</pctClan>
 			<pctSL unitType='Vehicle'>100,100,100,95,90</pctSL>
 			<salvage pct='10'>CHH:5,CCC:5,CDS:1,CW:5,CSV:10,CNC:5,CCO:5,CJF:5,CB:10</salvage>
 		</faction>
 		<faction key='CB'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,0,15,30</pctClan>
-			<pctSL>100,100,100,85,70</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,0,15,30 -->
+            <!-- Star League percentages: 100,100,100,85,70 -->
 			<pctClan unitType='Vehicle'>0,0,5,5,5</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,95,95</pctSL>
 			<salvage pct='10'>CCC:1,CHH:7,CSR:5,CIH:5,CSV:3,CFM:3,CCO:7,CGS:3,CSA:2,CDS:5,CW:3,CWI:2,CBS:3,CNC:10,CSJ:2,CMG:2,CJF:5</salvage>
@@ -46,17 +46,17 @@
 			<weightDistribution era='2830' unitType='Tank'>4,1,3,2</weightDistribution>
 		</faction>
 		<faction key='CCC'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,5,15,25</pctClan>
-			<pctSL>100,100,95,85,75</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,5,15,25 -->
+            <!-- Star League percentages: 100,100,95,85,75 -->
 			<pctClan unitType='Vehicle'>0,0,5,5,5</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,95,95</pctSL>
 			<salvage pct='10'>CHH:2,CSR:1,CIH:5,CSV:3,CFM:3,CCO:10,CGS:2,CSA:3,CDS:1,CW:3,CBS:2,CNC:5,CJF:5,CGB:2,CB:1</salvage>
 		</faction>
 		<faction key='CCO'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,0,15,20</pctClan>
-			<pctSL>100,100,100,85,80</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,0,15,20 -->
+            <!-- Star League percentages: 100,100,100,85,80 -->
 			<pctClan unitType='Vehicle'>0,0,10,10,10</pctClan>
 			<pctSL unitType='Vehicle'>100,100,90,90,90</pctSL>
 			<salvage pct='10'>CCC:7,CHH:1,CSR:3,CIH:10,CSV:3,CFM:7,CGS:1,CSA:5,CDS:1,CW:1,CBS:1,CNC:3,CSJ:7,CJF:3,CB:3</salvage>
@@ -64,17 +64,17 @@
 			<weightDistribution era='2830' unitType='Tank'>3,1,3,2</weightDistribution>
 		</faction>
 		<faction key='CFM'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,0,15,20</pctClan>
-			<pctSL>100,100,100,85,80</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,0,15,20 -->
+            <!-- Star League percentages: 100,100,100,85,80 -->
 			<pctClan unitType='Vehicle'>0,0,5,5,5</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,95,95</pctSL>
 			<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:10,CSV:5,CCO:6,CGS:7,CSA:10,CDS:3,CW:1,CNC:2,CSJ:4,CMG:1,CJF:4,CGB:1,CB:1</salvage>
 		</faction>
 		<faction key='CGB'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,10,15,20</pctClan>
-			<pctSL>100,100,90,85,80</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,10,15,20 -->
+            <!-- Star League percentages: 100,100,90,85,80 -->
 			<pctClan unitType='Vehicle'>0,0,5,5,5</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,95,95</pctSL>
 			<salvage pct='10'>CHH:10,CCC:3,CIH:5,CSR:1,CSV:10,CFM:3,CGS:1,CCO:1,CSA:8,CDS:1,CW:8,CMG:3,CJF:5</salvage>
@@ -82,25 +82,25 @@
 			<weightDistribution era='2830' unitType='Tank'>3,1,3,2</weightDistribution>
 		</faction>
 		<faction key='CGS'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,5,10,15</pctClan>
-			<pctSL>100,100,95,90,85</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,5,10,15 -->
+            <!-- Star League percentages: 100,100,95,90,85 -->
 			<pctClan unitType='Vehicle'>0,0,5,5,5</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,95,95</pctSL>
 			<salvage pct='10'>CCC:1,CHH:4,CSR:1,CIH:6,CSV:4,CFM:10,CCO:1,CSA:8,CDS:4,CW:1,CWI:3,CNC:3,CSJ:1,CMG:3,CJF:10,CB:3</salvage>
 		</faction>
 		<faction key='CHH'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,0,15,20</pctClan>
-			<pctSL>100,100,100,85,80</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,0,15,20 -->
+            <!-- Star League percentages: 100,100,100,85,80 -->
 			<pctClan unitType='Vehicle'>0,0,5,10,15</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,90,85</pctSL>
 			<salvage pct='10'>CCC:2,CSR:7,CIH:10,CSV:4,CFM:7,CCO:1,CGS:6,CSA:4,CDS:7,CW:3,CWI:4,CBS:2,CNC:10,CSJ:3,CMG:3,CJF:3,CGB:8,CB:7</salvage>
 		</faction>
 		<faction key='CIH'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,0,15,20</pctClan>
-			<pctSL>100,100,100,85,80</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,0,15,20 -->
+            <!-- Star League percentages: 100,100,100,85,80 -->
 			<pctClan unitType='Vehicle'>0,0,5,5,5</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,95,95</pctSL>
 			<salvage pct='10'>CCC:3,CHH:4,CSR:3,CSV:1,CFM:10,CCO:9,CGS:5,CSA:1,CDS:4,CW:4,CWI:1,CNC:3,CSJ:3,CMG:3,CJF:3,CGB:2,CB:3</salvage>
@@ -108,57 +108,57 @@
 			<weightDistribution era='2830' unitType='Tank'>5,2,3,1</weightDistribution>
 		</faction>
 		<faction key='CJF'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,5,15,20</pctClan>
-			<pctSL>100,100,95,85,80</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,5,15,20 -->
+            <!-- Star League percentages: 100,100,95,85,80 -->
 			<pctClan unitType='Vehicle'>0,0,5,5,5</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,95,95</pctSL>
 			<salvage pct='10'>CCC:2,CHH:3,CSR:7,CIH:7,CSV:7,CFM:10,CCO:7,CGS:6,CSA:3,CDS:4,CW:7,CWI:1,CBS:1,CNC:2,CSJ:3,CMG:3,CGB:1,CB:2</salvage>
 		</faction>
 		<faction key='CMG'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,0,15,25</pctClan>
-			<pctSL>100,100,100,85,75</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,0,15,25 -->
+            <!-- Star League percentages: 100,100,100,85,75 -->
 			<pctClan unitType='Vehicle'>0,0,5,5,5</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,95,95</pctSL>
 			<salvage pct='10'>CHH:3,CIH:10,CSR:3,CSV:8,CFM:8,CGS:5,CSA:8,CDS:3,CW:3,CSJ:3,CJF:10,CGB:3,CB:3</salvage>
 		</faction>
 		<faction key='CNC'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,0,20,30</pctClan>
-			<pctSL>100,100,100,80,70</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,0,20,30 -->
+            <!-- Star League percentages: 100,100,100,80,70 -->
 			<pctClan unitType='Vehicle'>0,0,5,5,5</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,95,95</pctSL>
 			<salvage pct='10'>CCC:5,CHH:10,CSR:3,CIH:7,CFM:3,CCO:7,CGS:3,CDS:3,CW:7,CWI:2,CBS:2,CSJ:3,CJF:5,CB:7</salvage>
 		</faction>
 		<faction key='CDS'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,0,15,20</pctClan>
-			<pctSL>100,100,100,85,80</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,0,15,20 -->
+            <!-- Star League percentages: 100,100,100,85,80 -->
 			<pctClan unitType='Vehicle'>0,0,5,5,5</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,95,95</pctSL>
 			<salvage pct='12'>CCC:2,CHH:7,CSR:3,CIH:10,CSV:3,CFM:4,CCO:3,CGS:4,CSA:8,CW:3,CWI:1,CNC:3,CSJ:7,CMG:1,CJF:6,CB:3</salvage>
 		</faction>
 		<faction key='CSJ'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,0,15,20</pctClan>
-			<pctSL>100,100,100,85,80</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,0,15,20 -->
+            <!-- Star League percentages: 100,100,100,85,80 -->
 			<pctClan unitType='Vehicle'>0,0,5,5,5</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,95,95</pctSL>
 			<salvage pct='10'>CHH:5,CSR:2,CIH:7,CSV:3,CFM:7,CCO:10,CGS:2,CSA:2,CDS:5,CW:7,CNC:5,CMG:2,CJF:3,CB:2</salvage>
 		</faction>
 		<faction key='CSR'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,5,20,30</pctClan>
-			<pctSL>100,100,95,80,70</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,5,20,30 -->
+            <!-- Star League percentages: 100,100,95,80,70 -->
 			<pctClan unitType='Vehicle'>0,0,5,5,5</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,95,95</pctSL>
 			<salvage pct='10'>CCC:1,CHH:7,CIH:7,CSV:5,CFM:7,CCO:7,CGS:1,CSA:1,CDS:3,CW:3,CWI:1,CNC:3,CSJ:3,CMG:1,CJF:7,CB:10</salvage>
 		</faction>
 		<faction key='CSA'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,0,25,20</pctClan>
-			<pctSL>100,100,100,75,80</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,0,25,20 -->
+            <!-- Star League percentages: 100,100,100,75,80 -->
 			<pctClan unitType='Vehicle'>0,0,5,10,10</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,90,90</pctSL>
 			<salvage pct='10'>CCC:2,CHH:2,CSR:1,CIH:10,CSV:10,CFM:10,CCO:3,CGS:5,CDS:5,CW:10,CSJ:1,CMG:3,CJF:10,CGB:3,CB:1</salvage>
@@ -166,25 +166,25 @@
 			<weightDistribution era='2830' unitType='Tank'>3,1,3,2</weightDistribution>
 		</faction>
 		<faction key='CSV'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,10,20,30</pctClan>
-			<pctSL>100,100,90,80,70</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,10,20,30 -->
+            <!-- Star League percentages: 100,100,90,80,70 -->
 			<pctClan unitType='Vehicle'>0,0,5,5,5</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,95,95</pctSL>
 			<salvage pct='10'>CCC:1,CHH:1,CSR:3,CIH:4,CFM:4,CCO:1,CGS:2,CSA:6,CDS:4,CW:4,CBS:1,CSJ:1,CMG:2,CJF:10,CGB:3,CB:1</salvage>
 		</faction>
 		<faction key='CWI'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,0,10,20</pctClan>
-			<pctSL>100,100,100,90,80</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,0,10,20 -->
+            <!-- Star League percentages: 100,100,100,90,80 -->
 			<pctClan unitType='Vehicle'>0,0,5,5,5</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,95,95</pctSL>
 			<salvage pct='10'>CHH:10,CIH:5,CSR:5,CDS:5,CW:10,CNC:5,CGS:10,CJF:5,CB:5</salvage>
 		</faction>
 		<faction key='CW'>
-			<pctOmni>0,0,0,0,0</pctOmni>
-			<pctClan>0,0,5,15,25</pctClan>
-			<pctSL>100,100,95,85,75</pctSL>
+            <!-- Omni percentages: 0,0,0,0,0 -->
+            <!-- Clan percentages: 0,0,5,15,25 -->
+            <!-- Star League percentages: 100,100,95,85,75 -->
 			<pctClan unitType='Vehicle'>0,0,5,5,5</pctClan>
 			<pctSL unitType='Vehicle'>100,100,95,95,95</pctSL>
 			<salvage pct='10'>CCC:3,CHH:2,CSR:3,CIH:8,CSV:10,CFM:3,CCO:1,CGS:1,CSA:3,CDS:2,CWI:1,CBS:1,CNC:5,CSJ:10,CMG:3,CJF:5,CGB:2,CB:5</salvage>

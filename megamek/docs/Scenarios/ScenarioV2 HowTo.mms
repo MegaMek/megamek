@@ -443,10 +443,9 @@ factions:
 # C3 networks:
 # As there can be more than one network, c3 networks must always be given as a list (preceded with hyphen), even
 # if there is only a single C3 network
-# The type of C3 network is determined by the scenario loader
-# The order of the units does not matter (even with standard C3)
 c3:
   # C3 networks without a master can be given as a single list; the loader will determine if they are C3i, NC3 or Nova
+  # The order of the units does not matter
   - [101, 102]
   - [2, 3, 6, 8]
   - [5, 9, 12]

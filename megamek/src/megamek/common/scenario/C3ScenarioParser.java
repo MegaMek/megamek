@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This class is used for parsing C3 network information from MM V2 scenarios (.mms) into an intermediate C3ScenarioInfo
+ * This class is used for parsing C3 network information from MM V2 scenarios (.mms) into an intermediate ParsedC3Info
  * object.
  *
  * @see megamek.common.scenario.ScenarioV2
@@ -41,7 +41,11 @@ class C3ScenarioParser {
     private static final String CONNECTED = "connected";
 
     static class ParsedC3Info {
+
+        /** The master in standard C3, Entity.NONE in other C3 networks */
         int masterId = Entity.NONE;
+
+        /** All units except the master in standard C3, all units in other C3 networks */
         Set<Integer> participants = new HashSet<>();
     }
 

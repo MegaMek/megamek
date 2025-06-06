@@ -6,9 +6,9 @@
 >
 	<factions>
 		<faction key='BAN'>
-			<pctOmni>0,0</pctOmni>
-			<pctClan>0,0</pctClan>
-			<pctSL>90,90</pctSL>
+            <!-- Omni percentages: 0,0 -->
+            <!-- Clan percentages: 0,0 -->
+            <!-- Star League percentages: 90,90 -->
 			<salvage pct='10'>CCC:2,CHH:2,CSR:2,CIH:2,CSV:2,CFM:2,CCO:2,CGS:2,CSA:2,CDS:2,CW:2,CWI:2,CBS:1,CNC:2,CSJ:2,CMG:2,CJF:2,CGB:2,CB:5</salvage>
 		</faction>
 		<faction key='BoS'>

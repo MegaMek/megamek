@@ -6,9 +6,9 @@
 >
 	<factions>
 		<faction key='BAN'>
-			<pctOmni>0,0</pctOmni>
-			<pctClan>0,0</pctClan>
-			<pctSL>80,80</pctSL>
+            <!-- Omni percentages: 0,0 -->
+            <!-- Clan percentages: 0,0 -->
+            <!-- Star League percentages: 80,80 -->
 			<salvage pct='10'>CCC:2,CHH:2,CSR:2,CIH:2,CSV:2,CFM:2,CCO:2,CGS:2,CSA:2,CDS:2,CW:2,CBS:1,CNC:2,CSJ:2,CJF:2,CGB:2,CB:5</salvage>
 		</faction>
 		<faction key='BoS'>
@@ -5901,14 +5901,14 @@
 			</model>
 		</chassis>
 		<chassis name='UrbanMech IIC' unitType='Mek'>
-			<availability>CHH:4,CIH:4-,CSR:4,CCO:5,CGS:4</availability>
+			<availability>CCO!Second Line:3</availability>
 			<model name=''>
 				<roles>urban</roles>
-				<availability>CLAN:8</availability>
+				<availability>CCO:8</availability>
 			</model>
 		</chassis>
 		<chassis name='UrbanMech' unitType='Mek'>
-			<availability>IS:4-,CC:5-,CLAN:1-,Periphery:3-,CS:4-,TC:3-,NIOPS:4-</availability>
+			<availability>IS:4-,CC:5-,CLAN:1-,Periphery:3-,CS:4-,NIOPS:4-</availability>
 			<model name='UM-R60'>
 				<roles>urban</roles>
 				<availability>IS:8,MERC:8,CLAN:8,Periphery:8,Periphery.Deep:8</availability>

@@ -4093,7 +4093,7 @@
 			</model>
 		</chassis>
 		<chassis name='Ostscout' unitType='Mek'>
-			<availability>IS:5,MERC:5,CS:4,CLAN!Front Line:2!Second Line:2!Solahma:2!Provisional Garrison:2,CB!Front Line:1!Second Line:1!Solahma:1!Provisional Garrison:1,CCO!Front Line:1!Second Line:1!Solahma:1!Provisional Garrison:1,CSJ!Second Line:1!Solahma:1,Provisional Garrison:1,CWI!Second Line:1!Solahma:1,Provisional Garrison:1,CW!Front Line:1!Second Line:1!Solahma:2!Provisional Garrison:2,Periphery:5,NIOPS:4,Periphery.Deep:5,BAN:1</availability>
+			<availability>IS:5,MERC:5,CS:4,CLAN!Front Line:2!Second Line:2!Solahma:2!Provisional Garrison:2,CB!Front Line:1!Second Line:1!Solahma:1!Provisional Garrison:1,CCO!Front Line:1!Second Line:1!Solahma:1!Provisional Garrison:1,CSJ!Second Line:1!Solahma:1!Provisional Garrison:1,CWI!Second Line:1!Solahma:1!Provisional Garrison:1,CW!Front Line:1!Second Line:1!Solahma:2!Provisional Garrison:2,Periphery:5,NIOPS:4,Periphery.Deep:5,BAN:1</availability>
 			<model name='OTT-7J'>
 				<roles>recon</roles>
 				<availability>IS:8,MERC:8,Periphery:8</availability>
@@ -5075,10 +5075,10 @@
 				<availability>CC:2+,FWL:2+,FS:2+,Periphery:8</availability>
 			</model>
 			<model name='THE-N'>
-				<availability>IS:5+,CS:8,CLAN:8,CB:7, CGB:7,CIH:7,CJF:7,CMG:7,CNC:7,CDS:7,CSR:7,CW:7,NIOPS:8,BAN:8</availability>
+				<availability>IS:5+,CS:8,CLAN:8,CB:7,CGB:7,CIH:7,CJF:7,CMG:7,CNC:7,CDS:7,CSR:7,CW:7,NIOPS:8,BAN:8</availability>
 			</model>
 			<model name='THE-Nb'>
-				<availability>CB:6+,CGB:6+,CIH:6+,CJF:6+,CMG:6+,CNC:6+,CDS:6+,CSR:6+,CW:6+,BAN!Second Line:1</availability>
+				<availability>CB:6+,CGB:6+,CIH:6+,CJF:6+,CMG:6+,CNC:6+,CDS:6+,CSR:6+,CW:6+,BAN:1+</availability>
 			</model>
 		</chassis>
 		<chassis name='Thrush' unitType='AeroSpaceFighter'>
@@ -5535,7 +5535,7 @@
 			</model>
 		</chassis>
 		<chassis name='Wasp' unitType='Mek'>
-			<availability>IS:10,CS:4-,CLAN:1-,Periphery:6,NIOPS:4-,CIR:5,Periphery.Deep:6,BAN:1-</availability>
+			<availability>IS:10,CS:4-,CLAN:1-,Periphery:6,CIR:5,NIOPS:4-,Periphery.Deep:6,BAN:1-</availability>
 			<model name='WSP-1A'>
 				<roles>recon</roles>
 				<availability>IS:8,MERC:8,CLAN:8,Periphery:8,BAN:8</availability>

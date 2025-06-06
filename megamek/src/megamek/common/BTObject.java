@@ -201,9 +201,7 @@ public interface BTObject {
     }
 
     /**
-     * Returns true when this object is a Handheld Weapon.
-     *
-     * @return True when this is a Conventional Infantry unit
+     * @return True when this object is a Handheld Weapon.
      */
     default boolean isHandheldWeapon() {
         return false;

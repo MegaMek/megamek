@@ -717,29 +717,29 @@ public class BLKFile {
 
             // Need to make sure that only "Unknown" armor gets skipped
             // barRating block written out later in the SV-specific section
-            if (!(t instanceof GunEmplacement)) {
-                if (!t.hasPatchworkArmor() && (t.getArmorType(0) != ArmorType.T_ARMOR_UNKNOWN)) {
-                    blk.writeBlockData("armor_type", t.getArmorType(0));
-                    blk.writeBlockData("armor_tech_rating", t.getArmorTechRating().getIndex());
-                    blk.writeBlockData("armor_tech_level", t.getArmorTechLevel(0));
-                } else if (t.hasPatchworkArmor()) {
-                    blk.writeBlockData("armor_type", EquipmentType.T_ARMOR_PATCHWORK);
-                    for (int i = 1; i < t.locations(); i++) {
-                        ArmorType armor = ArmorType.forEntity(t, i);
-                        blk.writeBlockData(t.getLocationName(i) + "_armor_type", armor.getArmorType());
-                        blk.writeBlockData(t.getLocationName(i) + "_armor_tech",
-                              TechConstants.getTechName(t.getArmorTechLevel(i)));
-                        blk.writeBlockData(t.getLocationName(i) + "_armor_tech_rating",
-                              armor.getTechRating().getIndex());
-                        if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
-                            blk.writeBlockData(t.getLocationName(i) + "_barrating", armor.getBAR());
-                        }
+            if (!t.hasPatchworkArmor() && (t.getArmorType(0) != ArmorType.T_ARMOR_UNKNOWN)) {
+                blk.writeBlockData("armor_type", t.getArmorType(0));
+                blk.writeBlockData("armor_tech_rating", t.getArmorTechRating().getIndex());
+                blk.writeBlockData("armor_tech_level", t.getArmorTechLevel(0));
+            } else if (t.hasPatchworkArmor()) {
+                blk.writeBlockData("armor_type", EquipmentType.T_ARMOR_PATCHWORK);
+                for (int i = 1;
+                      i < t.locations();
+                      i++) {
+                    ArmorType armor = ArmorType.forEntity(t, i);
+                    blk.writeBlockData(t.getLocationName(i) + "_armor_type", armor.getArmorType());
+                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech",
+                          TechConstants.getTechName(t.getArmorTechLevel(i)));
+                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech_rating",
+                          armor.getTechRating().getIndex());
+                    if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+                        blk.writeBlockData(t.getLocationName(i) + "_barrating", armor.getBAR());
                     }
-                } else {
-                    throw new EntitySavingException("Armor type unknown or not set; aborting save!");
                 }
+            } else {
+                throw new EntitySavingException("Armor type unknown or not set; aborting save!");
             }
-            if (t.getStructureType() != 0 && !(t instanceof GunEmplacement)) {
+            if (t.getStructureType() != 0) {
                 blk.writeBlockData("internal_type", t.getStructureType());
             }
             if (t.isOmni()) {

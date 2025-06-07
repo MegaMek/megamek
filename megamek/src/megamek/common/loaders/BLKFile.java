@@ -658,7 +658,7 @@ public class BLKFile {
 
         if ((t instanceof Infantry) && ((Infantry) t).getMount() != null) {
             blk.writeBlockData("motion_type", ((Infantry) t).getMount().toString());
-        } else if (!t.isHandheldWeapon()) {
+        } else if (!t.isHandheldWeapon() && !(t instanceof GunEmplacement)) {
             blk.writeBlockData("motion_type", t.getMovementModeAsString());
         }
 
@@ -677,7 +677,7 @@ public class BLKFile {
             blk.writeBlockData("transporters", transporter_array);
         }
 
-        if (!(t.isConventionalInfantry() || t.isHandheldWeapon())) {
+        if (!(t.isConventionalInfantry() || t.isHandheldWeapon() || t instanceof GunEmplacement)) {
             if (t instanceof Aero) {
                 blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
             } else {
@@ -690,7 +690,7 @@ public class BLKFile {
         }
 
         int numLocs = t.locations();
-        if (!(t instanceof Infantry)) {
+        if (!(t instanceof Infantry || t instanceof GunEmplacement)) {
             if (t instanceof Aero) {
                 if (t.isFighter()) {
                     blk.writeBlockData("cockpit_type", ((Aero) t).getCockpitType());
@@ -723,12 +723,15 @@ public class BLKFile {
                 blk.writeBlockData("armor_tech_level", t.getArmorTechLevel(0));
             } else if (t.hasPatchworkArmor()) {
                 blk.writeBlockData("armor_type", EquipmentType.T_ARMOR_PATCHWORK);
-                for (int i = 1; i < t.locations(); i++) {
+                for (int i = 1;
+                      i < t.locations();
+                      i++) {
                     ArmorType armor = ArmorType.forEntity(t, i);
                     blk.writeBlockData(t.getLocationName(i) + "_armor_type", armor.getArmorType());
                     blk.writeBlockData(t.getLocationName(i) + "_armor_tech",
                           TechConstants.getTechName(t.getArmorTechLevel(i)));
-                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech_rating", armor.getTechRating().getIndex());
+                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech_rating",
+                          armor.getTechRating().getIndex());
                     if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
                         blk.writeBlockData(t.getLocationName(i) + "_barrating", armor.getBAR());
                     }
@@ -973,6 +976,10 @@ public class BLKFile {
             }
             if (!augmentations.isEmpty()) {
                 blk.writeBlockData("augmentation", augmentations.toArray(new String[0]));
+            }
+        } else if (t instanceof GunEmplacement gunEmplacement) {
+            if (!gunEmplacement.hasNoTurret()) {
+                blk.writeBlockData("turret", 1);
             }
         } else {
             blk.writeBlockData("tonnage", t.getWeight());

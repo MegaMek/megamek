@@ -5871,7 +5871,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns whether this 'Mek has a C3 Slave or not.
+     * @return True if this unit has a C3 Slave.
      */
     public boolean hasC3S() {
         if (isShutDown() || isOffBoard()) {
@@ -6004,9 +6004,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Checks if it has any type of C3 computer.
-     *
-     * @return true iff it has a C3 computer.
+     * @return True if this unit has any type of standard C3 computer (not C3i), TM p.209.
      */
     public boolean hasC3() {
         return hasC3S() || hasC3M() || hasC3MM();

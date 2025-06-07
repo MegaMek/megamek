@@ -51,7 +51,7 @@ public class ScenarioLoader {
         } else if (mmsVersion == 2) {
             return new ScenarioV2(scenarioFile);
         } else {
-            throw new ScenarioLoaderException("ScenarioLoaderException.missingMMSVersion", scenarioFile.toString());
+            throw new ScenarioLoaderException("The scenario file lacks scenario version info!");
         }
     }
 

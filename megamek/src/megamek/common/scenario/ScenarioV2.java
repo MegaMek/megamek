@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -46,6 +48,7 @@ import megamek.common.jacksonadapters.*;
 import megamek.common.options.GameOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.util.C3Util;
 import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
 import megamek.server.scriptedevent.GameEndTriggeredEvent;
@@ -177,6 +180,25 @@ public class ScenarioV2 implements Scenario {
         }
 
         if (game instanceof Game twGame) {
+            List<C3ScenarioParser.ParsedC3Info> networks = C3ScenarioParser.parse(node);
+            for (C3ScenarioParser.ParsedC3Info network : networks) {
+                List<Entity> units = network.participants.stream().map(twGame::getEntity).toList();
+                try {
+                    if (network.masterId == Entity.NONE) {
+                        C3Util.joinNh(twGame, units, units.get(0).getId(), false);
+                    } else {
+                        boolean connectMM = units.stream().anyMatch(Entity::hasC3M);
+                        if (connectMM) {
+                            Entity master = Objects.requireNonNull(twGame.getEntity(network.masterId));
+                            C3Util.setCompanyMaster(List.of(master));
+                        }
+                        C3Util.connect(twGame, new ArrayList<>(units), network.masterId, false);
+                    }
+                } catch (Exception e) {
+                    throw new ScenarioLoaderException("Faulty C3 network definition: " + network);
+                }
+            }
+
             twGame.setupDeployment();
             if (node.has(PARAM_GAME_EXTERNAL_ID)) {
                 twGame.setExternalGameId(node.get(PARAM_GAME_EXTERNAL_ID).intValue());
@@ -309,7 +331,7 @@ public class ScenarioV2 implements Scenario {
 
     private List<Player> readPlayers(IGame game) throws ScenarioLoaderException, IOException {
         if (!node.has(PARAM_FACTIONS) || !node.get(PARAM_FACTIONS).isArray()) {
-            throw new ScenarioLoaderException("ScenarioLoaderException.missingFactions");
+            throw new ScenarioLoaderException("The scenario does not contain any factions (players)!");
         }
         List<Player> result = new ArrayList<>();
         int playerId = 0;
@@ -473,7 +495,7 @@ public class ScenarioV2 implements Scenario {
 
     private List<Board> parseBoards() throws ScenarioLoaderException {
         if (!node.has(MAP) && !node.has(MAPS)) {
-            throw new ScenarioLoaderException("ScenarioLoaderException.missingMap");
+            throw new ScenarioLoaderException("The scenario does not declare any game map!");
         }
         JsonNode mapNode = node.get(MAP);
         if (mapNode == null) {

@@ -435,6 +435,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
           boolean evenIfAlreadyFired, int ammoId, int ammoCarrier) {
         final Entity ae = game.getEntity(attackerId);
         final WeaponMounted weapon = (WeaponMounted) ae.getEquipment(weaponId);
+        if (weapon == null) {
+            logger.error("Attempted toHit calculation with a null weapon!");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "No weapon");
+        }
         final AmmoMounted linkedAmmo;
         if (ammoId == UNASSIGNED) {
             linkedAmmo = weapon.getLinkedAmmo();

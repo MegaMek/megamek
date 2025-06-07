@@ -130,6 +130,7 @@ public enum KeyCommandBind {
     ROUND_REPORT(true, "roundReport", VK_R, CTRL_DOWN_MASK),
     ZOOM_IN(true, "zoomIn", VK_ADD),
     ZOOM_OUT(true, "zoomOut", VK_SUBTRACT),
+    ZOOM_OVERVIEW_TOGGLE(true, "ZoomOverviewToggle", VK_Z),
     QUICK_LOAD(true, "quickLoad", VK_L, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     QUICK_SAVE(true, "quickSave", VK_S, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     LOCAL_LOAD(true, "localLoad", VK_L, CTRL_DOWN_MASK),

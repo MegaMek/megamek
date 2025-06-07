@@ -36,7 +36,7 @@ public class InfantryPistolMartialEagleMachinePistolWeapon extends InfantryWeapo
 		setInternalName(name);
 		addLookupName("InfantryMartialEaglepistol");
 		addLookupName("Martial Eagle Machine Pistol");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 180;
 		bv = 0.23;
 		tonnage = .001;

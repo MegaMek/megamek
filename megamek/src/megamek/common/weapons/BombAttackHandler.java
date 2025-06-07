@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.SpecialHexDisplay.Type;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
@@ -21,6 +22,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -52,17 +54,19 @@ public class BombAttackHandler extends WeaponHandler {
 
     @Override
     protected void useAmmo() {
-        int[] payload = waa.getBombPayload();
+        BombLoadout payload = waa.getBombPayload();
         if (!ae.isBomber() || (null == payload)) {
             return;
         }
-        for (int type = 0; type < payload.length; type++) {
-            for (int i = 0; i < payload[type]; i++) {
+        for (Map.Entry<BombTypeEnum, Integer> entry : payload.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            int bombCount = entry.getValue();
+            for (int i = 0; i < bombCount; i++) {
                 // find the first mounted bomb of this type and drop it
                 for (Mounted<?> bomb : ae.getBombs()) {
                     if (!bomb.isDestroyed()
                             && (bomb.getUsableShotsLeft() > 0)
-                            && (((BombType) bomb.getType()).getBombType() == type)) {
+                            && (((BombType) bomb.getType()).getBombType() == bombType)) {
                         bomb.setShotsLeft(0);
                         if (bomb.isInternalBomb()) {
                             ((IBomber) ae).increaseUsedInternalBombs(1);
@@ -82,7 +86,7 @@ public class BombAttackHandler extends WeaponHandler {
      */
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
-        int[] payload = waa.getBombPayload();
+        BombLoadout payload = waa.getBombPayload();
         Coords coords = target.getPosition();
         Coords drop;
         Player player = game.getEntity(waa.getEntityId()).getOwner();
@@ -90,7 +94,11 @@ public class BombAttackHandler extends WeaponHandler {
         Vector<Integer> hitIds = null;
 
         // now go through the payload and drop the bombs one at a time
-        for (int type = 0; type < payload.length; type++) {
+        for (Map.Entry<BombTypeEnum, Integer> entry : payload.entrySet()) {
+            BombTypeEnum type = entry.getKey();
+            int bombCount = entry.getValue();
+            
+            if (bombCount <= 0) continue;
             // to hit, adjusted for bomb-type specific rules
             ToHitData typeModifiedToHit = new ToHitData();
             typeModifiedToHit.append(toHit);
@@ -101,7 +109,7 @@ public class BombAttackHandler extends WeaponHandler {
             // Laser-Guided Bombs are getting errata'ed to get bonus from either A) a tagged
             // hex or B) a tagged target
             boolean laserGuided = false;
-            if (type == BombType.B_LG) {
+            if (type == BombTypeEnum.LG) {
                 for (TagInfo ti : game.getTagInfo()) {
                     if (ti.missed || game.getEntity(waa.getEntityId()).isEnemyOf(game.getEntity(ti.attackerId))) {
                         // Not a usable friendly TAG
@@ -118,7 +126,7 @@ public class BombAttackHandler extends WeaponHandler {
                 }
             }
 
-            for (int i = 0; i < payload[type]; i++) {
+            for (int i = 0; i < bombCount; i++) {
                 // Report weapon attack and its to-hit value.
                 Report r;
 
@@ -198,7 +206,7 @@ public class BombAttackHandler extends WeaponHandler {
                 if (!bMissed) {
                     r = new Report(6697);
                     r.indent(1);
-                    r.add(BombType.getBombName(type));
+                    r.add(type.getDisplayName());
                     r.subject = subjectId;
                     r.newlines = 1;
                     vPhaseReport.add(r);
@@ -239,7 +247,7 @@ public class BombAttackHandler extends WeaponHandler {
                         r.indent(1);
                         r.subject = subjectId;
                         r.newlines = 1;
-                        r.add(BombType.getBombName(type));
+                        r.add(type.getDisplayName());
                         r.add(drop.getBoardNum());
                         vPhaseReport.addElement(r);
                         bombMsg = "Bomb missed!  Round " + game.getRoundCount()
@@ -254,7 +262,7 @@ public class BombAttackHandler extends WeaponHandler {
                         r.indent(1);
                         r.subject = subjectId;
                         r.newlines = 1;
-                        r.add(BombType.getBombName(type));
+                        r.add(type.getDisplayName());
                         vPhaseReport.addElement(r);
                         bombMsg = "Bomb missed!  Round " + game.getRoundCount()
                                 + ", by " + ((player != null) ? player.getName() : "somebody")
@@ -269,9 +277,9 @@ public class BombAttackHandler extends WeaponHandler {
                 HexTarget dropHex = new HexTarget(drop, target.getTargetType());
                 dropHex.setTargetLevel(((HexTarget) target).getTargetLevel());
 
-                if (type == BombType.B_INFERNO) {
+                if (type == BombTypeEnum.INFERNO) {
                     hitIds = gameManager.deliverBombInferno(drop, ae, subjectId, vPhaseReport);
-                } else if (type == BombType.B_THUNDER) {
+                } else if (type == BombTypeEnum.THUNDER) {
                     gameManager.deliverThunderMinefield(drop, ae.getOwner().getId(), 20, ae.getId());
                     List<Coords> hexes = drop.allAdjacent();
                     for (Coords c : hexes) {

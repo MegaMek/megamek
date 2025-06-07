@@ -36,7 +36,7 @@ public class InfantryRifleMaxellPL10LaserWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryMaxellPL10Laser");
 		addLookupName("Maxell PL10 Laser Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 2000;
 		bv = 1.33;
 		tonnage = .0065;

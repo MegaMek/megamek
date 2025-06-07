@@ -52,7 +52,7 @@ public abstract class LRMWeapon extends MissileWeapon {
 
     public LRMWeapon() {
         super();
-        ammoType = AmmoType.T_LRM;
+        ammoType = AmmoType.AmmoTypeEnum.LRM;
         shortRange = 7;
         mediumRange = 14;
         longRange = 21;

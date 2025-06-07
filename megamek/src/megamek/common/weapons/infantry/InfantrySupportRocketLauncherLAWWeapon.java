@@ -37,7 +37,7 @@ public class InfantrySupportRocketLauncherLAWWeapon extends InfantryWeapon {
 		addLookupName("InfantryLAW");
 		addLookupName("Infantry LAW");
 		addLookupName("InfantryLightAntitankWeapon");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.AmmoTypeEnum.NA;
 		cost = 350;
 		bv = 2.71;
 		tonnage = .004;

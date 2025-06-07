@@ -36,7 +36,7 @@ public class InfantryRifleImperatorAX22AssaultWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryImperatorAX22");
 		addLookupName("Imperator AX-22 Assault Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 200;
 		bv = 1.59;
 		tonnage = .0035;

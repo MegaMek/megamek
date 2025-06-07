@@ -30,7 +30,7 @@ public class InfantrySMGWC2 extends InfantryWeapon {
        name = "SMG (WC-2)";
        setInternalName(name);
        addLookupName("WC-2");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .202;
        tonnage =  0.0023;
        infantryDamage =  0.2;

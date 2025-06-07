@@ -37,7 +37,7 @@ public class InfantryGrenadeMiniInfernoWeapon extends InfantryWeapon {
         addLookupName(name);
         addLookupName("InfantryMiniInfernoGrenade");
         addLookupName("Mini Inferno Grenades");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 8;
         bv = 0.10;
         tonnage = .00045;

@@ -30,7 +30,7 @@ public class InfantrySMGTiberius extends InfantryWeapon {
        name = "SMG (Tiberius)";
        setInternalName(name);
        addLookupName("Tiberius");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = 1.1;
        tonnage =  0.003;
        infantryDamage =  0.55;

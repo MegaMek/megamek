@@ -36,7 +36,7 @@ public class InfantryPistolMauserAutoPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryMauserAutopistol");
         addLookupName("M&G Auto Pistol");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 60;
         bv = 0.16;
 		tonnage = .00065;

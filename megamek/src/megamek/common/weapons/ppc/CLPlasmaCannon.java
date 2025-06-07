@@ -37,7 +37,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
         heat = 7;
         damage = DAMAGE_VARIABLE;
         rackSize = 2;
-        ammoType = AmmoType.T_PLASMA;
+        ammoType = AmmoType.AmmoTypeEnum.PLASMA;
         minimumRange = WEAPON_NA;
         shortRange = 6;
         mediumRange = 12;

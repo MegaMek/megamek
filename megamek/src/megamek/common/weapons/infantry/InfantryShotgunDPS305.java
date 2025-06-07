@@ -31,7 +31,7 @@ public class InfantryShotgunDPS305 extends InfantryWeapon {
        name = "Shotgun (DPS-305)";
        setInternalName(name);
        addLookupName("DPS-305");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .27;
        tonnage =  0.0035;
        infantryDamage =  0.27;

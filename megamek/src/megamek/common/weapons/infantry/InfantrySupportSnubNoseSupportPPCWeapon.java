@@ -29,7 +29,7 @@ public class InfantrySupportSnubNoseSupportPPCWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantrySnubNoseSupportPPC");
 		addLookupName("SnubNoseSupportPPC");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 60000;
 		bv = 0.0;
         tonnage = 1.6;

@@ -53,7 +53,7 @@ public class ISSRM6Primitive extends SRMWeapon {
         cost = 80000;
         shortAV = 8;
         maxRange = RANGE_SHORT;
-        ammoType = AmmoType.T_SRM_PRIMITIVE;
+        ammoType = AmmoType.AmmoTypeEnum.SRM_PRIMITIVE;
         // IO Doesn't strictly define when these weapons stop production. Checked with Herb, and
         // they would always be around. This to cover some of the back worlds in the Periphery.
         rulesRefs = "118, IO";

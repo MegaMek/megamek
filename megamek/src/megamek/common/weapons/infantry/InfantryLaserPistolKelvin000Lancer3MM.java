@@ -28,7 +28,7 @@ public class InfantryLaserPistolKelvin000Lancer3MM extends InfantryWeapon {
         name = "Laser Pistol (Kelvin 000 Lancer 3-MM)";
         setInternalName(name);
         addLookupName("LANCER3MM");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1250;
         bv = 0.01575;
         tonnage = 0.0016;

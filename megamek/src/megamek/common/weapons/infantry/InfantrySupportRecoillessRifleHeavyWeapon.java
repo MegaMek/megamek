@@ -37,7 +37,7 @@ public class InfantrySupportRecoillessRifleHeavyWeapon extends InfantryWeapon {
 		addLookupName(name);
 		addLookupName("InfantryHeavyRecoillessRifle");
 		addLookupName("Infantry Heavy Recoilless Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 3000;
 		bv = 2.91;
 		tonnage = .060;

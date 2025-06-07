@@ -28,7 +28,7 @@ public class InfantryLaserSniperRifleDWSL5L extends InfantryWeapon {
         name = "Laser Sniper Rifle (DWS L5L)";
         setInternalName(name);
         addLookupName("L5L");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 2500;
         bv = 1.225;
         tonnage = 0.0075;

@@ -37,7 +37,7 @@ public class CLBARecoillessRifleHeavy extends Weapon {
         shortName = "Heavy Recoiless Rifle";
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         shortRange = 3;
         mediumRange = 5;
         longRange = 7;

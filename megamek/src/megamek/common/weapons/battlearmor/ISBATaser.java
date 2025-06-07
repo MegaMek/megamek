@@ -36,7 +36,7 @@ public class ISBATaser extends AmmoWeapon {
         heat = 0;
         rackSize = 1;
         damage = 1;
-        ammoType = AmmoType.T_TASER;
+        ammoType = AmmoType.AmmoTypeEnum.TASER;
         shortRange = 1;
         mediumRange = 2;
         longRange = 3;

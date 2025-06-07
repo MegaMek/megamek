@@ -28,7 +28,7 @@ public class InfantryProstheticBallisticWeapon extends InfantryWeapon {
         name = "Prosthetic Ballistic";
         setInternalName(name);
         addLookupName("ProstheticBallistic");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 500;
         bv = 0.0;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);

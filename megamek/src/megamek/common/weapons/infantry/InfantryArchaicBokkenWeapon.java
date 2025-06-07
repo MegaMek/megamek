@@ -29,7 +29,7 @@ public class InfantryArchaicBokkenWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryBokken");
         addLookupName("Bokken");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 15;
         bv = 0.04;
         tonnage = .002; 

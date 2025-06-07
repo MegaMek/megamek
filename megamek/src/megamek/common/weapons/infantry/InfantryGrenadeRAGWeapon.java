@@ -37,7 +37,7 @@ public class InfantryGrenadeRAGWeapon extends InfantryWeapon {
         addLookupName("InfantryRAG");
         addLookupName("InfantryRPG");
         addLookupName("Rocket Assisted Grenade");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 50;
         bv = 0.92;
         tonnage = .0006;

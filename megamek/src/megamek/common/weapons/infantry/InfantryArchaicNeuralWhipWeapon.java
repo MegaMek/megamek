@@ -36,7 +36,7 @@ public class InfantryArchaicNeuralWhipWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryNeuralWhip");
         addLookupName("Neural Whip");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 500;
         bv = 0.08;
         tonnage = .0003; 

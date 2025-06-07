@@ -36,7 +36,7 @@ public class InfantrySniperStalkerWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("StalkerInfantryRifle");
         addLookupName("Rifle (Stalker Sniper Rifle)");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 5000;
         bv = .25;
         tonnage = .009;

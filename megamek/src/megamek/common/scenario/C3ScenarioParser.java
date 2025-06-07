@@ -61,6 +61,11 @@ class C3ScenarioParser {
 
         /** All units except the master in standard C3, all units in other C3 networks */
         Set<Integer> participants = new HashSet<>();
+
+        @Override
+        public String toString() {
+            return "C3Info: M = " + masterId + ", P = " + participants;
+        }
     }
 
     /**

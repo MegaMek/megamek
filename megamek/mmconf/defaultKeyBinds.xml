@@ -393,7 +393,7 @@
     </KeyBind>
 
     <KeyBind>
-        <command>reportKeySelPrev</command> <!-- Ctrl-Shift-N -->
+        <command>reportKeySelPrev</command> <!-- Ctrl+Shift-N -->
         <keyCode>78</keyCode>
         <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
@@ -519,15 +519,22 @@
     </KeyBind>
 
     <KeyBind>
-        <command>zoomIn</command> <!-- NumPad + -->
-        <keyCode>107</keyCode>
+        <command>zoomIn</command> <!-- Plus -->
+        <keyCode>521</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>zoomOut</command> <!-- NumPad - -->
-        <keyCode>109</keyCode>
+        <command>zoomOut</command> <!-- Minus -->
+        <keyCode>45</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+        <command>zoomOverviewToggle</command> <!-- Z -->
+        <keyCode>90</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>

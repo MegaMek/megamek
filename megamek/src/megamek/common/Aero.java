@@ -1147,11 +1147,6 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         };
     }
 
-    @Override
-    public boolean hasRearArmor(int loc) {
-        return false;
-    }
-
     /**
      * Returns the Compute.ARC that the weapon fires into.
      */
@@ -1407,14 +1402,6 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     /**
-     * Gets the location that is destroyed recursively
-     */
-    @Override
-    public int getDependentLocation(int loc) {
-        return LOC_NONE;
-    }
-
-    /**
      * Not used directly but is overwritten in 5 other classes.
      *
      * @return BV Type Modifier.
@@ -1598,9 +1585,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         return capacity;
     }
 
-    // If the aero is in the water, it is dead so no worries
     @Override
     public int getHeatCapacityWithWater() {
+        // If the aero is in the water, it is dead so no worries
         return getHeatCapacity(false);
     }
 
@@ -1737,16 +1724,6 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             }
         }
         return Math.max(0, caseLocations.size() - explicit);
-    }
-
-    @Override
-    public boolean doomedInExtremeTemp() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedInVacuum() {
-        return false;
     }
 
     @Override

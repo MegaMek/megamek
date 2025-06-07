@@ -29,7 +29,7 @@ public class InfantryArchaicCarbonReinforcedNailsWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryCarbonFingernails");
         addLookupName("Carbon Reinforced Fingernails");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 1000;
         bv = 0.02;
         tonnage = 0; 

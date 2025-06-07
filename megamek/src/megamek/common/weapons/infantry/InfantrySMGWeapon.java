@@ -36,7 +36,7 @@ public class InfantrySMGWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantrySMG");
 		addLookupName("Submachinegun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 80;
 		bv = 0.23;
 		tonnage = .003;

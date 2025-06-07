@@ -36,7 +36,7 @@ public class InfantrySupportMk1LightAAWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryMk1LightAA");
 		addLookupName("Infantry Mk 1 Light AA Weapon");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.AmmoTypeEnum.NA;
 		cost = 1000;
 		bv = 0.70;
 		tonnage = .005;

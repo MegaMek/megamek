@@ -30,7 +30,7 @@ public class InfantrySMGSpartacus extends InfantryWeapon {
        name = "SMG (Spartacus)";
        setInternalName(name);
        addLookupName("SMG (Spartacus)");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .44;
        tonnage =  0.0028;
        infantryDamage =  0.44;

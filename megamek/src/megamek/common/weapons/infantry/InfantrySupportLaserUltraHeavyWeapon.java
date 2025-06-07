@@ -37,7 +37,7 @@ public class InfantrySupportLaserUltraHeavyWeapon extends InfantryWeapon {
 		addLookupName("InfantryUltraHeavyLaser");
 		addLookupName("InfantryHeavyMediumLaser");
 		addLookupName("Infantry Ultra-Heavy Support Laser");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 100000;
 		bv = 20.31;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);

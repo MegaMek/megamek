@@ -41,7 +41,7 @@ public class ISHeavyMGA extends AmmoWeapon {
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;
         rackSize = 3;
-        ammoType = AmmoType.T_MG_HEAVY;
+        ammoType = AmmoType.AmmoTypeEnum.MG_HEAVY;
         minimumRange = WEAPON_NA;
         shortRange = 1;
         mediumRange = 2;

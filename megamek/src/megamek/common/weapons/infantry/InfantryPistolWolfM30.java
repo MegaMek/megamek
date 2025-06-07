@@ -34,7 +34,7 @@ public class InfantryPistolWolfM30 extends InfantryWeapon {
        name = "Pistol (Wolf M30)";
        setInternalName(name);
        addLookupName("Wolf M30");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .35;
        tonnage =  0.00095;
        infantryDamage =  0.35;

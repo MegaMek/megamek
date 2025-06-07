@@ -28,7 +28,7 @@ public class InfantryProstheticSMGWeapon extends InfantryWeapon {
         name = "Prosthetic SMG";
         setInternalName(name);
         addLookupName("ProstheticSMG");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 600;
         bv = 0.0;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);

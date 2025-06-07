@@ -39,7 +39,7 @@ public class ISImpHGaussRifle extends GaussWeapon {
         sortingName = "Gauss IMP D";
         heat = 2;
         damage = 22;
-        ammoType = AmmoType.T_IGAUSS_HEAVY;
+        ammoType = AmmoType.AmmoTypeEnum.IGAUSS_HEAVY;
         minimumRange = 3;
         shortRange = 6;
         mediumRange = 12;

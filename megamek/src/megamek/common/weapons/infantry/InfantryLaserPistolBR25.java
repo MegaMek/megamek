@@ -28,7 +28,7 @@ public class InfantryLaserPistolBR25 extends InfantryWeapon {
         name = "Laser Pistol (BR-25)";
         setInternalName(name);
         addLookupName("BR25");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 950;
         bv = 0.01575;
         tonnage = 0.0013;

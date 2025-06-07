@@ -36,6 +36,8 @@ import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.*;
+import megamek.common.AmmoType.AmmoTypeEnum;
+import megamek.common.AmmoType.Munitions;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -730,16 +732,16 @@ public abstract class BotClient extends Client {
         }
         for (Mounted<?> mounted : deployed_ent.getAmmo()) {
             AmmoType ammoType = (AmmoType) mounted.getType();
-            if (ammoType.getAmmoType() == AmmoType.T_ATM) {
+            if (ammoType.getAmmoType() == AmmoTypeEnum.ATM) {
                 weapon_count++;
                 av_range += 15.0;
-                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
+                if (ammoType.getMunitionType().contains(Munitions.M_HIGH_EXPLOSIVE)) {
                     av_range -= 6;
                 }
-                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
+                if (ammoType.getMunitionType().contains(Munitions.M_EXTENDED_RANGE)) {
                     av_range += 12.0;
                 }
-            } else if (ammoType.getAmmoType() == AmmoType.T_MML) {
+            } else if (ammoType.getAmmoType() == AmmoTypeEnum.MML) {
                 weapon_count++;
                 if (ammoType.hasFlag(AmmoType.F_MML_LRM)) {
                     av_range = 9.0;
@@ -1034,7 +1036,7 @@ public abstract class BotClient extends Client {
             AmmoType at = (AmmoType) weapon.getLinked().getType();
 
             float fHits;
-            if ((wt.getAmmoType() == AmmoType.T_SRM_STREAK) || (wt.getAmmoType() == AmmoType.T_LRM_STREAK)) {
+            if ((wt.getAmmoType() == AmmoTypeEnum.SRM_STREAK) || (wt.getAmmoType() == AmmoTypeEnum.LRM_STREAK)) {
                 fHits = wt.getRackSize();
             } else if ((wt.getRackSize() == 40) || (wt.getRackSize() == 30)) {
                 fHits = 2.0f * expectedHitsByRackSize[wt.getRackSize() / 2];

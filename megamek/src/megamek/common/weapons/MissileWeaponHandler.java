@@ -162,9 +162,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))
-                && (atype.getAmmoType() == AmmoType.T_MRM)) {
+                && (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MRM)) {
             nMissilesModifier -= 1;
-        } else if (atype.getAmmoType() == AmmoType.T_ATM) {
+        } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
             if (bECMAffected) {
                 // ECM prevents bonus
                 Report r = new Report(3330);
@@ -189,12 +189,12 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // sits on the target, is ECM affected
             boolean bTargetECMAffected = false;
             bTargetECMAffected = ComputeECM.isAffectedByECM(ae, target.getPosition(), target.getPosition());
-            if (((atype.getAmmoType() == AmmoType.T_LRM)
-                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                    || (atype.getAmmoType() == AmmoType.T_SRM)
-                    || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
-                    || (atype.getAmmoType() == AmmoType.T_MML)
-                    || (atype.getAmmoType() == AmmoType.T_NLRM))
+            if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM))
                     && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE))
                     && ((weapon.curMode() == null) || !weapon.curMode().equals("Indirect"))) {
                 if (bTargetECMAffected) {
@@ -311,7 +311,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // MML3 gets no bonus from Artemis IV (how sad)
             if (atype.getRackSize() > 3) {
                 bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-                if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
+                if ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) {
                     bonus = 2;
                 }
             }
@@ -324,7 +324,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // MML3 gets no bonus from Artemis IV (how sad)
             if (atype.getRackSize() > 3) {
                 bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-                if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
+                if ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) {
                     bonus = 1;
                 }
             }
@@ -337,12 +337,12 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // MML3 WOULD get a bonus from Artemis V, if you were crazy enough
             // to cross-tech it
             bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-            if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
+            if ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) {
                 bonus = 2;
             }
         }
         av = av + bonus;
-        if ((atype.getAmmoType() == AmmoType.T_MML) && !atype.hasFlag(AmmoType.F_MML_LRM)) {
+        if ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) && !atype.hasFlag(AmmoType.F_MML_LRM)) {
             av = av * 2;
         }
         // Set the Capital Fighter AV here. We'll apply counterAV to this later
@@ -634,11 +634,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         r.subject = subjectId;
         r.add(wtype.getName() + number);
         if (entityTarget != null) {
-            if (wtype.getAmmoType() != AmmoType.T_NA) {
+            if (wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA) {
                 AmmoType atype = (AmmoType) ammo.getType();
                 if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)
-                        || atype.getAmmoType() == AmmoType.T_MML
-                        || atype.getAmmoType() == AmmoType.T_ATM) {
+                        || atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML
+                        || atype.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
                     r.messageId = 3116;
                     r.add(atype.getSubMunitionName());
                 }
@@ -1014,7 +1014,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         boolean isNemesisConfusable = false;
         AmmoType atype = (AmmoType) ammo.getType();
         Mounted<?> mLinker = weapon.getLinkedBy();
-        if ((wtype.getAmmoType() == AmmoType.T_ATM)
+        if ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.ATM)
                 || ((mLinker != null)
                         && (mLinker.getType() instanceof MiscType)
                         && !mLinker.isDestroyed() && !mLinker.isMissing()
@@ -1025,22 +1025,22 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                                 || mLinker.getType().hasFlag(
                                         MiscType.F_ARTEMIS_PROTO)))) {
             if ((!weapon.hasModes() || !weapon.curMode().equals("Indirect"))
-                    && (((atype.getAmmoType() == AmmoType.T_ATM) &&
+                    && (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) &&
                             ((atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD))
                                     || (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))
                                     || (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))))
-                            || ((((atype.getAmmoType() == AmmoType.T_LRM)
-                                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                                    || (atype.getAmmoType() == AmmoType.T_SRM)
-                                    || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) &&
+                            || ((((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM)
+                                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) &&
                                     (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)))
                                     || (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))))) {
                 isNemesisConfusable = true;
             }
-        } else if ((wtype.getAmmoType() == AmmoType.T_LRM)
-                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
-                || (wtype.getAmmoType() == AmmoType.T_SRM)
-                || (wtype.getAmmoType() == AmmoType.T_SRM_IMP)) {
+        } else if ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM)
+                || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) {
             if ((atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE))
                     || (atype.getMunitionType().contains(AmmoType.Munitions.M_LISTEN_KILL))) {
                 isNemesisConfusable = true;

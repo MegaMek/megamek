@@ -36,7 +36,7 @@ public class InfantryPistolHoldoutPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryHoldoutpistol");
 		addLookupName("Holdout Pistol");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 20;
 		bv = 0.03;
 		tonnage = .0002;

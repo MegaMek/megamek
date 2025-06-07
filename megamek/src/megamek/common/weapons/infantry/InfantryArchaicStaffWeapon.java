@@ -36,7 +36,7 @@ public class InfantryArchaicStaffWeapon extends InfantryWeapon {
         // IO Combines this weapon into the Polearm Weapon
         setInternalName(name);
         addLookupName("InfantryStaff");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 5;
         bv = 0.04;
         tonnage = .0025; 

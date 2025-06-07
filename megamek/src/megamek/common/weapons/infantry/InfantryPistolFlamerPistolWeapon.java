@@ -36,7 +36,7 @@ public class InfantryPistolFlamerPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryFlamerpistol");
         addLookupName("Flamer Pistol");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 50;
         bv = 0.31;
         tonnage = .0012;

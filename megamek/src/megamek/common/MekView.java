@@ -30,6 +30,7 @@ import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
@@ -1090,16 +1091,22 @@ public class MekView {
     private List<ViewElement> getBombs() {
         List<ViewElement> retVal = new ArrayList<>();
         IBomber b = (IBomber) entity;
-        int[] choices = b.getIntBombChoices();
-        for (int type = 0; type < BombType.B_NUM; type++) {
-            if (choices[type] > 0) {
-                retVal.add(new SingleLine(BombType.getBombName(type) + " (" + choices[type] + ") [Int. Bay]"));
+        BombLoadout intChoices = b.getIntBombChoices();
+        // Get internal bomb choices
+        for (Map.Entry<BombTypeEnum, Integer> entry : intChoices.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            int count = entry.getValue();
+            if (count > 0) {
+                retVal.add(new SingleLine(bombType.getDisplayName() + " (" + count + ") [Int. Bay]"));
             }
         }
-        choices = b.getExtBombChoices();
-        for (int type = 0; type < BombType.B_NUM; type++) {
-            if (choices[type] > 0) {
-                retVal.add(new SingleLine(BombType.getBombName(type) + " (" + choices[type] + ")"));
+        // Get external bomb choices
+        BombLoadout extChoices = b.getExtBombChoices();
+        for (Map.Entry<BombTypeEnum, Integer> entry : extChoices.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            int count = entry.getValue();
+            if (count > 0) {
+                retVal.add(new SingleLine(bombType.getDisplayName() + " (" + count + ")"));
             }
         }
         return retVal;

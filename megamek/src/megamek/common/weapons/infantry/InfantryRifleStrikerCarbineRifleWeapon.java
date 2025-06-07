@@ -35,7 +35,7 @@ public class InfantryRifleStrikerCarbineRifleWeapon extends InfantryWeapon {
         name = "Rifle (Striker Carbine)";
         setInternalName(name);
         addLookupName("StrikerCarbineRifle");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 875;
         bv = .29;
         tonnage = .003;

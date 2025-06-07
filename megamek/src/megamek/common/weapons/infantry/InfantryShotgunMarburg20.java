@@ -31,7 +31,7 @@ public class InfantryShotgunMarburg20 extends InfantryWeapon {
        name = "Shotgun (Marburg-20)";
        setInternalName(name);
        addLookupName("Marburg-20");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .36;
        tonnage =  0.0043;
        infantryDamage =  0.36;

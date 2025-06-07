@@ -31,7 +31,7 @@ public class ISHeavyMG extends MGWeapon {
         addLookupName("IS Heavy Machine Gun");
         addLookupName("ISHeavyMG");
         sortingName = "MG D";
-        ammoType = AmmoType.T_MG_HEAVY;
+        ammoType = AmmoType.AmmoTypeEnum.MG_HEAVY;
         heat = 0;
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;

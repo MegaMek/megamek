@@ -41,7 +41,7 @@ public class CLBAGrenadeLauncherHeavy extends Weapon {
         heat = 0;
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         shortRange = 1;
         mediumRange = 2;
         longRange = 3;

@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import megamek.common.AmmoType.AmmoTypeEnum;
 
 /**
  * ArtilleryTracker - one held by every entity, it holds a list of the artillery
@@ -111,7 +112,7 @@ public class ArtilleryTracker implements Serializable {
         return (weapons.containsKey(mounted));
     }
 
-    public boolean ammoTypeInList(int ammoType) {
+    public boolean ammoTypeInList(AmmoTypeEnum ammoType) {
         for (Mounted<?> mounted : weapons.keySet()) {
             if (((WeaponType) mounted.getType()).getAmmoType() == ammoType) {
                 return true;

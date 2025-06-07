@@ -673,7 +673,7 @@ public class TestBattleArmor extends TestEntity {
 
             // BA NARC should be mounted individually
             if ((m.getType() instanceof WeaponType)
-                    && ((WeaponType) m.getType()).getAmmoType() == AmmoType.T_NARC
+                    && ((WeaponType) m.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.NARC
                     && m.getLocation() == BattleArmor.LOC_SQUAD) {
                 buff.append("BA NARC should be mounted individually " +
                         "instead of as a squad weapon!");
@@ -771,7 +771,7 @@ public class TestBattleArmor extends TestEntity {
 
             if (m.getType() instanceof AmmoType) {
                 final int maxShots;
-                if (((AmmoType) m.getType()).getAmmoType() != AmmoType.T_BA_TUBE) {
+                if (((AmmoType) m.getType()).getAmmoType() != AmmoType.AmmoTypeEnum.BA_TUBE) {
                     maxShots = NUM_SHOTS_PER_CRIT;
                 } else {
                     maxShots = NUM_SHOTS_PER_CRIT_TA;

@@ -34,7 +34,7 @@ public class InfantryPistolSturmEagleMK4P extends InfantryWeapon {
        name = "Pistol (Sturm Eagle Mk4P)";
        setInternalName(name);
        addLookupName("Sturm Eagle Mk4P");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .28;
        tonnage =  0.0013;
        infantryDamage =  0.28;

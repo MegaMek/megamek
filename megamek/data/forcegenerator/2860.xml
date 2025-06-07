@@ -1774,7 +1774,7 @@
 			<model name='COM-2D'>
 				<roles>recon</roles>
 				<deployedWith>Commando</deployedWith>
-				<availability>LA:8,MERC:8,Periphery:8,Periphery.Deep:8</availability>
+				<availability>LA:8,MERC:8,CGS:8,CSJ:8,Periphery:8,Periphery.Deep:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Condor Heavy Hover Tank' unitType='Tank'>
@@ -2109,7 +2109,7 @@
 		<chassis name='Drift Shag' unitType='Mek'>
 			<availability>CGS!Keshik:3!Front Line:1,CIH!Keshik:3!Front Line:1,CMG:2+</availability>
             <model name=''>
-                <availability>CLAN:8</availability>
+                <availability>CGS:8,CIH:8,CMG:8</availability>
             </model>
 		</chassis>
 		<chassis name='Dromedary Water Transport' unitType='Tank'>
@@ -2346,7 +2346,7 @@
 			</model>
 		</chassis>
 		<chassis name='Firestarter' unitType='Mek'>
-			<availability>IS:7,LA:8,CS:3,Periphery:7,NIOPS:3,Periphery.Deep:7</availability>
+			<availability>IS:7,LA:8,CS:3,CFM:3-,CHH:2-,Periphery:7,NIOPS:3,Periphery.Deep:7</availability>
 			<model name='FS9-H'>
                 <roles>anti_infantry,recon</roles>
 				<deployedWith>Vulcan</deployedWith>
@@ -2996,7 +2996,7 @@
 			</model>
 		</chassis>
 		<chassis name='Hermes' unitType='Mek'>
-			<availability>DC:2,FWL:4,CC:2,CS:3,CLAN!Front Line:2!Second Line:2!Solahma:2!Provisional Garrison:2,CBS:2,CB!Second Line:1!Solahma:1!Provisional Garrison:1,CCO:1,CGB!Front Line:1!Second Line:1!Solahma:1!Provisional Garrison:1,CGS:2,CHH:2,CIH!Front Line:5!Second Line:4!Solahma:3!Provisional Garrison:2,CNC!Second Line:2!Solahma:2!Provisional Garrison:2,CSR:2,CSV:2,MOC:3,OA:3,NIOPS:3,BAN:4+</availability>
+			<availability>DC:2,FWL:4,CC:2,CS:3,CLAN!Front Line:2!Second Line:2!Solahma:2!Provisional Garrison:2,CBS:2,CB!Second Line:1!Solahma:1!Provisional Garrison:1,CCO:1,CGB!Front Line:1!Second Line:1!Solahma:1!Provisional Garrison:1,CGS:2,CHH:2,CIH!Front Line:5!Second Line:4!Solahma:3!Provisional Garrison:2,CNC!Second Line:2!Solahma:2!Provisional Garrison:2,CSR:2,CSA:2,CSV:2,MOC:3,OA:3,NIOPS:3,BAN:4+</availability>
 			<model name='HER-1A'>
 				<roles>recon</roles>
 				<availability>FWL:8</availability>
@@ -3625,7 +3625,7 @@
 			</model>
 		</chassis>
 		<chassis name='Locust' unitType='Mek'>
-			<availability>IS:9,CS:6-,CLAN!Front Line:5!Second Line:5!Solahma:5!Provisional Garrison:5,CB!Front Line:4!Second Line:4!Solahma:4!Provisional Garrison:4,CCC:5,CCO!Front Line:4!Second Line:4!Solahma:4!Provisional Garrison:4,CFM:5,CGB!Second Line:5!Solahma:5!Provisional Garrison:5,CGS!Second Line:4!Solahma:4!Provisional Garrison:4,CJF:5,CNC:5,CDS:4,CSJ:5,CSR:5,CSA:5,CSV:5,CW:4-,Periphery:6,NIOPS:6-,Periphery.Deep:6</availability>
+			<availability>IS:9,CS:6-,CLAN!Front Line:5!Second Line:5!Solahma:5!Provisional Garrison:5,CB!Front Line:4!Second Line:4!Solahma:4!Provisional Garrison:4,CCC:5,CCO!Front Line:4!Second Line:4!Solahma:4!Provisional Garrison:4,CFM:5,CGB!Second Line:5!Solahma:5!Provisional Garrison:5,CGS!Second Line:4!Solahma:4!Provisional Garrison:4,CJF:5,CNC:5,CDS:4,CSJ:5,CSR:5,CSA:5,CSV:5,CW:4-,Periphery:6,NIOPS:6-,Periphery.Deep:6,BAN:4</availability>
 			<model name='C'>
 				<availability>CCC!Keshik:8!Front Line:3!Second Line:1,CFM!Keshik:8!Front Line:1,CJF!Keshik:8!Front Line:8!Second Line:1,CSJ!Keshik:5!Front Line:8!Second Line:5,CSV!Keshik:8!Front Line:5,BAN:1+</availability>
 			</model>
@@ -4590,7 +4590,7 @@
 			</model>
 		</chassis>
 		<chassis name='Peregrine (Horned Owl)' unitType='Mek'>
-			<availability>CFM:1+,CGS!Keshik:3!Front Line:1,CHH:2+,CNC:1+,CDS:1+,CSJ:2+,CW:2+</availability>
+			<availability>CFM:1+,CGS!Keshik:3!Front Line:1,CIH:2+,CNC:1+,CDS:1+,CSJ:2+,CW:2+</availability>
 			<model name=''>
 				<availability>CFM:8,CGS:8,CIH:8,CW:8</availability>
 			</model>

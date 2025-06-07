@@ -28,7 +28,7 @@ public class InfantryArchaicWhipWeapon extends InfantryWeapon {
         name = "Whip";
         setInternalName(name);
         addLookupName("InfantryWhip");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 18;
         bv = 0.05;
         tonnage = .00035; 

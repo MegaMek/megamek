@@ -49,7 +49,7 @@ public abstract class SRMWeapon extends MissileWeapon {
 
     public SRMWeapon() {
         super();
-        ammoType = AmmoType.T_SRM;
+        ammoType = AmmoType.AmmoTypeEnum.SRM;
         atClass = CLASS_SRM;
         flags = flags.or(F_PROTO_WEAPON).or(F_ARTEMIS_COMPATIBLE);
     }

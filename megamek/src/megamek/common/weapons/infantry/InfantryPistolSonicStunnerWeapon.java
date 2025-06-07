@@ -35,7 +35,7 @@ public class InfantryPistolSonicStunnerWeapon extends InfantryWeapon {
 		name = "Sonic Stunner";
 		setInternalName(name);
 		addLookupName("InfantrySonicStunnerpistol");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 100;
 		bv = 0.06;
 		tonnage = .0006;

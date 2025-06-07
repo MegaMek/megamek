@@ -28,7 +28,7 @@ public class InfantryLaserCarbineBrightstarL15 extends InfantryWeapon {
         name = "Laser Carbine (Brightstar L-15)";
         setInternalName(name);
         addLookupName("BrightstarCarbine");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 2500;
         bv = 0.2625;
         tonnage = 0.0018;

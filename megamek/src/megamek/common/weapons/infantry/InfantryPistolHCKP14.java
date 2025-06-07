@@ -28,7 +28,7 @@ public class InfantryPistolHCKP14 extends InfantryWeapon {
        name = "Pistol (HCK P-14)";
        setInternalName(name);
        addLookupName("HCK P-14");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = 0.056;
        tonnage = 0.0012;
        infantryDamage = 0.07;

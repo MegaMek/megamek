@@ -197,7 +197,7 @@ public class LRMHandler extends MissileWeaponHandler {
                 } else {
                     nMissilesModifier += 3;
                 }
-            } else if (atype.getAmmoType() == AmmoType.T_ATM) {
+            } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
                 if (bECMAffected) {
                     // ECM prevents bonus
                     Report r = new Report(3330);
@@ -223,12 +223,12 @@ public class LRMHandler extends MissileWeaponHandler {
                 boolean bTargetECMAffected = false;
                 bTargetECMAffected = ComputeECM.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition());
-                if (((atype.getAmmoType() == AmmoType.T_LRM)
-                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                    || (atype.getAmmoType() == AmmoType.T_SRM)
-                    || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
-                    || (atype.getAmmoType() == AmmoType.T_MML)
-                    || (atype.getAmmoType() == AmmoType.T_NLRM))
+                if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM))
                     && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE))) {
                     if (bTargetECMAffected) {
                         // ECM prevents bonus

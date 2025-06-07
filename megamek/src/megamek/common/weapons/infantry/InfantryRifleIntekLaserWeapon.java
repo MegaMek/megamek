@@ -36,7 +36,7 @@ public class InfantryRifleIntekLaserWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryIntekLaser");
 		addLookupName("Intek Laser Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1250;
 		bv = 1.51;
 		tonnage = .005;

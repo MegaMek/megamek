@@ -37,7 +37,7 @@ public class InfantrySupportMGSemiPortableWeapon extends InfantryWeapon {
 		addLookupName("InfantryMGSemiPortable");
 		addLookupName("Infantry MG Semi Portable");
 		addLookupName("InfantrySemiMG");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1000;
 		bv = 2.29;
 		tonnage = .020;

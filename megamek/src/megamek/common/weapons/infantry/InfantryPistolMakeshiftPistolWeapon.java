@@ -38,7 +38,7 @@ public class InfantryPistolMakeshiftPistolWeapon extends InfantryWeapon {
 		addLookupName("Makeshift Pistol");
 		addLookupName("ClanInfantryMakeshiftpistol");
 		addLookupName("Makeshift Pistol(Clan)");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 15;
 		bv = 0.02;
 		tonnage = .001;

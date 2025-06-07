@@ -34,7 +34,7 @@ public abstract class BPodWeapon extends AmmoWeapon {
         super();
         heat = 0;
         damage = 1;
-        ammoType = AmmoType.T_BPOD;
+        ammoType = AmmoType.AmmoTypeEnum.BPOD;
         rackSize = 1;
         minimumRange = 0;
         shortRange = 0;

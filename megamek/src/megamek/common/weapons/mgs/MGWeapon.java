@@ -31,7 +31,7 @@ public abstract class MGWeapon extends AmmoWeapon {
 
     public MGWeapon() {
         super();
-        ammoType = AmmoType.T_MG;
+        ammoType = AmmoType.AmmoTypeEnum.MG;
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_BALLISTIC).or(F_MG).or(F_PROTO_WEAPON)
                 .or(F_BURST_FIRE);

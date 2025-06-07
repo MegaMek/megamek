@@ -33,7 +33,7 @@ public class InfantrySMGBlackfieldScorpionMk65 extends InfantryWeapon {
        name = "SMG (Blackfield Scorpion Mk 65)";
        setInternalName(name);
        addLookupName("Blackfield Scorpion Mk 65");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .202;
        tonnage =  0.0014;
        infantryDamage =  0.2;

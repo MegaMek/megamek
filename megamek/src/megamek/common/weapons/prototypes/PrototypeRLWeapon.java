@@ -43,7 +43,7 @@ public abstract class PrototypeRLWeapon extends MissileWeapon {
      */
     public PrototypeRLWeapon() {
         super();
-        ammoType = AmmoType.T_ROCKET_LAUNCHER;
+        ammoType = AmmoType.AmmoTypeEnum.ROCKET_LAUNCHER;
         flags = flags.or(F_ONESHOT);
         toHitModifier = 1;
         atClass = CLASS_ROCKET_LAUNCHER;

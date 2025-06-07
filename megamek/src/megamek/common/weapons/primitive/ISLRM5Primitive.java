@@ -52,7 +52,7 @@ public class ISLRM5Primitive extends LRMWeapon {
         medAV = 3;
         longAV = 3;
         maxRange = RANGE_LONG;
-        ammoType = AmmoType.T_LRM_PRIMITIVE;
+        ammoType = AmmoType.AmmoTypeEnum.LRM_PRIMITIVE;
         // IO Doesn't strictly define when these weapons stop production. Checked with Herb, and
         // they would always be around. This to cover some of the back worlds in the Periphery.
         rulesRefs = "118, IO";

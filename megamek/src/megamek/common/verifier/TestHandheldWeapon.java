@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import megamek.common.AmmoType;
+import megamek.common.AmmoType.AmmoTypeEnum;
 import megamek.common.Entity;
 import megamek.common.HandheldWeapon;
 import megamek.common.MiscType;
@@ -171,7 +172,7 @@ public class TestHandheldWeapon extends TestEntity {
     public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
         boolean illegal = super.hasIllegalEquipmentCombinations(buff);
 
-        Set<Pair<Integer, Integer>> ammoKinds = new HashSet<>();
+        Set<Pair<AmmoTypeEnum, Integer>> ammoKinds = new HashSet<>();
         for (var at : hhw.getAmmo()) {
             var kind = Pair.of(at.getType().getAmmoType(), at.getType().getRackSize());
             if (ammoKinds.contains(kind)) {

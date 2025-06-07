@@ -34,7 +34,7 @@ public class LongTom extends ArtilleryWeapon {
         addLookupName("Clan Long Tom");
         heat = 20;
         rackSize = 25;
-        ammoType = AmmoType.T_LONG_TOM;
+        ammoType = AmmoType.AmmoTypeEnum.LONG_TOM;
         shortRange = 1;
         mediumRange = 2;
         longRange = 30;

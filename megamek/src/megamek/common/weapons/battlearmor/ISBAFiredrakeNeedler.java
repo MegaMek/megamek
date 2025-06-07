@@ -31,7 +31,7 @@ public class ISBAFiredrakeNeedler extends Weapon {
         addLookupName("ISBAFiredrakeIncendiaryNeedler");
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         shortRange = 1;
         mediumRange = 2;
         longRange = 3;

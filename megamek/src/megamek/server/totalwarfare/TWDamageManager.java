@@ -1548,8 +1548,8 @@ public class TWDamageManager implements IDamageManager {
                             int infernos = 0;
                             for (Mounted<?> m : entity.getEquipment()) {
                                 if (m.getType() instanceof AmmoType at) {
-                                    if (((at.getAmmoType() == AmmoType.T_SRM) ||
-                                               (at.getAmmoType() == AmmoType.T_MML)) &&
+                                    if (((at.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                                               (at.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) &&
                                               (at.getMunitionType().contains(AmmoType.Munitions.M_INFERNO))) {
                                         infernos += at.getRackSize() * m.getHittableShotsLeft();
                                     }

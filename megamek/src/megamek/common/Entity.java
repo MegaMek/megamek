@@ -31,6 +31,7 @@ import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.client.ui.util.PlayerColour;
 import megamek.codeUtilities.StringUtility;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
@@ -2874,16 +2875,16 @@ public abstract class Entity extends TurnOrdered
                 }
             }
 
-            int ammotype = mounted.getType().getAmmoType();
-            if ((ammotype == AmmoType.T_AC_ROTARY) && mounted.isJammed() && !mounted.isDestroyed()) {
+            AmmoType.AmmoTypeEnum ammotype = mounted.getType().getAmmoType();
+            if ((ammotype == AmmoType.AmmoTypeEnum.AC_ROTARY) && mounted.isJammed() && !mounted.isDestroyed()) {
                 return true;
             }
-            if (((ammotype == AmmoType.T_AC_ULTRA) ||
-                       (ammotype == AmmoType.T_AC_ULTRA_THB) ||
-                       (ammotype == AmmoType.T_AC) ||
-                       (ammotype == AmmoType.T_LAC) ||
-                       (ammotype == AmmoType.T_AC_IMP) ||
-                       (ammotype == AmmoType.T_PAC)) &&
+            if (((ammotype == AmmoType.AmmoTypeEnum.AC_ULTRA) ||
+                       (ammotype == AmmoType.AmmoTypeEnum.AC_ULTRA_THB) ||
+                       (ammotype == AmmoType.AmmoTypeEnum.AC) ||
+                       (ammotype == AmmoType.AmmoTypeEnum.LAC) ||
+                       (ammotype == AmmoType.AmmoTypeEnum.AC_IMP) ||
+                       (ammotype == AmmoType.AmmoTypeEnum.PAC)) &&
                       mounted.isJammed() &&
                       !mounted.isDestroyed() &&
                       game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
@@ -4411,7 +4412,7 @@ public abstract class Entity extends TurnOrdered
      */
     public void loadAllWeapons() {
         for (WeaponMounted mounted : getTotalWeaponList()) {
-            if (mounted.getType().getAmmoType() != AmmoType.T_NA) {
+            if (mounted.getType().getAmmoType() != AmmoType.AmmoTypeEnum.NA) {
                 loadWeapon(mounted);
             }
         }
@@ -4484,7 +4485,7 @@ public abstract class Entity extends TurnOrdered
             mounted.setLinked(mountedAmmo);
             success = true;
         } else if ((weaponType.hasFlag(WeaponType.F_DOUBLE_ONESHOT) ||
-                          (weaponType.getAmmoType() == AmmoType.T_INFANTRY)) &&
+                          (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.INFANTRY)) &&
                          (mountedAmmo.getLocation() == Entity.LOC_NONE)) {
             // Make sure this ammo is in the chain, then move it to the head.
             for (Mounted<?> current = mounted; current != null; current = current.getLinked()) {
@@ -5049,7 +5050,7 @@ public abstract class Entity extends TurnOrdered
 
         // Coolant Pod
         for (AmmoMounted m : getAmmo()) {
-            if (m.getType().ammoType == AmmoType.T_COOLANT_POD) {
+            if (m.getType().ammoType == AmmoType.AmmoTypeEnum.COOLANT_POD) {
                 capacity += sinks;
                 sb.append(", ").append(capacity).append(" with Coolant Pod");
                 break;
@@ -6829,7 +6830,7 @@ public abstract class Entity extends TurnOrdered
         for (WeaponMounted mounted : getTotalWeaponList()) {
             WeaponType weaponType = mounted.getType();
 
-            if (weaponType.getAmmoType() != AmmoType.T_NA) {
+            if (weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA) {
                 if ((mounted.getLinked() == null) ||
                           (mounted.getLinked().getUsableShotsLeft() <= 0) ||
                           mounted.getLinked().isDumping()) {
@@ -9237,14 +9238,14 @@ public abstract class Entity extends TurnOrdered
         // Walk through the unit's ammo, stop when we find a match.
         for (AmmoMounted amounted : getAmmo()) {
             AmmoType ammoType = amounted.getType();
-            if (((ammoType.getAmmoType() == AmmoType.T_SRM) ||
-                       (ammoType.getAmmoType() == AmmoType.T_SRM_IMP) ||
-                       (ammoType.getAmmoType() == AmmoType.T_MML)) &&
+            if (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                       (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+                       (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) &&
                       (ammoType.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) &&
                       (amounted.getHittableShotsLeft() > 0)) {
                 found = true;
             }
-            if ((ammoType.getAmmoType() == AmmoType.T_IATM) &&
+            if ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.IATM) &&
                       (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)) &&
                       (amounted.getHittableShotsLeft() > 0)) {
                 found = true;
@@ -11883,11 +11884,11 @@ public abstract class Entity extends TurnOrdered
      */
     public void setRapidFire() {
         for (WeaponMounted m : getTotalWeaponList()) {
-            int ammoType = m.getType().getAmmoType();
-            if (ammoType == AmmoType.T_AC_ROTARY) {
+            AmmoType.AmmoTypeEnum ammoType = m.getType().getAmmoType();
+            if (ammoType == AmmoType.AmmoTypeEnum.AC_ROTARY) {
                 m.setMode("6-shot");
                 m.setModeSwitchable(false);
-            } else if (ammoType == AmmoType.T_AC_ULTRA) {
+            } else if (ammoType == AmmoType.AmmoTypeEnum.AC_ULTRA) {
                 m.setMode("Ultra");
                 m.setModeSwitchable(false);
             }
@@ -12875,18 +12876,18 @@ public abstract class Entity extends TurnOrdered
     /**
      * @return an int array of the number of bombs of each type based on the current bomb list
      */
-    public int[] getBombLoadout() {
+    public BombLoadout getBombLoadout() {
         return getBombLoadout(false);
     }
 
-    public int[] getBombLoadout(boolean internalOnly) {
-        int[] loadout = new int[BombType.B_NUM];
+    public BombLoadout getBombLoadout(boolean internalOnly) {
+        BombLoadout loadout = new BombLoadout();
         for (BombMounted bomb : getBombs()) {
             if ((bomb.getUsableShotsLeft() > 0)) {
                 // Either count all bombs, or just internal bombs
                 if (!(internalOnly && !bomb.isInternalBomb())) {
-                    int type = bomb.getType().getBombType();
-                    loadout[type] = loadout[type] + 1;
+                    BombTypeEnum type = bomb.getType().getBombType();
+                    loadout.merge(type, 1, Integer::sum);
                 }
             }
         }
@@ -12894,17 +12895,24 @@ public abstract class Entity extends TurnOrdered
         return loadout;
     }
 
-    public int[] getInternalBombLoadout() {
+    public BombLoadout getInternalBombLoadout() {
         return getBombLoadout(true);
     }
 
-    public int[] getExternalBombLoadout() {
-        int[] allBombs = getBombLoadout();
-        int[] intBombs = getBombLoadout(true);
-        for (int i = 0; i < allBombs.length; i++) {
-            allBombs[i] -= intBombs[i];
+    public BombLoadout getExternalBombLoadout() {
+        BombLoadout allBombs = getBombLoadout();
+        BombLoadout intBombs = getBombLoadout(true);
+        BombLoadout extBombs = new BombLoadout();
+        for (Map.Entry<BombTypeEnum, Integer> entry : allBombs.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            int allCount = entry.getValue();
+            int intCount = intBombs.getOrDefault(bombType, 0);
+            int extCount = allCount - intCount;
+            if (extCount > 0) {
+                extBombs.put(bombType, extCount);
+            }
         }
-        return allBombs;
+        return extBombs;
     }
 
     @Override
@@ -12969,11 +12977,11 @@ public abstract class Entity extends TurnOrdered
         double total = 0.0;
         for (WeaponMounted m : getWeaponList()) {
             WeaponType wt = m.getType();
-            if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA)) ||
+            if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.AmmoTypeEnum.NA)) ||
                       wt.hasFlag(WeaponType.F_PPC) ||
                       wt.hasFlag(WeaponType.F_PLASMA) ||
                       wt.hasFlag(WeaponType.F_PLASMA_MFUK) ||
-                      (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
+                      (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.AmmoTypeEnum.NA))) {
                 total += m.getTonnage();
             }
             if ((m.getLinkedBy() != null) &&

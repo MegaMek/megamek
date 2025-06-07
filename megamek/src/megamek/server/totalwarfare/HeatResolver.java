@@ -367,7 +367,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             int possibleSinkage = ((Mek) entity).getNumberOfSinks();
             for (Mounted<?> m : entity.getEquipment()) {
                 if (m.getType() instanceof AmmoType at) {
-                    if ((at.getAmmoType() == AmmoType.T_COOLANT_POD) && m.isAmmoUsable()) {
+                    if ((at.getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) && m.isAmmoUsable()) {
                         EquipmentMode mode = m.curMode();
                         if (mode.equals("dump")) {
                             r = new Report(5260);
@@ -934,7 +934,7 @@ class HeatResolver extends AbstractTWRuleHandler {
         for (Mounted<?> m : entity.getEquipment()) {
             if (m.getType() instanceof AmmoType) {
                 AmmoType at = (AmmoType) m.getType();
-                if ((at.getAmmoType() == AmmoType.T_COOLANT_POD) && m.isAmmoUsable()) {
+                if ((at.getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) && m.isAmmoUsable()) {
                     EquipmentMode mode = m.curMode();
                     if (mode.equals("dump")) {
                         r = new Report(5260);

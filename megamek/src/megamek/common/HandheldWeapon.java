@@ -112,16 +112,6 @@ public class HandheldWeapon extends Entity {
     }
 
     @Override
-    public int getDependentLocation(int loc) {
-        throw new UnsupportedOperationException("Construction only.");
-    }
-
-    @Override
-    public boolean hasRearArmor(int loc) {
-        return false;
-    }
-
-    @Override
     public void autoSetInternal() {
         initializeInternal(0, LOC_GUN);
     }
@@ -134,21 +124,6 @@ public class HandheldWeapon extends Entity {
     @Override
     public boolean isSecondaryArcWeapon(int weaponId) {
         throw new UnsupportedOperationException("Construction only.");
-    }
-
-    @Override
-    public int getHeatCapacity(boolean radicalHeatSink) {
-        return DOES_NOT_TRACK_HEAT;
-    }
-
-    @Override
-    public int getHeatCapacityWithWater() {
-        return getHeatCapacity();
-    }
-
-    @Override
-    public int getEngineCritHeat() {
-        return 0;
     }
 
     private static final int[] NUM_OF_SLOTS = new int[] { 25 };
@@ -181,16 +156,6 @@ public class HandheldWeapon extends Entity {
     @Override
     public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
         return HandheldWeaponCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
-    }
-
-    @Override
-    public boolean doomedInExtremeTemp() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedInVacuum() {
-        return false;
     }
 
     @Override

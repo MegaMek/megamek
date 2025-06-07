@@ -676,9 +676,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     /**
      * Get the next target. Return null if we don't have any targets.
      */
-    private Entity getNextTarget(boolean nextOrPrev, boolean onlyValid,
-            boolean ignoreAllies) {
-        if (visibleTargets == null) {
+    private Entity getNextTarget(boolean nextOrPrev, boolean onlyValid, boolean ignoreAllies) {
+        if ((visibleTargets == null) || (visibleTargets.length == 0)) {
+            return null;
+        }
+        Entity attacker = ce();
+        if (attacker == null) {
             return null;
         }
 
@@ -689,19 +692,14 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // Default is one iteration, but may need to skip invalid or allies
         while (!done) {
             // Increment or decrement target index
-            if (nextOrPrev) {
-                lastTargetID++;
-            } else {
-                lastTargetID--;
-            }
+            lastTargetID += nextOrPrev ? 1 : -1;
             // Check bounds
             if (lastTargetID < 0) {
                 lastTargetID = visibleTargets.length - 1;
             } else if (lastTargetID >= visibleTargets.length) {
                 lastTargetID = 0;
             }
-            // If we've cycled through all visible targets without finding a valid one, stop
-            // looping
+            // If we've cycled through all visible targets without finding a valid one, stop looping
             count++;
             if (count > visibleTargets.length) {
                 return null;
@@ -709,18 +707,15 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             // Store target
             result = visibleTargets[lastTargetID];
             done = true;
-            // Check done
-            if (onlyValid) {
-                ToHitData toHit = WeaponAttackAction.toHit(
-                        game, ce().getId(), result,
-                        clientgui.getUnitDisplay().wPan.getSelectedWeaponNum(),
-                        isStrafing);
-                done &= toHit.getValue() != TargetRoll.AUTOMATIC_FAIL
-                        && toHit.getValue() != TargetRoll.IMPOSSIBLE
-                        && toHit.getValue() <= 12;
+            int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+            if (onlyValid && (weaponId != -1)) {
+                ToHitData toHit = WeaponAttackAction.toHit(game, attacker.getId(), result, weaponId, isStrafing);
+                done = (toHit.getValue() != TargetRoll.AUTOMATIC_FAIL)
+                      && (toHit.getValue() != TargetRoll.IMPOSSIBLE)
+                      && (toHit.getValue() <= 12);
             }
             if (ignoreAllies) {
-                done &= result.isEnemyOf(ce());
+                done &= result.isEnemyOf(attacker);
             }
         }
         return result;
@@ -921,7 +916,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      */
     private void doClearWeaponJam() {
         Entity currentEntity = ce();
-        
+
         if (currentEntity == null) {
             return;
         }

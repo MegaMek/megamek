@@ -3097,7 +3097,7 @@
 			</model>
 			<model name='HER-1S'>
 				<roles>recon</roles>
-				<availability>IS:2+,MERC:2+,CS:8,CLAN:4-,CGS:4,CMG:4,CSJ:3-,CSV:3-,Periphery:2+,NIOPS:8,BAN:5-</availability>
+				<availability>IS:2+,CS:8,CLAN:4-,CGS:4,CMG:4,CSJ:3-,CSV:3-,Periphery:2+,NIOPS:8,BAN:5-</availability>
 			</model>
 			<model name='HER-1Sb'>
 				<roles>recon</roles>
@@ -5479,7 +5479,7 @@
 		<chassis name='Stinger' unitType='Mek'>
 			<availability>IS:9,DC:6,MERC:6,CS:4-,CLAN!Front Line:4!Second Line:4!Solahma:4!Provisional Garrison:4,CBS:4,CB:5,CCC:4,CGS:4,CHH:4,CJF:4,CDS:4,CSR:4,CSA:4,CSV:4,CW:4,Periphery:6,NIOPS:4-,Periphery.Deep:6,BAN:5</availability>
             <model name='C'>
-                <availability>CCC!Keshik:8!Front Line:1,CHH!Keshik:8!Front Line:3,CIH!Front Line:8!Second Line:1,CSV!Keshik:8,CW!Keshik:8!Second Line:8,BAN:2+</availability>
+                <availability>CCC!Keshik:8!Front Line:1,CHH!Keshik:8!Front Line:3,CIH!Front Line:8!Second Line:1,CSV!Keshik:8,CW!Keshik:8!Front Line:8,BAN:2+</availability>
             </model>
             <model name='C 2'>
                 <availability>CBS!Keshik:8!Front Line:3,CB!Keshik:5!Front Line:1,BAN:2+</availability>

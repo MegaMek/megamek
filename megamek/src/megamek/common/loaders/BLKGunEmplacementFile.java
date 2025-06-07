@@ -30,22 +30,21 @@ public class BLKGunEmplacementFile extends BLKFile implements IMekLoader {
 
     @Override
     public Entity getEntity() throws EntityLoadingException {
-
-        GunEmplacement e = new GunEmplacement();
-        setBasicEntityData(e);
+        GunEmplacement gunEmplacement = new GunEmplacement();
+        setBasicEntityData(gunEmplacement);
 
         if (dataFile.exists("Turret")) {
             if (dataFile.getDataAsInt("Turret")[0] != 1) {
-                e.setHasNoTurret(true);
+                gunEmplacement.setHasNoTurret(true);
             }
         }
 
         // our gun emplacements do not support dual turrets at this time
-        e.setHasNoDualTurret(true);
+        gunEmplacement.setHasNoDualTurret(true);
 
-        loadEquipment(e, "Guns", GunEmplacement.LOC_GUNS);
-        e.setArmorTonnage(e.getArmorWeight());
-        loadQuirks(e);
-        return e;
+        loadEquipment(gunEmplacement, "Guns", GunEmplacement.LOC_GUNS);
+        gunEmplacement.setArmorTonnage(gunEmplacement.getArmorWeight());
+        loadQuirks(gunEmplacement);
+        return gunEmplacement;
     }
 }

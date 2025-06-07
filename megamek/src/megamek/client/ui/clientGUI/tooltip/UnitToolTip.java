@@ -130,7 +130,7 @@ public final class UnitToolTip {
           boolean pilotInfoShow, boolean pilotInfoStandard, @Nullable MapSettings mapSettings, boolean showName,
           boolean inGameValue, boolean showBV, boolean showSensors, boolean showSeenBy, boolean report) {
         // Tooltip info for a sensor blip
-        if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
+        if ((!report) && (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity))) {
             String msg_senorreturn = Messages.getString("BoardView1.sensorReturn");
             return new StringBuilder(msg_senorreturn);
         }

@@ -1834,12 +1834,7 @@ public class TWGameManager extends AbstractGameManager {
         comp = comp.thenComparing(Entity::getDisplayName);
         entities.sort(comp);
 
-        // turn off preformatted text for unit tool tip
-        Report r = new Report(1230, Report.PUBLIC);
-        r.add("</pre>");
-        reports.add(r);
-
-        r = new Report(7600, Report.PUBLIC);
+        Report r = new Report(7600, Report.PUBLIC);
         reports.add(r);
 
         r = new Report(1230, Report.PUBLIC);
@@ -1864,9 +1859,6 @@ public class TWGameManager extends AbstractGameManager {
             reports.add(r);
         }
 
-        // turn preformatted text back on, so that text after will display properly
-        r = new Report(1230, Report.PUBLIC);
-        r.add("<pre>");
         reports.add(r);
 
         mainPhaseReport.addAll(reports);

@@ -18,11 +18,6 @@
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
-
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -33,6 +28,11 @@ import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Sprite for an entity. Changes whenever the entity changes. Consists of an image, drawn from the Tile Manager; facing
@@ -180,7 +180,9 @@ public class EntitySprite extends Sprite {
         } else {
             String[] tokens = entity.getChassis().split(" ");
             int i = tokens.length - 1;
-            for (; i > 0; i--) {
+            for (;
+                  i > 0;
+                  i--) {
                 if (!REMOVABLE_NAME_PARTS.contains(tokens[i])) {
                     break;
                 }
@@ -785,10 +787,11 @@ public class EntitySprite extends Sprite {
             // draw facing
             graph.setColor(Color.white);
             if ((entity.getFacing() != -1) && !((entity instanceof Infantry)
-                  && !((Infantry) entity).hasFieldWeapon()
-                  && !((Infantry) entity).isTakingCover()) && !((entity instanceof IAero)
-                  && ((IAero) entity).isSpheroid()
-                  && !board.isSpace())) {
+                                                      && !((Infantry) entity).hasFieldWeapon()
+                                                      && !((Infantry) entity).isTakingCover()) && !(
+                  (entity instanceof IAero)
+                        && ((IAero) entity).isSpheroid()
+                        && !board.isSpace())) {
                 // Indicate a stacked unit with the same facing that can still move
                 if (shouldIndicateNotDone() && bv.game.getPhase().isMovement()) {
                     var tr = graph.getTransform();
@@ -863,14 +866,15 @@ public class EntitySprite extends Sprite {
             int pipOption = GUIP.getTMMPipMode();
             int pipScaleFactor = 1;
             int pipOffset = 0;
-            if (GUIP.getTMMPipBigger()) {
+            if (pipOption == 3 || pipOption == 4) { // bigger pips
                 pipScaleFactor = BIGGER_PIP_SCALE;
                 pipOffset = BIGGER_PIP_OFFSET;
             }
             if ((pipOption != 0) && !isGunEmplacement && !entity.isAero() && ((entity.isDone() && bv.game.getPhase()
                   .isMovement()) || bv.game.getPhase().isFiring())) {
                 int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
-                Color tmmColor = (pipOption == 1) ? Color.WHITE : GUIP.getColorForMovement(entity.moved);
+                Color tmmColor = (pipOption == 1 || pipOption == 3) ? Color.WHITE :
+                      GUIP.getColorForMovement(entity.moved);
                 graph.setColor(Color.darkGray);
                 graph.fillRect(STATUS_BAR_X - (pipOffset * (MAX_TMM_PIPS - 1)),
                       12 + TMM_PIP_SIZE,
@@ -878,22 +882,26 @@ public class EntitySprite extends Sprite {
                       TMM_PIP_SIZE * pipScaleFactor + 1);
                 if (tmm >= 0) {
                     // draw left to right for positive TMM
-                    for (int i = 0; i < MAX_TMM_PIPS; i++) {
+                    for (int i = 0;
+                          i < MAX_TMM_PIPS;
+                          i++) {
                         graph.setColor(Color.DARK_GRAY);
                         graph.setColor(i < tmm ? tmmColor : Color.BLACK);
                         graph.fillRect(STATUS_BAR_X - (pipOffset * (MAX_TMM_PIPS - 1)) + 1 + i * (TMM_PIP_SIZE
-                                    + pipOffset),
+                                                                                                        + pipOffset),
                               13 + TMM_PIP_SIZE,
                               TMM_PIP_SIZE - pipScaleFactor + pipOffset,
                               TMM_PIP_SIZE * pipScaleFactor - 1);
                     }
                 } else {
                     // draw pips right to left for negative TMM
-                    for (int i = 0; i < MAX_TMM_PIPS; i++) {
+                    for (int i = 0;
+                          i < MAX_TMM_PIPS;
+                          i++) {
                         graph.setColor(Color.DARK_GRAY);
                         graph.setColor(i >= (MAX_TMM_PIPS + tmm) ? tmmColor : Color.BLACK);
                         graph.fillRect(STATUS_BAR_X - (pipOffset * MAX_TMM_PIPS - 1) + 1 + i * (TMM_PIP_SIZE
-                                    + pipOffset),
+                                                                                                      + pipOffset),
                               13 + TMM_PIP_SIZE,
                               TMM_PIP_SIZE - pipScaleFactor + pipOffset,
                               TMM_PIP_SIZE * pipScaleFactor - 1);

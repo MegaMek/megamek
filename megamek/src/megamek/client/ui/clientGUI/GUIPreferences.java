@@ -311,6 +311,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_REPORT_COLOR_INFO = "MiniReportColorInfo";
     public static final String MINI_REPORT_FONT_TYPE = "MiniReportFontType";
     public static final String MINI_ROUND_REPORT_SPRITES = "MiniRoundReportSprites";
+    public static final String MINI_REPORT_SHOW_PLAYERS = "MiniReportShowPlayers";
+    public static final String MINI_REPORT_SHOW_UNITS = "MiniReportShowUnits";
+    public static final String MINI_REPORT_SHOW_KEYWORDS = "MiniReportShowKeywords";
+    public static final String MINI_REPORT_SHOW_FILTER = "MiniReportShowFilter";
 
     public static final String PLAYER_LIST_POS_X = "PlayerListPosX";
     public static final String PLAYER_LIST_POS_Y = "PlayerListPosY";
@@ -767,6 +771,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(MINI_REPORT_COLOR_INFO, new Color(51, 153, 255));
         setDefault(MINI_REPORT_FONT_TYPE, "Segoe UI");
         store.setDefault(MINI_ROUND_REPORT_SPRITES, true);
+        store.setDefault(MINI_REPORT_SHOW_PLAYERS, true);
+        store.setDefault(MINI_REPORT_SHOW_UNITS, true);
+        store.setDefault(MINI_REPORT_SHOW_KEYWORDS, true);
+        store.setDefault(MINI_REPORT_SHOW_FILTER, false);
 
         store.setDefault(PLAYER_LIST_ENABLED, true);
         store.setDefault(PLAYER_LIST_POS_X, 200);
@@ -1370,6 +1378,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getMiniReportShowSprites() {
         return store.getBoolean(MINI_ROUND_REPORT_SPRITES);
+    }
+
+    public boolean getMiniReportShowPlayers() {
+        return store.getBoolean(MINI_REPORT_SHOW_PLAYERS);
+    }
+
+    public boolean getMiniReportShowUnits() {
+        return store.getBoolean(MINI_REPORT_SHOW_UNITS);
+    }
+
+    public boolean getMiniReportShowKeywords() {
+        return store.getBoolean(MINI_REPORT_SHOW_KEYWORDS);
+    }
+
+    public boolean getMiniReportShowFilter() {
+        return store.getBoolean(MINI_REPORT_SHOW_FILTER);
     }
 
     public boolean getPlayerListEnabled() {
@@ -2248,6 +2272,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMiniReportShowSprites(boolean b) {
         store.setValue(MINI_ROUND_REPORT_SPRITES, b);
+    }
+
+    public void setMiniReportShowPlayers(boolean b) {
+        store.setValue(MINI_REPORT_SHOW_PLAYERS, b);
+    }
+
+    public void setMiniReportShowUnits(boolean b) {
+        store.setValue(MINI_REPORT_SHOW_UNITS, b);
+    }
+
+    public void setMiniReportShowKeywords(boolean b) {
+        store.setValue(MINI_REPORT_SHOW_KEYWORDS, b);
+    }
+
+    public void setMiniReportShowFilter(boolean b) {
+        store.setValue(MINI_REPORT_SHOW_FILTER, b);
     }
 
     public void setPlayerListEnabled(boolean b) {

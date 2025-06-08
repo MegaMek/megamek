@@ -37,7 +37,7 @@ public class InfantrySniperRifleRadiumLaserWeapon extends InfantryWeapon {
 		addLookupName("InfantryRadiumSniper");
 		addLookupName("Radium Sniper Rifle");
 		addLookupName("Rifle (Radium Sniper)");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 9500;
 		bv = 2.58;
 		tonnage = .012;

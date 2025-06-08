@@ -30,7 +30,7 @@ public class InfantrySMGSturmHornetMkIII extends InfantryWeapon {
        name = "SMG (Sturm Hornet Mk III)";
        setInternalName(name);
        addLookupName("Sturm Hornet Mk III");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .27;
        tonnage =  0.0034;
        infantryDamage =  0.27;

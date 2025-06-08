@@ -28,7 +28,7 @@ public class InfantryProstheticDartgunWeapon extends InfantryWeapon {
         name = "Prosthetic Dart Gun";
         setInternalName(name);
         addLookupName("ProstheticDartGun");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 750;
         bv = 0.0;
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);

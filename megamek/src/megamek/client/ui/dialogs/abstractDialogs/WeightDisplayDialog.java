@@ -73,7 +73,11 @@ public class WeightDisplayDialog extends AbstractDialog {
             textReport = weightReport.getTextReport().toString();
         } else {
             TestEntity testEntity = TestEntity.getEntityVerifier(entity);
-            textReport = testEntity.printEntity().toString();
+            if (testEntity != null) {
+                textReport = testEntity.printEntity().toString();
+            } else {
+                textReport = "This report is currently not implemented.";
+            }
             JTextPane textPane = new JTextPane();
             textPane.setText(textReport);
             textPane.setEditable(false);

@@ -42,7 +42,7 @@ public class CLLaserAMS extends LaserWeapon {
         extremeRange = 1;
         maxRange = RANGE_SHORT;
         shortAV = 3;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         tonnage = 1;
         criticals = 1;
         bv = 45;

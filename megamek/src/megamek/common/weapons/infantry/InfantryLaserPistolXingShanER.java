@@ -28,7 +28,7 @@ public class InfantryLaserPistolXingShanER extends InfantryWeapon {
         name = "Laser Pistol (Xīng Shan ER)";
         setInternalName(name);
         addLookupName("XīngShanER");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 830;
         bv = 0.21; // The bv in the image seems incorrect, adjusted to the value from the text
         tonnage = 0.0016;

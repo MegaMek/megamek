@@ -31,7 +31,7 @@ public class InfantryShotgunDaystarIIIC extends InfantryWeapon {
        name = "Shotgun (Daystar III (C))";
        setInternalName(name);
        addLookupName("Daystar III (C)");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .36;
        tonnage =  0.0026;
        infantryDamage =  0.36;

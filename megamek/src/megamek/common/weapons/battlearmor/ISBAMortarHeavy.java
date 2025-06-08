@@ -39,7 +39,7 @@ public class ISBAMortarHeavy extends Weapon {
         sortingName = "Mortar D";
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         minimumRange = 2;
         shortRange = 2;
         mediumRange = 4;

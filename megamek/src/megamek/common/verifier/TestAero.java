@@ -595,10 +595,10 @@ public class TestAero extends TestEntity {
             // Aeros can't use special munitions except for artemis, exceptions
             // LBX's must use clusters
             WeaponType wt = m.getType();
-            boolean canHaveSpecialMunitions = ((wt.getAmmoType() == AmmoType.T_MML)
-                    || (wt.getAmmoType() == AmmoType.T_ATM)
-                    || (wt.getAmmoType() == AmmoType.T_NARC));
-            if (wt.getAmmoType() != AmmoType.T_NA
+            boolean canHaveSpecialMunitions = ((wt.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
+                    || (wt.getAmmoType() == AmmoType.AmmoTypeEnum.ATM)
+                    || (wt.getAmmoType() == AmmoType.AmmoTypeEnum.NARC));
+            if (wt.getAmmoType() != AmmoType.AmmoTypeEnum.NA
                     && m.getLinked() != null
                     && !canHaveSpecialMunitions) {
                 EquipmentType linkedType = m.getLinked().getType();
@@ -609,7 +609,7 @@ public class TestAero extends TestEntity {
                 if (linkedType instanceof AmmoType) {
                     AmmoType linkedAT = (AmmoType) linkedType;
                     // Check LBX's
-                    if (wt.getAmmoType() == AmmoType.T_AC_LBX &&
+                    if (wt.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX &&
                             !linkedAT.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
                         correct = false;
                         buff.append("Aeros must use cluster munitions!").append(m.getType().getInternalName())
@@ -626,8 +626,8 @@ public class TestAero extends TestEntity {
                     }
                     if (!linkedAT.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)
                             && !hasArtemisFCS
-                            && wt.getAmmoType() != AmmoType.T_AC_LBX
-                            && wt.getAmmoType() != AmmoType.T_SBGAUSS) {
+                            && wt.getAmmoType() != AmmoType.AmmoTypeEnum.AC_LBX
+                            && wt.getAmmoType() != AmmoType.AmmoTypeEnum.SBGAUSS) {
                         correct = false;
                         buff.append("Aeros may not use special munitions! ").append(m.getType().getInternalName())
                                 .append(" is using ").append(linkedAT.getInternalName()).append("\n");
@@ -869,7 +869,7 @@ public class TestAero extends TestEntity {
                 return false;
             }
         } else if (eq instanceof WeaponType) {
-            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
+            if ((((WeaponType) eq).getAmmoType() == AmmoType.AmmoTypeEnum.GAUSS_HEAVY)
                     && (location != Aero.LOC_NOSE) && (location != Aero.LOC_AFT)) {
                 buffer.append(eq.getName()).append(" must be mounted in the nose or aft.\n");
                 return false;
@@ -891,13 +891,13 @@ public class TestAero extends TestEntity {
         WeaponType weapon = (WeaponType) eq;
 
         // small craft only; lacks aero weapon flag
-        if (weapon.getAmmoType() == AmmoType.T_C3_REMOTE_SENSOR) {
+        if (weapon.getAmmoType() == AmmoType.AmmoTypeEnum.C3_REMOTE_SENSOR) {
             return en.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)
                     && !en.hasETypeFlag(Entity.ETYPE_DROPSHIP);
         }
 
         if (weapon.hasFlag(WeaponType.F_ARTILLERY) && !weapon.hasFlag(WeaponType.F_BA_WEAPON)) {
-            return (weapon.getAmmoType() == AmmoType.T_ARROW_IV)
+            return (weapon.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV)
                     || en.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)
                     || en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
         }
@@ -947,11 +947,11 @@ public class TestAero extends TestEntity {
 
         if (weapon.hasFlag(WeaponType.F_ENERGY)
                 || (weapon.hasFlag(WeaponType.F_PLASMA) && (weapon
-                        .getAmmoType() == AmmoType.T_PLASMA))) {
+                        .getAmmoType() == AmmoType.AmmoTypeEnum.PLASMA))) {
 
             if (weapon.hasFlag(WeaponType.F_ENERGY)
                     && weapon.hasFlag(WeaponType.F_PLASMA)
-                    && (weapon.getAmmoType() == AmmoType.T_NA)) {
+                    && (weapon.getAmmoType() == AmmoType.AmmoTypeEnum.NA)) {
                 return false;
             }
         }

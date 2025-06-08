@@ -44,7 +44,7 @@ public abstract class ArrowIV extends ArtilleryWeapon {
         addLookupName("Arrow IV Missile System");
         heat = 10;
         rackSize = 20;
-        ammoType = AmmoType.T_ARROW_IV;
+        ammoType = AmmoType.AmmoTypeEnum.ARROW_IV;
         bv = 240;
         cost = 450000;
         this.flags = flags.or(F_MISSILE);

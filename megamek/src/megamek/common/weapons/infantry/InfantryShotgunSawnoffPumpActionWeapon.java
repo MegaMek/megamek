@@ -36,7 +36,7 @@ public class InfantryShotgunSawnoffPumpActionWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryPumpSawnOff");
 		addLookupName("Pump Action Sawed-Off Shotgun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 40;
 		bv = 0.07;
 		tonnage = .003;

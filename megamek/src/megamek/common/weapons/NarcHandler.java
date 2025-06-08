@@ -210,7 +210,7 @@ public class NarcHandler extends MissileWeaponHandler {
         }
 
         AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.getAmmoType() == AmmoType.T_NARC) {
+        if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NARC) {
             // narced
             NarcPod pod = new NarcPod(ae.getOwner().getTeam(),
                     hit.getLocation());
@@ -220,7 +220,7 @@ public class NarcHandler extends MissileWeaponHandler {
             r.add(entityTarget.getLocationAbbr(hit));
             vPhaseReport.addElement(r);
             entityTarget.attachNarcPod(pod);
-        } else if (atype.getAmmoType() == AmmoType.T_INARC) {
+        } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.INARC) {
             // iNarced
             INarcPod pod = null;
             if (atype.getMunitionType().contains(AmmoType.Munitions.M_ECM)) {

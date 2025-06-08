@@ -35,7 +35,7 @@ public class InfantryRifleElephantGunWeapon extends InfantryWeapon {
 		name = "Elephant Gun";
 		setInternalName(name);
 		addLookupName("InfantryElephantGun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 100;
 		bv = 0.34;
 		tonnage = .005;

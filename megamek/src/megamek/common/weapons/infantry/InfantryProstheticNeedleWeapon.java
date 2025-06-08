@@ -28,7 +28,7 @@ public class InfantryProstheticNeedleWeapon extends InfantryWeapon {
         name = "Prosthetic Needle";
         setInternalName(name);
         addLookupName("ProstheticNeedle");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 500;
         bv = 0.0;
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_NONPENETRATING).or(F_INF_ARCHAIC);

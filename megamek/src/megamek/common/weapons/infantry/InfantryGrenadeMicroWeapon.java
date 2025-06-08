@@ -36,7 +36,7 @@ public class InfantryGrenadeMicroWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryMicroGrenade");
         addLookupName("Micro Grenades");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 2;
         bv = 0.15;
         tonnage = .0002;

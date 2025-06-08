@@ -29,7 +29,7 @@ public class InfantryArchaicShockStaffWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryShockStaff");
         addLookupName("ShockStaff");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 1500;
         tonnage = 0.003;
         bv = 0.0;

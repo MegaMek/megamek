@@ -35,7 +35,7 @@ public class InfantryPistolWhiteDwarfLaserPistolWeapon extends InfantryWeapon {
 		name = "Laser Pistol (Hold-Out [White Dwarf])";
 		setInternalName(name);
 		addLookupName("White Dwarf Holdout Laser Pistol");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.AmmoTypeEnum.NA;
 		cost = 250;
 		bv = 0.02;
 		tonnage = .00025;

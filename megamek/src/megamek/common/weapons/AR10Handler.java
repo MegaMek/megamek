@@ -79,7 +79,7 @@ public class AR10Handler extends AmmoWeaponHandler {
             r.subject = subjectId;
             r.add(wtype.getName() + number);
             if (entityTarget != null) {
-                if ((wtype.getAmmoType() != AmmoType.T_NA)
+                if ((wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
                         && (weapon.getLinked() != null)
                         && (weapon.getLinked().getType() instanceof AmmoType)) {
                     AmmoType atype = (AmmoType) weapon.getLinked().getType();

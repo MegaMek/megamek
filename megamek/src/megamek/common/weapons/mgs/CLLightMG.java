@@ -33,7 +33,7 @@ public class CLLightMG extends MGWeapon {
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
         rackSize = 1;
-        ammoType = AmmoType.T_MG_LIGHT;
+        ammoType = AmmoType.AmmoTypeEnum.MG_LIGHT;
         shortRange = 2;
         mediumRange = 4;
         longRange = 6;

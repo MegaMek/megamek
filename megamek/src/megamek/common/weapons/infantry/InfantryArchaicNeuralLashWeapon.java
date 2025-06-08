@@ -36,7 +36,7 @@ public class InfantryArchaicNeuralLashWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryNeuralLash");
         addLookupName("Neural Lash");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 750;
         bv = 0.08;
         tonnage = .0001; 

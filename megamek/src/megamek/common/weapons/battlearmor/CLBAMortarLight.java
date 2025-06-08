@@ -42,7 +42,7 @@ public class CLBAMortarLight extends Weapon {
         sortingName = "Mortar B";
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         minimumRange = 1;
         shortRange = 1;
         mediumRange = 2;

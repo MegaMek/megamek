@@ -33,9 +33,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.Entity;
 import megamek.common.Mounted;
 import megamek.logging.MMLogger;
@@ -124,7 +126,10 @@ public class MunitionTree {
     public static final List<String> NARC_MUNITION_NAMES = new ArrayList<>(List.of("Narc Explosive", "Standard"));
 
     // Shorter, guaranteed to work in lookups
-    public static final List<String> BOMB_MUNITION_NAMES = new ArrayList<>(Arrays.asList(BombType.bombInternalNames));
+    public static final List<String> BOMB_MUNITION_NAMES = Arrays.stream(BombTypeEnum.values())
+        .filter(type -> type != BombTypeEnum.NONE)
+        .map(BombTypeEnum::getInternalName)
+        .collect(Collectors.toList());
 
     private static final String HEADER = String.join(System.lineSeparator(),
           "# ADF (AutoConfiguration Data File) from MegaMek.",

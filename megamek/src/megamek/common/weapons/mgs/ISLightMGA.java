@@ -40,7 +40,7 @@ public class ISLightMGA extends AmmoWeapon {
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
         rackSize = 1;
-        ammoType = AmmoType.T_MG_LIGHT;
+        ammoType = AmmoType.AmmoTypeEnum.MG_LIGHT;
         minimumRange = WEAPON_NA;
         shortRange = 2;
         mediumRange = 4;

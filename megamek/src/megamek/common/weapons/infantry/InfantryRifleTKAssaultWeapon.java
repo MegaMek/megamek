@@ -36,7 +36,7 @@ public class InfantryRifleTKAssaultWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryTKAssaultRifle");
 		addLookupName("TK Assault Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 150;
 		bv = 1.34;
 		tonnage = .0055;

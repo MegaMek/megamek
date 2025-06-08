@@ -36,7 +36,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
         heat = 10;
         damage = 10;
         rackSize = 1;
-        ammoType = AmmoType.T_PLASMA;
+        ammoType = AmmoType.AmmoTypeEnum.PLASMA;
         minimumRange = WEAPON_NA;
         shortRange = 5;
         mediumRange = 10;

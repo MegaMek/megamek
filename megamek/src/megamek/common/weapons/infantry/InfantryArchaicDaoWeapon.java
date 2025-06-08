@@ -36,7 +36,7 @@ public class InfantryArchaicDaoWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryDaoSword");
         addLookupName("Dao");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 200;
         bv = 0.04;
         tonnage = .003;

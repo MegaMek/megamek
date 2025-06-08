@@ -1440,7 +1440,7 @@ public class Compute {
         }
 
         // find any c3 spotters that could help
-        Entity c3spotter = Compute.findC3Spotter(game, ae, target);
+        Entity c3spotter = ComputeC3Spotter.findC3Spotter(game, ae, target);
         if (isIndirect) {
             c3spotter = ae; // no c3 when using indirect fire
         }
@@ -2002,9 +2002,10 @@ public class Compute {
      * Delete it if nova works but remember to alter the /nova debug server
      * command.
      */
+    @Deprecated
     public static Entity exposed_findC3Spotter(Game game, Entity attacker,
             Targetable target) {
-        return findC3Spotter(game, attacker, target);
+        return ComputeC3Spotter.findC3Spotter(game, attacker, target);
     }
 
     /**
@@ -2088,126 +2089,6 @@ public class Compute {
         logger.debug(msg.toString());
 
         return spotter;
-    }
-
-    /**
-     * find a c3, c3i, NC3, or nova spotter that is closer to the target than the
-     * attacker.
-     *
-     * @param game     The current {@link Game}
-     * @param attacker
-     * @param target
-     * @return A closer C3/C3i/Nova spotter, or the attacker if no spotters are
-     *         found
-     */
-    private static Entity findC3Spotter(Game game, Entity attacker,
-            Targetable target) {
-        // no available C3-like system
-        if (!attacker.hasC3() && !attacker.hasC3i()
-                && !attacker.hasActiveNovaCEWS() && !attacker.hasNavalC3()) {
-            return attacker;
-        }
-
-        ArrayList<Entity> network = new ArrayList<>();
-
-        // Compute friends in network
-        for (Entity friend : game.getEntitiesVector()) {
-
-            if (attacker.equals(friend)
-                    || !attacker.onSameC3NetworkAs(friend, true)
-                    || !friend.isDeployed()
-                    || (friend.getTransportId() != Entity.NONE)) {
-                continue; // useless to us...
-            }
-
-            int buddyRange = Compute.effectiveDistance(game, friend, target,
-                    false);
-
-            boolean added = false;
-            // put everyone in the C3 network into a list and sort it by range.
-            for (int pos = 0; pos < network.size(); pos++) {
-                if (Compute.effectiveDistance(game, network.get(pos), target,
-                        false) >= buddyRange) {
-                    network.add(pos, friend);
-                    added = true;
-                    break;
-                }
-            }
-
-            if (!added) {
-                network.add(friend);
-            }
-        }
-
-        // ensure network connectivity
-        List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
-                .getEntitiesVector());
-        int position = 0;
-        for (Entity spotter : network) {
-            for (int count = position++; count < network.size(); count++) {
-                if (Compute.canCompleteNodePath(spotter, attacker, network,
-                        count, allECMInfo)) {
-                    return spotter;
-                }
-            }
-        }
-
-        return attacker;
-    }
-
-    /**
-     * Looks through the network list to ensure that the given Entity is
-     * connected to the network.
-     *
-     * @param start
-     * @param end
-     * @param network
-     * @param startPosition
-     * @return
-     */
-    private static boolean canCompleteNodePath(Entity start, Entity end,
-            ArrayList<Entity> network, int startPosition,
-            List<ECMInfo> allECMInfo) {
-
-        Entity spotter = network.get(startPosition);
-
-        // ECMInfo for line between spotter's position and start's position
-        ECMInfo spotterStartECM = ComputeECM.getECMEffects(spotter,
-                start.getPosition(), spotter.getPosition(), true, allECMInfo);
-
-        // Check for ECM between spotter and start
-        boolean isC3BDefeated = start.hasBoostedC3()
-                && (spotterStartECM != null) && spotterStartECM.isAngelECM();
-        boolean isNovaDefeated = start.hasNovaCEWS()
-                && (spotterStartECM != null) && spotterStartECM.isNovaECM();
-        boolean isC3Defeated = !(start.hasBoostedC3() || start.hasNovaCEWS())
-                && (spotterStartECM != null) && spotterStartECM.isECM();
-        if (isC3BDefeated || isNovaDefeated || isC3Defeated) {
-            return false;
-        }
-
-        // ECMInfo for line between spotter's position and end's position
-        ECMInfo spotterEndECM = ComputeECM.getECMEffects(spotter,
-                spotter.getPosition(), end.getPosition(), true, allECMInfo);
-        isC3BDefeated = start.hasBoostedC3() && (spotterEndECM != null)
-                && spotterEndECM.isAngelECM();
-        isNovaDefeated = start.hasNovaCEWS() && (spotterEndECM != null)
-                && spotterEndECM.isNovaECM();
-        isC3Defeated = !(start.hasBoostedC3() || start.hasNovaCEWS())
-                && (spotterEndECM != null) && spotterEndECM.isECM();
-        // If there's no ECM between spotter and end, we're done
-        if (!(isC3BDefeated || isNovaDefeated || isC3Defeated)) {
-            return true;
-        }
-
-        for (++startPosition; startPosition < network.size(); startPosition++) {
-            if (Compute.canCompleteNodePath(spotter, end, network,
-                    startPosition, allECMInfo)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**

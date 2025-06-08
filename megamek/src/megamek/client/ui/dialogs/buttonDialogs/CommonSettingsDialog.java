@@ -203,8 +203,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           "CommonSettingsDialog.nagForLaunchDoors"));
     private final JCheckBox nagForSprint = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForSprint"));
     private final JCheckBox nagForOddSizedBoard =
-          new JCheckBox(Messages.getString(
-                "CommonSettingsDialog.nagForOddSizedBoard"));
+          new JCheckBox(Messages.getString("CommonSettingsDialog.nagForOddSizedBoard"));
     private final JCheckBox animateMove = new JCheckBox(Messages.getString("CommonSettingsDialog.animateMove"));
     private final JCheckBox showWrecks = new JCheckBox(Messages.getString("CommonSettingsDialog.showWrecks"));
     private final JCheckBox chkHighQualityGraphics = new JCheckBox(Messages.getString(
@@ -1743,8 +1742,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         traceOverlayTransparencySlider.setMaximumSize(new Dimension(1000, 100));
         traceOverlayTransparencySlider.addChangeListener(this);
         traceOverlayTransparencySlider.setToolTipText(
-              Messages.getString(
-                    "CommonSettingsDialog.TraceOverlayTransparency.tooltip"));
+              Messages.getString("CommonSettingsDialog.TraceOverlayTransparency.tooltip"));
         traceOverlayTransparencySlider.setValue(GUIP.getTraceOverlayTransparency());
 
         row = new ArrayList<>();
@@ -1831,8 +1829,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         traceOverlayImageFile.setText(GUIP.getTraceOverlayImageFile());
         JButton traceOverlayImageFileChooser = new JButton("...");
         traceOverlayImageFileChooser.addActionListener(
-              e -> selectTraceOverlayImageFile(traceOverlayImageFile,
-                    getFrame()));
+              e -> selectTraceOverlayImageFile(traceOverlayImageFile, getFrame()));
 
         row = new ArrayList<>();
         row.add(traceOverlayImageFileLabel);

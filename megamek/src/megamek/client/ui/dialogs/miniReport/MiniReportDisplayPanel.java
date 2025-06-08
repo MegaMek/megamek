@@ -74,6 +74,8 @@ import javax.swing.*;
 
 import javax.swing.*;
 
+import javax.swing.*;
+
 /**
  * Shows reports, with an Okay JButton
  */

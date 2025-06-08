@@ -154,9 +154,9 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
             weaponHeat /= 4;
         }
 
-        if ((wType.getAmmoType() == AmmoType.T_AC_ULTRA) || (wType.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+        if ((wType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) || (wType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
             weaponHeat *= 2;
-        } else if (wType.getAmmoType() == AmmoType.T_AC_ROTARY) {
+        } else if (wType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY) {
             weaponHeat *= 6;
         }
 
@@ -187,9 +187,9 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
         }
 
         // half heat for streaks
-        if ((wType.getAmmoType() == AmmoType.T_SRM_STREAK)
-                || (wType.getAmmoType() == AmmoType.T_LRM_STREAK)
-                || (wType.getAmmoType() == AmmoType.T_IATM)) {
+        if ((wType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_STREAK)
+                || (wType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_STREAK)
+                || (wType.getAmmoType() == AmmoType.AmmoTypeEnum.IATM)) {
             weaponHeat *= 0.5;
         }
 
@@ -219,12 +219,12 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
             return false;
         } else if ((eType instanceof PPCWeapon) && (mounted.getLinkedBy() == null)) {
             return false;
-        } else if ((eType instanceof WeaponType) && ((((WeaponType) eType).getAmmoType() == AmmoType.T_AC_ROTARY)
-                || (((WeaponType) eType).getAmmoType() == AmmoType.T_AC)
-                || (((WeaponType) eType).getAmmoType() == AmmoType.T_AC_IMP)
-                || (((WeaponType) eType).getAmmoType() == AmmoType.T_AC_PRIMITIVE)
-                || (((WeaponType) eType).getAmmoType() == AmmoType.T_PAC)
-                || (((WeaponType) eType).getAmmoType() == AmmoType.T_LAC))) {
+        } else if ((eType instanceof WeaponType) && ((((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY)
+                || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.AC)
+                || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP)
+                || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.AC_PRIMITIVE)
+                || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.PAC)
+                || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.LAC))) {
             return false;
         }
 

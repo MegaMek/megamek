@@ -159,10 +159,10 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
             night_modifier -= searchlightMod;
         } else if (atype != null) {
             // Certain ammunitions reduce the penalty
-            if (((atype.getAmmoType() == AmmoType.T_AC)
-                    || (atype.getAmmoType() == AmmoType.T_LAC)
-                    || (atype.getAmmoType() == AmmoType.T_AC_IMP)
-                    || (atype.getAmmoType() == AmmoType.T_PAC))
+            if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LAC)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.PAC))
                     && ((atype.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC))
                             || (atype.getMunitionType().contains(AmmoType.Munitions.M_TRACER)))) {
                 toHit.addModifier(-1, "incendiary/tracer ammo");

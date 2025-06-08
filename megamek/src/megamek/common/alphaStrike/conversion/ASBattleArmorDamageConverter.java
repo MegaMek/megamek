@@ -219,7 +219,7 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
     protected void assignSpecialAbilities(Mounted<?> weapon, WeaponType weaponType) {
         super.assignSpecialAbilities(weapon, weaponType);
 
-        if (weaponType.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
+        if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.BA_MICRO_BOMB) {
             bombRacks++;
         }
 
@@ -230,14 +230,14 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
 
     @Override
     protected void processTaser(Mounted<?> weapon, WeaponType weaponType) {
-        if (weaponType.getAmmoType() == AmmoType.T_TASER) {
+        if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.TASER) {
             assignToLocations(weapon, BTAS, 1);
         }
     }
 
     @Override
     protected void processNarc(Mounted<?> weapon, WeaponType weaponType) {
-        if (weaponType.getAmmoType() == AmmoType.T_NARC) {
+        if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.NARC) {
             assignToLocations(weapon, CNARC, 1);
         }
     }

@@ -36,7 +36,7 @@ public class InfantryRifleStarKingGyroslugCarbineWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryStarKing");
 		addLookupName("Star King Gyroslug Carbine");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 950;
 		bv = 1.07;
 		tonnage = .008;

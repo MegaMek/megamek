@@ -42,7 +42,7 @@ public abstract class InfantryWeapon extends Weapon {
         super();
         damage = DAMAGE_VARIABLE;
         flags = flags.or(F_INFANTRY);
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         shortRange = 0;
         mediumRange = 0;
         longRange = 0;

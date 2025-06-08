@@ -36,7 +36,7 @@ public class InfantryArchaicDoubleStunStaffWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryDoubleStunStaff");
         addLookupName("Double Ended Stun Staff");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 500;
         bv = 0.06;
         tonnage = .003; 

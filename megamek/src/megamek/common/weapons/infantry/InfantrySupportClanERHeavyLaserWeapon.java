@@ -37,7 +37,7 @@ public class InfantrySupportClanERHeavyLaserWeapon extends InfantryWeapon {
 		addLookupName("InfantryClanERHeavyLaser");
 		addLookupName("InfantryClanERMediumLaser");
 		addLookupName("Infantry Clan ER Heavy Laser");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 80000;
 		bv = 18.52;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);

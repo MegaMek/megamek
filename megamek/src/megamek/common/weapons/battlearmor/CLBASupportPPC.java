@@ -29,7 +29,7 @@ public class CLBASupportPPC extends PPCWeapon {
         setInternalName("BA Support PPC");
         addLookupName("CLBASupportPPC");
         damage = 2;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         shortRange = 2;
         mediumRange = 5;
         longRange = 7;

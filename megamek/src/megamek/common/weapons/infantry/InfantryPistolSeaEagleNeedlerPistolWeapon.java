@@ -36,7 +36,7 @@ public class InfantryPistolSeaEagleNeedlerPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantrySeaEagleNeedler");
 		addLookupName("Sea Eagle Needler Pistolr");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 110;
 		bv = 0.10;
 		tonnage = .00035;

@@ -37,7 +37,7 @@ public class InfantrySupportKingDavidLightGaussRifleWeapon extends InfantryWeapo
 		addLookupName("InfantryKingDavid");
 		addLookupName("InfantryKingDavidLightGaussRifle");
 		addLookupName("Infantry King David Light Gauss Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 8000;
 		bv = 4.87;
 		tonnage = .03;

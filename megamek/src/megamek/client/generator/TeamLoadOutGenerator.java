@@ -30,6 +30,7 @@ import java.util.stream.IntStream;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.dialogs.unitSelectorDialogs.AbstractUnitSelectorDialog;
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.containers.MunitionTree;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
@@ -189,17 +190,12 @@ public class TeamLoadOutGenerator {
 
     // subregion Bombs
     // bomb types assignable to aerospace units on ground maps
-    private static final int[] validBotBombs = { BombType.B_HE, BombType.B_CLUSTER, BombType.B_RL, BombType.B_INFERNO,
-                                                 BombType.B_THUNDER, BombType.B_FAE_SMALL, BombType.B_FAE_LARGE,
-                                                 BombType.B_LG, BombType.B_ARROW, BombType.B_HOMING, BombType.B_TAG };
+    private static final Set<BombTypeEnum> validBotBombs = Set.of(BombTypeEnum.HE, BombTypeEnum.CLUSTER, BombTypeEnum.RL, BombTypeEnum.INFERNO,
+                                                BombTypeEnum.THUNDER, BombTypeEnum.FAE_SMALL, BombTypeEnum.FAE_LARGE,
+                                                 BombTypeEnum.LG, BombTypeEnum.ARROW, BombTypeEnum.HOMING, BombTypeEnum.TAG);
 
-    private static final int[] validBotAABombs = { BombType.B_RL, BombType.B_LAA, BombType.B_AAA };
+    private static final Set<BombTypeEnum> validBotAABombs = Set.of(BombTypeEnum.RL, BombTypeEnum.LAA, BombTypeEnum.AAA);
 
-    /**
-     * External ordnance types that rely on TAG
-     */
-    private static final Collection<Integer> GUIDED_ORDNANCE = new HashSet<>(Arrays.asList(BombType.B_LG,
-          BombType.B_HOMING));
 
     /**
      * Relative weight distribution of various external ordnance choices for non-pirate forces
@@ -221,100 +217,110 @@ public class TeamLoadOutGenerator {
     /**
      * Relative weight distribution of general purpose external ordnance choices
      */
-    private static final Map<Integer, Integer> normalBombLoad = Map.ofEntries(Map.entry(BombType.B_HE,
-                castPropertyInt("normalBombLoad_HE", 40)),
-          Map.entry(BombType.B_LG, castPropertyInt("normalBombLoad_LG", 5)),
-          Map.entry(BombType.B_CLUSTER, castPropertyInt("normalBombLoad_CLUSTER", 30)),
-          Map.entry(BombType.B_INFERNO, castPropertyInt("normalBombLoad_INFERNO", 15)),
-          Map.entry(BombType.B_THUNDER, castPropertyInt("normalBombLoad_THUNDER", 10)));
+    private static final BombLoadout normalBombLoad = new BombLoadout() {{
+        put(BombTypeEnum.HE, castPropertyInt("normalBombLoad_HE", 40));
+        put(BombTypeEnum.LG, castPropertyInt("normalBombLoad_LG", 5));
+        put(BombTypeEnum.CLUSTER, castPropertyInt("normalBombLoad_CLUSTER", 30));
+        put(BombTypeEnum.INFERNO, castPropertyInt("normalBombLoad_INFERNO", 15));
+        put(BombTypeEnum.THUNDER, castPropertyInt("normalBombLoad_THUNDER", 10));
+    }};
 
     /**
      * Relative weight distribution of external ordnance choices for use against Meks
      */
-    private static final Map<Integer, Integer> antiMekBombLoad = Map.ofEntries(Map.entry(BombType.B_HE,
-                castPropertyInt("antiMekBombLoad_HE", 55)),
-          Map.entry(BombType.B_LG, castPropertyInt("antiMekBombLoad_LG", 15)),
-          Map.entry(BombType.B_INFERNO, castPropertyInt("antiMekBombLoad_INFERNO", 10)),
-          Map.entry(BombType.B_THUNDER, castPropertyInt("antiMekBombLoad_THUNDER", 10)),
-          Map.entry(BombType.B_HOMING, castPropertyInt("antiMekBombLoad_HOMING", 10)));
+    private static final BombLoadout antiMekBombLoad = new BombLoadout() {{
+        put(BombTypeEnum.HE, castPropertyInt("antiMekBombLoad_HE", 55));
+        put(BombTypeEnum.LG, castPropertyInt("antiMekBombLoad_LG", 15));
+        put(BombTypeEnum.INFERNO, castPropertyInt("antiMekBombLoad_INFERNO", 10));
+        put(BombTypeEnum.THUNDER, castPropertyInt("antiMekBombLoad_THUNDER", 10));
+        put(BombTypeEnum.HOMING, castPropertyInt("antiMekBombLoad_HOMING", 10));
+    }};
 
     /**
      * Relative weight distribution of external ordnance choices for use against ground vehicles and infantry
      */
-    private static final Map<Integer, Integer> antiConvBombLoad = Map.ofEntries(Map.entry(BombType.B_CLUSTER,
-                castPropertyInt("antiConvBombLoad_CLUSTER", 50)),
-          Map.entry(BombType.B_INFERNO, castPropertyInt("antiConvBombLoad_INFERNO", 40)),
-          Map.entry(BombType.B_THUNDER, castPropertyInt("antiConvBombLoad_THUNDER", 8)),
-          Map.entry(BombType.B_FAE_SMALL, castPropertyInt("antiConvBombLoad_FAE_SMALL", 2)));
+    private static final BombLoadout antiConvBombLoad = new BombLoadout() {{
+        put(BombTypeEnum.CLUSTER, castPropertyInt("antiConvBombLoad_CLUSTER", 50));
+        put(BombTypeEnum.INFERNO, castPropertyInt("antiConvBombLoad_INFERNO", 40));
+        put(BombTypeEnum.THUNDER, castPropertyInt("antiConvBombLoad_THUNDER", 8));
+        put(BombTypeEnum.FAE_SMALL, castPropertyInt("antiConvBombLoad_FAE_SMALL", 2));
+    }};
 
     /**
      * Relative weight distribution of external ordnance choices for providing artillery support
      */
-    private static final Map<Integer, Integer> standoffBombLoad = Map.ofEntries(Map.entry(BombType.B_ARROW,
-                castPropertyInt("standoffBombLoad_ARROW", 40)),
-          Map.entry(BombType.B_HOMING, castPropertyInt("standoffBombLoad_HOMING", 60)));
+    private static final BombLoadout standoffBombLoad = new BombLoadout() {{
+        put(BombTypeEnum.ARROW, castPropertyInt("standoffBombLoad_ARROW", 40));
+        put(BombTypeEnum.HOMING, castPropertyInt("standoffBombLoad_HOMING", 60));
+    }};
 
     /**
      * Relative weight distribution of external ordnance choices for attacking static targets
      */
-    private static final Map<Integer, Integer> strikeBombLoad = Map.ofEntries(Map.entry(BombType.B_LG,
-                castPropertyInt("strikeBombLoad_LG", 45)),
-          Map.entry(BombType.B_HOMING, castPropertyInt("strikeBombLoad_HOMING", 25)),
-          Map.entry(BombType.B_HE, castPropertyInt("strikeBombLoad_HE", 30)));
+    private static final BombLoadout strikeBombLoad = new BombLoadout() {{
+        put(BombTypeEnum.LG, castPropertyInt("strikeBombLoad_LG", 45));
+        put(BombTypeEnum.HOMING, castPropertyInt("strikeBombLoad_HOMING", 25));
+        put(BombTypeEnum.HE, castPropertyInt("strikeBombLoad_HE", 30));
+    }};
 
     /**
      * Relative weight distribution of external ordnance choices for low tech forces. Also used as a default/fall-back
      * selection.
      */
-    private static final Map<Integer, Integer> lowTechBombLoad = Map.ofEntries(Map.entry(BombType.B_HE,
-                castPropertyInt("lowTechBombLoad_HE", 35)),
-          Map.entry(BombType.B_RL, castPropertyInt("lowTechBombLoad_RL", 65)));
+    private static final BombLoadout lowTechBombLoad = new BombLoadout() {{
+        put(BombTypeEnum.HE, castPropertyInt("lowTechBombLoad_HE", 35));
+        put(BombTypeEnum.RL, castPropertyInt("lowTechBombLoad_RL", 65));
+    }};
 
     /**
      * Relative weight distribution of external ordnance choices for pirates. Low tech, high chaos factor.
      */
-    private static final Map<Integer, Integer> pirateBombLoad = Map.ofEntries(Map.entry(BombType.B_HE,
-                castPropertyInt("pirateBombLoad_HE", 7)),
-          Map.entry(BombType.B_RL, castPropertyInt("pirateBombLoad_RL", 45)),
-          Map.entry(BombType.B_INFERNO, castPropertyInt("pirateBombLoad_INFERNO", 35)),
-          Map.entry(BombType.B_CLUSTER, castPropertyInt("pirateBombLoad_CLUSTER", 5)),
-          Map.entry(BombType.B_FAE_SMALL, castPropertyInt("pirateBombLoad_FAE_SMALL", 6)),
-          Map.entry(BombType.B_FAE_LARGE, castPropertyInt("pirateBombLoad_FAE_LARGE", 2)));
-
+    private static final BombLoadout pirateBombLoad = new BombLoadout() {{
+        put(BombTypeEnum.HE, castPropertyInt("pirateBombLoad_HE", 7));
+        put(BombTypeEnum.RL, castPropertyInt("pirateBombLoad_RL", 45));
+        put(BombTypeEnum.INFERNO, castPropertyInt("pirateBombLoad_INFERNO", 35));
+        put(BombTypeEnum.CLUSTER, castPropertyInt("pirateBombLoad_CLUSTER", 5));
+        put(BombTypeEnum.FAE_SMALL, castPropertyInt("pirateBombLoad_FAE_SMALL", 6));
+        put(BombTypeEnum.FAE_LARGE, castPropertyInt("pirateBombLoad_FAE_LARGE", 2));
+    }};
     /**
      * External ordnance choices for pirates to set things on fire
      */
-    private static final Map<Integer, Integer> pirateFirestormBombLoad = Map.ofEntries(Map.entry(BombType.B_INFERNO,
-                castPropertyInt("pirateFirestormBombLoad_INFERNO", 60)),
-          Map.entry(BombType.B_FAE_SMALL, castPropertyInt("pirateFirestormBombLoad_FAE_SMALL", 30)),
-          Map.entry(BombType.B_FAE_LARGE, castPropertyInt("pirateFirestormBombLoad_FAE_LARGE", 10)));
+    private static final BombLoadout pirateFirestormBombLoad = new BombLoadout() {{
+        put(BombTypeEnum.INFERNO, castPropertyInt("pirateFirestormBombLoad_INFERNO", 60));
+        put(BombTypeEnum.FAE_SMALL, castPropertyInt("pirateFirestormBombLoad_FAE_SMALL", 30));
+        put(BombTypeEnum.FAE_LARGE, castPropertyInt("pirateFirestormBombLoad_FAE_LARGE", 10));
+    }};
 
     /**
      * External ordnance choices for air-to-air combat
      */
-    private static final Map<Integer, Integer> antiAirBombLoad = Map.ofEntries(Map.entry(BombType.B_RL,
-                castPropertyInt("antiAirBombLoad_RL", 40)),
-          Map.entry(BombType.B_LAA, castPropertyInt("antiAirBombLoad_LAA", 40)),
-          Map.entry(BombType.B_AAA, castPropertyInt("antiAirBombLoad_AAA", 15)),
-          Map.entry(BombType.B_AS, castPropertyInt("antiAirBombLoad_AS", 4)),
-          Map.entry(BombType.B_ASEW, castPropertyInt("antiAirBombLoad_ASEW", 1)));
+    private static final BombLoadout antiAirBombLoad = new BombLoadout() {{
+        put(BombTypeEnum.RL, castPropertyInt("antiAirBombLoad_RL", 40));
+        put(BombTypeEnum.LAA, castPropertyInt("antiAirBombLoad_LAA", 40));
+        put(BombTypeEnum.AAA, castPropertyInt("antiAirBombLoad_AAA", 15));
+        put(BombTypeEnum.AS, castPropertyInt("antiAirBombLoad_AS", 4));
+        put(BombTypeEnum.ASEW, castPropertyInt("antiAirBombLoad_ASEW", 1));
+    }};
 
     /**
      * External ordnance choices for attacking DropShips and other large craft
      */
-    private static final Map<Integer, Integer> antiShipBombLoad = Map.ofEntries(Map.entry(BombType.B_AAA,
-                castPropertyInt("antiShipBombLoad_AAA", 50)),
-          Map.entry(BombType.B_AS, castPropertyInt("antiShipBombLoad_AS", 35)),
-          Map.entry(BombType.B_ASEW, castPropertyInt("antiShipBombLoad_ASEW", 15)));
+    private static final BombLoadout antiShipBombLoad = new BombLoadout() {{
+        put(BombTypeEnum.AAA, castPropertyInt("antiShipBombLoad_AAA", 50));
+        put(BombTypeEnum.AS, castPropertyInt("antiShipBombLoad_AS", 35));
+        put(BombTypeEnum.ASEW, castPropertyInt("antiShipBombLoad_ASEW", 15));
+    }};
 
     /**
      * External ordnance choices for pirate air-to-air combat. Selects fewer high-tech choices than the standard load
      * out.
      */
-    private static final Map<Integer, Integer> pirateAirBombLoad = Map.ofEntries(Map.entry(BombType.B_RL,
-                castPropertyInt("pirateAntiBombLoad_RL", 60)),
-          Map.entry(BombType.B_LAA, castPropertyInt("pirateAntiBombLoad_LAA", 30)),
-          Map.entry(BombType.B_AAA, castPropertyInt("pirateAntiBombLoad_AAA", 10)));
+    private static final BombLoadout pirateAirBombLoad = new BombLoadout() {{
+        put(BombTypeEnum.RL, castPropertyInt("pirateAntiBombLoad_RL", 60));
+        put(BombTypeEnum.LAA, castPropertyInt("pirateAntiBombLoad_LAA", 30));
+        put(BombTypeEnum.AAA, castPropertyInt("pirateAntiBombLoad_AAA", 10));
+    }};
 
     // end subregion Bombs
     // endregion Constants
@@ -485,7 +491,7 @@ public class TeamLoadOutGenerator {
 
     private static long checkForNARC(ArrayList<Entity> el) {
         return el.stream()
-                     .filter(e -> e.getAmmo().stream().anyMatch(a -> a.getType().getAmmoType() == AmmoType.T_NARC))
+                     .filter(e -> e.getAmmo().stream().anyMatch(a -> a.getType().getAmmoType() == AmmoType.AmmoTypeEnum.NARC))
                      .count();
     }
 
@@ -1383,15 +1389,15 @@ public class TeamLoadOutGenerator {
                                                                 60))) / 100.0) * bomberList.size()), bomberList.size());
         int numBombers = 0;
 
-        Map<Integer, int[]> bombsByCarrier = new HashMap<>();
+        Map<Integer, BombLoadout> bombsByCarrier = new HashMap<>();
 
         boolean forceHasGuided = false;
         for (int i = 0; i < bomberList.size(); i++) {
             int minThrust;
             int maxLoad;
 
-            int[] generatedBombs;
-            bombsByCarrier.put(i, new int[BombType.B_NUM]);
+            BombLoadout generatedBombs;
+            bombsByCarrier.put(i, new BombLoadout());
 
             // Only generate loadouts up to the maximum number, use empty load out for the rest
             if (numBombers >= maxBombers) {
@@ -1446,12 +1452,12 @@ public class TeamLoadOutGenerator {
                   techBase,
                   mixedTech);
             // Whoops, go yell at the ordnance technician
-            if (Arrays.stream(generatedBombs).sum() == 0) {
+            if (generatedBombs.getTotalBombs() <= 0) {
                 continue;
             }
 
             // Set a flag to indicate at least one of the bombers is carrying guided ordnance
-            forceHasGuided = forceHasGuided || hasGuidedOrdnance(generatedBombs);
+            forceHasGuided = forceHasGuided || generatedBombs.hasGuidedOrdnance();
 
             // Store the bomb selections as we might need to add in TAG later
             bombsByCarrier.put(i, generatedBombs);
@@ -1466,7 +1472,7 @@ public class TeamLoadOutGenerator {
         loadBombsOntoBombers(bomberList, bombsByCarrier, forceHasGuided);
     }
 
-    private static void loadBombsOntoBombers(List<Entity> bomberList, Map<Integer, int[]> bombsByCarrier,
+    private static void loadBombsOntoBombers(List<Entity> bomberList, Map<Integer, BombLoadout> bombsByCarrier,
           boolean forceHasGuided) {
         // Load ordnance onto units. If there is guided ordnance present then randomly add some TAG pods to those
         // without the guided ordnance.
@@ -1474,7 +1480,7 @@ public class TeamLoadOutGenerator {
         for (int i = 0; i < bomberList.size(); i++) {
             Entity curBomber = bomberList.get(i);
 
-            int[] generatedBombs = bombsByCarrier.get(i);
+            BombLoadout generatedBombs = bombsByCarrier.get(i);
 
             // Don't combine guided ordnance with external TAG
             if (forceHasGuided && tagCount > 0) {
@@ -1488,7 +1494,7 @@ public class TeamLoadOutGenerator {
             }
 
             // Load the provided ordnance onto the unit
-            if (generatedBombs != null && Arrays.stream(generatedBombs).sum() > 0) {
+            if (generatedBombs.getTotalBombs() > 0) {
                 ((IBomber) curBomber).setBombChoices(generatedBombs);
             }
         }
@@ -1509,10 +1515,10 @@ public class TeamLoadOutGenerator {
      * @return array of integers, with each element being a bomb count using BombUnit enums as the lookup e.g.
      *       [BombUnit.HE] will get the number of HE bombs.
      */
-    public int[] generateExternalOrdnance(int bombUnits, boolean airOnly, boolean isPirate, int quality, int year,
+    public BombLoadout generateExternalOrdnance(int bombUnits, boolean airOnly, boolean isPirate, int quality, int year,
           String faction, String techBase, boolean mixedTech) {
 
-        int[] bombLoad = new int[BombType.B_NUM];
+        BombLoadout bombLoad = new BombLoadout();
 
         if (bombUnits <= 0) {
             return bombLoad;
@@ -1524,7 +1530,7 @@ public class TeamLoadOutGenerator {
         double randomThreshold;
 
         // Use weighted random generation for air-to-ground loadouts. Use simple random selection for air-to-air.
-        Map<Integer, Integer> bombMap;
+        BombLoadout bombMap;
         if (!airOnly) {
             bombMap = lowTechBombLoad;
 
@@ -1608,23 +1614,23 @@ public class TeamLoadOutGenerator {
         boolean guidedAndArrowAvailable = ((year >= 2600) && (year <= 2835)) || (year > 3044);
 
         // Generate a working map with all the unavailable ordnance replaced with rockets or HE
-        Map<Integer, Integer> workingBombMap = new HashMap<>();
-        for (int curBombType : bombMap.keySet()) {
+        BombLoadout workingBombMap = new BombLoadout();
+        for (BombTypeEnum curBombType : bombMap.keySet()) {
             // Make sure the bomb type is even legal for the current scenario
             if (!checkLegality(BombType.createBombByType(curBombType), faction, techBase, mixedTech)) {
                 continue;
             }
 
-            String typeName = BombType.getBombInternalName(curBombType);
-            if (curBombType == BombType.B_RL ||
-                      curBombType == BombType.B_HE ||
-                      (curBombType != BombType.B_LG &&
-                             curBombType != BombType.B_ARROW &&
-                             curBombType != BombType.B_HOMING &&
+            String typeName = curBombType.getInternalName();
+            if (curBombType == BombTypeEnum.RL ||
+                      curBombType == BombTypeEnum.HE ||
+                      (curBombType != BombTypeEnum.LG &&
+                             curBombType != BombTypeEnum.ARROW &&
+                             curBombType != BombTypeEnum.HOMING &&
                              BombType.get(typeName).isAvailableIn(year, false)) ||
-                      ((curBombType == BombType.B_LG ||
-                              curBombType == BombType.B_ARROW ||
-                              curBombType == BombType.B_HOMING) && guidedAndArrowAvailable)) {
+                      ((curBombType == BombTypeEnum.LG ||
+                              curBombType == BombTypeEnum.ARROW ||
+                              curBombType == BombTypeEnum.HOMING) && guidedAndArrowAvailable)) {
 
                 if (workingBombMap.containsKey(curBombType)) {
                     workingBombMap.put(curBombType, bombMap.get(curBombType) + workingBombMap.get(curBombType));
@@ -1633,12 +1639,12 @@ public class TeamLoadOutGenerator {
                 }
 
             } else {
-                int replacementBomb = airOnly ?
-                                            BombType.B_RL :
+                BombTypeEnum replacementBomb = airOnly ?
+                                            BombTypeEnum.RL :
                                             Compute.randomInt(castPropertyInt("bombReplacementIntRange", 2)) <=
                                                   castPropertyInt("bombReplacementRLThreshold", 0) ?
-                                                  BombType.B_RL :
-                                                  BombType.B_HE;
+                                                  BombTypeEnum.RL :
+                                                  BombTypeEnum.HE;
                 if (workingBombMap.containsKey(replacementBomb)) {
                     workingBombMap.put(replacementBomb, bombMap.get(curBombType) + workingBombMap.get(replacementBomb));
                 } else {
@@ -1650,12 +1656,12 @@ public class TeamLoadOutGenerator {
 
         // Generate enough bombs to meet the desired count
 
-        int selectedBombType = -1;
+        BombTypeEnum selectedBombType = BombTypeEnum.NONE;
         int loopSafety = 0;
 
-        List<Integer> ordnanceIDs = new ArrayList<>();
+        List<BombTypeEnum> ordnanceIDs = new ArrayList<>();
         List<Integer> ordnanceRandomWeights = new ArrayList<>();
-        for (int curID : workingBombMap.keySet()) {
+        for (BombTypeEnum curID : workingBombMap.keySet()) {
             ordnanceIDs.add(curID);
             ordnanceRandomWeights.add(workingBombMap.get(curID));
         }
@@ -1682,9 +1688,9 @@ public class TeamLoadOutGenerator {
 
                 // If the selected ordnance doesn't exceed the provided limit increment the counter, otherwise skip
                 // it and keep trying with some safeties to prevent infinite loops.
-                if (selectedBombType >= 0 && curLoad + BombType.getBombCost(selectedBombType) <= bombUnits) {
-                    bombLoad[selectedBombType]++;
-                    curLoad += BombType.getBombCost(selectedBombType);
+                if ((selectedBombType != BombTypeEnum.NONE) && (curLoad + selectedBombType.getCost() <= bombUnits)) {
+                    bombLoad.addBombs(selectedBombType, 1);
+                    curLoad += selectedBombType.getCost();
                 } else {
                     loopSafety++;
                 }
@@ -1692,15 +1698,15 @@ public class TeamLoadOutGenerator {
         }
 
         // Oops, nothing left - rocket launchers are always popular
-        if (Arrays.stream(bombLoad).sum() == 0) {
+        if (bombLoad.getTotalBombs() == 0) {
             // Rocket Launchers are a good option after CI era
-            if (checkLegality(BombType.createBombByType(BombType.B_RL), faction, techBase, mixedTech)) {
-                bombLoad[BombType.B_RL] = bombUnits;
+            if (checkLegality(BombType.createBombByType(BombTypeEnum.RL), faction, techBase, mixedTech)) {
+                bombLoad.put(BombTypeEnum.RL, bombUnits);
                 return bombLoad;
             }
             // Otherwise, Prototype Rocket Launchers are almost always in style.
-            if (checkLegality(BombType.createBombByType(BombType.B_RLP), faction, techBase, mixedTech)) {
-                bombLoad[BombType.B_RLP] = bombUnits;
+            if (checkLegality(BombType.createBombByType(BombTypeEnum.RLP), faction, techBase, mixedTech)) {
+                bombLoad.put(BombTypeEnum.RLP, bombUnits);
                 return bombLoad;
             }
         }
@@ -1708,16 +1714,16 @@ public class TeamLoadOutGenerator {
         // Randomly replace advanced ordnance with rockets or HE, depending on force rating and air-air/ground
         // preference
 
-        List<Integer> advancedOrdnance = Arrays.asList(BombType.B_LG,
-              BombType.B_ARROW,
-              BombType.B_HOMING,
-              BombType.B_LAA,
-              BombType.B_AAA,
-              BombType.B_THUNDER,
-              BombType.B_FAE_SMALL,
-              BombType.B_FAE_LARGE,
-              BombType.B_AS,
-              BombType.B_ASEW);
+        List<BombTypeEnum> advancedOrdnance = List.of(BombTypeEnum.LG,
+              BombTypeEnum.ARROW,
+              BombTypeEnum.HOMING,
+              BombTypeEnum.LAA,
+              BombTypeEnum.AAA,
+              BombTypeEnum.THUNDER,
+              BombTypeEnum.FAE_SMALL,
+              BombTypeEnum.FAE_LARGE,
+              BombTypeEnum.AS,
+              BombTypeEnum.ASEW);
 
         randomThreshold = switch (quality) {
             case ForceDescriptor.RATING_5, ForceDescriptor.RATING_4 ->
@@ -1729,20 +1735,21 @@ public class TeamLoadOutGenerator {
             default -> throw new IllegalArgumentException("Unrecognized rating value: " + quality);
         };
 
-        for (int curBomb : advancedOrdnance) {
-            int loadCount = bombLoad[curBomb];
+        for (BombTypeEnum curBomb : advancedOrdnance) {
+            int loadCount = bombLoad.getCount(curBomb);
 
             for (int i = 0; i < loadCount; i++) {
                 if (Compute.randomInt(100) < randomThreshold) {
                     if (airOnly) {
-                        bombLoad[BombType.B_RL]++;
+                        bombLoad.addBombs(BombTypeEnum.RL, 1);
                     } else {
-                        bombLoad[Compute.randomInt(castPropertyInt("bombReplacementIntRange", 2)) <=
+                        BombTypeEnum replacementBomb = Compute.randomInt(castPropertyInt("bombReplacementIntRange", 2)) <=
                                        castPropertyInt("bombReplacementRLThreshold", 0) ?
-                                       BombType.B_RL :
-                                       BombType.B_HE]++;
+                                       BombTypeEnum.RL :
+                                       BombTypeEnum.HE;
+                        bombLoad.addBombs(replacementBomb, 1);
                     }
-                    bombLoad[curBomb]--;
+                    bombLoad.addBombs(curBomb, -1);
                 }
             }
         }
@@ -1750,62 +1757,33 @@ public class TeamLoadOutGenerator {
     }
 
     /**
-     * Checks to see if a bomb load contains ordnance that relies on TAG guidance, such as laser/TAG guided bombs and
-     * homing Arrow IV
-     *
-     * @param bombLoad array of size BombType.B_NUM, suitable for setting bombs on IBomber entities
-     *
-     * @return true if guided ordnance is carried
-     */
-    private static boolean hasGuidedOrdnance(int[] bombLoad) {
-        if (bombLoad.length < Collections.max(GUIDED_ORDNANCE)) {
-            throw new IllegalArgumentException("Invalid array LENGTH for bombLoad parameter.");
-        }
-
-        for (int curHomingBomb : GUIDED_ORDNANCE) {
-            if (bombLoad[curHomingBomb] > 0) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Updates a bomb load to include an external TAG system. If this exceeds the provided maximum load (in bomb units
      * i.e. Arrow IV counts as multiple units), then one of the basic one-slot types is removed and the TAG system is
      * added in its place.
      *
-     * @param bombLoad   array of size BombType.B_NUM, suitable for setting bombs on IBomber entities
+     * @param bombLoad   a BombLoadout to update with TAG
      * @param skipGuided true to only select external TAG for units without guided ordnance
      * @param maxLoad    Maximum external ordnance load in total bomb units (NOT bomb count)
      *
      * @return true, if TAG was added, false otherwise
      */
-    private static boolean addExternalTAG(int[] bombLoad, boolean skipGuided, int maxLoad) {
-        if (bombLoad.length < BombType.B_NUM) {
-            throw new IllegalArgumentException("Invalid array length for bombLoad parameter.");
-        }
-
-        if (!skipGuided || !hasGuidedOrdnance(bombLoad)) {
-
-            // If there's enough room, add it
-            int totalLoad = IntStream.range(0, bombLoad.length)
-                                  .map(i -> BombType.getBombCost(i) * Math.max(bombLoad[i], 0))
-                                  .sum();
+    private static boolean addExternalTAG(BombLoadout bombLoad, boolean skipGuided, int maxLoad) {
+        if (!skipGuided || !bombLoad.hasGuidedOrdnance()) {
+            int totalLoad = bombLoad.getTotalBombCost();
             if (totalLoad < maxLoad) {
-                bombLoad[BombType.B_TAG]++;
+                bombLoad.addBombs(BombTypeEnum.TAG, 1);
                 return true;
             } else if (totalLoad == maxLoad) {
-
-                List<Integer> replaceableTypes = Arrays.asList(BombType.B_RL,
-                      BombType.B_HE,
-                      BombType.B_INFERNO,
-                      BombType.B_CLUSTER);
-                for (int i = 0; i < replaceableTypes.size(); i++) {
-                    if (bombLoad[i] > 0) {
-                        bombLoad[i]--;
-                        bombLoad[BombType.B_TAG]++;
+                Set<BombTypeEnum> replaceableTypes = Set.of(
+                    BombTypeEnum.RL,
+                    BombTypeEnum.HE,
+                    BombTypeEnum.INFERNO,
+                    BombTypeEnum.CLUSTER
+                );
+                for (BombTypeEnum curType : replaceableTypes) {
+                    if (bombLoad.getCount(curType) > 0) {
+                        bombLoad.addBombs(curType, -1);
+                        bombLoad.addBombs(BombTypeEnum.TAG, 1);
                         return true;
                     }
                 }
@@ -1814,8 +1792,7 @@ public class TeamLoadOutGenerator {
                 // Already overloaded, don't bother
                 return false;
             }
-
-            bombLoad[BombType.B_TAG]++;
+            bombLoad.addBombs(BombTypeEnum.TAG, 1);
             return true;
         }
 

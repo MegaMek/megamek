@@ -31,7 +31,7 @@ public class ISTHBLB2XAC extends LBXACWeapon {
         this.heat = 1;
         this.damage = 2;
         this.rackSize = 2;
-        this.ammoType = AmmoType.T_AC_LBX_THB;
+        this.ammoType = AmmoType.AmmoTypeEnum.AC_LBX_THB;
         this.minimumRange = 6;
         this.shortRange = 10;
         this.mediumRange = 18;

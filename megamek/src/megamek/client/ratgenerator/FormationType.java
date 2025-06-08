@@ -203,7 +203,7 @@ public class FormationType {
                     continue;
                 }
                 int damage = 0;
-                if (weapon.getAmmoType() != AmmoType.T_NA) {
+                if (weapon.getAmmoType() != AmmoType.AmmoTypeEnum.NA) {
                     Optional<EquipmentType> ammo = ms.getEquipmentNames()
                                                          .stream()
                                                          .map(EquipmentType::get)

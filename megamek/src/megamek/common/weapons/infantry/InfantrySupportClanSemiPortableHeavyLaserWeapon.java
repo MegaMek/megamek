@@ -37,7 +37,7 @@ public class InfantrySupportClanSemiPortableHeavyLaserWeapon extends InfantryWea
 		addLookupName("InfantryClanSemiPortableHeavyLaser");
 		addLookupName("InfantryClanHeavySmallLaser");
 		addLookupName("Infantry Clan Semi-Portable Heavy laser");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 20000;
 		bv = 7.53;
 		tonnage = 0.025;

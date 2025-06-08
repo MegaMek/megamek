@@ -631,7 +631,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         getMountedAmmo();
         AmmoType bayAType = bayWAmmo.getType();
         if ((bayWAmmo.getType().hasFlag(AmmoType.F_AR10_BARRACUDA)) ||
-                  (bayAType.getAmmoType() == AmmoType.T_BARRACUDA)) {
+                  (bayAType.getAmmoType() == AmmoType.AmmoTypeEnum.BARRACUDA)) {
             toHit.addModifier(-2, "Barracuda Missile");
         }
 
@@ -775,7 +775,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
 
         // AR10 munitions
         if (ammoType != null) {
-            if (ammoType.getAmmoType() == AmmoType.T_AR10) {
+            if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AR10) {
                 if (ammoType.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
                     toReturn = 4;
                 } else if (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
@@ -867,24 +867,24 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      * get the cap mis mod given a single ammo type
      */
     protected int getCritMod(AmmoType ammoType) {
-        if (ammoType == null || ammoType.getAmmoType() == AmmoType.T_PIRANHA) {
+        if (ammoType == null || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.PIRANHA) {
             return 0;
         }
 
-        if (ammoType.getAmmoType() == AmmoType.T_WHITE_SHARK || ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
+        if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.WHITE_SHARK || ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
                   // Santa Anna, per IO rules
                   || ammoType.hasFlag(AmmoType.F_SANTA_ANNA)) {
             return 9;
-        } else if (ammoType.getAmmoType() == AmmoType.T_KRAKEN_T || ammoType.getAmmoType() == AmmoType.T_KRAKENM
+        } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.KRAKEN_T || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.KRAKENM
                          // Peacemaker, per IO rules
                          || ammoType.hasFlag(AmmoType.F_PEACEMAKER)) {
             return 8;
-        } else if (ammoType.getAmmoType() == AmmoType.T_KILLER_WHALE ||
+        } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.KILLER_WHALE ||
                          ammoType.hasFlag(AmmoType.F_AR10_KILLER_WHALE) ||
-                         ammoType.getAmmoType() == AmmoType.T_MANTA_RAY ||
-                         ammoType.getAmmoType() == AmmoType.T_ALAMO) {
+                         ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MANTA_RAY ||
+                         ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ALAMO) {
             return 10;
-        } else if (ammoType.getAmmoType() == AmmoType.T_STINGRAY) {
+        } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.STINGRAY) {
             return 12;
         }
 
@@ -895,7 +895,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     protected double updateAVforAmmo(double currentAttackValue, AmmoType ammoType, WeaponType bayWeaponType, int range,
                                      int wId) {
         // AR10 munitions
-        if (ammoType.getAmmoType() == AmmoType.T_AR10) {
+        if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AR10) {
             if (ammoType.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
                 currentAttackValue = 4;
             } else if (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {

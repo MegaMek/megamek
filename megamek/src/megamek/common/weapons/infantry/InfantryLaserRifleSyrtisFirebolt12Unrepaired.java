@@ -28,7 +28,7 @@ public class InfantryLaserRifleSyrtisFirebolt12Unrepaired extends InfantryWeapon
         name = "Laser Rifle (Syrtis Firebolt-12) (Unrepaired)";
         setInternalName(name);
         addLookupName("FIREBOLT12u");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 2200;
         bv = 0.525;
         tonnage = 0.0065;

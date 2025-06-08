@@ -18,151 +18,209 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import megamek.common.ITechnology;
+
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 
 import static java.util.stream.Collectors.toList;
 
 public class BombType extends AmmoType {
 
-    public static final int B_NONE    = -1;
-    public static final int B_HE      = 0;
-    public static final int B_CLUSTER = 1;
-    public static final int B_LG      = 2;
-    public static final int B_RL      = 3;
-    public static final int B_TAG     = 4;
-    public static final int B_AAA     = 5;
-    public static final int B_AS      = 6;
-    public static final int B_ASEW    = 7;
-    public static final int B_ARROW   = 8;
-    public static final int B_HOMING  = 9;
-    public static final int B_INFERNO = 10;
-    public static final int B_LAA     = 11;
-    public static final int B_THUNDER = 12;
-    public static final int B_TORPEDO = 13;
-    public static final int B_ALAMO   = 14;
-    public static final int B_FAE_SMALL = 15;
-    public static final int B_FAE_LARGE = 16;
-    // Rocket Launcher (Prototype) Pod
-    public static final int B_RLP = 17;
-    public static final int B_NUM     = 18;
+    public enum BombTypeEnum {
+        NONE(-1, "None", "None", null, false, 0, false, false, false),
+        HE(0, "HE Bomb", "HEBomb", null, false, 1, true, true, false),
+        CLUSTER(1, "Cluster Bomb", "ClusterBomb", null, false, 1, true, true, false),
+        LG(2, "Laser-guided Bomb", "LGBomb", null, false, 1, true, true, true),
+        RL(3, "Rocket", "RL 10 Ammo (Bomb)", "BombRL", false, 1, false, false, false),
+        TAG(4, "TAG", "TAGBomb", "BombTAG", false, 1, false, false, true),
+        AAA(5, "AAA Missile", "AAAMissile Ammo", "AAA Missile", true, 5, false, false, false),
+        AS(6, "AS Missile", "ASMissile Ammo", "AS Missile", true, 6, false, false, false),
+        ASEW(7, "ASEW Missile", "ASEWMissile Ammo", "ASEWMissile", true, 6, false, false, false),
+        ARROW(8, "Arrow IV Missile", "ArrowIVMissile Ammo", "BombArrowIV", true, 5, true, false, false),
+        HOMING(9, "Arrow IV Homing Missile", "ArrowIVHomingMissile Ammo", "BombArrowIV", true, 5, true, false, false),
+        INFERNO(10, "Inferno Bomb", "InfernoBomb", null, true, 1, false, true, false),
+        LAA(11, "LAA Missile", "LAAMissile Ammo", "LAAMissile", true, 2, false, false, false),
+        THUNDER(12, "Thunder Bomb", "ThunderBomb", null, true, 1, false, true, false),
+        TORPEDO(13, "Torpedo Bomb", "TorpedoBomb", null, true, 1, false, true, false),
+        ALAMO(14, "Alamo Missile", "AlamoMissile Ammo", "AlamoMissile", true, 10, false, false, false),
+        FAE_SMALL(15, "Fuel-Air Bomb (small)", "FABombSmall Ammo", null, true, 1, false, true, false),
+        FAE_LARGE(16, "Fuel-Air Bomb (large)", "FABombLarge Ammo", null, true, 2, false, true, false),
+        RLP(17, "Prototype Rocket", "RL-P 10 Ammo (Bomb)", "BombRLP", true, 1, false, false, false);
 
-    public static final String[] bombNames = { "HE Bomb","Cluster Bomb","Laser-guided Bomb",
-                                              "Rocket", "TAG", "AAA Missile", "AS Missile",
-                                              "ASEW Missile", "Arrow IV Missile",
-                                              "Arrow IV Homing Missile", "Inferno Bomb",
-                                              "LAA Missile", "Thunder Bomb", "Torpedo Bomb",
-                                              "Alamo Missile", "Fuel-Air Bomb (small)", "Fuel-Air Bomb (large)",
-                                              "Prototype Rocket"};
+        private static final Map<Integer, BombTypeEnum> INDEX_LOOKUP = new HashMap<>();
+        private static final Map<String, BombTypeEnum> INTERNAL_NAME_LOOKUP = new HashMap<>();
+        static {
+            for (BombTypeEnum bt : values()) {
+                INDEX_LOOKUP.put(bt.index, bt);
+                INTERNAL_NAME_LOOKUP.put(bt.internalName, bt);
+            }
+        }
 
-    public static final String[] bombInternalNames = { "HEBomb","ClusterBomb","LGBomb",
-                                                      "RL 10 Ammo (Bomb)", "TAGBomb", "AAAMissile Ammo",
-                                                      "ASMissile Ammo",
-                                                      "ASEWMissile Ammo", "ArrowIVMissile Ammo",
-                                                      "ArrowIVHomingMissile Ammo", "InfernoBomb",
-                                                      "LAAMissile Ammo", "ThunderBomb", "TorpedoBomb",
-                                                      "AlamoMissile Ammo", "FABombSmall Ammo", "FABombLarge Ammo",
-                                                      "RL-P 10 Ammo (Bomb)" };
+        private final int index;
+        private final String displayName;
+        private final String internalName;
+        private final String weaponName;
+        private final boolean advancedAmmo;
+        private final int cost;
+        private final boolean canSpaceBomb;
+        private final boolean canGroundBomb;
+        private final boolean isGuided;
 
-    public static final String[] bombWeaponNames = { null, null, null, "BombRL", "BombTAG", "AAA Missile",
-                                                    "AS Missile", "ASEWMissile", "BombArrowIV", "BombArrowIV",
-                                                    null, "LAAMissile", null, null, "AlamoMissile", null, null,
-                                                    "BombRLP"};
+        BombTypeEnum(int index, String displayName, String internalName, String weaponName, boolean advancedAmmo, int cost, boolean canSpaceBomb, boolean canGroundBomb, boolean isGuided) {
+            this.index = index;
+            this.displayName = displayName;
+            this.internalName = internalName;
+            this.weaponName = weaponName;
+            this.advancedAmmo = advancedAmmo;
+            this.cost = cost;
+            this.canSpaceBomb = canSpaceBomb;
+            this.canGroundBomb = canGroundBomb;
+            this.isGuided = isGuided;
+        }
 
-    public static final int[] bombCosts = { 1, 1, 1, 1, 1, 5, 6, 6, 5, 5, 1, 2, 1, 1, 10, 1, 2, 1 };
+        public int getIndex() {
+            return index;
+        }
 
-    private int bombType;
+        public String getDisplayName() {
+            return displayName;
+        }
 
-    public static final Map<String, Integer> blastRadius;
-    static {
-        blastRadius = new HashMap<>();
+        public String getInternalName() {
+            return internalName;
+        }
+
+        public String getWeaponName() {
+            return weaponName;
+        }
+
+        public int getCost() {
+            return cost;
+        }
+
+        public boolean canSpaceBomb() {
+            return canSpaceBomb;
+        }
+
+        public boolean canGroundBomb() {
+            return canGroundBomb;
+        }
+
+        public boolean isGuided() {
+            return isGuided;
+        }
+
+        public boolean isAdvancedAmmo() {
+            return advancedAmmo;
+        }
+
+        /**
+         * Checks if a bomb type is allowed given current game settings.
+         * @param gameOptions the current game options
+         * @return true if the bomb type is allowed, false otherwise
+         */
+        public boolean isAllowedByGameOptions(GameOptions gameOptions) {
+            if (this == BombTypeEnum.ALAMO && 
+                !gameOptions.booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
+                return false;
+            }
+            int gameTL = TechConstants.getSimpleLevel(
+                gameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)
+            );
+            if (this.isAdvancedAmmo() && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
+                return false;
+            }
+            return true;
+        }
+
+        public static BombTypeEnum fromIndex(int index) {
+            return INDEX_LOOKUP.getOrDefault(index, NONE);
+        }
+
+        public static BombTypeEnum fromInternalName(String name) {
+            return INTERNAL_NAME_LOOKUP.getOrDefault(name, NONE);
+        }
+
     }
 
+    private BombTypeEnum bombType;
+    private int blastRadius = 0;
+
+    @Deprecated(
+            forRemoval = true,
+            since = "0.50.7")
     public static String getBombName(int type) {
-        if ((type >= B_NUM) || (type < 0)) {
-            return "Unknown bomb type";
-        }
-        return bombNames[type];
+        return BombTypeEnum.fromIndex(type).getDisplayName();
     }
 
-    public static int getBombTypeFromName(String name) {
-        for (int i = 0; i < B_NUM; i++) {
-            if (bombNames[i].equals(name)) {
-                return i;
+    @Deprecated(
+            forRemoval = true,
+            since = "0.50.7")
+    public static BombTypeEnum getBombTypeFromName(String name) {
+        if (name == null || name.isEmpty()) {
+            return BombTypeEnum.NONE;
+        }
+        for (BombTypeEnum bType : BombTypeEnum.values()) {
+            if (bType.getDisplayName().equalsIgnoreCase(name)) {
+                return bType;
             }
         }
-        return B_NONE;
+        return BombTypeEnum.NONE;
     }
 
-    public static int getBombTypeFromInternalName(String name) {
-        for (int i = 0; i < B_NUM; i++) {
-            if (bombInternalNames[i].equalsIgnoreCase(name)) {
-                return i;
-            }
-        }
-        return B_NONE;
+    @Deprecated(
+            forRemoval = true,
+            since = "0.50.7")
+    public static BombTypeEnum getBombTypeFromInternalName(String name) {
+        return BombTypeEnum.fromInternalName(name);
     }
 
+    @Deprecated(
+            forRemoval = true,
+            since = "0.50.7")
     public static String getBombWeaponName(int type) {
-        if ((type >= B_NUM) || (type < 0)) {
+        BombTypeEnum bombType = BombTypeEnum.fromIndex(type);
+        if (bombType == BombTypeEnum.NONE) {
             return "Unknown bomb weapon";
         }
-        return bombWeaponNames[type];
+        return bombType.getWeaponName();
     }
 
-    public static int getBombTypeForWeapon(EquipmentType weapon) {
-        for (int i = 0; i < B_NUM; i++) {
-            if (bombWeaponNames[i] != null
-                    && bombWeaponNames[i].equals(weapon.getInternalName())) {
-                return i;
+    @Deprecated(
+            forRemoval = true,
+            since = "0.50.7")
+    public static BombTypeEnum getBombTypeForWeapon(EquipmentType weapon) {
+        if (!(weapon instanceof BombType)) {
+            return BombTypeEnum.NONE;
+        }
+        String weaponName = weapon.getInternalName();
+        for (BombTypeEnum bType : BombTypeEnum.values()) {
+            if (bType.getInternalName().equalsIgnoreCase(weaponName)) {
+                return bType;
             }
         }
-        return -1;
+        return BombTypeEnum.NONE;
     }
 
+    @Deprecated(
+            forRemoval = true,
+            since = "0.50.7")
     public static String getBombInternalName(int type) {
-        if ((type >= B_NUM) || (type < 0)) {
+        BombTypeEnum bombType = BombTypeEnum.fromIndex(type);
+        if (bombType == BombTypeEnum.NONE) {
             return "Unknown bomb type";
         }
-        return bombInternalNames[type];
+        return bombType.getInternalName();
     }
 
+    @Deprecated(
+            forRemoval = true,
+            since = "0.50.7")
     public static int getBombCost(int type) {
-        if ((type >= B_NUM) || (type < 0)) {
-            return 0;
-        }
-        return bombCosts[type];
+        return BombTypeEnum.fromIndex(type).getCost();
     }
 
-    public static boolean canGroundBomb(int type) {
-        switch (type) {
-            case B_HE:
-            case B_CLUSTER:
-            case B_LG:
-            case B_INFERNO:
-            case B_THUNDER:
-            case B_TORPEDO:
-            case B_FAE_SMALL:
-            case B_FAE_LARGE:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    public static boolean canSpaceBomb(int type) {
-        switch (type) {
-            case B_HE:
-            case B_CLUSTER:
-            case B_LG:
-            case B_ARROW:
-            case B_HOMING:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    public int getBombType() {
+    public BombTypeEnum getBombType() {
         return bombType;
     }
 
@@ -206,43 +264,43 @@ public class BombType extends AmmoType {
                 .collect(toList());
     }
 
-    public static BombType createBombByType(int bType)    {
+    public static BombType createBombByType(BombTypeEnum bType)    {
         switch (bType) {
-            case B_HE:
+            case HE:
                 return createHighExplosiveBomb();
-            case B_CLUSTER:
+            case CLUSTER:
                 return createClusterBomb();
-            case B_LG:
+            case LG:
                 return createLaserGuidedBomb();
-            case B_RL:
+            case RL:
                 return createRocketBomb();
-            case B_TAG:
+            case TAG:
                 return createTAGBomb();
-            case B_AAA:
+            case AAA:
                 return createAAAMissileBomb();
-            case B_AS:
+            case AS:
                 return createASMissileBomb();
-            case B_ASEW:
+            case ASEW:
                 return createISASEWMissileBomb();
-            case B_ARROW:
+            case ARROW:
                 return createArrowIVBomb();
-            case B_HOMING:
+            case HOMING:
                 return createArrowIVHomingBomb();
-            case B_INFERNO:
+            case INFERNO:
                 return createInfernoBomb();
-            case B_LAA:
+            case LAA:
                 return createLAAMissileBomb();
-            case B_THUNDER:
+            case THUNDER:
                 return createThunderBomb();
-            case B_TORPEDO:
+            case TORPEDO:
                 return createTorpedoBomb();
-            case B_ALAMO:
+            case ALAMO:
                 return createAlamoBomb();
-            case B_FAE_SMALL:
+            case FAE_SMALL:
                 return createSmallFuelAirBomb();
-            case B_FAE_LARGE:
+            case FAE_LARGE:
                 return createLargeFuelAirBomb();
-            case B_RLP:
+            case RLP:
                 return createPrototypeRocketBomb();
             default:
                 return null;
@@ -255,15 +313,15 @@ public class BombType extends AmmoType {
         BombType bomb = new BombType();
 
         bomb.name = "Air-to-Air (AAA) Arrow Ammo";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_AAA));
-        bomb.addLookupName("IS " + BombType.getBombInternalName(BombType.B_AAA));
-        bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_AAA));
+        bomb.setInternalName(BombTypeEnum.AAA.getInternalName());
+        bomb.addLookupName("IS " + BombTypeEnum.AAA.getInternalName());
+        bomb.addLookupName("Clan " + BombTypeEnum.AAA.getInternalName());
         bomb.addLookupName("AAAMissile Ammo");
         bomb.damagePerShot = 20;
         bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB);
         bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_AAA_MISSILE;
-        bomb.bombType = BombType.B_AAA;
+        bomb.ammoType = AmmoTypeEnum.AAA_MISSILE;
+        bomb.bombType = BombTypeEnum.AAA;
         bomb.shots = 1;
         bomb.bv = 57;
         bomb.cost = 9000;
@@ -287,15 +345,15 @@ public class BombType extends AmmoType {
         BombType bomb = new BombType();
 
         bomb.name = "Anti-Ship (AS) Missiles Ammo";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_AS));
-        bomb.addLookupName("IS " + BombType.getBombInternalName(BombType.B_AS));
-        bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_AS));
+        bomb.setInternalName(BombTypeEnum.AS.getInternalName());
+        bomb.addLookupName("IS " + BombTypeEnum.AS.getInternalName());
+        bomb.addLookupName("Clan " + BombTypeEnum.AS.getInternalName());
         bomb.addLookupName("ASMissile Ammo");
         bomb.damagePerShot = 30;
         bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB);
         bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_AS_MISSILE;
-        bomb.bombType = BombType.B_AS;
+        bomb.ammoType = AmmoTypeEnum.AS_MISSILE;
+        bomb.bombType = BombTypeEnum.AS;
         bomb.shots = 1;
         bomb.bv = 114;
         bomb.cost = 15000;
@@ -320,14 +378,14 @@ public class BombType extends AmmoType {
         BombType bomb = new BombType();
 
         bomb.name = "Anti-Ship Electronic Warfare (ASEW) Ammo";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_ASEW));
-        bomb.addLookupName("IS " + BombType.getBombInternalName(BombType.B_ASEW));
+        bomb.setInternalName(BombTypeEnum.ASEW.getInternalName());
+        bomb.addLookupName("IS " + BombTypeEnum.ASEW.getInternalName());
         bomb.addLookupName("ASEWMissile Ammo");
         bomb.damagePerShot = 0;
         bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB);
         bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_ASEW_MISSILE;
-        bomb.bombType = BombType.B_ASEW;
+        bomb.ammoType = AmmoTypeEnum.ASEW_MISSILE;
+        bomb.bombType = BombTypeEnum.ASEW;
         bomb.shots = 1;
         bomb.bv = 75;
         bomb.cost = 20000;
@@ -346,14 +404,14 @@ public class BombType extends AmmoType {
 
         bomb.name = "Arrow IV Homing Missile (Air-Launched Version)";
         bomb.shortName = "Arrow IV Homing Air";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_HOMING));
-        bomb.addLookupName("IS " + BombType.getBombInternalName(BombType.B_HOMING));
-        bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_HOMING));
+        bomb.setInternalName(BombTypeEnum.HOMING.getInternalName());
+        bomb.addLookupName("IS " + BombTypeEnum.HOMING.getInternalName());
+        bomb.addLookupName("Clan " + BombTypeEnum.HOMING.getInternalName());
         bomb.addLookupName("ArrowIVHomingMissile Ammo");
         bomb.damagePerShot = 1;
         bomb.rackSize = 20;
-        bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
-        bomb.bombType = BombType.B_HOMING;
+        bomb.ammoType = AmmoTypeEnum.ARROW_IV_BOMB;
+        bomb.bombType = BombTypeEnum.HOMING;
         bomb.munitionType = EnumSet.of(AmmoType.Munitions.M_HOMING);
         // Allow Homing munitions to instantly switch between modes
         bomb.instantModeSwitch = true;
@@ -384,14 +442,15 @@ public class BombType extends AmmoType {
 
         bomb.name = "Arrow IV Non-Homing Missile (Air-Launched Version)";
         bomb.shortName = "Arrow IV Air";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_ARROW));
-        bomb.addLookupName("IS " + BombType.getBombInternalName(BombType.B_ARROW));
-        bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_ARROW));
+        bomb.setInternalName(BombTypeEnum.ARROW.getInternalName());
+        bomb.addLookupName("IS " + BombTypeEnum.ARROW.getInternalName());
+        bomb.addLookupName("Clan " + BombTypeEnum.ARROW.getInternalName());
         bomb.addLookupName("ArrowIVMissile Ammo");
         bomb.damagePerShot = 1;
         bomb.rackSize = 20;
-        bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
-        bomb.bombType = BombType.B_ARROW;
+        bomb.ammoType = AmmoTypeEnum.ARROW_IV_BOMB;
+        bomb.bombType = BombTypeEnum.ARROW;
+        bomb.blastRadius = 1;
         bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
         bomb.shots = 1;
         bomb.bv = 34;
@@ -410,8 +469,6 @@ public class BombType extends AmmoType {
                 .setProductionFactions(Faction.TH)
                 .setReintroductionFactions(Faction.CC);
 
-        blastRadius.put(BombType.getBombInternalName(BombType.B_ARROW), 1);
-
         return bomb;
     }
 
@@ -420,11 +477,12 @@ public class BombType extends AmmoType {
 
         bomb.name = "Cluster Bomb";
         bomb.shortName = "ClusterBomb";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_CLUSTER));
+        bomb.setInternalName(BombTypeEnum.CLUSTER.getInternalName());
         bomb.damagePerShot = 5;
         bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_CLUSTER;
+        bomb.ammoType = AmmoTypeEnum.BOMB;
+        bomb.bombType = BombTypeEnum.CLUSTER;
+        bomb.blastRadius = 1;
         bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 13;
@@ -438,8 +496,6 @@ public class BombType extends AmmoType {
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false);
 
-        blastRadius.put(BombType.getBombInternalName(BombType.B_CLUSTER), 1);
-
         return bomb;
     }
 
@@ -448,11 +504,12 @@ public class BombType extends AmmoType {
 
         bomb.name = "Fuel-Air Bomb (Small)";
         bomb.shortName = "FAE Bomb (s)";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_FAE_SMALL));
+        bomb.setInternalName(BombTypeEnum.FAE_SMALL.getInternalName());
         bomb.damagePerShot = 20;
         bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_FAE_SMALL;
+        bomb.ammoType = AmmoTypeEnum.BOMB;
+        bomb.bombType = BombTypeEnum.FAE_SMALL;
+        bomb.blastRadius = 2;
         bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 37;
@@ -467,8 +524,6 @@ public class BombType extends AmmoType {
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false);
 
-        blastRadius.put(BombType.getBombInternalName(BombType.B_FAE_SMALL), 2);
-
         return bomb;
     }
 
@@ -477,11 +532,12 @@ public class BombType extends AmmoType {
 
         bomb.name = "Fuel-Air Bomb (Large)";
         bomb.shortName = "FAE Bomb (L)";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_FAE_LARGE));
+        bomb.setInternalName(BombTypeEnum.FAE_LARGE.getInternalName());
         bomb.damagePerShot = 30;
         bomb.rackSize = 2;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_FAE_LARGE;
+        bomb.ammoType = AmmoTypeEnum.BOMB;
+        bomb.bombType = BombTypeEnum.FAE_LARGE;
+        bomb.blastRadius = 3;
         bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 2;
         bomb.bv = 63;
@@ -496,8 +552,6 @@ public class BombType extends AmmoType {
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false);
 
-        blastRadius.put(BombType.getBombInternalName(BombType.B_FAE_LARGE), 3);
-
         return bomb;
     }
 
@@ -506,11 +560,11 @@ public class BombType extends AmmoType {
 
         bomb.name = "High-Explosive (Standard) Bomb";
         bomb.shortName = "HEBomb";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_HE));
+        bomb.setInternalName(BombTypeEnum.HE.getInternalName());
         bomb.damagePerShot = 10;
         bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_HE;
+        bomb.ammoType = AmmoTypeEnum.BOMB;
+        bomb.bombType = BombTypeEnum.HE;
         bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 12;
@@ -532,11 +586,11 @@ public class BombType extends AmmoType {
 
         bomb.name = "Inferno Bomb";
         bomb.shortName = "InfernoBomb";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_INFERNO));
+        bomb.setInternalName(BombTypeEnum.INFERNO.getInternalName());
         bomb.damagePerShot = 5;
         bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_INFERNO;
+        bomb.ammoType = AmmoTypeEnum.BOMB;
+        bomb.bombType = BombTypeEnum.INFERNO;
         bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 16;
@@ -558,14 +612,14 @@ public class BombType extends AmmoType {
 
         bomb.name = "Laser-Guided (LG) Bomb";
         bomb.shortName = "LGBomb";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_LG));
-        bomb.addLookupName("IS " + BombType.getBombInternalName(BombType.B_LG));
-        bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_LG));
+        bomb.setInternalName(BombTypeEnum.LG.getInternalName());
+        bomb.addLookupName("IS " + BombTypeEnum.LG.getInternalName());
+        bomb.addLookupName("Clan " + BombTypeEnum.LG.getInternalName());
         bomb.addLookupName("LGBomb");
         bomb.damagePerShot = 10;
         bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_LG;
+        bomb.ammoType = AmmoTypeEnum.BOMB;
+        bomb.bombType = BombTypeEnum.LG;
         bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 20;
@@ -591,15 +645,15 @@ public class BombType extends AmmoType {
         BombType bomb = new BombType();
 
         bomb.name = "Light Air-to-Air (LAA) Missiles Ammo";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_LAA));
-        bomb.addLookupName("IS " + BombType.getBombInternalName(BombType.B_LAA));
-        bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_LAA));
+        bomb.setInternalName(BombTypeEnum.LAA.getInternalName());
+        bomb.addLookupName("IS " + BombTypeEnum.LAA.getInternalName());
+        bomb.addLookupName("Clan " + BombTypeEnum.LAA.getInternalName());
         bomb.addLookupName("LAAMissile Ammo");
         bomb.damagePerShot = 6;
         bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB);
         bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_LAA_MISSILE;
-        bomb.bombType = BombType.B_LAA;
+        bomb.ammoType = AmmoTypeEnum.LAA_MISSILE;
+        bomb.bombType = BombTypeEnum.LAA;
         bomb.shots = 1;
         bomb.bv = 17;
         bomb.cost = 6000;
@@ -619,13 +673,13 @@ public class BombType extends AmmoType {
         BombType bomb = new BombType();
 
         bomb.name = "Rocket Launcher Pod";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_RL));
+        bomb.setInternalName(BombTypeEnum.RL.getInternalName());
         bomb.addLookupName("RL 10 (Bomb)");
         bomb.damagePerShot = 1;
         bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB);
         bomb.rackSize = 10;
-        bomb.ammoType = AmmoType.T_RL_BOMB;
-        bomb.bombType = BombType.B_RL;
+        bomb.ammoType = AmmoTypeEnum.RL_BOMB;
+        bomb.bombType = BombTypeEnum.RL;
         bomb.shots = 1;
         bomb.bv = 18;
         bomb.cost = 15000;
@@ -642,14 +696,14 @@ public class BombType extends AmmoType {
         BombType bomb = new BombType();
 
         bomb.name = "Rocket Launcher (Prototype) Pod";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_RLP));
+        bomb.setInternalName(BombTypeEnum.RLP.getInternalName());
         bomb.addLookupName("RL-P 10 (Bomb)");
         bomb.damagePerShot = 1;
         // This works but is fragile
         bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB).or(WeaponType.F_PROTOTYPE);
         bomb.rackSize = 10;
-        bomb.ammoType = AmmoType.T_RL_BOMB;
-        bomb.bombType = BombType.B_RLP;
+        bomb.ammoType = AmmoTypeEnum.RL_BOMB;
+        bomb.bombType = BombTypeEnum.RLP;
         bomb.shots = 1;
         bomb.bv = 15;
         bomb.cost = 15000;
@@ -672,17 +726,17 @@ public class BombType extends AmmoType {
 
         bomb.name = "TAG Pod";
         bomb.shortName = "TAGPod";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_TAG));
-        bomb.addLookupName("IS " + BombType.getBombInternalName(BombType.B_TAG));
-        bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_TAG));
+        bomb.setInternalName(BombTypeEnum.TAG.getInternalName());
+        bomb.addLookupName("IS " + BombTypeEnum.TAG.getInternalName());
+        bomb.addLookupName("Clan " + BombTypeEnum.TAG.getInternalName());
         bomb.addLookupName("CLTAGBomb");
         bomb.addLookupName("ISTAGBomb");
         bomb.addLookupName("TAGBomb");
         bomb.damagePerShot = 0;
         bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB);
         bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_TAG;
+        bomb.ammoType = AmmoTypeEnum.BOMB;
+        bomb.bombType = BombTypeEnum.TAG;
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 50000;
@@ -709,11 +763,12 @@ public class BombType extends AmmoType {
 
         bomb.name = "Thunder (FASCAM) Bombs";
         bomb.shortName = "ThunderBomb";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_THUNDER));
+        bomb.setInternalName(BombTypeEnum.THUNDER.getInternalName());
         bomb.damagePerShot = 20;
         bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_THUNDER;
+        bomb.ammoType = AmmoTypeEnum.BOMB;
+        bomb.bombType = BombTypeEnum.THUNDER;
+        bomb.blastRadius = 1;
         bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 112;
@@ -728,8 +783,6 @@ public class BombType extends AmmoType {
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
                 .setProductionFactions(Faction.TH);
 
-        blastRadius.put(BombType.getBombInternalName(BombType.B_THUNDER), 1);
-
         return bomb;
     }
 
@@ -741,11 +794,11 @@ public class BombType extends AmmoType {
 
         bomb.name = "Torpedo Bomb";
         bomb.shortName = "TorpedoBomb";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_TORPEDO));
+        bomb.setInternalName(BombTypeEnum.TORPEDO.getInternalName());
         bomb.damagePerShot = 10;
         bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_TORPEDO;
+        bomb.ammoType = AmmoTypeEnum.BOMB;
+        bomb.bombType = BombTypeEnum.TORPEDO;
         bomb.shots = 1;
         bomb.bv = 10;
         bomb.cost = 7000;
@@ -765,11 +818,11 @@ public class BombType extends AmmoType {
         BombType bomb = new BombType();
 
         bomb.name = "Std. Nuclear Weapon (Type II/Alamo)";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_ALAMO));
+        bomb.setInternalName(BombTypeEnum.ALAMO.getInternalName());
         bomb.damagePerShot = 10;
         bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_ALAMO;
-        bomb.bombType = BombType.B_ALAMO;
+        bomb.ammoType = AmmoTypeEnum.ALAMO;
+        bomb.bombType = BombTypeEnum.ALAMO;
         bomb.shots = 1;
         bomb.bv = 100;
         bomb.cost = 1000000;
@@ -787,6 +840,6 @@ public class BombType extends AmmoType {
      * @return True when this bomb type is either a large or small FAE.
      */
     public boolean isFaeBomb() {
-        return (bombType == B_FAE_LARGE) || (bombType == B_FAE_SMALL);
+        return (bombType == BombTypeEnum.FAE_LARGE) || (bombType == BombTypeEnum.FAE_SMALL);
     }
 }

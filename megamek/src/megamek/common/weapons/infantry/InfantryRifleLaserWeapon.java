@@ -28,7 +28,7 @@ public class InfantryRifleLaserWeapon extends InfantryWeapon {
 		name = "Laser Rifle";
 		setInternalName(name);
 		addLookupName("InfantryLaserRifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1250;
 		bv = 1.43;
 		tonnage = .005;

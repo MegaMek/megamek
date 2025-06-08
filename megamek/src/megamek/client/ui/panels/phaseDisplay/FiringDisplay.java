@@ -37,6 +37,7 @@ import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
@@ -1072,12 +1073,14 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         clientgui.getUnitDisplay().wPan.setToHit(toHitSummary.toString());
     }
 
-    private HashMap<String, int[]> getBombPayloads(boolean isSpace, int limit) {
-        HashMap<String, int[]> payloads = new HashMap<>();
-        HashMap<String, int[]> loadouts = new HashMap<>();
+    private HashMap<String, BombLoadout> getBombPayloads(boolean isSpace, int limit) {
+        HashMap<String, BombLoadout> payloads = new HashMap<>();
+        HashMap<String, BombLoadout> loadouts = new HashMap<>();
         String[] titles = new String[] { "internal", "external" };
+
+        // Initialize empty payloads
         for (String title : titles) {
-            payloads.put(title, new int[BombType.B_NUM]);
+            payloads.put(title, new BombLoadout());
         }
 
         // Have to return after map is filled in, not before
@@ -1089,7 +1092,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         loadouts.put("external", ce().getExternalBombLoadout());
 
         for (String title : titles) {
-            int[] loadout = loadouts.get(title);
+            BombLoadout loadout = new BombLoadout(loadouts.get(title));
 
             // this part is ugly, but we need to find any other bombing attacks by this
             // entity in the attack list and subtract those payloads from the relevant
@@ -1098,16 +1101,19 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 if (o instanceof WeaponAttackAction) {
                     WeaponAttackAction waa = (WeaponAttackAction) o;
                     if (waa.getEntityId() == ce().getId()) {
-                        int[] priorLoad = waa.getBombPayloads().get(title);
-                        for (int i = 0; i < priorLoad.length; i++) {
-                            loadout[i] = loadout[i] - priorLoad[i];
+                        BombLoadout priorLoad = waa.getBombPayloads().get(title);
+                        for (Map.Entry<BombTypeEnum, Integer> entry : priorLoad.entrySet()) {
+                            BombTypeEnum bombType = entry.getKey();
+                            int priorCount = entry.getValue();
+                            int currentCount = loadout.getCount(bombType);
+                            loadout.put(bombType, Math.max(0, currentCount - priorCount));
                         }
                     }
                 }
             }
 
             // Don't bother preparing a dialog for bombs that don't exist.
-            if (Arrays.stream(loadout).sum() <= 0) {
+            if (loadout.getTotalBombs() <= 0) {
                 continue;
             }
 
@@ -1125,9 +1131,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                     loadout, isSpace, false, limit, numFighters);
             bombsDialog.setVisible(true);
             if (bombsDialog.getAnswer()) {
-                int[] choices = bombsDialog.getChoices();
-                for (int i = 0; i < choices.length; i++) {
-                    payloads.get(title)[i] += choices[i];
+                BombLoadout choices = bombsDialog.getChoices();
+                for (Map.Entry<BombTypeEnum, Integer> entry : choices.entrySet()) {
+                    BombTypeEnum bombType = entry.getKey();
+                    int count = entry.getValue();
+                    payloads.get(title).addBombs(bombType, count);
                 }
             }
         }
@@ -1231,7 +1239,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             }
 
             if ((mounted.getLinked() != null)
-                    && (mounted.getType().getAmmoType() != AmmoType.T_NA)
+                    && (mounted.getType().getAmmoType() != AmmoType.AmmoTypeEnum.NA)
                     && (mounted.getLinked().getType() instanceof AmmoType)) {
                 AmmoMounted ammoMount = mounted.getLinkedAmmo();
                 AmmoType ammoType = ammoMount.getType();
@@ -1240,9 +1248,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 waa.setAmmoMunitionType(ammoMunitionType);
                 waa.setAmmoCarrier(ammoMount.getEntity().getId());
                 if (((ammoMunitionType.contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB)) &&
-                        ((ammoType.getAmmoType() == AmmoType.T_LRM)
-                                || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
-                                || (ammoType.getAmmoType() == AmmoType.T_MML)))
+                        ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                                || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                                || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML)))
                         || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_VIBRABOMB_IV))) {
                     VibrabombSettingDialog vsd = new VibrabombSettingDialog(
                             clientgui.getFrame());
@@ -1988,7 +1996,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         return entity.getIndividualWeaponList().stream()
               .map(Mounted::getType)
               .filter(type -> type.hasFlag(WeaponType.F_ENERGY))
-              .anyMatch(type -> type.getAmmoType() == AmmoType.T_NA);
+              .anyMatch(type -> type.getAmmoType() == AmmoType.AmmoTypeEnum.NA);
     }
 
     private void updateActivateSPA() {
@@ -2175,13 +2183,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             AmmoType aType = (AmmoType) weapon.getLinked().getType();
             EnumSet<AmmoType.Munitions> munitionType = aType.getMunitionType();
             // Mek mortar flares should default to deliver flare
-            if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
+            if ((aType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)
                     && (munitionType.contains(AmmoType.Munitions.M_FLARE))) {
                 return new HexTarget(pos, boardId, Targetable.TYPE_FLARE_DELIVER);
                 // Certain mek mortar types and LRMs should target hexes
-            } else if (((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
-                    || (aType.getAmmoType() == AmmoType.T_LRM)
-                    || (aType.getAmmoType() == AmmoType.T_LRM_IMP))
+            } else if (((aType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)
+                    || (aType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                    || (aType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP))
                     && ((munitionType.contains(AmmoType.Munitions.M_AIRBURST))
                             || (munitionType.contains(AmmoType.Munitions.M_SMOKE_WARHEAD)))) {
                 return new HexTarget(pos, boardId, Targetable.TYPE_HEX_CLEAR);

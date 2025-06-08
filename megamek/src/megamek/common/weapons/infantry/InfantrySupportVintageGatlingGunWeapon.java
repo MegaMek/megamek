@@ -29,7 +29,7 @@ public class InfantrySupportVintageGatlingGunWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryVintageGatlingGun");
 		addLookupName("Vintage Gatling Gun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 450000;
 		tonnage = 0.296;
 		bv = 0.0;

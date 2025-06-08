@@ -36,7 +36,7 @@ public class InfantryArchaicLongBowWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryLongBow");
         addLookupName("Long Bow");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 20;
         bv = 0.01;
         tonnage = .0015; 

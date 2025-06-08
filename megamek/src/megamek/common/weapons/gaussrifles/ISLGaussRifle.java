@@ -36,7 +36,7 @@ public class ISLGaussRifle extends GaussWeapon {
         sortingName = "Gauss B";
         heat = 1;
         damage = 8;
-        ammoType = AmmoType.T_GAUSS_LIGHT;
+        ammoType = AmmoType.AmmoTypeEnum.GAUSS_LIGHT;
         minimumRange = 3;
         shortRange = 8;
         mediumRange = 17;

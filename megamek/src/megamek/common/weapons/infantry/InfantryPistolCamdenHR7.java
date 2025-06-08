@@ -28,7 +28,7 @@ public class InfantryPistolCamdenHR7 extends InfantryWeapon {
         name = "Pistol (Camden HR-7)";
         setInternalName(name);
         addLookupName("Camden HR-7");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = 0.44;
         tonnage =  0.0025;
         infantryDamage = 0.44;

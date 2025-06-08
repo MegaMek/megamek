@@ -38,7 +38,7 @@ public class ThumperCannon extends ArtilleryCannonWeapon {
         sortingName = "Cannon Arty Thumper";
         heat = 5;
         rackSize = 5;
-        ammoType = AmmoType.T_THUMPER_CANNON;
+        ammoType = AmmoType.AmmoTypeEnum.THUMPER_CANNON;
         minimumRange = 3;
         shortRange = 4;
         mediumRange = 9;

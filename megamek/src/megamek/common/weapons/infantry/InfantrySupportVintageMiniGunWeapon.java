@@ -29,7 +29,7 @@ public class InfantrySupportVintageMiniGunWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryVintageMiniGun");
 		addLookupName("VintageMinGun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 50000;
 		tonnage = .021;
 		bv = 0.0;

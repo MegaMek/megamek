@@ -3151,9 +3151,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setMiniReportShowUnits(chkReportShowUnits.isSelected());
         GUIP.setMiniReportShowKeywords(chkReportShowKeywords.isSelected());
         GUIP.setMiniReportShowFilter(chkReportShowFilter.isSelected());
-        try {
+        if ((clientgui != null) && (clientgui.getMiniReportDisplay() != null)) {
             clientgui.getMiniReportDisplay().refreshSearchPanel();
-        } catch (Exception ex) {
         }
 
         GUIP.setUnitOverviewTextShadowColor(csbUnitOverviewTextShadowColor.getColour());

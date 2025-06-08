@@ -72,6 +72,8 @@ import megamek.logging.MMLogger;
 
 import javax.swing.*;
 
+import javax.swing.*;
+
 /**
  * Shows reports, with an Okay JButton
  */
@@ -432,7 +434,9 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         String displayNane = String.format("%-12s", name).substring(0, len);
 
         found = false;
-        for (int i = 0; i < comboBox.getItemCount(); i++) {
+        for (int i = 0;
+              i < comboBox.getItemCount();
+              i++) {
             if (comboBox.getItemAt(i).equals(displayNane)) {
                 found = true;
                 break;

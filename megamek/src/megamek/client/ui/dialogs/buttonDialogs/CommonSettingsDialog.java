@@ -33,35 +33,6 @@
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
-import static java.util.stream.Collectors.toList;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Stream;
-import javax.swing.*;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MouseInputAdapter;
-
 import com.formdev.flatlaf.icons.FlatHelpButtonIcon;
 import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
@@ -101,6 +72,35 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
+
+import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MouseInputAdapter;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * The Client Settings Dialog offering GUI options concerning tooltips, map display, keybinds etc.
@@ -2972,42 +2972,42 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
             if ((s > UnitDisplayPanel.NON_TABBED_ZERO_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ZERO_INDEX)
-                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A1)))) {
+                      .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A1)))) {
                 unitDisplayNonTabbedChanged = true;
                 UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_A1,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ZERO_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_ONE_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ONE_INDEX)
-                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B1)))) {
+                      .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B1)))) {
                 unitDisplayNonTabbedChanged = true;
                 UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_B1,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ONE_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_TWO_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_TWO_INDEX)
-                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C1)))) {
+                      .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C1)))) {
                 unitDisplayNonTabbedChanged = true;
                 UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_C1,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_TWO_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_THREE_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_THREE_INDEX)
-                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A2)))) {
+                      .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A2)))) {
                 unitDisplayNonTabbedChanged = true;
                 UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_A2,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_THREE_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_FOUR_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FOUR_INDEX)
-                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B2)))) {
+                      .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B2)))) {
                 unitDisplayNonTabbedChanged = true;
                 UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_B2,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FOUR_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_FIVE_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FIVE_INDEX)
-                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C2)))) {
+                      .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C2)))) {
                 unitDisplayNonTabbedChanged = true;
                 UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_C2,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FIVE_INDEX));
@@ -3053,9 +3053,32 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setUnitDisplayMekArmorLargeFontSize(MathUtility.parseInt(unitDisplayMekArmorLargeFontSizeText.getText()));
         GUIP.setUnitDisplayMekArmorMediumFontSize(MathUtility.parseInt(unitDisplayMekArmorMediumFontSizeText.getText()));
 
-        GUIP.setUnitDisplayMekArmorSmallFontSize(MathUtility.parseInt(unitDisplayMekArmorSmallFontSizeText.getText()));
-        GUIP.setUnitDisplayMekLargeFontSize(MathUtility.parseInt(unitDisplayMekLargeFontSizeText.getText()));
-        GUIP.setUnitDisplayMekMediumFontSize(MathUtility.parseInt(unitDisplayMekMediumFontSizeText.getText()));
+        try {
+            GUIP.setUnitDisplayMekArmorLargeFontSize(Integer.parseInt(unitDisplayMekArmorLargeFontSizeText.getText()));
+        } catch (Exception ex) {
+            logger.error(ex, "");
+        }
+        try {
+            GUIP.setUnitDisplayMekArmorMediumFontSize(
+                  Integer.parseInt(unitDisplayMekArmorMediumFontSizeText.getText()));
+        } catch (Exception ex) {
+            logger.error(ex, "");
+        }
+        try {
+            GUIP.setUnitDisplayMekArmorSmallFontSize(Integer.parseInt(unitDisplayMekArmorSmallFontSizeText.getText()));
+        } catch (Exception ex) {
+            logger.error(ex, "");
+        }
+        try {
+            GUIP.setUnitDisplayMekLargeFontSize(Integer.parseInt(unitDisplayMekLargeFontSizeText.getText()));
+        } catch (Exception ex) {
+            logger.error(ex, "");
+        }
+        try {
+            GUIP.setUnitDisplayMekMediumFontSize(Integer.parseInt(unitDisplayMekMediumFontSizeText.getText()));
+        } catch (Exception ex) {
+            logger.error(ex, "");
+        }
 
         GUIP.setUnitToolTipFGColor(csbUnitTooltipFGColor.getColour());
         GUIP.setUnitTooltipLightFGColor(csbUnitTooltipLightFGColor.getColour());
@@ -3081,13 +3104,23 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setUnitToolTipArmorMiniCriticalChar(unitTooltipArmorMiniCriticalCharText.getText());
         GUIP.setUnitTooltipArmorMiniDestroyedChar(unitTooltipArmorMiniDestroyedCharText.getText());
         GUIP.setUnitTooltipArmorMiniCapArmorChar(unitTooltipArmorMiniCapArmorCharText.getText());
-        GUIP.setUnitTooltipArmorMiniUnitsPerBlock(MathUtility.parseInt(unitTooltipArmorMiniUnitsPerBlockText.getText()));
+
+        try {
+            GUIP.setUnitTooltipArmorMiniUnitsPerBlock(
+                  Integer.parseInt(unitTooltipArmorMiniUnitsPerBlockText.getText()));
+        } catch (Exception ex) {
+            logger.error(ex, "");
+        }
+        try {
+            GUIP.setUnitToolTipFontSize((String) unitTooltipFontSizeModCbo.getSelectedItem());
+        } catch (Exception ex) {
+            logger.error(ex, "");
+        }
 
         Object unitToolTipFontSize = unitTooltipFontSizeModCbo.getSelectedItem();
 
         if (unitToolTipFontSize instanceof String fontSize) {
             GUIP.setUnitToolTipFontSize(fontSize);
-        }
 
         GUIP.setReportLinkColor(csbReportLinkColor.getColour());
         GUIP.setReportSuccessColor(csbReportSuccessColor.getColour());

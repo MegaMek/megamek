@@ -118,7 +118,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARD_DARKEN_MAP_AT_NIGHT = "BoardDarkenMapAtNight";
     public static final String BOARD_TRANSLUCENT_HIDDEN_UNITS = "BoardTranslucentHiddenUnits";
     public static final String BOARD_TMM_PIP_MODE = "BoardTmmPipMode";
-    public static final String BOARD_TMM_PIP_BIGGER = "BoardTmmPipBigger";
 
     public static final String SHOW_ARTILLERY_MISSES = "ShowArtilleryMisses";
     public static final String SHOW_ARTILLERY_DRIFTS = "ShowArtilleryHits";
@@ -593,7 +592,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(BOARD_DARKEN_MAP_AT_NIGHT, true);
         store.setDefault(BOARD_TRANSLUCENT_HIDDEN_UNITS, true);
         setDefault(BOARD_TMM_PIP_MODE, 2); // show pips with colors based on move type
-        setDefault(BOARD_TMM_PIP_BIGGER, false);
 
         store.setDefault(SHOW_ARTILLERY_MISSES, true);
         store.setDefault(SHOW_ARTILLERY_DRIFTS, true);
@@ -2980,14 +2978,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setTMMPipMode(int i) {
         store.setValue(BOARD_TMM_PIP_MODE, i);
-    }
-
-    public boolean getTMMPipBigger() {
-        return getBoolean(BOARD_TMM_PIP_BIGGER);
-    }
-
-    public void setTMMPipBigger(boolean b) {
-        store.setValue(BOARD_TMM_PIP_BIGGER, b);
     }
 
     public Color getUnitOverviewTextShadowColor() {

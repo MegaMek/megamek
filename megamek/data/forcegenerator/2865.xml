@@ -5819,7 +5819,7 @@
 			<availability>CC:5-,IS:4-,Periphery:3-,CS:4-,FS.CMM:4-,NIOPS:4-</availability>
 			<model name='UM-R60'>
 				<roles>urban</roles>
-				<availability>IS:8,MERC:8,CC:8,Periphery:8,Periphery.Deep:8</availability>
+				<availability>IS:8,MERC:8,Periphery:8,Periphery.Deep:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Valkyrie' unitType='Mek'>
@@ -5996,7 +5996,7 @@
 			</model>
 		</chassis>
 		<chassis name='Wasp' unitType='Mek'>
-			<availability>IS:10,CS:4-,CIR:4,Periphery:6,NIOPS:4-,Periphery.Deep:6,BAN:1-</availability>
+			<availability>IS:10,CS:4-,Periphery:6,CIR:4,NIOPS:4-,Periphery.Deep:6,BAN:1-</availability>
 			<model name='WSP-1A'>
 				<roles>recon</roles>
 				<availability>IS:8,MERC:8,Periphery:8,BAN:8</availability>

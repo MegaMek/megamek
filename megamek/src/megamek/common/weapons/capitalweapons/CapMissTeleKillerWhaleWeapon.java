@@ -33,7 +33,7 @@ public class CapMissTeleKillerWhaleWeapon extends CapitalMissileWeapon {
         setInstantModeSwitch(false);
         this.heat = 20;
         this.damage = 4;
-        this.ammoType = AmmoType.T_KILLER_WHALE_T;
+        this.ammoType = AmmoType.AmmoTypeEnum.KILLER_WHALE_T;
         this.shortRange = 7;
         this.mediumRange = 14;
         this.longRange = 21;

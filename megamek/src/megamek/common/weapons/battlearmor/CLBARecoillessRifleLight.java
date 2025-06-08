@@ -37,7 +37,7 @@ public class CLBARecoillessRifleLight extends Weapon {
         shortName = "Light Recoiless Rifle";
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         shortRange = 2;
         mediumRange = 4;
         longRange = 6;

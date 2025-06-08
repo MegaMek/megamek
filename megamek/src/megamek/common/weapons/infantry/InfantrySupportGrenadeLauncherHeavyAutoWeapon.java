@@ -36,7 +36,7 @@ public class InfantrySupportGrenadeLauncherHeavyAutoWeapon extends InfantryWeapo
 		setInternalName("InfantryHeavyAutoGrenadeLauncher");
 		addLookupName(name);
 		addLookupName("Infantry Heavy Auto Grenade Launcher");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 4500;
 		bv = 5.90;
 		tonnage = .020;

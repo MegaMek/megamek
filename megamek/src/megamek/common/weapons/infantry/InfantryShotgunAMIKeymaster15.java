@@ -31,7 +31,7 @@ public class InfantryShotgunAMIKeymaster15 extends InfantryWeapon {
        name = "Shotgun (AMI Keymaster-15)";
        setInternalName(name);
        addLookupName("AMI Keymaster-15");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .084;
        tonnage =  0.0012;
        infantryDamage =  0.21;

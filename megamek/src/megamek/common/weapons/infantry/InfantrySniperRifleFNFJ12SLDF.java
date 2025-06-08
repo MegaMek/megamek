@@ -34,7 +34,7 @@ public class InfantrySniperRifleFNFJ12SLDF extends InfantryWeapon {
        name = "Sniper Rifle (FNF-J12 (SLDF))";
        setInternalName(name);
        addLookupName("FNF-J12 (SLDF)");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .336;
        tonnage =  0.006;
        infantryDamage =  0.42;

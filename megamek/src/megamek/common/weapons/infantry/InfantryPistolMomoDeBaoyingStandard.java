@@ -28,7 +28,7 @@ public class InfantryPistolMomoDeBaoyingStandard extends InfantryWeapon {
        name = "Pistol (Momo De Baoying (Standard))";
        setInternalName(name);
        addLookupName("Momo De Baoying (Standard)");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .42;
        tonnage =  0.0011;
        infantryDamage = 0.42;

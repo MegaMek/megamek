@@ -32,7 +32,7 @@ public class ISBAPlasmaRifle extends Weapon {
         addLookupName("IS BA Plasma Rifle");
         damage = 2;
         baDamageClass = WeaponType.WEAPON_PLASMA;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         shortRange = 2;
         mediumRange = 4;
         longRange = 6;

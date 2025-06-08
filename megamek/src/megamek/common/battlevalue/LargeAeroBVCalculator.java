@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import megamek.common.AmmoType;
+import megamek.common.AmmoType.AmmoTypeEnum;
 import megamek.common.Entity;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
@@ -107,13 +108,13 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
             if (!((wtype.hasFlag(WeaponType.F_ENERGY) &&
-                         !((wtype.getAmmoType() == AmmoType.T_PLASMA) ||
-                                 (wtype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER) ||
-                                 (wtype.getAmmoType() == AmmoType.T_HEAVY_FLAMER) ||
-                                 (wtype.getAmmoType() == AmmoType.T_CHEMICAL_LASER))) ||
+                         !((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.PLASMA) ||
+                                 (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.VEHICLE_FLAMER) ||
+                                 (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.HEAVY_FLAMER) ||
+                                 (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.CHEMICAL_LASER))) ||
                         wtype.hasFlag(WeaponType.F_ONESHOT) ||
                         wtype.hasFlag(WeaponType.F_INFANTRY) ||
-                        (wtype.getAmmoType() == AmmoType.T_NA))) {
+                        (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.NA))) {
                 String key = bvLocation(weapon) + ":" + wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(entity));
@@ -310,7 +311,7 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
             }
             if (!weaponsForExcessiveAmmo.containsKey(key)) {
                 // Coolant Pods have no matching weapon
-                if (key.equals(Integer.valueOf(AmmoType.T_COOLANT_POD).toString() + "1")) {
+                if (key.equals(AmmoTypeEnum.COOLANT_POD + ":1")) {
                     offensiveValue += ammoMap.get(key);
                 }
                 continue;

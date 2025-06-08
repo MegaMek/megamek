@@ -30,7 +30,7 @@ public class InfantryArchaicBlackjackWeapon extends InfantryWeapon {
         addLookupName("InfantryBlackjack");
         addLookupName("InfantrySap");
         addLookupName("Blackjack");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 5;
         bv = 0.05;
         tonnage = .001; 

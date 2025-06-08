@@ -36,7 +36,7 @@ public class InfantrySupportHeavyGrenadeLauncherInfernoWeapon extends InfantryWe
 		setInternalName("InfantryHeavyGrenadeLauncherInferno");
 		addLookupName(name);
 		addLookupName("Infantry Heavy Inferno Grenade Launcher");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1500;
 		bv = 2.11;
 		flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);

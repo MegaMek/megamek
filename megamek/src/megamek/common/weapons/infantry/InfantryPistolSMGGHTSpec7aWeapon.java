@@ -37,7 +37,7 @@ public class InfantryPistolSMGGHTSpec7aWeapon extends InfantryWeapon {
 
 		name = "Machine Pistol (H-T Spec-7a)";
 		setInternalName(name);
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 190;
 		bv = 0.23;
 		tonnage = .0012;

@@ -33,7 +33,7 @@ public class ISLongTomPrimitive extends ArtilleryWeapon {
         this.shortName = "Long Tom p";
         heat = 20;
         rackSize = 25;
-        ammoType = AmmoType.T_LONG_TOM_PRIM;
+        ammoType = AmmoType.AmmoTypeEnum.LONG_TOM_PRIM;
         shortRange = 1;
         mediumRange = 2;
         longRange = 30;

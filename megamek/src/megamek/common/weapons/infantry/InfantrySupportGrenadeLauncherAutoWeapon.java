@@ -36,7 +36,7 @@ public class InfantrySupportGrenadeLauncherAutoWeapon extends InfantryWeapon {
 		setInternalName("InfantryAutoGL");
 		addLookupName(name);
 		addLookupName("Infantry Auto Grenade Launcher");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 975;
 		bv = 4.55;
 		tonnage = .012;

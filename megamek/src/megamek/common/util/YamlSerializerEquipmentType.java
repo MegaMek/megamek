@@ -48,11 +48,12 @@ import megamek.logging.MMLogger;
  * Utility class for serializing EquipmentType objects to YAML-compatible data structures.
  * This isolates YAML serialization logic from the core EquipmentType class.
  */
-public final class YamlSerializerEquipmentType {
+public class YamlSerializerEquipmentType {
     private static final MMLogger logger = MMLogger.create(YamlSerializerEquipmentType.class);
-    
-    private YamlSerializerEquipmentType() {
-        // Utility class - prevent instantiation
+    public static final String VARIABLE = "variable";
+    public static final String VERSION = "1.0";
+
+    public YamlSerializerEquipmentType() {
     }
     
     /**
@@ -61,8 +62,9 @@ public final class YamlSerializerEquipmentType {
      * @param equipment The equipment type to serialize
      * @return A map containing the YAML-serializable data for the equipment type
      */
-    public static Map<String, Object> serialize(EquipmentType equipment) {
+    public Map<String, Object> serialize(EquipmentType equipment) {
         Map<String, Object> data = new LinkedHashMap<>();
+        data.put("version", VERSION);
         
         // Basic identification
         addBasicIdentification(data, equipment);
@@ -82,7 +84,7 @@ public final class YamlSerializerEquipmentType {
     /**
      * Adds basic identification information to the YAML data map.
      */
-    private static void addBasicIdentification(Map<String, Object> data, EquipmentType equipment) {
+    private void addBasicIdentification(Map<String, Object> data, EquipmentType equipment) {
         data.put("id", equipment.getInternalName());
         data.put("name", equipment.getName());
         
@@ -96,7 +98,7 @@ public final class YamlSerializerEquipmentType {
     /**
      * Adds alias names to the YAML data map, excluding duplicates.
      */
-    private static void addAliases(Map<String, Object> data, EquipmentType equipment) {
+    private void addAliases(Map<String, Object> data, EquipmentType equipment) {
         Enumeration<String> names = equipment.getNames();
         if (names == null || !names.hasMoreElements()) {
             return;
@@ -128,7 +130,7 @@ public final class YamlSerializerEquipmentType {
      * @param fieldName The name of the field
      * @return The field value, or null if the field cannot be accessed
      */
-    private static Object getFieldValue(Object object, String fieldName) {
+    protected static Object getFieldValue(Object object, String fieldName) {
         if (object == null) {
             return null;
         }
@@ -185,27 +187,27 @@ public final class YamlSerializerEquipmentType {
         return null;
     }
 
-    private static Double getDoubleFieldValue(Object object, String fieldName) {
+    protected static Double getDoubleFieldValue(Object object, String fieldName) {
         return getTypedFieldValue(object, fieldName, Double.class);
     }
 
-    private static Integer getIntegerFieldValue(Object object, String fieldName) {
+    protected static Integer getIntegerFieldValue(Object object, String fieldName) {
         return getTypedFieldValue(object, fieldName, Integer.class);
 
     }
 
-    private static Boolean getBooleanFieldValue(Object object, String fieldName) {
+    protected static Boolean getBooleanFieldValue(Object object, String fieldName) {
         return getTypedFieldValue(object, fieldName, Boolean.class);
     }
 
-    private static String getStringFieldValue(Object object, String fieldName) {
+    protected static String getStringFieldValue(Object object, String fieldName) {
         return getTypedFieldValue(object, fieldName, String.class);
     }
     
     /**
      * Adds equipment statistics to the YAML data map.
      */
-    private static void addStatistics(Map<String, Object> data, EquipmentType equipment) {
+    private void addStatistics(Map<String, Object> data, EquipmentType equipment) {
         EquipmentType defaultEquipment = createDefaultInstance(equipment);
         Map<String, Object> stats = new LinkedHashMap<>();
         
@@ -231,9 +233,9 @@ public final class YamlSerializerEquipmentType {
     /**
      * Adds a value to the map, using VARIABLE constant if the value is variable.
      */
-    private static void addVariableOrFixedValue(Map<String, Object> map, String key, Object value, BooleanSupplier isVariable) {
+    private void addVariableOrFixedValue(Map<String, Object> map, String key, Object value, BooleanSupplier isVariable) {
         if (isVariable.getAsBoolean()) {
-            map.put(key, YamlEncDec.VARIABLE);
+            map.put(key, VARIABLE);
         } else {
             map.put(key, value);
         }
@@ -242,7 +244,7 @@ public final class YamlSerializerEquipmentType {
     /**
      * Creates a default instance of the appropriate equipment type for comparison.
      */
-    private static EquipmentType createDefaultInstance(EquipmentType equipment) {
+    private EquipmentType createDefaultInstance(EquipmentType equipment) {
         try {
             if (equipment instanceof WeaponType) {
                 return WeaponType.class.getDeclaredConstructor().newInstance();
@@ -263,7 +265,7 @@ public final class YamlSerializerEquipmentType {
     /**
      * Adds equipment modes to the YAML data map.
      */
-    private static void addModes(Map<String, Object> data, EquipmentType equipment) {
+    private void addModes(Map<String, Object> data, EquipmentType equipment) {
         if (!equipment.hasModes()) {
             return;
         }
@@ -286,7 +288,7 @@ public final class YamlSerializerEquipmentType {
     /**
      * Adds technology advancement information to the YAML data map.
      */
-    private static void addTechAdvancement(Map<String, Object> data, EquipmentType equipment) {
+    private void addTechAdvancement(Map<String, Object> data, EquipmentType equipment) {
         TechAdvancement techAdvancement = equipment.getTechAdvancement();
         if (techAdvancement == null) {
             return;
@@ -299,8 +301,8 @@ public final class YamlSerializerEquipmentType {
         
         // Basic tech information
         techData.put("base", techAdvancement.getTechBase().name().toLowerCase());
-        techData.put("rating", techAdvancement.getTechRating().getName());
-        techData.put("level", techAdvancement.getStaticTechLevel().toString());
+        techData.put("rating", techAdvancement.getTechRating().name());
+        techData.put("level", techAdvancement.getStaticTechLevel().name().toLowerCase());
         
         // Availability by era
         addAvailabilityData(techData, techAdvancement);
@@ -317,11 +319,11 @@ public final class YamlSerializerEquipmentType {
     /**
      * Adds availability information by era to the technology data.
      */
-    private static void addAvailabilityData(Map<String, Object> techData, TechAdvancement techAdvancement) {
+    private void addAvailabilityData(Map<String, Object> techData, TechAdvancement techAdvancement) {
         Map<String, Object> availability = new LinkedHashMap<>();
         for (Era era : Era.values()) {
             AvailabilityValue availabilityValue = techAdvancement.getBaseAvailability(era);
-            availability.put(era.name().toLowerCase(), availabilityValue.getName());
+            availability.put(era.name().toLowerCase(), availabilityValue.name());
         }
         techData.put("availability", availability);
     }
@@ -329,7 +331,7 @@ public final class YamlSerializerEquipmentType {
     /**
      * Adds advancement phase dates to the technology data.
      */
-    private static void addAdvancementData(Map<String, Object> techData, TechAdvancement techAdvancement, TechAdvancement defaultTech) {
+    private void addAdvancementData(Map<String, Object> techData, TechAdvancement techAdvancement, TechAdvancement defaultTech) {
         Map<String, Object> advancement = new LinkedHashMap<>();
         
         Map<String, Object> advancementIS = createAdvancementPhaseMap(false, techAdvancement, defaultTech);
@@ -350,7 +352,7 @@ public final class YamlSerializerEquipmentType {
     /**
      * Creates advancement phase map for IS or Clan technology.
      */
-    private static Map<String, Object> createAdvancementPhaseMap(boolean isClan, TechAdvancement techAdvancement, TechAdvancement defaultTech) {
+    private Map<String, Object> createAdvancementPhaseMap(boolean isClan, TechAdvancement techAdvancement, TechAdvancement defaultTech) {
         Map<String, Object> advancementMap = new LinkedHashMap<>();
         
         for (AdvancementPhase phase : AdvancementPhase.values()) {
@@ -376,7 +378,7 @@ public final class YamlSerializerEquipmentType {
     /**
      * Gets the default advancement string for comparison.
      */
-    private static String getDefaultAdvancementString(AdvancementPhase phase, boolean isClan, TechAdvancement defaultTech) {
+    private String getDefaultAdvancementString(AdvancementPhase phase, boolean isClan, TechAdvancement defaultTech) {
         Integer defaultAdvancement = isClan ? defaultTech.getClanAdvancement(phase) 
                                            : defaultTech.getISAdvancement(phase);
         if (defaultAdvancement == null) {
@@ -391,7 +393,7 @@ public final class YamlSerializerEquipmentType {
     /**
      * Adds faction information to the technology data.
      */
-    private static void addFactionData(Map<String, Object> techData, TechAdvancement techAdvancement) {
+    private void addFactionData(Map<String, Object> techData, TechAdvancement techAdvancement) {
         Map<String, Object> factions = new LinkedHashMap<>();
         
         addFactionList(factions, "prototype", techAdvancement.getPrototypeFactions());
@@ -407,7 +409,7 @@ public final class YamlSerializerEquipmentType {
     /**
      * Adds a faction list to the factions map if not empty.
      */
-    private static void addFactionList(Map<String, Object> factions, String key, Set<Faction> factionSet) {
+    private void addFactionList(Map<String, Object> factions, String key, Set<Faction> factionSet) {
         if (factionSet == null || factionSet.isEmpty()) {
             return;
         }

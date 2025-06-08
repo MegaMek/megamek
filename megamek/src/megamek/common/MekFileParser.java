@@ -438,7 +438,7 @@ public class MekFileParser {
                     WeaponType weaponType = (WeaponType) mWeapon.getType();
 
                     // only srm and lrm are valid for artemis
-                    if (weaponType.getAmmoType() != AmmoType.T_MRM) {
+                    if (weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.MRM) {
                         continue;
                     }
 

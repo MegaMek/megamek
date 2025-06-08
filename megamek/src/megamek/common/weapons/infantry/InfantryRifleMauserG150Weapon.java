@@ -36,7 +36,7 @@ public class InfantryRifleMauserG150Weapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryM&GG150");
 		addLookupName("Mauser and Grey G-150");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 270;
 		bv = 1.64;
 		tonnage = .0035;

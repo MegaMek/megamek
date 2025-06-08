@@ -36,7 +36,7 @@ public class InfantryArchaicClanVibroSwordWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryClanVibroSword");
         addLookupName("Clan Vibro Sword");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 500;
         bv = 0.34;
         tonnage = .004;

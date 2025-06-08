@@ -31,7 +31,7 @@ public class InfantryShotgunByron15S extends InfantryWeapon {
        name = "Shotgun (Byron 15S)";
        setInternalName(name);
        addLookupName("Byron 15S");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .675;
        tonnage =  0.0035;
        infantryDamage =  0.56;

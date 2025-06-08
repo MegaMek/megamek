@@ -30,6 +30,8 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
+import megamek.common.weapons.artillery.ArtilleryWeapon;
 
 /**
  * @author Jay Lawson (Taharqa)
@@ -197,10 +199,66 @@ public class TestInfantry extends TestEntity {
             buff.append("Infantry may not have more than one armor kit!\n");
             correct = false;
         }
+
+        if (infantry.hasFieldWeapon()) {
+            // These tests include field artillery
+            Mounted<?> firstFieldGun = infantry.originalFieldWeapons().get(0);
+            EquipmentType fieldGunType = firstFieldGun.getType();
+            int fieldGunCount = infantry.originalFieldWeapons().size();
+
+            if (fieldGunCount > 1) {
+                if (isFieldArtilleryWeapon(firstFieldGun)) {
+                    buff.append("Infantry may only use a single field artillery weapon!\n");
+                    correct = false;
+                }
+                for (Mounted<?> fieldGun : infantry.originalFieldWeapons()) {
+                    if (fieldGun.getType() != fieldGunType) {
+                        buff.append("All field guns must be of the same type and size!\n");
+                        correct = false;
+                    }
+                }
+            }
+
+            int troopersRequired = fieldGunCount * fieldGunCrewRequirement(fieldGunType, infantry);
+            if (troopersRequired > infantry.getOriginalTrooperCount()) {
+                buff.append("Insufficient troopers to operate the field guns!\n");
+                correct = false;
+            }
+        }
+
         if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
+    }
+
+    /**
+     * @return True if the given equipment type is suitable as a field artillery weapon for a conventional infantry
+     * unit; false for a null equipment type.
+     */
+    public static boolean isFieldArtilleryType(@Nullable EquipmentType equipmentType) {
+        return (equipmentType instanceof ArtilleryWeapon) || (equipmentType instanceof ArtilleryCannonWeapon);
+    }
+
+    /**
+     * @return True if the given equipment is suitable as a field artillery weapon for a conventional infantry
+     * unit; false for a null equipment.
+     */
+    public static boolean isFieldArtilleryWeapon(@Nullable Mounted<?> mounted) {
+        return (mounted != null) && isFieldArtilleryType(mounted.getType());
+    }
+
+    /**
+     * Returns the number of troopers of the given infantry required to operate each of the given field gun equipment.
+     * Neither parameter is checked for correctness. The returned result is never 0.
+     *
+     * @param equip    The weapon type to be used as a field gun
+     * @param infantry The infantry unit
+     *
+     * @return The troopers required to operate the field gun
+     */
+    public static int fieldGunCrewRequirement(EquipmentType equip, Infantry infantry) {
+        return Math.max(2, (int) Math.ceil(equip.getTonnage(infantry)));
     }
 
     public static int maxSecondaryWeapons(Infantry inf) {

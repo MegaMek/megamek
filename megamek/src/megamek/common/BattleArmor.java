@@ -810,6 +810,11 @@ public class BattleArmor extends Infantry {
         return IArmorState.ARMOR_NA;
     }
 
+    @Override
+    public int getOriginalTrooperCount() {
+        return troopers;
+    }
+
     /**
      * Set the troopers in the unit to the appropriate values.
      */

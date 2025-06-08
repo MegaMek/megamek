@@ -1,16 +1,35 @@
 /*
- * MekSelectorDialog.java - Copyright (C) 2002, 2004 Josh Yockey
- * Renamed UnitSelectorDialog - Jay Lawson <jaylawson39 at yahoo.com>
- * Renamed AbstractUnitSelectorDialog - Copyright (c) 2020 - The MegaMek Team
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * Copyright (C) 2002, 2004 Josh Yockey
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.unitSelectorDialogs;
 
@@ -79,9 +98,6 @@ import megamek.logging.MMLogger;
 public abstract class AbstractUnitSelectorDialog extends JDialog implements Runnable, KeyListener,
                                                                             ActionListener, ListSelectionListener {
     private static final MMLogger logger = MMLogger.create(AbstractUnitSelectorDialog.class);
-
-    // region Variable Declarations
-    private static final long serialVersionUID = 8144354264100884817L;
 
     public static final String CLOSE_ACTION = "closeAction";
     public static final String SELECT_ACTION = "selectAction";
@@ -214,7 +230,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     private void initComponents() {
         advancedSearchDialog = new AdvancedSearchDialog(frame, allowedYear);
-        GridBagConstraints gridBagConstraints = new GridBagConstraints();
 
         // To use the below you MUST AND ONLY modify the gridx and gridy components
         GridBagConstraints gridBagConstraintsWest = new GridBagConstraints();
@@ -309,7 +324,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         JLabel labelUnitType = new JLabel(Messages.getString("MekSelectorDialog.m_labelUnitType"));
         labelUnitType.setName("labelUnitType");
-        gridBagConstraints = new GridBagConstraints();
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -362,11 +377,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         panelFilterButtons.add(textFilter, gridBagConstraintsWest);
         gridBagConstraintsWest.fill = GridBagConstraints.NONE;
 
-        /**
-         * Add the Gunnery and Piloting entry boxes and labels to the filter panel in
-         * the UI
-         **/
-
+        // Add the Gunnery and Piloting entry boxes and labels to the filter panel in the UI
         JLabel lblGun = new JLabel(Messages.getString("MekSelectorDialog.m_labelGunnery"));
         lblGun.setName("lblGun");
         gridBagConstraintsWest.gridx = 0;
@@ -1022,10 +1033,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 }
                 return ms.getTons();
             } else if (col == COL_BV) {
-                /**
-                 * This code allows for Gunnery and BV to be read from the UI, and update the BV
-                 * values in the table as a result
-                 **/
+                // This code allows for Gunnery and BV to be read from the UI, and update the BV values in
+                // the table as a result
                 int gunnery = 4;
                 int piloting = 5;
                 if (textGunnery.getText().matches("\\d+")) {
@@ -1045,11 +1054,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 double gp_multiply = BVCalculator.bvSkillMultiplier(gunnery, piloting);
                 return (int) Math.round(ms.getBV() * gp_multiply);
             } else if (col == COL_PV) {
-                /**
-                 * This code allows for Gunnery to be read from the UI, and update the PV values
-                 * in the table as a result
-                 * It uses Gunnery as the skill
-                 **/
+                // This code allows for Gunnery to be read from the UI, and update the PV values
+                // in the table as a result
+                // It uses Gunnery as the skill
                 int gunnery = 4;
                 if (textGunnery.getText().matches("\\d+")) {
                     gunnery = Integer.parseInt(textGunnery.getText());

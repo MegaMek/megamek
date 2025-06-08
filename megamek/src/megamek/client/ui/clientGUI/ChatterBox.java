@@ -255,17 +255,23 @@ public class ChatterBox implements KeyListener {
             historyBookmark--;
             fetchHistory();
         }
-        cb2.setMessage(inputField.getText()+ev.getKeyChar());
+        if (cb2 != null) {
+            cb2.setMessage(inputField.getText()+ev.getKeyChar());
+        }
         moveToEnd();
     }
 
     public void fetchHistory() {
         try {
             inputField.setText(history.get(historyBookmark));
-            cb2.setMessage(inputField.getText());
+            if (cb2 != null) {
+                cb2.setMessage(inputField.getText());
+            }
         } catch (IndexOutOfBoundsException ioobe) {
             inputField.setText("");
-            cb2.setMessage("");
+            if (cb2 != null) {
+                cb2.setMessage("");
+            }
             historyBookmark = -1;
         }
     }

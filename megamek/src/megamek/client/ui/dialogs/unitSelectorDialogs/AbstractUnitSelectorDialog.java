@@ -319,7 +319,10 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
         unitTypeModel.addElement(Messages.getString("MekSelectorDialog.All"));
         for (int i = 0; i < UnitType.SIZE; i++) {
-            unitTypeModel.addElement(UnitType.getTypeDisplayableName(i));
+            // the AERO type does not match any units and there are no preconstructed life boats or escape pods
+            if (i != UnitType.AERO) {
+                unitTypeModel.addElement(UnitType.getTypeDisplayableName(i));
+            }
         }
         unitTypeModel.addElement(Messages.getString("MekSelectorDialog.SupportVee"));
         comboUnitType.setModel(unitTypeModel);

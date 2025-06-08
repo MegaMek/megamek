@@ -33,6 +33,18 @@
  */
 package megamek.client.ui.clientGUI;
 
+import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
+import megamek.client.ui.util.PlayerColour;
+import megamek.common.Configuration;
+import megamek.common.EntityMovementType;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.WeaponSortOrder;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.preference.PreferenceStoreProxy;
+
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -43,18 +55,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-
-import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
-import megamek.client.ui.util.PlayerColour;
-import megamek.common.Configuration;
-import megamek.common.EntityMovementType;
-import megamek.common.annotations.Nullable;
-import megamek.common.enums.WeaponSortOrder;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.preference.PreferenceStoreProxy;
 
 public class GUIPreferences extends PreferenceStoreProxy {
 
@@ -138,7 +138,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String PLANETARY_CONDITIONS_SHOW_LABELS = "PlanetaryConditionsShowLabels";
     public static final String PLANETARY_CONDITIONS_SHOW_VALUES = "PlanetaryConditionsShowValues";
     public static final String PLANETARY_CONDITIONS_SHOW_INDICATORS = "PlanetaryConditionsShowIndicators";
-    public static final String PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY = "PlanetaryConditionsBackgroundTransparency";
+    public static final String PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY =
+          "PlanetaryConditionsBackgroundTransparency";
 
     public static final String TRACE_OVERLAY_TRANSPARENCY = "TraceOverlayTransparency";
     public static final String TRACE_OVERLAY_SCALE = "TraceOverlayScale";
@@ -310,6 +311,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_REPORT_COLOR_INFO = "MiniReportColorInfo";
     public static final String MINI_REPORT_FONT_TYPE = "MiniReportFontType";
     public static final String MINI_ROUND_REPORT_SPRITES = "MiniRoundReportSprites";
+    public static final String MINI_REPORT_SHOW_PLAYERS = "MiniReportShowPlayers";
+    public static final String MINI_REPORT_SHOW_UNITS = "MiniReportShowUnits";
+    public static final String MINI_REPORT_SHOW_KEYWORDS = "MiniReportShowKeywords";
+    public static final String MINI_REPORT_SHOW_FILTER = "MiniReportShowFilter";
 
     public static final String PLAYER_LIST_POS_X = "PlayerListPosX";
     public static final String PLAYER_LIST_POS_Y = "PlayerListPosY";
@@ -766,6 +771,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(MINI_REPORT_COLOR_INFO, new Color(51, 153, 255));
         setDefault(MINI_REPORT_FONT_TYPE, "Segoe UI");
         store.setDefault(MINI_ROUND_REPORT_SPRITES, true);
+        store.setDefault(MINI_REPORT_SHOW_PLAYERS, true);
+        store.setDefault(MINI_REPORT_SHOW_UNITS, true);
+        store.setDefault(MINI_REPORT_SHOW_KEYWORDS, true);
+        store.setDefault(MINI_REPORT_SHOW_FILTER, false);
 
         store.setDefault(PLAYER_LIST_ENABLED, true);
         store.setDefault(PLAYER_LIST_POS_X, 200);
@@ -1369,6 +1378,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getMiniReportShowSprites() {
         return store.getBoolean(MINI_ROUND_REPORT_SPRITES);
+    }
+
+    public boolean getMiniReportShowPlayers() {
+        return store.getBoolean(MINI_REPORT_SHOW_PLAYERS);
+    }
+
+    public boolean getMiniReportShowUnits() {
+        return store.getBoolean(MINI_REPORT_SHOW_UNITS);
+    }
+
+    public boolean getMiniReportShowKeywords() {
+        return store.getBoolean(MINI_REPORT_SHOW_KEYWORDS);
+    }
+
+    public boolean getMiniReportShowFilter() {
+        return store.getBoolean(MINI_REPORT_SHOW_FILTER);
     }
 
     public boolean getPlayerListEnabled() {
@@ -2247,6 +2272,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMiniReportShowSprites(boolean b) {
         store.setValue(MINI_ROUND_REPORT_SPRITES, b);
+    }
+
+    public void setMiniReportShowPlayers(boolean b) {
+        store.setValue(MINI_REPORT_SHOW_PLAYERS, b);
+    }
+
+    public void setMiniReportShowUnits(boolean b) {
+        store.setValue(MINI_REPORT_SHOW_UNITS, b);
+    }
+
+    public void setMiniReportShowKeywords(boolean b) {
+        store.setValue(MINI_REPORT_SHOW_KEYWORDS, b);
+    }
+
+    public void setMiniReportShowFilter(boolean b) {
+        store.setValue(MINI_REPORT_SHOW_FILTER, b);
     }
 
     public void setPlayerListEnabled(boolean b) {
@@ -3549,7 +3590,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         final String[] codesText = text.split(" ");
         if (codesText.length == 3) {
             int[] codes = new int[codesText.length];
-            for (int i = 0; i < codesText.length; i++) {
+            for (int i = 0;
+                  i < codesText.length;
+                  i++) {
                 codes[i] = Integer.parseInt(codesText[i]);
             }
             return new Color(codes[0], codes[1], codes[2]);

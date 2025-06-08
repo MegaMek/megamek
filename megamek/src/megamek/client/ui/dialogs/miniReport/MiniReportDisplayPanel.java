@@ -70,6 +70,8 @@ import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 
+import javax.swing.*;
+
 /**
  * Shows reports, with an Okay JButton
  */
@@ -114,18 +116,22 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         GameListener gameListener = new GameListenerAdapter() {
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                if (Objects.requireNonNull(e.getOldPhase()) == GamePhase.VICTORY) {
-                    setVisible(false);
-                } else {
-                    if ((!e.getNewPhase().equals((e.getOldPhase()))) && ((e.getNewPhase().isReport())
-                          || ((e.getNewPhase().isOnMap()) && (tabs.getTabCount() == 0)))) {
-                        addReportPages(e.getNewPhase());
-                        updatePlayerChoice();
-                        updateEntityChoice();
-                    }
+                switch (Objects.requireNonNull(e.getOldPhase())) {
+                    case VICTORY:
+                        setVisible(false);
+                        break;
+                    default:
+                        if ((!e.getNewPhase().equals((e.getOldPhase()))) && ((e.getNewPhase().isReport())
+                              || ((e.getNewPhase().isOnMap()) && (
+                              tabs.getTabCount() == 0)))) {
+                            addReportPages(e.getNewPhase());
+                            updatePlayerChoice();
+                            updateEntityChoice();
+                        }
                 }
             }
         };
+
         currentClient.getGame().addGameListener(gameListener);
         butSwitchLocation = new JButton(Messages.getString("MiniReportDisplay.SwitchLocation"));
         butSwitchLocation.addActionListener(this);
@@ -270,15 +276,21 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         add(panelMain, BorderLayout.CENTER);
 
         doLayout();
+        refreshSearchPanel();
     }
 
     private void filterReport(String selectedFilterKeyword) {
         StringBuilder filterResult = new StringBuilder();
         String[] keywords = selectedFilterKeyword.split(" ");
         String[] htmlLines = currentClient.phaseReport.split("<br>");
-        for (int i = 0; i < htmlLines.length; i++) {
+        for (int i = 0;
+              i < htmlLines.length;
+              i++) {
             String htmlLine = htmlLines[i];
-            for (String word : keywords) {
+            for (int j = 0;
+                  j < keywords.length;
+                  j++) {
+                String word = keywords[j];
                 if (htmlLine.replaceAll("<[^>]*>", "").toUpperCase().contains(word.toUpperCase())) {
                     if (i > 0 && htmlLines[i - 1].contains("<img")) {
                         filterResult.append(htmlLines[i - 1]).append("<br>"); // get image from line above
@@ -311,6 +323,22 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
     private void filterButtonReset() {
         butQuickFilter.setText("Filter");
         filterEnabled = false;
+    }
+
+    public void refreshSearchPanel() {
+        comboPlayer.setVisible(GUIP.getMiniReportShowPlayers());
+        butPlayerSearchDown.setVisible(GUIP.getMiniReportShowPlayers());
+        butPlayerSearchUp.setVisible(GUIP.getMiniReportShowPlayers());
+        comboEntity.setVisible(GUIP.getMiniReportShowUnits());
+        butEntitySearchDown.setVisible(GUIP.getMiniReportShowUnits());
+        butEntitySearchUp.setVisible(GUIP.getMiniReportShowUnits());
+        comboQuick.setVisible(GUIP.getMiniReportShowKeywords());
+        butQuickSearchDown.setVisible(GUIP.getMiniReportShowKeywords());
+        butQuickSearchUp.setVisible(GUIP.getMiniReportShowKeywords());
+        comboFilter.setVisible(GUIP.getMiniReportShowFilter());
+        butQuickFilter.setVisible(GUIP.getMiniReportShowFilter());
+        updateQuickChoice();
+        updateFilterChoice();
     }
 
     private void searchTextPane(String searchPattern, Boolean searchDown) {
@@ -403,6 +431,7 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         int len = (Math.min(name.length(), MRD_MAX_NAME_LENGTH));
         String displayNane = String.format("%-12s", name).substring(0, len);
 
+        found = false;
         for (int i = 0; i < comboBox.getItemCount(); i++) {
             if (comboBox.getItemAt(i).equals(displayNane)) {
                 found = true;
@@ -550,7 +579,9 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
             startIndex = tabs.getTabCount() + 1;
         }
 
-        for (int round = startIndex; round <= numRounds; round++) {
+        for (int round = startIndex;
+              round <= numRounds;
+              round++) {
             String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
             tabs.add(Messages.getString("MiniReportDisplay.Round") + " " + round, loadHtmlScrollPane(text));
         }
@@ -607,5 +638,4 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
             activePane().setToolTipText(null);
         }
     }
-
 }

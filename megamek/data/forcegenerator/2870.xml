@@ -2541,7 +2541,7 @@
 			</model>
 		</chassis>
 		<chassis name='Firefly' unitType='Mek'>
-			<availability>FS:1+,CC:1+,CLAN!Front Line:3!Second Line:2!Solahma:1,CBS:3+,CB!Front Line:4!Second Line:3!Solahma:2!Provisional Garrison:1,CCO!Front Line:4!Second Line:3!Solahma:2!Provisional Garrison:1,CFM!Second Line:3!Solahma:2!Provisional Garrison:1,CGB!Second Line:5!Solahma:4!Provisional Garrison:3,CHH!Front Line:4!Second Line:3!Solahma:2!Provisional Garrison:1,CIH:3-,CNC!Second Line:3!Solahma:2!Provisional Garrison:1,CDS!Front Line:3!Second Line:3!Solahma:3!Provisional Garrison:3,CSJ:4+,CSV:4-,CW:3-,BAN:2</availability>
+			<availability>FS:1+,CC:1+,CLAN!Front Line:3!Second Line:2!Solahma:1,CBS:3+,CB!Front Line:4!Second Line:3!Solahma:2!Provisional Garrison:1,CCO!Front Line:4!Second Line:3!Solahma:2!Provisional Garrison:1,CFM!Second Line:3!Solahma:2!Provisional Garrison:1,CGB!Second Line:5!Solahma:4!Provisional Garrison:3,CHH!Front Line:4!Second Line:3!Solahma:2!Provisional Garrison:1,CIH:3-,CNC!Second Line:3!Solahma:2!Provisional Garrison:1,CDS!Front Line:3!Second Line:3!Solahma:3!Provisional Garrison:3,CSJ:4+,CSR:4+,CSV:4-,CW:3-,BAN:2</availability>
 			<model name='C'>
 				<availability>CSJ!Keshik:8!Front Line:8!Second Line:1</availability>
 			</model>
@@ -3255,7 +3255,7 @@
 			</model>
 			<model name='HER-1S'>
 				<roles>recon</roles>
-				<availability>CS:8,CLAN:4-,CBS!Front Line:4!Second Line:4!Solahma:4!Provisional Garrison:4,CB:4,CCC:4,CGS:4,CIH!Front Line:4!Second Line:4!Solahma:4!Provisional Garrison:4,CJF:3-,CSJ:4,CSV:3-,CW:4-,NIOPS:8,BAN:5-</availability>
+				<availability>CS:8,CLAN:4-,CBS!Front Line:4!Second Line:4!Solahma:4!Provisional Garrison:4,CB:4,CCC:4,CGS:4,CIH!Front Line:4!Second Line:4!Solahma:4!Provisional Garrison:4,CJF:3-,CSJ:4,CSV:3-,NIOPS:8,BAN:5-</availability>
 			</model>
 			<model name='HER-1Sb'>
 				<roles>recon</roles>
@@ -4548,11 +4548,11 @@
 			</model>
 			<model name='MON-66'>
 				<roles>command,recon</roles>
-				<availability>CS:8,CLAN:6,CB:5,CCC:4-,CFM:5-,CJF!Front Line:3!Second Line:3!Solahma:3!Provisional Garrison:3,CNC:4-,CSJ:4-,CW!Front Line:6!Second Line:6!Solahma:6!Provisional Garrison:6,NIOPS:8,BAN:5-</availability>
+				<availability>CS:8,CLAN:6,CB:5,CCC:4-,CCO:4-,CFM:5-,CJF!Front Line:3!Second Line:3!Solahma:3!Provisional Garrison:3,CNC:4-,CSJ:4-,CW!Front Line:6!Second Line:6!Solahma:6!Provisional Garrison:6,NIOPS:8,BAN:5-</availability>
 			</model>
 			<model name='MON-66b'>
 				<roles>command,recon</roles>
-				<availability>CLAN:5+,CCC:4,CFM:4,CJF!Second Line:4!Solahma:3!Provisional Garrison:2,CNC:5,CSJ:4,BAN:1</availability>
+				<availability>CLAN:5+,CCC:4,CCO:4,CFM:4,CJF!Second Line:4!Solahma:3!Provisional Garrison:2,CNC:5,CSJ:4,BAN:1</availability>
 			</model>
 			<model name='MON-67'>
 				<roles>command,recon</roles>

@@ -148,7 +148,7 @@ public abstract class PathRanker implements IPathRanker {
             return returnPaths;
         }
         botLogger.append(game, true);
-        // log at most 200 paths
+        // log at most 500 paths
         int i = 0;
         int maxRankedPaths = Math.max(500, returnPaths.size());
         for (RankedPath rankedPath : returnPaths) {

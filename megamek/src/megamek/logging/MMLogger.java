@@ -29,6 +29,8 @@ import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.logging.log4j.spi.AbstractLogger;
 import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 
+import java.util.Objects;
+
 /**
  * <p>
  * Utility class to handle logging functions as well as reporting exceptions to Sentry. To deal with general
@@ -96,6 +98,20 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * @return The custom Logger.
      */
     public static MMLogger create(final Class<?> loggerName) {
+        final Logger wrapped = LogManager.getLogger(loggerName);
+        return new MMLogger(wrapped);
+    }
+
+    /**
+     * Returns a custom Logger using a specific string as the Logger name.
+     *
+     * @param loggerName The name to be used as the Logger name. Cannot be null nor blank.
+     *
+     * @return The custom Logger.
+     */
+    public static MMLogger create(final String loggerName) {
+        Objects.requireNonNull(loggerName == null ? null : (loggerName.isBlank() ? null : loggerName),
+              "loggerName cannot be null nor blank");
         final Logger wrapped = LogManager.getLogger(loggerName);
         return new MMLogger(wrapped);
     }

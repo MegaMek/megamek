@@ -9837,7 +9837,7 @@ public class TWGameManager extends AbstractGameManager {
                 AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
                 // TODO: this logic seems to be a bit off, rules need to be checked.
                 if (atype != null &&
-                          (atype.getAmmoType() == AmmoTypeEnum.ARROW_IV 
+                          (atype.getAmmoType() == AmmoTypeEnum.ARROW_IV
                           || ammoUsed.isHomingAmmoInHomingMode())) {
                     isHomingMissile = true;
                 }
@@ -11115,7 +11115,7 @@ TargetRoll nTargetRoll,
             int tf = jungle.getTerrainFactor() - nDamage;
             int level = jungle.getLevel();
             int folEl = h.terrainLevel(Terrains.FOLIAGE_ELEV);
-            if (tf < 0) {
+            if (tf <= 0) {
                 h.removeTerrain(Terrains.JUNGLE);
                 h.removeTerrain(Terrains.FOLIAGE_ELEV);
                 h.addTerrain(new Terrain(Terrains.ROUGH, 1));

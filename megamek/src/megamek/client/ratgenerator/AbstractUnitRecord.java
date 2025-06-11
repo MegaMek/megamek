@@ -40,15 +40,15 @@ public class AbstractUnitRecord {
     }
 
     /**
-     * Adjusts availability rating for +/- dynamic. Also reduces availability by
-     * introduction year, with 1 year before heavily reduced for pre-production
-     * prototypes and first year slightly reduced for working out initial
+     * Adjusts availability rating for +/- dynamic. Also reduces availability by introduction year, with 1 year before
+     * heavily reduced for pre-production prototypes and first year slightly reduced for working out initial
      * production.
      *
-     * @param avRating       The AvailabilityRecord for the chassis or model.
-     * @param equipRating   The force equipment rating.
+     * @param avRating     The AvailabilityRecord for the chassis or model.
+     * @param equipRating  The force equipment rating.
      * @param ratingLevels The number of equipment rating levels used by the faction.
-     * @param year     The game year
+     * @param year         The game year
+     *
      * @return The adjusted availability rating.
      */
     public int calcAvailability(AvailabilityRating avRating, int equipRating, int ratingLevels, int year) {
@@ -76,37 +76,47 @@ public class AbstractUnitRecord {
     public String getChassis() {
         return chassis;
     }
+
     public void setChassis(String chassis) {
         this.chassis = chassis;
     }
+
     public final String getChassisKey() {
         if (omni) {
-            return clan? chassis + "[" + UnitType.getTypeName(unitType) + "]ClanOmni" :
-                chassis + "[" + UnitType.getTypeName(unitType) + "]ISOmni";
+            return clan ? chassis + "[" + UnitType.getTypeName(unitType) + "]ClanOmni" :
+                         chassis + "[" + UnitType.getTypeName(unitType) + "]ISOmni";
         }
         return chassis + "[" + UnitType.getTypeName(unitType) + "]";
     }
+
     public String getKey() {
         return getChassisKey();
     }
+
     public int getUnitType() {
         return unitType;
     }
+
     public void setUnitType(int type) {
         unitType = type;
     }
+
     public void setUnitType(String type) {
         unitType = parseUnitType(type);
     }
+
     public boolean isOmni() {
         return omni;
     }
+
     public void setOmni(boolean omni) {
         this.omni = omni;
     }
+
     public boolean isClan() {
         return clan;
     }
+
     public void setClan(boolean clan) {
         this.clan = clan;
     }

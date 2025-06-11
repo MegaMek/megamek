@@ -179,8 +179,8 @@ tasks.register('copyFiles', Copy) {
     description = 'Stages files that are to be copied into the distribution.'
     group = 'build'
 
-    dependsOn generateDynamicFiles
     dependsOn copyLicenseFiles
+    dependsOn generateDynamicFiles
 
     from projectDir
     include "${data}/**"

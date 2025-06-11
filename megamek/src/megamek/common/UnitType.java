@@ -38,22 +38,17 @@ public class UnitType {
     public static final int HANDHELD_WEAPON = 16;
 
     private static String[] names = { "Mek", "Tank", "BattleArmor", "Infantry",
-            "ProtoMek", "VTOL", "Naval", "Gun Emplacement", "Conventional Fighter",
-            "AeroSpaceFighter", "Small Craft", "Dropship",
-            "Jumpship", "Warship", "Space Station", "Aero", "Handheld Weapon" };
+                                      "ProtoMek", "VTOL", "Naval", "Gun Emplacement", "Conventional Fighter",
+                                      "AeroSpaceFighter", "Small Craft", "Dropship",
+                                      "Jumpship", "Warship", "Space Station", "Aero", "Handheld Weapon" };
 
     public static final int SIZE = names.length;
-
-    /** @deprecated use {@code UnitType.getTypeName(e.getUnitType())} instead */
-    @Deprecated(since = "0.50.4", forRemoval = true)
-    public static String determineUnitType(Entity e) {
-        return getTypeName(e.getUnitType());
-    }
-
+    
     /**
      * Reverse lookup for type integer constant from name
      *
      * @param name Unit type name
+     *
      * @return The unit type constant. If no match can be found, returns -1.
      */
     public static int determineUnitTypeCode(String name) {
@@ -63,12 +58,6 @@ public class UnitType {
             }
         }
         return -1;
-    }
-
-    /** @deprecated use {@link Entity#getUnitType()} instead */
-    @Deprecated(since = "0.50.4", forRemoval = true)
-    public static int determineUnitTypeCode(Entity e) {
-        return e.getUnitType();
     }
 
     public static String getTypeName(int type) {
@@ -82,6 +71,7 @@ public class UnitType {
         if ((type >= 0) && (type < SIZE)) {
             return Messages.getString("UnitType." + names[type]);
         }
+
         throw new IllegalArgumentException("Unknown unit type");
     }
 
@@ -91,6 +81,7 @@ public class UnitType {
      * Whether the given entity is a VTOL
      *
      * @param e the entity to examine
+     *
      * @return True or false
      */
     public static boolean isVTOL(Entity e) {
@@ -101,6 +92,7 @@ public class UnitType {
      * Whether the given entity is a Spheroid dropship
      *
      * @param e the entity to examine
+     *
      * @return True or false
      */
     public static boolean isSpheroidDropship(Entity e) {

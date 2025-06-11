@@ -152,7 +152,6 @@ public class RATGenerator {
         initialized = false;
         initializing = false;
         initialize(dir);
-        ratGenerator.getEraSet().forEach(e -> ratGenerator.loadEra(e, dir));
     }
 
     public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, String faction, int year) {
@@ -1383,6 +1382,7 @@ public class RATGenerator {
 
         if (!interrupted) {
             ratGenerator.initialized = true;
+            ratGenerator.getEraSet().forEach(e -> ratGenerator.loadEra(e, dir));
             ratGenerator.notifyListenersOfInitialization();
         }
 

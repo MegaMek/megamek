@@ -54,7 +54,7 @@ import org.apache.logging.log4j.LogManager;
 
 public class AvailabilityPanel {
 
-    private final static RATGenerator RG = RATGenerator.getInstance();
+    private final static RATGenerator RAT_GENERATOR = RATGenerator.getInstance();
     private static Integer[] RG_ERAS;
 
     private final JFrame parent;
@@ -81,7 +81,7 @@ public class AvailabilityPanel {
     }
 
     public void setUnit(String model, String chassis) {
-        record = RG.getModelRecord(chassis + " " + model);
+        record = RAT_GENERATOR.getModelRecord(chassis + " " + model);
         initializePanel();
     }
 
@@ -90,12 +90,12 @@ public class AvailabilityPanel {
     }
 
     private void initializePanel() {
-        if (!RG.isInitialized()) {
+        if (!RAT_GENERATOR.isInitialized()) {
             return;
         } else if (RG_ERAS == null) {
-            RG.getEraSet().forEach(RG::loadYear);
-            RG.initRemainingUnits();
-            RG_ERAS = RG.getEraSet().toArray(new Integer[0]);
+            RAT_GENERATOR.getEraSet().forEach(RAT_GENERATOR::loadYear);
+            // RAT_GENERATOR.initRemainingUnits();
+            RG_ERAS = RAT_GENERATOR.getEraSet().toArray(new Integer[0]);
         }
         panel.removeAll();
         columns = 0;
@@ -116,18 +116,18 @@ public class AvailabilityPanel {
                     ratings.clear();
 
                     // Cycle the years and check if the year is in the current ERA and the faction is active
-                    for (Integer year : RG.getEraSet()) {
-                        FactionRecord faction = RG.getFaction(factionName);
+                    for (Integer year : RAT_GENERATOR.getEraSet()) {
+                        FactionRecord faction = RAT_GENERATOR.getFaction(factionName);
                         if ((Eras.getEra(year) != era)
                                   || ((faction != null) && !faction.isActiveInYear(year))) {
                             continue;
                         }
-                        ratings.add(RG.findModelAvailabilityRecord(year, record.getKey(), factionName));
+                        ratings.add(RAT_GENERATOR.findModelAvailabilityRecord(year, record.getKey(), factionName));
                     }
 
                     ratings.removeIf(Objects::isNull);
                     // Merge all ratings from years that fell into the current era
-                    AvailabilityRating eraAvailability = RG.mergeFactionAvailability(factionName, ratings);
+                    AvailabilityRating eraAvailability = RAT_GENERATOR.mergeFactionAvailability(factionName, ratings);
                     if (eraAvailability != null) {
                         text = eraAvailability.getAvailabilityCode();
                     }

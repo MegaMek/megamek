@@ -1537,10 +1537,12 @@ public class RATGenerator {
             if (models.containsKey(ms.getName())) {
                 continue;
             }
+
             ModelRecord mr = new ModelRecord(ms);
 
             models.put(mr.getKey(), mr);
             String chassisKey = mr.getChassisKey();
+            
             if (chassis.containsKey(chassisKey)) {
                 if (chassis.get(chassisKey).getIntroYear() == 0 ||
                           chassis.get(chassisKey).getIntroYear() > ms.getYear()) {

@@ -1615,22 +1615,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         row.add(reportKeywordsTextPane);
         comps.add(row);
 
-        row = new ArrayList<>();
-        row.add(chkReportShowFilter);
-        chkReportShowFilter.setToolTipText(Messages.getString(
-              "CommonSettingsDialog.showReportFilterList.tooltip"));
-        chkReportShowFilter.setSelected(GUIP.getMiniReportShowFilter());
-        comps.add(row);
-
-        JLabel reportFilterKeywordsLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportFilterKeywords")
-              + ":"
-              + " ");
-        reportFilterKeywordsTextPane = new JTextPane();
-        row = new ArrayList<>();
-        row.add(reportFilterKeywordsLabel);
-        row.add(reportFilterKeywordsTextPane);
-        comps.add(row);
-
         return createSettingsPanel(comps);
     }
 

@@ -1590,16 +1590,22 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         row = new ArrayList<>();
         row.add(chkReportShowPlayers);
+        chkReportShowPlayers.setToolTipText(Messages.getString(
+              "CommonSettingsDialog.showReportPlayerList.tooltip"));
         chkReportShowPlayers.setSelected(GUIP.getMiniReportShowPlayers());
         comps.add(row);
 
         row = new ArrayList<>();
         row.add(chkReportShowUnits);
+        chkReportShowUnits.setToolTipText(Messages.getString(
+              "CommonSettingsDialog.showReportUnitList.tooltip"));
         chkReportShowUnits.setSelected(GUIP.getMiniReportShowUnits());
         comps.add(row);
 
         row = new ArrayList<>();
         row.add(chkReportShowKeywords);
+        chkReportShowKeywords.setToolTipText(Messages.getString(
+              "CommonSettingsDialog.showReportKeywordsList.tooltip"));
         chkReportShowKeywords.setSelected(GUIP.getMiniReportShowKeywords());
         comps.add(row);
         JLabel reportKeywordsLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportKeywords") + ": ");
@@ -1611,6 +1617,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         row = new ArrayList<>();
         row.add(chkReportShowFilter);
+        chkReportShowFilter.setToolTipText(Messages.getString(
+              "CommonSettingsDialog.showReportFilterList.tooltip"));
         chkReportShowFilter.setSelected(GUIP.getMiniReportShowFilter());
         comps.add(row);
 

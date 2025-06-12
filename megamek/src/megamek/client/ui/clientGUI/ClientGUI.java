@@ -628,6 +628,18 @@ public class ClientGUI extends AbstractClientGUI
 
             panTop.add(splitPaneA, BorderLayout.CENTER);
             initializeFocusTracking();
+
+            // TODO: extract to function that can be called here and at gameBoardNew()
+            BoardView boardView = new BoardView(client.getGame(), controller, ClientGUI.this, 0);
+            boardView.getPanel().setPreferredSize(clientGuiPanel.getSize());
+            boardView.addBoardViewListener(ClientGUI.this);
+            cb = new ChatterBox(this);
+            cb2 = new ChatterBoxOverlay(ClientGUI.this, boardView, controller);
+            cb.setChatterBox2(cb2);
+            cb2.setChatterBox(cb);
+            boardView.getPanel().addKeyListener(cb2);
+            boardView.addOverlay(cb2);
+
         } catch (Exception ex) {
             logger.fatal(ex, "initialize");
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
@@ -664,7 +676,6 @@ public class ClientGUI extends AbstractClientGUI
         setBotCommandsDialog(new BotCommandsDialog(frame, this));
         getBotCommandsDialog().add(new BotCommandsPanel(getClient(), audioService, null));
 
-        cb = new ChatterBox(this);
         client.changePhase(GamePhase.UNKNOWN);
         UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
         if (!MekSummaryCache.getInstance().isInitialized()) {

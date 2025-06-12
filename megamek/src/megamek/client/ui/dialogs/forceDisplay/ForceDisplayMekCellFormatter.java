@@ -18,6 +18,19 @@
  */
 package megamek.client.ui.dialogs.forceDisplay;
 
+import static megamek.client.ui.panels.phaseDisplay.lobby.MekTableModel.DOT_SPACER;
+import static megamek.client.ui.util.UIUtil.CONNECTED_SIGN;
+import static megamek.client.ui.util.UIUtil.ECM_SIGN;
+import static megamek.client.ui.util.UIUtil.QUIRKS_SIGN;
+import static megamek.client.ui.util.UIUtil.UNCONNECTED_SIGN;
+import static megamek.client.ui.util.UIUtil.fontHTML;
+import static megamek.client.ui.util.UIUtil.uiGray;
+
+import java.awt.Color;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
+import java.util.List;
+
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
@@ -29,14 +42,6 @@ import megamek.common.force.Force;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.CollectionUtil;
-
-import java.awt.*;
-import java.text.MessageFormat;
-import java.text.NumberFormat;
-import java.util.List;
-
-import static megamek.client.ui.panels.phaseDisplay.lobby.MekTableModel.DOT_SPACER;
-import static megamek.client.ui.util.UIUtil.*;
 
 class ForceDisplayMekCellFormatter {
 
@@ -58,7 +63,7 @@ class ForceDisplayMekCellFormatter {
                 && !EntityVisibilityUtils.detectedOrHasVisual(localPlayer, client.getGame(), entity);
 
         if (entity.isSensorReturn(localPlayer)) {
-            String value = "<NOBR>&nbsp;&nbsp;";
+            String value = "";
             String uType = "";
 
             if (entity instanceof Infantry) {
@@ -85,8 +90,9 @@ class ForceDisplayMekCellFormatter {
         } else if (showAsUnknown) {
             return "";
         }
-
-        StringBuilder result = new StringBuilder("<NOBR>&nbsp;&nbsp;");
+        String divOpen = "<td width='100'>";
+        String divClose = "</td>";
+        StringBuilder result = new StringBuilder("<table><tr valign='top'>");
         boolean isCarried = entity.getTransportId() != Entity.NONE;
 
         Color color = GUIP.getEnemyUnitColor();
@@ -97,11 +103,15 @@ class ForceDisplayMekCellFormatter {
         }
 
         if (entity.getForceId() == Force.NO_FORCE) {
-            result.append(UIUtil.fontHTML(color) + "\u25AD" + "</FONT>");
+            result.append("<td width='10'>" + UIUtil.fontHTML(color) + "\u25AD" + "</FONT>" + divClose);
         }
 
         String id = MessageFormat.format("[{0}] ", entity.getId());
-        result.append(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + id + "</FONT>");
+        result.append("<td width='10'>" +
+                            UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) +
+                            id +
+                            "</FONT>" +
+                            divClose);
 
         // Done
         if (!game.getPhase().isReport()) {
@@ -111,50 +121,70 @@ class ForceDisplayMekCellFormatter {
             } else {
                 done = "\u2611 ";
             }
-            result.append(UIUtil.fontHTML(color) + done + "</FONT>");
+            result.append("<td width='20'>" + UIUtil.fontHTML(color) + done + "</FONT>" + divClose);
         }
 
         // Unit name
         // Gray out if the unit is a fighter in a squadron
         if (entity.isPartOfFighterSquadron()) {
-            result.append(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + entity.getShortNameRaw() + "</FONT>");
+            result.append("<td width='150'>" +
+                                UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) +
+                                entity.getShortNameRaw() +
+                                "</FONT>" +
+                                divClose);
         } else {
-            result.append(entity.getShortNameRaw());
+            result.append("<td width='150'>" + entity.getShortNameRaw() + divClose);
         }
 
         // Pilot
         Crew pilot = entity.getCrew();
-        result.append(DOT_SPACER);
+        //result.append(DOT_SPACER);
 
         if (pilot.getSlotCount() > 1 || entity instanceof FighterSquadron) {
-            result.append("<I>" + Messages.getString("ChatLounge.multipleCrew") + "</I>");
+            result.append("<td width='150'>" +
+                                "<I>" +
+                                Messages.getString("ChatLounge.multipleCrew") +
+                                "</I>" +
+                                divClose);
         } else if ((pilot.getNickname(0) != null) && !pilot.getNickname(0).isEmpty()) {
-            result.append(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + "<B>'");
+            result.append("<td width='150'>" + UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + "<B>'");
             result.append(pilot.getNickname(0).toUpperCase() + "'</B></FONT>");
             if (!pilot.getStatusDesc(0).isEmpty()) {
                 result.append(" (" + pilot.getStatusDesc(0) + ")");
             }
+            result.append(divClose);
         } else {
-            result.append(pilot.getDesc(0));
+            result.append("<td width='150'>" + pilot.getDesc(0) + divClose);
         }
 
         final boolean rpgSkills = options.booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-        result.append(" (" + pilot.getSkillsAsString(rpgSkills) + ")");
+        result.append("<td width='50'>" + pilot.getSkillsAsString(rpgSkills) + divClose);
 
-        result.append(DOT_SPACER);
-        result.append(' ' + UnitToolTip.getDamageLevelDesc(entity, true));
+        //result.append(DOT_SPACER);
+        //result.append("<td width='100'>" + UnitToolTip.getDamageLevelDesc(entity, true) + divClose);
+        result.append("<td width='150'>Armor: " +
+                            entity.getTotalArmor() +
+                            "/" +
+                            entity.getTotalOArmor() +
+                            divClose +
+                            "<td " +
+                            "width='150'>Internal: " +
+                            entity.getTotalInternal() +
+                            "/" +
+                            entity.getTotalOInternal() +
+                            divClose);
 
         // Tonnage
-        result.append(DOT_SPACER);
+        //result.append(DOT_SPACER);
         NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
         String tonnage = formatter.format(entity.getWeight());
-        tonnage += Messages.getString("ChatLounge.Tons");
-        result.append(tonnage);
+        tonnage += "t";
+        result.append("<td width='40'>" + tonnage + divClose);
 
         // Alpha Strike Unit Role
         if (!entity.isUnitGroup()) {
-            result.append(DOT_SPACER);
-            result.append(entity.getRole().toString());
+            //result.append(DOT_SPACER);
+            result.append("<td width='100'>" + entity.getRole().toString() + divClose);
         }
 
         // Controls the separator dot character
@@ -290,6 +320,7 @@ class ForceDisplayMekCellFormatter {
             result.append(UIUtil.fontHTML(color) + player + "</FONT>");
         }
 
+        result.append("</tr></table>");
         return UnitToolTip.wrapWithHTML(result.toString());
     }
 

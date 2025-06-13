@@ -32,21 +32,43 @@
  */
 package megamek.client.ui.dialogs.unitSelectorDialogs;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Image;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import megamek.client.ratgenerator.AvailabilityRating;
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.RATGenerator;
-import megamek.client.ui.util.SpringUtilities;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.eras.Era;
 import megamek.common.eras.Eras;
@@ -54,24 +76,388 @@ import org.apache.logging.log4j.LogManager;
 
 public class AvailabilityPanel {
 
+
+    private static class FixedColumnGrid extends JPanel {
+        private final JTable fixedTable;
+        private final JTable scrollableTable;
+        private final JScrollPane fixedScrollPane;
+        private final JScrollPane scrollableScrollPane;
+        private final DefaultTableModel model;
+        private static final int FIXED_COLUMN_WIDTH = 200;
+
+        public static class FactionCellData {
+            Icon icon;
+            String text;
+
+            public FactionCellData(Icon icon, String text) {
+                this.icon = icon;
+                this.text = text;
+            }
+        }
+
+        private static class FactionCellRenderer extends JPanel implements TableCellRenderer {
+            private final JLabel iconLabel = new JLabel();
+            private final JLabel textLabel = new JLabel();
+
+            public FactionCellRenderer() {
+                setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+                setOpaque(true);
+                setBorder(new EmptyBorder(2, 5, 2, 5)); // Padding for the whole cell
+                iconLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
+                iconLabel.setVerticalAlignment(SwingConstants.CENTER);
+                textLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
+                textLabel.setVerticalAlignment(SwingConstants.CENTER);
+                add(iconLabel);
+                add(Box.createHorizontalStrut(5)); // Gap between icon and text
+                add(textLabel);
+            }
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                if (value instanceof FactionCellData) {
+                    FactionCellData data = (FactionCellData) value;
+                    iconLabel.setIcon(data.icon);
+                    // Adjusted width calculation for HTML body to account for panel padding and strut
+                    int textContentWidth = FIXED_COLUMN_WIDTH -
+                                                 getInsets().left - getInsets().right - // Panel border
+                                                 (data.icon != null ? data.icon.getIconWidth() : 0) -
+                                                 5 - // Strut width
+                                                 5; // Small buffer for text label itself
+                    if (textContentWidth < 10) textContentWidth = 10; // Minimum width
+
+                    textLabel.setText("<html><body style='width: " + textContentWidth + "px'>" +
+                                            (data.text != null ? data.text.replace("\n", "<br>") : "") +
+                                            "</body></html>");
+                    iconLabel.setVisible(data.icon != null);
+                } else {
+                    iconLabel.setIcon(null);
+                    textLabel.setText(value == null ? "" : "<html>" + value.toString().replace("\n", "<br>") + "</html>");
+                    iconLabel.setVisible(false);
+                }
+
+                if (isSelected) {
+                    setBackground(table.getSelectionBackground());
+                    setForeground(table.getSelectionForeground());
+                    textLabel.setForeground(table.getSelectionForeground()); // Ensure text color changes
+                } else {
+                    setBackground(table.getBackground());
+                    setForeground(table.getForeground());
+                    textLabel.setForeground(table.getForeground());
+                }
+                return this;
+            }
+        }
+
+        private static class HyperlinkHeaderRenderer extends JLabel implements TableCellRenderer {
+            public HyperlinkHeaderRenderer() {
+                setOpaque(true);
+                setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+                setHorizontalAlignment(CENTER);
+                setFont(UIManager.getFont("TableHeader.font").deriveFont(Font.BOLD));
+                setForeground(UIUtil.uiLightBlue());
+            }
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                setText(value == null ? "" : value.toString());
+                return this;
+            }
+        }
+
+        public FixedColumnGrid() {
+            setLayout(new BorderLayout());
+
+            // Create a shared model for both tables
+            model = new DefaultTableModel() {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return true; // Make cells editable if needed
+                }
+            };
+
+            // Fixed column table (left side)
+            fixedTable = new JTable(model);
+            fixedTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            fixedTable.getTableHeader().setReorderingAllowed(false);
+            fixedTable.setIntercellSpacing(new Dimension(0,1));
+
+            // Create the scrollable columns table (right side)
+            scrollableTable = new JTable(model);
+            scrollableTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            scrollableTable.getTableHeader().setReorderingAllowed(false);
+            scrollableTable.setIntercellSpacing(new Dimension(1,1));
+
+            // Set up scroll panes
+            fixedScrollPane = new JScrollPane(fixedTable,
+                  JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+                  JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            fixedScrollPane.setWheelScrollingEnabled(true);
+
+            scrollableScrollPane = new JScrollPane(scrollableTable,
+                  JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            scrollableScrollPane.setWheelScrollingEnabled(true);
+
+            scrollableScrollPane.getVerticalScrollBar().setModel(fixedScrollPane.getVerticalScrollBar().getModel());
+            scrollableTable.setSelectionModel(fixedTable.getSelectionModel());
+
+            // Set up the main layout with both tables
+            JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                  fixedScrollPane, scrollableScrollPane);
+            splitPane.setDividerSize(0);
+            splitPane.setContinuousLayout(true);
+            splitPane.setDividerLocation(FIXED_COLUMN_WIDTH);
+            splitPane.setResizeWeight(0.0);
+
+            add(splitPane, BorderLayout.CENTER);
+
+            model.addTableModelListener(new RowHeightSynchronizer());
+
+            // Setup header renderers and mouse listener for hyperlinks
+            HyperlinkHeaderRenderer headerRenderer = new HyperlinkHeaderRenderer();
+            MouseAdapter headerMouseAdapter = new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    JTableHeader header = (JTableHeader) e.getSource();
+                    JTable table = header.getTable();
+                    int columnIndexInView = table.columnAtPoint(e.getPoint());
+                    if (columnIndexInView != -1) {
+                        int modelColumnIndex = table.convertColumnIndexToModel(columnIndexInView);
+                        String headerValue = table.getModel().getColumnName(modelColumnIndex); // Get from model for original HTML
+                        if (headerValue != null) {
+                            Pattern pattern = Pattern.compile("href\\s*=\\s*['\"]([^'\"]*)['\"]", Pattern.CASE_INSENSITIVE);
+                            Matcher matcher = pattern.matcher(headerValue);
+                            if (matcher.find()) {
+                                String url = matcher.group(1);
+                                try {
+                                    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                                        Desktop.getDesktop().browse(new URI(url));
+                                    }
+                                } catch (Exception ex) {
+                                    JOptionPane.showMessageDialog(table, "Could not open link: " + ex.getMessage(), "Link Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            fixedTable.getTableHeader().setDefaultRenderer(headerRenderer);
+            fixedTable.getTableHeader().addMouseListener(headerMouseAdapter);
+            scrollableTable.getTableHeader().setDefaultRenderer(headerRenderer);
+            scrollableTable.getTableHeader().addMouseListener(headerMouseAdapter);
+
+
+            // Listen for column model changes to re-apply setup
+            fixedTable.addPropertyChangeListener("model", evt -> {
+                setupFixedColumns();
+                synchronizeRowHeights();
+            });
+            scrollableTable.addPropertyChangeListener("model", evt -> {
+                setupScrollableColumns();
+                synchronizeRowHeights();
+            });
+
+
+            ComponentAdapter componentAdapter = new ComponentAdapter() {
+                @Override
+                public void componentResized(ComponentEvent e) {
+                    synchronizeRowHeights(); // This will also call adjustColumnWidths
+                }
+            };
+            fixedTable.addComponentListener(componentAdapter);
+            scrollableTable.addComponentListener(componentAdapter);
+            addComponentListener(componentAdapter);
+        }
+
+        /**
+         * Configure the fixed column table to show only the first column
+         */
+        private void setupFixedColumns() {
+            TableColumnModel fcm = fixedTable.getColumnModel();
+            while (fcm.getColumnCount() > 1) {
+                fcm.removeColumn(fcm.getColumn(1));
+            }
+
+            if (model.getColumnCount() > 0) {
+                TableColumn fixedColCandidate = null;
+                if (fcm.getColumnCount() == 1) {
+                    fixedColCandidate = fcm.getColumn(0);
+                }
+                if (fixedColCandidate != null && fcm.getColumnCount() == 1 && fixedColCandidate.getModelIndex() == 0) {
+                    fixedColCandidate.setCellRenderer(new FactionCellRenderer());
+                    fixedColCandidate.setPreferredWidth(FIXED_COLUMN_WIDTH);
+                    fixedColCandidate.setHeaderValue(model.getColumnName(0));
+                }
+            } else {
+                while (fcm.getColumnCount() > 0) {
+                    fcm.removeColumn(fcm.getColumn(0));
+                }
+            }
+
+            fixedTable.setPreferredScrollableViewportSize(new Dimension(FIXED_COLUMN_WIDTH, fixedTable.getPreferredScrollableViewportSize().height));
+            fixedTable.getTableHeader().revalidate();
+            fixedTable.getTableHeader().repaint();
+        }
+
+        /**
+         * Configure the scrollable table to hide the first column
+         */
+        private void setupScrollableColumns() {
+            TableColumnModel scm = scrollableTable.getColumnModel();
+            for (int i = scm.getColumnCount() - 1; i >= 0; i--) {
+                if (scm.getColumn(i).getModelIndex() == 0) {
+                    scm.removeColumn(scm.getColumn(i));
+                }
+            }
+            for (int i = 0; i < scm.getColumnCount(); i++) {
+                TableColumn col = scm.getColumn(i);
+                col.setHeaderValue(model.getColumnName(col.getModelIndex()));
+                DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+                renderer.setHorizontalAlignment(SwingConstants.CENTER);
+                col.setCellRenderer(renderer);
+            }
+            scrollableTable.getTableHeader().revalidate();
+            scrollableTable.getTableHeader().repaint();
+        }
+
+        /**
+         * Synchronize row heights between the fixed and scrollable tables
+         */
+        public void synchronizeRowHeights() {
+            for (int row = 0; row < model.getRowCount(); row++) {
+                int fixedHeight = 0;
+                if (fixedTable.getColumnCount() > 0 && row < fixedTable.getRowCount()) {
+                    fixedHeight = getPreferredRowHeight(fixedTable, row);
+                }
+
+                int scrollHeight = 0;
+                if (scrollableTable.getColumnCount() > 0 && row < scrollableTable.getRowCount()) {
+                    scrollHeight = getPreferredRowHeight(scrollableTable, row);
+                }
+
+                int maxHeight = Math.max(fixedTable.getRowHeight(), Math.max(fixedHeight, scrollHeight));
+                if (maxHeight <= 0 && fixedHeight > 0) {
+                    maxHeight = fixedHeight;
+                }
+                if (maxHeight <= 0) maxHeight = UIManager.getFont("Table.font").getSize() + 4; // Default based on font
+
+                if (fixedTable.getRowCount() > row) fixedTable.setRowHeight(row, maxHeight);
+                if (scrollableTable.getRowCount() > row) scrollableTable.setRowHeight(row, maxHeight);
+            }
+            adjustColumnWidths();
+            fixedScrollPane.revalidate();
+            fixedScrollPane.repaint();
+            scrollableScrollPane.revalidate();
+            scrollableScrollPane.repaint();
+        }
+
+        /**
+         * Calculate the preferred height for a row based on its content
+         */
+        private int getPreferredRowHeight(JTable table, int row) {
+            int height = table.getRowHeight(); // Start with current or default
+            if (row < 0 || row >= table.getRowCount()) return height;
+
+            for (int column = 0; column < table.getColumnCount(); column++) {
+                if (column >= table.getColumnCount()) continue;
+                Component comp = table.prepareRenderer(table.getCellRenderer(row, column), row, column);
+                try {
+                    int compHeight = comp.getPreferredSize().height + table.getRowMargin();
+                    height = Math.max(height, compHeight);
+                } catch (Exception e) {
+                    // Could happen if renderer is misbehaving or data is unusual
+                    LogManager.getLogger().warn("Could not get preferred height for cell ({}, {}): {}", row, column, e.getMessage());
+                }
+            }
+            return height;
+        }
+
+        public void adjustColumnWidths() {
+            // Fixed table column width is managed by FIXED_COLUMN_WIDTH and dividerLocation
+            if (fixedTable.getColumnModel().getColumnCount() > 0) {
+                fixedTable.getColumnModel().getColumn(0).setPreferredWidth(FIXED_COLUMN_WIDTH);
+            }
+
+            // Scrollable table columns
+            TableColumnModel scm = scrollableTable.getColumnModel();
+            for (int i = 0; i < scm.getColumnCount(); i++) {
+                TableColumn column = scm.getColumn(i);
+                int modelColIdx = column.getModelIndex();
+                int maxWidth = 0;
+
+                // Header width
+                TableCellRenderer headerRenderer = column.getHeaderRenderer();
+                if (headerRenderer == null) {
+                    headerRenderer = scrollableTable.getTableHeader().getDefaultRenderer();
+                }
+                Object headerValue = model.getColumnName(modelColIdx); // Use model name (HTML)
+                Component headerComp = headerRenderer.getTableCellRendererComponent(
+                      scrollableTable, headerValue, false, false, -1, i); // view column index i
+                maxWidth = Math.max(maxWidth, headerComp.getPreferredSize().width);
+
+                // Cell content width
+                for (int row = 0; row < scrollableTable.getRowCount(); row++) {
+                    TableCellRenderer cellRenderer = scrollableTable.getCellRenderer(row, i); // view column index i
+                    Component cellComp = scrollableTable.prepareRenderer(cellRenderer, row, i); // view column index i
+                    maxWidth = Math.max(maxWidth, cellComp.getPreferredSize().width);
+                }
+                column.setPreferredWidth(maxWidth + scrollableTable.getIntercellSpacing().width + 15); // Add padding
+            }
+        }
+
+        /**
+         * Set the data model for the grid
+         */
+        public void setModel(DefaultTableModel newModel) {
+            Vector<Object> columnIdentifiers = new Vector<>();
+            for (int i = 0; i < newModel.getColumnCount(); i++) {
+                columnIdentifiers.add(newModel.getColumnName(i));
+            }
+            this.model.setDataVector(newModel.getDataVector(), columnIdentifiers);
+            fixedTable.setModel(model); // Re-set to ensure listeners fire if not already
+            scrollableTable.setModel(model);
+
+            setupFixedColumns();
+            setupScrollableColumns();
+            synchronizeRowHeights(); // This calls adjustColumnWidths
+            revalidate();
+            repaint();
+        }
+
+        /**
+         * Table model listener that synchronizes row heights when data changes
+         */
+        private class RowHeightSynchronizer implements TableModelListener {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                SwingUtilities.invokeLater(() -> {
+                    if (e.getType() == TableModelEvent.HEADER_ROW) {
+                        setupFixedColumns();
+                        setupScrollableColumns();
+                    }
+                    // Always synchronize heights and adjust widths for any change
+                    synchronizeRowHeights();
+                });
+            }
+        }
+
+    }
+
     private final static RATGenerator RAT_GENERATOR = RATGenerator.getInstance();
-    private static Integer[] RG_ERAS;
+    private static volatile Integer[] RG_ERAS;
 
     private final JFrame parent;
-    private final JPanel panel = new UIUtil.FixedXPanel(new SpringLayout());
     private final Box mainPanel = Box.createVerticalBox();
     private final JScrollPane scrollPane = new JScrollPane(mainPanel);
-    private int columns;
     private ModelRecord record;
+    private final FixedColumnGrid grid;
 
     public AvailabilityPanel(JFrame parent) {
         this.parent = parent;
-        panel.setAlignmentX(0);
-        mainPanel.setBorder(new EmptyBorder(20, 25, 0, 0));
-        mainPanel.add(new JLabel(
-              "Clicking on the factions or eras opens a link to the MUL showing the respective entry."));
-        mainPanel.add(Box.createVerticalStrut(25));
-        mainPanel.add(panel);
+        grid = new FixedColumnGrid();
+        mainPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
+        mainPanel.add(grid);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         initializePanel();
     }
@@ -92,109 +478,120 @@ public class AvailabilityPanel {
     private void initializePanel() {
         if (!RAT_GENERATOR.isInitialized()) {
             return;
-        } else if (RG_ERAS == null) {
-            RAT_GENERATOR.getEraSet().forEach(RAT_GENERATOR::loadYear);
-            // RAT_GENERATOR.initRemainingUnits();
-            RG_ERAS = RAT_GENERATOR.getEraSet().toArray(new Integer[0]);
         }
-        panel.removeAll();
-        columns = 0;
-        addHeader("Faction");
-        for (Era era : Eras.getEras()) {
-            String link = "<HTML><BODY><DIV ALIGN=CENTER><A HREF = http://www.masterunitlist.info/Era/Details/"
-                                + era.mulId() + ">" + era + "</A></BODY></HTML>";
-            addHeader(link);
+        if (RG_ERAS == null) {
+            synchronized (AvailabilityPanel.class) {
+                RAT_GENERATOR.getEraSet().forEach(RAT_GENERATOR::loadYear);
+                RG_ERAS = RAT_GENERATOR.getEraSet().toArray(new Integer[0]);
+            }
         }
-
-        if (record != null) {
-            int row = 1;
-            List<AvailabilityRating> ratings = new ArrayList<>();
-            for (String factionName : record.getIncludedFactions()) {
-                addGridElementLeftAlign(factionName, row % 2 == 1);
-                for (Era era : Eras.getEras()) {
-                    String text = "--";
-                    ratings.clear();
-
-                    // Cycle the years and check if the year is in the current ERA and the faction is active
-                    for (Integer year : RAT_GENERATOR.getEraSet()) {
-                        FactionRecord faction = RAT_GENERATOR.getFaction(factionName);
-                        if ((Eras.getEra(year) != era)
-                                  || ((faction != null) && !faction.isActiveInYear(year))) {
+        DefaultTableModel newGridModel = new DefaultTableModel();
+        List<String> finalColumnTitles = new ArrayList<>();
+        finalColumnTitles.add("Faction");
+        List<Era> allEras = Eras.getEras();
+        List<Era> erasToDisplay = new ArrayList<>();
+        Map<Era, Map<String, String>> eraFactionAvailabilityCache = new HashMap<>();
+        if (record != null && !allEras.isEmpty()) {
+            boolean[] eraHasDataFlags = new boolean[allEras.size()];
+            for (int i = 0; i < allEras.size(); i++) {
+                Era currentEra = allEras.get(i);
+                boolean currentEraHasAnyData = false;
+                for (String factionName : record.getIncludedFactions()) {
+                    String availabilityTextCheck = "";
+                    List<AvailabilityRating> ratingsForEra = new ArrayList<>();
+                    FactionRecord factionRecord = RAT_GENERATOR.getFaction(factionName);
+                    for (Integer year : RG_ERAS) {
+                        if ((Eras.getEra(year) != currentEra)
+                                  || (factionRecord != null && !factionRecord.isActiveInYear(year))) {
                             continue;
                         }
-                        ratings.add(RAT_GENERATOR.findModelAvailabilityRecord(year, record.getKey(), factionName));
+                        AvailabilityRating modelAvailRecord = RAT_GENERATOR.findModelAvailabilityRecord(
+                              year, record.getKey(), factionName);
+                        if (modelAvailRecord != null) {
+                            ratingsForEra.add(modelAvailRecord);
+                        }
                     }
-
-                    ratings.removeIf(Objects::isNull);
-                    // Merge all ratings from years that fell into the current era
-                    AvailabilityRating eraAvailability = RAT_GENERATOR.mergeFactionAvailability(factionName, ratings);
-                    if (eraAvailability != null) {
-                        text = eraAvailability.getAvailabilityCode();
+                    if (!ratingsForEra.isEmpty()) {
+                        AvailabilityRating mergedAvailability = RAT_GENERATOR.mergeFactionAvailability(
+                              factionName, ratingsForEra);
+                        if (mergedAvailability != null) {
+                            availabilityTextCheck = mergedAvailability.formatAvailability(factionRecord);
+                        }
                     }
-
-                    addGridElement(text, row % 2 == 1);
-                }
-                row++;
-            }
-
-            SpringUtilities.makeCompactGrid(panel, row, columns, 5, 5, 1, 1);
-            panel.revalidate();
-        }
-    }
-
-    private void addHeader(String text, float alignment) {
-        columns++;
-        var headerPanel = new UIUtil.FixedYPanel();
-        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.PAGE_AXIS));
-        var textLabel = new JTextPane();
-        textLabel.setContentType("text/html");
-        textLabel.setEditable(false);
-        textLabel.setText(text);
-        textLabel.setAlignmentX(alignment);
-        textLabel.setFont(panel.getFont().deriveFont(Font.BOLD));
-        textLabel.setForeground(UIUtil.uiLightBlue());
-        textLabel.setFont(UIUtil.getDefaultFont());
-        textLabel.addHyperlinkListener(e -> {
-            try {
-                if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
-                    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                        Desktop.getDesktop().browse(e.getURL().toURI());
+                    eraFactionAvailabilityCache.computeIfAbsent(currentEra, k -> new HashMap<>()).put(factionName, availabilityTextCheck);
+                    if (!availabilityTextCheck.isEmpty()) {
+                        currentEraHasAnyData = true;
                     }
                 }
-            } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
-                JOptionPane.showMessageDialog(parent, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+                eraHasDataFlags[i] = currentEraHasAnyData;
             }
-        });
-        headerPanel.add(textLabel);
-        headerPanel.add(Box.createVerticalStrut(5));
-        headerPanel.add(new JSeparator());
-        panel.add(headerPanel);
-    }
 
-    private void addHeader(String text) {
-        addHeader(text, JComponent.CENTER_ALIGNMENT);
-    }
+            // Find the first era with data, if any
+            int firstEraWithDataIndex = -1;
+            for (int i = 0; i < eraHasDataFlags.length; i++) {
+                if (eraHasDataFlags[i]) {
+                    firstEraWithDataIndex = i;
+                    break;
+                }
+            }
+            // Find the last era with data, if any
+            int lastEraWithDataIndex = -1;
+            if (firstEraWithDataIndex != -1) {
+                for (int i = eraHasDataFlags.length - 1; i >= firstEraWithDataIndex; i--) {
+                    if (eraHasDataFlags[i]) {
+                        lastEraWithDataIndex = i;
+                        break;
+                    }
+                }
+            }
 
-    private void addGridElement(String text, boolean coloredBG) {
-        var elementPanel = new UIUtil.FixedYPanel();
-        if (coloredBG) {
-            elementPanel.setBackground(UIUtil.alternateTableBGColor());
+            if (firstEraWithDataIndex != -1 && lastEraWithDataIndex != -1) {
+                for (int i = firstEraWithDataIndex; i <= lastEraWithDataIndex; i++) {
+                    erasToDisplay.add(allEras.get(i));
+                }
+            }
         }
-        var textLabel = new JLabel(text);
-        textLabel.setFont(UIUtil.getDefaultFont());
-        elementPanel.add(textLabel);
-        panel.add(elementPanel);
-    }
 
-    private void addGridElementLeftAlign(String text, boolean coloredBG) {
-        var elementPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
-        if (coloredBG) {
-            elementPanel.setBackground(UIUtil.alternateTableBGColor());
+        for (Era era : erasToDisplay) {
+            String link = String.format("<HTML><A HREF=\"http://www.masterunitlist.info/Era/Details/%s\">%s</A></HTML>",
+                  era.mulId(), era.toString().replace("\n", "<br>"));
+            finalColumnTitles.add(link);
         }
-        var textLabel = new JLabel(text);
-        textLabel.setFont(UIUtil.getDefaultFont());
-        elementPanel.add(textLabel);
-        panel.add(elementPanel);
+        newGridModel.setColumnIdentifiers(finalColumnTitles.toArray());
+
+        if (record != null) {
+            for (String factionName : record.getIncludedFactions()) {
+                List<Object> rowData = new ArrayList<>();
+                String baseAbbr = factionName.split("\\.")[0];
+                ImageIcon factionIcon = RAT_GENERATOR.getFactionLogo(0, baseAbbr, Color.WHITE);
+                Icon finalIcon = null;
+                if (factionIcon != null) {
+                    Image img = factionIcon.getImage();
+                    int iconDisplayHeight = 32;
+                    int originalWidth = img.getWidth(null);
+                    int originalHeight = img.getHeight(null);
+                    if (originalHeight > 0 && originalWidth > 0) {
+                        int scaledWidth = (originalWidth * iconDisplayHeight) / originalHeight;
+                        if (scaledWidth > 0) {
+                            Image scaledImg = img.getScaledInstance(scaledWidth, iconDisplayHeight, Image.SCALE_SMOOTH);
+                            finalIcon = new ImageIcon(scaledImg);
+                        }
+                    }
+                }
+                rowData.add(new FixedColumnGrid.FactionCellData(finalIcon, factionName));
+
+                for (Era era : erasToDisplay) {
+                    String availabilityText = eraFactionAvailabilityCache
+                                                    .getOrDefault(era, Collections.emptyMap())
+                                                    .getOrDefault(factionName, "-");
+                    if (availabilityText.isEmpty()) {
+                        availabilityText = "-";
+                    }
+                    rowData.add("<HTML><CENTER>" + availabilityText.replace("\n", "<BR>") + "</CENTER></HTML>");
+                }
+                newGridModel.addRow(rowData.toArray());
+            }
+        }
+        grid.setModel(newGridModel);
     }
 }

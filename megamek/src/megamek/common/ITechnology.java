@@ -249,6 +249,9 @@ public interface ITechnology {
         public String getCode() { return codeMM; }
         public String getCodeMM() { return codeMM; }
         public String getCodeIO() { return codeIO; }
+        public boolean isClan() {
+            return this.affiliation == FactionAffiliation.CLAN;
+        }
         public static Faction fromIndex(int idx) {
             Faction f = INDEX_LOOKUP.get(idx);
             if (f == null) throw new IllegalArgumentException("Invalid Faction index: " + idx);
@@ -260,7 +263,16 @@ public interface ITechnology {
             return MM_ABBR_LOOKUP.getOrDefault(baseAbbr, NONE);
         }
         public static Faction fromIOAbbr(String abbr) {
-            return IO_ABBR_LOOKUP.getOrDefault(abbr, NONE);
+            String baseAbbr = abbr.split("\\.")[0];
+            return IO_ABBR_LOOKUP.getOrDefault(baseAbbr, NONE);
+        }
+        public static Faction fromAbbr(String abbr) {
+            // This is a generic method to handle both MM and IO abbreviations.
+            Faction faction = fromMMAbbr(abbr);
+            if (faction == NONE) {
+                faction = fromIOAbbr(abbr);
+            }
+            return faction;
         }
     }
     
@@ -581,8 +593,8 @@ public interface ITechnology {
 
     /**
      * @deprecated Use {@link TechRating#getName()} instead.
-     * @param rating
-     * @return
+     * @param rating the TechRating
+     * @return the name of the TechRating
      */
     @Deprecated
     static String getRatingName(TechRating rating) {

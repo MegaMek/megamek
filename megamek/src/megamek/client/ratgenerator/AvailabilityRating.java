@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -54,7 +55,7 @@ public class AvailabilityRating {
     String unitName = null;
 
     // Rating values indexed by equipment level names
-    HashMap<String,Integer> ratingByLevel;
+    LinkedHashMap<String,Integer> ratingByLevel;
     // Rating values indexed by equipment level values
     HashMap<Integer,Integer> ratingByNumericLevel;
 
@@ -82,7 +83,7 @@ public class AvailabilityRating {
         this.era = era;
         startYear = era;
         this.ratingAdjustment = 0;
-        ratingByLevel = new HashMap<>();
+        ratingByLevel = new LinkedHashMap<>();
         ratingByNumericLevel = new HashMap<>();
 
         String[] fields;
@@ -337,6 +338,71 @@ public class AvailabilityRating {
         } else {
             Collection<String> equipRatings = ratingByLevel.keySet();
             return equipRatings.stream().map(curLevel -> '!' + curLevel + ':' + ratingByLevel.get(curLevel)).collect(Collectors.joining());
+        }
+    }
+
+    private String getAvailabilityText(int availability) {
+        return switch (availability) {
+            case 0 -> "-";
+            case 1, 2 -> "Very Rare";
+            case 3, 4 -> "Rare";
+            case 5, 6 -> "Uncommon";
+            case 7, 8 -> "Common";
+            case 9,10 -> "Ubiquitous";
+            default -> "Unknown"+ " (" + availability + ")";
+        };
+    }
+
+    private String explodeAvailabilityByRatings(FactionRecord faction, int availability, int ratingAdjustment) {
+        if (ratingAdjustment == 0) {
+            return getAvailabilityText(availability);
+        }
+        //If an availability code is marked with +, it's for top-tier equipment (rating A/Keshik) and drops by 1 for each lower rating.
+        //– means the opposite: it's for the lowest quality, and the number goes down for better ratings.
+        StringBuilder result = new StringBuilder();
+        ArrayList<String> ratingLevels = new ArrayList<>(faction.getRatingLevels());
+        Collections.reverse(ratingLevels);
+        int currentAvailability = availability;
+        if (ratingAdjustment < 0) {
+            currentAvailability-=ratingLevels.size() -1;
+        }
+        for (String curLevel : ratingLevels) {
+            if (currentAvailability > 0) {
+                result.append(getAvailabilityText(currentAvailability))
+//                      .append(" [").append(currentAvailability).append("]")
+                      .append(" (").append(curLevel).append(")\n");
+            }
+            if (ratingAdjustment > 0) {
+                currentAvailability--;
+            } else {
+                currentAvailability++;
+            }
+        }
+
+        // Remove trailing newline if present
+        if (!result.isEmpty() && result.charAt(result.length() - 1) == '\n') {
+            result.setLength(result.length() - 1);
+        }
+        return result.toString();
+    }
+
+    public String formatAvailability(FactionRecord factionRecord) {
+        if (!hasMultipleRatings()) {
+            if (ratingAdjustment == 0) {
+                return getAvailabilityText(availability);
+            } else {
+                return explodeAvailabilityByRatings(factionRecord, availability, ratingAdjustment);
+            }
+        } else {
+            Collection<String> equipRatings = ratingByLevel.keySet();
+            return equipRatings.stream().map((curLevel) -> {
+                Integer rating = ratingByLevel.get(curLevel);
+                if (rating == null || rating <= 0) {
+                    return "";
+                }
+                return getAvailabilityText(rating) + " (" + curLevel + ")";
+            }).filter(curText -> !curText.isEmpty()
+            ).collect(Collectors.joining("\n"));
         }
     }
 

@@ -171,7 +171,7 @@ public class AvailabilityPanel {
             model = new DefaultTableModel() {
                 @Override
                 public boolean isCellEditable(int row, int column) {
-                    return true; // Make cells editable if needed
+                    return false;
                 }
             };
 

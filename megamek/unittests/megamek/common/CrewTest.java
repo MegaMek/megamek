@@ -26,10 +26,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.jupiter.api.Test;
-
 import megamek.common.battlevalue.BVCalculator;
 import megamek.common.options.GameOptions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -42,17 +41,17 @@ class CrewTest {
         Infantry inf = mock(Infantry.class);
         Crew crew = getInfantryCrewWithCombatTurns(17);
         when(inf.getCrew()).thenReturn(crew);
-        inf.getCrew().setGunnery(5);
-        inf.getCrew().setPiloting(8);
+        inf.getCrew().setGunnery(5, crew.getCrewType().getGunnerPos());
+        inf.getCrew().setPiloting(8, crew.getCrewType().getPilotPos());
         assertTrue(inf.getCrew().isPilotingFatigued());
         assertTrue(inf.getCrew().isGunneryFatigued());
 
-        inf.getCrew().setGunnery(4);
-        inf.getCrew().setPiloting(2);
+        inf.getCrew().setGunnery(4, crew.getCrewType().getGunnerPos());
+        inf.getCrew().setPiloting(2, crew.getCrewType().getPilotPos());
         assertTrue(inf.getCrew().isPilotingFatigued());
         assertFalse(inf.getCrew().isGunneryFatigued());
 
-        inf.getCrew().setGunnery(1);
+        inf.getCrew().setGunnery(1, crew.getCrewType().getGunnerPos());
         assertFalse(inf.getCrew().isPilotingFatigued());
 
         inf.getCrew().setCrewFatigue(15, 0);
@@ -60,8 +59,8 @@ class CrewTest {
 
         crew = getInfantryCrewWithCombatTurns(16);
         when(inf.getCrew()).thenReturn(crew);
-        inf.getCrew().setGunnery(2);
-        inf.getCrew().setPiloting(8);
+        inf.getCrew().setGunnery(2, crew.getCrewType().getGunnerPos());
+        inf.getCrew().setPiloting(8, crew.getCrewType().getPilotPos());
         assertFalse(inf.getCrew().isPilotingFatigued());
 
         inf.getCrew().setCrewFatigue(4, 0);
@@ -76,17 +75,17 @@ class CrewTest {
         Mek inf = mock(Mek.class);
         Crew crew = getMekCrewWithCombatTurns(17);
         when(inf.getCrew()).thenReturn(crew);
-        inf.getCrew().setGunnery(5);
-        inf.getCrew().setPiloting(8);
+        inf.getCrew().setGunnery(5, crew.getCrewType().getGunnerPos());
+        inf.getCrew().setPiloting(8, crew.getCrewType().getPilotPos());
         assertTrue(inf.getCrew().isPilotingFatigued());
         assertTrue(inf.getCrew().isGunneryFatigued());
 
-        inf.getCrew().setGunnery(4);
-        inf.getCrew().setPiloting(2);
+        inf.getCrew().setGunnery(4, crew.getCrewType().getGunnerPos());
+        inf.getCrew().setPiloting(2, crew.getCrewType().getPilotPos());
         assertTrue(inf.getCrew().isPilotingFatigued());
         assertFalse(inf.getCrew().isGunneryFatigued());
 
-        inf.getCrew().setGunnery(1);
+        inf.getCrew().setGunnery(1, crew.getCrewType().getGunnerPos());
         assertTrue(inf.getCrew().isPilotingFatigued());
 
         inf.getCrew().setCrewFatigue(15, 0);
@@ -94,8 +93,8 @@ class CrewTest {
 
         crew = getMekCrewWithCombatTurns(16);
         when(inf.getCrew()).thenReturn(crew);
-        inf.getCrew().setGunnery(2);
-        inf.getCrew().setPiloting(8);
+        inf.getCrew().setGunnery(2, crew.getCrewType().getGunnerPos());
+        inf.getCrew().setPiloting(8, crew.getCrewType().getPilotPos());
         assertTrue(inf.getCrew().isPilotingFatigued());
 
         inf.getCrew().setCrewFatigue(4, 0);

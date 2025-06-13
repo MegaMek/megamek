@@ -36,7 +36,7 @@ public class InfantryRifleEbonyAssaultLaserWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryEbonyAssaultLaser");
 		addLookupName("Infantry Ebony Assault Laser Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 8500;
 		bv = 1.07;
 		tonnage = .010;
@@ -46,11 +46,11 @@ public class InfantryRifleEbonyAssaultLaserWeapon extends InfantryWeapon {
 		ammoWeight = 0.0003;
 		shots = 3;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3056, 3063, DATE_NONE, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3056, 3063, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_MC)
-		        .setProductionFactions(F_MC).setTechRating(RATING_F)
-		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+		        .setPrototypeFactions(Faction.MC)
+		        .setProductionFactions(Faction.MC).setTechRating(TechRating.F)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
 
 	}
 }

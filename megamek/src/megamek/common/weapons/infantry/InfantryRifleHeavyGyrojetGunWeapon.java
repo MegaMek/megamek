@@ -36,7 +36,7 @@ public class InfantryRifleHeavyGyrojetGunWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryHeavyGyrojetGun");
 		addLookupName("Heavy Gyrojet Gun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 2500;
 		bv = 1.07;
 		tonnage = .010;
@@ -47,12 +47,12 @@ public class InfantryRifleHeavyGyrojetGunWeapon extends InfantryWeapon {
 		ammoCost = 250;
 		shots = 5;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2585, 2590, 2600, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2585, 2590, 2600, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2585, 2590, 2600, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
-		        .setProductionFactions(F_LC).setTechRating(RATING_D)
-		        .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.LC)
+		        .setProductionFactions(Faction.LC).setTechRating(TechRating.D)
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 }

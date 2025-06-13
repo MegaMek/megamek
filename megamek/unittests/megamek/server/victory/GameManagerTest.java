@@ -32,7 +32,7 @@ import java.util.Vector;
 
 import org.junit.jupiter.api.Test;
 
-import megamek.client.ui.swing.util.PlayerColour;
+import megamek.client.ui.util.PlayerColour;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.force.Forces;

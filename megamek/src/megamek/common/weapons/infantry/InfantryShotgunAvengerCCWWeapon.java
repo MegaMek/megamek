@@ -36,7 +36,7 @@ public class InfantryShotgunAvengerCCWWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryAvengerCCW");
 		addLookupName("Avenger Crowd Control Weapon");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 345;
 		bv = 0.30;
 		tonnage = .0055;
@@ -48,10 +48,10 @@ public class InfantryShotgunAvengerCCWWeapon extends InfantryWeapon {
 		shots = 15;
 		bursts = 5;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3019, 3020, DATE_NONE, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSV)
-		        .setProductionFactions(F_CSV).setTechRating(RATING_C)
-		        .setAvailability(RATING_X, RATING_E, RATING_C, RATING_D);
+		techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3019, 3020, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CSV)
+		        .setProductionFactions(Faction.CSV).setTechRating(TechRating.C)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.C, AvailabilityValue.D);
 
 	}
 }

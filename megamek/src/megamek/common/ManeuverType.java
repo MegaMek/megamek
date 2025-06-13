@@ -14,7 +14,9 @@
 
 package megamek.common;
 
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.moves.MoveStep;
 
 /**
  * Maneuver types for Aeros
@@ -50,7 +52,7 @@ public class ManeuverType {
      */
     public static boolean canPerform(int type, int velocity, int altitude, 
                                      int ceiling, boolean isVTOL, int distance, 
-                                     Game game, MovePath mp) {
+                                     Board board, MovePath mp) {
 
         // We can only perform one maneuver in a turn (important for side-slip)
         for (final MoveStep step : mp.getStepVector()) {
@@ -83,7 +85,7 @@ public class ManeuverType {
                 if (velocity > 0) {
                     // If we're on a ground map, we need to make sure we can move
                     //  all 16 hexes
-                    if (game.getBoard().getType() == Board.T_GROUND) {
+                    if (board.isGround()) {
                         MovePath tmpMp = mp.clone();                    
                         for (int i = 0; i < 8; i++) {
                             if (type == MAN_SIDE_SLIP_LEFT) {

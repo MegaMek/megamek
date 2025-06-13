@@ -15,12 +15,14 @@
 
 package megamek.common.autoresolve.acar.report;
 
+import megamek.common.autoresolve.acar.SimulationManager;
+
 public interface IPhaseEndReporter {
     void movementPhaseHeader();
 
     void firingPhaseHeader();
 
-    void addSummary();
+    void addSummary(SimulationManager simulationManager);
 
     void closeTheFile();
 }

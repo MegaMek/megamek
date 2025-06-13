@@ -39,11 +39,11 @@ public class ISRISCHyperLaser extends LaserWeapon {
         shortRange = 8;
         mediumRange = 15;
         longRange = 25;
-        extremeRange = 30;
+        extremeRange = 37;
         waterShortRange = 5;
         waterMediumRange = 10;
         waterLongRange = 18;
-        waterExtremeRange = 20;
+        waterExtremeRange = 27;
         tonnage = 8.0;
         criticals = 6;
         bv = 596;
@@ -58,11 +58,11 @@ public class ISRISCHyperLaser extends LaserWeapon {
         rulesRefs = "93, IO";
         this.flags = flags.or(F_LASER).or(F_DIRECT_FIRE).or(F_HYPER);
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
-        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+        techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
                 .setISAdvancement(3134, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false,false,false,false,false)
-                .setPrototypeFactions(F_RS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setPrototypeFactions(Faction.RS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     /*

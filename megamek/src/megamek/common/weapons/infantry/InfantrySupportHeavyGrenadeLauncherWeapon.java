@@ -36,7 +36,7 @@ public class InfantrySupportHeavyGrenadeLauncherWeapon extends InfantryWeapon {
 		setInternalName("InfantryHeavyGrenadeLauncher");
 		addLookupName(name);
 		addLookupName("Infantry Heavy Grenade Launcher");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1500;
 		bv = 5.38;
 		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
@@ -49,11 +49,11 @@ public class InfantrySupportHeavyGrenadeLauncherWeapon extends InfantryWeapon {
 		bursts = 4;
 		tonnage = .018;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3049, 3050, 3057, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3049, 3050, 3057, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
-				.setPrototypeFactions(F_FS, F_LC)
-				.setProductionFactions(F_FS, F_LC).setTechRating(RATING_C)
-				.setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+				.setPrototypeFactions(Faction.FS, Faction.LC)
+				.setProductionFactions(Faction.FS, Faction.LC).setTechRating(TechRating.C)
+				.setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C);
 
 	}
 }

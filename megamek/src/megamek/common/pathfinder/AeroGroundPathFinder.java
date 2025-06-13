@@ -16,7 +16,9 @@ package megamek.common.pathfinder;
 
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.moves.MoveStep;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.logging.MMLogger;
 
@@ -299,7 +301,7 @@ public class AeroGroundPathFinder {
 
         boolean firstTurn = true;
         while (mp.length() < STACK_DEPTH && straightLine.getFinalVelocityLeft() > 0 &&
-                game.getBoard().contains(straightLine.getFinalCoords())) {
+                game.getBoard(mp.getFinalBoardId()).contains(straightLine.getFinalCoords())) {
 
             // little dirty hack to get around the problem where if this is the first step
             // of a path

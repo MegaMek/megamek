@@ -1,6 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2024-2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2005 Ben Mazur (bmazur@sev.org)
  *
  * This file is part of MegaMek.
  *
@@ -17,77 +17,82 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.client.event;
 
+import megamek.common.Coords;
+import megamek.client.ui.clientGUI.boardview.IBoardView;
+
+import java.util.EventListener;
+
 /**
- * Classes which implement this interface provide methods that deal with the
- * events that are generated when the BoardView is changed.
+ * Classes which implement this interface provide methods that deal with the events that are generated when the
+ * BoardView is changed.
  * <p>
- * After creating an instance of a class that implements this interface it can
- * be added to a Board using the <code>addBoardViewListener</code> method and
- * removed using the <code>removeBoardViewListener</code> method. When
- * BoardView is changed the appropriate method will be invoked.
- * </p>
+ * After creating an instance of a class that implements this interface it can be added to a Board using the
+ * addBoardViewListener method and removed using the removeBoardViewListener method. When BoardView is changed the
+ * appropriate method will be invoked.
  *
  * @see BoardViewListenerAdapter
  * @see BoardViewEvent
  */
-public interface BoardViewListener extends java.util.EventListener {
+public interface BoardViewListener extends EventListener {
 
     /**
      * Sent when user clicks, double clicks or drags hex.
      *
      * @param b an event
      */
-    public void hexMoused(BoardViewEvent b);
+    void hexMoused(BoardViewEvent b);
 
     /**
      * Sent when BoardView 'cursor' is set to Hex.
      *
      * @param b an event
      */
-    public void hexCursor(BoardViewEvent b);
+    void hexCursor(BoardViewEvent b);
 
     /**
      * Sent when Hex is highlighted.
      *
      * @param b an event
      */
-    public void boardHexHighlighted(BoardViewEvent b);
+    void boardHexHighlighted(BoardViewEvent b);
 
     /**
-     * Sent when Hex is selected.
+     * Sent when Hex is selected through a call to the select method (this is not a mouse click event, although many
+     * mouse clicks lead to the hex being selected).
      *
-     * @param b an event
+     * @param b The select event
+     *
+     * @see IBoardView#select(Coords)
      */
-    public void hexSelected(BoardViewEvent b);
+    void hexSelected(BoardViewEvent b);
 
     /**
      * Sent when firstLOS is set.
      *
      * @param b an event
      */
-    public void firstLOSHex(BoardViewEvent b);
+    void firstLOSHex(BoardViewEvent b);
 
     /**
      * Sent when secondLOS is set.
      *
      * @param b an event
      */
-    public void secondLOSHex(BoardViewEvent b);
+    void secondLOSHex(BoardViewEvent b);
 
     /**
      * Sent when moving units is finished.
      *
      * @param b an event
      */
-    public void finishedMovingUnits(BoardViewEvent b);
+    void finishedMovingUnits(BoardViewEvent b);
 
     /**
      * Sent when Unit is selected.
      *
      * @param b an event
      */
-    public void unitSelected(BoardViewEvent b);
+    void unitSelected(BoardViewEvent b);
 }

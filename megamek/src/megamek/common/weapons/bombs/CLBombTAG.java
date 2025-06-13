@@ -14,6 +14,7 @@
 package megamek.common.weapons.bombs;
 
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.weapons.tag.TAGWeapon;
 
 /**
@@ -27,7 +28,7 @@ public class CLBombTAG extends TAGWeapon {
         super();
 
         this.name = "TAG Pod";
-        this.setInternalName(BombType.getBombWeaponName(BombType.B_TAG));
+        this.setInternalName(BombTypeEnum.TAG.getWeaponName());
         this.tonnage = 1;
         this.criticals = 0;
         this.hittable = false;
@@ -42,14 +43,14 @@ public class CLBombTAG extends TAGWeapon {
         this.cost = 50000;
         flags = flags.or(F_BOMB_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         rulesRefs = "238, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2600, 2605, 2645, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH);
     }
 }

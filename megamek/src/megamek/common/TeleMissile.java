@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2007 - Jay Lawson
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2023-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -19,7 +19,8 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.AmmoType.AmmoTypeEnum;
 
 /**
  * @author Jay Lawson
@@ -38,7 +39,7 @@ public class TeleMissile extends Aero {
     // need another type of boolean for out-of-control status that indicates
     // lack of contact with originating unit
     private boolean outContact = false;
-    
+
     public TeleMissile() {
         super();
         damThresh = new int[] { 0 };
@@ -49,25 +50,25 @@ public class TeleMissile extends Aero {
         return false;
     }
 
-    public TeleMissile(Entity originalRide, int damageValue, int armorValue, double weight, int type, int capMisMod) {
+    public TeleMissile(Entity originalRide, int damageValue, int armorValue, double weight, AmmoTypeEnum type, int capMisMod) {
         this();
 
         String name;
         int fuel;
         switch (type) {
-            case AmmoType.T_KRAKEN_T:
+            case KRAKEN_T:
                 name = "Kraken-T Missile";
                 fuel = 25;
                 break;
-            case AmmoType.T_WHITE_SHARK_T:
+            case WHITE_SHARK_T:
                 name = "White Shark-T Missile";
                 fuel = 40;
                 break;
-            case AmmoType.T_KILLER_WHALE_T:
+            case KILLER_WHALE_T:
                 name = "Killer Whale-T Missile";
                 fuel = 30;
                 break;
-            case AmmoType.T_BARRACUDA_T:
+            case BARRACUDA_T:
                 name = "Barracuda-T Missile";
                 fuel = 30;
                 break;
@@ -179,14 +180,14 @@ public class TeleMissile extends Aero {
     @Override
     public PilotingRollData checkThrustSI(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-        roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not exceeding SI");
+        roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding SI");
         return roll;
     }
 
     @Override
     public PilotingRollData checkThrustSITotal(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-        roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not exceeding SI");
+        roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding SI");
         return roll;
     }
 
@@ -216,7 +217,7 @@ public class TeleMissile extends Aero {
     public int locations() {
         return 1;
     }
-    
+
     @Override
     public boolean canRam() {
         return false;

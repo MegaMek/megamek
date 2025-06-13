@@ -37,7 +37,7 @@ public class InfantrySupportDragonsbaneDisposablePulseLaserWeapon extends Infant
 		addLookupName("InfantryDragonsbane");
 		addLookupName("InfantryDragonsbanePulseLaser");
 		addLookupName("Infantry Dragonsbane Disposable Pulse Laser");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.AmmoTypeEnum.NA;
 		cost = 5000;
 		bv = 5.08;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
@@ -46,11 +46,11 @@ public class InfantrySupportDragonsbaneDisposablePulseLaserWeapon extends Infant
 		crew = 1;
 		rulesRefs = "273, TM";
 		tonnage = .007;
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3054, 3058, 3068, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3054, 3058, 3068, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_DC)
-		        .setProductionFactions(F_DC).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_F);
+		        .setPrototypeFactions(Faction.DC)
+		        .setProductionFactions(Faction.DC).setTechRating(TechRating.E)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.F);
 
 	}
 }

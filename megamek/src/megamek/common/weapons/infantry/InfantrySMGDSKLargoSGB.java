@@ -33,7 +33,7 @@ public class InfantrySMGDSKLargoSGB extends InfantryWeapon {
        name = "SMG (DSK Largo SGB)";
        setInternalName(name);
        addLookupName("DSK Largo SGB");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .44;
        tonnage =  0.0035;
        infantryDamage =  0.44;
@@ -46,12 +46,12 @@ public class InfantrySMGDSKLargoSGB extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #5";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_X,RATING_X,RATING_D,RATING_D)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.X,AvailabilityValue.D,AvailabilityValue.D)
        .setISAdvancement(DATE_NONE, DATE_NONE,3050,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_LC);
+       .setProductionFactions(Faction.LC);
 
 
    }

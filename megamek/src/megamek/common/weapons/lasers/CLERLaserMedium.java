@@ -35,7 +35,7 @@ public class CLERLaserMedium extends LaserWeapon {
         waterShortRange = 3;
         waterMediumRange = 7;
         waterLongRange = 10;
-        waterExtremeRange = 14;
+        waterExtremeRange = 15;
         tonnage = 1.0;
         criticals = 1;
         bv = 108;
@@ -44,14 +44,14 @@ public class CLERLaserMedium extends LaserWeapon {
         medAV = 7;
         maxRange = RANGE_MED;
         rulesRefs = "226, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(2822, 2824, 2830, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CJF)
-                .setProductionFactions(F_CJF);
+                .setPrototypeFactions(Faction.CJF)
+                .setProductionFactions(Faction.CJF);
     }
 }

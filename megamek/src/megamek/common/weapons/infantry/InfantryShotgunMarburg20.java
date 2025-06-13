@@ -31,7 +31,7 @@ public class InfantryShotgunMarburg20 extends InfantryWeapon {
        name = "Shotgun (Marburg-20)";
        setInternalName(name);
        addLookupName("Marburg-20");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .36;
        tonnage =  0.0043;
        infantryDamage =  0.36;
@@ -44,11 +44,11 @@ public class InfantryShotgunMarburg20 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_X,RATING_D,RATING_D,RATING_C)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_FW);
+       .setProductionFactions(Faction.FW);
    }
 }

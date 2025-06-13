@@ -34,7 +34,7 @@ public class InfantrySniperRifleHammelMarksman extends InfantryWeapon {
        name = "Sniper Rifle (Hammel Marksman)";
        setInternalName(name);
        addLookupName("Hammel Marksman");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .28;
        tonnage =  0.005;
        infantryDamage =  0.28;
@@ -47,11 +47,11 @@ public class InfantrySniperRifleHammelMarksman extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #1";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_C,RATING_C,RATING_C,RATING_B)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.B)
        .setISAdvancement(DATE_NONE, DATE_NONE,DATE_ES,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_FW);
+       .setProductionFactions(Faction.FW);
    }
 }

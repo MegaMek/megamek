@@ -14,6 +14,8 @@
 package megamek.common.weapons.other;
 
 import megamek.common.Game;
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -42,6 +44,14 @@ public class ISFireExtinguisher extends Weapon {
         tonnage = 0.0;
         criticals = 0;
         flags = flags.or(F_NO_FIRES).or(F_SOLO_ATTACK);
+        techAdvancement.setTechBase(TechBase.IS)
+            .setTechRating(TechRating.B)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setISAdvancement(DATE_NONE, DATE_NONE, DATE_PS, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false, false, false)
+            .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     /*

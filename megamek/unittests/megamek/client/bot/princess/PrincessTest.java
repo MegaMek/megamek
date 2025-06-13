@@ -19,24 +19,33 @@
  */
 package megamek.client.bot.princess;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -104,7 +113,9 @@ class PrincessTest {
         when(mockPrincess.calculateMoveIndex(any(Entity.class), any(StringBuilder.class))).thenCallRealMethod();
         when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(false);
 
-        when(mockPathRanker.distanceToClosestEnemy(any(Entity.class), nullable(Coords.class), nullable(Game.class))).thenReturn(10.0);
+        when(mockPathRanker.distanceToClosestEnemy(any(Entity.class),
+              nullable(Coords.class),
+              nullable(Game.class))).thenReturn(10.0);
 
         // Test a 6/9/6 regular mek.
         Entity mockMek = mock(BipedMek.class);
@@ -407,7 +418,7 @@ class PrincessTest {
 
         // Unit is on home edge.
         BasicPathRanker mockRanker = mock(BasicPathRanker.class);
-        when(mockRanker.distanceToHomeEdge(any(Coords.class), any(CardinalEdge.class), any(Game.class))).thenReturn(0);
+        when(mockRanker.distanceToHomeEdge(any(Coords.class), anyInt(), any(CardinalEdge.class), any(Game.class))).thenReturn(0);
         when(mockPrincess.getPathRanker(any(Entity.class))).thenReturn(mockRanker);
 
         // Mock objects so we don't have nulls.
@@ -450,7 +461,7 @@ class PrincessTest {
 
         // The unit can flee, but is no longer on the board edge.
         when(mockMek.canFlee(mockMek.getPosition())).thenReturn(true);
-        when(mockRanker.distanceToHomeEdge(any(Coords.class), any(CardinalEdge.class), any(Game.class))).thenReturn(1);
+        when(mockRanker.distanceToHomeEdge(any(Coords.class), anyInt(), any(CardinalEdge.class), any(Game.class))).thenReturn(1);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
     }
 
@@ -461,13 +472,13 @@ class PrincessTest {
 
         Hex mockHex = mock(Hex.class);
         when(mockHex.getLevel()).thenReturn(0);
-        when(mockPrincess.getHex(any(Coords.class))).thenReturn(mockHex);
 
         Game mockGame = mock(Game.class);
         PlanetaryConditions mockPC = new PlanetaryConditions();
         mockPC.setGravity(1.0f);
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPC);
         doReturn(mockGame).when(mockPrincess).getGame();
+        when(mockGame.getHexOf(any(Targetable.class))).thenReturn(mockHex);
 
         BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
         when(mockBehavior.getFallShameIndex()).thenReturn(5);
@@ -492,7 +503,13 @@ class PrincessTest {
         when(mockMek.checkGetUp(any(MoveStep.class), any(EntityMovementType.class))).thenReturn(mockPilotingRollData);
         when(mockMek.getPosition()).thenReturn(mockPosition);
         when(mockMek.getPriorPosition()).thenReturn(mockPriorPosition);
-        when(mockMek.checkBogDown(any(MoveStep.class), any(EntityMovementType.class), eq(mockHex), eq(mockPriorPosition), eq(mockPosition), anyInt(), anyBoolean())).thenReturn(mockPilotingRollData);
+        when(mockMek.checkBogDown(any(MoveStep.class),
+              any(EntityMovementType.class),
+              eq(mockHex),
+              eq(mockPriorPosition),
+              eq(mockPosition),
+              anyInt(),
+              anyBoolean())).thenReturn(mockPilotingRollData);
         assertFalse(mockPrincess.isImmobilized(mockMek));
 
         // Test a shutdown mek.

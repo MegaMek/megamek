@@ -36,7 +36,7 @@ public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryMk2PortableAA");
 		addLookupName("Infantry Mk 2 Man-Portable AA Weapon");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 3500;
 		bv = 4.14;
 		tonnage = .035;
@@ -54,12 +54,12 @@ public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
 		longRange = 6;
 		extremeRange = 8;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2498, 2510, 2590, 2790, 3056)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2498, 2510, 2590, 2790, 3056)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2498, 2510, 2590, DATE_NONE, 3056)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-		        .setProductionFactions(F_TH).setReintroductionFactions(F_FW).setTechRating(RATING_D)
-		        .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+		        .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.FW).setTechRating(TechRating.D)
+		        .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D);
 
 	}
 }

@@ -34,7 +34,7 @@ public class InfantrySniperRifleFNFJ12SLDF extends InfantryWeapon {
        name = "Sniper Rifle (FNF-J12 (SLDF))";
        setInternalName(name);
        addLookupName("FNF-J12 (SLDF)");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .336;
        tonnage =  0.006;
        infantryDamage =  0.42;
@@ -47,11 +47,11 @@ public class InfantrySniperRifleFNFJ12SLDF extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #1";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_E)
-       .setAvailability(RATING_E,RATING_E,RATING_E,RATING_E)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.E)
+       .setAvailability(AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,2765,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_TH);
+       .setProductionFactions(Faction.TH);
    }
 }

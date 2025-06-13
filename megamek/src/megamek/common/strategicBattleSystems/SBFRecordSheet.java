@@ -19,8 +19,8 @@
 package megamek.common.strategicBattleSystems;
 
 import megamek.MMConstants;
-import megamek.client.ui.swing.util.StringDrawer;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.util.StringDrawer;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
@@ -51,8 +51,10 @@ public class SBFRecordSheet implements Printable {
             new MegaMekFile(Configuration.miscImagesDir(), FILENAME_BT_LOGO).toString());
     private final static Image CGL_LOGO = ImageUtil.loadImageFromFile(
             new MegaMekFile(Configuration.miscImagesDir(), FILENAME_CGL_LOGO).toString());
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
     private static final String COPYRIGHT1 = "(C) 2024 The Topps Company, Inc. BattleTech, 'Mech and BattleMech "
             + "are trademarks of the Topps Company, Inc. All rights reserved.";
+
     private static final String COPYRIGHT2 = "Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of "
             + "InMediaRes Production, LLC. Permission to photocopy for personal use.";
     private static final double MINIMUM_BORDER_X = 1.0 * 72; // 0.7" in print units of 1/72"

@@ -28,7 +28,7 @@ public class InfantryPulseLaserRifleTirbuni extends InfantryWeapon {
         name = "Pulse Laser Rifle (Tirbuni)";
         setInternalName(name);
         addLookupName("TIRBUNI");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1900;
         bv = 0.9;
         tonnage = 0.0074;
@@ -40,11 +40,11 @@ public class InfantryPulseLaserRifleTirbuni extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_D) // Assuming E-E-D-D simplifies to D
-                .setAvailability(new int[]{RATING_E, RATING_E, RATING_D, RATING_D})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.D) // Assuming E-E-D-D simplifies to D
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_MH);
+                .setProductionFactions(Faction.MH);
     }
 }

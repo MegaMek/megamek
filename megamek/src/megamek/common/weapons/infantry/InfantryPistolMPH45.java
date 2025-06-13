@@ -28,7 +28,7 @@ public class InfantryPistolMPH45 extends InfantryWeapon {
        name = "Pistol (MPH-45)";
        setInternalName(name);
        addLookupName("MPH-45");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = 0.7;
        tonnage = 0.001;
        infantryDamage = 0.35;
@@ -41,11 +41,11 @@ public class InfantryPistolMPH45 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #3";
        techAdvancement
-               .setTechBase(TECH_BASE_IS)
-               .setTechRating(RATING_D)
-               .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+               .setTechBase(TechBase.IS)
+               .setTechRating(TechRating.D)
+               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
                .setISApproximate(false, false, true, false, false)
-               .setProductionFactions(F_DC);
+               .setProductionFactions(Faction.DC);
    }
 }

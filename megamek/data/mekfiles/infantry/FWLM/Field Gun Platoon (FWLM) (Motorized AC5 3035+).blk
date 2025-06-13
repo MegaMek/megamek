@@ -1,0 +1,74 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-14
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Field Gun Platoon (FWLM)
+</Name>
+
+<Model>
+(Motorized AC5 3035+)
+</Model>
+
+<year>
+3030
+</year>
+
+<originalBuildYear>
+3030
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Motorized
+</motion_type>
+
+<Troopers Equipment>
+Free Worlds League Infantry Kit (3035+)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+Autocannon/5
+IS Ammo AC/5
+Autocannon/5
+IS Ammo AC/5
+Autocannon/5
+IS Ammo AC/5
+</Field Guns Equipment>
+
+<capabilities>
+Motorized field guns are light and nimble, making them ideal for supporting air mobile forces such as jump infantry regiments which are otherwise light on firepower. Although outclassed by many later versions, older autocannon are still in common use as field guns due to lower operational costs plus a wide range of specialized ammunition.
+</capabilities>
+
+<overview>
+In response to the formation of the Federated Commonwealth the Free World League introduced it's own advanced infantry armor kit.  It is widely considered the most effective commonly available kit in the Inner Sphere and is in high demand among FWL forces.
+</overview>
+
+<notes>
+Intro date based on prototype release of FWL advanced infantry kit
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+
+<encumberingarmor>
+true
+</encumberingarmor>
+

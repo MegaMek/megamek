@@ -36,7 +36,7 @@ public class InfantryRifleMarxXXLaserWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryMarxXXLaser");
 		addLookupName("Marx XX Laser Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1750;
 		bv = 1.86;
 		tonnage = .006;
@@ -46,12 +46,12 @@ public class InfantryRifleMarxXXLaserWeapon extends InfantryWeapon {
 		ammoWeight = 0.0003;
 		shots = 5;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2685, 2670, 2690, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2685, 2670, 2690, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2685, 2670, 2690, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-		        .setProductionFactions(F_TH).setTechRating(RATING_D)
-		        .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+		        .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+		        .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D);
 
 	}
 }

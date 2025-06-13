@@ -29,7 +29,8 @@ import java.util.TreeSet;
 
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 
 /**
  * Handles the generation of ground-based move paths that contain information
@@ -134,7 +135,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         int bestDistance = Integer.MAX_VALUE;
 
         for (Coords coords : destinationRegion) {
-            if (!entity.getGame().getBoard().contains(coords)) {
+            if (!entity.getGame().getBoard(entity).contains(coords)) {
                 continue;
             }
 
@@ -226,9 +227,9 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
                 (child.getEntity().getMaxElevationDown() == Entity.UNLIMITED_JUMP_DOWN)
                         && (Math.abs(mli.elevationChange) > child.getEntity().getMaxElevationChange());
 
-        boolean destinationUseBridge = child.getGame().getBoard().getHex(destinationCoords)
+        boolean destinationUseBridge = child.getGame().getBoard(child.getFinalBoardId()).getHex(destinationCoords)
                 .getTerrain(Terrains.BRIDGE) != null;
-        int destHexElevation = calculateUnitElevationInHex(child.getGame().getBoard().getHex(destinationCoords),
+        int destHexElevation = calculateUnitElevationInHex(child.getGame().getBoard(child.getFinalBoardId()).getHex(destinationCoords),
                 child.getEntity(), child.getEntity().getMovementMode() == EntityMovementMode.HOVER,
                 child.getCachedEntityState().isAmphibious(),
                 destinationUseBridge);
@@ -277,7 +278,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             return friendlyFireCheckResults.get(position);
         }
 
-        Building building = game.getBoard().getBuildingAt(position);
+        Building building = game.getBoard(shooter).getBuildingAt(position);
 
         // no building, no problem
         if (building == null) {
@@ -289,7 +290,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         // criteria:
         // - is friendly
         // - if we care only about mobile units, has no MP
-        for (Entity entity : game.getEntitiesVector(position, true)) {
+        for (Entity entity : game.getEntitiesVector(position, shooter.getBoardId(), true)) {
             if (!entity.isEnemyOf(shooter)
                     && (includeMobileUnits || (entity.getWalkMP(MPCalculationSetting.STANDARD) == 0))) {
                 friendlyFireCheckResults.put(position, true);
@@ -306,7 +307,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      * breached legs and effectively immobilize it.
      */
     private boolean underwaterLegBreachCheck(BulldozerMovePath path) {
-        Hex hex = path.getGame().getBoard().getHex(path.getFinalCoords());
+        Hex hex = path.getGame().getBoard(path.getFinalBoardId()).getHex(path.getFinalCoords());
 
         // investigate: do we want quad meks with a single breached leg to risk this
         // move? Currently not, but if we did, this is probably where this logic would
@@ -340,7 +341,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
          */
         @Override
         public int compare(BulldozerMovePath first, BulldozerMovePath second) {
-            Board board = first.getGame().getBoard();
+            Board board = first.getGame().getBoard(first.getFinalBoardId());
             boolean backwards = false;
             int h1 = first.getFinalCoords().distance(destination)
                     + ShortestPathFinder.getLevelDiff(first, destination, board, false)

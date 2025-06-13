@@ -1,3 +1,4 @@
+meks.tsv
 /tmp/
 /.metadata
 /.recommenders/
@@ -8,6 +9,7 @@ logs/
 *.log
 .DS_Store
 Thumbs.db
+/tmp
 /megamek/*.blame
 /megamek/*.diff
 /megamek/*.patch
@@ -104,3 +106,7 @@ equipment.txt
 # Testing Temp Folder
 /megamek/testresources/tmp/*
 !/megamek/testresources/tmp/.keep
+/megamek/resources/extraVersion.properties
+
+/megamek/docs/README.md
+/megamek/docs/LICENSE*

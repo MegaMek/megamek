@@ -28,7 +28,7 @@ public class InfantryLaserRifleScorcherVIBlazerRifle extends InfantryWeapon {
         name = "Blazer Rifle (Scorcher VI)";
         setInternalName(name);
         addLookupName("SCORCHERVI");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1500;
         bv = 1.05;
         tonnage = 0.0075;
@@ -40,11 +40,11 @@ public class InfantryLaserRifleScorcherVIBlazerRifle extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_D) // Assuming E-E-D-D simplifies to D
-                .setAvailability(new int[]{RATING_E, RATING_E, RATING_D, RATING_D})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.D) // Assuming E-E-D-D simplifies to D
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_TC);
+                .setProductionFactions(Faction.TC);
     }
 }

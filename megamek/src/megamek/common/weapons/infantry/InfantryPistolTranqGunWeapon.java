@@ -35,7 +35,7 @@ public class InfantryPistolTranqGunWeapon extends InfantryWeapon {
 		name = "Tranq Gun";
 		setInternalName(name);
 		addLookupName("InfantryTranquilizerGun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 30;
 		bv = 0.13;
 		tonnage = .0015;
@@ -46,11 +46,11 @@ public class InfantryPistolTranqGunWeapon extends InfantryWeapon {
 		ammoCost = 1;
 		shots = 30;
 		rulesRefs = " 273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
-		        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+		        .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.A)
+		        .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
 
 	}
 }

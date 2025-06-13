@@ -41,21 +41,21 @@ public class ISLB2XAC extends LBXACWeapon {
         criticals = 4;
         bv = 42;
         cost = 150000;
-        shortAV = 2;
-        medAV = 2;
-        longAV = 2;
-        extAV = 2;
+        shortAV = getBaseAeroDamage();
+        medAV = shortAV;
+        longAV = shortAV;
+        extAV = shortAV;
         maxRange = RANGE_EXT;
         rulesRefs = "207, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS);
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS);
     }
 
     @Override

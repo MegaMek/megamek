@@ -36,7 +36,7 @@ public class InfantrySMGImperator2894A1Weapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryImperator2894A1");
 		addLookupName("Imperator 2894A1 SMG");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 100;
 		bv = 0.20;
 		tonnage = .004;
@@ -48,11 +48,11 @@ public class InfantrySMGImperator2894A1Weapon extends InfantryWeapon {
 		shots = 50;
 		bursts = 5;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2838, 2842, 2900, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2838, 2842, 2900, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_FW)
-		        .setProductionFactions(F_FW).setTechRating(RATING_C)
-		        .setAvailability(RATING_X, RATING_C, RATING_B, RATING_C);
+		        .setPrototypeFactions(Faction.FW)
+		        .setProductionFactions(Faction.FW).setTechRating(TechRating.C)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.C);
 
 	}
 }

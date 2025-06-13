@@ -31,7 +31,7 @@ public class InfantryShotgunWranglemanTriBarrel extends InfantryWeapon {
        name = "Shotgun (Wrangleman Tri-Barrel)";
        setInternalName(name);
        addLookupName("Wrangleman Tri-Barrel");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .243;
        tonnage =  0.003;
        infantryDamage =  0.27;
@@ -44,11 +44,11 @@ public class InfantryShotgunWranglemanTriBarrel extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_ALL)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_X,RATING_X,RATING_C,RATING_F)
+       .setTechBase(TechBase.ALL)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.X,AvailabilityValue.C,AvailabilityValue.F)
        .setISAdvancement(DATE_NONE, DATE_NONE,3050,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_OA);
+       .setProductionFactions(Faction.OA);
    }
 }

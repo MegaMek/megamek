@@ -19,12 +19,15 @@
  */
 package megamek.common.weapons.missiles;
 
+import java.io.Serial;
+
 /**
- * Duplicate of IS BA RL, not available to mechs at this rack size
- * Commented out in Weapontype
+ * Duplicate of IS BA RL, not available to meks at this rack size Commented out in {@link megamek.common.WeaponType}
+ *
  * @author Sebastian Brocks
  */
 public class ISRL2 extends RLWeapon {
+    @Serial
     private static final long serialVersionUID = -3501679876316953438L;
 
     public ISRL2() {
@@ -38,18 +41,18 @@ public class ISRL2 extends RLWeapon {
         shortRange = 3;
         mediumRange = 7;
         longRange = 12;
-        extremeRange = 14;
+        extremeRange = 18;
         bv = 3;
         rulesRefs = "229, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
-                .setIntroLevel(false)
-                .setUnofficial(true)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
-                .setISAdvancement(DATE_ES, 3064, 3067, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false)
-                .setProductionFactions(F_MH);
+        techAdvancement.setTechBase(TechBase.ALL)
+              .setIntroLevel(false)
+              .setUnofficial(true)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
+              .setISAdvancement(DATE_ES, 3064, 3067, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, false, false, false)
+              .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
+              .setClanApproximate(false, false, false, false, false)
+              .setProductionFactions(Faction.MH);
     }
 }

@@ -15,6 +15,7 @@
 */
 package megamek.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,15 +44,15 @@ import megamek.logging.MMLogger;
  * @author Suvarov454@sourceforge.net (James A. Damour)
  */
 public class Building implements Serializable {
-    private static final MMLogger logger = MMLogger.create(Building.class);
-
+    @Serial
     private static final long serialVersionUID = -8236017592012683793L;
+
+    private static final MMLogger logger = MMLogger.create(Building.class);
 
     /**
      * Generic flag for uninitialized values.
      */
     protected static final int UNKNOWN = -1;
-
 
     /**
      * The Building Type of the building; equal to the terrain elevation of the
@@ -81,7 +82,8 @@ public class Building implements Serializable {
     /**
      * The coordinates of every hex of this building.
      */
-    private Vector<Coords> coordinates = new Vector<>();
+    private final Vector<Coords> coordinates = new Vector<>();
+    private int boardId;
 
     /**
      * The Basement type of the building.
@@ -239,35 +241,30 @@ public class Building implements Serializable {
     }
 
     /**
-     * Construct a building for the given coordinates from the board's
-     * information. If the building covers multiple hexes, every hex will be
-     * included in the building.
+     * Construct a building for the given coordinates from the board's information. If the building covers multiple
+     * hexes, every hex will be included in the building.
      *
-     * @param coords the <code>Coords</code> of a hex of the building. If the
-     *               building covers
-     *               multiple hexes, this constructor will include them all in this
-     *               building
-     *               automatically.
+     * @param coords the <code>Coords</code> of a hex of the building. If the building covers multiple hexes, this
+     *               constructor will include them all in this building automatically.
      * @param board  the game's <code>Board</code> object.
-     * @throws IllegalArgumentException will be thrown if the given coordinates do
-     *                                  not contain a
-     *                                  building, or if the building covers multiple
-     *                                  hexes with different CFs.
+     *
+     * @throws IllegalArgumentException will be thrown if the given coordinates do not contain a building, or if the
+     *                                  building covers multiple hexes with different CFs.
      */
     public Building(Coords coords, Board board, int structureType, BasementType basementType) {
 
-        // The ID of the building will be deterministic based on the
-        // position of its first hex. 9,999 hexes in the Y direction
-        // ought to be enough for anyone.
+        // The ID of the building will be deterministic based on the position of its first hex. 999 hexes in the Y
+        // direction ought to be enough for anyone. This has been changed to accomodate the board ID. Now only allows
+        // maximum board size of 1000x1000 which still seems enough. The ID cannot allow collisions (unlike the
+        // hashcode).
         //
-        // ASSUMPTION: this will be unique ID across ALL the building's
-        // hexes for ALL the clients of this board.
-        id = coords.getX() * 10000 + coords.getY();
+        // ASSUMPTION: this will be unique ID across ALL the building's hexes for ALL the clients of this board.
+        id = board.getBoardId() * 1_000_000 + coords.getX() * 1000 + coords.getY();
 
         // The building occupies the given coords, at least.
         coordinates.addElement(coords);
         originalHexes++;
-
+        boardId = board.getBoardId();
         burning.put(coords, false);
 
         // Get the Hex for those coords.
@@ -594,28 +591,14 @@ public class Building implements Serializable {
     }
 
     /**
-     * Override <code>Object#equals(Object)</code>.
+     * Two Buildings are equal if and only if their IDs are equal.
      *
-     * @param obj
-     *            - the other <code>Object</code> to compare to this
-     *            <code>Building</code>.
-     * @return <code>true</code> if the other object is the same as this
-     *         <code>Building</code>. The value <code>false</code> will be
-     *         returned if the other object is <code>null</code>, is not a
-     *         <code>Building</code>, or if it is not the same as this
-     *         <code>Building</code>.
+     * @param other The other Object to compare
+     * @return True if this and the given other are considered equal
      */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof Building)) {
-            return false;
-        }
-        // True until we're talking about more than one Board per Game.
-        final Building other = (Building) obj;
-        return (id == other.id);
+    public boolean equals(Object other) {
+        return (this == other) || ((other instanceof Building otherBuilding) && (id == otherBuilding.id));
     }
 
     @Override
@@ -627,16 +610,12 @@ public class Building implements Serializable {
      * Returns a string representation of the given building class, e.g. "Hangar".
      */
     public static String className(int bldgClass) {
-        switch (bldgClass) {
-            case Building.HANGAR:
-                return "Hangar";
-            case Building.FORTRESS:
-                return "Fortress";
-            case Building.GUN_EMPLACEMENT:
-                return "Gun Emplacement";
-            default:
-                return "Building";
-        }
+        return switch (bldgClass) {
+            case Building.HANGAR -> "Hangar";
+            case Building.FORTRESS -> "Fortress";
+            case Building.GUN_EMPLACEMENT -> "Gun Emplacement";
+            default -> "Building";
+        };
     }
 
     @Override
@@ -798,5 +777,13 @@ public class Building implements Serializable {
 
     public void setBasementCollapsed(Coords coords, boolean collapsed) {
         basementCollapsed.put(coords, collapsed);
+    }
+
+    public int getBoardId() {
+        return boardId;
+    }
+
+    public void setBoardId(int boardId) {
+        this.boardId = boardId;
     }
 }

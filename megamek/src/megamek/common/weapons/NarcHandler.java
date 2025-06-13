@@ -171,7 +171,7 @@ public class NarcHandler extends MissileWeaponHandler {
         }
         hit.setAttackerId(getAttackerId());
 
-        // Catch Protomech near-misses here.
+        // Catch protomek near-misses here.
         // So what do we do for a near miss on a glider? Assume attach to wings.
         if (entityTarget instanceof ProtoMek
                 && hit.getLocation() == ProtoMek.LOC_NMISS
@@ -183,7 +183,7 @@ public class NarcHandler extends MissileWeaponHandler {
         }
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
+                .getCover(), ComputeSideTable.sideTable(ae, entityTarget, weapon
                 .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
@@ -210,7 +210,7 @@ public class NarcHandler extends MissileWeaponHandler {
         }
 
         AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.getAmmoType() == AmmoType.T_NARC) {
+        if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NARC) {
             // narced
             NarcPod pod = new NarcPod(ae.getOwner().getTeam(),
                     hit.getLocation());
@@ -220,7 +220,7 @@ public class NarcHandler extends MissileWeaponHandler {
             r.add(entityTarget.getLocationAbbr(hit));
             vPhaseReport.addElement(r);
             entityTarget.attachNarcPod(pod);
-        } else if (atype.getAmmoType() == AmmoType.T_INARC) {
+        } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.INARC) {
             // iNarced
             INarcPod pod = null;
             if (atype.getMunitionType().contains(AmmoType.Munitions.M_ECM)) {

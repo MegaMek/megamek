@@ -37,7 +37,7 @@ public class InfantryGrenadeMiniInfernoWeapon extends InfantryWeapon {
         addLookupName(name);
         addLookupName("InfantryMiniInfernoGrenade");
         addLookupName("Mini Inferno Grenades");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 8;
         bv = 0.10;
         tonnage = .00045;
@@ -48,11 +48,11 @@ public class InfantryGrenadeMiniInfernoWeapon extends InfantryWeapon {
         infantryRange = 0;
         // very hackish - using some data from Inferno Fuel.
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+                .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);
 
     }
 }

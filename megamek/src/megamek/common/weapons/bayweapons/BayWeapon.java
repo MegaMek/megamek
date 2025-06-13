@@ -17,6 +17,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.weapons.ArtilleryBayWeaponIndirectFireHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BayWeaponHandler;
 import megamek.common.weapons.Weapon;
@@ -35,9 +36,9 @@ public abstract class BayWeapon extends Weapon {
         super();
         // Tech progression for Small Craft or DropShip, using primitive for production and standard
         // for common.
-        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
-                .setAdvancement(DATE_ES, 2200, 2400).setProductionFactions(F_TA)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
+        techAdvancement = new TechAdvancement(TechBase.ALL)
+                .setAdvancement(DATE_ES, 2200, 2400).setProductionFactions(Faction.TA)
+                .setTechRating(TechRating.D).setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
@@ -49,17 +50,14 @@ public abstract class BayWeapon extends Weapon {
         return super.fire(waa, game, manager);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
-     */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, TWGameManager manager) {
-        return new BayWeaponHandler(toHit, waa, game, manager);
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+          TWGameManager manager) {
+        if ((isCapital() || isSubCapital()) && waa.isOrbitToSurface(game)) {
+            return new ArtilleryBayWeaponIndirectFireHandler(toHit, waa, game, manager);
+        } else {
+            return new BayWeaponHandler(toHit, waa, game, manager);
+        }
     }
 
     @Override

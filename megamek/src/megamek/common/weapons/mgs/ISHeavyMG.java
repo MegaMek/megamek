@@ -31,7 +31,7 @@ public class ISHeavyMG extends MGWeapon {
         addLookupName("IS Heavy Machine Gun");
         addLookupName("ISHeavyMG");
         sortingName = "MG D";
-        ammoType = AmmoType.T_MG_HEAVY;
+        ammoType = AmmoType.AmmoTypeEnum.MG_HEAVY;
         heat = 0;
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;
@@ -48,14 +48,14 @@ public class ISHeavyMG extends MGWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "228, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_B)
-                .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+                .setTechRating(TechRating.B)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
                 .setISAdvancement(3063, 3068, 3070, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TC)
-                .setProductionFactions(F_TC);
+                .setPrototypeFactions(Faction.TC)
+                .setProductionFactions(Faction.TC);
     }
 }

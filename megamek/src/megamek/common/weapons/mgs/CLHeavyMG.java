@@ -33,7 +33,7 @@ public class CLHeavyMG extends MGWeapon {
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;
         rackSize = 3;
-        ammoType = AmmoType.T_MG_HEAVY;
+        ammoType = AmmoType.AmmoTypeEnum.MG_HEAVY;
         shortRange = 1;
         mediumRange = 2;
         longRange = 2;
@@ -46,14 +46,14 @@ public class CLHeavyMG extends MGWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "228, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
                 .setClanAdvancement(3054, 3059, 3070, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CHH)
-                .setProductionFactions(F_CSJ);
+                .setPrototypeFactions(Faction.CHH)
+                .setProductionFactions(Faction.CSJ);
     }
 }

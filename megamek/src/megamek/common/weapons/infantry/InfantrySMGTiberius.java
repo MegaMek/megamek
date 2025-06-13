@@ -30,7 +30,7 @@ public class InfantrySMGTiberius extends InfantryWeapon {
        name = "SMG (Tiberius)";
        setInternalName(name);
        addLookupName("Tiberius");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = 1.1;
        tonnage =  0.003;
        infantryDamage =  0.55;
@@ -43,11 +43,11 @@ public class InfantrySMGTiberius extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #5";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_D)
-       .setAvailability(RATING_X,RATING_E,RATING_E,RATING_E)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.D)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,2920,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_MH);
+       .setProductionFactions(Faction.MH);
    }
 }

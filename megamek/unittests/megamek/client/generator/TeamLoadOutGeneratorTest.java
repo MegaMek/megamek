@@ -18,33 +18,35 @@
  */
 package megamek.client.generator;
 
-import megamek.client.Client;
-import megamek.client.ratgenerator.ForceDescriptor;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.common.*;
-import megamek.common.AmmoType.Munitions;
-import megamek.common.containers.MunitionTree;
-import megamek.common.options.GameOptions;
-import megamek.common.options.Option;
-import megamek.common.options.OptionsConstants;
-import megamek.common.options.PilotOptions;
-import org.apache.commons.collections4.IteratorUtils;
-import org.junit.jupiter.api.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import megamek.client.Client;
+import megamek.client.ratgenerator.ForceDescriptor;
+import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.common.*;
+import megamek.common.AmmoType.Munitions;
+import megamek.common.BombType.BombTypeEnum;
+import megamek.common.containers.MunitionTree;
+import megamek.common.options.GameOptions;
+import megamek.common.options.Option;
+import megamek.common.options.OptionsConstants;
+import megamek.common.options.PilotOptions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class TeamLoadOutGeneratorTest {
 
@@ -237,8 +239,14 @@ class TeamLoadOutGeneratorTest {
         // Set up two loadouts: one for a named pilot, and one for all LRMs on any
         // Catapults
         MunitionTree mt = new MunitionTree();
-        mt.insertImperative("Catapult", "CPLT-C1", "J. Robert Hoppenheimer", "LRM-15", "Standard", "Dead-Fire",
-                "Heat-Seeking", "Smoke");
+        mt.insertImperative("Catapult",
+              "CPLT-C1",
+              "J. Robert Hoppenheimer",
+              "LRM-15",
+              "Standard",
+              "Dead-Fire",
+              "Heat-Seeking",
+              "Smoke");
         mt.insertImperative("Catapult", "any", "any", "LRM", "Standard", "Swarm", "Semi-guided");
 
         // J. Robert H. should get the first load out
@@ -271,7 +279,7 @@ class TeamLoadOutGeneratorTest {
         game.setEntity(1, mockMek2);
         game.setEntity(2, mockMek3);
 
-        // Load ammo in 'meks; locations are for fun
+        // Load ammo in `Meks; locations are for fun
         Mounted<?> bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
         Mounted<?> bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
         Mounted<?> bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
@@ -321,7 +329,7 @@ class TeamLoadOutGeneratorTest {
         game.setEntity(1, mockMek2);
         game.setEntity(2, mockMek3);
 
-        // Load ammo in 'meks; locations are for fun
+        // Load ammo in `Meks; locations are for fun
         Mounted<?> bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
         Mounted<?> bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
         Mounted<?> bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
@@ -339,7 +347,7 @@ class TeamLoadOutGeneratorTest {
     }
 
     @Test
-    void testLoadEntityListTwoEntities() throws LocationFullException {
+    void testLoadEntityListTwoEntities() {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         Mek mockMek = createMek("Hunchback", "HBK-4G", "Boomstick");
         Mek mockMek2 = createMek("Hunchback", "HBK-4J", "The Shade");
@@ -369,7 +377,7 @@ class TeamLoadOutGeneratorTest {
         game.setEntity(1, mockMek2);
         game.setEntity(2, mockMek3);
 
-        // Load ammo in 'meks; locations are for fun
+        // Load ammo in `Meks; locations are for fun
         Mounted<?> bin1 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
         Mounted<?> bin2 = mockMek.addEquipment(mockAC20AmmoType, Mek.LOC_CT);
         Mounted<?> bin3 = mockMek2.addEquipment(mockLRM15AmmoType, Mek.LOC_LT);
@@ -402,7 +410,7 @@ class TeamLoadOutGeneratorTest {
         game.setEntity(1, mockMek2);
         game.setEntity(2, mockMek3);
 
-        // Load ammo in 'meks; locations are for fun
+        // Load ammo in `Meks; locations are for fun
         Mounted<?> bin1 = mockMek.addEquipment(mockSRM6AmmoType, Mek.LOC_CT);
         Mounted<?> bin2 = mockMek2.addEquipment(mockMML7LRMAmmoType, Mek.LOC_LT);
         Mounted<?> bin3 = mockMek2.addEquipment(mockMML7SRMAmmoType, Mek.LOC_LT);
@@ -423,8 +431,11 @@ class TeamLoadOutGeneratorTest {
     void testAmmoTypeIllegalByTechLevel() {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         AmmoType aType = (AmmoType) EquipmentType.get("IS Arrow IV Ammo");
-        AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType()).stream()
-                .filter(m -> m.getSubMunitionName().contains("ADA")).findFirst().orElse(null);
+        AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType())
+                               .stream()
+                               .filter(m -> m.getSubMunitionName().contains("ADA"))
+                               .findFirst()
+                               .orElse(null);
         // Set game tech level to Standard and update generator
         when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Standard");
         tlg.updateOptionValues();
@@ -450,8 +461,11 @@ class TeamLoadOutGeneratorTest {
     void testAmmoTypeIllegalBeforeCreation() {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         AmmoType aType = (AmmoType) EquipmentType.get("IS Arrow IV Ammo");
-        AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType()).stream()
-                .filter(m -> m.getSubMunitionName().contains("ADA")).findFirst().orElse(null);
+        AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType())
+                               .stream()
+                               .filter(m -> m.getSubMunitionName().contains("ADA"))
+                               .findFirst()
+                               .orElse(null);
         // Should be available by default in 3151, including to Clans (using MixTech)
         Assertions.assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
         Assertions.assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
@@ -474,9 +488,9 @@ class TeamLoadOutGeneratorTest {
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3070);
         tlg.updateOptionValues();
         Assertions.assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
-        Assertions.assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
-        Assertions.assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
-        Assertions.assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
+        Assertions.assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
+        Assertions.assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
+        Assertions.assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
     }
 
     @Test
@@ -533,7 +547,9 @@ class TeamLoadOutGeneratorTest {
         // Have the Munition Tree generator use our pre-made mwc so we can see its
         // changes
 
-        ArrayList<Entity> ownTeamEntities = (ArrayList<Entity>) IteratorUtils.toList(game.getTeamEntities(team));
+        Iterator<Entity> entityIterator = game.getTeamEntities(team);
+        ArrayList<Entity> ownTeamEntities = new ArrayList<>();
+        entityIterator.forEachRemaining(ownTeamEntities::add);
         TeamLoadOutGenerator.generateMunitionTree(rp, ownTeamEntities, "", mwc);
 
         assertEquals(0.0, mwc.getArtyWeights().get("Davy Crockett-M"));
@@ -614,20 +630,45 @@ class TeamLoadOutGeneratorTest {
         String faction = "PIR";
         String techBase = "IS";
         boolean mixedTech = false;
-        int[] generatedBombs = tlg.generateExternalOrdnance(
-            bombUnits,
-            airOnly,
-            isPirate,
-            quality,
-            year,
-            faction,
-            techBase,
-            mixedTech
-        );
-        int[] expected = new int[BombType.B_NUM];
-        expected[BombType.B_RLP] = bombUnits;
-        assertArrayEquals(expected, generatedBombs);
+        BombLoadout generatedBombs = tlg.generateExternalOrdnance(bombUnits,
+              airOnly,
+              isPirate,
+              quality,
+              year,
+              faction,
+              techBase,
+              mixedTech);
+        BombLoadout expected = new BombLoadout();
+        expected.put(BombTypeEnum.RLP, bombUnits);
+        assertBombLoadoutEquals(expected, generatedBombs);
+        if (!expected.equals(generatedBombs)) {
+            fail(String.format("Expected %s, but got %s", expected, generatedBombs));
+        }
     }
+
+    private void assertBombLoadoutEquals(BombLoadout expected, BombLoadout actual) {
+        assertEquals(expected.size(), actual.size(), "BombLoadout sizes don't match");
+        
+        for (Map.Entry<BombTypeEnum, Integer> entry : expected.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            int expectedCount = entry.getValue();
+            int actualCount = actual.getCount(bombType);
+            
+            assertEquals(expectedCount, actualCount, 
+                String.format("Bomb count mismatch for %s: expected %d, got %d", 
+                    bombType.getDisplayName(), expectedCount, actualCount));
+        }
+        
+        // Check for unexpected bomb types in actual
+        for (BombTypeEnum bombType : actual.keySet()) {
+            if (!expected.containsKey(bombType)) {
+                assertEquals(0, actual.getCount(bombType), 
+                    String.format("Unexpected bomb type %s with count %d", 
+                        bombType.getDisplayName(), actual.getCount(bombType)));
+            }
+        }
+    }
+    
 
     /**
      * We expect CAP Pirate flights in the 3SW era to mount ordnance only RL-P pods.
@@ -646,20 +687,18 @@ class TeamLoadOutGeneratorTest {
         String faction = "PIR";
         String techBase = "IS";
         boolean mixedTech = false;
-        int[] generatedBombs = tlg.generateExternalOrdnance(
-            bombUnits,
-            airOnly,
-            isPirate,
-            quality,
-            year,
-            faction,
-            techBase,
-            mixedTech
-        );
+        BombLoadout generatedBombs = tlg.generateExternalOrdnance(bombUnits,
+              airOnly,
+              isPirate,
+              quality,
+              year,
+              faction,
+              techBase,
+              mixedTech);
         // Should always get some regular rocket launchers
-        assertTrue(generatedBombs[BombType.B_RL] > 0);
+        assertTrue(generatedBombs.getCount(BombTypeEnum.RL) > 0);
         // Should not use RL-Ps when RLs are available
-        assertEquals(0, generatedBombs[BombType.B_RLP]);
+        assertEquals(0, generatedBombs.getCount(BombTypeEnum.RLP));
     }
 
     /**
@@ -679,17 +718,15 @@ class TeamLoadOutGeneratorTest {
         String faction = "CSJ";
         String techBase = "CL";
         boolean mixedTech = false;
-        int[] generatedBombs = tlg.generateExternalOrdnance(
-            bombUnits,
-            airOnly,
-            isPirate,
-            quality,
-            year,
-            faction,
-            techBase,
-            mixedTech
-        );
+        BombLoadout generatedBombs = tlg.generateExternalOrdnance(bombUnits,
+              airOnly,
+              isPirate,
+              quality,
+              year,
+              faction,
+              techBase,
+              mixedTech);
         // Pre-2823, Clan units can take RL-P bombs
-        assertTrue(generatedBombs[BombType.B_RLP] > 0);
+        assertTrue(generatedBombs.getCount(BombTypeEnum.RLP) > 0);
     }
 }

@@ -85,12 +85,14 @@ public class TerrainHexArea extends AbstractHexArea {
 
     @Override
     public boolean containsCoords(Coords coords, Board board) {
-        if (maxDistance == 0) {
+        if (!matchesBoardId(board)) {
+            return false;
+        } else if (maxDistance == 0) {
             return board.contains(coords) && hasCorrectTerrain(board.getHex(coords));
         } else {
             for (int distance = minDistance; distance <= maxDistance; distance++) {
                 for (Coords coordsToCheck : coords.allAtDistance(distance)) {
-                    if (hasCorrectTerrain(board.getHex(coordsToCheck))) {
+                    if (board.contains(coordsToCheck) && hasCorrectTerrain(board.getHex(coordsToCheck))) {
                         return true;
                     }
                 }

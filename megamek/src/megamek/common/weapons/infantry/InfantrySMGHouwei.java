@@ -33,7 +33,7 @@ public class InfantrySMGHouwei extends InfantryWeapon {
        name = "SMG (Houwei)";
        setInternalName(name);
        addLookupName("Houwei");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .36;
        tonnage =  0.0035;
        infantryDamage =  0.36;
@@ -46,11 +46,11 @@ public class InfantrySMGHouwei extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #5";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_D)
-       .setAvailability(RATING_D,RATING_D,RATING_D,RATING_D)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.D)
+       .setAvailability(AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.D)
        .setISAdvancement(DATE_NONE, DATE_NONE,DATE_ES,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_CC);
+       .setProductionFactions(Faction.CC);
    }
 }

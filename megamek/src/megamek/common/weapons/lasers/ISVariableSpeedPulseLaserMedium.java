@@ -37,11 +37,11 @@ public class ISVariableSpeedPulseLaserMedium extends VariableSpeedPulseLaserWeap
         shortRange = 2;
         mediumRange = 5;
         longRange = 9;
-        extremeRange = 10;
+        extremeRange = 13;
         waterShortRange = 1;
         waterMediumRange = 3;
         waterLongRange = 6;
-        waterExtremeRange = 6;
+        waterExtremeRange = 9;
         damageShort = 9;
         damageMedium = 7;
         damageLong = 5;
@@ -52,11 +52,11 @@ public class ISVariableSpeedPulseLaserMedium extends VariableSpeedPulseLaserWeap
         shortAV = 7;
         maxRange = RANGE_SHORT;
         rulesRefs = "321, TO";
-        //Nov 22 - CGL requested we move to Standard for Simple Tech Level 
-        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3070, 3072, 3080).setPrototypeFactions(F_FW, F_WB)
-                .setProductionFactions(F_FW, F_WB).setStaticTechLevel(SimpleTechLevel.STANDARD);
+        //Nov 22 - CGL requested we move to Standard for Simple Tech Level
+        techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
+                .setISAdvancement(3070, 3072, 3080).setPrototypeFactions(Faction.FW, Faction.WB)
+                .setProductionFactions(Faction.FW, Faction.WB).setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     @Override

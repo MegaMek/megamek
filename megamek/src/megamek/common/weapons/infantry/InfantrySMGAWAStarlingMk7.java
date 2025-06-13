@@ -30,7 +30,7 @@ public class InfantrySMGAWAStarlingMk7 extends InfantryWeapon {
        name = "SMG (AWA Starling Mk7)";
        setInternalName(name);
        addLookupName("AWA Starling Mk7");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .33;
        tonnage =  0.0029;
        infantryDamage =  0.33;
@@ -43,12 +43,12 @@ public class InfantrySMGAWAStarlingMk7 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #5";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_D)
-       .setAvailability(RATING_X,RATING_C,RATING_C,RATING_C)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.D)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_FS);
+       .setProductionFactions(Faction.FS);
 
    }
 }

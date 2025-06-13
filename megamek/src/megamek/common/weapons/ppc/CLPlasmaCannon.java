@@ -37,7 +37,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
         heat = 7;
         damage = DAMAGE_VARIABLE;
         rackSize = 2;
-        ammoType = AmmoType.T_PLASMA;
+        ammoType = AmmoType.AmmoTypeEnum.PLASMA;
         minimumRange = WEAPON_NA;
         shortRange = 6;
         mediumRange = 12;
@@ -54,15 +54,15 @@ public class CLPlasmaCannon extends AmmoWeapon {
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
         rulesRefs = "234, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(3068, 3069, 3070, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CSF)
-                .setProductionFactions(F_CSF);
+                .setPrototypeFactions(Faction.CSF)
+                .setProductionFactions(Faction.CSF);
     }
 
     /*

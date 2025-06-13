@@ -1,0 +1,74 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-14
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Foot Platoon (FWLM)
+</Name>
+
+<Model>
+(Sappers 2315+)
+</Model>
+
+<year>
+2315
+</year>
+
+<originalBuildYear>
+2315
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<Troopers Equipment>
+Demolition Charge
+Demolition Charge
+Ballistic Plate, Standard
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+Equipped with a variety of tools these platoons engage in some of the most dangerous tasks assigned to combat engineers - explosive ordnance disposal, clearing minefields, and explosive demolition of obstacles and buildings. As such they are equipped with much heavier protective gear than normally found among infantry.
+</capabilities>
+
+<overview>
+Sapper is an old term for combat engineers, especially those involved with explosives, demolitions, and mines.  These activities are conducted in peacetime, such as EOD (explosive ordnance disposal) and clearing leftover minefields, as well as breaching minefields and destroying critical bunkers and bridges while under active fire.
+</overview>
+
+<notes>
+Intro date based on introduction date of ballistic plate armor. Ballistic plate armor chosen for damage divisor and ATOW stats and general description.
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+2
+</squadn>
+
+<Primary>
+Submachine Gun
+</Primary>
+
+<encumberingarmor>
+true
+</encumberingarmor>
+
+<specialization>
+10
+</specialization>
+

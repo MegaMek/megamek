@@ -24,6 +24,7 @@ import java.text.NumberFormat;
 import java.util.*;
 
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -31,6 +32,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AreaEffectHelper;
 import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
@@ -139,7 +141,7 @@ public class WeaponFireInfo {
      *
      * @param shooter               The {@link megamek.common.Entity} doing the
      *                              attacking.
-     * @param shooterPath           The {@link megamek.common.MovePath} of the
+     * @param shooterPath           The {@link MovePath} of the
      *                              attacker.
      * @param target                The {@link megamek.common.Targetable} of the
      *                              attack.
@@ -167,7 +169,7 @@ public class WeaponFireInfo {
             final boolean assumeUnderFlightPath,
             final boolean guess,
             final Princess owner,
-            final HashMap<String, int[]> bombPayloads) {
+            final HashMap<String, BombLoadout> bombPayloads) {
         this(shooter, null, shooterPath, target, targetState, weapon, ammo, game, assumeUnderFlightPath, guess, owner,
                 bombPayloads);
     }
@@ -182,7 +184,7 @@ public class WeaponFireInfo {
      * @param shooterState          The current
      *                              {@link megamek.client.bot.princess.EntityState}
      *                              of the attacker.
-     * @param shooterPath           The {@link megamek.common.MovePath} of the
+     * @param shooterPath           The {@link MovePath} of the
      *                              attacker.
      * @param target                The {@link megamek.common.Targetable} of the
      *                              attack.
@@ -212,7 +214,7 @@ public class WeaponFireInfo {
             final boolean assumeUnderFlightPath,
             final boolean guess,
             final Princess owner,
-            final HashMap<String, int[]> bombPayloads) {
+            final HashMap<String, BombLoadout> bombPayloads) {
         this.owner = owner;
 
         setShooter(shooter);
@@ -424,7 +426,7 @@ public class WeaponFireInfo {
         }
     }
 
-    private WeaponAttackAction buildBombAttackAction(final HashMap<String, int[]> bombPayloads) {
+    private WeaponAttackAction buildBombAttackAction(final HashMap<String, BombLoadout> bombPayloads) {
         final WeaponAttackAction diveBomb = new WeaponAttackAction(getShooter().getId(),
                 getTarget().getTargetType(),
                 getTarget().getId(),
@@ -532,7 +534,7 @@ public class WeaponFireInfo {
         // For clan plasma cannon, assume 7 "damage".
         final WeaponType weaponType = (WeaponType) weapon.getType();
         if (weaponType.hasFlag(WeaponType.F_PLASMA) &&
-                TechAdvancement.TECH_BASE_CLAN == weaponType.getTechBase()) {
+                TechAdvancement.TechBase.CLAN == weaponType.getTechBase()) {
             return new double[] {7D, 0D, 0D};
         }
 
@@ -543,7 +545,7 @@ public class WeaponFireInfo {
                 (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
             // Assume average cluster size for this weapon, unless it has Streak
             // capabilities
-            if (!List.of(AmmoType.T_SRM_STREAK, AmmoType.T_LRM_STREAK, AmmoType.T_IATM)
+            if (!List.of(AmmoType.AmmoTypeEnum.SRM_STREAK, AmmoType.AmmoTypeEnum.LRM_STREAK, AmmoType.AmmoTypeEnum.IATM)
                     .contains(weaponType.getAmmoType())) {
                 boolean artillery = (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY);
                 int rs = weaponType.getRackSize();
@@ -630,8 +632,14 @@ public class WeaponFireInfo {
             String msg = realToHitData.getCumulativePlainDesc();
             ToHitData thd;
             if (game.getPhase() != GamePhase.FIRING) {
-                // Check if any spotters can help us out...
                 Entity te = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target : null;
+
+                // Can't hit flying Aerospace with Homing
+                if (te != null && te.isAirborne()) {
+                    return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Aerospace cannot be TAGged, auto-miss");
+                }
+
+                // Check if any spotters can help us out...
                 Entity spotter = Compute.findTAGSpotter(game, shooter, target, false);
                 if (spotter != null) {
                     // Chance of getting a TAG spot is, at base, the spotter's gunnery skill
@@ -827,7 +835,7 @@ public class WeaponFireInfo {
     void initDamage(@Nullable final MovePath shooterPath,
             final boolean assumeUnderFlightPath,
             final boolean guess,
-            final HashMap<String, int[]> bombPayloads) {
+            final HashMap<String, BombLoadout> bombPayloads) {
 
         final StringBuilder msg = new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
                 .append(" firing ").append(getWeapon().getDesc())
@@ -835,7 +843,7 @@ public class WeaponFireInfo {
                 .append(":");
 
         // Set up the attack action and calculate the chance to hit.
-        if ((null == bombPayloads) || (0 == bombPayloads.get("external").length)) {
+        if ((null == bombPayloads) || (0 == bombPayloads.get("external").getTotalBombs())) {
             setAction(buildWeaponAttackAction());
         } else {
             setAction(buildBombAttackAction(bombPayloads));

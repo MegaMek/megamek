@@ -28,7 +28,7 @@ public class InfantryLaserRifleSyrtisFirebolt12Unrepaired extends InfantryWeapon
         name = "Laser Rifle (Syrtis Firebolt-12) (Unrepaired)";
         setInternalName(name);
         addLookupName("FIREBOLT12u");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 2200;
         bv = 0.525;
         tonnage = 0.0065;
@@ -40,11 +40,11 @@ public class InfantryLaserRifleSyrtisFirebolt12Unrepaired extends InfantryWeapon
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_D)
-                .setAvailability(new int[]{RATING_X, RATING_X, RATING_E, RATING_D})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_FS);
+                .setProductionFactions(Faction.FS);
     }
 }

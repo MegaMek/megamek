@@ -41,7 +41,7 @@ public class ISAC20Primitive extends ACWeapon {
         addLookupName("ISAC20p");
         addLookupName("IS Autocannon/20 Primitive");
         this.shortName = "AC/20p";
-        ammoType = AmmoType.T_AC_PRIMITIVE;
+        ammoType = AmmoType.AmmoTypeEnum.AC_PRIMITIVE;
         heat = 7;
         damage = 20;
         rackSize = 20;
@@ -60,15 +60,15 @@ public class ISAC20Primitive extends ACWeapon {
         // IO Doesn't strictly define when these weapons stop production. Checked with Herb, and
         // they would always be around. This to cover some of the back worlds in the Periphery.
         rulesRefs = "118, IO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
                 .setISAdvancement(2488, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TA)
+                .setPrototypeFactions(Faction.TA)
+                .setProductionFactions(Faction.TA)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

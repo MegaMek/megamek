@@ -36,7 +36,7 @@ public class InfantryArchaicCompoundBowWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryCompoundBow");
         addLookupName("Compound Bow");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 15;
         bv = 0.01;
         tonnage = .001; 
@@ -44,11 +44,11 @@ public class InfantryArchaicCompoundBowWeapon extends InfantryWeapon {
         infantryDamage = 0.01;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_A, RATING_A, RATING_A);
+                .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
 
     }
 }

@@ -37,7 +37,7 @@ public class InfantrySupportClanSemiPortablePulseLaserWeapon extends InfantryWea
 		addLookupName("InfantryClanSemiPortablePulseLaser");
 		addLookupName("InfantryClanMicroPulseLaser");
 		addLookupName("Infantry Clan Semi-Portable Pulse Laser");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 12500;
 		bv = 2.81;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_SUPPORT);
@@ -49,10 +49,10 @@ public class InfantrySupportClanSemiPortablePulseLaserWeapon extends InfantryWea
 		bursts = 2;
 		rulesRefs = "273, TM";
 		tonnage = .040;
-		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3056, 3059, DATE_NONE, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSJ)
-		        .setProductionFactions(F_CSJ).setTechRating(RATING_F)
-		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+		techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3056, 3059, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CSJ)
+		        .setProductionFactions(Faction.CSJ).setTechRating(TechRating.F)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D);
 
 	}
 }

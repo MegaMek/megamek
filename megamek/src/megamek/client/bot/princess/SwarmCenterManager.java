@@ -157,9 +157,9 @@ public class SwarmCenterManager {
             CubeCoords cube = unit.getPosition().toCube();
             double weight = calculateUnitWeight(unit);
 
-            qSum += cube.q * weight;
-            rSum += cube.r * weight;
-            sSum += cube.s * weight;
+            qSum += cube.q() * weight;
+            rSum += cube.r() * weight;
+            sSum += cube.s() * weight;
             totalWeight += weight;
         }
 

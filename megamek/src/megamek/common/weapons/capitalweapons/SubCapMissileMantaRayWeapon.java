@@ -34,7 +34,7 @@ public class SubCapMissileMantaRayWeapon extends SubCapMissileWeapon {
         this.shortName = "Manta Ray";
         this.heat = 21;
         this.damage = 5;
-        this.ammoType = AmmoType.T_MANTA_RAY;
+        this.ammoType = AmmoType.AmmoTypeEnum.MANTA_RAY;
         this.shortRange = 7;
         this.mediumRange = 14;
         this.longRange = 21;
@@ -49,17 +49,17 @@ public class SubCapMissileMantaRayWeapon extends SubCapMissileWeapon {
         this.maxRange = RANGE_SHORT;
         rulesRefs = "345, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
                 .setISAdvancement(DATE_NONE, 3060, 3072, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setClanAdvancement(DATE_NONE, 3070, 3072, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
-                .setPrototypeFactions(F_WB)
-                .setProductionFactions(F_WB)
+                .setPrototypeFactions(Faction.WB)
+                .setProductionFactions(Faction.WB)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

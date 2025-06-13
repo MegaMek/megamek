@@ -36,7 +36,7 @@ public class InfantryPistolHoldoutNeedlerPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryHoldoutNeedlerpistol");
 		addLookupName("Holdout Needler Pistol");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 20;
 		bv = 0.10;
 		tonnage = .00005;
@@ -46,12 +46,12 @@ public class InfantryPistolHoldoutNeedlerPistolWeapon extends InfantryWeapon {
 		ammoWeight = 0.00003;
 		shots = 5;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2510, 2515, 2570, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2510, 2515, 2570, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
 				.setClanAdvancement(2510, 2515, 2570, DATE_NONE, DATE_NONE)
-				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-				.setProductionFactions(F_TH).setTechRating(RATING_D)
-				.setAvailability(RATING_C, RATING_B, RATING_B, RATING_A);
+				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+				.setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+				.setAvailability(AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.A);
 
 	}
 }

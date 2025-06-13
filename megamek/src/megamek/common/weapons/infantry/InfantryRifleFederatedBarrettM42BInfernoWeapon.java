@@ -35,7 +35,7 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
         setInternalName("InfantryFederatedBarrettM42BInferno");
         addLookupName(name);
         addLookupName("Federated Barrett M42B Inferno");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1385;
         bv = 2.3;
         tonnage = .006;
@@ -47,10 +47,10 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
         shots = 50;
         bursts = 5;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3060, 3064, 3095, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3060, 3064, 3095, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS).setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS).setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C);
     }
 }

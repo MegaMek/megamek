@@ -1,0 +1,68 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-15
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Mechanized Hover Platoon (FWLM)
+</Name>
+
+<Model>
+(ER Laser 3052+)
+</Model>
+
+<year>
+3052
+</year>
+
+<originalBuildYear>
+3052
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+Hover
+</motion_type>
+
+<Troopers Equipment>
+Free Worlds League Infantry Kit (3035+)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+The Free Worlds League is well known for it's quality infantry laser weapons. The Starfire ER Laser Rifle carries on that tradition, providing range at least as good as the more common Intek brand while improving on damage capability.  This additional reach is added to platoons equipped with personal hover sleds, creating an unparalleled tool for recon and deep strikes.
+</capabilities>
+
+<overview>
+In response to the formation of the Federated Commonwealth the Free World League introduced it's own advanced infantry armor kit.  It is widely considered the most effective commonly available kit in the Inner Sphere and is in high demand among FWL forces.
+</overview>
+
+<notes>
+Intro date based on Starfire ER Laser Rifle production date
+</notes>
+
+<squad_size>
+5
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+Laser Rifle (ER [Sunbeam Starfire])
+</Primary>
+
+<encumberingarmor>
+true
+</encumberingarmor>
+

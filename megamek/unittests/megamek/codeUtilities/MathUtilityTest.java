@@ -106,4 +106,31 @@ class MathUtilityTest {
         assertEquals(5L, MathUtility.clamp(6L, 1L, 5L));
     }
     // endregion Clamp
+
+    @Test
+    void testStringToInt() {
+        assertEquals(1, MathUtility.parseInt("1", 0));
+        assertEquals(0, MathUtility.parseInt("A", 0));
+        assertEquals(0, MathUtility.parseInt(null, 0));
+        assertEquals(0, MathUtility.parseInt("", 0));
+    }
+
+    @Test
+    void testStringToFloat() {
+        assertEquals(1.0f, MathUtility.parseFloat("1", 0f));
+        assertEquals(0.5f, MathUtility.parseFloat("0.5", 0f));
+        assertEquals(0f, MathUtility.parseFloat("A", 0f));
+        assertEquals(0f, MathUtility.parseFloat(null, 0f));
+        assertEquals(0f, MathUtility.parseFloat("", 0f));
+    }
+
+    @Test
+    void testStringToDouble() {
+        assertEquals(1.0, MathUtility.parseDouble("1", 0.0));
+        assertEquals(0.5, MathUtility.parseDouble("0.5", 0.0));
+        assertEquals(0.0, MathUtility.parseDouble("A", 0.0));
+        assertEquals(0.0, MathUtility.parseDouble(null, 0.0));
+        assertEquals(0.0, MathUtility.parseDouble("", 0.0));
+    }
+
 }

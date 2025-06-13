@@ -28,7 +28,7 @@ public class InfantryPulseLaserPistolNWW12 extends InfantryWeapon {
         name = "Pulse Laser Pistol (NWW-12)";
         setInternalName(name);
         addLookupName("NWW12");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 850;
         bv = 0.054;
         tonnage = 0.0009;
@@ -40,11 +40,11 @@ public class InfantryPulseLaserPistolNWW12 extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_C)
-                .setAvailability(new int[]{RATING_X, RATING_X, RATING_X, RATING_C})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_FW);
+                .setProductionFactions(Faction.FW);
     }
 }

@@ -30,7 +30,7 @@ public class InfantrySMGWolfBarronA7 extends InfantryWeapon {
        name = "SMG (Wolf-Barron A7)";
        setInternalName(name);
        addLookupName("Wolf-Barron A7");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .2475;
        tonnage =  0.0029;
        infantryDamage =  0.25;
@@ -43,11 +43,11 @@ public class InfantrySMGWolfBarronA7 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #5";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_X,RATING_X,RATING_D,RATING_D)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.X,AvailabilityValue.D,AvailabilityValue.D)
        .setISAdvancement(DATE_NONE, DATE_NONE,3050,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_FW);
+       .setProductionFactions(Faction.FW);
    }
 }

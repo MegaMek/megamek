@@ -1,0 +1,59 @@
+#Saved from version 0.50.06 on 2025-04-25
+<UnitType>
+HandheldWeapon
+</UnitType>
+
+<Name>
+Light Machine Gun Weapon
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+3064
+</year>
+
+<originalBuildYear>
+3064
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<armor_type>
+0
+</armor_type>
+
+<armor_tech_rating>
+0
+</armor_tech_rating>
+
+<armor_tech_level>
+7
+</armor_tech_level>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+8
+</armor>
+
+<Gun Equipment>
+Light Machine Gun
+Light Machine Gun
+IS Light Machine Gun Ammo - Full:Shots100#
+</Gun Equipment>
+
+<source>
+TRO Irregulars
+</source>
+
+<tonnage>
+2.0
+</tonnage>
+

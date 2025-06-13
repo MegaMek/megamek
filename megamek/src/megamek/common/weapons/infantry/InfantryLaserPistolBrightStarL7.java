@@ -27,7 +27,7 @@ public class InfantryLaserPistolBrightStarL7 extends InfantryWeapon {
         name = "Laser Pistol (Brightstar L-7)";
         setInternalName(name);
         addLookupName("BRIGHTSTARL7");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 950;
         bv = 0.021;
         tonnage = 0.0011;
@@ -38,11 +38,11 @@ public class InfantryLaserPistolBrightStarL7 extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         rulesRefs = "Shrapnel #9";
         techAdvancement
-        .setTechBase(TECH_BASE_IS)
+        .setTechBase(TechBase.IS)
         .setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE)
-        .setTechRating(RATING_E) // Assuming E-E-E-E simplifies to E
-        .setAvailability(new int[]{RATING_E, RATING_E, RATING_E, RATING_E})
+        .setTechRating(TechRating.E) // Assuming E-E-E-E simplifies to E
+        .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
         .setISApproximate(false, false, true, false, false)
-        .setProductionFactions(F_TH);
+        .setProductionFactions(Faction.TH);
     }
 }

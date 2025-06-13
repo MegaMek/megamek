@@ -20,7 +20,7 @@
 package megamek.common.util;
 
 import megamek.common.*;
-import megamek.common.internationalization.Internationalization;
+import megamek.common.internationalization.I18n;
 import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.List;
@@ -86,7 +86,7 @@ public class HazardousLiquidPoolUtil {
             case 3 -> HazardousLiquidClass.CLASS_1;
             default -> HazardousLiquidClass.CLASS_0;
         };
-        hazardousLiquidClassReport.add(Internationalization.getText("HazardousLiquidPoolUtil." + hazardousLiquidClass.name() + ".text"));
+        hazardousLiquidClassReport.add(I18n.getText("HazardousLiquidPoolUtil." + hazardousLiquidClass.name() + ".text"));
         reports.add(hazardousLiquidClassReport);
 
         // Class 0 does no damage, so let's return.

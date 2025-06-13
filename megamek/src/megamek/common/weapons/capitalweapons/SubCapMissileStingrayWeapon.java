@@ -34,7 +34,7 @@ public class SubCapMissileStingrayWeapon extends SubCapMissileWeapon {
         this.shortName = "Stingray";
         this.heat = 9;
         this.damage = 3;
-        this.ammoType = AmmoType.T_STINGRAY;
+        this.ammoType = AmmoType.AmmoTypeEnum.STINGRAY;
         this.shortRange = 7;
         this.mediumRange = 14;
         this.longRange = 21;
@@ -50,17 +50,17 @@ public class SubCapMissileStingrayWeapon extends SubCapMissileWeapon {
         this.maxRange = RANGE_MED;
         rulesRefs = "345, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
                 .setISAdvancement(DATE_NONE, 3060, 3072, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setClanAdvancement(DATE_NONE, 3070, 3072, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
-                .setPrototypeFactions(F_WB)
-                .setProductionFactions(F_WB)
+                .setPrototypeFactions(Faction.WB)
+                .setProductionFactions(Faction.WB)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

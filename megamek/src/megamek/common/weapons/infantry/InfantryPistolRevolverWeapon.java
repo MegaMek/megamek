@@ -35,7 +35,7 @@ public class InfantryPistolRevolverWeapon extends InfantryWeapon {
 		name = "Revolver";
 		setInternalName(name);
 		addLookupName("InfantryRevolver");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 60;
 		bv = 0.16;
 		tonnage = .0005;
@@ -46,11 +46,11 @@ public class InfantryPistolRevolverWeapon extends InfantryWeapon {
 		ammoCost = 1;
 		shots = 6;
 		rulesRefs = " 273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 				.setISApproximate(false, false, false, false, false)
 				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_B)
-				.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+				.setClanApproximate(false, false, false, false, false).setTechRating(TechRating.B)
+				.setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
 
 	}
 }

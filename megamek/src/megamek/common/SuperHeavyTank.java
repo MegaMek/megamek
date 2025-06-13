@@ -70,11 +70,11 @@ public class SuperHeavyTank extends Tank {
     }
 
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-    private static final TechAdvancement TA_SUPERHEAVY_TANK = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement TA_SUPERHEAVY_TANK = new TechAdvancement(TechBase.ALL)
             .setAdvancement(2470, DATE_NONE, 3075)
-            .setApproximate(true, false, true).setPrototypeFactions(F_LC)
-            .setTechRating(RATING_C)
-            .setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
+            .setApproximate(true, false, true).setPrototypeFactions(Faction.LC)
+            .setTechRating(TechRating.C)
+            .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override
@@ -283,19 +283,19 @@ public class SuperHeavyTank extends Tank {
         int fa = (effectivePos.degree(src) + ((6 - face) * 60)) % 360;
 
         int leftBetter = 2;
+        Board board = game.getBoard(this);
         // if we're right on the line, we need to special case this
         // defender would choose along which hex the LOS gets drawn, and that
         // side also determines the side we hit in
         if ((fa % 30) == 0) {
-            Hex srcHex = game.getBoard().getHex(src);
-            Hex curHex = game.getBoard().getHex(getPosition());
+            Hex srcHex = board.getHex(src);
+            Hex curHex = board.getHex(getPosition());
             if ((srcHex != null) && (curHex != null)) {
-                LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src, getPosition(),
+                LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src, getPosition(), getBoardId(),
                         1, getElevation(), srcHex.floor(), curHex.floor());
                 ArrayList<Coords> in = Coords.intervening(ai.attackPos, ai.targetPos,
                         true);
-                leftBetter = LosEffects.dividedLeftBetter(in, game, ai,
-                        Compute.isInBuilding(game, this), new LosEffects());
+                leftBetter = LosEffects.dividedLeftBetter(in, game, ai, isInBuilding(), new LosEffects());
             }
         }
 
@@ -350,8 +350,8 @@ public class SuperHeavyTank extends Tank {
     }
 
     @Override
-    public int getWeaponArc(int wn) {
-        final Mounted<?> mounted = getEquipment(wn);
+    public int getWeaponArc(int weaponNumber) {
+        final Mounted<?> mounted = getEquipment(weaponNumber);
 
         // B-Pods need to be special-cased, the have 360 firing arc
         if ((mounted.getType() instanceof WeaponType)

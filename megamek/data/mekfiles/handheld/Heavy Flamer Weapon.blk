@@ -1,0 +1,60 @@
+#Saved from version 0.50.06 on 2025-04-25
+<UnitType>
+HandheldWeapon
+</UnitType>
+
+<Name>
+Heavy Flamer Weapon
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+3068
+</year>
+
+<originalBuildYear>
+3068
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<armor_type>
+0
+</armor_type>
+
+<armor_tech_rating>
+0
+</armor_tech_rating>
+
+<armor_tech_level>
+0
+</armor_tech_level>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+16
+</armor>
+
+<Gun Equipment>
+Heavy Flamer
+Heavy Flamer
+Heavy Flamer
+IS Heavy Flamer Ammo:Shots10#
+</Gun Equipment>
+
+<source>
+TRO Prototypes
+</source>
+
+<tonnage>
+6.5
+</tonnage>
+

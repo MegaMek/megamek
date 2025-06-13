@@ -31,7 +31,7 @@ public class InfantryShotgunSGS9 extends InfantryWeapon {
        name = "Shotgun (SGS-9)";
        setInternalName(name);
        addLookupName("SGS-9");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .36;
        tonnage =  0.0027;
        infantryDamage =  0.36;
@@ -44,11 +44,11 @@ public class InfantryShotgunSGS9 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_CLAN)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_X,RATING_E,RATING_E,RATING_E)
+       .setTechBase(TechBase.CLAN)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E)
        .setClanAdvancement(DATE_NONE, DATE_NONE, 2830,DATE_NONE,DATE_NONE)
        .setClanApproximate(false, false, true, false, false)
-       .setProductionFactions(F_CLAN);
+       .setProductionFactions(Faction.CLAN);
    }
 }

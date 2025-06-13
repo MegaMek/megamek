@@ -24,6 +24,7 @@ import megamek.common.Player;
 import megamek.common.Report;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,8 +44,8 @@ public class BVDestroyedVictoryCondition implements BvVictoryCondition {
         boolean isVictory = false;
         VictoryResult victoryResult = new VictoryResult(true);
         HashSet<Integer> doneTeams = new HashSet<>();
-
-        for (Player player : game.getPlayersList()) {
+        List<Player> players = List.copyOf(game.getPlayersList());
+        for (Player player : players) {
             if (player.isObserver()) {
                 continue;
             }

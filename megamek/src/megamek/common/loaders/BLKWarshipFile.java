@@ -100,7 +100,7 @@ public class BLKWarshipFile extends BLKFile implements IMekLoader {
         if (!dataFile.exists("structural_integrity")) {
             throw new EntityLoadingException("Could not find structual integrity block.");
         }
-        a.set0SI(dataFile.getDataAsInt("structural_integrity")[0]);
+        a.setOSI(dataFile.getDataAsInt("structural_integrity")[0]);
 
         // figure out heat
         if (!dataFile.exists("heatsinks")) {
@@ -185,9 +185,7 @@ public class BLKWarshipFile extends BLKFile implements IMekLoader {
             }
         }
         a.setArmorType(at);
-        if (dataFile.exists("armor_tech")) {
-            a.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
-        }
+        setArmorTechLevelFromDataFile(a);
         if (dataFile.exists("internal_type")) {
             a.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
         } else {

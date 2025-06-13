@@ -37,7 +37,7 @@ public class InfantrySupportERHeavyLaserWeapon extends InfantryWeapon {
 		addLookupName("InfantryERHeavyLaser");
 		addLookupName("InfantryERMediumLaser");
 		addLookupName("Infantry ER Heavy Laser");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 80000;
 		bv = 13.88;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
@@ -54,11 +54,11 @@ public class InfantrySupportERHeavyLaserWeapon extends InfantryWeapon {
 		extremeRange = 24;
 		rulesRefs = "273, TM";
 		tonnage = .250;
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3054, 3060, 3075, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3054, 3060, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_FW)
-		        .setProductionFactions(F_FW).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+		        .setPrototypeFactions(Faction.FW)
+		        .setProductionFactions(Faction.FW).setTechRating(TechRating.E)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
 
 	}
 }

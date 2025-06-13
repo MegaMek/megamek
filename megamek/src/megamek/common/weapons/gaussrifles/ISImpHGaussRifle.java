@@ -39,12 +39,12 @@ public class ISImpHGaussRifle extends GaussWeapon {
         sortingName = "Gauss IMP D";
         heat = 2;
         damage = 22;
-        ammoType = AmmoType.T_IGAUSS_HEAVY;
+        ammoType = AmmoType.AmmoTypeEnum.IGAUSS_HEAVY;
         minimumRange = 3;
         shortRange = 6;
         mediumRange = 12;
         longRange = 19;
-        extremeRange = 24;
+        extremeRange = 28;
         tonnage = 20.0;
         criticals = 11;
         bv = 385;
@@ -56,10 +56,10 @@ public class ISImpHGaussRifle extends GaussWeapon {
         explosionDamage = 30;
         rulesRefs = "313, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(3065, DATE_NONE, 3081, DATE_NONE, DATE_NONE)
-                .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
+                .setPrototypeFactions(Faction.LC).setProductionFactions(Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

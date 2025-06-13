@@ -28,14 +28,13 @@ import java.util.stream.Collectors;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.util.UIUtil;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.eras.Era;
-import megamek.common.eras.Eras;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -43,6 +42,7 @@ import megamek.common.util.DiscordFormat;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
+
 
 /**
  * A utility class for retrieving unit information in a formatted string.
@@ -255,6 +255,8 @@ public class MekView {
         }
 
         sHead.add(new Title(entity.getShortNameRaw()));
+        sHead.add(new SingleLine(unitTypeAsString(entity)));
+        sHead.add(new SingleLine());
         String techLevel = entity.getStaticTechLevel().toString();
         if (entity.isMixedTech()) {
             if (entity.isClan()) {
@@ -274,35 +276,7 @@ public class MekView {
             sHead.add(new SingleLine(Messages.getString("MekView.DesignInvalid")));
         }
 
-        TableElement tpTable = new TableElement(3);
-        String tableSpacer = "     ";
-        tpTable.setColNames(Messages.getString("MekView.Level"), tableSpacer,
-                Messages.getString("MekView.Era"));
-        tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
-
-        String eraText = entity.getExperimentalRange()
-                + eraText(entity.getPrototypeDate(), entity.getProductionDate());
-        tpTable.addRow(TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_EXPERIMENTAL),
-                tableSpacer, eraText);
-
-        eraText = entity.getAdvancedRange()
-                + eraText(entity.getProductionDate(), entity.getCommonDate());
-        tpTable.addRow(TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_ADVANCED),
-                tableSpacer, eraText);
-
-        eraText = entity.getStandardRange()
-                + eraText(entity.getCommonDate(), ITechnology.DATE_NONE);
-        tpTable.addRow(TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_STANDARD),
-                tableSpacer, eraText);
-
-        String extinctRange = entity.getExtinctionRange();
-        if (extinctRange.length() > 1) {
-            tpTable.addRow(Messages.getString("MekView.Extinct"), tableSpacer, extinctRange);
-        }
-        sHead.add(tpTable);
-
-        sHead.add(new LabeledElement(Messages.getString("MekView.TechRating"), entity.getFullRatingName()));
-        sHead.add(new SingleLine());
+        makeHeaderTable(entity, formatting);
 
         if (!isInf) {
             sHead.add(new LabeledElement(Messages.getString("MekView.Weight"),
@@ -348,8 +322,8 @@ public class MekView {
             if (entity.getJumpMP() > 0) {
                 moveString.append("/").append(entity.getJumpMP());
                 if (entity.damagedJumpJets() > 0) {
-                    moveString.append("<font color='red'> (").append(entity.damagedJumpJets())
-                          .append(" damaged jump jets)</font>");
+                    moveString.append(warningStart()).append("(").append(entity.damagedJumpJets())
+                          .append(" damaged jump jets)").append(warningEnd());
                 }
             }
             if (entity instanceof Mek mek) {
@@ -370,9 +344,10 @@ public class MekView {
                 moveString.append("/")
                         .append(entity.getActiveUMUCount());
                 if ((entity.getAllUMUCount() - entity.getActiveUMUCount()) != 0) {
-                    moveString.append("<font color='red'> (")
-                            .append(entity.getAllUMUCount() - entity.getActiveUMUCount())
-                            .append(" damaged UMUs)</font>");
+                    moveString.append(warningStart()).append("(")
+                          .append(entity.getAllUMUCount() - entity.getActiveUMUCount())
+                          .append(" damaged UMUs)")
+                          .append(warningEnd());
                 }
             }
             if (isVehicle) {
@@ -404,14 +379,10 @@ public class MekView {
             }
         }
         if (isBA && ((BattleArmor) entity).isBurdened()) {
-            sBasic.add(new SingleLine(italicsStart()
-                    + Messages.getString("MekView.Burdened")
-                    + italicsEnd()));
+            sBasic.add(new SingleLine(italicize(Messages.getString("MekView.Burdened"))));
         }
         if (isBA && ((BattleArmor) entity).hasDWP()) {
-            sBasic.add(new SingleLine(italicsStart()
-                    + Messages.getString("MekView.DWPBurdened")
-                    + italicsEnd()));
+            sBasic.add(new SingleLine(italicize(Messages.getString("MekView.DWPBurdened"))));
         }
         if (entity instanceof QuadVee) {
             entity.setConversionMode(QuadVee.CONV_MODE_VEHICLE);
@@ -602,25 +573,48 @@ public class MekView {
         }
     }
 
+    private void makeHeaderTable(Entity entity, ViewFormatting formatting) {
+        TableElement tpTable = new TableElement(3);
+
+        String tableSpacer = ViewFormatting.HTML.equals(formatting) ? "&nbsp;&nbsp;&nbsp;&nbsp;" : "    ";
+        tpTable.setColNames(Messages.getString("MekView.Availability"), tableSpacer,
+                Messages.getString("MekView.Era"));
+        tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
+
+        // Add rows to the table
+        tpTable.addRow(textWithTooltip(Messages.getString("MekView.Prototype"),
+              Messages.getString("MekView.Prototype.tooltip")), tableSpacer,
+              splitDateRange(entity.getPrototypeRangeDate()));
+        tpTable.addRow(textWithTooltip(Messages.getString("MekView.Production"),
+              Messages.getString("MekView.Production.tooltip")), tableSpacer,
+              splitDateRange(entity.getProductionDateRange()));
+        tpTable.addRow(textWithTooltip(Messages.getString("MekView.Common"),
+              Messages.getString("MekView.Common.tooltip")), tableSpacer,
+              splitDateRange(entity.getCommonDateRange()));
+        String extinctRange = splitDateRange(entity.getExtinctionRange());
+        if (extinctRange.length() > 1) {
+            tpTable.addRow(
+                  textWithTooltip(
+                        Messages.getString("MekView.Extinct"),
+                        Messages.getString("MekView.Extinct.tooltip")),
+                  tableSpacer,
+                  extinctRange);
+        }
+
+        // Add table to header
+        sHead.add(tpTable);
+
+        // Add tech rating and date
+        sHead.add(new LabeledElement(textWithTooltip(Messages.getString("MekView.TechRating"), Messages.getString("MekView.TechRating.tooltip")),
+              entity.getFullRatingName()));
+        sHead.add(new SingleLine());
+        sHead.add(new LabeledElement(textWithTooltip(Messages.getString("MekView.EarliestTechDate"), Messages.getString("MekView.EarliestTechDate.tooltip")),
+              entity.getEarliestTechDateAndEra()));
+    }
+
     /** @return True when the unit requires an ammo block. */
     private boolean showAmmoBlock(boolean showDetail) {
         return (!entity.usesWeaponBays() || !showDetail) && !entity.getAmmo().stream().allMatch(this::hideAmmo);
-    }
-
-    private String eraText(int startYear, int endYear) {
-        String eraText = "";
-        if (startYear != ITechnology.DATE_NONE) {
-            Era startEra = Eras.getEra(startYear);
-            Era endEra = Eras.getEra(endYear - 1);
-            eraText = " (" + startEra.name();
-            if (endYear == ITechnology.DATE_NONE) {
-                eraText += " -";
-            } else if (!endEra.equals(startEra)) {
-                eraText += " to " + endEra.name();
-            }
-            eraText += ")";
-        }
-        return eraText;
     }
 
     /**
@@ -827,7 +821,7 @@ public class MekView {
         List<ViewElement> retVal = new ArrayList<>();
 
         retVal.add(new LabeledElement(Messages.getString("MekView.SI"),
-                renderArmor(a.getSI(), a.get0SI(), formatting)));
+                renderArmor(a.getSI(), a.getOSI(), formatting)));
 
         // if it is a jumpship get sail and KF integrity
         if (isJumpship) {
@@ -944,11 +938,11 @@ public class MekView {
             WeaponType wtype = mounted.getType();
 
             if (entity.isClan()
-                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
+                    && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
                 row[0] += Messages.getString("MekView.IS");
             }
             if (!entity.isClan()
-                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
+                    && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
                 row[0] += Messages.getString("MekView.Clan");
             }
             /*
@@ -994,11 +988,11 @@ public class MekView {
                     row = new String[] { m.getDesc(), "", "", "" };
 
                     if (entity.isClan()
-                            && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
+                            && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
                         row[0] += Messages.getString("MekView.IS");
                     }
                     if (!entity.isClan()
-                            && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
+                            && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
                         row[0] += Messages.getString("MekView.Clan");
                     }
                     if (m.isDestroyed()) {
@@ -1097,16 +1091,22 @@ public class MekView {
     private List<ViewElement> getBombs() {
         List<ViewElement> retVal = new ArrayList<>();
         IBomber b = (IBomber) entity;
-        int[] choices = b.getIntBombChoices();
-        for (int type = 0; type < BombType.B_NUM; type++) {
-            if (choices[type] > 0) {
-                retVal.add(new SingleLine(BombType.getBombName(type) + " (" + choices[type] + ") [Int. Bay]"));
+        BombLoadout intChoices = b.getIntBombChoices();
+        // Get internal bomb choices
+        for (Map.Entry<BombTypeEnum, Integer> entry : intChoices.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            int count = entry.getValue();
+            if (count > 0) {
+                retVal.add(new SingleLine(bombType.getDisplayName() + " (" + count + ") [Int. Bay]"));
             }
         }
-        choices = b.getExtBombChoices();
-        for (int type = 0; type < BombType.B_NUM; type++) {
-            if (choices[type] > 0) {
-                retVal.add(new SingleLine(BombType.getBombName(type) + " (" + choices[type] + ")"));
+        // Get external bomb choices
+        BombLoadout extChoices = b.getExtBombChoices();
+        for (Map.Entry<BombTypeEnum, Integer> entry : extChoices.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            int count = entry.getValue();
+            if (count > 0) {
+                retVal.add(new SingleLine(bombType.getDisplayName() + " (" + count + ")"));
             }
         }
         return retVal;
@@ -1140,11 +1140,11 @@ public class MekView {
 
             String[] row = { mounted.getDesc(), entity.joinLocationAbbr(mounted.allLocations(), 3), "" };
             if (entity.isClan()
-                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
+                    && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
                 row[0] += Messages.getString("MekView.IS");
             }
             if (!entity.isClan()
-                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
+                    && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
                 row[0] += Messages.getString("MekView.Clan");
             }
 
@@ -1698,16 +1698,11 @@ public class MekView {
      * @return A String that is used to mark the beginning of a warning.
      */
     private String warningStart() {
-        switch (formatting) {
-            case HTML:
-                return "<font color=\"red\">";
-            case NONE:
-                return "*";
-            case DISCORD:
-                return DiscordFormat.RED.toString();
-            default:
-                throw new IllegalStateException("Impossible");
-        }
+        return switch (formatting) {
+            case HTML -> "<font color=\"red\">";
+            case NONE -> "*";
+            case DISCORD -> DiscordFormat.RED.toString();
+        };
     }
 
     /**
@@ -1716,16 +1711,25 @@ public class MekView {
      * @return A String that is used to mark the end of a warning.
      */
     private String warningEnd() {
-        switch (formatting) {
-            case HTML:
-                return "</font>";
-            case NONE:
-                return "*";
-            case DISCORD:
-                return DiscordFormat.RESET.toString();
-            default:
-                throw new IllegalStateException("Impossible");
-        }
+        return switch (formatting) {
+            case HTML -> "</font>";
+            case NONE -> "*";
+            case DISCORD -> DiscordFormat.RESET.toString();
+        };
+    }
+
+    private String textWithTooltip(String text, String tooltip) {
+        return switch (formatting) {
+            case HTML -> "<span title=\"" + tooltip + "\">" + text + "*</span>";
+            default -> text;
+        };
+    }
+
+    private String splitDateRange(String text) {
+        return switch (formatting) {
+            case HTML -> text.replace(", ", "<br>");
+            default -> text;
+        };
     }
 
     /**
@@ -1736,16 +1740,11 @@ public class MekView {
      * @return The starting element for italicized text.
      */
     private String italicsStart() {
-        switch (formatting) {
-            case HTML:
-                return "<i>";
-            case NONE:
-                return "";
-            case DISCORD:
-                return DiscordFormat.UNDERLINE.toString();
-            default:
-                throw new IllegalStateException("Impossible");
-        }
+        return switch (formatting) {
+            case HTML -> "<i>";
+            case NONE -> "";
+            case DISCORD -> DiscordFormat.UNDERLINE.toString();
+        };
     }
 
     /**
@@ -1754,15 +1753,118 @@ public class MekView {
      * @return The ending element for italicized text.
      */
     private String italicsEnd() {
-        switch (formatting) {
-            case HTML:
-                return "</i>";
-            case NONE:
-                return "";
-            case DISCORD:
-                return DiscordFormat.RESET.toString();
-            default:
-                throw new IllegalStateException("Impossible");
+        return switch (formatting) {
+            case HTML -> "</i>";
+            case NONE -> "";
+            case DISCORD -> DiscordFormat.RESET.toString();
+        };
+    }
+
+    /**
+     * Wraps the text in italics for html output. For plain text it returns the text unchanged.
+     * For discord output it adds the underline formatting.
+     * @param text The text to italicize.
+     * @return The text wrapped in italics for html or underlined for discord.
+     */
+    private String italicize(String text) {
+        return italicsStart() + text + italicsEnd();
+    }
+
+    private String unitTypeAsString(Entity entity) {
+        String result = "";
+        if (entity.isPrimitive()) {
+            result += Messages.getString("MekView.unitType.primitive") + " ";
         }
+        if ((entity.isDropShip() || entity.isSmallCraft())) {
+            if (!entity.isMilitary()) {
+                result += Messages.getString("MekView.unitType.civilian") + " ";
+            }
+            if (entity.isAerodyne()) {
+                result += Messages.getString("MekView.unitType.aerodyne") + " ";
+            } else {
+                result += Messages.getString("MekView.unitType.spheroid") + " ";
+            }
+        }
+        if (entity instanceof Infantry inf && !entity.isBattleArmor() && inf.isMechanized()) {
+            result += Messages.getString("MekView.unitType.mechanized") + " ";
+        } else if (entity.getMovementMode().isMotorizedInfantry()) {
+            result += Messages.getString("MekView.unitType.motorized") + " ";
+        }
+        if (entity.isSuperHeavy()) {
+            result += Messages.getString("MekView.unitType.superHeavy") + " ";
+        }
+        if (entity.isTripodMek()) {
+            result += Messages.getString("MekView.unitType.tripod") + " ";
+        } else if (entity instanceof QuadVee) {
+            result += Messages.getString("MekView.unitType.quadVee") + " ";
+        } else if (entity.isQuadMek() || (entity instanceof ProtoMek pm && pm.isQuad())) {
+            result += Messages.getString("MekView.unitType.quad") + " ";
+        }
+        if (entity.isIndustrialMek()) {
+            result += Messages.getString("MekView.unitType.industrial") + " ";
+        }
+        if (entity.isConventionalFighter()) {
+            result += Messages.getString("MekView.unitType.conventional") + " ";
+        } else if (entity.isAerospaceFighter()) {
+            result += Messages.getString("MekView.unitType.aerospace") + " ";
+        }
+        if (entity.isCombatVehicle() && !(entity instanceof GunEmplacement)) {
+            result += Messages.getString("MekView.unitType.combat") + " ";
+        } else if (entity.isFixedWingSupport()) {
+            result += Messages.getString("MekView.unitType.fixedWingSupport") + " ";
+        } else if (entity.isSupportVehicle()) {
+            result += Messages.getString("MekView.unitType.support") + " ";
+        }
+
+        if (entity.isSpaceStation()) {
+            if (entity.isMilitary()) {
+                result += Messages.getString("MekView.unitType.military") + " ";
+            } else {
+                result += Messages.getString("MekView.unitType.civilian") + " ";
+            }
+            result += Messages.getString("MekView.unitType.spaceStation");
+        } else if (entity.isJumpShip()) {
+            result += Messages.getString("MekView.unitType.jumpShip");
+        } else if (entity.isWarShip()) {
+            result += Messages.getString("MekView.unitType.warShip");
+        } else if (entity.isDropShip()) {
+            result += Messages.getString("MekView.unitType.dropShip");
+        } else if (entity.isSmallCraft()) {
+            result += Messages.getString("MekView.unitType.smallCraft");
+        } else if (entity.isProtoMek()) {
+            result += Messages.getString("MekView.unitType.protoMek");
+        } else if (entity.isBattleArmor()) {
+            result += Messages.getString("MekView.unitType.battleArmor");
+        } else if (entity.isConventionalInfantry()) {
+            result += Messages.getString("MekView.unitType.infantry");
+        } else if (entity.isMek() && !entity.isIndustrialMek()) {
+            result += Messages.getString("MekView.unitType.battleMek");
+        } else if (entity instanceof GunEmplacement) {
+            result += Messages.getString("MekView.unitType.gunEmplacement");
+        } else if (entity.isIndustrialMek()) {
+            result += Messages.getString("MekView.unitType.onlyMek");
+        } else if (entity.isVehicle() || entity.isFixedWingSupport()) {
+            result += Messages.getString("MekView.unitType.vehicle");
+        } else if (entity.isFighter() && !entity.isSupportVehicle()) {
+            result += Messages.getString("MekView.unitType.fighter");
+        } else if (entity instanceof HandheldWeapon) {
+            result += Messages.getString("MekView.unitType.handHeld");
+        }
+        String addendum = "";
+        if (entity.isVehicle()) {
+            if (entity.getMovementMode().isSubmarine()) {
+                addendum += Messages.getString("MekView.unitType.submarine");
+            } else if (entity.getMovementMode().isVTOL()) {
+                addendum += Messages.getString("MekView.unitType.vtol");
+            } else if (entity.getMovementMode().isHover()) {
+                addendum += Messages.getString("MekView.unitType.hover");
+            } else if (entity.getMovementMode().isRail()) {
+                addendum += Messages.getString("MekView.unitType.rail");
+            } else if (entity.getMovementMode().isNaval() || entity.getMovementMode().isHydrofoil()) {
+                addendum += Messages.getString("MekView.unitType.naval");
+            } else if (entity.getMovementMode().isWiGE()) {
+                addendum += Messages.getString("MekView.unitType.wige");
+            }
+        } return result + (addendum.isBlank() ? "" : " (%s)".formatted(addendum));
     }
 }

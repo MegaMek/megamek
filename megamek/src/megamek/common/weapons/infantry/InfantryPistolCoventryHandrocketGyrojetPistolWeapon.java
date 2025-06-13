@@ -36,7 +36,7 @@ public class InfantryPistolCoventryHandrocketGyrojetPistolWeapon extends Infantr
         setInternalName(name);
         addLookupName("InfantryCoventryHandrocketGyrojetpistol");
         addLookupName("Coventry Handrocket");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 250;
         bv = 0.43;
         tonnage = .0031;
@@ -47,11 +47,11 @@ public class InfantryPistolCoventryHandrocketGyrojetPistolWeapon extends Infantr
         ammoCost = 3;
         shots = 5;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3050, 3052, 3090, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3050, 3052, 3090, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_LC)
-                .setProductionFactions(F_LC, F_FS).setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+                .setPrototypeFactions(Faction.LC)
+                .setProductionFactions(Faction.LC, Faction.FS).setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C);
 
     }
 }

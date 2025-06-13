@@ -20,8 +20,6 @@ import megamek.common.autoresolve.acar.report.IWithdrawReporter;
 import megamek.common.autoresolve.acar.report.WithdrawReporter;
 import megamek.common.autoresolve.damage.EntityFinalState;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class WithdrawActionHandler extends AbstractActionHandler {
 
     private final IWithdrawReporter reporter;

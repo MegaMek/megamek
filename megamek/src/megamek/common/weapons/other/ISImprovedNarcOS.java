@@ -28,27 +28,27 @@ public class ISImprovedNarcOS extends NarcWeapon {
         addLookupName("IS OS iNarc Beacon");
         addLookupName("IS iNarc Missile Beacon (OS)");
         sortingName = "Narc X OS";
-        ammoType = AmmoType.T_INARC;
+        ammoType = AmmoType.AmmoTypeEnum.INARC;
         heat = 0;
         rackSize = 1;
         shortRange = 4;
         mediumRange = 9;
         longRange = 15;
-        extremeRange = 18;
+        extremeRange = 22;
         tonnage = 5.5;
         criticals = 2;
         bv = 15;
         flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 250000;
         rulesRefs = "232, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setTechRating(TechRating.E)
+            .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
             .setISAdvancement(3054, 3062, 3070, DATE_NONE, DATE_NONE)
             .setISApproximate(true, false, false, false, false)
-            .setPrototypeFactions(F_CS)
-            .setProductionFactions(F_CS / F_WB);
+            .setPrototypeFactions(Faction.CS)
+            .setProductionFactions(Faction.CS, Faction.WB);
     }
 }

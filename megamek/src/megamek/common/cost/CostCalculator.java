@@ -18,8 +18,8 @@
  */
 package megamek.common.cost;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
@@ -95,7 +95,7 @@ public class CostCalculator {
         Map<String, Long> weaponsCostMap = new HashMap<>();
         for (Mounted<?> mounted : entity.getEquipment()) {
             if (ignoreAmmo && (mounted.getType() instanceof AmmoType)
-                    && (!(((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD))) {
+                    && (!(((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD))) {
                 continue;
             }
             if (mounted.isWeaponGroup() || mounted.getType() instanceof ArmorType) {

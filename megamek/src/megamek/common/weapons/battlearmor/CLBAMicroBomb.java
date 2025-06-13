@@ -37,7 +37,7 @@ public class CLBAMicroBomb extends Weapon {
         heat = 0;
         damage = DAMAGE_VARIABLE;
         rackSize = 2;
-        ammoType = AmmoType.T_BA_MICRO_BOMB;
+        ammoType = AmmoType.AmmoTypeEnum.BA_MICRO_BOMB;
         shortRange = 0;
         mediumRange = 0;
         longRange = 0;
@@ -48,15 +48,15 @@ public class CLBAMicroBomb extends Weapon {
         criticals = 2;
         cost = 30000;
         rulesRefs = "253, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CCC)
-                .setProductionFactions(F_CCC);
+                .setPrototypeFactions(Faction.CCC)
+                .setProductionFactions(Faction.CCC);
     }
 
     @Override

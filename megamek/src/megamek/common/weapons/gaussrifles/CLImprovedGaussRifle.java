@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
- * This program is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the Free 
- * Software Foundation; either version 2 of the License, or (at your option) 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
 package megamek.common.weapons.gaussrifles;
@@ -37,12 +37,12 @@ public class CLImprovedGaussRifle extends GaussWeapon {
         sortingName = "Gauss Imp";
         heat = 1;
         damage = 15;
-        ammoType = AmmoType.T_GAUSS_IMP;
+        ammoType = AmmoType.AmmoTypeEnum.GAUSS_IMP;
         minimumRange = 2;
         shortRange = 7;
         mediumRange = 15;
         longRange = 22;
-        extremeRange = 30;
+        extremeRange = 33;
         tonnage = 13.0;
         criticals = 6;
         bv = 320;
@@ -53,13 +53,13 @@ public class CLImprovedGaussRifle extends GaussWeapon {
         maxRange = RANGE_LONG;
         explosionDamage = 20;
         rulesRefs = "96, IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_E, RATING_X, RATING_E)
+        techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E)
                 .setClanAdvancement(2818, 2821, 2822, 2837, 3080)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CGS)
-                .setProductionFactions(F_CGS)
-                .setReintroductionFactions(F_EI)
+                .setPrototypeFactions(Faction.CGS)
+                .setProductionFactions(Faction.CGS)
+                .setReintroductionFactions(Faction.EI)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

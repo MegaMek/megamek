@@ -37,7 +37,7 @@ public class InfantrySupportHeavyPulseLaserWeapon extends InfantryWeapon {
 		addLookupName("InfantryHeavyPulseLaser");
 		addLookupName("Infantry Heavy Pulse Laser");
 		addLookupName("InfantryMediumPulseLaser");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 60000;
 		bv = 9.58;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_BURST).or(F_INF_SUPPORT);
@@ -49,12 +49,12 @@ public class InfantrySupportHeavyPulseLaserWeapon extends InfantryWeapon {
 		bursts = 3;
 		tonnage = .300;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2610, 2615, 2675, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2610, 2615, 2675, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2610, 2615, 2675, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-		        .setProductionFactions(F_TH).setTechRating(RATING_E)
-		        .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+		        .setProductionFactions(Faction.TH).setTechRating(TechRating.E)
+		        .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D);
 
 	}
 }

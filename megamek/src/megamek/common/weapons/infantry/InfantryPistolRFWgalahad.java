@@ -28,7 +28,7 @@ public class InfantryPistolRFWgalahad extends InfantryWeapon {
        name = "Pistol (RFW Galahad)";
        setInternalName(name);
        addLookupName("RFW Galahad");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = 0.315;
        tonnage = 0.0021;
        infantryDamage = 0.32;
@@ -41,11 +41,11 @@ public class InfantryPistolRFWgalahad extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #3";
        techAdvancement
-               .setTechBase(TECH_BASE_IS)
-               .setTechRating(RATING_D)
-               .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+               .setTechBase(TechBase.IS)
+               .setTechRating(TechRating.D)
+               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
                .setISAdvancement(DATE_NONE, DATE_NONE, 2100, DATE_NONE, DATE_NONE)
                .setISApproximate(false, false, true, false, false)
-               .setProductionFactions(F_FS);
+               .setProductionFactions(Faction.FS);
    }
 }

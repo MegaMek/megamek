@@ -1,0 +1,76 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-14
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Motorized Platoon (FWLM)
+</Name>
+
+<Model>
+(SRM 3035+)
+</Model>
+
+<mul id:>
+2240
+</mul id:>
+
+<year>
+3030
+</year>
+
+<originalBuildYear>
+3030
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Motorized
+</motion_type>
+
+<Troopers Equipment>
+Free Worlds League Infantry Kit (3035+)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<overview>
+In response to the formation of the Federated Commonwealth the Free World League introduced it's own advanced infantry armor kit.  It is widely considered the most effective commonly available kit in the Inner Sphere and is in high demand among FWL forces.
+</overview>
+
+<notes>
+Intro date based on prototype release of FWL advanced infantry kit. Model name based on MUL name.
+</notes>
+
+<squad_size>
+6
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+
+<Secondary>
+InfantryHeavySRM
+</Secondary>
+
+<encumberingarmor>
+true
+</encumberingarmor>
+

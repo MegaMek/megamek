@@ -1,0 +1,91 @@
+#Saved from version 0.50.1-SNAPSHOT on 2024-10-24
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+J-27 Trailer
+</Name>
+
+<Model>
+(RISC) (Decoy)
+</Model>
+
+<year>
+3136
+</year>
+
+<originalBuildYear>
+3136
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<role>
+None
+</role>
+
+<quirks>
+non_standard
+</quirks>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<cruiseMP>
+0
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+5
+5
+5
+4
+</armor>
+
+<Body Equipment>
+RISC Viral Jammer (Decoy)
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+ISMPod
+</Right Equipment>
+
+<Left Equipment>
+ISMPod
+</Left Equipment>
+
+<Rear Equipment>
+Hitch
+</Rear Equipment>
+
+<source>
+XTRO:RISC
+</source>
+
+<tonnage>
+10.0
+</tonnage>
+
+<trailer>
+1
+</trailer>
+

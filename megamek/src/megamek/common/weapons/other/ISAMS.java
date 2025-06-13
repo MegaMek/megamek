@@ -41,7 +41,7 @@ public class ISAMS extends AmmoWeapon {
         extremeRange = 1;
         maxRange = RANGE_SHORT;
         shortAV = 3;
-        ammoType = AmmoType.T_AMS;
+        ammoType = AmmoType.AmmoTypeEnum.AMS;
         tonnage = 0.5;
         criticals = 1;
         bv = 32;
@@ -52,14 +52,14 @@ public class ISAMS extends AmmoWeapon {
         cost = 100000;
         atClass = CLASS_AMS;
         rulesRefs = "204, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+        techAdvancement.setTechBase(TechBase.IS)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(2613, 2617, 3048, 2835, 3045)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.CC);
     }
 
     @Override

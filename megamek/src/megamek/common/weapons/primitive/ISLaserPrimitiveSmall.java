@@ -40,7 +40,7 @@ public class ISLaserPrimitiveSmall extends LaserWeapon {
         waterShortRange = 1;
         waterMediumRange = 2;
         waterLongRange = 2;
-        waterExtremeRange = 4;
+        waterExtremeRange = 2;
         tonnage = 0.5;
         criticals = 1;
         flags = flags.or(F_NO_FIRES).or(F_PROTOTYPE);
@@ -52,18 +52,18 @@ public class ISLaserPrimitiveSmall extends LaserWeapon {
         // IO Doesn't strictly define when these weapons stop production. Checked with Herb, and they
         // would always be around. This is to cover some of the back worlds in the Periphery.
         rulesRefs = "118, IO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
                 .setISAdvancement(2290, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TA)
+                .setPrototypeFactions(Faction.TA)
+                .setProductionFactions(Faction.TA)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
-    
+
     @Override
     public boolean isAlphaStrikePointDefense() {
         return true;

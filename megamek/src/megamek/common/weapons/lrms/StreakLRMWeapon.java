@@ -34,15 +34,15 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
 
     public StreakLRMWeapon() {
         super();
-        this.ammoType = AmmoType.T_LRM_STREAK;
+        this.ammoType = AmmoType.AmmoTypeEnum.LRM_STREAK;
         flags = flags.or(F_PROTO_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);
         clearModes();
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 3057, 3079, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_CCY).setProductionFactions(F_CJF)
+                .setPrototypeFactions(Faction.CCY).setProductionFactions(Faction.CJF)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

@@ -34,7 +34,7 @@ public class InfantryPistolSerrek7994SF extends InfantryWeapon {
        name = "Pistol (Serrek 7994 SF)";
        setInternalName(name);
        addLookupName("Serrek 7994 SF");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .202;
        tonnage =  0.0011;
        infantryDamage =  0.2;
@@ -47,11 +47,11 @@ public class InfantryPistolSerrek7994SF extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #3";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_X,RATING_D,RATING_C,RATING_C)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.D,AvailabilityValue.C,AvailabilityValue.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_FS);
+       .setProductionFactions(Faction.FS);
    }
 }

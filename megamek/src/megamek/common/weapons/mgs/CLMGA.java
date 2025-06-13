@@ -36,7 +36,7 @@ public class CLMGA extends AmmoWeapon {
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;
         rackSize = 2;
-        ammoType = AmmoType.T_MG;
+        ammoType = AmmoType.AmmoTypeEnum.MG;
         minimumRange = WEAPON_NA;
         shortRange = 1;
         mediumRange = 2;
@@ -53,11 +53,11 @@ public class CLMGA extends AmmoWeapon {
         setModes(modeStrings);
         instantModeSwitch = false;
         rulesRefs = "228, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3069, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false);
 

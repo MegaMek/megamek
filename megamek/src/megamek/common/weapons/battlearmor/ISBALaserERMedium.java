@@ -37,7 +37,7 @@ public class ISBALaserERMedium extends LaserWeapon {
         waterShortRange = 3;
         waterMediumRange = 5;
         waterLongRange = 8;
-        waterExtremeRange = 10;
+        waterExtremeRange = 12;
         tonnage = 0.8;
         criticals = 3;
         bv = 62;
@@ -47,14 +47,14 @@ public class ISBALaserERMedium extends LaserWeapon {
         flags = flags.or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         maxRange = RANGE_MED;
         rulesRefs = "258, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(3055, 3058, 3062, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW);
+                .setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.FW);
     }
 }

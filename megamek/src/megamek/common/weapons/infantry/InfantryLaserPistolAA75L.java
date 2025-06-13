@@ -28,7 +28,7 @@ public class InfantryLaserPistolAA75L extends InfantryWeapon {
         name = "Laser Pistol (AA-75L)";
         setInternalName(name);
         addLookupName("AA75L");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1500;
         bv = 0.021;
         tonnage = 0.0001;
@@ -41,11 +41,11 @@ public class InfantryLaserPistolAA75L extends InfantryWeapon {
         bursts = 1;
         rulesRefs = "Shrapnel #9";
         techAdvancement
-        .setTechBase(TECH_BASE_IS)
+        .setTechBase(TechBase.IS)
         .setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE)
-        .setTechRating(RATING_C)
-        .setAvailability(new int[]{RATING_C, RATING_C, RATING_C, RATING_C})
+        .setTechRating(TechRating.C)
+        .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
         .setISApproximate(false, false, true, false, false)
-        .setProductionFactions(F_LC);
+        .setProductionFactions(Faction.LC);
     }
 }

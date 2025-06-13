@@ -1,0 +1,72 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-14
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Field Gun Platoon (FWLM)
+</Name>
+
+<Model>
+(Tracked UAC10 3057+)
+</Model>
+
+<year>
+3057
+</year>
+
+<originalBuildYear>
+3057
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<Troopers Equipment>
+Free Worlds League Infantry Kit (3035+)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+ISUltraAC10
+IS Ultra AC/10 Ammo
+ISUltraAC10
+IS Ultra AC/10 Ammo
+</Field Guns Equipment>
+
+<capabilities>
+Ultra-class field guns have a longer range and higher rate of fire compared with their standard equivalents.  The tradeoffs of higher ammunition consumption and higher cost, with the lack of specialized ammunition, keep them from being highly popular.
+</capabilities>
+
+<overview>
+In response to the formation of the Federated Commonwealth the Free World League introduced it's own advanced infantry armor kit.  It is widely considered the most effective commonly available kit in the Inner Sphere and is in high demand among FWL forces.
+</overview>
+
+<notes>
+Intro date based on production date of ultra-class autocannon
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+
+<encumberingarmor>
+true
+</encumberingarmor>
+

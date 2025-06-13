@@ -13,10 +13,14 @@
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.util.List;
+import java.util.Map;
 
 import megamek.common.Aero;
+import megamek.common.BombLoadout;
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.Game;
@@ -32,19 +36,21 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sep 23, 2004
  */
 public class SpaceBombAttackHandler extends WeaponHandler {
-    private static final MMLogger logger = MMLogger.create(SpaceBombAttackHandler.class);
+    private static final MMLogger LOGGER = MMLogger.create(SpaceBombAttackHandler.class);
 
+    @Serial
     private static final long serialVersionUID = -2439937071168853215L;
 
     /**
-     * @param toHit
-     * @param waa
-     * @param g
+     * @param toHit              {@link ToHitData} Object
+     * @param weaponAttackAction {@link WeaponAttackAction} Object
+     * @param game               {@link Game} Object
+     * @param twGameManager      {@link TWGameManager} Object
      */
-    public SpaceBombAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
-        super(toHit, waa, g, m);
+    public SpaceBombAttackHandler(ToHitData toHit, WeaponAttackAction weaponAttackAction, Game game,
+                                  TWGameManager twGameManager) {
+        super(toHit, weaponAttackAction, game, twGameManager);
         generalDamageType = HitData.DAMAGE_NONE;
-        // payload = waa.getBombPayload();
     }
 
     /**
@@ -54,26 +60,23 @@ public class SpaceBombAttackHandler extends WeaponHandler {
      */
     @Override
     protected int calcAttackValue() {
-        int[] payload = waa.getBombPayload();
+        BombLoadout payload = waa.getBombPayload();
         if (null == payload) {
             return 0;
         }
-        int nbombs = 0;
-        for (int i = 0; i < payload.length; i++) {
-            nbombs += payload[i];
-        }
+        int numberOfBombs = payload.getTotalBombs();
+
         if (bDirect) {
-            nbombs = Math.min(nbombs + (toHit.getMoS() / 3), nbombs * 2);
+            numberOfBombs = Math.min(numberOfBombs + (toHit.getMoS() / 3), numberOfBombs * 2);
         }
 
-        nbombs = applyGlancingBlowModifier(nbombs, false);
+        numberOfBombs = applyGlancingBlowModifier(numberOfBombs, false);
 
-        return nbombs;
+        return numberOfBombs;
     }
 
     /**
-     * Does this attack use the cluster hit table? necessary to determine how
-     * Aero damage should be applied
+     * Does this attack use the cluster hit table? necessary to determine how Aero damage should be applied
      */
     @Override
     protected boolean usesClusterTable() {
@@ -82,76 +85,134 @@ public class SpaceBombAttackHandler extends WeaponHandler {
 
     @Override
     protected void useAmmo() {
-        int[] payload = waa.getBombPayload();
-        if (!(ae.isAero()) || null == payload) {
+        BombLoadout payload = waa.getBombPayload();
+        if (!(ae.isAero()) || null == payload || payload.isEmpty()) {
             return;
         }
 
         // Need to remove ammo from fighters within a squadron
         if (ae instanceof FighterSquadron) {
-            // In a fighter squadron, we will haved dropped a salvo of bombs.
-            // The salvo consists of one bomb from each fighter equipped with
-            // a bomb of the proper type.
-            for (int type = 0; type < payload.length; type++) {
-                List<Entity> activeFighters = ae.getActiveSubEntities();
-                if (activeFighters.isEmpty()) {
-                    break;
-                }
-                int fighterIndex = 0;
-                for (int i = 0; i < payload[type]; i++) {
-                    boolean bombRemoved = false;
-                    int iterations = 0;
-                    while (!bombRemoved && iterations <= activeFighters.size()) {
-                        Aero fighter = (Aero) activeFighters.get(fighterIndex);
-                        // find the first mounted bomb of this type and drop it
-                        for (Mounted<?> bomb : fighter.getBombs()) {
-                            if (((BombType) bomb.getType()).getBombType() == type &&
-                                    !bomb.isDestroyed()
-                                    && bomb.getUsableShotsLeft() > 0) {
-                                bomb.setShotsLeft(0);
-                                bombRemoved = true;
-                                break;
-                            }
-                        }
-                        iterations++;
-                        fighterIndex = (fighterIndex + 1) % activeFighters.size();
-                    }
-
-                    if (iterations > activeFighters.size()) {
-                        logger.error("Couldn't find ammo for a dropped bomb");
-                    }
-                }
-                // Now remove a bomb from the squadron
-                if (payload[type] > 0) {
-                    double numSalvos = Math.ceil((payload[type] + 0.0) / activeFighters.size());
-                    for (int salvo = 0; salvo < numSalvos; salvo++) {
-                        for (Mounted<?> bomb : ae.getBombs()) {
-                            if (((BombType) bomb.getType()).getBombType() == type
-                                    && !bomb.isDestroyed()
-                                    && bomb.getUsableShotsLeft() > 0) {
-                                bomb.setShotsLeft(0);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        } else { // Ammo expenditure for a single fighter
-            for (int type = 0; type < payload.length; type++) {
-                for (int i = 0; i < payload[type]; i++) {
-                    // find the first mounted bomb of this type and drop it
-                    for (Mounted<?> bomb : ae.getBombs()) {
-                        if (((BombType) bomb.getType()).getBombType() == type &&
-                                !bomb.isDestroyed()
-                                && bomb.getUsableShotsLeft() > 0) {
-                            bomb.setShotsLeft(0);
-                            break;
-                        }
-                    }
-                }
-            }
+            handleSquadronAmmoExpenditure(payload);
+        } else {
+            // Ammo expenditure for a single fighter
+            handleSingleFighterAmmoExpenditure(payload);
         }
 
         super.useAmmo();
+    }
+
+    /**
+     * Handles ammunition expenditure for fighter squadrons.
+     * In a squadron, salvos consist of one bomb from each fighter equipped with the proper type.
+     */
+    private void handleSquadronAmmoExpenditure(BombLoadout payload) {
+        List<Entity> activeFighters = ae.getActiveSubEntities();
+        if (activeFighters.isEmpty()) {
+            return;
+        }
+
+        for (Map.Entry<BombTypeEnum, Integer> entry : payload.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            int bombCount = entry.getValue();
+            
+            if (bombCount <= 0) continue;
+
+            // Remove bombs from individual fighters in the squadron
+            removeBombsFromSquadronFighters(activeFighters, bombType, bombCount);
+            
+            // Remove bombs from the squadron entity itself
+            removeSquadronBombs(bombType, bombCount, activeFighters.size());
+        }
+    }
+
+    /**
+     * Removes bombs from individual fighters within a squadron.
+     */
+    private void removeBombsFromSquadronFighters(List<Entity> activeFighters, BombTypeEnum bombType, int bombCount) {
+        int fighterIndex = 0;
+        
+        for (int i = 0; i < bombCount; i++) {
+            boolean bombRemoved = false;
+            int iterations = 0;
+            
+            // Round-robin through fighters to find and remove bombs
+            while (!bombRemoved && iterations <= activeFighters.size()) {
+                Aero fighter = (Aero) activeFighters.get(fighterIndex);
+                
+                if (removeBombFromEntity(fighter, bombType)) {
+                    bombRemoved = true;
+                }
+                
+                iterations++;
+                fighterIndex = (fighterIndex + 1) % activeFighters.size();
+            }
+
+            if (iterations > activeFighters.size()) {
+                LOGGER.error("Couldn't find ammo for a dropped bomb of type: {}", bombType.getDisplayName());
+            }
+        }
+    }
+
+    /**
+     * Removes bombs from the squadron entity itself based on salvo calculations.
+     */
+    private void removeSquadronBombs(BombTypeEnum bombType, int bombCount, int activeFighterCount) {
+        int numSalvos = (int) Math.ceil((double) bombCount / activeFighterCount);
+
+        for (int salvo = 0; salvo < numSalvos; salvo++) {
+            if (!removeBombFromEntity(ae, bombType)) {
+                LOGGER.warn("Could not remove squadron bomb for salvo {} of type: {}", 
+                        salvo, bombType.getDisplayName());
+                break;
+            }
+        }
+    }
+
+    /**
+     * Handles ammunition expenditure for single fighters.
+     */
+    private void handleSingleFighterAmmoExpenditure(BombLoadout payload) {
+        for (Map.Entry<BombTypeEnum, Integer> entry : payload.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            int bombCount = entry.getValue();
+            
+            for (int i = 0; i < bombCount; i++) {
+                if (!removeBombFromEntity(ae, bombType)) {
+                    LOGGER.warn("Could not remove bomb {} of {} for type: {}", 
+                            i + 1, bombCount, bombType.getDisplayName());
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes a single bomb of the specified type from the given entity.
+     * 
+     * @param entity The entity to remove the bomb from
+     * @param bombType The type of bomb to remove
+     * @return true if a bomb was successfully removed, false otherwise
+     */
+    private boolean removeBombFromEntity(Entity entity, BombTypeEnum bombType) {
+        for (Mounted<?> bomb : entity.getBombs()) {
+            if (isBombRemovable(bomb, bombType)) {
+                bomb.setShotsLeft(0);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if a mounted bomb can be removed (correct type, not destroyed, has shots).
+     * 
+     * @param bomb The mounted bomb to check
+     * @param bombType The bomb type we're looking for
+     * @return true if the bomb can be removed
+     */
+    private boolean isBombRemovable(Mounted<?> bomb, BombTypeEnum bombType) {
+        return ((BombType) bomb.getType()).getBombType() == bombType
+            && !bomb.isDestroyed()
+            && bomb.getUsableShotsLeft() > 0;
     }
 }

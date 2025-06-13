@@ -20,6 +20,8 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 
+import static megamek.common.QuadVee.CONV_MODE_VEHICLE;
+
 public class PhysicalAttackAction extends AbstractAttackAction {
     private static final long serialVersionUID = -4702357516725749181L;
 
@@ -54,6 +56,10 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                                     && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return "A friendly unit can never be the target of a direct attack.";
             }
+        }
+
+        if (!game.onTheSameBoard(ae, target)) {
+            return "Attacker and target are not on the same board.";
         }
 
         // check range
@@ -103,12 +109,12 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             // target unit in building checks
             final boolean targetInBuilding = Compute.isInBuilding(game, te);
             if (targetInBuilding) {
-                Building TargBldg = game.getBoard().getBuildingAt(te.getPosition());
+                Building TargBldg = game.getBoard(target).getBuildingAt(te.getPosition());
 
                 // Can't target units in buildings (from the outside).
                 if (!Compute.isInBuilding(game, ae)) {
                     return "Target is inside building";
-                } else if (!game.getBoard().getBuildingAt(ae.getPosition()).equals(TargBldg)) {
+                } else if (!game.getBoard(target).getBuildingAt(ae.getPosition()).equals(TargBldg)) {
                     return "Target is inside different building";
                 }
             }
@@ -223,7 +229,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 }
             }
 
-            Hex targHex = game.getBoard().getHex(te.getPosition());
+            Hex targHex = game.getHexOf(te);
             // water partial cover?
             if ((te.height() > 0) && (te.getElevation() == -1)
                     && (targHex.terrainLevel(Terrains.WATER) == te.height())) {
@@ -255,5 +261,14 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         if ((ae instanceof Mek) && ((Mek) ae).hasIndustrialTSM()) {
             toHit.addModifier(2, "industrial TSM");
         }
+    }
+
+    //Returns true if QuadVee is in Vehicle mode.  QuadVees in this mode are treated as having 1 less height in
+    // physical attacks
+    static protected boolean isConvertedQuadVee(Targetable target, Game game){
+        if(!target.isQuadMek()){
+            return false;
+        }
+        return game.getEntityOrThrow(target.getId()).getConversionMode() == CONV_MODE_VEHICLE;
     }
 }

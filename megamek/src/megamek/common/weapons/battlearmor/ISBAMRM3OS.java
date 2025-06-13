@@ -44,21 +44,21 @@ public class ISBAMRM3OS extends MRMWeapon {
         shortRange = 3;
         mediumRange = 8;
         longRange = 15;
-        extremeRange = 16;
+        extremeRange = 22;
         bv = 4;
         cost = 7500;
         tonnage = .15;
         criticals = 3;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_B)
+        .setTechRating(TechRating.E)
+        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B)
         .setISAdvancement(3058, 3060, 3067, DATE_NONE, DATE_NONE)
         .setISApproximate(true, false, false, false, false)
-        .setPrototypeFactions(F_DC)
-        .setProductionFactions(F_DC);
+        .setPrototypeFactions(Faction.DC)
+        .setProductionFactions(Faction.DC);
     }
 }

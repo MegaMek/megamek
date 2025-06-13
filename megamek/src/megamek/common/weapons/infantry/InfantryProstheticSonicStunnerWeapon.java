@@ -28,7 +28,7 @@ public class InfantryProstheticSonicStunnerWeapon extends InfantryWeapon {
         name = "Prosthetic Sonic Stunner";
         setInternalName(name);
         addLookupName("InfantryProstheticSonicStunner");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 800;
         bv = 0.0;
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_ENERGY);
@@ -37,11 +37,11 @@ public class InfantryProstheticSonicStunnerWeapon extends InfantryWeapon {
 		// Rating and Dates not available below is compiled from Specific
 		// Weapons in IO blended with the rating for the limb itself
         rulesRefs = "84, IO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_E, RATING_D, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2365, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2365, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)

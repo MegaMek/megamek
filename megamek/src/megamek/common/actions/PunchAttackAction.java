@@ -97,15 +97,13 @@ public class PunchAttackAction extends PhysicalAttackAction {
      * @param target
      * @return
      */
-    protected static String toHitIsImpossible(Game game, Entity ae,
-            Targetable target, int arm) {
-        String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(
-                game, ae, target);
+    protected static String toHitIsImpossible(Game game, Entity ae, Targetable target, int arm) {
+        String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(game, ae, target);
         if (physicalImpossible != null) {
             return physicalImpossible;
         }
-        Hex attHex = game.getBoard().getHex(ae.getPosition());
-        Hex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getHexOf(ae);
+        Hex targHex = game.getHexOf(target);
         int attackerHeight = ae.relHeight() + attHex.getLevel(); // The absolute level of the attacker's arms
         if (ae.isHullDown()) {
             attackerHeight--;
@@ -179,8 +177,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
     /**
      * To-hit number for the specified arm to punch
      */
-    public static ToHitData toHit(Game game, int attackerId,
-            Targetable target, int arm, boolean zweihandering) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target, int arm, boolean zweihandering) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null) {
             logger.error("Attacker not valid");
@@ -195,8 +192,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, impossible);
         }
 
-        Hex attHex = game.getBoard().getHex(ae.getPosition());
-        Hex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getHexOf(ae);
+        Hex targHex = game.getHexOf(target);
         final int attackerHeight = ae.relHeight() + attHex.getLevel(); // The absolute level of the attacker's arms
         final int targetElevation = target.getElevation()
                 + targHex.getLevel(); // The absolute level of the target's arms
@@ -234,7 +231,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
 
         // Check facing if the Mek is not prone.
-        else if (!Compute.isInArc(ae.getPosition(), ae.getSecondaryFacing(),
+        else if (!ComputeArc.isInArc(ae.getPosition(), ae.getSecondaryFacing(),
                 target, armArc)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
@@ -303,22 +300,26 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
 
         // elevation
-        if ((attackerHeight == targetElevation) && !ae.isHullDown()) {
-            if (target.getHeight() == 0) {
-                toHit.setHitTable(ToHitData.HIT_NORMAL);
-            } else {
-                toHit.setHitTable(ToHitData.HIT_KICK);
-            }
+        if(isConvertedQuadVee(target, game)){
+            toHit.setHitTable(ToHitData.HIT_PUNCH);
         } else {
-            if (ae.isHullDown()) {
-                // If we are above the target, use punch chart
-                if (attackerHeight > targetElevation) {
-                    toHit.setHitTable(ToHitData.HIT_PUNCH);
-                } else { // If on the same level, it's a punch to the legs
+            if ((attackerHeight == targetElevation) && !ae.isHullDown()) {
+                if (target.getHeight() == 0) {
+                    toHit.setHitTable(ToHitData.HIT_NORMAL);
+                } else {
                     toHit.setHitTable(ToHitData.HIT_KICK);
-                } // Target can't be above, as it wouldn't be legal
+                }
             } else {
-                toHit.setHitTable(ToHitData.HIT_PUNCH);
+                if (ae.isHullDown()) {
+                    // If we are above the target, use punch chart
+                    if (attackerHeight > targetElevation) {
+                        toHit.setHitTable(ToHitData.HIT_PUNCH);
+                    } else { // If on the same level, it's a punch to the legs
+                        toHit.setHitTable(ToHitData.HIT_KICK);
+                    } // Target can't be above, as it wouldn't be legal
+                } else {
+                    toHit.setHitTable(ToHitData.HIT_PUNCH);
+                }
             }
         }
 
@@ -335,7 +336,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
 
         // factor in target side
-        toHit.setSideTable(Compute.targetSideTable(ae, target));
+        toHit.setSideTable(ComputeSideTable.sideTable(ae, target));
 
         // done!
         return toHit;

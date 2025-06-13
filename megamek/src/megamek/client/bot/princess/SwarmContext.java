@@ -288,27 +288,12 @@ public class SwarmContext {
         }
 
         private Coords calculateClusterCentroid(List<Entity> members) {
-            double count = 0;
-            double qSum = 0;
-            double rSum = 0;
-            double sSum = 0;
-
-            for (Entity unit : members) {
-                CubeCoords cube = unit.getPosition().toCube();
-                qSum += cube.q;
-                rSum += cube.r;
-                sSum += cube.s;
-                count ++;
-            }
-
-            CubeCoords weightedCube = new CubeCoords(
-                    qSum / count,
-                    rSum / count,
-                    sSum / count
-            );
-
-            return weightedCube.toOffset();
-
+            return CubeCoords.mean(members.stream().map(Entity::getPosition)
+                  .filter(Objects::nonNull)
+                  .map(Coords::toCube)
+                  .toList())
+                  .map(CubeCoords::toOffset)
+                  .orElseThrow();
         }
     }
 

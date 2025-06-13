@@ -34,7 +34,7 @@ public class InfantryPistolWhisper4Standard extends InfantryWeapon {
        name = "Pistol (Whisper-4 (Standard Rounds))";
        setInternalName(name);
        addLookupName("Whisper-4 (Standard Rounds)");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .42;
        tonnage =  0.0012;
        infantryDamage =  0.35;
@@ -47,12 +47,12 @@ public class InfantryPistolWhisper4Standard extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #3";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_D)
-       .setAvailability(RATING_E,RATING_E,RATING_E,RATING_E)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.D)
+       .setAvailability(AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,2100,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_MC);
+       .setProductionFactions(Faction.MC);
 
    }
 }

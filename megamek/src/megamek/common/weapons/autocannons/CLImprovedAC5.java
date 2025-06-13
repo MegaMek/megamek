@@ -45,13 +45,13 @@ public class CLImprovedAC5 extends ACWeapon {
         medAV = 5;
         maxRange = RANGE_MED;
         explosionDamage = damage;
-        ammoType = AmmoType.T_AC_IMP;
+        ammoType = AmmoType.AmmoTypeEnum.AC_IMP;
         rulesRefs = "96, IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_C, RATING_X, RATING_X)
+        techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.X, AvailabilityValue.X)
                 .setClanAdvancement(DATE_NONE, 2815, 2818, 2833, 3080)
                 .setClanApproximate(false, true, false, false, false)
-                .setProductionFactions(F_CLAN).setReintroductionFactions(F_EI)
+                .setProductionFactions(Faction.CLAN).setReintroductionFactions(Faction.EI)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

@@ -31,25 +31,29 @@ public class ISTHBLB20XAC extends LBXACWeapon {
         heat = 6;
         damage = 20;
         rackSize = 20;
-        ammoType = AmmoType.T_AC_LBX_THB;
+        ammoType = AmmoType.AmmoTypeEnum.AC_LBX_THB;
         shortRange = 4;
         mediumRange = 7;
         longRange = 12;
         extremeRange = 14;
         tonnage = 14.0;
         criticals = 10;
+        shortAV = getBaseAeroDamage();
+        medAV = shortAV;
+        longAV = shortAV;
+        extAV = shortAV;
         bv = 204;
         cost = 700000;
         // Since this are the Tactical Handbook Weapons I'm using the TM Stats.
         rulesRefs = "THB (Unofficial)";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS);
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS);
     }
 }

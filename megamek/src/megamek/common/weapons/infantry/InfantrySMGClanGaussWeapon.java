@@ -36,7 +36,7 @@ public class InfantrySMGClanGaussWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryGaussSMG");
 		addLookupName("InfantryClanGaussSMG");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 2000;
 		bv = 1.38;
 		tonnage = .0045;
@@ -48,10 +48,10 @@ public class InfantrySMGClanGaussWeapon extends InfantryWeapon {
 		shots = 30;
 		bursts = 10;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3051, 3055, 3060, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSF)
-		        .setProductionFactions(F_CSF).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+		techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3051, 3055, 3060, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CSF)
+		        .setProductionFactions(Faction.CSF).setTechRating(TechRating.E)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D);
 
 	}
 }

@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
  *
- * This program is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the Free 
- * Software Foundation; either version 2 of the License, or (at your option) 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
 package megamek.common.weapons.ppc;
@@ -31,11 +31,11 @@ public class CLERPPC extends PPCWeapon {
         this.shortRange = 7;
         this.mediumRange = 14;
         this.longRange = 23;
-        this.extremeRange = 28;
+        this.extremeRange = 34;
         this.waterShortRange = 4;
         this.waterMediumRange = 10;
         this.waterLongRange = 16;
-        this.waterExtremeRange = 20;
+        this.waterExtremeRange = 24;
         this.tonnage = 6.0;
         this.criticals = 2;
         this.bv = 412;
@@ -45,14 +45,14 @@ public class CLERPPC extends PPCWeapon {
         this.longAV = 15;
         this.maxRange = RANGE_LONG;
         rulesRefs = "233, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(2823, 2826, 2828, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CSR)
-                .setProductionFactions(F_CSR);
+                .setPrototypeFactions(Faction.CSR)
+                .setProductionFactions(Faction.CSR);
     }
 }

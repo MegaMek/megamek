@@ -32,7 +32,7 @@ public class CLAPGaussRifle extends GaussWeapon {
         heat = 1;
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;
-        ammoType = AmmoType.T_APGAUSS;
+        ammoType = AmmoType.AmmoTypeEnum.APGAUSS;
         shortRange = 3;
         mediumRange = 6;
         longRange = 9;
@@ -47,14 +47,14 @@ public class CLAPGaussRifle extends GaussWeapon {
         this.atClass = CLASS_POINT_DEFENSE;
         explosionDamage = 3;
         rulesRefs = "218, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(3065, 3069, 3072, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CJF)
-                .setProductionFactions(F_CJF);
+                .setPrototypeFactions(Faction.CJF)
+                .setProductionFactions(Faction.CJF);
     }
 }

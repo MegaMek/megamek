@@ -27,7 +27,7 @@ public class InfantryLaserPistolBrightStarL15 extends InfantryWeapon {
         name = "Laser Pistol (Brightstar L-15)";
         setInternalName(name);
         addLookupName("BRIGHTSTARL15");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1750;
         bv = 0.056;
         tonnage = 0.0014;
@@ -39,11 +39,11 @@ public class InfantryLaserPistolBrightStarL15 extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_CLAN)
-                .setTechRating(RATING_E) 
-                .setAvailability(new int[]{RATING_X, RATING_E, RATING_E, RATING_D})
+                .setTechBase(TechBase.CLAN)
+                .setTechRating(TechRating.E) 
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setProductionFactions(F_CLAN);
+                .setProductionFactions(Faction.CLAN);
     }
 }

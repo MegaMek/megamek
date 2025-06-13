@@ -38,7 +38,7 @@ public class CLHeavyLaserSmall extends LaserWeapon {
         waterShortRange = 1;
         waterMediumRange = 2;
         waterLongRange = 2;
-        waterExtremeRange = 4;
+        waterExtremeRange = 2;
         tonnage = 0.5;
         criticals = 1;
         bv = 15;
@@ -47,18 +47,18 @@ public class CLHeavyLaserSmall extends LaserWeapon {
         maxRange = RANGE_SHORT;
         rulesRefs = "226, TM";
         //Jan 22 - Errata issued by CGL (Greekfire) for Heavy Lasers
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(3057, 3058, 3059, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CBR, F_CSA)
-                .setProductionFactions(F_CSA)
+                .setPrototypeFactions(Faction.CBR, Faction.CSA)
+                .setProductionFactions(Faction.CSA)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
-    
+
     @Override
     public boolean isAlphaStrikePointDefense() {
         return true;

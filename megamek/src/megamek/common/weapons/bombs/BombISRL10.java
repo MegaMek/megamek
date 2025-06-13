@@ -14,6 +14,7 @@
 package megamek.common.weapons.bombs;
 
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrototypeRLHandler;
@@ -31,7 +32,7 @@ public class BombISRL10 extends MissileWeapon {
         super();
 
         this.name = "Rocket Launcher Pod";
-        this.setInternalName(BombType.getBombWeaponName(BombType.B_RL));
+        this.setInternalName(BombTypeEnum.RL.getWeaponName());
         addLookupName("RL 10 (Bomb)");
         this.heat = 0;
         this.rackSize = 10;
@@ -49,17 +50,17 @@ public class BombISRL10 extends MissileWeapon {
         this.medAV = 6;
         this.maxRange = RANGE_MED;
         this.toHitModifier = 1;
-        this.ammoType = AmmoType.T_RL_BOMB;
+        this.ammoType = AmmoType.AmmoTypeEnum.RL_BOMB;
         rulesRefs = "229, TM";
-        new TechAdvancement(TECH_BASE_IS)
+        this.techAdvancement.setTechBase(TechBase.IS)
             .setIntroLevel(false)
             .setUnofficial(false)
-            .setTechRating(RATING_B)
-            .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
+            .setTechRating(TechRating.B)
+            .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
             .setISAdvancement(3060, 3064, 3067, DATE_NONE, DATE_NONE)
             .setISApproximate(true, false, false, false, false)
-            .setPrototypeFactions(F_MH)
-            .setProductionFactions(F_MH);
+            .setPrototypeFactions(Faction.MH)
+            .setProductionFactions(Faction.MH);
     }
 
     @Override

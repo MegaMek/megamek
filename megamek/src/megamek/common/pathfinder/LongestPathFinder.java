@@ -26,9 +26,9 @@ import megamek.client.bot.princess.MinefieldUtil;
 import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Infantry;
-import megamek.common.MovePath;
-import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.moves.MoveStep;
 import megamek.common.Tank;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
@@ -82,7 +82,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * @return a longest path finder for aeros
      */
     public static LongestPathFinder newInstanceOfAeroPath(int maxMP, Game game) {
-        LongestPathFinder lpf = new LongestPathFinder(new AeroMultiPathRelaxer(!game.getBoard().inSpace()),
+        LongestPathFinder lpf = new LongestPathFinder(new AeroMultiPathRelaxer(!game.getBoard().isSpace()),
                 new NextStepsAdjacencyMap(MoveStepType.FORWARDS),
                 new AeroMultiPathComparator(),
                 game);

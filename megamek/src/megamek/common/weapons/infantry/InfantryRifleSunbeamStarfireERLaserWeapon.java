@@ -36,7 +36,7 @@ public class InfantryRifleSunbeamStarfireERLaserWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantrySunbeamStarfire");
 		addLookupName("Sunbeam Starfire ER Laser Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 2500;
 		bv = 2.01;
 		tonnage = .005;
@@ -46,11 +46,11 @@ public class InfantryRifleSunbeamStarfireERLaserWeapon extends InfantryWeapon {
 		ammoWeight = 0.0003;
 		shots = 5;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3050, 3052, 3075, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3050, 3052, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_FW)
-		        .setProductionFactions(F_FW).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+		        .setPrototypeFactions(Faction.FW)
+		        .setProductionFactions(Faction.FW).setTechRating(TechRating.E)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
 
 	}
 }

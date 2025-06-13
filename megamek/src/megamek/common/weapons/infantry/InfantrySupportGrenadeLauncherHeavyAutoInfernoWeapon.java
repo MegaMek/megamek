@@ -36,7 +36,7 @@ public class InfantrySupportGrenadeLauncherHeavyAutoInfernoWeapon extends Infant
 		setInternalName("InfantryHeavyAutoGrenadeLauncherInferno");
 		addLookupName(name);
 		addLookupName("Infantry Inferno Heavy Auto Grenade Launcher");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 4500;
 		bv = 2.93;
 		tonnage = .020;
@@ -50,10 +50,10 @@ public class InfantrySupportGrenadeLauncherHeavyAutoInfernoWeapon extends Infant
 		bursts = 3;
 		tonnage = .020;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2896, 2900, DATE_NONE, DATE_NONE, DATE_NONE)
-				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSF, F_CHH)
-				.setProductionFactions(F_CSF).setTechRating(RATING_D)
-				.setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+		techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2896, 2900, DATE_NONE, DATE_NONE, DATE_NONE)
+				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CSF, Faction.CHH)
+				.setProductionFactions(Faction.CSF).setTechRating(TechRating.D)
+				.setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D);
 
 	}
 }

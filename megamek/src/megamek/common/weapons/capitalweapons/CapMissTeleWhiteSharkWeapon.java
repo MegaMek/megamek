@@ -33,7 +33,7 @@ public class CapMissTeleWhiteSharkWeapon extends CapitalMissileWeapon {
         setInstantModeSwitch(false);
         this.heat = 15;
         this.damage = 3;
-        this.ammoType = AmmoType.T_WHITE_SHARK_T;
+        this.ammoType = AmmoType.AmmoTypeEnum.WHITE_SHARK_T;
         this.shortRange = 12;
         this.mediumRange = 24;
         this.longRange = 36;
@@ -50,14 +50,14 @@ public class CapMissTeleWhiteSharkWeapon extends CapitalMissileWeapon {
         this.missileArmor = 30;
         this.maxRange = RANGE_EXT;
         rulesRefs = "210, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3053, 3056, 3060, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CS, F_DC)
-                .setProductionFactions(F_DC);
+                .setPrototypeFactions(Faction.CS, Faction.DC)
+                .setProductionFactions(Faction.DC);
     }
 }

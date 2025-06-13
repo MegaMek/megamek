@@ -1,0 +1,58 @@
+#Saved from version 0.50.06 on 2025-04-25
+<UnitType>
+HandheldWeapon
+</UnitType>
+
+<Name>
+Light Autocannon Weapon
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+3062
+</year>
+
+<originalBuildYear>
+3062
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<armor_type>
+0
+</armor_type>
+
+<armor_tech_rating>
+0
+</armor_tech_rating>
+
+<armor_tech_level>
+7
+</armor_tech_level>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+8
+</armor>
+
+<Gun Equipment>
+Light Auto Cannon/5
+IS Ammo LAC/5:Shots10#
+</Gun Equipment>
+
+<source>
+TRO Prototypes
+</source>
+
+<tonnage>
+6.0
+</tonnage>
+

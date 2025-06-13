@@ -1,0 +1,64 @@
+#Saved from version 0.50.04-SNAPSHOT on 2025-03-03
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Clan Field Gun Point
+</Name>
+
+<Model>
+(Wheeled PAC4 Advanced)
+</Model>
+
+<year>
+3070
+</year>
+
+<originalBuildYear>
+3070
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<Troopers Equipment>
+Clan Armor Kit (All)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+CLProtoMechAC4
+Clan ProtoMech AC/4 Ammo
+CLProtoMechAC4
+Clan ProtoMech AC/4 Ammo
+CLProtoMechAC4
+Clan ProtoMech AC/4 Ammo
+CLProtoMechAC4
+Clan ProtoMech AC/4 Ammo
+</Field Guns Equipment>
+
+<notes>
+Intro date based on Clan infantry kit intro date
+</notes>
+
+<squad_size>
+5
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+

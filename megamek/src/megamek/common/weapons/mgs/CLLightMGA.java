@@ -40,7 +40,7 @@ public class CLLightMGA extends AmmoWeapon {
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
         rackSize = 1;
-        ammoType = AmmoType.T_MG_LIGHT;
+        ammoType = AmmoType.AmmoTypeEnum.MG_LIGHT;
         minimumRange = WEAPON_NA;
         shortRange = 2;
         mediumRange = 4;
@@ -57,11 +57,11 @@ public class CLLightMGA extends AmmoWeapon {
         setModes(modeStrings);
         instantModeSwitch = false;
         rulesRefs = "228, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3069, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false);
     }

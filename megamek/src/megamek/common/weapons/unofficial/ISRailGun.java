@@ -30,7 +30,7 @@ public class ISRailGun extends GaussWeapon {
         this.addLookupName("IS Rail Gun");
         this.heat = 1;
         this.damage = 22;
-        this.ammoType = AmmoType.T_RAIL_GUN;
+        this.ammoType = AmmoType.AmmoTypeEnum.RAIL_GUN;
         this.minimumRange = 1;
         this.shortRange = 6;
         this.mediumRange = 13;
@@ -43,14 +43,14 @@ public class ISRailGun extends GaussWeapon {
         this.explosionDamage = 20;
         // This appears to be like the Heavy Gauss using those stats.
         rulesRefs = "Unofficial";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3051, 3061, 3067, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FC);
+                .setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.FC);
     }
 }

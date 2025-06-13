@@ -162,9 +162,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))
-                && (atype.getAmmoType() == AmmoType.T_MRM)) {
+                && (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MRM)) {
             nMissilesModifier -= 1;
-        } else if (atype.getAmmoType() == AmmoType.T_ATM) {
+        } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
             if (bECMAffected) {
                 // ECM prevents bonus
                 Report r = new Report(3330);
@@ -189,12 +189,12 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // sits on the target, is ECM affected
             boolean bTargetECMAffected = false;
             bTargetECMAffected = ComputeECM.isAffectedByECM(ae, target.getPosition(), target.getPosition());
-            if (((atype.getAmmoType() == AmmoType.T_LRM)
-                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                    || (atype.getAmmoType() == AmmoType.T_SRM)
-                    || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
-                    || (atype.getAmmoType() == AmmoType.T_MML)
-                    || (atype.getAmmoType() == AmmoType.T_NLRM))
+            if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM))
                     && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE))
                     && ((weapon.curMode() == null) || !weapon.curMode().equals("Indirect"))) {
                 if (bTargetECMAffected) {
@@ -311,7 +311,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // MML3 gets no bonus from Artemis IV (how sad)
             if (atype.getRackSize() > 3) {
                 bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-                if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
+                if ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) {
                     bonus = 2;
                 }
             }
@@ -324,7 +324,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // MML3 gets no bonus from Artemis IV (how sad)
             if (atype.getRackSize() > 3) {
                 bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-                if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
+                if ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) {
                     bonus = 1;
                 }
             }
@@ -337,12 +337,12 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // MML3 WOULD get a bonus from Artemis V, if you were crazy enough
             // to cross-tech it
             bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-            if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
+            if ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) {
                 bonus = 2;
             }
         }
         av = av + bonus;
-        if ((atype.getAmmoType() == AmmoType.T_MML) && !atype.hasFlag(AmmoType.F_MML_LRM)) {
+        if ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) && !atype.hasFlag(AmmoType.F_MML_LRM)) {
             av = av * 2;
         }
         // Set the Capital Fighter AV here. We'll apply counterAV to this later
@@ -388,13 +388,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 && !entityTarget.isAirborneVTOLorWIGE()
                 && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE
                         && (atype == null || atype.getFireTN() != TargetRoll.IMPOSSIBLE)))) {
-            gameManager.tryIgniteHex(target.getPosition(), subjectId, false, false,
+            gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false, false,
                     getFireTNRoll(), 3, vPhaseReport);
         }
 
         // shots that miss an entity can also potential cause explosions in a
         // heavy industrial hex
-        gameManager.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
+        gameManager.checkExplodeIndustrialZone(target.getPosition(), target.getBoardId(), vPhaseReport);
 
         // Report any AMS action.
         if (amsEngaged) {
@@ -480,11 +480,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 boolean isInArc;
                 // If the defending unit is the target, use attacker for arc
                 if (entityTarget.equals(pdEnt)) {
-                    isInArc = Compute.isInArc(game, entityTarget.getId(),
+                    isInArc = ComputeArc.isInArc(game, entityTarget.getId(),
                             entityTarget.getEquipmentNum(counter), ae);
                 } else {
                     // Otherwise, the attack target must be in arc
-                    isInArc = Compute.isInArc(game, pdEnt.getId(), pdEnt.getEquipmentNum(counter),
+                    isInArc = ComputeArc.isInArc(game, pdEnt.getId(), pdEnt.getEquipmentNum(counter),
                             entityTarget);
                 }
 
@@ -625,7 +625,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        Building bldg = game.getBuildingAt(target.getPosition(), target.getBoardId()).orElse(null);
         String number = nweapons > 1 ? " (" + nweapons + ")" : "";
         // Report weapon attack and its to-hit value.
         Report r = new Report(3115);
@@ -634,11 +634,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         r.subject = subjectId;
         r.add(wtype.getName() + number);
         if (entityTarget != null) {
-            if (wtype.getAmmoType() != AmmoType.T_NA) {
+            if (wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA) {
                 AmmoType atype = (AmmoType) ammo.getType();
                 if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)
-                        || atype.getAmmoType() == AmmoType.T_MML
-                        || atype.getAmmoType() == AmmoType.T_ATM) {
+                        || atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML
+                        || atype.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
                     r.messageId = 3116;
                     r.add(atype.getSubMunitionName());
                 }
@@ -820,7 +820,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int nCluster = calcnCluster();
         int id = vPhaseReport.size();
         int hits;
-        if (game.getBoard().inSpace() || waa.isAirToAir(game) || waa.isAirToGround(game)) {
+        if (ae.isSpaceborne() || waa.isAirToAir(game) || waa.isAirToGround(game)) {
             // Ensures single AMS state is properly updated
             getAMSHitsMod(new Vector<>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
@@ -947,7 +947,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             if (hits == 0) {
                 r = new Report(3365);
                 r.subject = subjectId;
-                if (target.isAirborne() || game.getBoard().inSpace()) {
+                if (target.isAirborne() || ae.isSpaceborne()) {
                     r.indent(2);
                 }
                 vPhaseReport.addElement(r);
@@ -1014,7 +1014,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         boolean isNemesisConfusable = false;
         AmmoType atype = (AmmoType) ammo.getType();
         Mounted<?> mLinker = weapon.getLinkedBy();
-        if ((wtype.getAmmoType() == AmmoType.T_ATM)
+        if ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.ATM)
                 || ((mLinker != null)
                         && (mLinker.getType() instanceof MiscType)
                         && !mLinker.isDestroyed() && !mLinker.isMissing()
@@ -1025,22 +1025,22 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                                 || mLinker.getType().hasFlag(
                                         MiscType.F_ARTEMIS_PROTO)))) {
             if ((!weapon.hasModes() || !weapon.curMode().equals("Indirect"))
-                    && (((atype.getAmmoType() == AmmoType.T_ATM) &&
+                    && (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) &&
                             ((atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD))
                                     || (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))
                                     || (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))))
-                            || ((((atype.getAmmoType() == AmmoType.T_LRM)
-                                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                                    || (atype.getAmmoType() == AmmoType.T_SRM)
-                                    || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) &&
+                            || ((((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM)
+                                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) &&
                                     (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)))
                                     || (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))))) {
                 isNemesisConfusable = true;
             }
-        } else if ((wtype.getAmmoType() == AmmoType.T_LRM)
-                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
-                || (wtype.getAmmoType() == AmmoType.T_SRM)
-                || (wtype.getAmmoType() == AmmoType.T_SRM_IMP)) {
+        } else if ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM)
+                || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) {
             if ((atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE))
                     || (atype.getMunitionType().contains(AmmoType.Munitions.M_LISTEN_KILL))) {
                 isNemesisConfusable = true;

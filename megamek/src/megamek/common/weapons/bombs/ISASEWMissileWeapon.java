@@ -15,6 +15,7 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -37,7 +38,7 @@ public class ISASEWMissileWeapon extends ThunderBoltWeapon {
         super();
 
         this.name = "Anti-Ship Electronic Warfare (ASEW) Missiles";
-        this.setInternalName(BombType.getBombWeaponName(BombType.B_ASEW));
+        this.setInternalName(BombTypeEnum.ASEW.getWeaponName());
         this.heat = 0;
         this.damage = 0;
         this.rackSize = 1;
@@ -56,19 +57,19 @@ public class ISASEWMissileWeapon extends ThunderBoltWeapon {
         this.medAV = 0;
         this.longAV = 0;
         this.maxRange = RANGE_MED;
-        this.ammoType = AmmoType.T_ASEW_MISSILE;
+        this.ammoType = AmmoType.AmmoTypeEnum.ASEW_MISSILE;
         this.capital = false;
         this.missileArmor = 30;
         rulesRefs = "358, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+        .setTechRating(TechRating.E)
+        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
         .setISAdvancement(3067, 3073, DATE_NONE, DATE_NONE, DATE_NONE)
         .setISApproximate(false, false, false, false, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
+        .setPrototypeFactions(Faction.LC)
+        .setProductionFactions(Faction.LC);
     }
 
     @Override

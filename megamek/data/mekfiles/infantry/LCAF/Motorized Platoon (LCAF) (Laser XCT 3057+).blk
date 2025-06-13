@@ -1,0 +1,76 @@
+#Saved from version 0.50.06 on 2025-04-27
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Motorized Platoon (LCAF)
+</Name>
+
+<Model>
+(Laser XCT 3057+)
+</Model>
+
+<year>
+3057
+</year>
+
+<originalBuildYear>
+3057
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Motorized
+</motion_type>
+
+<Troopers Equipment>
+Environment Suit, Hostile
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+Platoons specifically trained to operate in hostile environments are rare and typically operate as pure light infantry with no dedicated heavy support or weapons platoons. To compensate for this they are more heavily armed than standard infantry platoons.  The primary weapon of LAAF/LCAF XCT commands is the newly developed Maxell PL-10.
+</capabilities>
+
+<overview>
+XCT infantry platoons are trained and equipped to face combat in any environmental comdition - hot, cold, toxic atmosphere, no atmosphere, it doesn't matter. The additional costs as well as the preference for settling more habitable areas makes them a rare sight outside of places of significant strategic importance.
+</overview>
+
+<notes>
+Intro date based on Maxell PL-10 laser rifle prototype date and LAAF faction date. Maxell PL-10 is standard laser rifle for LAAF/LCAF.
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<secondn>
+1
+</secondn>
+
+<Primary>
+Laser Rifle (Maxell PL-10)
+</Primary>
+
+<Secondary>
+Support Laser (Semi-Portable)
+</Secondary>
+
+<specialization>
+2048
+</specialization>
+

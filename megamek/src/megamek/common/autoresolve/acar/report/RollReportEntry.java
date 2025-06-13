@@ -13,10 +13,8 @@
  */
 package megamek.common.autoresolve.acar.report;
 
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.Roll;
-
-import java.util.List;
 
 public class RollReportEntry extends PublicReportEntry {
 

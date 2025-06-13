@@ -35,7 +35,7 @@ public class InfantrySniperRifleBartonAMRAntiArmor extends InfantryWeapon {
        name = "Sniper Rifle (Barton AMR (Anti-Armor))";
        setInternalName(name);
        addLookupName("Barton AMR (Anti-Armor)");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = 1.176;
        tonnage =  0.014;
        ammoWeight =  0.014;
@@ -48,11 +48,11 @@ public class InfantrySniperRifleBartonAMRAntiArmor extends InfantryWeapon {
        infantryRange = 7;
        rulesRefs = "Shrapnel #1";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_D)
-       .setAvailability(RATING_X,RATING_E,RATING_E,RATING_E)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.D)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_FS);
+       .setProductionFactions(Faction.FS);
    }
 }

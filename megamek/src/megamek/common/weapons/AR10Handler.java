@@ -79,7 +79,7 @@ public class AR10Handler extends AmmoWeaponHandler {
             r.subject = subjectId;
             r.add(wtype.getName() + number);
             if (entityTarget != null) {
-                if ((wtype.getAmmoType() != AmmoType.T_NA)
+                if ((wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
                         && (weapon.getLinked() != null)
                         && (weapon.getLinked().getType() instanceof AmmoType)) {
                     AmmoType atype = (AmmoType) weapon.getLinked().getType();
@@ -215,7 +215,7 @@ public class AR10Handler extends AmmoWeaponHandler {
             int id = vPhaseReport.size();
             int hits = calcHits(vPhaseReport);
 
-            if (target.isAirborne() || game.getBoard().inSpace() || ae.usesWeaponBays()) {
+            if (target.isAirborne() || game.getBoard().isSpace() || ae.usesWeaponBays()) {
                 // if we added a line to the phase report for calc hits, remove
                 // it now
                 while (vPhaseReport.size() > id) {

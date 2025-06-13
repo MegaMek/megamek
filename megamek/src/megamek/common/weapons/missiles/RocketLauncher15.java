@@ -46,7 +46,7 @@ public class RocketLauncher15 extends RLWeapon {
         shortRange = 4;
         mediumRange = 9;
         longRange = 15;
-        extremeRange = 18;
+        extremeRange = 22;
         tonnage = 1.0;
         criticals = 2;
         bv = 23;
@@ -55,15 +55,15 @@ public class RocketLauncher15 extends RLWeapon {
         medAV = 9;
         maxRange = RANGE_MED;
         rulesRefs = "229, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
         	.setIntroLevel(false)
         	.setUnofficial(false)
-            .setTechRating(RATING_B)
-            .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+            .setTechRating(TechRating.B)
+            .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
             .setISAdvancement(DATE_NONE, 3064, 3067, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, false,false, false)
             .setClanAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
             .setClanApproximate(false, false, false,false, false)
-            .setProductionFactions(F_MH);
+            .setProductionFactions(Faction.MH);
     }
 }

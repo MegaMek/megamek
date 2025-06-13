@@ -31,7 +31,7 @@ public class InfantryShotgunDPS305 extends InfantryWeapon {
        name = "Shotgun (DPS-305)";
        setInternalName(name);
        addLookupName("DPS-305");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .27;
        tonnage =  0.0035;
        infantryDamage =  0.27;
@@ -44,12 +44,12 @@ public class InfantryShotgunDPS305 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_C,RATING_C,RATING_C,RATING_C)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,2271,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_FW);
+       .setProductionFactions(Faction.FW);
 
    }
 }

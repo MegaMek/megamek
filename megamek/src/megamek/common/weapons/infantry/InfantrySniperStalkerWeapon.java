@@ -36,7 +36,7 @@ public class InfantrySniperStalkerWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("StalkerInfantryRifle");
         addLookupName("Rifle (Stalker Sniper Rifle)");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 5000;
         bv = .25;
         tonnage = .009;
@@ -48,9 +48,9 @@ public class InfantrySniperStalkerWeapon extends InfantryWeapon {
         shots = 9;
         damage = 1;
         rulesRefs =" HBHL, 147";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
-		        .setISApproximate(false, false, false, false, false).setTechRating(RATING_C)
-		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false).setTechRating(TechRating.C)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D);
 
     }
 }

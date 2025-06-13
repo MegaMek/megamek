@@ -30,7 +30,7 @@ public class InfantryArchaicAxeWeapon extends InfantryWeapon {
         addLookupName("InfantryAxe");
         addLookupName("InfantryBladeAxe");
         addLookupName("Axe");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 25;
         bv = 0.10;
         tonnage = .004; 
@@ -38,9 +38,9 @@ public class InfantryArchaicAxeWeapon extends InfantryWeapon {
         infantryDamage = 0.11;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false).setTechRating(RATING_A)
-                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+                .setISApproximate(false, false, false, false, false).setTechRating(TechRating.A)
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
     }
 }

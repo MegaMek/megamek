@@ -40,18 +40,18 @@ public class CLLB10XAC extends LBXACWeapon {
         this.criticals = 5;
         this.bv = 148;
         this.cost = 400000;
-        this.shortAV = 10;
-        this.medAV = 10;
+        shortAV = getBaseAeroDamage();
+        this.medAV = this.shortAV;
         this.maxRange = RANGE_MED;
         rulesRefs = "207, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_D, RATING_C, RATING_B)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
                 .setClanAdvancement(2824, 2826, 2828, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false)
-                .setProductionFactions(F_CLAN)
-                .setReintroductionFactions(F_CLAN);
+                .setProductionFactions(Faction.CLAN)
+                .setReintroductionFactions(Faction.CLAN);
     }
 
     @Override

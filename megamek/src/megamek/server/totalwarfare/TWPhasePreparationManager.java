@@ -92,12 +92,8 @@ public class TWPhasePreparationManager {
                 gameManager.checkForConditionDeath();
 
                 gameManager.checkForBlueShieldDamage();
-                if (gameManager.getGame().getBoard().inAtmosphere()) {
-                    gameManager.checkForAtmosphereDeath();
-                }
-                if (gameManager.getGame().getBoard().inSpace()) {
-                    gameManager.checkForSpaceDeath();
-                }
+                gameManager.checkForAtmosphereDeath();
+                gameManager.checkForSpaceDeath();
 
                 gameManager.bvReports(true);
 
@@ -110,7 +106,7 @@ public class TWPhasePreparationManager {
                 gameManager.resetActivePlayersDone();
                 gameManager.setIneligible(phase);
 
-                if (gameManager.getGame().getBoard().onGround()) {
+                if (gameManager.getGame().getBoard().isGround()) {
                     gameManager.getGame().setTurnVector(gameManager.getGame().getPlayersList().stream()
                             .filter(Player::hasMinefields)
                             .map(p -> new GameTurn(p.getId()))
@@ -176,8 +172,9 @@ public class TWPhasePreparationManager {
             case END:
                 gameManager.resetEntityPhase(phase);
                 gameManager.clearReports();
-                gameManager.resolveHeat();
+                gameManager.heatResolver.resolveHeat();
                 gameManager.resolveWeather();
+                gameManager.addReport(gameManager.handleFlyOffs());
                 gameManager.addReport(gameManager.resolveControlRolls());
                 gameManager.addReport(gameManager.checkForTraitors());
                 // write End Phase header
@@ -259,7 +256,7 @@ public class TWPhasePreparationManager {
                         }
                         Aero a = (Aero) entity;
                         int currentSI = a.getSI() / (2 * scale);
-                        a.set0SI(a.get0SI() / (2 * scale));
+                        a.setOSI(a.getOSI() / (2 * scale));
                         if (currentSI > 0) {
                             a.setSI(currentSI);
                         }

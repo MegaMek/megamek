@@ -39,19 +39,19 @@ public class CLIATM12 extends CLIATMWeapon {
         this.criticals = 5;
         this.bv = 333; // Ammo BV is 78
         this.cost = 700000;
-        this.shortAV = 24;
-        this.medAV = 24;
+        this.shortAV = this.getBaseAeroDamage(); // This is a streak weapon so we use the rack size for the AV
+        this.medAV = this.shortAV;
         this.maxRange = RANGE_MED;
         rulesRefs = "65, IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CCY)
-                .setProductionFactions(F_CCY);
+                .setPrototypeFactions(Faction.CCY)
+                .setProductionFactions(Faction.CCY);
     }
 
     @Override

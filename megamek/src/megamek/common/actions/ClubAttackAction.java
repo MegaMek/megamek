@@ -456,7 +456,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 clubArc = Compute.ARC_FORWARD;
             }
         }
-        if (!Compute.isInArc(ae.getPosition(), ae.getSecondaryFacing(), target,
+        if (!ComputeArc.isInArc(ae.getPosition(), ae.getSecondaryFacing(), target,
                 clubArc)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
@@ -541,6 +541,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
                     toHit.setHitTable(ToHitData.HIT_PUNCH);
                 }
             }
+            if(isConvertedQuadVee(target, game)){
+                toHit.setHitTable(ToHitData.HIT_PUNCH);
+            }
         } else {
             if (attackerElevation == targetElevation) {
                 toHit.setHitTable(aimTable);
@@ -549,7 +552,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 }
             } else if (attackerElevation < targetElevation) {
                 if (target.getHeight() == 0) {
-                    if (shield) {
+                    if (shield || isConvertedQuadVee(target, game)) {
                         toHit.setHitTable(ToHitData.HIT_PUNCH);
                     } else {
                         toHit.setHitTable(ToHitData.HIT_NORMAL);
@@ -562,8 +565,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
             }
         }
 
+
         // factor in target side
-        toHit.setSideTable(Compute.targetSideTable(ae, target));
+        toHit.setSideTable(ComputeSideTable.sideTable(ae, target));
 
         // done!
         return toHit;

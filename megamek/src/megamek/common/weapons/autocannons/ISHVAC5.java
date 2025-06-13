@@ -36,7 +36,7 @@ public class ISHVAC5 extends HVACWeapon {
         shortRange = 8;
         mediumRange = 16;
         longRange = 28;
-        extremeRange = 32;
+        extremeRange = 42;
         tonnage = 12.0;
         criticals = 4;
         bv = 109;
@@ -49,11 +49,11 @@ public class ISHVAC5 extends HVACWeapon {
         explosionDamage = 5;
         rulesRefs = "285, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        techAdvancement.setTechBase(TechBase.IS)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(3059, 3079)
-                .setPrototypeFactions(F_CC).setProductionFactions(F_CC)
+                .setPrototypeFactions(Faction.CC).setProductionFactions(Faction.CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

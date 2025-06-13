@@ -37,7 +37,7 @@ public class InfantrySupportFiredrakeNeedlerWeapon extends InfantryWeapon {
 		addLookupName("InfantryFiredrake");
 		addLookupName("InfantrySupportNeedler");
 		addLookupName("Infantry Firedrake Needler");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 500;
 		bv = 6.13;
 		flags = flags.or(F_INCENDIARY_NEEDLES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
@@ -52,11 +52,11 @@ public class InfantrySupportFiredrakeNeedlerWeapon extends InfantryWeapon {
 		bursts = 3;
 		tonnage = .025;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3061, 3075, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3058, 3061, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_LC)
-		        .setProductionFactions(F_LC).setTechRating(RATING_D)
-		        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C);
+		        .setPrototypeFactions(Faction.LC)
+		        .setProductionFactions(Faction.LC).setTechRating(TechRating.D)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 }

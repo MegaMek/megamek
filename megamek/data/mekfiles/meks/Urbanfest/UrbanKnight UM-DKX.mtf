@@ -1,0 +1,161 @@
+generator:MegaMek Suite 0.50.05 on 2025-04-22
+chassis:UrbanKnight
+model:UM-DKX
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3145
+rules level:4
+role:Scout
+
+quirk:difficult_eject
+quirk:nimble_jumper
+quirk:cowl
+quirk:difficult_maintain
+quirk:no_arms
+quirk:distracting
+quirk:reinforced_legs
+quirk:imp_sensors
+quirk:pro_actuator
+
+mass:60
+engine:360 XL (Clan) Engine
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Command Console
+gyro:Standard Gyro
+
+heat sinks:10 IS Double
+walk mp:6
+jump mp:6
+
+armor:Standard(Inner Sphere)
+LA armor:15
+RA armor:15
+LT armor:15
+RT armor:15
+CT armor:15
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:9
+RTR armor:9
+RTC armor:10
+
+Weapons:2
+BattleMech Taser, Right Arm
+Small Laser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Small Laser
+Mek Null Signature System
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Mek Taser
+Mek Taser
+Mek Taser
+Taser Ammo
+Taser Ammo
+Mek Null Signature System
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Jump Jet
+Jump Jet
+ChainDrapeCape
+ChainDrapeCape
+ChainDrapeCape
+Mek Null Signature System
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Jump Jet
+Jump Jet
+ChainDrapeCape
+ChainDrapeCape
+ChainDrapeCape
+Mek Null Signature System
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Mek Null Signature System
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Cockpit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Mek Null Signature System
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Mek Null Signature System
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -36,7 +36,7 @@ public class Sniper extends ArtilleryWeapon {
         addLookupName("Clan Sniper");
         heat = 10;
         rackSize = 20;
-        ammoType = AmmoType.T_SNIPER;
+        ammoType = AmmoType.AmmoTypeEnum.SNIPER;
         shortRange = 1;
         mediumRange = 2;
         longRange = 18;
@@ -47,10 +47,10 @@ public class Sniper extends ArtilleryWeapon {
         bv = 85;
         cost = 300000;
         rulesRefs = "284, TO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
-            .setTechRating(RATING_B).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        techAdvancement.setTechBase(TechBase.ALL)
+            .setTechRating(TechRating.B).setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
             .setAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

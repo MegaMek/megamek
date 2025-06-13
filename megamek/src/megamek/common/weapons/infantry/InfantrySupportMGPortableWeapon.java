@@ -37,7 +37,7 @@ public class InfantrySupportMGPortableWeapon extends InfantryWeapon {
 		addLookupName("InfantryMGPortable");
 		addLookupName("Infantry MG Portable");
 		addLookupName("InfantryMG");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1000;
 		bv = 1.99;
 		tonnage = .0115;
@@ -56,11 +56,11 @@ public class InfantrySupportMGPortableWeapon extends InfantryWeapon {
 		longRange = 3;
 		extremeRange = 4;
 		rulesRefs = " 273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-		        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+		        .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
+		        .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);
 
 	}
 }

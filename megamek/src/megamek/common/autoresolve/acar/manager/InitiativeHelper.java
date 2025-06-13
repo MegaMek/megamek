@@ -13,6 +13,10 @@
  */
 package megamek.common.autoresolve.acar.manager;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import megamek.common.AbstractGame;
 import megamek.common.Player;
 import megamek.common.Team;
@@ -21,10 +25,6 @@ import megamek.common.autoresolve.component.AcTurn;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.component.FormationTurn;
 import megamek.common.enums.GamePhase;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Luana Coppio
@@ -37,7 +37,8 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
         }
     }
 
-    private record InitiativeFormationTurn(int initiativeValue, AcTurn acTurn) implements Comparable<InitiativeFormationTurn> {
+    private record InitiativeFormationTurn(int initiativeValue, AcTurn acTurn)
+          implements Comparable<InitiativeFormationTurn> {
         @Override
         public int compareTo(InitiativeFormationTurn o) {
             if (initiativeValue > o.initiativeValue) {
@@ -50,20 +51,22 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
     }
 
     /**
-     * Determines the turn order for a given phase, setting the game's turn list and sending it to the
-     * Clients. Also resets the turn index.
+     * Determines the turn order for a given phase, setting the game's turn list and sending it to the Clients. Also
+     * resets the turn index.
      *
      * @param phase The phase to find the turns for
+     *
      * @see AbstractGame#resetTurnIndex()
      */
     void determineTurnOrder(GamePhase phase) {
         List<InitiativeFormationTurn> formationTurns = new ArrayList<>();
         if (phase.isFiring() || phase.isMovement()) {
             for (var player : game().getPlayersList()) {
-                var actionsForThisTurn = game().getActiveFormations(player).stream()
-                    .filter(Formation::isDeployed)
-                    .filter(unit -> unit.isEligibleForPhase(phase))
-                    .count();
+                var actionsForThisTurn = game().getActiveFormations(player)
+                                               .stream()
+                                               .filter(Formation::isDeployed)
+                                               .filter(unit -> unit.isEligibleForPhase(phase))
+                                               .count();
                 var turnsForPlayer = (int) Math.min(actionsForThisTurn, player.getInitiative().size());
                 for (int i = 0; i < turnsForPlayer; i++) {
                     var initiative = player.getInitiative().getRoll(i);
@@ -72,10 +75,11 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
             }
         } else if (phase.isDeployment()) {
             for (var player : game().getPlayersList()) {
-                var actionsForThisTurn = game().getActiveFormations(player).stream()
-                    .filter(Formation::isDeployed)
-                    .filter(unit -> !unit.isDeployed())
-                    .count();
+                var actionsForThisTurn = game().getActiveFormations(player)
+                                               .stream()
+                                               .filter(Formation::isDeployed)
+                                               .filter(unit -> !unit.isDeployed())
+                                               .count();
                 var turnsForPlayer = (int) Math.min(actionsForThisTurn, player.getInitiative().size());
                 for (int i = 0; i < turnsForPlayer; i++) {
                     var initiative = player.getInitiative().getRoll(i);
@@ -84,10 +88,11 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
             }
         } else {
             for (var player : game().getPlayersList()) {
-                var actionsForThisTurn = game().getActiveFormations(player).stream()
-                    .filter(unit -> unit.isEligibleForPhase(phase))
-                    .filter(Formation::isDeployed)
-                    .count();
+                var actionsForThisTurn = game().getActiveFormations(player)
+                                               .stream()
+                                               .filter(unit -> unit.isEligibleForPhase(phase))
+                                               .filter(Formation::isDeployed)
+                                               .count();
                 var turnsForPlayer = (int) Math.min(actionsForThisTurn, player.getInitiative().size());
                 for (int i = 0; i < turnsForPlayer; i++) {
                     var initiative = player.getInitiative().getRoll(i);
@@ -97,19 +102,20 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
         }
 
         final List<AcTurn> turns = formationTurns.stream()
-            .sorted()
-            .map(InitiativeFormationTurn::acTurn)
-            .collect(Collectors.toList());
+                                         .sorted()
+                                         .map(InitiativeFormationTurn::acTurn)
+                                         .collect(Collectors.toList());
 
         game().setTurns(turns);
         game().resetTurnIndex();
     }
 
     private Team getTeamForPlayerId(int id) {
-        return game().getTeams().stream()
-            .filter(t -> t.players().stream().anyMatch(p -> p.getId() == id))
-            .findFirst()
-            .orElse(null);
+        return game().getTeams()
+                     .stream()
+                     .filter(t -> t.players().stream().anyMatch(p -> p.getId() == id))
+                     .findFirst()
+                     .orElse(null);
     }
 
     private Player getPlayerForFormation(Formation formation) {
@@ -124,7 +130,8 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
                 bonus = team.getTotalInitBonus(false);
             }
             var player = this.getPlayerForFormation(formation);
-            player.getInitiative().addRoll(bonus);
+            // Due to the abstract nature of the simulation, we don't track initiative aptitude SPAs
+            player.getInitiative().addRoll(bonus, "");
         }
     }
 }

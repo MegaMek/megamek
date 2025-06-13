@@ -219,7 +219,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                         MiscType.F_ARTEMIS))
                 && atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
             bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-            if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
+            if ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) {
                 bonus = 2;
             }
             current_av = current_av + bonus;
@@ -233,14 +233,14 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             // MML3 WOULD get a bonus from Artemis V, if you were crazy enough
             // to cross-tech it
             bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-            if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
+            if ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) {
                 bonus = 2;
             }
         }
 
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
             current_av = Math.floor(0.6 * current_av);
-        } else if (AmmoType.T_ATM == atype.getAmmoType()) {
+        } else if (AmmoType.AmmoTypeEnum.ATM == atype.getAmmoType()) {
             if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                 current_av = bayWType.getShortAV() / 2;
             } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
@@ -249,7 +249,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                     current_av = 0.0;
                 }
             }
-        } else if (atype.getAmmoType() == AmmoType.T_MML
+        } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML
                 && !atype.hasFlag(AmmoType.F_MML_LRM)) {
             current_av = 2 * current_av;
             if (range > WeaponType.RANGE_SHORT) {
@@ -274,7 +274,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                 && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR
                         && target.getTargetType() != Targetable.TYPE_HEX_IGNITE
                         && target.getTargetType() != Targetable.TYPE_BUILDING))
-                || game.getBoard().inSpace()) {
+                || game.getBoard().isSpace()) {
             return super.handle(phase, vPhaseReport);
         }
 

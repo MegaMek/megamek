@@ -23,19 +23,20 @@ import static megamek.client.bot.princess.FiringPlanCalculationParameters.Firing
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import megamek.common.Entity;
 import megamek.common.Targetable;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.WeaponMounted;
 import megamek.logging.MMLogger;
+import org.apache.logging.log4j.message.ParameterizedMessage;
 
 /**
- * This data structure contains parameters that may be passed to the
- * "determineBestFiringPlan()"
+ * This data structure contains parameters that may be passed to the "determineBestFiringPlan()"
  */
 public final class FiringPlanCalculationParameters {
-    private final static MMLogger logger = MMLogger.create(FiringPlanCalculationParameters.class);
+    private final static MMLogger LOGGER = MMLogger.create(FiringPlanCalculationParameters.class);
 
     // The type of firing plan calculation to carry out
     public enum FiringPlanCalculationType {
@@ -78,7 +79,7 @@ public final class FiringPlanCalculationParameters {
         }
 
         /**
-         * he current state of the shooting unit.
+         * the current state of the shooting unit.
          */
         public Builder setShooterState(@Nullable final EntityState value) {
             shooterState = value;
@@ -105,12 +106,11 @@ public final class FiringPlanCalculationParameters {
         }
 
         /**
-         * How much heat we're willing to tolerate.
-         * Defaults to {@link Entity#DOES_NOT_TRACK_HEAT}
+         * How much heat we're willing to tolerate. Defaults to {@link Entity#DOES_NOT_TRACK_HEAT}
          */
         public Builder setMaxHeat(final int value) {
             if (value < 0) {
-                logger.warn("Invalid max heat: " + value);
+                LOGGER.warn("Invalid max heat: {}", value);
                 maxHeat = 0;
                 return this;
             }
@@ -120,8 +120,7 @@ public final class FiringPlanCalculationParameters {
         }
 
         /**
-         * Ammo conservation biases of the unit's mounted weapons.
-         * Defaults to an empty map.
+         * Ammo conservation biases of the unit's mounted weapons. Defaults to an empty map.
          */
         public Builder setAmmoConservation(@Nullable final Map<WeaponMounted, Double> value) {
             ammoConservation = value;
@@ -129,8 +128,7 @@ public final class FiringPlanCalculationParameters {
         }
 
         /**
-         * Are we guessing or not?
-         * Defaults to {@link FiringPlanCalculationType#GUESS}
+         * Are we guessing or not? Defaults to {@link FiringPlanCalculationType#GUESS}
          */
         public Builder setCalculationType(final FiringPlanCalculationType value) {
             if (null == value) {
@@ -141,35 +139,32 @@ public final class FiringPlanCalculationParameters {
         }
 
         /**
-         * Builds the new {@link FiringPlanCalculationParameters} based on the
-         * builder properties.
+         * Builds the new {@link FiringPlanCalculationParameters} based on the builder properties.
          */
         public FiringPlanCalculationParameters build() {
             return new FiringPlanCalculationParameters(this);
         }
 
         public FiringPlanCalculationParameters buildGuess(final Entity shooter,
-                @Nullable final EntityState shooterState,
-                final Targetable target,
-                @Nullable final EntityState targetState,
-                final int maxHeat,
-                @Nullable final Map<WeaponMounted, Double> ammoConservation) {
+                                                          @Nullable final EntityState shooterState,
+                                                          final Targetable target,
+                                                          @Nullable final EntityState targetState, final int maxHeat,
+                                                          @Nullable final Map<WeaponMounted, Double> ammoConservation) {
             return setShooter(shooter).setShooterState(shooterState)
-                    .setTarget(target)
-                    .setTargetState(targetState)
-                    .setMaxHeat(maxHeat)
-                    .setAmmoConservation(ammoConservation)
-                    .setCalculationType(FiringPlanCalculationType.GUESS)
-                    .build();
+                         .setTarget(target)
+                         .setTargetState(targetState)
+                         .setMaxHeat(maxHeat)
+                         .setAmmoConservation(ammoConservation)
+                         .setCalculationType(FiringPlanCalculationType.GUESS)
+                         .build();
         }
 
-        public FiringPlanCalculationParameters buildExact(final Entity shooter,
-                final Targetable target,
-                final Map<WeaponMounted, Double> ammoConservation) {
+        public FiringPlanCalculationParameters buildExact(final Entity shooter, final Targetable target,
+                                                          final Map<WeaponMounted, Double> ammoConservation) {
             return setShooter(shooter).setTarget(target)
-                    .setAmmoConservation(ammoConservation)
-                    .setCalculationType(GET)
-                    .build();
+                         .setAmmoConservation(ammoConservation)
+                         .setCalculationType(GET)
+                         .build();
         }
 
     }
@@ -221,11 +216,9 @@ public final class FiringPlanCalculationParameters {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof FiringPlanCalculationParameters)) {
+        if (!(o instanceof FiringPlanCalculationParameters that)) {
             return false;
         }
-
-        FiringPlanCalculationParameters that = (FiringPlanCalculationParameters) o;
 
         if (maxHeat != that.maxHeat) {
             return false;
@@ -233,18 +226,17 @@ public final class FiringPlanCalculationParameters {
         if (!shooter.equals(that.shooter)) {
             return false;
         }
-        if (shooterState != null ? !shooterState.equals(that.shooterState) : that.shooterState != null) {
+        if (!Objects.equals(shooterState, that.shooterState)) {
             return false;
         }
         if (!target.equals(that.target)) {
             return false;
         }
-        if (targetState != null ? !targetState.equals(that.targetState) : that.targetState != null) {
+        if (!Objects.equals(targetState, that.targetState)) {
             return false;
         }
         // noinspection SimplifiableIfStatement
-        if (ammoConservation != null ? !ammoConservation.equals(that.ammoConservation)
-                : that.ammoConservation != null) {
+        if (!Objects.equals(ammoConservation, that.ammoConservation)) {
             return false;
         }
         return calculationType == that.calculationType;
@@ -264,14 +256,22 @@ public final class FiringPlanCalculationParameters {
 
     @Override
     public String toString() {
-        return "FiringPlanCalculationParameters{" +
-                "shooter=" + shooter +
-                ", shooterState=" + shooterState +
-                ", target=" + target +
-                ", targetState=" + targetState +
-                ", maxHeat=" + maxHeat +
-                ", ammoConservation=" + ammoConservation +
-                ", calculationType=" + calculationType +
-                '}';
+        return new ParameterizedMessage("""
+              FiringPlanCalculationParameters{
+              \tshooter = {},
+              \tshooterState = {},
+              \ttarget = {},
+              \ttargetState = {},
+              \tmaxHeat = {},
+              \tammoConservation = {},
+              \tcalculationType = {}
+              }""",
+              shooter,
+              shooterState,
+              target,
+              targetState,
+              maxHeat,
+              ammoConservation,
+              calculationType).getFormattedMessage();
     }
 }

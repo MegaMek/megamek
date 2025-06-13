@@ -31,7 +31,7 @@ public class InfantryShotgunSDType31 extends InfantryWeapon {
        name = "Shotgun (SD Type-31)";
        setInternalName(name);
        addLookupName("SD Type-31");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .45;
        tonnage =  0.003;
        infantryDamage =  0.45;
@@ -44,12 +44,12 @@ public class InfantryShotgunSDType31 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_D)
-       .setAvailability(RATING_E,RATING_E,RATING_E,RATING_E)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.D)
+       .setAvailability(AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,2366,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_CC);
+       .setProductionFactions(Faction.CC);
 
    }
 }

@@ -30,7 +30,7 @@ public abstract class RACWeapon extends UACWeapon {
 
     public RACWeapon() {
         super();
-        ammoType = AmmoType.T_AC_ROTARY;
+        ammoType = AmmoType.AmmoTypeEnum.AC_ROTARY;
         String[] modeStrings = { MODE_AC_SINGLE, MODE_RAC_TWO_SHOT, MODE_RAC_THREE_SHOT,
                 MODE_RAC_FOUR_SHOT, MODE_RAC_FIVE_SHOT, MODE_RAC_SIX_SHOT };
         setModes(modeStrings);
@@ -65,7 +65,7 @@ public abstract class RACWeapon extends UACWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted<?> disregard) {
-        if (techAdvancement.getTechBase() == TECH_BASE_IS) {
+        if (techAdvancement.getTechBase() == TechBase.IS) {
             if (rackSize == 2) {
                 return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.8 : 0;
             } else {

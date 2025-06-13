@@ -36,7 +36,7 @@ public class InfantrySMGRorynexRM3XXIWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryRorynexRM3XXI");
 		addLookupName("Rorynex RM-3/XXI");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 80;
 		bv = 0.18;
 		tonnage = .003;
@@ -48,12 +48,12 @@ public class InfantrySMGRorynexRM3XXIWeapon extends InfantryWeapon {
 		shots = 100;
 		bursts = 6;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2655, 2660, 2663, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2655, 2660, 2663, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2655, 2660, 2663, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-		        .setProductionFactions(F_TH).setTechRating(RATING_D)
-		        .setAvailability(RATING_C, RATING_B, RATING_C, RATING_D);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+		        .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.D);
 
 	}
 }

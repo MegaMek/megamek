@@ -38,21 +38,21 @@ public class ISBAMRM2 extends MRMWeapon {
         this.shortRange = 3;
         this.mediumRange = 8;
         this.longRange = 15;
-        this.extremeRange = 16;
+        this.extremeRange = 22;
         this.bv = 9;
         cost = 10000;
         tonnage = .12;
         criticals = 2;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_B)
+        .setTechRating(TechRating.E)
+        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B)
         .setISAdvancement(3058, 3060, 3067, DATE_NONE, DATE_NONE)
         .setISApproximate(true, false, false, false, false)
-        .setPrototypeFactions(F_DC)
-        .setProductionFactions(F_DC);
+        .setPrototypeFactions(Faction.DC)
+        .setProductionFactions(Faction.DC);
     }
 }

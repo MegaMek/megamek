@@ -35,7 +35,7 @@ public class CLImprovedPulseLaserLarge extends PulseLaserWeapon {
         shortRange = 3;
         mediumRange = 7;
         longRange = 10;
-        extremeRange = 14;
+        extremeRange = 15;
         waterShortRange = 2;
         waterMediumRange = 5;
         waterLongRange = 7;
@@ -48,11 +48,11 @@ public class CLImprovedPulseLaserLarge extends PulseLaserWeapon {
         medAV = 9;
         maxRange = RANGE_MED;
         rulesRefs = "95, IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_E, RATING_X, RATING_X)
+        techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.X)
                 .setClanAdvancement(2815, 2818, 2820, 2826, 3080)
                 .setClanApproximate(false, false, false, true, false)
-                .setPrototypeFactions(F_CGS).setProductionFactions(F_CGS)
-                .setReintroductionFactions(F_EI).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setPrototypeFactions(Faction.CGS).setProductionFactions(Faction.CGS)
+                .setReintroductionFactions(Faction.EI).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

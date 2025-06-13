@@ -38,7 +38,7 @@ public class InfantrySupportMortarHeavyWeapon extends InfantryWeapon {
 		setInternalName("InfantryHeavyMortar");
 		addLookupName(name);
 		addLookupName("Infantry Heavy Mortar");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 5000;
 		bv = 4.09;
 		tonnage = .220;
@@ -50,11 +50,11 @@ public class InfantrySupportMortarHeavyWeapon extends InfantryWeapon {
 		ammoCost = 32;
 		shots = 1;
 		rulesRefs = " 273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_B)
-		        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+		        .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.B)
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 

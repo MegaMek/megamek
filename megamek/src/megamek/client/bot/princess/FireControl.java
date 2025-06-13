@@ -23,9 +23,12 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import org.apache.logging.log4j.Level;
 
 import megamek.common.*;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
@@ -297,10 +300,14 @@ public class FireControl {
             targetState = new EntityState(target);
         }
 
-        // Can't shoot if one of us is not on the board.
-        // todo exception for off-board artillery.
+        // Can't shoot if one of us has not got a position (n.b.: off-board units have positions, but not hexes).
         if ((null == shooterState.getPosition()) || (null == targetState.getPosition())) {
             return new ToHitData(TH_NULL_POSITION);
+        }
+
+        // For now, can't shoot if not on the same board
+        if (shooter.getBoardId() != target.getBoardId()) {
+            return new ToHitData(TH_RNG_TOO_FAR);
         }
 
         // Is the target in range at all?
@@ -360,7 +367,7 @@ public class FireControl {
         LosEffects los = LosEffects.calculateLOS(game, shooter, target);
 
         // We want to check the target hex _and_ the intervening hexes for woods, smoke, etc.
-        final Hex targetHex = game.getBoard().getHex(targetState.getPosition());
+        final Hex targetHex = game.getBoard(target.getBoardId()).getHex(targetState.getPosition());
         int woodsLevel = targetHex.terrainLevel(Terrains.WOODS) +
             ((los.thruWoods()) ? los.getLightWoods() + los.getHeavyWoods() + los.getUltraWoods() : 0);
         if (targetHex.terrainLevel(Terrains.JUNGLE) > woodsLevel) {
@@ -488,8 +495,8 @@ public class FireControl {
         }
 
         // Check elevation difference.
-        final Hex attackerHex = game.getBoard().getHex(shooterState.getPosition());
-        final Hex targetHex = game.getBoard().getHex(targetState.getPosition());
+        final Hex attackerHex = game.getBoard(target).getHex(shooterState.getPosition());
+        final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
         final int attackerElevation = shooter.getElevation() + attackerHex.getLevel();
         final int attackerHeight = shooter.relHeight() + attackerHex.getLevel();
         final int targetElevation = target.getElevation() + targetHex.getLevel();
@@ -588,7 +595,7 @@ public class FireControl {
     }
 
     /**
-     * Returns the value of {@link Compute#isInArc(Coords, int, Targetable, int)}.
+     * Returns the value of {@link ComputeArc#isInArc(Coords, int, Targetable, int)}.
      *
      * @param shooterPosition The current {@link Coords} of the shooter.
      * @param shooterFacing   The shooter's current facing.
@@ -601,7 +608,7 @@ public class FireControl {
             final int shooterFacing,
             final Coords targetPosition,
             final int weaponArc) {
-        return Compute.isInArc(shooterPosition, shooterFacing, targetPosition, weaponArc);
+        return ComputeArc.isInArc(shooterPosition, shooterFacing, targetPosition, weaponArc);
     }
 
     /**
@@ -742,7 +749,7 @@ public class FireControl {
         // Make sure we have ammo.
         final WeaponType weaponType = (WeaponType) weapon.getType();
         final Mounted<?> firingAmmo;
-        if (AmmoType.T_NA != weaponType.getAmmoType()) {
+        if (AmmoType.AmmoTypeEnum.NA != weaponType.getAmmoType()) {
             // Use ammo arg if provided, else use linked ammo.
             firingAmmo = (ammo == null) ? weapon.getLinkedAmmo() : ammo;
             if (null == firingAmmo) {
@@ -779,7 +786,7 @@ public class FireControl {
         }
         // Bays compute arc differently
         final boolean inArc = (bayWeapon)
-                ? Compute.isInArc(game, shooter.getId(), weapon.getBayWeapons().get(0).getEquipmentNum(), target)
+                ? ComputeArc.isInArc(game, shooter.getId(), weapon.getBayWeapons().get(0).getEquipmentNum(), target)
                 : isInArc(shooterState.getPosition(), shooterFacing, targetState.getPosition(),
                         shooter.getWeaponArc(shooter.getEquipmentNum(weapon)));
         if (!inArc) {
@@ -788,7 +795,7 @@ public class FireControl {
 
         // Check range.
         int distance = shooterState.getPosition().distance(targetState.getPosition());
-        if (shooterState.isAirborne() && targetState.isAirborne() && game.getBoard().onGround()) {
+        if (shooterState.isAirborne() && targetState.isAirborne() && game.getBoard(target).isGround()) {
             // Aerospace firing at each on the ground map have immense range.
             distance /= 16;
         }
@@ -851,7 +858,7 @@ public class FireControl {
                 targetState.getPosition(), false);
 
         // water is a separate los effect
-        final Hex targetHex = game.getBoard().getHex(targetState.getPosition());
+        final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
         Entity targetEntity = null;
         if (target instanceof Entity) {
             targetEntity = (Entity) target;
@@ -927,7 +934,7 @@ public class FireControl {
         }
 
         // ammo mods
-        if (AmmoType.T_NA != weaponType.getAmmoType()
+        if (AmmoType.AmmoTypeEnum.NA != weaponType.getAmmoType()
                 && (null != firingAmmo)
                 && (firingAmmo.getType() instanceof AmmoType ammoType)) {
             // Set of munitions we'll consider for Flak targeting
@@ -996,7 +1003,7 @@ public class FireControl {
             }
 
             // Guesstimate Air-to-Air missile mods; targetState values are less accurate but workable
-            if ((ammoType.getAmmoType() == AmmoType.T_AAA_MISSILE) || (ammoType.getAmmoType() == AmmoType.T_LAA_MISSILE)) {
+            if ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AAA_MISSILE) || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LAA_MISSILE)) {
                 if (!targetState.isAirborneAero()) {
                     // Mod for firing at non-flying ground
                     if (!targetState.isAirborne()) {
@@ -1126,7 +1133,7 @@ public class FireControl {
 
         // Is the weapon loaded?
         AmmoMounted firingAmmo = (ammo == null) ? weapon.getLinkedAmmo() : ammo;
-        if (AmmoType.T_NA != (weapon.getType()).ammoType) {
+        if (AmmoType.AmmoTypeEnum.NA != (weapon.getType()).ammoType) {
             if (null == firingAmmo) {
                 return new ToHitData(TH_WEAPON_NO_AMMO);
             }
@@ -1138,7 +1145,7 @@ public class FireControl {
             if (weapon.isGroundBomb()
                     && !(weapon.getType().hasFlag(WeaponType.F_TAG) || weapon.getType().hasFlag(WeaponType.F_MISSILE))
             ) {
-                Hex hex = game.getBoard().getHex(target.getPosition());
+                Hex hex = game.getHexOf(target);
                 // If somehow we get an off-board hex, it's impossible to hit.
                 if (hex == null) {
                     return new ToHitData(TH_NULL_POSITION);
@@ -1313,7 +1320,7 @@ public class FireControl {
                 } else {
                     // For certain weapon types, look over all their loaded ammos
                     List<AmmoMounted> ammos;
-                    if (List.of(AmmoType.T_ATM, AmmoType.T_IATM, AmmoType.T_MML).contains(weaponType.getAmmoType())) {
+                    if (List.of(AmmoType.AmmoTypeEnum.ATM, AmmoType.AmmoTypeEnum.IATM, AmmoType.AmmoTypeEnum.MML).contains(weaponType.getAmmoType())) {
                         ammos = shooter.getAmmo(weapon);
                     } else {
                         // Otherwise assume the current loaded ammo is suitable representative
@@ -1680,7 +1687,7 @@ public class FireControl {
             final Game game,
             final boolean assumeUnderFlightPath,
             final boolean guessToHit,
-            final HashMap<String, int[]> bombPayloads) {
+            final HashMap<String, BombLoadout> bombPayloads) {
         return new WeaponFireInfo(shooter, flightPath, target, targetState,
                 weapon, ammo, game, assumeUnderFlightPath, guessToHit, owner, bombPayloads);
     }
@@ -1738,19 +1745,24 @@ public class FireControl {
 
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
-                !game.getBoard().contains(shooter.getPosition())) {
+                !game.getBoard(shooter).contains(shooter.getPosition())) {
             logger.error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
-        if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
+        if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard(target).contains(target.getPosition())) {
             logger.error("Target's position is NULL/Off Board!");
+            return myPlan;
+        }
+
+        // For now, no shooting at targets on other boards
+        if (shooter.getBoardId() != target.getBoardId()) {
             return myPlan;
         }
 
         if (shooter.isAirborne()
                 && shooter.isLargeCraft()
                 && shooter.isSpheroid()
-                && game.getBoard().onGround()
+                && game.getBoard(shooter).isGround()
                 && !target.isAirborne()) {
             // This process takes a long time for no reason; the likelihood of being able to
             // strike or hit an enemy (other than Aero) is next to nil.
@@ -1778,7 +1790,7 @@ public class FireControl {
             } else {
                 // For certain weapon types, look over all their loaded ammos
                 List<AmmoMounted> ammos;
-                if (List.of(AmmoType.T_ATM, AmmoType.T_IATM, AmmoType.T_MML).contains(weaponType.getAmmoType())) {
+                if (List.of(AmmoType.AmmoTypeEnum.ATM, AmmoType.AmmoTypeEnum.IATM, AmmoType.AmmoTypeEnum.MML).contains(weaponType.getAmmoType())) {
                     ammos = shooter.getAmmo(weapon);
                 } else {
                     // Otherwise assume the current loaded ammo is suitable representative
@@ -1880,12 +1892,12 @@ public class FireControl {
 
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
-                !game.getBoard().contains(shooter.getPosition())) {
+                !game.getBoard(shooter).contains(shooter.getPosition())) {
             logger.error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
 
-        if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
+        if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard(target).contains(target.getPosition())) {
             logger.error("Target's position is NULL/Off Board!");
             return myPlan;
         }
@@ -1902,7 +1914,7 @@ public class FireControl {
             return myPlan;
         }
 
-        if (shooter.isAirborne() && shooter.isLargeCraft() && shooter.isSpheroid() && game.getBoard().onGround()) {
+        if (shooter.isAirborne() && shooter.isLargeCraft() && shooter.isSpheroid() && game.getBoard(shooter).isGround()) {
             // This process takes a long time for no reason; the likelihood of being able to
             // strike or hit an enemy Aero is next to nil.
             logger.debug(
@@ -1928,7 +1940,7 @@ public class FireControl {
             } else {
                 // For certain weapon types, look over all their loaded ammos
                 List<AmmoMounted> ammos;
-                if (List.of(AmmoType.T_ATM, AmmoType.T_IATM, AmmoType.T_MML).contains(weaponType.getAmmoType())) {
+                if (List.of(AmmoType.AmmoTypeEnum.ATM, AmmoType.AmmoTypeEnum.IATM, AmmoType.AmmoTypeEnum.MML).contains(weaponType.getAmmoType())) {
                     ammos = shooter.getAmmo(weapon);
                 } else {
                     // Otherwise assume the current loaded ammo is suitable representative
@@ -2014,7 +2026,7 @@ public class FireControl {
         // 3. Target is Submarine too far below surface level
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity entity = (Entity) target;
-            Hex hex = game.getBoard().getHex(entity.getPosition());
+            Hex hex = game.getHexOf(entity);
             hexToBomb.setTargetLevel((hex != null) ? hex.getLevel() : 0);
 
             if (entity.isAirborne()) {
@@ -2058,22 +2070,22 @@ public class FireControl {
         while (weaponIter.hasNext()) {
             final WeaponMounted weapon = weaponIter.next();
             if (weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
-                final HashMap<String, int[]> bombPayloads = new HashMap<String, int[]>();
-                bombPayloads.put("internal", new int[BombType.B_NUM]);
-                bombPayloads.put("external", new int[BombType.B_NUM]);
+                final HashMap<String, BombLoadout> bombPayloads = new HashMap<String, BombLoadout>();
+                bombPayloads.put("internal", new BombLoadout());
+                bombPayloads.put("external", new BombLoadout());
 
                 // load up all droppable bombs, yeah baby! Mix thunder bombs and infernos 'cause
                 // why the hell not.
                 // seriously, though, TODO: more intelligent bomb drops
                 for (final BombMounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
-                    int bType = bomb.getType().getBombType();
+                    BombTypeEnum bType = bomb.getType().getBombType();
                     if (bomb.isInternalBomb()) {
                         // Can only drop 6 internal bombs in one turn.
-                        if (bombPayloads.get("internal")[bType] < 6) {
-                            bombPayloads.get("internal")[bType]++;
+                        if (bombPayloads.get("internal").getCount(bType) < 6) {
+                            bombPayloads.get("internal").addBombs(bType, 1);
                         }
                     } else {
-                        bombPayloads.get("external")[bType]++;
+                            bombPayloads.get("external").addBombs(bType, 1);
                     }
                 }
 
@@ -2114,11 +2126,11 @@ public class FireControl {
 
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
-                !game.getBoard().contains(shooter.getPosition())) {
+                !game.getBoard(shooter).contains(shooter.getPosition())) {
             logger.error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
-        if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
+        if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard(target).contains(target.getPosition())) {
             logger.error("Target's position is NULL/Off Board!");
             return myPlan;
         }
@@ -2826,7 +2838,7 @@ public class FireControl {
 
                 // For certain weapon types, look over all their loaded ammos
                 List<AmmoMounted> ammos;
-                if (List.of(AmmoType.T_ATM, AmmoType.T_IATM, AmmoType.T_MML).contains(weaponType.getAmmoType())) {
+                if (List.of(AmmoType.AmmoTypeEnum.ATM, AmmoType.AmmoTypeEnum.IATM, AmmoType.AmmoTypeEnum.MML).contains(weaponType.getAmmoType())) {
                     ammos = shooter.getAmmo(weapon);
                 } else {
                     // Otherwise assume the current loaded ammo is suitable representative
@@ -3719,7 +3731,7 @@ public class FireControl {
                     continue;
                 }
 
-                for (Entity ent : shooter.getGame().getEntitiesVector(intervening, true)) {
+                for (Entity ent : shooter.getGame().getEntitiesVector(intervening, shooter.getBoardId(), true)) {
                     // don't count ourselves, or the target if it's already lit itself up
                     // or the target if it will be lit up by a previously declared search light
                     if ((ent.getId() == shooter.getId()) || ent.isIlluminated()) {
@@ -3799,9 +3811,9 @@ public class FireControl {
      * @return true if weaponType doesn't actually track ammo
      */
     protected static boolean effectivelyAmmoless(WeaponType weaponType) {
-        List<Integer> ammoTypes = Arrays.asList(
-                AmmoType.T_NA,
-                AmmoType.T_INFANTRY);
+        List<AmmoType.AmmoTypeEnum> ammoTypes = Arrays.asList(
+                AmmoType.AmmoTypeEnum.NA,
+                AmmoType.AmmoTypeEnum.INFANTRY);
         return ammoTypes.contains(weaponType.getAmmoType());
     }
 }

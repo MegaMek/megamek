@@ -31,7 +31,7 @@ public class InfantryShotgunDuckettA5 extends InfantryWeapon {
        name = "Shotgun (Duckett A-5)";
        setInternalName(name);
        addLookupName("Duckett A-5");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .288;
        tonnage =  0.0029;
        infantryDamage =  0.36;
@@ -44,11 +44,11 @@ public class InfantryShotgunDuckettA5 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_D)
-       .setAvailability(RATING_D,RATING_D,RATING_D,RATING_D)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.D)
+       .setAvailability(AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.D)
        .setISAdvancement(DATE_NONE, DATE_NONE,2340,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_LC);
+       .setProductionFactions(Faction.LC);
    }
 }

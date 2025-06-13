@@ -15,6 +15,7 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 
 /**
@@ -27,10 +28,10 @@ public class BombArrowIV extends ArtilleryWeapon {
     public BombArrowIV() {
         super();
         this.name = "Arrow IV Bomb Mount";
-        this.setInternalName(BombType.getBombWeaponName(BombType.B_ARROW));
+        this.setInternalName(BombTypeEnum.ARROW.getWeaponName());
         this.heat = 0;
         this.rackSize = 20;
-        this.ammoType = AmmoType.T_ARROW_IV_BOMB;
+        this.ammoType = AmmoType.AmmoTypeEnum.ARROW_IV_BOMB;
         this.shortRange = 1; //
         this.mediumRange = 2;
         this.longRange = 9;
@@ -42,17 +43,17 @@ public class BombArrowIV extends ArtilleryWeapon {
         this.cost = 0;
         flags = flags.or(F_BOMB_WEAPON);
         rulesRefs = "359, TO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(2622, 2623, DATE_NONE, 2850, 3047)
                 .setISApproximate(true, false, false, true, false)
                 .setClanAdvancement(2622, 2623, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.CC);
     }
 }

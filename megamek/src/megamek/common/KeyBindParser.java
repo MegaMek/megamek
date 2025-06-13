@@ -21,25 +21,22 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-
 import javax.xml.parsers.DocumentBuilder;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.util.KeyCommandBind;
+import megamek.client.ui.util.MegaMekController;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
- * This class provides a static method to read in the defaultKeybinds.xml and
- * set all of the <code>KeyCommandbind</code>'s based on the specifications in
- * the XML file.
+ * This class provides a static method to read in the defaultKeybinds.xml and set all of the
+ * <code>KeyCommandbind</code>'s based on the specifications in the XML file.
  *
  * @author arlith
  */
@@ -141,8 +138,7 @@ public class KeyBindParser {
     }
 
     /**
-     * Each KeyCommand has a built-in default; if no key binding file can be
-     * found, we should register those defaults.
+     * Each KeyCommand has a built-in default; if no key binding file can be found, we should register those defaults.
      *
      * @param controller
      */
@@ -157,13 +153,12 @@ public class KeyBindParser {
      */
     public static void writeKeyBindings() {
         try {
-            Writer output = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(new MegaMekFile(Configuration.configDir(),
-                            DEFAULT_BINDINGS_FILE).getFile())));
+            Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new MegaMekFile(Configuration.configDir(),
+                  DEFAULT_BINDINGS_FILE).getFile())));
             output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-            output.write("<KeyBindings " +
-                    "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
-                    " xsi:noNamespaceSchemaLocation=\"keyBindingSchema.xsd\">\n");
+            output.write("<KeyBindings "
+                  + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                  + " xsi:noNamespaceSchemaLocation=\"keyBindingSchema.xsd\">\n");
 
             for (KeyCommandBind kcb : KeyCommandBind.values()) {
                 output.write("    <KeyBind>\n");
@@ -174,11 +169,14 @@ public class KeyBindParser {
                     keyTxt += "-";
                 }
                 keyTxt += KeyEvent.getKeyText(kcb.key);
-                output.write("<!-- " + keyTxt + " -->\n");
+                if (kcb.key == 0) {
+                    output.write("<!-- " + "Unbound" + " -->\n");
+                } else {
+                    output.write("<!-- " + keyTxt + " -->\n");
+                }
                 output.write("        <keyCode>" + kcb.key + "</keyCode>\n");
                 output.write("        <modifier>" + kcb.modifiers + "</modifier>\n");
-                output.write("        <isRepeatable>" + kcb.isRepeatable
-                        + "</isRepeatable>\n");
+                output.write("        <isRepeatable>" + kcb.isRepeatable + "</isRepeatable>\n");
                 output.write("    </KeyBind>\n");
                 output.write("\n");
             }
@@ -192,14 +190,10 @@ public class KeyBindParser {
     }
 
     /**
-     * Register an object that wishes to be alerted when the key binds (may) have
-     * changed.
-     * When the keybinds change, a PreferenceChange with the name
-     * KeyBindParser.KEYBINDS_CHANGED
-     * is fired.
+     * Register an object that wishes to be alerted when the key binds (may) have changed. When the keybinds change, a
+     * PreferenceChange with the name KeyBindParser.KEYBINDS_CHANGED is fired.
      *
-     * @param listener the <code>PreferenceListener</code> that wants to register
-     *                 itself.
+     * @param listener the <code>PreferenceListener</code> that wants to register itself.
      */
     public static synchronized void addPreferenceChangeListener(IPreferenceChangeListener listener) {
         if (!listeners.contains((listener))) {
@@ -208,11 +202,9 @@ public class KeyBindParser {
     }
 
     /**
-     * De-register an object from being alerted when the key binds (may) have
-     * changed.
+     * De-register an object from being alerted when the key binds (may) have changed.
      *
-     * @param listener the <code>PreferenceListener</code> that wants to remove
-     *                 itself.
+     * @param listener the <code>PreferenceListener</code> that wants to remove itself.
      */
     public synchronized static void removePreferenceChangeListener(IPreferenceChangeListener listener) {
         listeners.remove(listener);

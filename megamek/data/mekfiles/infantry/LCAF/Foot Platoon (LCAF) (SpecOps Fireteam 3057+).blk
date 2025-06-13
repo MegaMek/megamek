@@ -1,0 +1,77 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-26
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Foot Platoon (LCAF)
+</Name>
+
+<Model>
+(SpecOps Fireteam 3057+)
+</Model>
+
+<year>
+3057
+</year>
+
+<originalBuildYear>
+3057
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<Troopers Equipment>
+AntiMekGear
+Sneak Suit (Camo/IR/ECM)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+Only moderately more capable than regular infantry in terms of raw firepower, most of the utility of these formations is found in their skill and training. A direct assault at a critical point can make the difference between an easy success and slow, grinding failure.  Equipped with the latest in infantry stealth gear only makes these forces more threatening.
+</capabilities>
+
+<overview>
+Special operations forces, or SpecOps, are sometimes called on to take key parts of important assault operations. Too expensive to field in large numbers these veteran operators are used to assist with planning, training, and leading larger groups of more conventionally trained infantry.
+</overview>
+
+<notes>
+Intro date based on LAAF faction start date. Slightly oversized squads selected for minimum anti-Mek capability.
+</notes>
+
+<squad_size>
+8
+</squad_size>
+
+<squadn>
+2
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Rifle (TK Assault)
+</Primary>
+
+<Secondary>
+Laser Rifle (Blazer)
+</Secondary>
+
+<specialization>
+512
+</specialization>
+

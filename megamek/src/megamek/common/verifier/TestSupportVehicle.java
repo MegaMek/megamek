@@ -21,6 +21,7 @@
 package megamek.common.verifier;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +38,8 @@ import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
+import megamek.common.ITechnology.AvailabilityValue;
+import megamek.common.ITechnology.TechBase;
 import megamek.logging.MMLogger;
 
 /**
@@ -486,47 +489,53 @@ public class TestSupportVehicle extends TestEntity {
      * proposal to the rules committee for E.
      */
     public static final TechAdvancement[] TECH_LEVEL_TA = {
-            new TechAdvancement(ITechnology.TECH_BASE_ALL).setTechRating(ITechnology.RATING_A)
+            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.A)
                     .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
-                    .setAvailability(ITechnology.RATING_A, ITechnology.RATING_A, ITechnology.RATING_A,
-                            ITechnology.RATING_A),
+                    .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A,
+                            AvailabilityValue.A),
 
-            new TechAdvancement(ITechnology.TECH_BASE_ALL).setTechRating(ITechnology.RATING_B)
+            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.B)
                     .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
-                    .setAvailability(ITechnology.RATING_B, ITechnology.RATING_B, ITechnology.RATING_B,
-                            ITechnology.RATING_A),
+                    .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B,
+                            AvailabilityValue.A),
 
-            new TechAdvancement(ITechnology.TECH_BASE_ALL).setTechRating(ITechnology.RATING_C)
+            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.C)
                     .setAdvancement(ITechnology.DATE_ES, ITechnology.DATE_ES, ITechnology.DATE_ES)
-                    .setPrototypeFactions(ITechnology.F_TA).setProductionFactions(ITechnology.F_TA)
-                    .setAvailability(ITechnology.RATING_C, ITechnology.RATING_B, ITechnology.RATING_B,
-                            ITechnology.RATING_B),
+                    .setPrototypeFactions(ITechnology.Faction.TA).setProductionFactions(ITechnology.Faction.TA)
+                    .setAvailability(AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B,
+                            AvailabilityValue.B),
 
-            new TechAdvancement(ITechnology.TECH_BASE_ALL).setTechRating(ITechnology.RATING_D)
+            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.D)
                     .setAdvancement(2420, 2430, 2435).setApproximate(true, true, false)
-                    .setPrototypeFactions(ITechnology.F_TH).setProductionFactions(ITechnology.F_TH)
-                    .setAvailability(ITechnology.RATING_C, ITechnology.RATING_C, ITechnology.RATING_C,
-                            ITechnology.RATING_B),
+                    .setPrototypeFactions(ITechnology.Faction.TH).setProductionFactions(ITechnology.Faction.TH)
+                    .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C,
+                            AvailabilityValue.B),
 
-            new TechAdvancement(ITechnology.TECH_BASE_ALL).setTechRating(ITechnology.RATING_E)
+            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.E)
                     .setISAdvancement(2557, 2571, 3055).setClanAdvancement(2557, 2571, 2815)
-                    .setAvailability(ITechnology.RATING_D, ITechnology.RATING_F, ITechnology.RATING_D,
-                            ITechnology.RATING_C),
+                    .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D,
+                            AvailabilityValue.C),
 
-            new TechAdvancement(ITechnology.TECH_BASE_ALL).setTechRating(ITechnology.RATING_F)
+            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.F)
                     .setISAdvancement(ITechnology.DATE_NONE, ITechnology.DATE_NONE, 3065)
                     .setISApproximate(false, false, true)
                     .setClanAdvancement(2820, 2825, 2830).setClanApproximate(true, true, false)
-                    .setAvailability(ITechnology.RATING_E, ITechnology.RATING_E, ITechnology.RATING_D,
-                            ITechnology.RATING_C)
+                    .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D,
+                            AvailabilityValue.C)
     };
 
     /**
      * The chassis weight multiplier for tech ratings A-F
      */
-    private static final double[] STRUCTURE_TECH_MULTIPLIER = {
-            1.6, 1.3, 1.15, 1.0, 0.85, 0.66
-    };
+    private static final EnumMap<ITechnology.TechRating, Double> STRUCTURE_TECH_MULTIPLIER = new EnumMap<>(ITechnology.TechRating.class);
+    static {
+        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.A, 1.6);
+        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.B, 1.3);
+        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.C, 1.15);
+        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.D, 1.0);
+        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.E, 0.85);
+        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.F, 0.66);
+    }
 
     /**
      * Filters all vehicle armor according to given tech constraints. Standard armor
@@ -677,7 +686,7 @@ public class TestSupportVehicle extends TestEntity {
     @Override
     public String printWeightEngine() {
         return StringUtil.makeLength(String.format("Engine: %s (%s)",
-                engine.getEngineName(), ITechnology.getRatingName(getEntity().getEngineTechRating())),
+                engine.getEngineName(), getEntity().getEngineTechRating().getName()),
                 getPrintSize() - 5)
                 + TestEntity.makeWeightString(getWeightEngine(), usesKgStandard()) + "\n";
     }
@@ -765,7 +774,8 @@ public class TestSupportVehicle extends TestEntity {
     public double getWeightStructure() {
         double weight = supportVee.getWeight();
         weight *= SVType.getBaseChassisValue(supportVee);
-        weight *= STRUCTURE_TECH_MULTIPLIER[supportVee.getStructuralTechRating()];
+        double structureMultiplier = STRUCTURE_TECH_MULTIPLIER.getOrDefault(supportVee.getStructuralTechRating(), 1.0);
+        weight *= structureMultiplier;
 
         for (Mounted<?> mounted : supportVee.getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_CHASSIS_MODIFICATION)) {
@@ -1005,6 +1015,11 @@ public class TestSupportVehicle extends TestEntity {
             correct = false;
         }
 
+        if (engine.getEngineType() == Engine.NONE && getEntity().getWalkMP() > 0) {
+            buff.append("Vehicle with no engine must not have nonzero MP\n");
+            correct = false;
+        }
+
         if ((supportVee instanceof Tank supportTank) && (supportTank.fuelTonnagePer100km() > 0.0)
                 && (supportTank.getFuelTonnage() <= 0.0)) {
             buff.append("Support vehicles with ").append(engine.getEngineName())
@@ -1055,7 +1070,7 @@ public class TestSupportVehicle extends TestEntity {
                     buff.append("BAR ")
                             .append(bar)
                             .append(" exceeds maximum for armor tech rating ")
-                            .append(ITechnology.getRatingName(supportVee.getArmorTechRating()))
+                            .append(supportVee.getArmorTechRating().getName())
                             .append(".\n");
                     correct = false;
                 }

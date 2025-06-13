@@ -58,21 +58,6 @@ public class LBXHandler extends AmmoWeaponHandler {
         return 1;
     }
 
-    /**
-     * Calculate the attack value based on range
-     *
-     * @return an <code>int</code> representing the attack value at that range.
-     */
-    @Override
-    protected int calcAttackValue() {
-        int av = super.calcAttackValue();
-        if (usesClusterTable()) {
-            // basically 60% of normal
-            return (int) Math.floor(0.6 * av);
-        }
-        return av;
-    }
-
     /*
      * (non-Javadoc)
      *

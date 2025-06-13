@@ -29,7 +29,7 @@ public class InfantryPistolClanERLaserPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryClanERLaserPistol");
         addLookupName("Clan ER Laser Pistol");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1000;
         bv = 0.61;
         tonnage = .001;
@@ -39,9 +39,9 @@ public class InfantryPistolClanERLaserPistolWeapon extends InfantryWeapon {
         ammoWeight = 0.0003;
         shots = 10;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2833, 2835, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CFM)
-                .setProductionFactions(F_CFM).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_D, RATING_C, RATING_C);
+        techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2833, 2835, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CFM)
+                .setProductionFactions(Faction.CFM).setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
     }
 }

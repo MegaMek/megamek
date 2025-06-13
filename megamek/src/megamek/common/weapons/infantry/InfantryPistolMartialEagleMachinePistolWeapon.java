@@ -36,7 +36,7 @@ public class InfantryPistolMartialEagleMachinePistolWeapon extends InfantryWeapo
 		setInternalName(name);
 		addLookupName("InfantryMartialEaglepistol");
 		addLookupName("Martial Eagle Machine Pistol");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 180;
 		bv = 0.23;
 		tonnage = .001;
@@ -48,11 +48,11 @@ public class InfantryPistolMartialEagleMachinePistolWeapon extends InfantryWeapo
 		shots = 30;
 		bursts = 3;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3040, 3045, 3060, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3040, 3045, 3060, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
-				.setPrototypeFactions(F_FW)
-				.setProductionFactions(F_FW).setTechRating(RATING_D)
-				.setAvailability(RATING_X, RATING_F, RATING_D, RATING_C);
+				.setPrototypeFactions(Faction.FW)
+				.setProductionFactions(Faction.FW).setTechRating(TechRating.D)
+				.setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C);
 
 	}
 }

@@ -15,6 +15,7 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.weapons.missiles.ThunderBoltWeapon;
 
 /**
@@ -31,7 +32,7 @@ public class ISLAAMissileWeapon extends ThunderBoltWeapon {
         super();
 
         this.name = "Light Air-to-Air (LAA) Missiles";
-        this.setInternalName(BombType.getBombWeaponName(BombType.B_LAA));
+        this.setInternalName(BombTypeEnum.LAA.getWeaponName());
         this.heat = 0;
         this.damage = 6;
         this.rackSize = 1;
@@ -49,18 +50,18 @@ public class ISLAAMissileWeapon extends ThunderBoltWeapon {
         this.shortAV = 6;
         this.medAV = 6;
         this.maxRange = RANGE_MED;
-        this.ammoType = AmmoType.T_LAA_MISSILE;
+        this.ammoType = AmmoType.AmmoTypeEnum.LAA_MISSILE;
         this.capital = false;
         this.missileArmor = 6;
         rulesRefs = "359, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+        .setTechRating(TechRating.E)
+        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
         .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
         .setISApproximate(true, false, false, false, false)
-        .setPrototypeFactions(F_FW)
-        .setProductionFactions(F_FW);
+        .setPrototypeFactions(Faction.FW)
+        .setProductionFactions(Faction.FW);
     }
 }

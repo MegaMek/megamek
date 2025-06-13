@@ -46,7 +46,7 @@ Aerodyne
 
 <transporters>
 navalrepairunpressurized:2100000.0:1:1:f0
-mechbay:36.0:1
+mekbay:36.0:1
 cargobay:12000.0:0:3
 smallcraftbay:72.0:6:4
 cargobay:24000.0:1:5

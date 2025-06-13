@@ -34,7 +34,7 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
         shortRange = 2;
         mediumRange = 4;
         longRange = 5;
-        extremeRange = 8;
+        extremeRange = 7;
         waterShortRange = 1;
         waterMediumRange = 2;
         waterLongRange = 3;
@@ -48,14 +48,14 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
         maxRange = RANGE_SHORT;
         flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
         rulesRefs = "97, IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
                 .setClanAdvancement(2819, DATE_NONE, DATE_NONE, 2825, DATE_NONE)
                 .setClanApproximate(true, false, false, true, false)
-                .setPrototypeFactions(F_CSJ)
+                .setPrototypeFactions(Faction.CSJ)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

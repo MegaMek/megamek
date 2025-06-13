@@ -34,7 +34,7 @@ public class LongTom extends ArtilleryWeapon {
         addLookupName("Clan Long Tom");
         heat = 20;
         rackSize = 25;
-        ammoType = AmmoType.T_LONG_TOM;
+        ammoType = AmmoType.AmmoTypeEnum.LONG_TOM;
         shortRange = 1;
         mediumRange = 2;
         longRange = 30;
@@ -45,10 +45,10 @@ public class LongTom extends ArtilleryWeapon {
         bv = 368;
         cost = 450000;
         rulesRefs = "284, TO";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_B)
-            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        techAdvancement.setTechBase(TechBase.ALL).setTechRating(TechRating.B)
+            .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
             .setAdvancement(2445, 2500, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

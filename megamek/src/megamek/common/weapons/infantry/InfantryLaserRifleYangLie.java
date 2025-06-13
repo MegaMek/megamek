@@ -28,7 +28,7 @@ public class InfantryLaserRifleYangLie extends InfantryWeapon {
         name = "Laser Rifle (Yang Lie)";
         setInternalName(name);
         addLookupName("YangLie");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1275;
         bv = 0.525;
         tonnage = 0.0055;
@@ -40,11 +40,11 @@ public class InfantryLaserRifleYangLie extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_E) // Assuming X-E-E-E simplifies to E
-                .setAvailability(new int[]{RATING_X, RATING_E, RATING_E, RATING_E})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.E) // Assuming X-E-E-E simplifies to E
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_CC);
+                .setProductionFactions(Faction.CC);
     }
 }

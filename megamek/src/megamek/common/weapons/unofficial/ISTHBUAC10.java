@@ -31,7 +31,7 @@ public class ISTHBUAC10 extends UACWeapon {
         this.heat = 4;
         this.damage = 10;
         this.rackSize = 10;
-        this.ammoType = AmmoType.T_AC_ULTRA_THB;
+        this.ammoType = AmmoType.AmmoTypeEnum.AC_ULTRA_THB;
         this.shortRange = 7;
         this.mediumRange = 14;
         this.longRange = 21;
@@ -42,14 +42,14 @@ public class ISTHBUAC10 extends UACWeapon {
         this.cost = 400000;
         // Since this are the Tactical Handbook Weapons I'm using the TM Stats.
         rulesRefs = "THB (Unofficial)";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS);
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS);
     }
 }

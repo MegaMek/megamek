@@ -36,7 +36,7 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryGuntherMP20");
 		addLookupName("Gunther MP-20");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 125;
 		bv = 0.30;
 		tonnage = .0025;
@@ -48,11 +48,11 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
 		shots = 30;
 		bursts = 6;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3005, 3007, 3025, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3005, 3007, 3025, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_LC)
-		        .setProductionFactions(F_LC).setTechRating(RATING_C)
-		        .setAvailability(RATING_X, RATING_E, RATING_C, RATING_C);
+		        .setPrototypeFactions(Faction.LC)
+		        .setProductionFactions(Faction.LC).setTechRating(TechRating.C)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 }

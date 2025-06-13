@@ -37,7 +37,7 @@ public class InfantryPistolBlazerPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryBlazerPistol");
         addLookupName("Blazer Pistol");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 3000;
         bv = 0.79;
         tonnage = .002;
@@ -47,9 +47,9 @@ public class InfantryPistolBlazerPistolWeapon extends InfantryWeapon {
         ammoWeight = 0.0003;
         shots = 8;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
         techAdvancement.setISAdvancement(2100, 2290, 2350);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_C });
+        techAdvancement.setTechRating(TechRating.D);
+        techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C);
     }
 }

@@ -13,14 +13,18 @@
  */
 package megamek.common;
 
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static megamek.common.Terrains.*;
 
@@ -80,16 +84,15 @@ public class VTOL extends Tank implements IBomber {
         return LOC_TURRET_2;
     }
 
-    protected int[] intBombChoices = new int[BombType.B_NUM];
-    protected int[] extBombChoices = new int[BombType.B_NUM];
+    protected BombLoadout extBombChoices = new BombLoadout();
 
     private Targetable bombTarget = null;
     private final List<Coords> strafingCoords = new ArrayList<>();
 
     @Override
     public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType,
-            MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos,
-            boolean isInfantry, int distance) {
+                                      MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos,
+                                      boolean isInfantry, int distance) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: VTOLs can't skid");
         return roll;
@@ -106,8 +109,12 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int elevation) {
-        Hex hex = game.getBoard().getHex(c);
+    public boolean isLocationProhibited(Coords c, int testBoardId, int elevation) {
+        if (!game.hasBoardLocation(c, testBoardId)) {
+            return true;
+        }
+
+        Hex hex = game.getHex(c, testBoardId);
 
         if (hex.containsAnyTerrainOf(IMPASSABLE, SPACE, SKY)) {
             return true;
@@ -268,29 +275,28 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
-    public int[] getIntBombChoices() {
-        return intBombChoices.clone();
+    public BombLoadout getIntBombChoices() {
+        return new BombLoadout(); // Always empty, VTOLs don't have internal bombs
     }
 
     @Override
-    public void setIntBombChoices(int[] bc) {
+    public void setIntBombChoices(BombLoadout bc) {
+        // Internal bomb choices are not supported for VTOLs
     }
 
     @Override
-    public int[] getExtBombChoices() {
-        return extBombChoices.clone();
+    public BombLoadout getExtBombChoices() {
+        return new BombLoadout(extBombChoices);
     }
 
     @Override
-    public void setExtBombChoices(int[] bc) {
-        if (bc.length == extBombChoices.length) {
-            extBombChoices = bc;
-        }
+    public void setExtBombChoices(BombLoadout bc) {
+        extBombChoices = new BombLoadout(bc);
     }
 
     @Override
     public void clearBombChoices() {
-        Arrays.fill(extBombChoices, 0);
+        extBombChoices.clear();
     }
 
     @Override
@@ -696,9 +702,9 @@ public class VTOL extends Tank implements IBomber {
     }
 
     public static TechAdvancement getChinTurretTA() {
-        return new TechAdvancement(TECH_BASE_ALL)
+        return new TechAdvancement(TechBase.ALL)
                 .setAdvancement(DATE_PS, 3079, 3080).setApproximate(false, true, false)
-                .setTechRating(RATING_B).setAvailability(RATING_F, RATING_F, RATING_F, RATING_D)
+                .setTechRating(TechRating.B).setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.D)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 

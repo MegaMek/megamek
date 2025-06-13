@@ -28,7 +28,7 @@ public class InfantryPistolAlamo17 extends InfantryWeapon {
        name = "Pistol (Alamo-17)";
        setInternalName(name);
        addLookupName("Alamo17");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = 0.28;
        tonnage = 0.001;
        infantryDamage =  0.28;
@@ -41,12 +41,12 @@ public class InfantryPistolAlamo17 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #3";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_A,RATING_A,RATING_A,RATING_A)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.A,AvailabilityValue.A,AvailabilityValue.A,AvailabilityValue.A)
        .setISAdvancement(DATE_NONE, DATE_NONE,2100,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_TC);
+       .setProductionFactions(Faction.TC);
 
    }
 }

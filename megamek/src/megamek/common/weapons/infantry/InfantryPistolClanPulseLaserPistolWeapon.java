@@ -36,7 +36,7 @@ public class InfantryPistolClanPulseLaserPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryClanPulseLaserPistol");
         addLookupName("Clan Pulse Laser Pistol");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1500;
         bv = 0.61;
         tonnage = .001;
@@ -47,10 +47,10 @@ public class InfantryPistolClanPulseLaserPistolWeapon extends InfantryWeapon {
         shots = 10;
         bursts = 2;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2835, 2840, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CFM)
-                .setProductionFactions(F_CFM).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_C, RATING_C, RATING_C);
+        techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2835, 2840, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CFM)
+                .setProductionFactions(Faction.CFM).setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
 
     }
 }

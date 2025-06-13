@@ -14,9 +14,9 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        java-distribution: [temurin]
-        java-version: [17]
+        os: [ ubuntu-latest ]
+        java-distribution: [ temurin ]
+        java-version: [ 17 ]
       fail-fast: false
 
     name: Nightly MegaMek CI ${{ matrix.os }} on ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
@@ -25,6 +25,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           path: megamek
+
+      - name: "Output branch information to Version file"
+        run: |
+          echo "branch=nightly" >> megamek/megamek/resources/extraVersion.properties
+          echo "gitHash=$(date +'%Y-%m-%d')" >> megamek/megamek/resources/extraVersion.properties 
 
       - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v4
@@ -39,22 +44,27 @@ jobs:
           build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
           build-scan-terms-of-use-agree: "yes"
 
-      - name: Build with Gradle
+      - name: Testing Nightly
         working-directory: megamek
-        run: ./gradlew clean build --stacktrace --scan
+        run: ./gradlew test
 
       - name: Upload Test Logs on Failure
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: ${{ matrix.os }}-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}-ci-failure-logs
-          path: megamek/megamek/build/reports/
+          name: cd-failure-logs
+          path: ./megamek/megamek/build/reports/
 
-      #      - name: Upload Zip Artifacts
-      #        uses: actions/upload-artifact@v4
-      #        with:
-      #          name: mm-release-zip-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
-      #          path: ./megamek/megamek/build/distributions/*.zip
+      - name: CodeCov.io Coverage Report
+        uses: codecov/codecov-action@v5
+        with:
+          directory: ./megamek/megamek/build/reports/jacoco/test
+          fail_ci_if_error: false
+          verbose: true
+
+      - name: Build with Gradle
+        working-directory: megamek
+        run: ./gradlew build -x test -PextraVersion="nightly-$(date +'%Y-%m-%d')"
 
       - name: Upload TarGZ Release
         uses: actions/upload-artifact@v4

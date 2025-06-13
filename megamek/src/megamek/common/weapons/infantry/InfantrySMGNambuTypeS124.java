@@ -30,7 +30,7 @@ public class InfantrySMGNambuTypeS124 extends InfantryWeapon {
        name = "SMG (Nambu Type S-124)";
        setInternalName(name);
        addLookupName("Nambu Type S-124");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .202;
        tonnage =  0.0039;
        infantryDamage =  0.2;
@@ -43,11 +43,11 @@ public class InfantrySMGNambuTypeS124 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #5";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_X,RATING_E,RATING_E,RATING_E)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_DC);
+       .setProductionFactions(Faction.DC);
    }
 }

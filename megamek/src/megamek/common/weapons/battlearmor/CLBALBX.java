@@ -46,24 +46,24 @@ public class CLBALBX extends Weapon {
         shortRange = 2;
         mediumRange = 5;
         longRange = 8;
-        extremeRange = 10;
+        extremeRange = 12;
         tonnage = 0.4;
         criticals = 2;
         toHitModifier = -1;
         // TODO: refactor BA ammo-based weapons to use real AmmoTypes (but not track ammo use)
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         bv = 20;
         cost = 70000;
         // TODO: implement F_NO_COUNT_AMMO
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_BALLISTIC).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "207, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        techAdvancement.setTechBase(TechBase.CLAN)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(3075, 3085)
                 .setClanApproximate(false, false)
-                .setPrototypeFactions(F_CNC)
-                .setProductionFactions(F_CNC)
+                .setPrototypeFactions(Faction.CNC)
+                .setProductionFactions(Faction.CNC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 

@@ -264,7 +264,8 @@ public class MultiTargetFireControl extends FireControl {
         // account for artillery fired during the Targeting (offboard) phase; we reduce the heat capacity and treat
         // the arc's heat as 0 because this arc has already fired - so it can be included in the solution for "free"
         for ( WeaponMounted weapon : shooter.getWeaponList().stream().filter(Mounted::isUsedThisRound).toList()) {
-            int arc = weapon.isRearMounted() ? -shooter.getWeaponArc(weapon.getLocation()) : shooter.getWeaponArc(weapon.getLocation());
+            int arc = weapon.isRearMounted() ? -shooter.getWeaponArc(weapon.getEquipmentNum()) :
+                            shooter.getWeaponArc(weapon.getEquipmentNum());
             if (!arcShots.containsKey(arc)) {
                 heatCapacity -= shooter.getHeatInArc(weapon.getLocation(), weapon.isRearMounted());
                 arcShots.put(arc, new ArrayList<>());

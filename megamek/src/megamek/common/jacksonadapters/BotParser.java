@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.ui.swing.ScenarioDialog;
+import megamek.client.ui.dialogs.ScenarioDialog;
 
 public final class BotParser {
 

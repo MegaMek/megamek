@@ -7,6 +7,10 @@ map:
   width: 36
   height: 19
 
+options:
+  off:
+    - check_victory
+
 factions:
   - name: Epsilon Galaxy Flight
     camo: Clans/Coyote/Epsilon Galaxy.jpg

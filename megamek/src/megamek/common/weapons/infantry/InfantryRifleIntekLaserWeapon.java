@@ -36,7 +36,7 @@ public class InfantryRifleIntekLaserWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryIntekLaser");
 		addLookupName("Intek Laser Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1250;
 		bv = 1.51;
 		tonnage = .005;
@@ -46,11 +46,11 @@ public class InfantryRifleIntekLaserWeapon extends InfantryWeapon {
 		ammoWeight = 0.0003;
 		shots = 15;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2875, 2880, 2950, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2875, 2880, 2950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_FW)
-		        .setProductionFactions(F_FW).setTechRating(RATING_D)
-		        .setAvailability(RATING_X, RATING_D, RATING_D, RATING_C);
+		        .setPrototypeFactions(Faction.FW)
+		        .setProductionFactions(Faction.FW).setTechRating(TechRating.D)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C);
 
 	}
 }

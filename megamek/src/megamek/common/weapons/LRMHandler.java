@@ -197,7 +197,7 @@ public class LRMHandler extends MissileWeaponHandler {
                 } else {
                     nMissilesModifier += 3;
                 }
-            } else if (atype.getAmmoType() == AmmoType.T_ATM) {
+            } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
                 if (bECMAffected) {
                     // ECM prevents bonus
                     Report r = new Report(3330);
@@ -223,12 +223,12 @@ public class LRMHandler extends MissileWeaponHandler {
                 boolean bTargetECMAffected = false;
                 bTargetECMAffected = ComputeECM.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition());
-                if (((atype.getAmmoType() == AmmoType.T_LRM)
-                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                    || (atype.getAmmoType() == AmmoType.T_SRM)
-                    || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
-                    || (atype.getAmmoType() == AmmoType.T_MML)
-                    || (atype.getAmmoType() == AmmoType.T_NLRM))
+                if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
+                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM))
                     && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE))) {
                     if (bTargetECMAffected) {
                         // ECM prevents bonus
@@ -257,7 +257,7 @@ public class LRMHandler extends MissileWeaponHandler {
         // ELRMs only hit with half their rack size rounded up at minimum range.
         // Ignore this for space combat. 1 hex is 18km across.
         if (wtype instanceof ExtendedLRMWeapon
-                && !game.getBoard().inSpace()
+                && !game.getBoard().isSpace()
                 && (nRange <= wtype.getMinimumRange())) {
             rackSize = rackSize / 2 + rackSize % 2;
             minRangeELRMAttack = true;

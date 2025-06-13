@@ -36,7 +36,7 @@ public class InfantryArchaicShurikenWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryShuriken");
         addLookupName("Shuriken");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 5;
         bv = 0;
         tonnage = .0001; 
@@ -44,9 +44,9 @@ public class InfantryArchaicShurikenWeapon extends InfantryWeapon {
         infantryDamage = 0;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false).setTechRating(RATING_A)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false).setTechRating(TechRating.A)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B);
 
     }
 }

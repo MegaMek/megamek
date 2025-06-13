@@ -36,7 +36,7 @@ public class InfantryPistolStettaAutoPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryStettaAutopistol");
         addLookupName("Stetta AutoPistol");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 150;
         bv = 0.16;
         tonnage = .002;
@@ -48,10 +48,10 @@ public class InfantryPistolStettaAutoPistolWeapon extends InfantryWeapon {
         shots = 100;
         bursts = 10;
         rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3005, 3010, 3050, DATE_NONE, DATE_NONE)
-		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
-		        .setProductionFactions(F_LC).setTechRating(RATING_D)
-		        .setAvailability(RATING_X, RATING_F, RATING_C, RATING_B);
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3005, 3010, 3050, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.LC)
+		        .setProductionFactions(Faction.LC).setTechRating(TechRating.D)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.C, AvailabilityValue.B);
 
     }
 }

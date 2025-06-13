@@ -1,0 +1,157 @@
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-10-27
+chassis:BattleAxe
+model:BKX-RISC
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3137
+source:XTRO:RISC
+rules level:4
+role:Sniper
+
+quirk:difficult_maintain
+quirk:non_standard
+
+mass:70
+engine:280 XL Engine(IS)
+structure:IS Endo-Composite
+myomer:Standard
+heat sink kit:RISC Heat Sink Override Kit
+
+heat sinks:13 IS Double
+walk mp:4
+jump mp:4
+
+armor:Standard(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:24
+RT armor:24
+CT armor:28
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:6
+RTR armor:6
+RTC armor:7
+
+Weapons:5
+ER PPC, Left Arm
+ER PPC, Right Arm
+LRM 5, Left Torso
+SRM 6, Right Torso
+LRM 5, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERPPC
+ISERPPC
+ISERPPC
+PPC Capacitor
+IS Endo-Composite
+IS Endo-Composite
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERPPC
+ISERPPC
+ISERPPC
+PPC Capacitor
+IS Endo-Composite
+IS Endo-Composite
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLLRM5
+Clan Ammo LRM-5
+Radical Heat Sink System
+Radical Heat Sink System
+Radical Heat Sink System
+IS Endo-Composite
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLSRM6
+CLLRM5
+Clan Ammo SRM-6
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+IS Endo-Composite
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo-Composite
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+RISC Viral Jammer (Decoy)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

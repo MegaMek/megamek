@@ -30,7 +30,7 @@ public class InfantrySMGJ15Hagel extends InfantryWeapon {
        name = "SMG (J-15 Hagel)";
        setInternalName(name);
        addLookupName("J-15 Hagel");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .33;
        tonnage =  0.0027;
        infantryDamage =  0.33;
@@ -43,11 +43,11 @@ public class InfantrySMGJ15Hagel extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #5";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_D)
-       .setAvailability(RATING_X,RATING_X,RATING_D,RATING_C)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.D)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.X,AvailabilityValue.D,AvailabilityValue.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,3050,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_WB);
+       .setProductionFactions(Faction.WB);
    }
 }

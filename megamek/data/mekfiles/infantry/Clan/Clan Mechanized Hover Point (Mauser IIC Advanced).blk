@@ -1,0 +1,52 @@
+#Saved from version 0.50.04-SNAPSHOT on 2025-03-03
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Clan Mechanized Hover Point
+</Name>
+
+<Model>
+(Mauser IIC Advanced)
+</Model>
+
+<year>
+3013
+</year>
+
+<originalBuildYear>
+3013
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<role>
+Scout
+</role>
+
+<motion_type>
+Hover
+</motion_type>
+
+<Troopers Equipment>
+Clan Armor Kit (All)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<squad_size>
+5
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+Laser Rifle (Mauser IIC IAS)
+</Primary>
+

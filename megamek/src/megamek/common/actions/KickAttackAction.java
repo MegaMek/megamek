@@ -131,8 +131,8 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
-        Hex attHex = game.getBoard().getHex(ae.getPosition());
-        Hex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getHexOf(ae);
+        Hex targHex = game.getHexOf(target);
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int targetElevation = target.getElevation()
                 + targHex.getLevel();
@@ -166,11 +166,6 @@ public class KickAttackAction extends PhysicalAttackAction {
                 && (leg != KickAttackAction.LEFTMULE)) {
             throw new IllegalArgumentException(
                     "Leg must be one of LEFT, RIGHT, LEFTMULE, or RIGHTMULE");
-        }
-
-        // non-meks can't kick
-        if (!(ae instanceof Mek)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-meks can't kick");
         }
 
         // check if all legs are present & working
@@ -215,14 +210,14 @@ public class KickAttackAction extends PhysicalAttackAction {
         // Don't check arc for stomping infantry or tanks.
         if ((0 != range)
                 && (mule != 1)
-                && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
+                && !ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 
         // check facing, part 2: Mule kick
         if ((0 != range)
                 && (mule == 1)
-                && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_REAR)) {
+                && !ComputeArc.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_REAR)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 
@@ -280,12 +275,16 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // elevation
-        if (attackerElevation < targetHeight) {
-            toHit.setHitTable(ToHitData.HIT_KICK);
-        } else if (target.getHeight() > 0) {
+        if(isConvertedQuadVee(target, game)){
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         } else {
-            toHit.setHitTable(ToHitData.HIT_NORMAL);
+            if (attackerElevation < targetHeight) {
+                toHit.setHitTable(ToHitData.HIT_KICK);
+            } else if (target.getHeight() > 0) {
+                toHit.setHitTable(ToHitData.HIT_PUNCH);
+            } else {
+                toHit.setHitTable(ToHitData.HIT_NORMAL);
+            }
         }
 
         // What to do with grounded dropships? Awaiting rules clarification, but
@@ -301,7 +300,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // factor in target side
-        toHit.setSideTable(Compute.targetSideTable(ae, target));
+        toHit.setSideTable(ComputeSideTable.sideTable(ae, target));
 
         // BMRr pg. 42, "The side on which a vehicle takes damage is determined
         // randomly if the BattleMek is attacking from the same hex."

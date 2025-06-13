@@ -37,7 +37,7 @@ public class SpaceBombAttack extends Weapon {
         setInternalName(IBomber.SPACE_BOMB_ATTACK);
         heat = 0;
         damage = DAMAGE_SPECIAL;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         minimumRange = WEAPON_NA;
         shortRange = 0;
         mediumRange = 0;
@@ -50,6 +50,7 @@ public class SpaceBombAttack extends Weapon {
         flags = flags.or(F_SPACE_BOMB).or(F_SOLO_ATTACK);
         hittable = false;
         capital = true;
+        techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
     }
 
     /*

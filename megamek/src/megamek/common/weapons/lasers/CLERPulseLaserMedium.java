@@ -35,11 +35,11 @@ public class CLERPulseLaserMedium extends PulseLaserWeapon {
         shortRange = 5;
         mediumRange = 9;
         longRange = 14;
-        extremeRange = 18;
+        extremeRange = 21;
         waterShortRange = 3;
         waterMediumRange = 6;
         waterLongRange = 9;
-        waterExtremeRange = 10;
+        waterExtremeRange = 12;
         shortAV = 7;
         medAV = 7;
         maxRange = RANGE_MED;
@@ -49,10 +49,10 @@ public class CLERPulseLaserMedium extends PulseLaserWeapon {
         cost = 150000;
         rulesRefs = "320, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-                .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        techAdvancement.setTechBase(TechBase.CLAN)
+                .setTechRating(TechRating.F).setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(DATE_NONE, 3057, 3082, DATE_NONE, DATE_NONE)
-                .setPrototypeFactions(F_CWF)
-                .setProductionFactions(F_CWF).setStaticTechLevel(SimpleTechLevel.STANDARD);
+                .setPrototypeFactions(Faction.CWF)
+                .setProductionFactions(Faction.CWF).setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

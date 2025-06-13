@@ -37,7 +37,7 @@ public class InfantrySupportMGSupportWeapon extends InfantryWeapon {
 		addLookupName("InfantryHMG");
 		addLookupName("InfantrySupportMG");
 		addLookupName("InfantrySupportMachineGun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1750;
 		bv = 4.80;
 		tonnage = .044;
@@ -56,11 +56,11 @@ public class InfantrySupportMGSupportWeapon extends InfantryWeapon {
 		longRange = 6;
 		extremeRange = 8;
 		rulesRefs = " 273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-		        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+		        .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 }

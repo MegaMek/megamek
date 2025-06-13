@@ -37,7 +37,7 @@ public class InfantrySupportSRMLightInfernoWeapon extends InfantryWeapon {
 		addLookupName(name);
 		addLookupName("Light SRM (Inferno)");
 		sortingName = "SRM Launcher BI";
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1500;
 		bv = 1.74;
 		flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);
@@ -50,12 +50,12 @@ public class InfantrySupportSRMLightInfernoWeapon extends InfantryWeapon {
 		setModes(modeStrings);
 		rulesRefs = "273, TM";
 		tonnage = .010;
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-		        .setProductionFactions(F_TH).setTechRating(RATING_C)
-		        .setAvailability(RATING_C, RATING_C, RATING_D, RATING_C);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
+		        .setProductionFactions(Faction.TH).setTechRating(TechRating.C)
+		        .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C);
 
 	}
 }

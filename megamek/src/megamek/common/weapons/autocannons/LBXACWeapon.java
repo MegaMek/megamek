@@ -55,7 +55,7 @@ public abstract class LBXACWeapon extends AmmoWeapon {
         super();
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON)
                 .or(F_BALLISTIC).or(F_DIRECT_FIRE);
-        ammoType = AmmoType.T_AC_LBX;
+        ammoType = AmmoType.AmmoTypeEnum.AC_LBX;
         atClass = CLASS_LBX_AC;
     }
 
@@ -75,5 +75,12 @@ public abstract class LBXACWeapon extends AmmoWeapon {
     @Override
     public int getBattleForceClass() {
         return BFCLASS_FLAK;
+    }
+
+    /**
+     * This is an LBX weapon, the Aero AV is 60% of normal.
+     */
+    protected double getBaseAeroDamage() {
+        return Math.ceil(0.6 * this.damage);
     }
 }

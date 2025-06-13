@@ -34,7 +34,7 @@ public class CLBASRM1 extends SRMWeapon {
         setInternalName("CLBASRM1");
         addLookupName("Clan BA SRM-1");
         addLookupName("Clan BA SRM 1");
-        ammoType = AmmoType.T_SRM;
+        ammoType = AmmoType.AmmoTypeEnum.SRM;
         rackSize = 1;
         shortRange = 3;
         mediumRange = 6;
@@ -46,14 +46,14 @@ public class CLBASRM1 extends SRMWeapon {
         criticals = 1;
         cost = 5000;
         rulesRefs = "261, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_D, RATING_C, RATING_B)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
                 .setClanAdvancement(2865, 2868, 2870, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CWF)
-                .setProductionFactions(F_CWF);
+                .setPrototypeFactions(Faction.CWF)
+                .setProductionFactions(Faction.CWF);
     }
 }

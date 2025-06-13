@@ -36,7 +36,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
         heat = 10;
         damage = 10;
         rackSize = 1;
-        ammoType = AmmoType.T_PLASMA;
+        ammoType = AmmoType.AmmoTypeEnum.PLASMA;
         minimumRange = WEAPON_NA;
         shortRange = 5;
         mediumRange = 10;
@@ -53,15 +53,15 @@ public class ISPlasmaRifle extends AmmoWeapon {
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
         rulesRefs = "234, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3061, 3068, 3072, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC);
+                .setPrototypeFactions(Faction.CC)
+                .setProductionFactions(Faction.CC);
     }
 
     /*

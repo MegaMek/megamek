@@ -36,7 +36,7 @@ public class InfantryPistolMydronAutoPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryMydronAutopistol");
 		addLookupName("Mydron Auto Pistol");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 100;
 		bv = 0.13;
 		tonnage = .0015;
@@ -48,12 +48,12 @@ public class InfantryPistolMydronAutoPistolWeapon extends InfantryWeapon {
 		shots = 20;
 		bursts = 4;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2607, 2612, 2700, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2607, 2612, 2700, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
 				.setClanAdvancement(2607, 2612, 2700, DATE_NONE, DATE_NONE)
-				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_FS)
-				.setProductionFactions(F_FS).setTechRating(RATING_C)
-				.setAvailability(RATING_C, RATING_B, RATING_B, RATING_B);
+				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FS)
+				.setProductionFactions(Faction.FS).setTechRating(TechRating.C)
+				.setAvailability(AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);
 
 	}
 }

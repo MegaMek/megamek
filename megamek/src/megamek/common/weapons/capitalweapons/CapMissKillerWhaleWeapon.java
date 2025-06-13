@@ -29,7 +29,7 @@ public class CapMissKillerWhaleWeapon extends CapitalMissileWeapon {
         this.shortName = "Killer Whale";
         this.heat = 20;
         this.damage = 4;
-        this.ammoType = AmmoType.T_KILLER_WHALE;
+        this.ammoType = AmmoType.AmmoTypeEnum.KILLER_WHALE;
         this.shortRange = 7;
         this.mediumRange = 14;
         this.longRange = 21;
@@ -46,17 +46,17 @@ public class CapMissKillerWhaleWeapon extends CapitalMissileWeapon {
         this.missileArmor = 40;
         this.maxRange = RANGE_EXT;
         rulesRefs = "210, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_C, RATING_E, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2200, 2305, 3055, 2950, 3051)
                 .setISApproximate(true, false, false, true, false)
                 .setClanAdvancement(2200, 2305, 3055, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TA)
-                .setReintroductionFactions(F_FS, F_LC);
+                .setPrototypeFactions(Faction.TA)
+                .setProductionFactions(Faction.TA)
+                .setReintroductionFactions(Faction.FS, Faction.LC);
     }
 }

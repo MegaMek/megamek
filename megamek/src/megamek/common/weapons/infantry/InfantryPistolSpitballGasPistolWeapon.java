@@ -36,7 +36,7 @@ public class InfantryPistolSpitballGasPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantrySpitballGaspistol");
 		addLookupName("Spitball Gas Weapon");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 6;
 		bv = 0;
 		tonnage = .001;
@@ -47,11 +47,11 @@ public class InfantryPistolSpitballGasPistolWeapon extends InfantryWeapon {
 		ammoCost = 2;
 		shots = 25;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3056, 3059, 3100, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3056, 3059, 3100, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
-				.setPrototypeFactions(F_LC)
-				.setProductionFactions(F_LC).setTechRating(RATING_C)
-				.setAvailability(RATING_X, RATING_X, RATING_C, RATING_C);
+				.setPrototypeFactions(Faction.LC)
+				.setProductionFactions(Faction.LC).setTechRating(TechRating.C)
+				.setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 }

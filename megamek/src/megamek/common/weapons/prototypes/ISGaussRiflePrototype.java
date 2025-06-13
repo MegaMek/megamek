@@ -45,12 +45,12 @@ public class ISGaussRiflePrototype extends GaussWeapon {
         sortingName = "Gauss PROTO";
         heat = 1;
         damage = 15;
-        ammoType = AmmoType.T_GAUSS;
+        ammoType = AmmoType.AmmoTypeEnum.GAUSS;
         minimumRange = 2;
         shortRange = 7;
         mediumRange = 15;
         longRange = 22;
-        extremeRange = 30;
+        extremeRange = 33;
         tonnage = 15.0;
         bv = 320;
         cost = 1200000;
@@ -60,16 +60,16 @@ public class ISGaussRiflePrototype extends GaussWeapon {
         explosionDamage = 20;
         rulesRefs = "71, IO";
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
+                .setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
                 .setISAdvancement(2587, DATE_NONE, DATE_NONE, 2590, 3038)
                 .setISApproximate(false, false, false, true, true)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FS, F_LC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

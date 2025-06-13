@@ -37,7 +37,7 @@ public class InfantrySupportClanSemiPortableHeavyLaserWeapon extends InfantryWea
 		addLookupName("InfantryClanSemiPortableHeavyLaser");
 		addLookupName("InfantryClanHeavySmallLaser");
 		addLookupName("Infantry Clan Semi-Portable Heavy laser");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 20000;
 		bv = 7.53;
 		tonnage = 0.025;
@@ -49,10 +49,10 @@ public class InfantrySupportClanSemiPortableHeavyLaserWeapon extends InfantryWea
 		shots = 10;
 		tonnage = .150;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3055, 3061, DATE_NONE, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CBR)
-		        .setProductionFactions(F_CSA).setTechRating(RATING_F)
-		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+		techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3055, 3061, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CBR)
+		        .setProductionFactions(Faction.CSA).setTechRating(TechRating.F)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D);
 
 	}
 }

@@ -1,19 +1,39 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common.autoresolve.damage;
 
 import megamek.common.*;
+import megamek.common.equipment.WeaponMounted;
 import megamek.logging.MMLogger;
 
 import java.util.ArrayList;
@@ -40,7 +60,10 @@ public interface DamageApplier<E extends Entity> {
             return new HitDetails(hit, damageToApply, setArmorValueTo, hitInternal, Math.min(hitCrew + 1, Crew.DEATH));
         }
         public HitDetails withDamage(int damage) {
-            return new HitDetails(hit, damage, setArmorValueTo, hitInternal, Math.min(hitCrew + 1, Crew.DEATH));
+            return new HitDetails(hit, damage, setArmorValueTo, hitInternal, hitCrew);
+        }
+        public HitDetails redirectedTo(HitData nextLocation) {
+            return new HitDetails(nextLocation, damageToApply, setArmorValueTo, hitInternal, hitCrew);
         }
     }
 
@@ -107,7 +130,7 @@ public interface DamageApplier<E extends Entity> {
         int damageApplied = 0;
         while (totalDamage > 0) {
             var clusterDamage = Math.min(totalDamage, clusterSize);
-            applyDamage(hitDetails.withDamage(clusterDamage));
+            hitDetails = applyDamage(hitDetails.withDamage(clusterDamage));
             totalDamage -= clusterDamage;
             damageApplied += clusterDamage;
         }
@@ -163,11 +186,15 @@ public interface DamageApplier<E extends Entity> {
      *
      * @param hitDetails the hit details
      */
-    default void applyDamage(HitDetails hitDetails) {
+    default HitDetails applyDamage(HitDetails hitDetails) {
         hitDetails = damageArmor(hitDetails);
         hitDetails = damageInternals(hitDetails);
         tryToDamageCrew(hitDetails.hitCrew());
         entity().applyDamage();
+        if (entity().isDoomed()) {
+            setEntityDestroyed(entity());
+        }
+        return hitDetails;
     }
 
     /**
@@ -185,14 +212,21 @@ public interface DamageApplier<E extends Entity> {
         }
 
         entity.setArmor(0, hit);
-        int newInternalValue = Math.max(currentInternalValue + hitDetails.setArmorValueTo(), entityMustSurvive() ? 1 : 0);
-
+        int newInternalValue = currentInternalValue + hitDetails.setArmorValueTo();
+        if (newInternalValue <= 0 && entityMustSurvive()) {
+            newInternalValue = 1;
+        }
         logger.trace("[{}] Damage: {} - Internal at: {}", entity.getDisplayName(), hitDetails.damageToApply(), newInternalValue);
-        entity.setInternal(newInternalValue, hit);
         if (newInternalValue > 0) {
+            entity.setInternal(newInternalValue, hit);
             hitDetails = applyDamageToEquipments(hitDetails);
         } else {
+            entity.setInternal(0, hit);
             hitDetails = destroyLocation(hitDetails);
+            if (newInternalValue < 0) {
+                hitDetails = hitDetails.redirectedTo(entity.getTransferLocation(hit));
+                hitDetails = hitDetails.withDamage(newInternalValue * -1);
+            }
         }
         return hitDetails;
     }
@@ -216,7 +250,6 @@ public interface DamageApplier<E extends Entity> {
         var entity = entity();
         logger.trace("[{}] Destroying location {}", entity.getDisplayName(), location);
         entity.destroyLocation(location);
-        entity.setDestroyed(true);
         setEntityDestroyed(entity);
     }
 
@@ -284,11 +317,10 @@ public interface DamageApplier<E extends Entity> {
      * @param <E> the type of the entity
      */
     static <E extends Entity> void setEntityDestroyed(E entity) {
-        if (entity.getRemovalCondition() != IEntityRemovalConditions.REMOVE_DEVASTATED) {
-            entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_SALVAGEABLE);
-            entity.setSalvage(true);
-            logger.trace("[{}] Entity destroyed", entity.getDisplayName());
-        }
+        entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_SALVAGEABLE);
+        boolean salvageable = entity.getRemovalCondition() < IEntityRemovalConditions.REMOVE_DEVASTATED;
+        entity.setSalvage(salvageable);
+        entity.setDestroyed(true);
     }
 
     /**
@@ -300,7 +332,6 @@ public interface DamageApplier<E extends Entity> {
         entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_DEVASTATED);
         entity.setSalvage(false);
         entity.setDestroyed(true);
-        logger.trace("[{}] Entity devastated", entity.getDisplayName());
     }
 
     /**
@@ -315,7 +346,7 @@ public interface DamageApplier<E extends Entity> {
         Collections.shuffle(criticalSlots);
         for (CriticalSlot slot : criticalSlots) {
             if (slot != null && slot.isHittable() && !slot.isHit() && !slot.isDestroyed()) {
-                slot.setHit(true);
+                slot.setDestroyed(true);
                 logger.trace("[{}] Equipment destroyed: {}", entity.getDisplayName(), slot);
                 break;
             }
@@ -329,7 +360,14 @@ public interface DamageApplier<E extends Entity> {
      * @param hitDetails the hit details
      */
     default HitDetails damageArmor(HitDetails hitDetails) {
+        var hit = hitDetails.hit();
         var currentArmorValue = Math.max(hitDetails.setArmorValueTo(), 0);
+        if (hit.getLocation() < 0 || hit.getLocation() > 7) {
+            hit.setLocation(getRandomHitLocation());
+        }
+        if (hit.getLocation() < 0 || hit.getLocation() > 7) {
+            hit.setLocation(0);
+        }
         entity().setArmor(currentArmorValue, hitDetails.hit());
         logger.trace("[{}] Damage: {} - Armor at: {}", entity().getDisplayName(), hitDetails.damageToApply(), currentArmorValue);
         return hitDetails;

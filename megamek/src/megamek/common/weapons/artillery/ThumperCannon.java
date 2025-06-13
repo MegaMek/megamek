@@ -38,12 +38,12 @@ public class ThumperCannon extends ArtilleryCannonWeapon {
         sortingName = "Cannon Arty Thumper";
         heat = 5;
         rackSize = 5;
-        ammoType = AmmoType.T_THUMPER_CANNON;
+        ammoType = AmmoType.AmmoTypeEnum.THUMPER_CANNON;
         minimumRange = 3;
         shortRange = 4;
         mediumRange = 9;
         longRange = 14;
-        extremeRange = 18;
+        extremeRange = 21;
         tonnage = 10;
         criticals = 7;
         bv = 41;
@@ -54,13 +54,13 @@ public class ThumperCannon extends ArtilleryCannonWeapon {
         maxRange = RANGE_MED;
         rulesRefs = "285, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_ALL)
-                .setTechRating(RATING_B).setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+        techAdvancement.setTechBase(TechBase.ALL)
+                .setTechRating(TechRating.B).setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3012, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setClanAdvancement(3032, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
-                .setPrototypeFactions(F_LC, F_CWF).setProductionFactions(F_LC)
+                .setPrototypeFactions(Faction.LC, Faction.CWF).setProductionFactions(Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 

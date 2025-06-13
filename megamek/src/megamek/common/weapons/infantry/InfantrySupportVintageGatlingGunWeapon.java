@@ -29,7 +29,7 @@ public class InfantrySupportVintageGatlingGunWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryVintageGatlingGun");
 		addLookupName("Vintage Gatling Gun");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 450000;
 		tonnage = 0.296;
 		bv = 0.0;
@@ -42,10 +42,10 @@ public class InfantrySupportVintageGatlingGunWeapon extends InfantryWeapon {
 		shots = 480;
 		bursts = 40;
 		rulesRefs = "195, AToW-C";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_B)
-		        .setAvailability(RATING_E, RATING_E, RATING_F, RATING_F);
+		        .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.B)
+		        .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F);
 	}
 }

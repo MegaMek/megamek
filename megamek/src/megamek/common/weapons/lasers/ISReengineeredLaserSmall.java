@@ -36,7 +36,7 @@ public class ISReengineeredLaserSmall extends ReengineeredLaserWeapon {
         waterShortRange = 1;
         waterMediumRange = 2;
         waterLongRange = 2;
-        waterExtremeRange = 4;
+        waterExtremeRange = 2;
         tonnage = 1.5;
         criticals = 1;
         flags = flags.or(F_NO_FIRES);
@@ -47,18 +47,18 @@ public class ISReengineeredLaserSmall extends ReengineeredLaserWeapon {
         atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "89, IO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D)
                 .setISAdvancement(3120, 3130,DATE_NONE,DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
-    
+
     @Override
     public boolean isAlphaStrikePointDefense() {
         return true;

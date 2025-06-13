@@ -17,6 +17,7 @@ import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -79,7 +80,7 @@ public class MGAWeaponHandler extends MGHandler {
         shotsNeedFiring = howManyShots;
         if (ammo.getUsableShotsLeft() == 0) {
             ae.loadWeapon(weapon);
-            ammo = weapon.getLinked();
+            ammo = (AmmoMounted) weapon.getLinked();
             // there will be some ammo somewhere, otherwise shot will not have
             // been fired.
         }
@@ -87,7 +88,7 @@ public class MGAWeaponHandler extends MGHandler {
             shotsNeedFiring -= ammo.getBaseShotsLeft();
             ammo.setShotsLeft(0);
             ae.loadWeapon(weapon);
-            ammo = weapon.getLinked();
+            ammo = (AmmoMounted) weapon.getLinked();
         }
         ammo.setShotsLeft(ammo.getBaseShotsLeft() - shotsNeedFiring);
     }
@@ -154,7 +155,7 @@ public class MGAWeaponHandler extends MGHandler {
         }
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
+                .getCover(), ComputeSideTable.sideTable(ae, entityTarget, weapon
                 .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,

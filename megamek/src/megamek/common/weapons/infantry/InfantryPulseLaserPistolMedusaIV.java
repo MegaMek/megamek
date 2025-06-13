@@ -28,7 +28,7 @@ public class InfantryPulseLaserPistolMedusaIV extends InfantryWeapon {
         name = "Pulse Laser Pistol (Medusa IV)";
         setInternalName(name);
         addLookupName("MEDUSAIV");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1500;
         bv = 0.063;
         tonnage = 0.0001;
@@ -40,11 +40,11 @@ public class InfantryPulseLaserPistolMedusaIV extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TechAdvancement.TECH_BASE_IS)
-                .setTechRating(TechAdvancement.RATING_E) // Assuming X-E-E-D simplifies to E
-                .setAvailability(new int[]{TechAdvancement.RATING_X, TechAdvancement.RATING_E, TechAdvancement.RATING_E, TechAdvancement.RATING_D})
-                .setISAdvancement(TechAdvancement.DATE_NONE, TechAdvancement.DATE_NONE, 2800, TechAdvancement.DATE_NONE, TechAdvancement.DATE_NONE)
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.E) // Assuming X-E-E-D simplifies to E
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
+                .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(TechAdvancement.F_MC);
+                .setProductionFactions(Faction.MC);
     }
 }

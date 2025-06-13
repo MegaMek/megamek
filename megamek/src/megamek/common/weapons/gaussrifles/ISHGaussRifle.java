@@ -39,12 +39,12 @@ public class ISHGaussRifle extends GaussWeapon {
         sortingName = "Gauss D";
         heat = 2;
         damage = DAMAGE_VARIABLE;
-        ammoType = AmmoType.T_GAUSS_HEAVY;
+        ammoType = AmmoType.AmmoTypeEnum.GAUSS_HEAVY;
         minimumRange = 4;
         shortRange = 6;
         mediumRange = 13;
         longRange = 20;
-        extremeRange = 26;
+        extremeRange = 30;
         damageShort = 25;
         damageMedium = 20;
         damageLong = 10;
@@ -58,15 +58,15 @@ public class ISHGaussRifle extends GaussWeapon {
         maxRange = RANGE_LONG;
         explosionDamage = 25;
         rulesRefs = "218, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3051, 3061, 3067, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FC);
+                .setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.FC);
     }
 
     @Override

@@ -32,6 +32,7 @@ public enum MegaMekCommandLineFlag {
     // exporters and utilities
     EQDB(Messages.getString("MegaMek.Help.EquipmentDB")),
     EQEDB(Messages.getString("MegaMek.Help.EquipmentExtendedDB")),
+    EQYAMLDB(Messages.getString("MegaMek.Help.EquipmentYamlDB")),
     EQWDB(Messages.getString("MegaMek.Help.EquipmentWeaponDB")),
     EQADB(Messages.getString("MegaMek.Help.EquipmentAmmoDB")),
     EQMDB(Messages.getString("MegaMek.Help.EquipmentMiscDB")),
@@ -55,7 +56,7 @@ public enum MegaMekCommandLineFlag {
             return valueOf(text.toUpperCase(Locale.ROOT));
         } catch (Exception ex) {
             MMLogger.create(MegaMekCommandLineFlag.class)
-                    .error("Failed to parse the MegaMekCommandLineFlag from text " + text);
+                  .error("Failed to parse the MegaMekCommandLineFlag from text {}", text);
             throw (ex);
         }
     }

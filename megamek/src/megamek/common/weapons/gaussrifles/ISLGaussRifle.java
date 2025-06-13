@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
- * This program is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the Free 
- * Software Foundation; either version 2 of the License, or (at your option) 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
 package megamek.common.weapons.gaussrifles;
@@ -36,12 +36,12 @@ public class ISLGaussRifle extends GaussWeapon {
         sortingName = "Gauss B";
         heat = 1;
         damage = 8;
-        ammoType = AmmoType.T_GAUSS_LIGHT;
+        ammoType = AmmoType.AmmoTypeEnum.GAUSS_LIGHT;
         minimumRange = 3;
         shortRange = 8;
         mediumRange = 17;
         longRange = 25;
-        extremeRange = 34;
+        extremeRange = 37;
         tonnage = 12.0;
         criticals = 5;
         bv = 159;
@@ -53,20 +53,20 @@ public class ISLGaussRifle extends GaussWeapon {
         maxRange = RANGE_EXT;
         explosionDamage = 16;
         rulesRefs = "219, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3049, 3056, 3065, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW);
+                .setPrototypeFactions(Faction.FW)
+                .setProductionFactions(Faction.FW);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

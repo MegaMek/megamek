@@ -94,9 +94,7 @@ public class BLKConvFighterFile extends BLKFile implements IMekLoader {
         } else {
             a.setArmorType(EquipmentType.T_ARMOR_STANDARD);
         }
-        if (dataFile.exists("armor_tech")) {
-            a.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
-        }
+        setArmorTechLevelFromDataFile(a);
         if (dataFile.exists("internal_type")) {
             a.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
         } else {

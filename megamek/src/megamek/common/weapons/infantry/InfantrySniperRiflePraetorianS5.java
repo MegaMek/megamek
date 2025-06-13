@@ -34,7 +34,7 @@ public class InfantrySniperRiflePraetorianS5 extends InfantryWeapon {
        name = "Sniper Rifle (Praetorian S-5)";
        setInternalName(name);
        addLookupName("Praetorian S-5");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = 1.05;
        tonnage =  0.007;
        infantryDamage =  0.53;
@@ -47,12 +47,12 @@ public class InfantrySniperRiflePraetorianS5 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #1";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_X,RATING_C,RATING_C,RATING_C)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,2920,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_MH);
+       .setProductionFactions(Faction.MH);
 
    }
 }

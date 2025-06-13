@@ -34,7 +34,7 @@ public class InfantrySniperRifleLRS53SniperRifle extends InfantryWeapon {
        name = "Sniper Rifle (LRS-53 Sniper Rifle)";
        setInternalName(name);
        addLookupName("LRS-53 Sniper Rifle");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .252;
        tonnage =  0.006;
        infantryDamage =  0.28;
@@ -47,12 +47,12 @@ public class InfantrySniperRifleLRS53SniperRifle extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #1";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_X,RATING_E,RATING_D,RATING_D)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.E,AvailabilityValue.D,AvailabilityValue.D)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_MC);
+       .setProductionFactions(Faction.MC);
 
    }
 }

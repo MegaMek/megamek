@@ -116,8 +116,8 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
         } else {
             mek.setArmorType(EquipmentType.T_ARMOR_STANDARD);
         }
-        if (!patchworkArmor && dataFile.exists("armor_tech")) {
-            mek.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        if (!patchworkArmor) {
+            setArmorTechLevelFromDataFile(mek);
         }
         if (patchworkArmor) {
             for (int i = 0; i < mek.locations(); i++) {

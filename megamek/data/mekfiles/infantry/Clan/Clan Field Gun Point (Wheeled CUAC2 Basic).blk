@@ -1,0 +1,64 @@
+#Saved from version 0.50.04-SNAPSHOT on 2025-03-04
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Clan Field Gun Point
+</Name>
+
+<Model>
+(Wheeled CUAC2 Basic)
+</Model>
+
+<year>
+2822
+</year>
+
+<originalBuildYear>
+2822
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<Troopers Equipment>
+Generic Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+CLUltraAC2
+IS Ultra AC/2 Ammo
+CLUltraAC2
+IS Ultra AC/2 Ammo
+CLUltraAC2
+IS Ultra AC/2 Ammo
+CLUltraAC2
+IS Ultra AC/2 Ammo
+</Field Guns Equipment>
+
+<notes>
+Intro date is based on when the weapon becomes an Advanced weapon. Uses Generic Infantry kit due to much later intro date of standard Clan kit.
+</notes>
+
+<squad_size>
+5
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+

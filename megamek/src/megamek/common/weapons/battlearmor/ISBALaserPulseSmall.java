@@ -40,7 +40,7 @@ public class ISBALaserPulseSmall extends PulseLaserWeapon {
         waterShortRange = 1;
         waterMediumRange = 2;
         waterLongRange = 2;
-        waterExtremeRange = 4;
+        waterExtremeRange = 2;
         tonnage = 0.4;
         criticals = 1;
         bv = 12;
@@ -51,14 +51,14 @@ public class ISBALaserPulseSmall extends PulseLaserWeapon {
         flags = flags.or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
                 .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "258, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(3057, 3060, 3062, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_LC)
-                .setProductionFactions(F_LC);
+                .setPrototypeFactions(Faction.LC)
+                .setProductionFactions(Faction.LC);
     }
 }

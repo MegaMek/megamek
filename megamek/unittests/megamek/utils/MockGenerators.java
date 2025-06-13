@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import megamek.common.*;
+import megamek.common.moves.MovePath;
 import megamek.common.options.GameOptions;
 import megamek.common.options.PilotOptions;
 
@@ -67,7 +68,7 @@ public class MockGenerators {
 		final Hex mockHex = new Hex();
 		when(mockBoard.getHex(any(Coords.class))).thenReturn(mockHex);
 		when(mockBoard.contains(any(Coords.class))).thenReturn(true);
-		when(mockBoard.inSpace()).thenReturn(false);
+		when(mockBoard.isSpace()).thenReturn(false);
 
 		return mockBoard;
 	}
@@ -199,7 +200,7 @@ public class MockGenerators {
 		when(mockPlayer.getConstantInitBonus()).thenReturn(0);
 		when(mockPlayer.getTurnInitBonus()).thenReturn(0);
 		when(mockPlayer.getInitCompensationBonus()).thenReturn(0);
-		when(mockPlayer.getCommandBonus()).thenReturn(0);
+		when(mockPlayer.getOverallCommandBonus()).thenReturn(0);
 		return mockPlayer;
 	}
 }

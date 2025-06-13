@@ -23,6 +23,7 @@ import java.util.Map;
 
 import megamek.client.bot.princess.FireControl;
 import megamek.client.bot.princess.MinefieldUtil;
+import megamek.common.moves.MovePath;
 import megamek.common.pathfinder.BoardClusterTracker.MovementType;
 
 /**
@@ -83,7 +84,7 @@ public class BulldozerMovePath extends MovePath {
     @Override
     public MovePath addStep(final MoveStepType type) {
         BulldozerMovePath mp = (BulldozerMovePath) super.addStep(type);
-        Hex hex = mp.getGame().getBoard().getHex(mp.getFinalCoords());
+        Hex hex = mp.getGame().getBoard(mp.getFinalBoardId()).getHex(mp.getFinalCoords());
         int hexWaterDepth = ((hex != null) && hex.containsTerrain(Terrains.WATER)) ? hex.depth() : Integer.MIN_VALUE;
 
         if (!mp.isMoveLegal() && !mp.isJumping()) {
@@ -187,7 +188,7 @@ public class BulldozerMovePath extends MovePath {
      * to a form through which the current unit can move
      */
     public static int calculateLevelingCost(Coords finalCoords, Entity entity) {
-        Board board = entity.getGame().getBoard();
+        Board board = entity.getGame().getBoard(entity);
         Hex destHex = board.getHex(finalCoords);
         int levelingCost = CANNOT_LEVEL;
 

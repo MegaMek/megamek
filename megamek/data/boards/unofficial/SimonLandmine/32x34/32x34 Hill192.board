@@ -1,5 +1,12 @@
 size 32 34
 option exit_roads_to_pavement false
+tag "LightUrban (Auto)"
+tag "GrassTheme (Auto)"
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "HighHills (Auto)"
+tag "Woods (Auto)"
+tag "DenseForest (Auto)"
 hex 0101 2 "woods:1;foliage_elev:2" "grass"
 hex 0201 2 "woods:1;foliage_elev:2" "grass"
 hex 0301 2 "woods:1;road_fluff:1;road:1:5;foliage_elev:2" "grass"

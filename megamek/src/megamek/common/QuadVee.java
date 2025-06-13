@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. <Package Name> was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common;
 
@@ -116,13 +130,13 @@ public class QuadVee extends QuadMek {
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-    return new TechAdvancement(TECH_BASE_CLAN)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+    return new TechAdvancement(TechBase.CLAN)
+            .setTechRating(TechRating.F)
+            .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
             .setClanAdvancement(3130, 3135, DATE_NONE, DATE_NONE, DATE_NONE)
             .setClanApproximate(true)
-            .setPrototypeFactions(F_CHH)
-            .setProductionFactions(F_CHH)
+            .setPrototypeFactions(Faction.CHH)
+            .setProductionFactions(Faction.CHH)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
@@ -266,7 +280,7 @@ public class QuadVee extends QuadMek {
     }
 
     /**
-     * QuadVees cannot benefit from MASC in vehicle mode
+     * QuadVees cannot benefit from MASC or SuperChargers in vehicle mode
      */
     @Override
     public MPBoosters getArmedMPBoosters() {
@@ -275,11 +289,7 @@ public class QuadVee extends QuadMek {
             return  mpBoosters;
         }
 
-        return switch (mpBoosters) {
-            case MASC_AND_SUPERCHARGER -> MPBoosters.SUPERCHARGER_ONLY;
-            case MASC_ONLY -> MPBoosters.NONE;
-            default -> mpBoosters;
-        };
+        return MPBoosters.NONE;
     }
 
     /**
@@ -376,7 +386,8 @@ public class QuadVee extends QuadMek {
     @Override
     public boolean canFall(boolean gyroLegDamage) {
         // QuadVees cannot fall due to failed PSR in vehicle mode.
-        return !isProne() || getConversionMode() == CONV_MODE_MEK || (convertingNow && game.getPhase().isMovement());
+        return (getConversionMode() == CONV_MODE_MEK && !isProne()) ||
+                     (convertingNow && game.getPhase().isMovement() && !isProne());
     }
 
     /**
@@ -475,7 +486,7 @@ public class QuadVee extends QuadMek {
                 }
             }
             // are we wheeled and in light snow?
-            Hex hex = game.getBoard().getHex(getPosition());
+            Hex hex = game.getHexOf(this);
             if ((null != hex) && getMovementMode().isWheeled()
                     && (hex.terrainLevel(Terrains.SNOW) == 1)) {
                 roll.addModifier(1, "thin snow");
@@ -518,7 +529,7 @@ public class QuadVee extends QuadMek {
     @Override
     public boolean canGoHullDown() {
         if (getConversionMode() == CONV_MODE_VEHICLE != convertingNow) {
-            Hex occupiedHex = game.getBoard().getHex(getPosition());
+            Hex occupiedHex = game.getHexOf(this);
             return occupiedHex.containsTerrain(Terrains.FORTIFIED)
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
         }

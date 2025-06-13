@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,7 +34,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import megamek.client.ui.swing.util.PlayerColour;
+import megamek.client.ui.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASGame;
 import megamek.common.alphaStrike.BattleForceSUA;
@@ -46,6 +48,7 @@ import megamek.common.jacksonadapters.*;
 import megamek.common.options.GameOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.util.C3Util;
 import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
 import megamek.server.scriptedevent.GameEndTriggeredEvent;
@@ -145,16 +148,57 @@ public class ScenarioV2 implements Scenario {
 
         game.setupTeams();
 
-        game.setBoard(0, createBoard());
-        int zone = 1000;
-        for (HexArea hexArea : deploymentAreas) {
-            game.getBoard().addDeploymentZone(zone++, hexArea);
+        game.receiveBoards(new HashMap<>());
+
+        int id = 0;
+        for (Board board : parseBoards()) {
+            int boardId = board.getBoardId();
+            // when the scenario does not give an ID, it will be 0; then assign an ID
+            // default to 0 instead of -1 to keep compatibility with single-board!
+            if (boardId == 0) {
+                boardId = id;
+                id++;
+                board.setBoardId(boardId);
+            }
+            game.setBoard(boardId, board);
+        }
+        // post-process embedded boards and deployment areas
+        for (Board board : game.getBoards().values()) {
+            for (Coords coord : board.getEmbeddedBoardHexes()) {
+                Board embeddedBoard = game.getBoard(board.getEmbeddedBoardAt(coord));
+                embeddedBoard.setEnclosingBoard(board.getBoardId());
+            }
+            int zone = 1000;
+            for (HexArea hexArea : deploymentAreas) {
+                if (hexArea.matchesBoardId(board)) {
+                    board.addDeploymentZone(zone++, hexArea);
+                }
+            }
         }
         if ((game instanceof PlanetaryConditionsUsing)) {
             parsePlanetaryConditions((PlanetaryConditionsUsing) game);
         }
 
         if (game instanceof Game twGame) {
+            List<C3ScenarioParser.ParsedC3Info> networks = C3ScenarioParser.parse(node);
+            for (C3ScenarioParser.ParsedC3Info network : networks) {
+                List<Entity> units = network.participants.stream().map(twGame::getEntity).toList();
+                try {
+                    if (network.masterId == Entity.NONE) {
+                        C3Util.joinNh(twGame, units, units.get(0).getId(), false);
+                    } else {
+                        boolean connectMM = units.stream().anyMatch(Entity::hasC3M);
+                        if (connectMM) {
+                            Entity master = Objects.requireNonNull(twGame.getEntity(network.masterId));
+                            C3Util.setCompanyMaster(List.of(master));
+                        }
+                        C3Util.connect(twGame, new ArrayList<>(units), network.masterId, false);
+                    }
+                } catch (Exception e) {
+                    throw new ScenarioLoaderException("Faulty C3 network definition: " + network);
+                }
+            }
+
             twGame.setupDeployment();
             if (node.has(PARAM_GAME_EXTERNAL_ID)) {
                 twGame.setExternalGameId(node.get(PARAM_GAME_EXTERNAL_ID).intValue());
@@ -287,7 +331,7 @@ public class ScenarioV2 implements Scenario {
 
     private List<Player> readPlayers(IGame game) throws ScenarioLoaderException, IOException {
         if (!node.has(PARAM_FACTIONS) || !node.get(PARAM_FACTIONS).isArray()) {
-            throw new ScenarioLoaderException("ScenarioLoaderException.missingFactions");
+            throw new ScenarioLoaderException("The scenario does not contain any factions (players)!");
         }
         List<Player> result = new ArrayList<>();
         int playerId = 0;
@@ -449,17 +493,16 @@ public class ScenarioV2 implements Scenario {
         return units.stream().mapToInt(InGameObject::getId).max().orElse(0) + 1;
     }
 
-    private Board createBoard() throws ScenarioLoaderException {
+    private List<Board> parseBoards() throws ScenarioLoaderException {
         if (!node.has(MAP) && !node.has(MAPS)) {
-            throw new ScenarioLoaderException("ScenarioLoaderException.missingMap");
+            throw new ScenarioLoaderException("The scenario does not declare any game map!");
         }
         JsonNode mapNode = node.get(MAP);
         if (mapNode == null) {
             mapNode = node.get(MAPS);
         }
 
-        // TODO: currently, the first parsed board is used
-        return BoardDeserializer.parse(mapNode, scenarioDirectory()).get(0);
+        return BoardDeserializer.parse(mapNode, scenarioDirectory());
     }
 
     private File scenarioDirectory() {

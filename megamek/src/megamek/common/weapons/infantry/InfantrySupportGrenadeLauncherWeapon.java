@@ -36,7 +36,7 @@ public class InfantrySupportGrenadeLauncherWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryGrenadeLauncher");
 		addLookupName("Infantry Grenade Launcher");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 465;
 		bv = 2.48;
 		tonnage = .005;
@@ -48,11 +48,11 @@ public class InfantrySupportGrenadeLauncherWeapon extends InfantryWeapon {
 		ammoCost = 80;
 		shots = 10;
 		rulesRefs = " 273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 				.setISApproximate(false, false, false, false, false)
 				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-				.setAvailability(RATING_A, RATING_B, RATING_B, RATING_A);
+				.setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
+				.setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.A);
 
 	}
 }

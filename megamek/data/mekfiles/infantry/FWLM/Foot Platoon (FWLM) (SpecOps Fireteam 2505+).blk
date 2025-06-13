@@ -1,0 +1,85 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-15
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Foot Platoon (FWLM)
+</Name>
+
+<Model>
+(SpecOps Fireteam 2505+)
+</Model>
+
+<year>
+2505
+</year>
+
+<originalBuildYear>
+2505
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<Troopers Equipment>
+AntiMekGear
+Sneak Suit (Camo/IR)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+Only moderately more capable than regular infantry in terms of raw firepower, most of the utility of these formations is found in their skill and training. A direct assault at a critical point can make the difference between an easy success and slow, grinding failure.  Equipped with the latest in infantry stealth gear only makes these forces more threatening.
+</capabilities>
+
+<overview>
+In response to the formation of the Federated Commonwealth the Free World League introduced it's own advanced infantry armor kit.  It is widely considered the most effective commonly available kit in the Inner Sphere and is in high demand among FWL forces.
+</overview>
+
+<notes>
+Intro date based on common availability for two-system stealth suit. Slightly oversized squads selected for minimum anti-Mek capability.
+</notes>
+
+<squad_size>
+8
+</squad_size>
+
+<squadn>
+2
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+
+<Secondary>
+Laser Rifle (Blazer)
+</Secondary>
+
+<sneakcamo>
+true
+</sneakcamo>
+
+<sneakir>
+true
+</sneakir>
+
+<specialization>
+512
+</specialization>
+

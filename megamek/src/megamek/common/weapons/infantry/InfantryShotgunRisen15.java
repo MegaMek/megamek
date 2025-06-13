@@ -31,7 +31,7 @@ public class InfantryShotgunRisen15 extends InfantryWeapon {
        name = "Shotgun (Risen-15)";
        setInternalName(name);
        addLookupName("Risen-15");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .216;
        tonnage =  0.0039;
        infantryDamage =  0.27;
@@ -44,11 +44,11 @@ public class InfantryShotgunRisen15 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_X,RATING_E,RATING_D,RATING_D)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.E,AvailabilityValue.D,AvailabilityValue.D)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_DC);
+       .setProductionFactions(Faction.DC);
    }
 }

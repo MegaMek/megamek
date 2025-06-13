@@ -63,9 +63,15 @@ map:
   width: 65
   height: 35
 
-# space map
+# (deep) space map
 map:
   type: space
+  width: 65
+  height: 35
+
+# high altitude space map
+map:
+  type: highaltitude
   width: 65
   height: 35
 
@@ -102,6 +108,24 @@ maps:                                        # map and maps are 100% synonymous
     width: 20
     height: 20
 
+# Multiple connected maps
+map:
+  - file: Beginner Box/16x17 Grassland 1.board
+    # the name of this map, used in the map tab display
+    name: Grassland
+  - file: Battle of Tukayyid Pack/32x17 Pozoristu Mountains (CW).board
+    name: Pozoristu Mountains
+  - type: sky
+    width: 65
+    height: 35
+    embed:
+      # embed map id 0 (Grassland) at 5,5 in the sky map
+      - at: [ 5, 5 ]
+        id: 0
+      # embed map id 1 (Pozoristu) at 8, 9 in the sky map
+      - at: [ 8, 9 ]
+        id: 1
+
 # Post Processing:
 map:
   file: AGoAC Maps/16x17 Grassland 2.board
@@ -133,6 +157,27 @@ map:
       # when omitted, the terrain level is left unchanged
       newlevel: 2
       # obviously, at least one of newterrain and newlevel must be given
+
+    # addterrain adds terrain in a given area
+    - type: addterrain
+      # required: the terrain type to change, as used in board files
+      terrain: fire
+      # required: the terrain level
+      level: 1
+      # required: an area to apply it to, see "areas" section
+      area:
+        list:
+          - [ 10, 10 ]
+
+    # hexlevel sets the hex levels in a given area
+    - type: hexlevel
+      # required: the new hex level
+      level: 2
+      # required: an area to apply it to, see "areas" section
+      area:
+        list:
+          - [ 10, 10 ]
+
 
 # Optional: game options
 # when not given, the options from the latest game are used
@@ -236,10 +281,15 @@ factions:
 #    - include: Annihilator ANH-13.mmu
       - fullname: Atlas AS7-D
         # pre-deployed:
-        offboard: N                             # default: not offboard; values: N, E, S, W (TODO)
+        # default: not offboard; values: NORTH, EAST, SOUTH, WEST
+        offboard: NORTH
+        # the offboard distance in hexes; defaults to 17
+        distance: 200
         # Optional: when pre-deployed, set the facing. 5 = NW
         facing: 5
         at: [7, 4]                            # position 0704 (pre-deployed)
+        # The board to be in; defaults to 0; this can also be used without a position (deploy to this board)
+        board: 0
   #      x: 7                                 # alternative way to give position
   #      y: 4                                    # must have both x and y or neither
         # NOT pre-deployed:
@@ -381,14 +431,32 @@ factions:
           piloting: 4
           gunnery: 3
 
-events:
-  - type: princesssettings
-    trigger:
-      - type: unitkilled
-        unit: 103
-    destination: south
-    flee: true
+#events:
+#  - type: princesssettings
+#    trigger:
+#      - type: unitkilled
+#        unit: 103
+#    destination: south
+#    flee: true
 
+# ###############################################
+# C3 networks:
+# As there can be more than one network, c3 networks must always be given as a list (preceded with hyphen), even
+# if there is only a single C3 network
+c3:
+  # C3 networks without a master can be given as a single list; the loader will determine if they are C3i, NC3 or Nova
+  # The order of the units does not matter
+  - [101, 102]
+  - [2, 3, 6, 8]
+  - [5, 9, 12]
+  # Standard C3 must explicitly give the master as a single ID and the connected units as a list; the connected units
+  # can be C3S or C3M (in this case the master will be set to company commander mode), note the rules TW p.132
+  - c3m: 208
+    connected: [ 202, 203 ]
+  # 301 is next connected to 302 and 208 which are both C3M; 301 is set to CC mode and the network contains 5 units:
+  - c3m: 301
+    connected: [ 302, 208 ]
+  # atm, double master units are not supported
 
 
 # ###############################################
@@ -738,7 +806,7 @@ area:
     # OR optional: a range of terrain levels to include
     minlevel: 1
     maxlevel: 2
-    # optional: the minimum distance from any hex with the terrain; 0 means only the hexes themselves
+    # optional: the minimum distance from any hex with the terrain; 0 means the hexes themselves
     mindistance: 2
     # optional: the maximum distance from any hex with the terrain
     # be careful with distances of more than 3 or so on big boards: this leads to exploding calculation times

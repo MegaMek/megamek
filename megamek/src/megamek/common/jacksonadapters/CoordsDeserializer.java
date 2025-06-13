@@ -32,6 +32,13 @@ public class CoordsDeserializer {
     private static final String Y = "y";
     private static final String MESSAGE = "Illegal Coords definition. Use either a list of two values or x: and y:";
 
+    /**
+     * Returns a parsed Coords from the given node. Note that 1 is subtracted from the x and y values so that a
+     * coords given as [ 3, 3 ] is the hex 0303 (rather than 0202) on the board when the grid numbers are shown.
+     *
+     * @param coordsNode The Json node to parse; it should be either an array of two values or have x: and y: nodes.
+     * @return The parsed coords
+     */
     public static Coords parseNode(JsonNode coordsNode) {
         if (coordsNode.isArray()) {
             List<Integer> xyList = new ArrayList<>();
@@ -48,4 +55,6 @@ public class CoordsDeserializer {
             throw new IllegalArgumentException(MESSAGE);
         }
     }
+
+    private CoordsDeserializer() { }
 }

@@ -26,8 +26,8 @@ import java.util.Map;
 
 import megamek.common.Game;
 import megamek.common.IAero;
-import megamek.common.MovePath;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
 import megamek.logging.MMLogger;
 

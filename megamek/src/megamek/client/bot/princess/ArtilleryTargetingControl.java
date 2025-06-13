@@ -19,6 +19,12 @@
 
 package megamek.client.bot.princess;
 
+import static megamek.common.AmmoType.FLARE_MUNITIONS;
+import static megamek.common.AmmoType.MINE_MUNITIONS;
+import static megamek.common.AmmoType.Munitions;
+import static megamek.common.AmmoType.SMOKE_MUNITIONS;
+import static megamek.common.AmmoType.isAmmoValid;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Enumeration;
@@ -31,12 +37,11 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import megamek.common.*;
+import megamek.common.AmmoType.Munitions;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-
-import static megamek.common.AmmoType.*;
 
 /**
  * This class handles the creation of firing plans for indirect-fire artillery
@@ -331,6 +336,7 @@ public class ArtilleryTargetingControl {
             }
         }
 
+        // TODO: Counter-battery fire must target a hex (TO:AR p 154); needs better off-board unit deploy logic
         for (Entity enemy : game.getAllOffboardEnemyEntities(shooter.getOwner())) {
             if (enemy.isOffBoardObserved(shooter.getOwner().getTeam())) {
                 targetSet.add(enemy);
@@ -428,8 +434,9 @@ public class ArtilleryTargetingControl {
         // by the end of this loop, we either have 0 max damage/0 top valued
         // coordinates, which indicates there's nothing worth shooting at
         // or we have a 1+ top valued coordinates.
-        // Track ADA WFIs separately.
-        List<WeaponFireInfo> topValuedADAInfos = new ArrayList<>();
+        // Track ADA and Flak WFIs separately.
+        EnumSet<AmmoType.Munitions> aaMunitions = EnumSet.of(AmmoType.Munitions.M_CLUSTER, AmmoType.Munitions.M_FLAK);
+        List<WeaponFireInfo> topValuedFlakInfos = new ArrayList<>();
         for (WeaponMounted currentWeapon : shooter.getWeaponList()) {
             List<WeaponFireInfo> topValuedFireInfos = new ArrayList<>();
             double maxDamage = 0;
@@ -451,6 +458,12 @@ public class ArtilleryTargetingControl {
 
 
                     for (Targetable target : targetSet) {
+                        boolean attackOnEntity = (target.getTargetType() == Targetable.TYPE_ENTITY);
+                        boolean attackOnAirborneEntity = attackOnEntity &&
+                                                              (target instanceof Entity targetedEntity) &&
+                                                              ((targetedEntity.isAirborne()) ||
+                                                                     (targetedEntity.isAirborneVTOLorWIGE()) ||
+                                                                     (targetedEntity.isAirborneAeroOnGroundMap()));
                         double damageValue;
                         if (isZeroDamageMunition) {
                             // Skip zero-damage utility munitions for now.
@@ -466,13 +479,18 @@ public class ArtilleryTargetingControl {
                                 }
                             }
                         } else {
-                            if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-                                damageValue = damage;
+                            // Flak Artillery need to be made during direct fire, not as Indirect
+                            // Other indirect-fire entity-targeting attacks are likely Counter-Battery Fire
+                            // and should ignore surrounding targets when computing damage.
+                            if (attackOnAirborneEntity || attackOnEntity) {
+                                // Homing rounds can't hit flying Aerospace units because TAG can't hit them.
+                                boolean homing = ammo.getType().getMunitionType().contains(AmmoType.Munitions.M_HOMING);
+                                damageValue = (target.isAirborne() && homing) ? 0 : damage;
                             } else {
                                 if (!isADA) {
                                     damageValue = calculateDamageValue(damage, (HexTarget) target, shooter, game, owner);
                                 } else {
-                                    // No ADA attacks except at Entities.
+                                    // No ADA attacks except at Entities; no Flak attacks except direct fire
                                     continue;
                                 }
                             }
@@ -496,19 +514,28 @@ public class ArtilleryTargetingControl {
                                 } else {
                                     wfi.getAmmo().setSwitchedReason(1503);
                                 }
-                                if (isADA) {
-                                    topValuedADAInfos.clear();
-                                    maxDamage = damage; // Actual expected damage will be higher
-                                    topValuedADAInfos.add(wfi);
+                                if (attackOnAirborneEntity &&
+                                          (isADA ||
+                                                 wfi.getAmmo()
+                                                       .getType()
+                                                       .getMunitionType()
+                                                       .stream()
+                                                       .anyMatch(aaMunitions::contains) ||
+                                                 wfi.getAmmo().getType().countsAsFlak())) {
+                                    // Handle Flak attacks during Direct Fire
+                                    topValuedFlakInfos.clear();
+                                    maxDamage = damage;
+                                    topValuedFlakInfos.add(wfi);
                                 } else {
                                     topValuedFireInfos.clear();
                                     maxDamage = damageValue;
                                     topValuedFireInfos.add(wfi);
                                 }
                             } else if ((damageValue == maxDamage) && (damageValue > 0)) {
-                                if (wfi.getAmmo().getType().getMunitionType()
-                                        .contains(Munitions.M_ADA)) {
-                                    topValuedADAInfos.add(wfi);
+                                if (attackOnAirborneEntity && (wfi.getAmmo().getType().getMunitionType()
+                                        .contains(Munitions.M_ADA) || wfi.getAmmo().getType().getMunitionType().stream().anyMatch(aaMunitions::contains)
+                                          || wfi.getAmmo().getType().countsAsFlak())) {
+                                    topValuedFlakInfos.add(wfi);
                                 } else {
                                     topValuedFireInfos.add(wfi);
                                 }
@@ -568,10 +595,10 @@ public class ArtilleryTargetingControl {
             }
         }
 
-        // Clear all artillery attacks if we have valid ADA attacks that do damage, but
+        // Clear all artillery attacks if we have valid ADA or Flak attacks that do damage, but
         // keep any TAG attacks.
-        if (!topValuedADAInfos.isEmpty()) {
-            if (topValuedADAInfos.get(0).getExpectedDamage() > 0) {
+        if (!topValuedFlakInfos.isEmpty()) {
+            if (topValuedFlakInfos.get(0).getExpectedDamage() > 0) {
                 returnValue = TAGPlan;
             }
         } else {
@@ -687,7 +714,7 @@ public class ArtilleryTargetingControl {
                 if (null == weapon) {
                     // The weaponId couldn't get us a weapon; probably a bomb Arrow IV dropped on a
                     // prior turn.
-                    BombType bombType = BombType.createBombByType(BombType.getBombTypeFromName("Arrow IV Missile"));
+                    BombType bombType = BombType.createBombByType(BombType.BombTypeEnum.ARROW);
                     damage = (bombType != null) ? bombType.getRackSize() : 0;
                 } else {
                     if (weapon.getType() instanceof BombType) {
@@ -709,8 +736,9 @@ public class ArtilleryTargetingControl {
                 }
 
                 double hitOdds;
-                if (operator.getArtilleryAutoHit() != null &&
-                        operator.getArtilleryAutoHit().contains(coords)) {
+
+                Player localPlayer = operator.getLocalPlayer();
+                if (localPlayer != null && localPlayer.getArtyAutoHitHexes().contains(BoardLocation.of(coords, 0))) {
                     hitOdds = 1.0;
                 } else {
                     hitOdds = Compute.oddsAbove(artySkill + ARTILLERY_ATTACK_MODIFIER);

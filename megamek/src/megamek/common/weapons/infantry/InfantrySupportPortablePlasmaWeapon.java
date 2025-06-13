@@ -38,7 +38,7 @@ public class InfantrySupportPortablePlasmaWeapon extends InfantryWeapon {
 		addLookupName("InfantryPlasmaPortable");
 		addLookupName("InfantryMPPR");
 		addLookupName("Portable Plasma Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 7500;
 		bv = 8.08;
 		flags = flags.or(F_DIRECT_FIRE).or(F_PLASMA).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
@@ -52,11 +52,11 @@ public class InfantrySupportPortablePlasmaWeapon extends InfantryWeapon {
 		shots = 10;
 		rulesRefs = "273, TM";
 		tonnage = .030;
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3063, 3065, 3075, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3063, 3065, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_CC)
-		        .setProductionFactions(F_CC).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+		        .setPrototypeFactions(Faction.CC)
+		        .setProductionFactions(Faction.CC).setTechRating(TechRating.E)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C);
 
 	}
 }

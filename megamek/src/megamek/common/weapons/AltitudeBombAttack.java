@@ -40,7 +40,7 @@ public class AltitudeBombAttack extends Weapon {
         setInternalName(IBomber.ALT_BOMB_ATTACK);
         heat = 0;
         damage = DAMAGE_SPECIAL;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         minimumRange = WEAPON_NA;
         shortRange = 0;
         mediumRange = 0;
@@ -54,6 +54,7 @@ public class AltitudeBombAttack extends Weapon {
         flags = flags.or(F_ALT_BOMB);
         hittable = false;
         capital = true;
+        techAdvancement.setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);
     }
 
     @Override

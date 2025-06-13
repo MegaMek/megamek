@@ -34,7 +34,7 @@ public class CapMissTeleKrakenWeapon extends CapitalMissileWeapon {
         setInstantModeSwitch(false);
         this.heat = 50;
         this.damage = 10;
-        this.ammoType = AmmoType.T_KRAKEN_T;
+        this.ammoType = AmmoType.AmmoTypeEnum.KRAKEN_T;
         this.shortRange = 11;
         this.mediumRange = 22;
         this.longRange = 34;
@@ -51,14 +51,14 @@ public class CapMissTeleKrakenWeapon extends CapitalMissileWeapon {
         this.missileArmor = 100;
         this.maxRange = RANGE_EXT;
         rulesRefs = "210, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3053, 3057, 3060, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CS, F_DC)
-                .setProductionFactions(F_DC);
+                .setPrototypeFactions(Faction.CS, Faction.DC)
+                .setProductionFactions(Faction.DC);
     }
 }

@@ -31,7 +31,7 @@ public class InfantryShotgunByron15S extends InfantryWeapon {
        name = "Shotgun (Byron 15S)";
        setInternalName(name);
        addLookupName("Byron 15S");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .675;
        tonnage =  0.0035;
        infantryDamage =  0.56;
@@ -44,12 +44,12 @@ public class InfantryShotgunByron15S extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_D)
-       .setAvailability(RATING_D,RATING_D,RATING_D,RATING_D)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.D)
+       .setAvailability(AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.D)
        .setISAdvancement(DATE_NONE, DATE_NONE,2340,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_LC);
+       .setProductionFactions(Faction.LC);
 
    }
 }

@@ -34,7 +34,7 @@ public class InfantrySniperRifleSR17SunsKiller extends InfantryWeapon {
        name = "Sniper Rifle (SR-17 Suns Killer)";
        setInternalName(name);
        addLookupName("SR-17 Suns Killer");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .35;
        tonnage =  0.006;
        infantryDamage =  0.35;
@@ -47,11 +47,11 @@ public class InfantrySniperRifleSR17SunsKiller extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #1";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_C,RATING_C,RATING_C,RATING_C)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.C,AvailabilityValue.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,2335,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, false, false, false)
-       .setProductionFactions(F_TC);
+       .setProductionFactions(Faction.TC);
    }
 }

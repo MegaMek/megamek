@@ -48,16 +48,16 @@ public class ISSilverBulletGauss extends GaussWeapon {
         shortRange = 7;
         mediumRange = 15;
         longRange = 22;
-        extremeRange = 30;
+        extremeRange = 33;
         tonnage = 15.0;
         criticals = 7;
         bv = 198;
         cost = 350000;
-        shortAV = 15; // Due to LBXHandler
-        medAV = 15;   // Due to LBXHandler
-        longAV = 15;  // Due to LBXHandler
+        shortAV = getBaseAeroDamage();
+        medAV = shortAV;
+        longAV = shortAV;
         maxRange = RANGE_LONG;
-        ammoType = AmmoType.T_SBGAUSS;
+        ammoType = AmmoType.AmmoTypeEnum.SBGAUSS;
         // SB Gauss rifles can neither benefit from a targeting computer nor
         // do they add to its mass and size (TacOps pp. 314/5); thus, the
         // "direct fire" flag inherited from the superclass needs to go again.
@@ -66,11 +66,11 @@ public class ISSilverBulletGauss extends GaussWeapon {
         explosionDamage = 20;
         rulesRefs = "314, TO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(3051, DATE_NONE, 3080,DATE_NONE, DATE_NONE)
-                .setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_FC)
+                .setPrototypeFactions(Faction.FS, Faction.LC)
+                .setProductionFactions(Faction.FC)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
@@ -103,5 +103,12 @@ public class ISSilverBulletGauss extends GaussWeapon {
     @Override
     public int getBattleForceClass() {
         return BFCLASS_FLAK;
+    }
+    
+    /**
+     * This is an LBX weapon, the Aero AV is 60% of normal.
+     */
+    protected double getBaseAeroDamage() {
+        return Math.ceil(0.6 * this.damage);
     }
 }

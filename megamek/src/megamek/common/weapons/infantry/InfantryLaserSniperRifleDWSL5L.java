@@ -28,7 +28,7 @@ public class InfantryLaserSniperRifleDWSL5L extends InfantryWeapon {
         name = "Laser Sniper Rifle (DWS L5L)";
         setInternalName(name);
         addLookupName("L5L");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 2500;
         bv = 1.225;
         tonnage = 0.0075;
@@ -40,11 +40,11 @@ public class InfantryLaserSniperRifleDWSL5L extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
         
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_C)
-                .setAvailability(new int[]{RATING_X, RATING_C, RATING_C, RATING_C})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_LC);
+                .setProductionFactions(Faction.LC);
     }
 }

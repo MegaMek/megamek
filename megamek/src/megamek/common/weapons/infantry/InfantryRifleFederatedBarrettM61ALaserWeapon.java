@@ -35,7 +35,7 @@ public class InfantryRifleFederatedBarrettM61ALaserWeapon extends InfantryWeapon
         setInternalName("InfantryFederatedBarrettM61A");
         addLookupName(name);
         addLookupName("Federated Barrett M61A");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 2150;
         bv = 3.83;
         tonnage = .006;
@@ -45,11 +45,11 @@ public class InfantryRifleFederatedBarrettM61ALaserWeapon extends InfantryWeapon
         ammoWeight = 0.0003;
         shots = 6;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3062, 3085, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3058, 3062, 3085, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS).setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS).setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C);
 
     }
 }

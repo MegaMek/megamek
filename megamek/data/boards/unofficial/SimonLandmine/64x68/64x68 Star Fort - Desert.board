@@ -1,4 +1,13 @@
 size 64 68
+tag "Rough (Auto)"
+tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "MultipleTheme (Auto)"
+tag "DesertTheme (Auto)"
+tag "Woods (Auto)"
+tag "GunEmplacement (Auto)"
+tag "HeavyBuilding (Auto)"
 hex 0101 0 "" "desert"
 hex 0201 0 "" "desert"
 hex 0301 0 "" "desert"

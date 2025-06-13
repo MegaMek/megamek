@@ -37,7 +37,7 @@ public class InfantrySupportRocketLauncherLAWWeapon extends InfantryWeapon {
 		addLookupName("InfantryLAW");
 		addLookupName("Infantry LAW");
 		addLookupName("InfantryLightAntitankWeapon");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.AmmoTypeEnum.NA;
 		cost = 350;
 		bv = 2.71;
 		tonnage = .004;
@@ -46,11 +46,11 @@ public class InfantrySupportRocketLauncherLAWWeapon extends InfantryWeapon {
 		infantryRange = 2;
 		crew = 1;
 		rulesRefs = " 273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-		        .setAvailability(RATING_A, RATING_B, RATING_B, RATING_B);
+		        .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
+		        .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);
 
 	}
 }

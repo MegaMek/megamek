@@ -36,7 +36,7 @@ public class InfantryArchaicClanVibroSwordWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryClanVibroSword");
         addLookupName("Clan Vibro Sword");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 500;
         bv = 0.34;
         tonnage = .004;
@@ -44,10 +44,10 @@ public class InfantryArchaicClanVibroSwordWeapon extends InfantryWeapon {
         infantryDamage = 0.37;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2815, 2820, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CJF)
-                .setProductionFactions(F_CJF).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D);
+        techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2815, 2820, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CJF)
+                .setProductionFactions(Faction.CJF).setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D);
 
     }
 }

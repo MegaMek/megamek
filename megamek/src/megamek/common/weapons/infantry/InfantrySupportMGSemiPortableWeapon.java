@@ -37,7 +37,7 @@ public class InfantrySupportMGSemiPortableWeapon extends InfantryWeapon {
 		addLookupName("InfantryMGSemiPortable");
 		addLookupName("Infantry MG Semi Portable");
 		addLookupName("InfantrySemiMG");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 1000;
 		bv = 2.29;
 		tonnage = .020;
@@ -51,11 +51,11 @@ public class InfantrySupportMGSemiPortableWeapon extends InfantryWeapon {
 		shots = 80;
 		bursts = 4;
 		rulesRefs = " 273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-		        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+		        .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
+		        .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);
 
 	}
 }

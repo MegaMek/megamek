@@ -28,7 +28,7 @@ public class InfantryLaserRifleDarkLightCLLight extends InfantryWeapon {
         name = "Laser Rifle (Darklight-CL Light)";
         setInternalName(name);
         addLookupName("DARKLIGHT-CL");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 2400;
         bv = 0.84;
         tonnage = 0.0055;
@@ -40,11 +40,11 @@ public class InfantryLaserRifleDarkLightCLLight extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_E) 
-                .setAvailability(new int[]{RATING_X, RATING_E, RATING_E, RATING_D})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.E) 
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_DC);
+                .setProductionFactions(Faction.DC);
     }
 }

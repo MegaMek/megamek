@@ -37,7 +37,7 @@ public class InfantryArchaicSwordWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantrySword");
         addLookupName("Infantry Sword");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 30;
         bv = 0.06;
         tonnage = .003; 
@@ -45,9 +45,9 @@ public class InfantryArchaicSwordWeapon extends InfantryWeapon {
         infantryDamage = 0.07;
         infantryRange = 0;
         rulesRefs ="272, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false).setTechRating(RATING_A)
-                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_B);
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false).setTechRating(TechRating.A)
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.B);
 
     }
 }

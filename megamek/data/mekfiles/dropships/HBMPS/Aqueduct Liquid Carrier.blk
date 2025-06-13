@@ -46,7 +46,7 @@ Spheroid
 
 <transporters>
 smallcraftbay:2.0:2:1
-mechbay:2.0:1
+mekbay:2.0:1
 cargobay:2850.0:2:7
 2ndclassquarters:0.0:0
 steeragequarters:100.0:0

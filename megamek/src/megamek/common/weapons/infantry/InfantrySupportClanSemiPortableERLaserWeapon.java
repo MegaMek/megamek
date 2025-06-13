@@ -37,7 +37,7 @@ public class InfantrySupportClanSemiPortableERLaserWeapon extends InfantryWeapon
 		addLookupName("InfantryClanERMicroLaser");
 		addLookupName("InfantryClanSemiPortableERLaser");
 		addLookupName("Infantry Clan Semi-Portable ER Laser");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 10000;
 		bv = 5.02;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
@@ -48,10 +48,10 @@ public class InfantrySupportClanSemiPortableERLaserWeapon extends InfantryWeapon
 		shots = 15;
 		tonnage = .025;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3056, 3060, DATE_NONE, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSJ)
-		        .setProductionFactions(F_CSJ).setTechRating(RATING_F)
-		        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_D);
+		techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3056, 3060, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CSJ)
+		        .setProductionFactions(Faction.CSJ).setTechRating(TechRating.F)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.D);
 
 	}
 }

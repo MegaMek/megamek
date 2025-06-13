@@ -110,11 +110,7 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
             t.setArmorType(EquipmentType.T_ARMOR_STANDARD_PROTOMEK);
         }
 
-        if (dataFile.exists("armor_tech")) {
-            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
-        } else {
-            t.setArmorTechLevel(TechConstants.T_ALL_CLAN);
-        }
+        setArmorTechLevelFromDataFile(t);
 
         // add the body to the armor array
         for (int x = 0; x < armor.length; x++) {

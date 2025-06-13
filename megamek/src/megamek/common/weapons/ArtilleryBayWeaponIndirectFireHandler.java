@@ -127,13 +127,13 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                         + (game.getRoundCount() + aaa.getTurnsTilHit())
                         + ", fired by "
                         + game.getPlayer(aaa.getPlayerId()).getName();
-                game.getBoard().addSpecialHexDisplay(
+                game.getBoard(aaa.getTarget(game).getBoardId()).addSpecialHexDisplay(
                         aaa.getTarget(game).getPosition(),
                         new SpecialHexDisplay(
                                 SpecialHexDisplay.Type.ARTILLERY_INCOMING, game
                                         .getRoundCount() + aaa.getTurnsTilHit(),
                                 game.getPlayer(aaa.getPlayerId()), artyMsg,
-                                SpecialHexDisplay.SHD_OBSCURED_TEAM));
+                                SpecialHexDisplay.SHD_VISIBLETO_TEAM));
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
@@ -321,6 +321,9 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
 
         // In the case of misses, we'll need to hit multiple hexes
         List<Coords> targets = new ArrayList<>();
+        List<Integer> heights = new ArrayList<>();
+        Hex targetHex = null;
+
         if (!bMissed) {
             r = new Report(3199);
             r.subject = subjectId;
@@ -331,10 +334,12 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             if (!mineClear) {
                 vPhaseReport.addElement(r);
             }
+            targetHex = game.getBoard(target.getBoardId()).getHex(targetPos);
+            heights.add((targetHex != null) ? game.getBoard(target.getBoardId()).getHex(targetPos).getLevel() : 0);
             artyMsg = "Artillery hit here on round " + game.getRoundCount()
                     + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
                     + " (this hex is now an auto-hit)";
-            game.getBoard().addSpecialHexDisplay(targetPos,
+            game.getBoard(target.getBoardId()).addSpecialHexDisplay(targetPos,
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
                             game.getRoundCount(), game.getPlayer(aaa.getPlayerId()), artyMsg));
         } else {
@@ -362,6 +367,16 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 targetPos = Compute.scatterDirectArty(origPos, moF);
                 if (game.getBoard().contains(targetPos)) {
                     targets.add(targetPos);
+                    targetHex = game.getBoard().getHex(targetPos);
+                    if (targetHex != null) {
+                        heights.add(
+                              (isFlak) ? (
+                                    (asfFlak) ? target.getAltitude() : targetHex.getLevel() + target.getElevation()
+                              ) : targetHex.getLevel()
+                        );
+                    } else {
+                        heights.add(0);
+                    }
                     // misses and scatters to another hex
                     if (!isFlak) {
                         r = new Report(3202);
@@ -393,11 +408,11 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         }
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
             int radius;
-            if (atype.getAmmoType() == AmmoType.T_ARROW_IV) {
+            if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV) {
                 radius = 4;
-            } else if (atype.getAmmoType() == AmmoType.T_LONG_TOM) {
+            } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM) {
                 radius = 3;
-            } else if (atype.getAmmoType() == AmmoType.T_SNIPER) {
+            } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER) {
                 radius = 2;
             } else {
                 radius = 1;
@@ -502,10 +517,6 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             return false;
         }
-        int altitude = 0;
-        if (isFlak) {
-            altitude = target.getElevation();
-        }
 
         // check to see if this is a mine clearing attack
         // According to the RAW you have to hit the right hex to hit even if the
@@ -548,14 +559,18 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             // Here we're doing damage for each hit with more standard artillery shells
             while (nweaponsHit > 0) {
-                gameManager.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
-                        subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
+                gameManager.artilleryDamageArea(targetPos, atype,
+                        subjectId, ae, isFlak, heights.get(0), mineClear, vPhaseReport,
                         asfFlak);
                 nweaponsHit--;
             }
         } else {
             // Now if we missed, resolve a strike on each scatter hex
-            for (Coords c : targets) {
+            Coords c;
+            int height;
+            for (int index=0;index<targets.size();index++) {
+                c = targets.get(index);
+                height = heights.get(index);
                 // Accidental mine clearance...
                 if (!mineClear && game.containsMinefield(c)) {
                     Enumeration<Minefield> minefields = game.getMinefields(c).elements();
@@ -571,8 +586,8 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                     }
                 }
                 handleArtilleryDriftMarker(origPos, c, aaa,
-                        gameManager.artilleryDamageArea(c, aaa.getCoords(), atype, subjectId, ae, isFlak,
-                                altitude, mineClear, vPhaseReport, asfFlak));
+                        gameManager.artilleryDamageArea(c, atype, subjectId, ae, isFlak,
+                                height, mineClear, vPhaseReport, asfFlak));
             }
 
         }

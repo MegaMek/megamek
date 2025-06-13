@@ -38,7 +38,7 @@ public class LongTomCannon extends ArtilleryCannonWeapon {
         sortingName = "Cannon Arty Long Tom";
         heat = 20;
         rackSize = 20;
-        ammoType = AmmoType.T_LONG_TOM_CANNON;
+        ammoType = AmmoType.AmmoTypeEnum.LONG_TOM_CANNON;
         tonnage = 20;
         criticals = 15;
         bv = 329;
@@ -47,20 +47,20 @@ public class LongTomCannon extends ArtilleryCannonWeapon {
         shortRange = 6;
         mediumRange = 13;
         longRange = 20;
-        extremeRange = 26;
+        extremeRange = 30;
         shortAV = 20;
         medAV = 20;
         longAV = 20;
         maxRange = RANGE_LONG;
         rulesRefs = "285, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_ALL)
-                .setTechRating(RATING_B).setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+        techAdvancement.setTechBase(TechBase.ALL)
+                .setTechRating(TechRating.B).setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3012, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setClanAdvancement(3032, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
-                .setPrototypeFactions(F_LC, F_CWF).setProductionFactions(F_LC)
+                .setPrototypeFactions(Faction.LC, Faction.CWF).setProductionFactions(Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 

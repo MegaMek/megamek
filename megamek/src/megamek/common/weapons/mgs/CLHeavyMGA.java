@@ -41,7 +41,7 @@ public class CLHeavyMGA extends AmmoWeapon {
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;
         rackSize = 3;
-        ammoType = AmmoType.T_MG_HEAVY;
+        ammoType = AmmoType.AmmoTypeEnum.MG_HEAVY;
         minimumRange = WEAPON_NA;
         shortRange = 1;
         mediumRange = 2;
@@ -59,11 +59,11 @@ public class CLHeavyMGA extends AmmoWeapon {
         setModes(modeStrings);
         instantModeSwitch = false;
         rulesRefs = "228, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3069, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false);
     }

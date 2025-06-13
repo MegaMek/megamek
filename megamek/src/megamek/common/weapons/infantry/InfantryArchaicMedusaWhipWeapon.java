@@ -36,7 +36,7 @@ public class InfantryArchaicMedusaWhipWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryClanMedusaWhip");
         addLookupName("Medusa Whip");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 2200;
         bv = 0.15;
         tonnage = .00045; 
@@ -44,10 +44,10 @@ public class InfantryArchaicMedusaWhipWeapon extends InfantryWeapon {
         infantryDamage = 0.16;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2820, 2825, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(F_CWM)
-                .setProductionFactions(F_CWM).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_E);
+        techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2820, 2825, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.CWM)
+                .setProductionFactions(Faction.CWM).setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E);
 
     }
 }

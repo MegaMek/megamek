@@ -37,7 +37,7 @@ public class InfantrySupportSemiPortablePPCWeapon extends InfantryWeapon {
 		addLookupName("InfantrySemiPortablePPC");
 		addLookupName("InfantryManPackPPC");
 		addLookupName("Infantry Semi-Portable PPC");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 7000;
 		bv = 3.68;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PPC).or(F_INF_SUPPORT);
@@ -48,12 +48,12 @@ public class InfantrySupportSemiPortablePPCWeapon extends InfantryWeapon {
 		shots = 25;
 		tonnage = .040;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2430, 2436, 2450, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2430, 2436, 2450, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2430, 2436, 2450, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_DC)
-		        .setProductionFactions(F_DC).setTechRating(RATING_E)
-		        .setAvailability(RATING_D, RATING_E, RATING_D, RATING_C);
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.DC)
+		        .setProductionFactions(Faction.DC).setTechRating(TechRating.E)
+		        .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C);
 
 	}
 }

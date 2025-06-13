@@ -36,7 +36,7 @@ public class InfantryArchaicNeuralWhipWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryNeuralWhip");
         addLookupName("Neural Whip");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 500;
         bv = 0.08;
         tonnage = .0003; 
@@ -44,11 +44,11 @@ public class InfantryArchaicNeuralWhipWeapon extends InfantryWeapon {
         infantryDamage = 0.09;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2315, 2325, 2500, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2315, 2325, 2500, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, true, false, false, false).setClanAdvancement(2315, 2325, 2500, 2786, DATE_NONE)
-                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(F_DC)
-                .setProductionFactions(F_DC).setTechRating(RATING_D)
-                .setAvailability(RATING_F, RATING_F, RATING_E, RATING_F);
+                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.DC)
+                .setProductionFactions(Faction.DC).setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.F);
 
     }
 }

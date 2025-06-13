@@ -39,7 +39,7 @@ public class ISBAMortarHeavy extends Weapon {
         sortingName = "Mortar D";
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         minimumRange = 2;
         shortRange = 2;
         mediumRange = 4;
@@ -53,10 +53,10 @@ public class ISBAMortarHeavy extends Weapon {
                 .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "263, TM";
 
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
         techAdvancement.setISAdvancement(3049, 3057, 3063);
-        techAdvancement.setTechRating(RATING_B);
-        techAdvancement.setAvailability(RATING_X, RATING_X, RATING_C, RATING_C);
+        techAdvancement.setTechRating(TechRating.B);
+        techAdvancement.setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C);
     }
 
     @Override

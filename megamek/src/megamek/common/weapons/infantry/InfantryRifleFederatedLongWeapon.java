@@ -36,7 +36,7 @@ public class InfantryRifleFederatedLongWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryFederatedLongRifle");
 		addLookupName("Federated Long Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 120;
 		bv = 1.07;
 		tonnage = .005;
@@ -47,11 +47,11 @@ public class InfantryRifleFederatedLongWeapon extends InfantryWeapon {
 		ammoCost = 3;
 		shots = 10;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2860, 2870, 3000, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2860, 2870, 3000, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_FS)
-		        .setProductionFactions(F_FS).setTechRating(RATING_C)
-		        .setAvailability(RATING_X, RATING_C, RATING_A, RATING_B);
+		        .setPrototypeFactions(Faction.FS)
+		        .setProductionFactions(Faction.FS).setTechRating(TechRating.C)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.A, AvailabilityValue.B);
 
 	}
 }

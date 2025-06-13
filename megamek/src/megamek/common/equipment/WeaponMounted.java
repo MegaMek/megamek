@@ -78,7 +78,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
             return 15;
         }
 
-        if ((getType().getAmmoType() == AmmoType.T_MPOD) && isFired()) {
+        if ((getType().getAmmoType() == AmmoType.AmmoTypeEnum.MPOD) && isFired()) {
             return 0;
         }
 
@@ -342,7 +342,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
         // Ensure we only target attacks in our arc & range
         List<WeaponAttackAction> vAttacksInArc = new Vector<>(vAttacks.size());
         for (WeaponHandler wr : vAttacks) {
-            boolean isInArc = Compute.isInArc(getEntity().getGame(),
+            boolean isInArc = ComputeArc.isInArc(getEntity().getGame(),
                     getEntity().getId(), getEntity().getEquipmentNum(this),
                     getEntity().getGame().getEntity(wr.waa.getEntityId()));
             boolean isInRange = getEntity().getPosition().distance(
@@ -369,7 +369,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
                 && getType().getInternalName().equals("ISBAAPDS")) {
             return true;
         } else {
-            return getType().getAmmoType() == AmmoType.T_APDS;
+            return getType().getAmmoType() == AmmoType.AmmoTypeEnum.APDS;
         }
     }
 

@@ -1,0 +1,72 @@
+#Saved from version 0.50.05 on 2025-05-12
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Mechanized Tracked Platoon (LCAF)
+</Name>
+
+<Model>
+(Gauss 3065+)
+</Model>
+
+<year>
+3065
+</year>
+
+<originalBuildYear>
+3065
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<Troopers Equipment>
+Lyran Alliance/Lyran Commonwealth (3060+) Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+Despite it's industry-leading production of Gauss Rifles for mechanized forces, including massive models for use on WarShips, Lyran domestic development and employment of infantry-scale Gauss weapons lags the other Successor States.  These rarely seen platoons are equipped with excess Grand Mauler systems destined for use on battle armor with the classic TK Assault rifle returning as the standard Lyran rifle.
+</capabilities>
+
+<overview>
+After the removal of historically Lyran systems from the unified Federated Commonwealth, many changes took place to restore and reinforce the Lyran nature of military forces posted there.  Infantry armor production was quickly updated with the first production runs seeing little more than a logo change.  Later production would see more visible changes to resemble the older Lyran style while retaining the protection capabilities of the FedCom model.
+</overview>
+
+<notes>
+Intro date based on Grand Mauler common production date
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Rifle (TK Assault)
+</Primary>
+
+<Secondary>
+Gauss Cannon (Grand Mauler)
+</Secondary>
+

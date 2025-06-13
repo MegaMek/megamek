@@ -31,7 +31,7 @@ public class InfantryShotgunDaystarIIC extends InfantryWeapon {
        name = "Shotgun (Daystar II (C))";
        setInternalName(name);
        addLookupName("Daystar II (C)");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .202;
        tonnage =  0.0028;
        infantryDamage =  0.2;
@@ -44,12 +44,12 @@ public class InfantryShotgunDaystarIIC extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_B,RATING_B,RATING_A,RATING_A)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.B,AvailabilityValue.B,AvailabilityValue.A,AvailabilityValue.A)
        .setISAdvancement(DATE_NONE, DATE_NONE,2435,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_TC);
+       .setProductionFactions(Faction.TC);
 
    }
 }

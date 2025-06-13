@@ -49,19 +49,19 @@ public class ISAC10i extends ACWeapon {
         explosionDamage = damage;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MEK_WEAPON)
                 .or(F_AERO_WEAPON).or(F_TANK_WEAPON);
-        ammoType = AmmoType.T_ACi;
+        ammoType = AmmoType.AmmoTypeEnum.ACi;
         atClass = CLASS_AC;
         // Since this is an unofficial Weapon I'm using the Normal AC10 Stats
         rulesRefs = "Unofficial";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setUnofficial(true)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2443, 2460, 2465, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2443, 2460, 2465, 2850, DATE_NONE)
                 .setClanApproximate(false, false, false, true, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH);
     }
 }

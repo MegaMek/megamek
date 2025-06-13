@@ -37,7 +37,7 @@ public class InfantrySupportOneShotMRMWeapon extends InfantryWeapon {
 		addLookupName(name);
 		addLookupName("InfantryMRM");
 		addLookupName("Infantry One-Shot MRM Launcher");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 2500;
 		bv = 2.71;
 		tonnage = .03;
@@ -49,9 +49,9 @@ public class InfantrySupportOneShotMRMWeapon extends InfantryWeapon {
 		ammoCost = 21;
 		shots = 1;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3063, 3065, 3075, DATE_NONE, DATE_NONE)
-		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_DC)
-		        .setProductionFactions(F_DC).setTechRating(RATING_D)
-		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3063, 3065, 3075, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.DC)
+		        .setProductionFactions(Faction.DC).setTechRating(TechRating.D)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
 	}
 }

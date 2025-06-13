@@ -14,16 +14,13 @@
 
 package megamek.common;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.cost.CostCalculator;
-import megamek.common.cost.HandheldWeaponCostCalculator;
-import megamek.common.enums.AimingMode;
-import megamek.logging.MMLogger;
-
 import java.io.Serial;
 import java.util.Vector;
 
-import static megamek.common.ITechnology.TECH_BASE_ALL;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.cost.HandheldWeaponCostCalculator;
+import megamek.common.enums.AimingMode;
+import megamek.logging.MMLogger;
 
 public class HandheldWeapon extends Entity {
     private static final MMLogger logger = MMLogger.create(HandheldWeapon.class);
@@ -42,19 +39,23 @@ public class HandheldWeapon extends Entity {
         return UnitType.HANDHELD_WEAPON;
     }
 
-    private static final TechAdvancement ADVANCEMENT = new TechAdvancement(TECH_BASE_ALL)
-        .setAdvancement(3055, 3083).setApproximate(false, true)
-        .setPrototypeFactions(F_FS, F_LC).setProductionFactions(F_FS, F_LC)
-        .setTechRating(RATING_D).setAvailability(RATING_E, RATING_E, RATING_F, RATING_E)
-        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    private static final TechAdvancement ADVANCEMENT = new TechAdvancement(TechBase.ALL).setAdvancement(3055, 3083)
+                                                             .setApproximate(false, true)
+                                                             .setPrototypeFactions(Faction.FS, Faction.LC)
+                                                             .setProductionFactions(Faction.FS, Faction.LC)
+                                                             .setTechRating(TechRating.D)
+                                                             .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E)
+                                                             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return ADVANCEMENT;
     }
 
     public static final int LOC_GUN = 0;
-    private static final String[] LOCATION_NAMES = new String[] {"Gun"};
-    private static final String[] LOCATION_ABBRS = new String[] {"GUN"};
+    private static final String[] LOCATION_NAMES = new String[] { "Gun" };
+    private static final String[] LOCATION_ABBRS = new String[] { "GUN" };
+
     @Override
     public int locations() {
         return LOCATION_NAMES.length;
@@ -111,22 +112,12 @@ public class HandheldWeapon extends Entity {
     }
 
     @Override
-    public int getDependentLocation(int loc) {
-        throw new UnsupportedOperationException("Construction only.");
-    }
-
-    @Override
-    public boolean hasRearArmor(int loc) {
-        return false;
-    }
-
-    @Override
     public void autoSetInternal() {
         initializeInternal(0, LOC_GUN);
     }
 
     @Override
-    public int getWeaponArc(int wn) {
+    public int getWeaponArc(int weaponNumber) {
         throw new UnsupportedOperationException("Construction only.");
     }
 
@@ -135,22 +126,8 @@ public class HandheldWeapon extends Entity {
         throw new UnsupportedOperationException("Construction only.");
     }
 
-    @Override
-    public int getHeatCapacity(boolean radicalHeatSink) {
-        return DOES_NOT_TRACK_HEAT;
-    }
+    private static final int[] NUM_OF_SLOTS = new int[] { 25 };
 
-    @Override
-    public int getHeatCapacityWithWater() {
-        return getHeatCapacity();
-    }
-
-    @Override
-    public int getEngineCritHeat() {
-        return 0;
-    }
-
-    private static final int[] NUM_OF_SLOTS = new int[] {25};
     @Override
     protected int[] getNoOfSlots() {
         return NUM_OF_SLOTS;
@@ -179,31 +156,6 @@ public class HandheldWeapon extends Entity {
     @Override
     public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
         return HandheldWeaponCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
-    }
-
-    @Override
-    public boolean doomedInExtremeTemp() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedInVacuum() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedOnGround() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedInAtmosphere() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedInSpace() {
-        return false;
     }
 
     @Override

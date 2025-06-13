@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -85,17 +86,19 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.GUNNERY_SNIPER, false);
         addOption(adv, OptionsConstants.GUNNERY_WEAPON_SPECIALIST, new Vector<>());
 
-         // Misc Abilities
-         // addOption(adv, OptionsConstants.MISC_ANTAGONIZER, false);
-         // addOption(adv, OptionsConstants.MISC_COMBAT_INTUITION, false);
-         // addOption(adv, OptionsConstants.MISC_DEMORALIZER, false);
-         addOption(adv, OptionsConstants.MISC_EAGLE_EYES, false);
-         addOption(adv, OptionsConstants.MISC_ENV_SPECIALIST, new Vector<>());
-         addOption(adv, OptionsConstants.MISC_FORWARD_OBSERVER, false);
-         addOption(adv, OptionsConstants.MISC_HUMAN_TRO, new Vector<>());
-         addOption(adv, OptionsConstants.MISC_IRON_MAN, false);
-         addOption(adv, OptionsConstants.MISC_PAIN_RESISTANCE, false);
-         addOption(adv, OptionsConstants.MISC_TACTICAL_GENIUS, false);
+        // Misc Abilities
+        // addOption(adv, OptionsConstants.MISC_ANTAGONIZER, false);
+        // addOption(adv, OptionsConstants.MISC_COMBAT_INTUITION, false);
+        // addOption(adv, OptionsConstants.MISC_DEMORALIZER, false);
+        addOption(adv, OptionsConstants.MISC_EAGLE_EYES, false);
+        addOption(adv, OptionsConstants.MISC_ENV_SPECIALIST, new Vector<>());
+        addOption(adv, OptionsConstants.MISC_FORWARD_OBSERVER, false);
+        addOption(adv, OptionsConstants.MISC_HUMAN_TRO, new Vector<>());
+        addOption(adv, OptionsConstants.MISC_IRON_MAN, false);
+        addOption(adv, OptionsConstants.MISC_PAIN_RESISTANCE, false);
+        addOption(adv, OptionsConstants.MISC_TACTICAL_GENIUS, false);
+        addOption(adv, OptionsConstants.ATOW_COMBAT_SENSE, false);
+        addOption(adv, OptionsConstants.ATOW_COMBAT_PARALYSIS, false);
 
         // Infantry abilities - Only one until beast mounts are implemented
         addOption(adv, OptionsConstants.INFANTRY_FOOT_CAV, false);

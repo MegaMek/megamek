@@ -35,7 +35,7 @@ public class InfantrySupportDavidLightGaussRifleWeapon extends InfantryWeapon {
 		name = "Gauss Rifle, Light (David)";
 		setInternalName(name);
 		addLookupName("Infantry David Light Gauss Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 6000;
 		bv = 4.01;
 		tonnage = .018;
@@ -55,11 +55,11 @@ public class InfantrySupportDavidLightGaussRifleWeapon extends InfantryWeapon {
 		extremeRange = 12;
 		rulesRefs = "273, TM";
 		tonnage = .018;
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3060, 3063, 3075, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3060, 3063, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_FW)
-		        .setProductionFactions(F_FW).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+		        .setPrototypeFactions(Faction.FW)
+		        .setProductionFactions(Faction.FW).setTechRating(TechRating.E)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
 
 	}
 }

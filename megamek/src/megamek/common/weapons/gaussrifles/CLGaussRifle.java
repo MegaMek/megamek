@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
- * This program is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the Free 
- * Software Foundation; either version 2 of the License, or (at your option) 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
 package megamek.common.weapons.gaussrifles;
@@ -36,12 +36,12 @@ public class CLGaussRifle extends GaussWeapon {
         this.addLookupName("Clan Gauss Rifle");
         this.heat = 1;
         this.damage = 15;
-        this.ammoType = AmmoType.T_GAUSS;
+        this.ammoType = AmmoType.AmmoTypeEnum.GAUSS;
         this.minimumRange = 2;
         this.shortRange = 7;
         this.mediumRange = 15;
         this.longRange = 22;
-        this.extremeRange = 30;
+        this.extremeRange = 33;
         this.tonnage = 12.0;
         this.criticals = 6;
         this.bv = 320;
@@ -52,20 +52,20 @@ public class CLGaussRifle extends GaussWeapon {
         this.maxRange = RANGE_LONG;
         this.explosionDamage = 20;
         rulesRefs = "219, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_F, RATING_D, RATING_D)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2822, 2828, 2830, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CBR)
-                .setProductionFactions(F_CBR);
+                .setPrototypeFactions(Faction.CBR)
+                .setProductionFactions(Faction.CBR);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

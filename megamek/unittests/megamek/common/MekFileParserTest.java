@@ -21,11 +21,16 @@ package megamek.common;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import megamek.common.equipment.WeaponMounted;
 
 class MekFileParserTest {
+    @BeforeAll
+    static void beforeAll() {
+        EquipmentType.initializeTypes();
+    }
 
     @Test
     void splitMGsBetweenMGAs() throws LocationFullException {

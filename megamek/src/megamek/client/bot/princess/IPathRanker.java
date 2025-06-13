@@ -18,14 +18,13 @@
 */
 package megamek.client.bot.princess;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.MovePath;
+import megamek.common.moves.MovePath;
 import megamek.common.Targetable;
 
 public interface IPathRanker {
@@ -47,11 +46,12 @@ public interface IPathRanker {
      * Gives the distance to the closest edge
      *
      * @param position Final coordinates of the proposed move.
+     * @param boardId The board on which to look
      * @param homeEdge Unit's home edge.
      * @param game The current {@link Game}
      * @return The distance, in hexes to the unit's home edge.
      */
-    int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, Game game);
+    int distanceToHomeEdge(Coords position, int boardId, CardinalEdge homeEdge, Game game);
 
     /**
      * Returns the best path of a list of ranked paths.
@@ -69,5 +69,12 @@ public interface IPathRanker {
     /**
      * Find the closest enemy to a unit with a path
      */
-    Targetable findClosestEnemy(Entity me, Coords position, Game game, boolean includeStrategicTargets);
+    default Targetable findClosestEnemy(Entity me, Coords position, Game game, boolean includeStrategicTargets) {
+        return findClosestEnemy(me, position, game, includeStrategicTargets, 0);
+    }
+
+    /**
+     * Find the closest enemy to a unit with a path
+     */
+    Targetable findClosestEnemy(Entity me, Coords position, Game game, boolean includeStrategicTargets, int minRange);
 }

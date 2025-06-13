@@ -24,6 +24,7 @@ import java.util.List;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.moves.MovePath;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
@@ -57,8 +58,8 @@ public class InfantryFireControl extends FireControl {
      * @return The most damage done at that range.
      */
     public double getMaxDamageAtRange(final MovePath shooterPath, final MovePath targetPath,
-            final int range, final boolean useExtremeRange,
-            final boolean useLOSRange) {
+                                      final int range, final boolean useExtremeRange,
+                                      final boolean useLOSRange) {
         double maxFGDamage = 0;
         double maxInfantryWeaponDamage = 0;
         Entity shooter = shooterPath.getEntity();
@@ -76,7 +77,7 @@ public class InfantryFireControl extends FireControl {
         // field guns can't fire if the unit in question moved
         boolean otherWeaponsMayShoot = !shooterIsActualInfantry || shooterPath.getMpUsed() == 0;
         boolean inBuilding = Compute.isInBuilding(target.getGame(), targetPath.getFinalElevation(),
-                targetPath.getFinalCoords());
+                targetPath.getFinalCoords(), targetPath.getFinalBoardId());
         boolean inOpen = ServerHelper.infantryInOpen(target, targetHex, target.getGame(), targetIsPlatoon, false,
                 false);
         boolean nonInfantryVsMechanized = !shooter.hasETypeFlag(Entity.ETYPE_INFANTRY)

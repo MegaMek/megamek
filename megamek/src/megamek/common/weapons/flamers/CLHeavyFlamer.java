@@ -38,7 +38,7 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         damage = 4;
         infDamageClass = WeaponType.WEAPON_BURST_6D6;
         rackSize = 2;
-        ammoType = AmmoType.T_HEAVY_FLAMER;
+        ammoType = AmmoType.AmmoTypeEnum.HEAVY_FLAMER;
         shortRange = 2;
         mediumRange = 3;
         longRange = 4;
@@ -52,15 +52,15 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         cost = 11250;
         rulesRefs = "312, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_CJF)
-                .setProductionFactions(F_CJF)
+                .setPrototypeFactions(Faction.CJF)
+                .setProductionFactions(Faction.CJF)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

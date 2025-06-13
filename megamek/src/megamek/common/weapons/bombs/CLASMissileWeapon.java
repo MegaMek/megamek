@@ -21,6 +21,7 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.missiles.ThunderBoltWeapon;
 
@@ -37,7 +38,7 @@ public class CLASMissileWeapon extends ThunderBoltWeapon {
     public CLASMissileWeapon() {
         super();
         name = "AS Missile";
-        setInternalName(BombType.getBombWeaponName(BombType.B_AS));
+        setInternalName(BombTypeEnum.AS.getWeaponName());
         heat = 0;
         damage = 30;
         rackSize = 1;
@@ -56,15 +57,15 @@ public class CLASMissileWeapon extends ThunderBoltWeapon {
         longAV = 30;
         flags = flags.or(F_ANTI_SHIP).or(F_MISSILE).or(F_LARGEMISSILE).or(F_BOMB_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         maxRange = RANGE_LONG;
-        ammoType = AmmoType.T_AS_MISSILE;
+        ammoType = AmmoType.AmmoTypeEnum.AS_MISSILE;
         capital = false;
         this.missileArmor = 30;
         rulesRefs = "358, TO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setTechRating(TechRating.D)
+        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
         .setISAdvancement(DATE_NONE, DATE_NONE, 3076, DATE_NONE, DATE_NONE)
         .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }

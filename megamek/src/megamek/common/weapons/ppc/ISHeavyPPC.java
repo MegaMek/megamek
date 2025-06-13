@@ -37,7 +37,7 @@ public class ISHeavyPPC extends PPCWeapon {
         waterShortRange = 4;
         waterMediumRange = 7;
         waterLongRange = 10;
-        waterExtremeRange = 14;
+        waterExtremeRange = 15;
         tonnage = 10.0;
         criticals = 4;
         bv = 317;
@@ -48,14 +48,14 @@ public class ISHeavyPPC extends PPCWeapon {
         // with a capacitor
         explosive = true;
         rulesRefs = "234, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.C)
                 .setISAdvancement(3062, 3067, 3068, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_DC)
-                .setProductionFactions(F_DC,F_FW);
+                .setPrototypeFactions(Faction.DC)
+                .setProductionFactions(Faction.DC,Faction.FW);
     }
 }

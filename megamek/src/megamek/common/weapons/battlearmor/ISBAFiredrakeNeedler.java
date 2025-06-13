@@ -31,7 +31,7 @@ public class ISBAFiredrakeNeedler extends Weapon {
         addLookupName("ISBAFiredrakeIncendiaryNeedler");
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         shortRange = 1;
         mediumRange = 2;
         longRange = 3;
@@ -44,14 +44,14 @@ public class ISBAFiredrakeNeedler extends Weapon {
                 .or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON)
                 .andNot(F_PROTO_WEAPON);
         rulesRefs = "266, TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B)
                 .setISAdvancement(3058, 3060, 3068, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_LC)
-                .setProductionFactions(F_LC);
+                .setPrototypeFactions(Faction.LC)
+                .setProductionFactions(Faction.LC);
     }
 }

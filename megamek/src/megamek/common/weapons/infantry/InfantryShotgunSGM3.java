@@ -31,7 +31,7 @@ public class InfantryShotgunSGM3 extends InfantryWeapon {
        name = "Shotgun (SGM-3)";
        setInternalName(name);
        addLookupName("SGM-3");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .248;
        tonnage =  0.0029;
        infantryDamage =  0.25;
@@ -44,11 +44,11 @@ public class InfantryShotgunSGM3 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_E,RATING_X,RATING_X,RATING_X)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.E,AvailabilityValue.X,AvailabilityValue.X,AvailabilityValue.X)
        .setISAdvancement(DATE_NONE, DATE_NONE,2100,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_TA);
+       .setProductionFactions(Faction.TA);
    }
 }

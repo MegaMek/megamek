@@ -1,0 +1,72 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-15
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Mechanized Tracked Platoon (FWLM)
+</Name>
+
+<Model>
+(ER Laser Heavy 3059+)
+</Model>
+
+<year>
+3059
+</year>
+
+<originalBuildYear>
+3059
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<Troopers Equipment>
+Free Worlds League Infantry Kit (3035+)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+The Free Worlds League is well known for it's quality infantry laser weapons. The Starfire ER Laser Rifle carries on that tradition, providing range at least as good as the more common Intek brand while improving on damage capability. Elite commands combine these with the latest in ER support lasers to create powerful weapons platoons to support infantry against the growing threat of battle armor and other hard to kill targets.
+</capabilities>
+
+<overview>
+In response to the formation of the Federated Commonwealth the Free World League introduced it's own advanced infantry armor kit.  It is widely considered the most effective commonly available kit in the Inner Sphere and is in high demand among FWL forces.
+</overview>
+
+<notes>
+Intro date based on production date of ER IS support laser
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Laser Rifle
+</Primary>
+
+<Secondary>
+Support Laser (ER, IS)
+</Secondary>
+

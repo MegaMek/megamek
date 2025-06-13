@@ -25,6 +25,7 @@ public class CLProtoMekAC8 extends ProtoMekACWeapon {
     public CLProtoMekAC8() {
         super();
 
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
         name = "ProtoMech AC/8";
         setInternalName("CLProtoMechAC8");
         addLookupName("Clan ProtoMech AC/8");
@@ -35,7 +36,7 @@ public class CLProtoMekAC8 extends ProtoMekACWeapon {
         shortRange = 3;
         mediumRange = 7;
         longRange = 10;
-        extremeRange = 14;
+        extremeRange = 15;
         tonnage = 5.5;
         criticals = 4;
         bv = 66;
@@ -47,11 +48,11 @@ public class CLProtoMekAC8 extends ProtoMekACWeapon {
         explosionDamage = damage;
         rulesRefs = "286, TO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-                .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        techAdvancement.setTechBase(TechBase.CLAN)
+                .setTechRating(TechRating.F).setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 3070, 3073, DATE_NONE,DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
-                .setPrototypeFactions(F_CBS).setProductionFactions(F_CBS)
+                .setPrototypeFactions(Faction.CBS).setProductionFactions(Faction.CBS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

@@ -15,16 +15,20 @@ package megamek.common.weapons.autocannons;
 
 import megamek.common.SimpleTechLevel;
 
+import java.io.Serial;
+
 /**
  * @author Jason Tighe
  * @since Oct 2, 2004
  */
 public class CLProtoMekAC2 extends ProtoMekACWeapon {
+
+    @Serial
     private static final long serialVersionUID = 4371171653960292873L;
 
     public CLProtoMekAC2() {
         super();
-
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
         name = "ProtoMech AC/2";
         setInternalName("CLProtoMechAC2");
         addLookupName("Clan ProtoMech AC/2");
@@ -35,7 +39,7 @@ public class CLProtoMekAC2 extends ProtoMekACWeapon {
         shortRange = 7;
         mediumRange = 14;
         longRange = 20;
-        extremeRange = 28;
+        extremeRange = 30;
         tonnage = 3.5;
         criticals = 2;
         bv = 34;
@@ -47,11 +51,11 @@ public class CLProtoMekAC2 extends ProtoMekACWeapon {
         explosionDamage = damage;
         rulesRefs = "286, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-                .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        techAdvancement.setTechBase(TechBase.CLAN)
+                .setTechRating(TechRating.F).setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 3070, 3073, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
-                .setPrototypeFactions(F_CBS).setProductionFactions(F_CBS)
+                .setPrototypeFactions(Faction.CBS).setProductionFactions(Faction.CBS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

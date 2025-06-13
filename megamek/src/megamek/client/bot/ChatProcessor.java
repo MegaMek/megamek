@@ -1,45 +1,54 @@
 /*
- * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot;
 
-import megamek.client.bot.princess.*;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+import java.util.stream.Stream;
+
+import megamek.client.bot.princess.ChatCommands;
+import megamek.client.bot.princess.Princess;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.commands.DefeatCommand;
 import megamek.server.commands.GameMasterCommand;
-import megamek.server.commands.JoinTeamCommand;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.ArgumentsParser;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ChatProcessor {
     private final static MMLogger logger = MMLogger.create(ChatProcessor.class);
@@ -47,17 +56,17 @@ public class ChatProcessor {
     boolean shouldBotAcknowledgeDefeat(String message, BotClient bot) {
         boolean result = false;
         if (!StringUtility.isNullOrBlank(message) &&
-                (message.contains("declares individual victory at the end of the turn.")
-                        || message.contains("declares team victory at the end of the turn."))) {
+                  (message.contains("declares individual victory at the end of the turn.") ||
+                         message.contains("declares team victory at the end of the turn."))) {
             String[] splitMessage = message.split(" ");
             int i = 1;
-            String name = splitMessage[i];
+            StringBuilder name = new StringBuilder(splitMessage[i]);
             while (!splitMessage[i + 1].equals("declares")) {
-                name += " " + splitMessage[i + 1];
+                name.append(" ").append(splitMessage[i + 1]);
                 i++;
             }
             for (Player p : bot.getGame().getPlayersList()) {
-                if (p.getName().equals(name)) {
+                if (p.getName().contentEquals(name)) {
                     if (p.isEnemyOf(bot.getLocalPlayer())) {
                         bot.sendChat("/defeat");
                         result = true;
@@ -75,14 +84,13 @@ public class ChatProcessor {
         if (!StringUtility.isNullOrBlank(message) && message.contains(DefeatCommand.wantsDefeat)) {
             String[] splitMessage = message.split(" ");
             int i = 1;
-            String name = splitMessage[i];
-            while (!splitMessage[i + 1].equals("wants")
-                    && !splitMessage[i + 1].equals("admits")) {
-                name += " " + splitMessage[i + 1];
+            StringBuilder name = new StringBuilder(splitMessage[i]);
+            while (!splitMessage[i + 1].equals("wants") && !splitMessage[i + 1].equals("admits")) {
+                name.append(" ").append(splitMessage[i + 1]);
                 i++;
             }
             for (Player p : bot.getGame().getPlayersList()) {
-                if (p.getName().equals(name)) {
+                if (p.getName().contentEquals(name)) {
                     if (p.isEnemyOf(bot.getLocalPlayer())) {
                         bot.sendChat("/victory");
                         result = true;
@@ -125,9 +133,7 @@ public class ChatProcessor {
 
         if (name.equals(Server.ORIGIN)) {
             String msg = st.nextToken();
-            if (msg.contains(JoinTeamCommand.SERVER_VOTE_PROMPT_MSG)) {
-                bot.sendChat("/allowTeamChange");
-            } else if (msg.contains(GameMasterCommand.SERVER_VOTE_PROMPT_MSG)) {
+            if (msg.contains(GameMasterCommand.SERVER_VOTE_PROMPT_MSG)) {
                 bot.sendChat("/allowGM");
             }
             return;
@@ -186,7 +192,7 @@ public class ChatProcessor {
         if (tokenizer.hasMoreElements()) {
             String[] additionalArguments = tokenizer.nextToken().trim().split(" ");
             arguments = Stream.concat(Arrays.stream(arguments), Arrays.stream(additionalArguments))
-                .toArray(String[]::new);
+                              .toArray(String[]::new);
         }
 
 
@@ -215,8 +221,8 @@ public class ChatProcessor {
 
     private static void processChatCommand(Princess princess, String command, String[] arguments) {
         for (ChatCommands cmd : ChatCommands.values()) {
-            if (command.toLowerCase().equalsIgnoreCase(cmd.getAbbreviation())
-                || command.toLowerCase().equalsIgnoreCase(cmd.getCommand())) {
+            if (command.toLowerCase().equalsIgnoreCase(cmd.getAbbreviation()) ||
+                      command.toLowerCase().equalsIgnoreCase(cmd.getCommand())) {
                 try {
                     Arguments args = ArgumentsParser.parse(arguments, cmd.getChatCommand().defineArguments());
                     cmd.getChatCommand().execute(princess, args);

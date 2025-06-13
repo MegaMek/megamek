@@ -31,11 +31,11 @@ public class ISKinsSlaughterPPC extends PPCWeapon {
         this.shortRange = 4;
         this.mediumRange = 10;
         this.longRange = 16;
-        this.extremeRange = 20;
+        this.extremeRange = 24;
         this.waterShortRange = 4;
         this.waterMediumRange = 10;
         this.waterLongRange = 16;
-        this.waterExtremeRange = 20;
+        this.waterExtremeRange = 24;
         this.tonnage = 7.0;
         this.criticals = 3;
         this.bv = 229;
@@ -44,16 +44,16 @@ public class ISKinsSlaughterPPC extends PPCWeapon {
         // This weapons was actually blended into IO's Enhanced PPC and should be considered non-canon
         // for IS factions
         rulesRefs = "Unofficial";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(2740, 2751, DATE_NONE, 2860, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2740, 2751, DATE_NONE, 2831, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH);
     }
 }

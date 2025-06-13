@@ -35,7 +35,7 @@ public class InfantryRifleMauser1200LSSWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryMauser1200");
 		addLookupName("Mauser 1200 LSS");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 10000;
 		bv = 5.32;
 		tonnage = .011;
@@ -46,10 +46,10 @@ public class InfantryRifleMauser1200LSSWeapon extends InfantryWeapon {
 		shots = 6;
 		bursts = 1;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3052, 3055, 3075, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3052, 3055, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_WB)
-		        .setProductionFactions(F_WB).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+		        .setPrototypeFactions(Faction.WB)
+		        .setProductionFactions(Faction.WB).setTechRating(TechRating.E)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
 	}
 }

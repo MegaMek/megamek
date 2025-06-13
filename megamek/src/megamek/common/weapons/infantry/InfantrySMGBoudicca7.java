@@ -33,7 +33,7 @@ public class InfantrySMGBoudicca7 extends InfantryWeapon {
        name = "SMG (Boudicca-7)";
        setInternalName(name);
        addLookupName("Boudicca-7");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = 1.375;
        tonnage =  0.0021;
        infantryDamage =  0.69;
@@ -46,11 +46,11 @@ public class InfantrySMGBoudicca7 extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #5";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_X,RATING_X,RATING_E,RATING_E)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.X,AvailabilityValue.E,AvailabilityValue.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,3050,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_MC);
+       .setProductionFactions(Faction.MC);
    }
 }

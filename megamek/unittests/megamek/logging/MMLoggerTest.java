@@ -1,18 +1,35 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-
 package megamek.logging;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,6 +42,7 @@ import static org.mockito.Mockito.verify;
 import java.awt.GraphicsEnvironment;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.message.Message;
@@ -36,8 +54,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.MockitoAnnotations;
 
 public class MMLoggerTest {
-
-    private final static MMLogger logger = MMLogger.create(MMLoggerTest.class);
 
     private CustomLogger mockLogger;
     private MMLogger testMMLogger;
@@ -71,8 +87,8 @@ public class MMLoggerTest {
     @Test
     public void testWarnLoggingWithException() {
         Exception e = new Exception("Test exception");
-        testMMLogger.warn(e, "Warn message: {}", "test");
-        verifyLog(Level.WARN, "Warn message: test", e);
+        testMMLogger.warn(e, "Warn message w/ Exception: {}", "test");
+        verifyLog(Level.WARN, "Warn message w/ Exception: test", e);
     }
 
     @Test
@@ -115,19 +131,6 @@ public class MMLoggerTest {
 
     @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
     @Test
-    public void testDeprecatedErrorLoggingWithExceptionNoParams() {
-        if (GraphicsEnvironment.isHeadless()) {
-            // Skip this test if running in headless mode
-            return;
-        }
-        automaticallyDismissDialog();
-        Exception e = new Exception("Test exception");
-        testMMLogger.error(e, "Error message: noparameter accepted", "test");
-        verifyLog(Level.ERROR, "Error message: noparameter accepted", e);
-    }
-
-    @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
-    @Test
     public void testErrorLoggingWithException() {
         if (GraphicsEnvironment.isHeadless()) {
             // Skip this test if running in headless mode
@@ -157,18 +160,6 @@ public class MMLoggerTest {
         verifyLog(Level.FATAL, "Fatal with dialog with exception");
     }
 
-    @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
-    @Test
-    public void testDeprecatedFatalLoggingWithDialog() {
-        if (GraphicsEnvironment.isHeadless()) {
-            // Skip this test if running in headless mode
-            return;
-        }
-        automaticallyDismissDialog();
-        testMMLogger.fatalDialog("Fatal with dialog with exception", "Fatal dialog title");
-        verifyLog(Level.FATAL, "Fatal with dialog with exception");
-    }
-
     @Test
     public void testFatalLoggingWithException() {
         Exception e = new Exception("Test exception");
@@ -176,22 +167,12 @@ public class MMLoggerTest {
         verifyLog(Level.FATAL, "Fatal without dialog with exception", e);
     }
 
-    @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
-    @Test
-    public void testDeprecatedFatalLoggingWithException() {
-        if (GraphicsEnvironment.isHeadless()) {
-            // Skip this test if running in headless mode
-            return;
-        }
-        automaticallyDismissDialog();
-        Exception e = new Exception("Test exception");
-        testMMLogger.fatalDialog(e, "Fatal without dialog with exception", "Fatal dialog title");
-        verifyLog(Level.FATAL, "Fatal without dialog with exception", e);
-    }
-
     private void verifyLog(Level level, String message) {
         ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
-        verify(mockLogger).logMessage(anyString(), eq(level), nullable(Marker.class), messageCaptor.capture(),
+        verify(mockLogger).logMessage(anyString(),
+              eq(level),
+              nullable(Marker.class),
+              messageCaptor.capture(),
               nullable(Throwable.class));
         assertEquals(message, messageCaptor.getValue().getFormattedMessage());
     }
@@ -199,7 +180,10 @@ public class MMLoggerTest {
     private void verifyLog(Level level, String message, Throwable e) {
         ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
         ArgumentCaptor<Throwable> throwableCaptor = ArgumentCaptor.forClass(Throwable.class);
-        verify(mockLogger).logMessage(anyString(), eq(level), nullable(Marker.class), messageCaptor.capture(),
+        verify(mockLogger).logMessage(anyString(),
+              eq(level),
+              nullable(Marker.class),
+              messageCaptor.capture(),
               throwableCaptor.capture());
         assertEquals(message, messageCaptor.getValue().getFormattedMessage());
         assertEquals(e, throwableCaptor.getValue());
@@ -233,7 +217,7 @@ public class MMLoggerTest {
 
         @Override
         public void logMessage(String fqcn, Level level, org.apache.logging.log4j.Marker marker, String message,
-              Throwable t) {
+                               Throwable t) {
             // Custom implementation for logging messages
         }
 
@@ -249,7 +233,7 @@ public class MMLoggerTest {
 
         @Override
         public boolean isEnabled(Level level, org.apache.logging.log4j.Marker marker, String message,
-              Object... params) {
+                                 Object... params) {
             return true;
         }
 
@@ -270,43 +254,43 @@ public class MMLoggerTest {
 
         @Override
         public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2,
-              Object p3) {
+                                 Object p3) {
             return true;
         }
 
         @Override
         public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3,
-              Object p4) {
+                                 Object p4) {
             return true;
         }
 
         @Override
         public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3,
-              Object p4, Object p5) {
+                                 Object p4, Object p5) {
             return true;
         }
 
         @Override
         public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3,
-              Object p4, Object p5, Object p6) {
+                                 Object p4, Object p5, Object p6) {
             return true;
         }
 
         @Override
         public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3,
-              Object p4, Object p5, Object p6, Object p7) {
+                                 Object p4, Object p5, Object p6, Object p7) {
             return true;
         }
 
         @Override
         public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3,
-              Object p4, Object p5, Object p6, Object p7, Object p8) {
+                                 Object p4, Object p5, Object p6, Object p7, Object p8) {
             return true;
         }
 
         @Override
         public boolean isEnabled(Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3,
-              Object p4, Object p5, Object p6, Object p7, Object p8, Object p9) {
+                                 Object p4, Object p5, Object p6, Object p7, Object p8, Object p9) {
             return true;
         }
 
@@ -322,7 +306,7 @@ public class MMLoggerTest {
 
         @Override
         public boolean isEnabled(Level level, org.apache.logging.log4j.Marker marker,
-              org.apache.logging.log4j.message.Message message, Throwable t) {
+                                 org.apache.logging.log4j.message.Message message, Throwable t) {
             return true;
         }
 
@@ -337,3 +321,4 @@ public class MMLoggerTest {
         }
     }
 }
+

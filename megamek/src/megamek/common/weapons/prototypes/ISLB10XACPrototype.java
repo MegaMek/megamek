@@ -50,19 +50,23 @@ public class ISLB10XACPrototype extends LBXACWeapon {
         longRange = 18;
         extremeRange = 24;
         tonnage = 11.0;
+        shortAV = getBaseAeroDamage();
+        medAV = shortAV;
+        longAV = shortAV;
+        extAV = shortAV;
         bv = 148;
         cost = 2000000; // Cost in the AoW is 160000 but not making another version for one field.
         rulesRefs = "71, IO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
                 .setISAdvancement(2590, DATE_NONE, DATE_NONE, 2595, 3035)
                 .setISApproximate(false, false, false, true, true)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FS, F_LC)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FS, Faction.LC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

@@ -1,0 +1,76 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-15
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Jump Platoon (FWLM)
+</Name>
+
+<Model>
+(Laser TAG 3051+)
+</Model>
+
+<year>
+3051
+</year>
+
+<originalBuildYear>
+3051
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<Troopers Equipment>
+Free Worlds League Infantry Kit (3035+)
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<capabilities>
+These troops are equipped with man-portable TAG designator systems to support guided ordnance from Arrow IV launchers. These are typically launched from light air mobile artillery platoons and ground support aircraft, and later on tactical support Meks such as the ANV-8M Anvil.
+</capabilities>
+
+<overview>
+In response to the formation of the Federated Commonwealth the Free World League introduced it's own advanced infantry armor kit.  It is widely considered the most effective commonly available kit in the Inner Sphere and is in high demand among FWL forces.
+</overview>
+
+<notes>
+Intro date based on re-introduction date of man-portable TAG weapon
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Laser Rifle
+</Primary>
+
+<Secondary>
+InfantryTAG
+</Secondary>
+
+<specialization>
+1024
+</specialization>
+

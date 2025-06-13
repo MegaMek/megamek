@@ -1,0 +1,156 @@
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-10-25
+chassis:Helios
+model:HEL-6RISC
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3136
+source:XTRO:RISC
+rules level:4
+role:Skirmisher
+
+quirk:easy_maintain
+quirk:non_standard
+
+mass:60
+engine:300 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Triple-Strength
+
+heat sinks:12 IS Double
+walk mp:5
+jump mp:5
+
+armor:Standard(Inner Sphere)
+LA armor:15
+RA armor:15
+LT armor:18
+RT armor:18
+CT armor:22
+HD armor:9
+LL armor:15
+RL armor:15
+RTL armor:5
+RTR armor:5
+RTC armor:7
+
+Weapons:5
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+Plasma Rifle, Right Arm
+SRM 6, Left Torso
+SRM 6, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERMediumLaser
+CLERMediumLaser
+Chameleon Light Polarization Shield
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISPlasmaRifle
+ISPlasmaRifle
+ISPlasmaRifleAmmo
+Chameleon Light Polarization Shield
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLSRM6
+RISC Viral Jammer (Decoy)
+Chameleon Light Polarization Shield
+IS Endo Steel
+IS Endo Steel
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLSRM6
+Clan Ammo SRM-6
+Clan Ammo SRM-6
+Chameleon Light Polarization Shield
+ISCASEII
+IS Endo Steel
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+ISC3SlaveUnit
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISRemoteDroneCommandConsole
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Chameleon Light Polarization Shield
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Chameleon Light Polarization Shield
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -29,7 +29,8 @@ import java.util.Vector;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.BombType.BombTypeEnum;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
@@ -90,9 +91,9 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     @Override
-    public int get0SI() {
+    public int getOSI() {
         return getActiveSubEntities().stream()
-                .mapToInt(ent -> ((IAero) ent).get0SI())
+                .mapToInt(ent -> ((IAero) ent).getOSI())
                 .min()
                 .orElse(0);
     }
@@ -189,11 +190,10 @@ public class FighterSquadron extends AeroSpaceFighter {
 
     @Override
     public boolean hasActiveECM() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
-            return super.hasActiveECM();
-        } else {
+        if (isSpaceborne() && isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return getActiveSubEntities().stream().anyMatch(Entity::hasActiveECM);
+        } else {
+            return super.hasActiveECM();
         }
     }
 
@@ -212,13 +212,13 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
         int vel = getCurrentVelocity();
         int vmod = vel - (2 * getWalkMP());
-        if (!getGame().getBoard().inSpace() && (vmod > 0)) {
+        if (!isSpaceborne() && (vmod > 0)) {
             prd.addModifier(vmod, "Velocity greater than 2x safe thrust");
         }
 
         // add in atmospheric effects later
         PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (!(game.getBoard().inSpace()
+        if (!(isSpaceborne()
                 || conditions.getAtmosphere().isVacuum())) {
             prd.addModifier(+2, "Atmospheric operations");
             prd.addModifier(-1, "fighter/ small craft");
@@ -477,11 +477,9 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     @Override
-    public void setBombChoices(int... bc) {
+    public void setBombChoices(BombLoadout bc) {
         // Set the bombs for the squadron
-        if (bc.length == extBombChoices.length) {
-            extBombChoices = bc;
-        }
+        extBombChoices = new BombLoadout(bc);
         // Update each fighter in the squadron
         for (Entity bomber : getSubEntities()) {
             ((IBomber) bomber).setBombChoices(bc);
@@ -496,11 +494,11 @@ public class FighterSquadron extends AeroSpaceFighter {
      * type mounted.
      */
     @Override
-    public int[] getBombLoadout() {
-        int[] loadout = new int[BombType.B_NUM];
+    public BombLoadout getBombLoadout() {
+        BombLoadout loadout = new BombLoadout();
         for (Entity fighter : getSubEntities()) {
             for (Mounted<?> m : fighter.getBombs()) {
-                loadout[((BombType) m.getType()).getBombType()]++;
+                loadout.addBombs(((BombType) m.getType()).getBombType(), 1);
             }
         }
         return loadout;
@@ -528,81 +526,174 @@ public class FighterSquadron extends AeroSpaceFighter {
         clearBombs();
 
         // Find out what bombs everyone has
-        for (int bombType = 0; bombType < BombType.B_NUM; bombType++) {
-            int finalBombType = bombType;
-            int maxBombCount = 0;
-            for (Entity fighter : getSubEntities()) {
-                int bombCount = (int) fighter.getBombs().stream()
-                        .filter(m -> m.getType().getBombType() == finalBombType)
-                        .count();
-                maxBombCount = Math.max(bombCount, maxBombCount);
-            }
-            extBombChoices[bombType] = maxBombCount;
-        }
+        BombLoadout squadronCapabilities = calculateSquadronBombCapabilities();
+        extBombChoices = new BombLoadout(squadronCapabilities);
 
         // Now that we know our bomb choices, load 'em
-        int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
-        for (int type = 0; type < BombType.B_NUM; type++) {
-            for (int i = 0; i < extBombChoices[type]; i++) {
-                if ((type == BombType.B_ALAMO)
-                        && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
-                    continue;
-                } else if ((type > BombType.B_TAG) && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
-                    continue;
-                }
+        loadBombEquipment(squadronCapabilities);
 
-                // some bombs need an associated weapon and if so
-                // they need a weapon for each bomb
-                if ((null != BombType.getBombWeaponName(type)) && (type != BombType.B_ARROW)
-                        && (type != BombType.B_HOMING)) {
-                    try {
-                        addBomb(EquipmentType.get(BombType.getBombWeaponName(type)), LOC_NOSE);
-                    } catch (Exception ignored) {
+        // Add special attack types
+        addSpaceBombAttack();
+        addGroundBombAttacks();
 
+        // Finalization
+        updateWeaponGroups();
+        loadAllWeapons();
+    }
+
+    /**
+     * Calculates the maximum bomb capabilities of the squadron by analyzing
+     * each fighter's bomb loadout.
+     * 
+     * @return BombLoadout representing the squadron's maximum bomb capabilities
+     */
+    private BombLoadout calculateSquadronBombCapabilities() {
+        BombLoadout capabilities = new BombLoadout();
+        
+        // For each bomb type, find the maximum count across all fighters
+        for (BombTypeEnum bombType : BombTypeEnum.values()) {
+            if (bombType == BombTypeEnum.NONE) continue;
+            
+            int maxBombCount = getSubEntities().stream()
+                .mapToInt(fighter -> countBombsOfType(fighter, bombType))
+                .max()
+                .orElse(0);
+                
+            if (maxBombCount > 0) {
+                capabilities.put(bombType, maxBombCount);
+            }
+        }
+        
+        return capabilities;
+    }
+
+    /**
+     * Counts the number of bombs of a specific type on a fighter.
+     * 
+     * @param fighter The fighter entity to check
+     * @param bombType The type of bomb to count
+     * @return The number of bombs of the specified type
+     */
+    private int countBombsOfType(Entity fighter, BombTypeEnum bombType) {
+        return (int) fighter.getBombs().stream()
+            .filter(mounted -> ((BombType) mounted.getType()).getBombType() == bombType)
+            .count();
+    }
+
+    /**
+     * Loads bomb equipment onto the squadron based on calculated capabilities.
+     * 
+     * @param capabilities The squadron's bomb capabilities
+     */
+    private void loadBombEquipment(BombLoadout capabilities) {
+        for (Map.Entry<BombTypeEnum, Integer> entry : capabilities.entrySet()) {
+            BombTypeEnum bombType = entry.getKey();
+            int count = entry.getValue();
+            
+            if (!bombType.isAllowedByGameOptions(game.getOptions())) {
+                continue;
+            }
+
+            for (int i = 0; i < count; i++) {
+                try {
+                    // Add weapon if bomb type requires one
+                    if (requiresWeapon(bombType)) {
+                        try {
+                            EquipmentType weaponType = EquipmentType.get(bombType.getWeaponName());
+                            if (weaponType != null) {
+                                addBomb(weaponType, LOC_NOSE);
+                            }
+                        } catch (Exception ignored) {
+                            logger.warn("Failed to add bomb ammo for type: {}", bombType.getDisplayName(), ignored);
+                        }
                     }
-                }
-                // If the bomb was added as a weapon, don't add the ammo
-                // The ammo will end up never getting removed from the squadron
-                // because it doesn't count as a weapon.
-                if ((type != BombType.B_TAG) && (null == BombType.getBombWeaponName(type))) {
-                    try {
-                        addEquipment(EquipmentType.get(BombType.getBombInternalName(type)), LOC_NOSE, false);
-                    } catch (Exception ignored) {
-
+                    
+                    // Add ammo/equipment if bomb type requires it
+                    if (requiresAmmo(bombType)) {
+                        try {
+                            EquipmentType ammoType = EquipmentType.get(bombType.getInternalName());
+                            if (ammoType != null) {
+                                addEquipment(ammoType, LOC_NOSE, false);
+                            }
+                        } catch (Exception ignored) {
+                            logger.warn("Failed to add bomb ammo for type: {}", bombType.getDisplayName(), ignored);
+                        }
                     }
+                } catch (Exception e) {
+                    logger.warn("Failed to add bomb equipment for type: {}, iteration: {}", 
+                            bombType.getDisplayName(), i, e);
                 }
             }
-            // Clear out the bomb choice once the bombs are loaded
-            extBombChoices[type] = 0;
         }
-        // add the space bomb attack
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
-                && game.getBoard().inSpace() && !getBombs(AmmoType.F_SPACE_BOMB).isEmpty()) {
+        
+        // Clear bomb choices after loading equipment
+        extBombChoices.clear();
+    }
+
+    /**
+     * Checks if a bomb type requires a weapon to be added.
+     * TODO: Maybe this should be moved to BombTypeEnum?
+     * 
+     * @param bombType The bomb type to check
+     * @return true if a weapon is required
+     */
+    private boolean requiresWeapon(BombTypeEnum bombType) {
+        return (bombType.getWeaponName() != null) && 
+            (bombType != BombTypeEnum.ARROW) && 
+            (bombType != BombTypeEnum.HOMING);
+    }
+
+    /**
+     * Checks if a bomb type requires ammo to be added.
+     * TODO: Maybe this should be moved to BombTypeEnum?
+     * 
+     * @param bombType The bomb type to check
+     * @return true if ammo is required
+     */
+    private boolean requiresAmmo(BombTypeEnum bombType) {
+        return (bombType != BombTypeEnum.TAG) && (bombType.getWeaponName() == null);
+    }
+
+    /**
+     * Adds space bomb attack if conditions are met.
+     */
+    private void addSpaceBombAttack() {
+        if (isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB) &&
+            isSpaceborne() && 
+            !getBombs(AmmoType.F_SPACE_BOMB).isEmpty()) {
+            
             try {
                 addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (Exception ignored) {
-
+                logger.warn("Failed to add space bomb attack", ignored);
             }
         }
+    }
 
-        if (!game.getBoard().inSpace() && !getBombs(AmmoType.F_GROUND_BOMB).isEmpty()) {
+    /**
+     * Adds ground bomb attacks if conditions are met.
+     */
+    private void addGroundBombAttacks() {
+        if (isSpaceborne() || getBombs(AmmoType.F_GROUND_BOMB).isEmpty()) {
+            return;
+        }
+        
+        // Add dive bomb attack
+        try {
+            addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK), LOC_NOSE, false);
+        } catch (Exception ignored) {
+            logger.warn("Failed to add dive bomb attack", ignored);
+        }
+        
+        // Add altitude bomb attacks (up to 10)
+        int bombCount = Math.min(10, getBombs(AmmoType.F_GROUND_BOMB).size());
+        for (int i = 0; i < bombCount; i++) {
             try {
-                addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK), LOC_NOSE, false);
+                addEquipment(EquipmentType.get(ALT_BOMB_ATTACK), LOC_NOSE, false);
             } catch (Exception ignored) {
-
-            }
-
-            for (int i = 0; i < Math.min(10, getBombs(AmmoType.F_GROUND_BOMB).size()); i++) {
-                try {
-                    addEquipment(EquipmentType.get(ALT_BOMB_ATTACK), LOC_NOSE, false);
-                } catch (Exception ignored) {
-
-                }
+                logger.warn("Failed to add altitude bomb attack {}", i, ignored);
             }
         }
-
-        updateWeaponGroups();
-        loadAllWeapons();
     }
 
     /**

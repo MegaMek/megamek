@@ -54,18 +54,18 @@ public class ISGAC4 extends ACWeapon {
         toHitModifier = -1;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MEK_WEAPON)
                 .or(F_AERO_WEAPON).or(F_TANK_WEAPON).or(F_PULSE);
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.AmmoTypeEnum.AC;
         atClass = CLASS_AC;
         // Going to Assume these are like IS RACs
         rulesRefs = "Unofficial";
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TechBase.IS)
                 .setIntroLevel(false)
                 .setUnofficial(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3060, 3062, 3071, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS);
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS);
     }
 }

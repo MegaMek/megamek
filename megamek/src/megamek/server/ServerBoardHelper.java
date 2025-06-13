@@ -19,7 +19,6 @@
 package megamek.server;
 
 import megamek.MMConstants;
-import megamek.client.bot.princess.Princess;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
 import megamek.common.Configuration;
@@ -29,7 +28,7 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
-import static megamek.client.ui.swing.lobby.LobbyUtility.extractSurpriseMaps;
+import static megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility.extractSurpriseMaps;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -109,11 +108,17 @@ public class ServerBoardHelper {
     public static Board getPossibleGameBoard(MapSettings mapSettings, boolean onlyFixedBoards) {
         mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
         Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
-        List<Boolean> rotateBoard = new ArrayList<>();
-        for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
+
+        var boardsIterator = mapSettings.getBoardsSelectedVector().iterator();
+        int i = 0;
+        while (boardsIterator.hasNext()) {
+            String name = boardsIterator.next();
+
+            if (name == null || name.isEmpty()) {
+                continue;
+            }
             sheetBoards[i] = new Board();
 
-            String name = mapSettings.getBoardsSelectedVector().get(i);
             if ((name.startsWith(MapSettings.BOARD_GENERATED) || name.startsWith(MapSettings.BOARD_SURPRISE))
                     && onlyFixedBoards) {
                 sheetBoards[i] = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
@@ -138,13 +143,13 @@ public class ServerBoardHelper {
                 sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name + MMConstants.CL_KEY_FILEEXTENTION_BOARD).getFile());
                 BoardUtilities.flip(sheetBoards[i], flipBoard, flipBoard);
             }
+            i++;
         }
 
         Board finalBoard;
         try {
             finalBoard = BoardUtilities.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
-                  mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards, rotateBoard,
-                  mapSettings.getMedium());
+                  mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards, mapSettings.getMedium());
         } catch (IllegalArgumentException ex) {
             int totalWidth = mapSettings.getMapWidth() * mapSettings.getBoardWidth();
             int totalHeight = mapSettings.getMapHeight() * mapSettings.getBoardHeight();

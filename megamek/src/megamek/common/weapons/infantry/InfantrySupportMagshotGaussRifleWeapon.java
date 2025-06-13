@@ -37,7 +37,7 @@ public class InfantrySupportMagshotGaussRifleWeapon extends InfantryWeapon {
 		addLookupName("InfantryMagshot");
 		addLookupName("InfantryMagshotGaussRifle");
 		addLookupName("Infantry Magshot Gauss Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 8500;
 		bv = 3.78;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
@@ -49,11 +49,11 @@ public class InfantrySupportMagshotGaussRifleWeapon extends InfantryWeapon {
 		ammoCost = 10;
 		shots = 20;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3059, 3065, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3058, 3059, 3065, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_FS)
-		        .setProductionFactions(F_FS).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+		        .setPrototypeFactions(Faction.FS)
+		        .setProductionFactions(Faction.FS).setTechRating(TechRating.E)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D);
 
 	}
 }

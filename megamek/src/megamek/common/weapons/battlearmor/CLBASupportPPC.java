@@ -29,7 +29,7 @@ public class CLBASupportPPC extends PPCWeapon {
         setInternalName("BA Support PPC");
         addLookupName("CLBASupportPPC");
         damage = 2;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         shortRange = 2;
         mediumRange = 5;
         longRange = 7;
@@ -37,7 +37,7 @@ public class CLBASupportPPC extends PPCWeapon {
         waterShortRange = 1;
         waterMediumRange = 3;
         waterLongRange = 5;
-        waterExtremeRange = 6;
+        waterExtremeRange = 7;
         bv = 14;
         tonnage = 0.240;
         criticals = 2;
@@ -45,8 +45,8 @@ public class CLBASupportPPC extends PPCWeapon {
                 .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         cost = 14000;
         rulesRefs = "267, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+        techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2950, DATE_NONE, DATE_NONE);
     }
 }

@@ -28,7 +28,7 @@ public class InfantryPistolCamdenHR7 extends InfantryWeapon {
         name = "Pistol (Camden HR-7)";
         setInternalName(name);
         addLookupName("Camden HR-7");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = 0.44;
         tonnage =  0.0025;
         infantryDamage = 0.44;
@@ -41,11 +41,11 @@ public class InfantryPistolCamdenHR7 extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         rulesRefs = "Shrapnel #3";
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 2100, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_TC);
+                .setProductionFactions(Faction.TC);
     }
 }

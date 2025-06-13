@@ -29,7 +29,7 @@ public class ISCruiseMissile120 extends ArtilleryWeapon {
         this.setInternalName("ISCruiseMissile120");
         this.heat = 120;
         this.rackSize = 120;
-        this.ammoType = AmmoType.T_CRUISE_MISSILE;
+        this.ammoType = AmmoType.AmmoTypeEnum.CRUISE_MISSILE;
         this.shortRange = 1;
         this.mediumRange = 2;
         this.longRange = 150;
@@ -42,13 +42,13 @@ public class ISCruiseMissile120 extends ArtilleryWeapon {
         this.cost = 3000000;
         rulesRefs = "284, TO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        techAdvancement.setTechBase(TechBase.IS)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(3065, 3095, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS)
+                .setPrototypeFactions(Faction.FS)
+                .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

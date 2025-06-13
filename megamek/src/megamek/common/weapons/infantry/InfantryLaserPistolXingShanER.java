@@ -28,7 +28,7 @@ public class InfantryLaserPistolXingShanER extends InfantryWeapon {
         name = "Laser Pistol (Xīng Shan ER)";
         setInternalName(name);
         addLookupName("XīngShanER");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 830;
         bv = 0.21; // The bv in the image seems incorrect, adjusted to the value from the text
         tonnage = 0.0016;
@@ -40,11 +40,11 @@ public class InfantryLaserPistolXingShanER extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
 
         techAdvancement
-                .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_E) // Assuming X-X-E-E simplifies to E
-                .setAvailability(new int[]{RATING_X, RATING_X, RATING_E, RATING_E})
+                .setTechBase(TechBase.IS)
+                .setTechRating(TechRating.E) // Assuming X-X-E-E simplifies to E
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
-                .setProductionFactions(F_CC);
+                .setProductionFactions(Faction.CC);
     }
 }

@@ -24,9 +24,10 @@ import static java.util.stream.Collectors.toList;
 import static megamek.common.SpecialHexDisplay.Type.*;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.BasementType;
 import megamek.common.event.BoardEvent;
@@ -43,6 +44,8 @@ public class Board implements Serializable {
     // region Variable Declarations
 
     public static final String BOARD_REQUEST_ROTATION = "rotate:";
+    public static final int BOARD_NONE = -1;
+    public static final String BOARD_NAME_UNNAMED = "Unnamed";
 
     // starting positions
     public static final int START_NONE = -1;
@@ -61,26 +64,15 @@ public class Board implements Serializable {
     public static final int NUM_ZONES_X2 = 22;
 
     // Board Dimensions
-    // Used for things like artillery rules that reference the standard mapsheet
-    // dimensions
+    // Used for things like artillery rules that reference the standard mapsheet dimensions
     public static final int DEFAULT_BOARD_HEIGHT = 17;
     public static final int DEFAULT_BOARD_WIDTH = 16;
-    // Variable board width and height. Used for most everything else since we're
-    // not restricted to paper map sizes
-    protected int width;
-    protected int height;
 
-    // MapType
-    public static final int T_GROUND = 0;
-    public static final int T_ATMOSPHERE = 1;
-    public static final int T_SPACE = 2;
+    // Variable board width and height. Used for most everything else since we're not restricted to paper map sizes
+    private int width;
+    private int height;
 
-    public static final int MAX_DEPLOYMENT_ZONE_NUMBER = 31;
-
-    private static final String[] typeNames = { "Ground", "Low Atmosphere", "Space" };
-
-    // Min and Max elevation values for when they are undefined (since you can't set
-    // an int to null).
+    // Min and Max elevation values for when they are undefined (since you can't set an int to null).
     private static final int UNDEFINED_MIN_ELEV = 10000;
     private static final int UNDEFINED_MAX_ELEV = -10000;
 
@@ -89,14 +81,14 @@ public class Board implements Serializable {
     private int minElevation = UNDEFINED_MIN_ELEV;
     private int maxElevation = UNDEFINED_MAX_ELEV;
 
-    private int mapType = T_GROUND;
+    private BoardType boardType = BoardType.GROUND;
 
     private Hex[] data;
 
     /**
      * Building data structures.
      */
-    private Vector<Building> buildings = new Vector<>();
+    private final Vector<Building> buildings = new Vector<>();
     private transient Hashtable<Coords, Building> bldgByCoords = new Hashtable<>();
 
     protected transient Vector<BoardListener> boardListeners = new Vector<>();
@@ -104,9 +96,9 @@ public class Board implements Serializable {
     /**
      * Record the infernos placed on the board.
      */
-    private Hashtable<Coords, InfernoTracker> infernos = new Hashtable<>();
+    private final Hashtable<Coords, InfernoTracker> infernos = new Hashtable<>();
 
-    private Hashtable<Coords, Collection<SpecialHexDisplay>> specialHexes = new Hashtable<>();
+    private Map<Coords, Collection<SpecialHexDisplay>> specialHexes = new Hashtable<>();
 
     /**
      * Option to turn have roads auto-exiting to pavement.
@@ -121,12 +113,14 @@ public class Board implements Serializable {
     /**
      * Per-hex annotations on the map.
      */
-    private Map<Coords, Collection<String>> annotations = new HashMap<>();
+    private final Map<Coords, Collection<String>> annotations = new HashMap<>();
 
     /** Tags associated with this board to facilitate searching for it. */
-    private Set<String> tags = new HashSet<>();
+    private final Set<String> tags = new HashSet<>();
 
-    private final int boardId = 0;
+    private int boardId = 0;
+
+    public static final int MAX_DEPLOYMENT_ZONE_NUMBER = 31;
 
     /**
      * The board's deployment zones. These may come as terrains from the board file or they may be set by code. The field is
@@ -138,6 +132,23 @@ public class Board implements Serializable {
      * HexAreas that are set by code to be deployment zones.
      */
     private final Map<Integer, HexArea> areas = new HashMap<>();
+
+    /**
+     * At each Coords, one other, lower type board can be located, e.g. a ground board can be embedded in a
+     * low atmosphere board hex or a low atmosphere board can be embedded in a ground row hex of a high
+     * altitude board. This map gives the board ID for each affected Coords. This and
+     * {@link #enclosingBoard} should correspond to each other across the boards of a game.
+     */
+    private final Map<Coords, Integer> embeddedBoards = new HashMap<>();
+
+    /**
+     * This board may be embedded in (= enclosed by) a higher type board, e.g. if this is a ground map,
+     * it may be embedded in one or more hexes of a low atmosphere map. This and
+     * {@link #embeddedBoards} should correspond to each other across the boards of a game.
+     */
+    private int enclosingBoard = -1;
+
+    private String mapName = BOARD_NAME_UNNAMED;
 
     // endregion Variable Declarations
 
@@ -165,64 +176,25 @@ public class Board implements Serializable {
     }
 
     /**
-     * Creates a new board of the specified dimensions and specified hex data.
+     * Creates a new board of the specified dimensions and specified hex data. Note that the number of Hexes given
+     * should be equal to width * height to avoid null Hexes in the board.
      *
-     * @param width
-     *               the width dimension.
-     * @param height
-     *               the height dimension.
-     * @param data
+     * @param width  the width dimension
+     * @param height the height dimension
+     * @param data   the Hexes of the new board
      */
     public Board(int width, int height, Hex... data) {
         this.width = width;
         this.height = height;
-        this.data = new Hex[width * height];
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                this.data[(y * width) + x] = data[(y * width) + x];
-            }
-        }
+        this.data = Arrays.copyOf(data, data.length);
     }
 
     /**
-     * Creates a new board of the specified dimensions, hexes, buildings, and
-     * inferno trackers. Do *not* use this method unless you have carefully
-     * examined this class.
-     *
-     * @param width
-     *               The <code>int</code> width dimension in hexes.
-     * @param height
-     *               The <code>int</code> height dimension in hexes.
-     * @param hexes
-     *               The array of <code>Hex</code>es for this board. This object is
-     *               used directly without being copied. This value should only be
-     *               <code>null</code> if either <code>width</code> or
-     *               <code>height</code> is zero.
-     * @param bldgs
-     *               The <code>Vector</code> of <code>Building</code>s for this
-     *               board. This object is used directly without being copied.
-     * @param infMap
-     *               The <code>Hashtable</code> that map <code>Coords</code> to
-     *               <code>InfernoTracker</code>s for this board. This object is
-     *               used directly without being copied.
-     */
-    public Board(int width, int height, Hex[] hexes, Vector<Building> bldgs,
-            Hashtable<Coords, InfernoTracker> infMap) {
-        this.width = width;
-        this.height = height;
-        data = hexes;
-        buildings = bldgs;
-        infernos = infMap;
-        createBldgByCoords();
-    }
-
-    /**
-     * Returns a new atmospheric (low altitude) board with no terrain (sky map) of
-     * the given
-     * size.
+     * Returns a new atmospheric (low altitude) board with no terrain (sky map) of the given size.
      *
      * @param width  the width of the board
      * @param height the height of the board
+     *
      * @return the new board, ready to be used
      */
     public static Board getSkyBoard(int width, int height) {
@@ -234,7 +206,7 @@ public class Board implements Serializable {
             }
         }
         Board result = new Board(width, height, data);
-        result.setType(Board.T_ATMOSPHERE);
+        result.setBoardType(BoardType.SKY);
         return result;
     }
 
@@ -254,20 +226,20 @@ public class Board implements Serializable {
             }
         }
         Board result = new Board(width, height, data);
-        result.setType(Board.T_SPACE);
+        result.setBoardType(BoardType.FAR_SPACE);
         return result;
     }
     // endregion Constructors
 
     /**
-     * @return Map width in hexes
+     * @return Map height in hexes
      */
     public int getHeight() {
         return height;
     }
 
     /**
-     * @return Map height in hexes
+     * @return Map width in hexes
      */
     public int getWidth() {
         return width;
@@ -661,6 +633,17 @@ public class Board implements Serializable {
     }
 
     /**
+     * Determines whether this Board "contains" the specified location. True only when the board IDs match and the
+     * coords of the location are within the borders of the board.
+     *
+     * @param location the location to test
+     * @return true if the board contains the specified location
+     */
+    public boolean contains(@Nullable BoardLocation location) {
+        return (location != null) && location.isOn(boardId) && contains(location.coords());
+    }
+
+    /**
      * Returns the Hex at the given Coords, both of which may be null.
      *
      * @param coords the Coords to look for the Hex
@@ -699,48 +682,27 @@ public class Board implements Serializable {
      * @param hex the hex to be set into position.
      */
     public void setHex(int x, int y, Hex hex) {
-        data[(y * width) + x] = hex;
-        initializeHex(x, y);
-        // If this hex has exitable terrain, we may need to update the exits in
-        // adjacent hexes
-        if (hex.hasExitableTerrain()) {
-            for (int dir = 0; dir < 6; dir++) {
-                if (hex.containsExit(dir)) {
-                    initializeInDir(x, y, dir);
-                }
-            }
-        }
+        Map<BoardLocation, Hex> changedHex = new HashMap<>();
+        changedHex.put(BoardLocation.of(new Coords(x, y), boardId), hex);
+        setHexes(changedHex);
     }
 
     /**
-     * Similar to the setHex function for a collection of coordinates and hexes.
-     * For each coord/hex pair in the supplied collections, this method determines
-     * if the Board
-     * contains the coords and if so updates the specified hex into that position
-     * and initializes it.
+     * Copies in the given hexes, overwriting any affected hexes that are on this board. For simplicity, this method
+     * ignores boardlocations that are not on this board, i.e., it can be called without first filtering the locations
+     * for board ID.
      *
-     * The method ensures that each hex that needs to be updated is only updated
-     * once.
-     *
-     * @param coords A list of coordinates to be updated
-     * @param hexes  The hex to be updated for each coordinate
+     * @param changedHexes A map of locations and hexes; the locations need not all (or any) match this board
      */
-    public void setHexes(List<Coords> coords, List<Hex> hexes) {
-        // Keeps track of hexes that will need to be reinitialized
-        LinkedHashSet<Coords> needsUpdate = new LinkedHashSet<>((int) (coords.size() * 1.25 + 0.5));
+    public void setHexes(Map<BoardLocation, Hex> changedHexes) {
+        Set<Coords> needsUpdate = new HashSet<>();
+        for (Map.Entry<BoardLocation, Hex> entry : changedHexes.entrySet()) {
+            if (boardId != entry.getKey().boardId()) {
+                continue;
+            }
 
-        // Sanity check
-        if (coords.size() != hexes.size()) {
-            throw new IllegalStateException("setHexes received two collections differeing size!");
-        }
-
-        // Update all input hexes, plus create a set of coords that need
-        // updating
-        Iterator<Coords> coordIter = coords.iterator();
-        Iterator<Hex> hexIter = hexes.iterator();
-        while (coordIter.hasNext() && hexIter.hasNext()) {
-            Coords currCoord = coordIter.next();
-            Hex currHex = hexIter.next();
+            Coords currCoord = entry.getKey().coords();
+            Hex currHex = entry.getValue();
             int x = currCoord.getX();
             int y = currCoord.getY();
 
@@ -760,13 +722,11 @@ public class Board implements Serializable {
                     }
                 }
             }
-
         }
 
         for (Coords coord : needsUpdate) {
             initializeHex(coord.getX(), coord.getY());
         }
-
     }
 
     /**
@@ -870,6 +830,8 @@ public class Board implements Serializable {
                         result.add(st.sval);
                     }
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("end")) {
+                    break;
+                } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("hex")) {
                     break;
                 }
             }
@@ -989,18 +951,13 @@ public class Board implements Serializable {
      * @return Constant representing the opposite edge
      */
     public int getOppositeEdge(int cardinalEdge) {
-        switch (cardinalEdge) {
-            case Board.START_E:
-                return Board.START_W;
-            case Board.START_N:
-                return Board.START_S;
-            case Board.START_W:
-                return Board.START_E;
-            case Board.START_S:
-                return Board.START_N;
-            default:
-                return Board.START_NONE;
-        }
+        return switch (cardinalEdge) {
+            case Board.START_E -> Board.START_W;
+            case Board.START_N -> Board.START_S;
+            case Board.START_W -> Board.START_E;
+            case Board.START_S -> Board.START_N;
+            default -> Board.START_NONE;
+        };
     }
 
     /**
@@ -1021,6 +978,15 @@ public class Board implements Serializable {
      */
     public void load(InputStream is) {
         load(is, null, false);
+    }
+
+    public void load(String boardString, @Nullable List<String> errors) {
+        try (InputStream is = new ByteArrayInputStream(boardString.getBytes(StandardCharsets.UTF_8))) {
+            load(is, errors, false);
+        } catch (IOException ex) {
+            logger.error(ex, "Error loading string to build board - {}", ex.getMessage());
+            throw new IllegalArgumentException("Error loading string to build board - " + ex.getMessage());
+        }
     }
 
     public void load(InputStream is, @Nullable List<String> errors, boolean continueLoadOnError) {
@@ -1122,9 +1088,9 @@ public class Board implements Serializable {
         }
 
         // check data integrity
-        if (isValid(nd, nw, nh, errors) && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
+        if (isValid(nd, nw, nh, errors) && ((nw > 0) || (nh > 0) || (di == (nw * nh)))) {
             newData(nw, nh, nd, errors);
-        } else if (continueLoadOnError && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
+        } else if (continueLoadOnError && ((nw > 0) || (nh > 0) || (di == (nw * nh)))) {
             logger.error("Invalid board data!");
             newData(nw, nh, nd, errors);
         } else if (errors == null) {
@@ -1412,23 +1378,7 @@ public class Board implements Serializable {
      *         returned instead.
      */
     private Building getLocalBuilding(Building other) {
-        // Handle garbage input.
-        if (other == null) {
-            return null;
-        }
-
-        // ASSUMPTION: it is better to use the Hashtable than the Vector.
-        Building local = null;
-        Enumeration<Coords> coords = other.getCoords();
-        if (coords.hasMoreElements()) {
-            local = bldgByCoords.get(coords.nextElement());
-            if (!other.equals(local)) {
-                local = null;
-            }
-        }
-
-        // TODO: if local is still null, try the Vector.
-        return local;
+        return buildings.stream().filter(building -> building.equals(other)).findFirst().orElse(null);
     }
 
     /**
@@ -1442,9 +1392,7 @@ public class Board implements Serializable {
         Enumeration<Coords> loop = coords.elements();
         while (loop.hasMoreElements()) {
             final Coords other = loop.nextElement();
-
-            // Update the building.
-            this.collapseBuilding(other);
+            collapseBuilding(other);
         }
     }
 
@@ -1455,11 +1403,12 @@ public class Board implements Serializable {
      * @param coords the <code>Building</code> that has collapsed.
      */
     public void collapseBuilding(Coords coords) {
-        final Hex curHex = this.getHex(coords);
+        final Hex curHex = getHex(coords);
 
         // Remove the building from the building map.
         Building bldg = bldgByCoords.get(coords);
         if (bldg == null) {
+            logger.error("No building found at %s".formatted(coords));
             return;
         }
         bldg.removeHex(coords);
@@ -1503,8 +1452,7 @@ public class Board implements Serializable {
         // Update the hex.
         // TODO : Do I need to initialize it???
         // ASSUMPTION: It's faster to update one at a time.
-        this.setHex(coords, curHex);
-
+        setHex(coords, curHex);
     }
 
     /**
@@ -1527,38 +1475,25 @@ public class Board implements Serializable {
     }
 
     /**
-     * Update the construction factors on an array of buildings.
+     * Update a locally stored building with CF and other values from a building received from the server.
      *
-     * @param bldgs the <code>Vector</code> of <code>Building</code> objects to be
-     *              updated.
+     * @param receivedBuilding The Building received from the server
      */
-    public void updateBuildings(Vector<Building> bldgs) {
+    public void updateBuilding(Building receivedBuilding) {
+        Building localBuilding = getLocalBuilding(receivedBuilding);
 
-        // Walk through the vector of buildings.
-        Enumeration<Building> loop = bldgs.elements();
-        while (loop.hasMoreElements()) {
-            final Building other = loop.nextElement();
-
-            // Find the local object for the given building.
-            Building bldg = getLocalBuilding(other);
-
-            // Handle garbage input.
-            if (bldg == null) {
-                logger.error("Could not find a match for " + other + " to update.");
-                continue;
-            }
-            Enumeration<Coords> coordsEnum = bldg.getCoords();
-            while (coordsEnum.hasMoreElements()) {
-                // Set the current and phase CFs of the building hexes.
-                final Coords coords = coordsEnum.nextElement();
-                bldg.setCurrentCF(other.getCurrentCF(coords), coords);
-                bldg.setPhaseCF(other.getPhaseCF(coords), coords);
-                bldg.setArmor(other.getArmor(coords), coords);
-                bldg.setBasement(coords,
-                        BasementType.getType(getHex(coords).terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
-                bldg.setBasementCollapsed(coords, other.getBasementCollapsed(coords));
-                bldg.setDemolitionCharges(other.getDemolitionCharges());
-            }
+        if ((receivedBuilding.getBoardId() != boardId) || (localBuilding == null)) {
+            logger.error("Could not find a match for " + receivedBuilding + " to update.");
+            return;
+        }
+        for (Coords coords : localBuilding.getCoordsList()) {
+            localBuilding.setCurrentCF(receivedBuilding.getCurrentCF(coords), coords);
+            localBuilding.setPhaseCF(receivedBuilding.getPhaseCF(coords), coords);
+            localBuilding.setArmor(receivedBuilding.getArmor(coords), coords);
+            localBuilding.setBasement(coords,
+                  BasementType.getType(getHex(coords).terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
+            localBuilding.setBasementCollapsed(coords, receivedBuilding.getBasementCollapsed(coords));
+            localBuilding.setDemolitionCharges(receivedBuilding.getDemolitionCharges());
         }
     }
 
@@ -1645,7 +1580,13 @@ public class Board implements Serializable {
         }
     }
 
-    protected void processBoardEvent(BoardEvent event) {
+    /**
+     * Fires a board event which typically leads to the boardview and minimap being redrawn. This is public as the
+     * boards and minimaps show some data that is not part of the Board class and Board has no way of knowing when a
+     * change happens. An example of this is arty auto hexes which are stored in the player class
+     * @param event
+     */
+    public void processBoardEvent(BoardEvent event) {
         if (boardListeners == null) {
             return;
         }
@@ -1702,14 +1643,22 @@ public class Board implements Serializable {
     }
 
     /**
-     * This returns special events that should be marked on hexes, such as artillery
-     * fire.
+     * @return Special events that should be marked on hexes, such as artillery fire as well as notes players can
+     * leave manually on hexes. Always returns at least an empty list, never null.
      */
     public Collection<SpecialHexDisplay> getSpecialHexDisplay(Coords coords) {
-        return specialHexes.get(coords);
+        return specialHexes.getOrDefault(coords, Collections.emptyList());
     }
 
-    public void addSpecialHexDisplay(Coords coords, SpecialHexDisplay shd) {
+    /**
+     * Adds the given SHD at the given coords to this board. An event can be fired for this board change (this should
+     * not be done on the Server).
+     *
+     * @param coords The position of the SHD on this board
+     * @param shd The SpecialHexDisplay to add
+     * @param fireEvent When true, a BoardEvent is fired for the affected coords
+     */
+    public void addSpecialHexDisplay(Coords coords, SpecialHexDisplay shd, boolean fireEvent) {
         Collection<SpecialHexDisplay> col;
         if (!specialHexes.containsKey(coords)) {
             col = new LinkedList<>();
@@ -1718,84 +1667,79 @@ public class Board implements Serializable {
             col = specialHexes.get(coords);
             // It's possible we are updating a SHD that is already entered.
             // If that is the case, we want to remove the original entry.
+            // FIXME: An updated shd will likely not get removed because of SpecialHexDisplay.equals. Why not use a Set?
             col.remove(shd);
         }
 
         col.add(shd);
+
+        if (fireEvent) {
+            processBoardEvent(new BoardEvent(this, coords, BoardEvent.BOARD_CHANGED_HEX));
+        }
     }
 
+    /**
+     * Adds the given SHD at the given coords to this board. This method does not fire an event for the change.
+     *
+     * @param coords The position of the SHD on this board
+     * @param shd The SpecialHexDisplay to add
+     */
+    public void addSpecialHexDisplay(Coords coords, SpecialHexDisplay shd) {
+        addSpecialHexDisplay(coords, shd, false);
+    }
+
+    /**
+     * Removes the given SHD from the given coords.
+     *
+     * @param coords The position of the SHD on this board
+     * @param shd    The SpecialHexDisplay to remove
+     */
     public void removeSpecialHexDisplay(Coords coords, SpecialHexDisplay shd) {
+        removeSpecialHexDisplay(coords, shd, false);
+    }
+
+    /**
+     * Removes the given SHD from the given coords.
+     *
+     * @param coords The position of the SHD on this board
+     * @param shd    The SpecialHexDisplay to remove
+     */
+    public void removeSpecialHexDisplay(Coords coords, SpecialHexDisplay shd, boolean fireEvent) {
         Collection<SpecialHexDisplay> col = specialHexes.get(coords);
         if (col != null) {
             col.remove(shd);
         }
+        if (fireEvent) {
+            processBoardEvent(new BoardEvent(this, coords, BoardEvent.BOARD_CHANGED_HEX));
+        }
     }
 
-    public Hashtable<Coords, Collection<SpecialHexDisplay>> getSpecialHexDisplayTable() {
+    public Map<Coords, Collection<SpecialHexDisplay>> getSpecialHexDisplayTable() {
         return specialHexes;
     }
 
     /**
-     * Sets the current board's specialHexes hashtable to a new set.
-     * To avoid opponent updates wiping local copies of SHDs, specifically Artillery
-     * Miss and
-     * Drift markers, back up the local copies. Add them back if the remote table
-     * doesn't
-     * contain them.
+     * Sets this board's specialHexes to a new set. This method should be used by the client when receiving an update
+     * from the server.
      *
-     * @param shd
+     * @param shd The new map of SpecialHexDisplays
      */
-    public void setSpecialHexDisplayTable(Hashtable<Coords, Collection<SpecialHexDisplay>> shd) {
-        Hashtable<Coords, Collection<SpecialHexDisplay>> temp = new Hashtable<>();
-
-        // Grab all current ARTILLERY_MISS and ARTILLERY_DRIFT instances
-        for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e : specialHexes.entrySet()) {
-            for (SpecialHexDisplay special : e.getValue()) {
-                if (Set.of(ARTILLERY_MISS, ARTILLERY_DRIFT).contains(special.getType())) {
-                    temp.computeIfAbsent(e.getKey(), k -> new LinkedList<>()).add(special);
-                }
-            }
-        }
-
-        // Swap new Hashtable in for old
+    public void setSpecialHexDisplayTable(Map<Coords, Collection<SpecialHexDisplay>> shd) {
+        // save the former SHDs to redraw their hexes if they've vanished
+        Set<Coords> toRedraw = new HashSet<>(specialHexes.keySet());
         specialHexes = shd;
-
-        // Add miss instances back
-        for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e : temp.entrySet()) {
-            for (SpecialHexDisplay miss : e.getValue()) {
-                if (!specialHexes.containsKey(e.getKey())) {
-                    specialHexes.put(e.getKey(), new LinkedList<>());
-                }
-                if (!specialHexes.get(e.getKey()).contains(miss)) {
-                    specialHexes.get(e.getKey()).add(miss);
-                }
-            }
-        }
+        toRedraw.addAll(shd.keySet());
+        toRedraw.forEach(coords ->
+               processBoardEvent(new BoardEvent(this, coords, BoardEvent.BOARD_CHANGED_HEX)));
+        //TODO: Add a BoardEvent for a set of coords to avoid many events
     }
 
     public void setType(int t) {
-        mapType = t;
-    }
-
-    public int getType() {
-        return mapType;
-    }
-
-    public static String getTypeName(int t) {
-        return typeNames[t];
-    }
-
-    // some convenience functions
-    public boolean onGround() {
-        return (mapType == T_GROUND);
-    }
-
-    public boolean inAtmosphere() {
-        return (mapType == T_ATMOSPHERE);
-    }
-
-    public boolean inSpace() {
-        return (mapType == T_SPACE);
+        setBoardType(switch (t) {
+            case MapSettings.MEDIUM_ATMOSPHERE -> BoardType.SKY_WITH_TERRAIN;
+            case MapSettings.MEDIUM_SPACE -> BoardType.FAR_SPACE;
+            default -> BoardType.GROUND;
+        });
     }
 
     /**
@@ -1845,6 +1789,9 @@ public class Board implements Serializable {
     }
 
     public boolean containsBridges() {
+        if (isSpace() || isSky()) {
+            return false;
+        }
         for (Coords c : bldgByCoords.keySet()) {
             Hex hex = getHex(c);
             if (hex.containsTerrain(Terrains.BRIDGE)) {
@@ -1928,10 +1875,7 @@ public class Board implements Serializable {
      * @return true when the given Coord c is on the edge of the board.
      */
     public boolean isOnBoardEdge(Coords c) {
-        return (c.getX() == 0)
-                || (c.getY() == 0)
-                || (c.getX() == (width - 1))
-                || (c.getY() == (height - 1));
+        return (c.getX() == 0) || (c.getY() == 0) || (c.getX() == (width - 1)) || (c.getY() == (height - 1));
     }
 
     public static Board createEmptyBoard(int width, int height) {
@@ -1964,8 +1908,12 @@ public class Board implements Serializable {
     }
 
     /** @return The name of this map; this is meant to be displayed in the GUI. */
-    public String getMapName() {
-        return "Board #" + boardId;
+    public String getBoardName() {
+        return mapName;
+    }
+
+    public void setMapName(String mapName) {
+        this.mapName = mapName;
     }
 
     /**
@@ -2084,4 +2032,112 @@ public class Board implements Serializable {
         return zoneID + NUM_ZONES_X2;
     }
 
+    /**
+     * Sets the board's ID. Within an MM game, the ID must be unique. To preserve "normal" games, 0 is the default.
+     */
+    public void setBoardId(int boardId) {
+        this.boardId = boardId;
+        // must update buildings that have already been created.
+        for (Building building : buildings) {
+            building.setBoardId(boardId);
+        }
+    }
+
+    public int getBoardId() {
+        return boardId;
+    }
+
+    public void setEnclosingBoard(int enclosingBoardId) {
+        enclosingBoard = enclosingBoardId;
+    }
+
+    /** @return The ID of the enclosing board of this board, or -1 if it has no enclosing board. */
+    public int getEnclosingBoardId() {
+        return enclosingBoard;
+    }
+
+    /**
+     * Sets the given board ID as an embedded board at the given coords of this board. The board ID is not checked
+     * nor the board type. The coords are checked against the size of this board.
+     *
+     * @param boardId The board ID to embed
+     * @param coords The location to place the given board
+     * @throws IllegalArgumentException When this board does not contain the given coords
+     */
+    public void setEmbeddedBoard(int boardId, Coords coords) {
+        if (contains(coords)) {
+            embeddedBoards.put(coords, boardId);
+        } else {
+            throw new IllegalArgumentException("Board does not contain the given coords.");
+        }
+    }
+
+    public Set<Coords> embeddedBoardCoords() {
+        return embeddedBoards.keySet();
+    }
+
+    public @Nullable Coords embeddedBoardPosition(int boardId) {
+        for (Map.Entry<Coords, Integer> entry : embeddedBoards.entrySet()) {
+            if (entry.getValue() == boardId) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public int getEmbeddedBoardAt(Coords coords) {
+        return embeddedBoards.getOrDefault(coords, -1);
+    }
+
+    public Set<Coords> getEmbeddedBoardHexes() {
+        return embeddedBoards.keySet();
+    }
+
+    public boolean isGround() {
+        return boardType.isGround();
+    }
+
+    /**
+     * @return True if this board is a low altitude (a.k.a. atmospheric) board, either with terrain or without
+     * terrain ("sky").
+     */
+    public boolean isLowAltitude() {
+        return boardType.isLowAltitude();
+    }
+
+    /**
+     * @return True if this board is a low altitude (a.k.a. atmospheric) board without terrain ("sky").
+     */
+    public boolean isSky() {
+        return boardType.isSky();
+    }
+
+    /**
+     * @return True if this board is a space board, either close to a planet with some atmospheric hexes ("high
+     * altitude") or in deeper space.
+     */
+    public boolean isSpace() {
+        return boardType.isSpace();
+    }
+
+    /**
+     * @return True if this board is a high altitude board, i.e. a space board close to a planet with some atmospheric
+     * hexes.
+     */
+    public boolean isHighAltitude() {
+        return boardType.isHighAltitude();
+    }
+
+    public void setBoardType(BoardType boardType) {
+        this.boardType = boardType;
+    }
+
+    public BoardType getBoardType() {
+        return boardType;
+    }
+
+    @Override
+    public String toString() {
+        return "[Board-%s] (%s) %dx%d".formatted(boardType, mapName, width, height);
+    }
 }

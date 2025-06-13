@@ -31,7 +31,7 @@ public class InfantryShotgunDaystarIVM extends InfantryWeapon {
        name = "Shotgun (Daystar IV (M))";
        setInternalName(name);
        addLookupName("Daystar IV (M)");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .44;
        tonnage =  0.0027;
        infantryDamage =  0.44;
@@ -44,12 +44,12 @@ public class InfantryShotgunDaystarIVM extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_D,RATING_D,RATING_C,RATING_C)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.D,AvailabilityValue.D,AvailabilityValue.C,AvailabilityValue.C)
        .setISAdvancement(DATE_NONE, DATE_NONE,2635,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_TC);
+       .setProductionFactions(Faction.TC);
 
    }
 }

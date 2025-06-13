@@ -36,7 +36,7 @@ public class InfantryRifleImperatorAX22AssaultWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryImperatorAX22");
 		addLookupName("Imperator AX-22 Assault Rifle");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 200;
 		bv = 1.59;
 		tonnage = .0035;
@@ -48,11 +48,11 @@ public class InfantryRifleImperatorAX22AssaultWeapon extends InfantryWeapon {
 		shots = 15;
 		bursts = 1;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3052, 3060, 3085, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3052, 3060, 3085, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_FW)
-		        .setProductionFactions(F_FW).setTechRating(RATING_C)
-		        .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B);
+		        .setPrototypeFactions(Faction.FW)
+		        .setProductionFactions(Faction.FW).setTechRating(TechRating.C)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B);
 
 	}
 }

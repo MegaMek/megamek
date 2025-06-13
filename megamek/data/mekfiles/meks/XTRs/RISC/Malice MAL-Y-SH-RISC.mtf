@@ -1,0 +1,157 @@
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-10-28
+chassis:Malice
+model:MAL-Y-SH-RISC
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3150
+source:XTRO:RISC
+rules level:4
+role:Sniper
+
+quirk:illegal_design
+
+mass:105
+engine:315 XXL (Clan) Engine
+structure:IS Endo Steel
+myomer:Super-Cooled
+cockpit:Superheavy Cockpit
+gyro:Superheavy Gyro
+heat sink kit:RISC Heat Sink Override Kit
+
+heat sinks:27 Laser
+walk mp:3
+jump mp:0
+
+armor:Ferro-Lamellor(Clan)
+LA armor:32
+RA armor:32
+LT armor:32
+RT armor:32
+CT armor:42
+HD armor:12
+LL armor:41
+RL armor:41
+RTL armor:12
+RTR armor:12
+RTC armor:20
+
+Weapons:4
+RISC Hyper Laser, Left Arm
+RISC Hyper Laser, Right Arm
+RISC Hyper Laser, Left Torso
+RISC Hyper Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Laser Heat Sink
+Laser Heat Sink
+ISRISCHyperLaser
+ISRISCHyperLaser
+ISRISCHyperLaser
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Laser Heat Sink
+Laser Heat Sink
+ISRISCHyperLaser
+ISRISCHyperLaser
+ISRISCHyperLaser
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Laser Heat Sink
+Laser Heat Sink
+Laser Heat Sink
+ISRISCHyperLaser
+ISRISCHyperLaser
+ISRISCHyperLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Laser Heat Sink
+Laser Heat Sink
+Laser Heat Sink
+ISRISCHyperLaser
+ISRISCHyperLaser
+ISRISCHyperLaser
+ISSuperCooledMyomer
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Laser Heat Sink
+Laser Heat Sink
+Laser Heat Sink
+Laser Heat Sink
+Radical Heat Sink System
+Radical Heat Sink System
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Laser Heat Sink
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISSuperCooledMyomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISSuperCooledMyomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

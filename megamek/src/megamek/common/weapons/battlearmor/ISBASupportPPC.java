@@ -32,7 +32,7 @@ public class ISBASupportPPC extends PPCWeapon {
         setInternalName("ISBASupportPPC");
         addLookupName("IS BA Support PPC");
         damage = 2;
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         shortRange = 2;
         mediumRange = 5;
         longRange = 7;
@@ -40,7 +40,7 @@ public class ISBASupportPPC extends PPCWeapon {
         waterShortRange = 1;
         waterMediumRange = 3;
         waterLongRange = 5;
-        waterExtremeRange = 6;
+        waterExtremeRange = 7;
         tonnage = 0.25;
         criticals = 2;
         flags = flags.or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
@@ -48,8 +48,8 @@ public class ISBASupportPPC extends PPCWeapon {
         bv = 14;
         cost = 14000;
         rulesRefs = "267, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS)
-                .setISAdvancement(3046, 3053, 3056).setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C);
+        techAdvancement.setTechBase(TechAdvancement.TechBase.IS)
+                .setISAdvancement(3046, 3053, 3056).setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C);
     }
 }

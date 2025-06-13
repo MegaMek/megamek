@@ -35,7 +35,7 @@ public class Thumper extends ArtilleryWeapon {
         addLookupName("Clan Thumper");
         heat = 5;
         rackSize = 15;
-        ammoType = AmmoType.T_THUMPER;
+        ammoType = AmmoType.AmmoTypeEnum.THUMPER;
         shortRange = 1;
         mediumRange = 2;
         longRange = 21;
@@ -46,10 +46,10 @@ public class Thumper extends ArtilleryWeapon {
         bv = 43;
         cost = 187500;
         rulesRefs = "284, TO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
-            .setTechRating(RATING_B).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        techAdvancement.setTechBase(TechBase.ALL)
+            .setTechRating(TechRating.B).setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
             .setAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

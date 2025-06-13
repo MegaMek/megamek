@@ -35,7 +35,7 @@ public class InfantryPistolWhiteDwarfLaserPistolWeapon extends InfantryWeapon {
 		name = "Laser Pistol (Hold-Out [White Dwarf])";
 		setInternalName(name);
 		addLookupName("White Dwarf Holdout Laser Pistol");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.AmmoTypeEnum.NA;
 		cost = 250;
 		bv = 0.02;
 		tonnage = .00025;
@@ -43,11 +43,11 @@ public class InfantryPistolWhiteDwarfLaserPistolWeapon extends InfantryWeapon {
 		infantryDamage = 0.02;
 		infantryRange = 0;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3056, 3058, 3075, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3056, 3058, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
-		        .setPrototypeFactions(F_FW)
-		        .setProductionFactions(F_FW).setTechRating(RATING_D)
-		        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C);
+		        .setPrototypeFactions(Faction.FW)
+		        .setProductionFactions(Faction.FW).setTechRating(TechRating.D)
+		        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C);
 
 	}
 }

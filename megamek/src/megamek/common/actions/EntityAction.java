@@ -21,9 +21,9 @@ package megamek.common.actions;
 
 import megamek.client.Client;
 import megamek.common.*;
-import megamek.client.ui.swing.AccessibilityWindow;
-import megamek.client.ui.swing.tooltip.EntityActionLog;
-import megamek.client.ui.swing.boardview.TurnDetailsOverlay;
+import megamek.client.ui.dialogs.AccessibilityDialog;
+import megamek.client.ui.clientGUI.tooltip.EntityActionLog;
+import megamek.client.ui.clientGUI.boardview.overlay.TurnDetailsOverlay;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.strategicBattleSystems.SBFFormation;
 
@@ -50,12 +50,12 @@ public interface EntityAction {
 
     /**
      * Returns a full description of the action that is (only) to be used in the
-     * {@link AccessibilityWindow} as a textual representation of the action.
+     * {@link AccessibilityDialog} as a textual representation of the action.
      * By default, this method returns the value of toString().
      *
      * @param client The local client to obtain any necessary information for the description
      * @return A string describing the action
-     * @see AccessibilityWindow
+     * @see AccessibilityDialog
      */
     default String toAccessibilityDescription(Client client) {
         return toString();

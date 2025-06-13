@@ -32,7 +32,7 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.shortName = "AR10";
         this.heat = 20; // This should reflect the maximum possible heat
         this.damage = 2;
-        this.ammoType = AmmoType.T_AR10;
+        this.ammoType = AmmoType.AmmoTypeEnum.AR10;
         this.shortRange = 20;
         this.mediumRange = 30;
         this.longRange = 40;
@@ -49,18 +49,18 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.maxRange = RANGE_EXT;
         this.atClass = CLASS_AR10;
         rulesRefs = "210, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2540, 2550, 3055, 2950, 3051)
                 .setISApproximate(true, false, false, true, false)
                 .setClanAdvancement(2540, 2550, 3055, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FS, F_LC);
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FS, Faction.LC);
     }
 
     @Override

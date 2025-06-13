@@ -42,7 +42,7 @@ public class CLERPulseLaserSmall extends PulseLaserWeapon {
         waterShortRange = 1;
         waterMediumRange = 2;
         waterLongRange = 4;
-        waterExtremeRange = 4;
+        waterExtremeRange = 6;
         tonnage = 1.5;
         criticals = 1;
         shortAV = 5;
@@ -52,10 +52,10 @@ public class CLERPulseLaserSmall extends PulseLaserWeapon {
         flags = flags.or(F_BURST_FIRE);
         rulesRefs = "320, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-                .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        techAdvancement.setTechBase(TechBase.CLAN)
+                .setTechRating(TechRating.F).setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(DATE_NONE, 3057, 3082, DATE_NONE, DATE_NONE)
-                .setPrototypeFactions(F_CWF)
-                .setProductionFactions(F_CWF).setStaticTechLevel(SimpleTechLevel.STANDARD);
+                .setPrototypeFactions(Faction.CWF)
+                .setProductionFactions(Faction.CWF).setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

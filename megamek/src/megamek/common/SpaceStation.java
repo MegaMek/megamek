@@ -12,15 +12,18 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.cost.SpaceStationCostCalculator;
 import megamek.common.options.OptionsConstants;
+
+import java.io.Serial;
 
 /**
  * @author Jay Lawson
  * @since Jun 17, 2007
  */
 public class SpaceStation extends Jumpship {
+    @Serial
     private static final long serialVersionUID = -3160156173650960985L;
 
     /** A station over this weight in may built as a modular station. */
@@ -40,25 +43,25 @@ public class SpaceStation extends Jumpship {
         setSail(false);
     }
 
-    private static final TechAdvancement TA_SPACE_STATION = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement TA_SPACE_STATION = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_ES, DATE_ES)
-            .setTechRating(RATING_D)
-            .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setTechRating(TechRating.D)
+            .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
-    private static final TechAdvancement TA_SPACE_STATION_KF_ADAPTER = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement TA_SPACE_STATION_KF_ADAPTER = new TechAdvancement(TechBase.ALL)
             .setISAdvancement(2350, 2375, DATE_NONE, 2850, 3048).setClanAdvancement(2350, 2375)
-            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
             // The adapter itself is tech rating C, but this is the base for a station with an adapter.
-            .setReintroductionFactions(F_FS).setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_F, RATING_D, RATING_D)
+            .setReintroductionFactions(Faction.FS).setTechRating(TechRating.D)
+            .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
-    private static final TechAdvancement TA_SPACE_STATION_MODULAR = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement TA_SPACE_STATION_MODULAR = new TechAdvancement(TechBase.ALL)
             .setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090).setClanAdvancement(2565, 2585)
-            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-            .setReintroductionFactions(F_RS).setTechRating(RATING_D)
-            .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+            .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
+            .setReintroductionFactions(Faction.RS).setTechRating(TechRating.D)
+            .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
@@ -118,28 +121,9 @@ public class SpaceStation extends Jumpship {
         }
     }
 
-    /**
-     * All military space stations automatically have ECM if in space
-     */
-    @Override
-    public boolean hasActiveECM() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
-            return super.hasActiveECM();
-        }
-        return getECMRange() >= 0;
-    }
-
-    /**
-     * What's the range of the ECM equipment?
-     *
-     * @return the <code>int</code> range of this unit's ECM. This value will be
-     *         <code>Entity.NONE</code> if no ECM is active.
-     */
     @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
+        if (!isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !isSpaceborne()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {

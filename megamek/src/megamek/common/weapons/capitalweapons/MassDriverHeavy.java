@@ -33,7 +33,7 @@ public class MassDriverHeavy extends MassDriverWeapon {
         this.shortName = "Heavy Mass Driver";
         this.heat = 90;
         this.damage = 140;
-        this.ammoType = AmmoType.T_HMASS;
+        this.ammoType = AmmoType.AmmoTypeEnum.HMASS;
         this.shortRange = 12;
         this.mediumRange = 24;
         this.longRange = 40;
@@ -44,13 +44,13 @@ public class MassDriverHeavy extends MassDriverWeapon {
         this.medAV = 140;
         this.longAV = 140;
         rulesRefs = "323, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_D)
-                .setAvailability(RATING_F, RATING_X, RATING_F, RATING_F)
+        techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setISAdvancement(2715, DATE_NONE, DATE_NONE, 2855, 3066)
                 .setISApproximate(true, false, false, true, false)
                 .setClanAdvancement(2715, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, true, false)
-                .setPrototypeFactions(F_TH).setReintroductionFactions(F_WB)
+                .setPrototypeFactions(Faction.TH).setReintroductionFactions(Faction.WB)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

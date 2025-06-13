@@ -48,6 +48,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         }
 
         Coords targetPos = target.getPosition();
+        Hex targetHex = game.getHexOf(target);
         boolean targetIsEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
         boolean isFlak = targetIsEntity && Compute.isFlakAttack(ae, (Entity) target);
         boolean asfFlak = isFlak && target.isAirborne();
@@ -121,9 +122,10 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             r.add(targetPos.getBoardNum());
             vPhaseReport.addElement(r);
         } else {
-            if (!game.getBoard().inSpace()) {
+            Board board = game.getBoard(target);
+            if (!board.isSpace()) {
                 targetPos = Compute.scatter(targetPos, (Math.abs(toHit.getMoS()) + 1) / 2);
-                if (game.getBoard().contains(targetPos)) {
+                if (board.contains(targetPos)) {
                     // misses and scatters to another hex
                     if (!isFlak) {
                         r = new Report(3195);
@@ -154,15 +156,22 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             }
         }
 
+        int height = ((targetHex != null) ? targetHex.getLevel() : 0);
+        if (asfFlak) {
+            height = target.getAltitude();
+        } else if (isFlak) {
+            height += target.getElevation();
+        }
+
         // According to TacOps eratta, artillery cannons can only fire standard
         // rounds and fuel-air cannon shells (Interstellar Ops p165).
         // But, they're still in as unofficial tech, because they're fun. :)
         if (null != ammoType) {
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
                 int radius;
-                if (ammoType.getAmmoType() == AmmoType.T_LONG_TOM) {
+                if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM) {
                     radius = 3;
-                } else if (ammoType.getAmmoType() == AmmoType.T_SNIPER) {
+                } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER) {
                     radius = 2;
                 } else {
                     radius = 1;
@@ -188,31 +197,18 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                 // Currently Artillery Cannons _can_ make Flak attacks using FAE munitions
                 // If this is an ASF Flak attack we know we hit an entity by itself in the air,
                 // so just hit it for full damage.
-                int height = target.getElevation();
-                if (target instanceof HexTarget) {
-                    Board board = game.getBoard();
-                    if (board.contains(targetPos)) {
-                        height = board.getHex(targetPos).getLevel();
-                    }
-                }
-
                 if (asfFlak) {
                     AreaEffectHelper.artilleryDamageEntity((Entity) target, ammoType.getRackSize(), null,
                             0, false, asfFlak, isFlak, height,
                             targetPos, atype, targetPos, false, ae, null, getAttackerId(),
                             vPhaseReport, gameManager);
                 } else {
-                    AreaEffectHelper.processFuelAirDamage(targetPos, height,
+                    AreaEffectHelper.processFuelAirDamage(targetPos, target.getBoardId(), height,
                             ammoType, ae, vPhaseReport, gameManager);
                 }
 
                 return false;
             }
-        }
-
-        int altitude = 0;
-        if (isFlak) {
-            altitude = target.getElevation();
         }
 
         // check to see if this is a mine clearing attack
@@ -230,8 +226,8 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                     gameManager);
         }
 
-        gameManager.artilleryDamageArea(targetPos, ae.getPosition(), ammoType,
-                subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
+        gameManager.artilleryDamageArea(targetPos, ammoType,
+                subjectId, ae, isFlak, height, mineClear, vPhaseReport,
                 asfFlak);
 
         // artillery may unintentionally clear minefields, but only if it wasn't trying

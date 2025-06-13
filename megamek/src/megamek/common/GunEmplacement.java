@@ -14,42 +14,41 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.logging.MMLogger;
 
+import java.io.Serial;
+import java.util.Optional;
+
 /**
- * A building with weapons fitted and, optionally, a turret.
- * Taharqa: I am completely re-writing this entity to bring it up to code with
- * TacOps rules
- * GunEmplacements will not simply be the weapon loadouts that can be attached
- * to buildings.
- * They will not be targetable in game, but will be destroyed if their building
- * hex is reduced.
+ * A building with weapons fitted and, optionally, a turret. Taharqa: I am completely re-writing this entity to bring it
+ * up to code with TacOps rules GunEmplacements will not simply be the weapon loadouts that can be attached to
+ * buildings. They will not be targetable in game, but will be destroyed if their building hex is reduced.
  */
 public class GunEmplacement extends Tank {
-    private static final MMLogger logger = MMLogger.create(GunEmplacement.class);
-
+    @Serial
     private static final long serialVersionUID = 8561738092216598248L;
+    private static final MMLogger logger = MMLogger.create(GunEmplacement.class);
 
     // locations
     public static final int LOC_GUNS = 0;
 
     public static final String[] HIT_LOCATION_NAMES = { "guns" };
 
-    private static final int[] CRITICAL_SLOTS = new int[] { 0 };
+    private static final int[] CRITICAL_SLOTS = new int[] { 100 };
     private static final String[] LOCATION_ABBRS = { "GUN" };
     private static final String[] LOCATION_NAMES = { "GUNS" };
 
-    private static final TechAdvancement TA_GUN_EMPLACEMENT = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement TA_GUN_EMPLACEMENT = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_B).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            .setTechRating(TechRating.B).setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
 
-    public static final TechAdvancement TA_LIGHT_BUILDING = new TechAdvancement(TECH_BASE_ALL)
+    public static final TechAdvancement TA_LIGHT_BUILDING = new TechAdvancement(TechBase.ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            .setTechRating(TechRating.A).setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     private int initialBuildingCF;
@@ -104,8 +103,12 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int currElevation) {
-        Hex hex = game.getBoard().getHex(c);
+    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
+        if (!game.hasBoardLocation(c, testBoardId)) {
+            return true;
+        }
+
+        Hex hex = game.getHex(c, testBoardId);
 
         if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
@@ -156,10 +159,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public int getWeaponArc(int weaponId) {
-        if (isTurret()) {
-            return Compute.ARC_TURRET;
-        }
-        return Compute.ARC_FORWARD;
+        return isTurret() ? Compute.ARC_TURRET : Compute.ARC_FORWARD;
     }
 
     @Override
@@ -194,13 +194,8 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public int getHeatCapacity() {
-        return DOES_NOT_TRACK_HEAT;
-    }
-
-    @Override
-    public int getHeatCapacityWithWater() {
-        return getHeatCapacity();
+    public int getTotalSlots() {
+        return CRITICAL_SLOTS[LOC_GUNS];
     }
 
     @Override
@@ -229,7 +224,7 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public boolean canFlee(Coords pos) {
+    public boolean canFlee(Coords position) {
         return false;
     }
 
@@ -239,7 +234,7 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public boolean canGoDown(int assumed, Coords coords) {
+    public boolean canGoDown(int assumed, Coords coords, int boardId) {
         return false;
     }
 
@@ -282,40 +277,24 @@ public class GunEmplacement extends Tank {
 
     @Override
     public boolean isDmgHeavy() {
-        int totalWeapons = getTotalWeaponList().size();
-        int totalInoperable = 0;
-        for (Mounted<?> weap : getTotalWeaponList()) {
-            if (weap.isCrippled()) {
-                totalInoperable++;
-            }
-        }
-        return ((double) totalInoperable / totalWeapons) >= 0.75;
+        long inoperableWeapons = inoperableWeaponCount();
+        return inoperableWeapons != 0 && ((double) inoperableWeapons / getTotalWeaponList().size()) >= 0.75;
     }
 
     @Override
     public boolean isDmgLight() {
-        int totalWeapons = getTotalWeaponList().size();
-        int totalInoperable = 0;
-        for (Mounted<?> weap : getTotalWeaponList()) {
-            if (weap.isCrippled()) {
-                totalInoperable++;
-            }
-        }
-
-        return ((double) totalInoperable / totalWeapons) >= 0.25;
+        long inoperableWeapons = inoperableWeaponCount();
+        return inoperableWeapons != 0 && ((double) inoperableWeapons / getTotalWeaponList().size()) >= 0.25;
     }
 
     @Override
     public boolean isDmgModerate() {
-        int totalWeapons = getTotalWeaponList().size();
-        int totalInoperable = 0;
-        for (Mounted<?> weap : getTotalWeaponList()) {
-            if (weap.isCrippled()) {
-                totalInoperable++;
-            }
-        }
+        long inoperableWeapons = inoperableWeaponCount();
+        return inoperableWeapons != 0 && ((double) inoperableWeapons / getTotalWeaponList().size()) >= 0.5;
+    }
 
-        return ((double) totalInoperable / totalWeapons) >= 0.5;
+    private long inoperableWeaponCount() {
+        return getTotalWeaponList().stream().filter(Mounted::isCrippled).count();
     }
 
     @Override
@@ -331,8 +310,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public int getArmorType(int loc) {
-        // this is a hack to get around the fact that gun emplacements don't even have
-        // armor
+        // this is a hack to get around the fact that gun emplacements don't even have armor
         return 0;
     }
 
@@ -353,37 +331,36 @@ public class GunEmplacement extends Tank {
     @Override
     public void setDeployed(boolean deployed) {
         super.setDeployed(deployed);
+        Optional<Building> occupiedBuilding = occupiedBuilding();
+        initialBuildingCF = occupiedBuilding.map(bldg -> bldg.getCurrentCF(getPosition())).orElse(0);
+        initialBuildingArmor = occupiedBuilding.map(bldg -> bldg.getArmor(getPosition())).orElse(0);
+    }
 
-        // very aggressive null defense
-        if (deployed && (getGame() != null) && (getGame().getBoard() != null) &&
-                (getPosition() != null)) {
-            Building occupiedStructure = getGame().getBoard().getBuildingAt(getPosition());
-
-            if (occupiedStructure != null) {
-                initialBuildingCF = occupiedStructure.getCurrentCF(getPosition());
-                initialBuildingArmor = occupiedStructure.getArmor(getPosition());
-                return;
-            }
+    /**
+     * @return The Building this Gun Emplacement is deployed onto, if any. Safe to call under any circumstances (game
+     * may be null, may be undeployed etc).
+     */
+    private Optional<Building> occupiedBuilding() {
+        if (game != null) {
+            return game.getBuildingAt(getPosition(), getBoardId());
+        } else {
+            return Optional.empty();
         }
-
-        initialBuildingCF = initialBuildingArmor = 0;
     }
 
     @Override
     public double getArmorRemainingPercent() {
-        if (getPosition() == null) {
-            return 1.0;
+        return occupiedBuilding().map(this::armorPercentage).orElse(1d);
+    }
+
+    private double armorPercentage(Building building) {
+        if (initialBuildingCF + initialBuildingArmor == 0) {
+            // probably undeployed; avoid division by zero
+            return 1;
+        } else {
+            return (building.getCurrentCF(getPosition()) + building.getArmor(getPosition()))
+                         / ((double) (initialBuildingCF + initialBuildingArmor));
         }
-
-        Building occupiedStructure = getGame().getBoard().getBuildingAt(getPosition());
-
-        // we'll consider undeployed emplacements to be fully intact
-        if ((occupiedStructure == null) || (initialBuildingCF + initialBuildingArmor == 0)) {
-            return 1.0;
-        }
-
-        return (occupiedStructure.getCurrentCF(getPosition()) + occupiedStructure.getArmor(getPosition()))
-                / ((double) (initialBuildingCF + initialBuildingArmor));
     }
 
     /**

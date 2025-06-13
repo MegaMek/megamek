@@ -17,6 +17,7 @@ package megamek.common.weapons;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.server.totalwarfare.TWGameManager;
@@ -353,7 +354,13 @@ public class CLIATMHandler extends ATMHandler {
         }
         if (ammo.getUsableShotsLeft() <= 0) {
             ae.loadWeaponWithSameAmmo(weapon);
-            ammo = weapon.getLinked();
+            if (weapon.getLinked() instanceof AmmoMounted ammoMounted) {
+                ammo = ammoMounted;
+            } else {
+                throw new IllegalStateException(
+                        "Weapon " + weapon.getType().getName()
+                                + " has no linked ammo!");
+            }
         }
         if (roll.getIntValue() >= toHit.getValue()) {
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
@@ -710,7 +717,7 @@ public class CLIATMHandler extends ATMHandler {
 
             // Now I need to adjust this for attacks on aeros because they use
             // attack values and different rules
-            if (target.isAirborne() || game.getBoard().inSpace()) {
+            if (target.isAirborne() || game.getBoard().isSpace()) {
                 // this will work differently for cluster and non-cluster
                 // weapons, and differently for capital fighter/fighter
                 // squadrons

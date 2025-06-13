@@ -31,7 +31,7 @@ public class InfantryShotgunDokuhebi extends InfantryWeapon {
        name = "Shotgun (Dokuhebi)";
        setInternalName(name);
        addLookupName("Dokuhebi");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .225;
        tonnage =  0.0024;
        infantryDamage =  0.45;
@@ -44,12 +44,12 @@ public class InfantryShotgunDokuhebi extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_E,RATING_E,RATING_E,RATING_E)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.C)
+       .setAvailability(AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,2319,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_DC);
+       .setProductionFactions(Faction.DC);
 
    }
 }

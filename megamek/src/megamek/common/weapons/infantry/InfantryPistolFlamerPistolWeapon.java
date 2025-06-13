@@ -36,7 +36,7 @@ public class InfantryPistolFlamerPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryFlamerpistol");
         addLookupName("Flamer Pistol");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 50;
         bv = 0.31;
         tonnage = .0012;
@@ -47,11 +47,11 @@ public class InfantryPistolFlamerPistolWeapon extends InfantryWeapon {
         ammoCost = 1;
         shots = 10;
         rulesRefs = " 273, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+                .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);
 
     }
 }

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  * MegaAero - Copyright (C) 2007 Jay Lawson This program is free software; you
  * can redistribute it and/or modify it under the terms of the GNU General
  * Public License as published by the Free Software Foundation; either version 2
@@ -11,15 +12,15 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import java.util.HashMap;
+import java.util.Map;
+
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.cost.SmallCraftCostCalculator;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Jay Lawson
@@ -51,18 +52,33 @@ public class SmallCraft extends Aero {
     private int escapePodsLaunched = 0;
     private int lifeBoatsLaunched = 0;
 
-    private static final TechAdvancement TA_SM_CRAFT = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_NONE, 2350, 2400).setISApproximate(false, true, false)
-            .setProductionFactions(F_TH).setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_SM_CRAFT_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
-            // Per MUL team and per availability codes should exist to around 2781
-            .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2781, DATE_NONE)
-            .setISApproximate(false, true, false, true, false)
-            .setProductionFactions(F_TA).setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_SM_CRAFT = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE,
+                2350,
+                2400)
+                                                             .setISApproximate(false, true, false)
+                                                             .setProductionFactions(Faction.TH)
+                                                             .setTechRating(TechRating.D)
+                                                             .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+                                                             .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_SM_CRAFT_PRIMITIVE = new TechAdvancement(TechBase.IS)
+                                                                       // Per MUL team and per availability codes should exist to around 2781
+                                                                       .setISAdvancement(DATE_ES,
+                                                                             2200,
+                                                                             DATE_NONE,
+                                                                             2781,
+                                                                             DATE_NONE)
+                                                                       .setISApproximate(false,
+                                                                             true,
+                                                                             false,
+                                                                             true,
+                                                                             false)
+                                                                       .setProductionFactions(Faction.TA)
+                                                                       .setTechRating(TechRating.D)
+                                                                       .setAvailability(AvailabilityValue.D,
+                                                                             AvailabilityValue.X,
+                                                                             AvailabilityValue.F,
+                                                                             AvailabilityValue.F)
+                                                                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override
     public int getUnitType() {
@@ -78,9 +94,6 @@ public class SmallCraft extends Aero {
         }
     }
 
-    /**
-     * @return Returns the autoEject setting (always off for large craft)
-     */
     @Override
     public boolean isAutoEject() {
         return false;
@@ -162,17 +175,15 @@ public class SmallCraft extends Aero {
     }
 
     /**
-     * Returns a mapping of how many crewmembers from other units this unit is
-     * carrying
-     * and what ship they're from by external ID
+     * Returns a mapping of how many crewmembers from other units this unit is carrying and what ship they're from by
+     * external ID
      */
     public Map<String, Integer> getNOtherCrew() {
         return nOtherCrew;
     }
 
     /**
-     * Convenience method to return all crew from other craft aboard from the above
-     * Map
+     * Convenience method to return all crew from other craft aboard from the above Map
      *
      * @return
      */
@@ -185,8 +196,7 @@ public class SmallCraft extends Aero {
     }
 
     /**
-     * Adds a number of crewmembers from another ship keyed by that ship's external
-     * ID
+     * Adds a number of crewmembers from another ship keyed by that ship's external ID
      *
      * @param id The external ID of the ship these crew came from
      * @param n  The number to add
@@ -200,9 +210,8 @@ public class SmallCraft extends Aero {
     }
 
     /**
-     * Returns a mapping of how many passengers from other units this unit is
-     * carrying
-     * and what ship they're from by external ID
+     * Returns a mapping of how many passengers from other units this unit is carrying and what ship they're from by
+     * external ID
      */
     public Map<String, Integer> getPassengers() {
         return passengers;
@@ -222,8 +231,7 @@ public class SmallCraft extends Aero {
     }
 
     /**
-     * Adds a number of passengers from another ship keyed by that ship's external
-     * ID
+     * Adds a number of passengers from another ship keyed by that ship's external ID
      *
      * @param id The external ID of the ship these passengers came from
      * @param n  The number to add
@@ -351,8 +359,7 @@ public class SmallCraft extends Aero {
 
         // special rules for spheroids in atmosphere
         // http://www.classicbattletech.com/forums/index.php/topic,54077.0.html
-        if (isSpheroid() && table != ToHitData.HIT_SPHEROID_CRASH &&
-                !game.getBoard().inSpace()) {
+        if (isSpheroid() && table != ToHitData.HIT_SPHEROID_CRASH && !isSpaceborne()) {
             int preroll = Compute.d6(1);
             if ((table == ToHitData.HIT_ABOVE) && (preroll < 4)) {
                 side = ToHitData.SIDE_FRONT;
@@ -452,8 +459,7 @@ public class SmallCraft extends Aero {
                 case 12:
                     setPotCrit(CRIT_KF_BOOM);
                     // Primitve dropships without kf-boom take avionics hit instead (IO, p. 119).
-                    if ((this instanceof Dropship)
-                            && (((Dropship) this).getCollarType() == Dropship.COLLAR_NO_BOOM)) {
+                    if ((this instanceof Dropship) && (((Dropship) this).getCollarType() == Dropship.COLLAR_NO_BOOM)) {
                         setPotCrit(CRIT_AVIONICS);
                     }
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
@@ -575,8 +581,8 @@ public class SmallCraft extends Aero {
 
     // weapon arcs
     @Override
-    public int getWeaponArc(int wn) {
-        final Mounted<?> mounted = getEquipment(wn);
+    public int getWeaponArc(int weaponNumber) {
+        final Mounted<?> mounted = getEquipment(weaponNumber);
 
         int arc = Compute.ARC_NOSE;
         if (!isSpheroid()) {
@@ -629,7 +635,7 @@ public class SmallCraft extends Aero {
                     arc = Compute.ARC_360;
             }
         } else {
-            if ((game != null) && game.getBoard().inSpace()) {
+            if (isSpaceborne()) {
                 switch (mounted.getLocation()) {
                     case LOC_NOSE:
                         if (mounted.isInWaypointLaunchMode()) {
@@ -780,8 +786,10 @@ public class SmallCraft extends Aero {
             return success;
         }
 
-        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT)
-                && (atype.getAmmoType() == wtype.getAmmoType()) && (atype.getRackSize() == wtype.getRackSize())) {
+        if (mountedAmmo.isAmmoUsable() &&
+                  !wtype.hasFlag(WeaponType.F_ONESHOT) &&
+                  (atype.getAmmoType() == wtype.getAmmoType()) &&
+                  (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;
         }
@@ -798,28 +806,25 @@ public class SmallCraft extends Aero {
         return 3 + getExtraCommGearTons();
     }
 
-    /**
-     * All military small craft automatically have ECM if in space
-     */
     @Override
     public boolean hasActiveECM() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
+        // Military small craft automatically have ECM if in space
+        if (isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) && isSpaceborne()) {
+            return getECMRange() >= 0;
+        } else {
             return super.hasActiveECM();
         }
-        return getECMRange() >= 0;
     }
 
     /**
      * What's the range of the ECM equipment?
      *
      * @return the <code>int</code> range of this unit's ECM. This value will be
-     *         <code>Entity.NONE</code> if no ECM is active.
+     *       <code>Entity.NONE</code> if no ECM is active.
      */
     @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
+        if (!isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !isSpaceborne()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {
@@ -845,24 +850,14 @@ public class SmallCraft extends Aero {
         return range;
     }
 
-    /**
-     * @return is the crew of this vessel protected from gravitational effects,
-     *         see StratOps, pg. 36
-     */
     @Override
     public boolean isCrewProtected() {
         return isMilitary() && (getOriginalWalkMP() > 4);
     }
 
-    /**
-     * Return the height of this small craft above the terrain.
-     */
     @Override
     public int height() {
-        if (isAirborne()) {
-            return 0;
-        }
-        return 1;
+        return isAirborne() ? 0 : 1;
     }
 
     @Override
@@ -870,14 +865,8 @@ public class SmallCraft extends Aero {
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT;
     }
 
-    @Override
-    public boolean isFighter() {
-        return false;
-    }
-
     /**
-     * Fighters may carry external ordnance;
-     * Other Aerospace units with cargo bays and the Internal Bomb Bay quirk may
+     * Fighters may carry external ordnance; Other Aerospace units with cargo bays and the Internal Bomb Bay quirk may
      * carry bombs internally.
      *
      * @return boolean
@@ -885,11 +874,6 @@ public class SmallCraft extends Aero {
     @Override
     public boolean isBomber() {
         return (hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB));
-    }
-
-    @Override
-    public boolean isAerospaceFighter() {
-        return false;
     }
 
     /**
@@ -913,8 +897,9 @@ public class SmallCraft extends Aero {
     @Override
     public void autoSetMaxBombPoints() {
         // Only internal cargo bays can be considered for this type of unit.
-        maxIntBombPoints = getTransportBays().stream().mapToInt(
-                tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0).sum();
+        maxIntBombPoints = getTransportBays().stream()
+                                 .mapToInt(tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0)
+                                 .sum();
     }
 
     @Override

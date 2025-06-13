@@ -36,7 +36,7 @@ public class InfantryPistolSerrekAutoPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantrySerrekAutopistol");
 		addLookupName("Serrek 7875D AutoPistol");
-		ammoType = AmmoType.T_INFANTRY;
+		ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
 		cost = 185;
 		bv = 0.15;
         tonnage = .0004;
@@ -47,11 +47,11 @@ public class InfantryPistolSerrekAutoPistolWeapon extends InfantryWeapon {
 		infantryDamage = 0.16;
 		infantryRange = 0;
 		rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2805, 2810, 2900, DATE_NONE, DATE_NONE)
+		techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2805, 2810, 2900, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
-				.setPrototypeFactions(F_FS)
-				.setProductionFactions(F_FS).setTechRating(RATING_C)
-				.setAvailability(RATING_X, RATING_C, RATING_B, RATING_B);
+				.setPrototypeFactions(Faction.FS)
+				.setProductionFactions(Faction.FS).setTechRating(TechRating.C)
+				.setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B);
 
 	}
 }

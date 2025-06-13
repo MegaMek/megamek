@@ -38,7 +38,7 @@ public class CLBALaserSmall extends LaserWeapon {
         waterShortRange = 1;
         waterMediumRange = 2;
         waterLongRange = 2;
-        waterExtremeRange = 4;
+        waterExtremeRange = 2;
         tonnage = 0.2;
         criticals = 1;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
@@ -47,14 +47,14 @@ public class CLBALaserSmall extends LaserWeapon {
         cost = 11250;
         atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "258, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_C, RATING_B, RATING_B)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
                 .setClanAdvancement(2865, 2868, 2870, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CWF)
-                .setProductionFactions(F_CWF);
+                .setPrototypeFactions(Faction.CWF)
+                .setProductionFactions(Faction.CWF);
     }
 }

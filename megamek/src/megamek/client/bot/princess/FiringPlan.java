@@ -19,6 +19,13 @@
  */
 package megamek.client.bot.princess;
 
+import java.io.Serial;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Vector;
+
 import megamek.codeUtilities.StringUtility;
 import megamek.common.AmmoType;
 import megamek.common.Mounted;
@@ -30,9 +37,6 @@ import megamek.common.actions.TorsoTwistAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 
-import java.text.DecimalFormat;
-import java.util.*;
-
 /**
  * FiringPlan is a series of {@link WeaponFireInfo} objects describing a full attack turn
  *
@@ -40,6 +44,7 @@ import java.util.*;
  * @since 12/18/13 1:20 PM
  */
 public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<FiringPlan> {
+    @Serial
     private static final long serialVersionUID = 8938385222775928559L;
 
     private double utility; // calculated elsewhere
@@ -60,6 +65,16 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
     FiringPlan(Targetable target, boolean flipArms) {
         this(target);
         this.flipArms = flipArms;
+    }
+
+    @Override
+    public FiringPlan clone() {
+        FiringPlan firingPlan = (FiringPlan) super.clone();
+        firingPlan.utility = this.utility;
+        firingPlan.twist = this.twist;
+        firingPlan.flipArms = this.flipArms;
+        firingPlan.target = this.target;
+        return firingPlan;
     }
 
     /**
@@ -102,7 +117,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
 
     /**
      * @return The total number of expected critical hits based on the chance to hit, damage to target, toughness of
-     *         target and odds of rolling a successful crit check.   This is in the units of critical hits.
+     *       target and odds of rolling a successful critical check.   This is in the units of critical hits.
      */
     synchronized double getExpectedCriticals() {
         double expectedCriticals = 0;
@@ -113,14 +128,13 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
     }
 
     /**
-     * Models the probability of each individual weapon getting a kill shot.
-     * We treat each weapon shot as a Bernoulli trial and compute the probability
-     * of the target surviving each shot.  We can then take 1 - surviveChance to
-     * get the chance of getting a kill.  This model doesn't take into
-     * consideration multiple weapons hitting the same location.
+     * Models the probability of each individual weapon getting a kill shot. We treat each weapon shot as a Bernoulli
+     * trial and compute the probability of the target surviving each shot.  We can then take 1 - surviveChance to get
+     * the chance of getting a kill.  This model doesn't take into consideration multiple weapons hitting the same
+     * location.
      *
-     * @return The odds of getting a kill based on the odds of each individual
-     *      weapon getting a kill.  The result will be between 0 and 1.
+     * @return The odds of getting a kill based on the odds of each individual weapon getting a kill.  The result will
+     *       be between 0 and 1.
      */
     synchronized double getKillProbability() {
         double surviveProbability = 1;
@@ -135,6 +149,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
      * Searches the list of weapons contained in this plan to see if the given weapon is part of it.
      *
      * @param weapon The weapon being searched for.
+     *
      * @return TRUE if the given weapon is part of this plan.
      */
     synchronized boolean containsWeapon(Mounted<?> weapon) {
@@ -159,7 +174,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
 
         if (getTwist() != 0) {
             actionVector.add(new TorsoTwistAction(get(0).getShooter().getId(),
-                FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
+                  FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
         }
 
         if (flipArms) {
@@ -181,7 +196,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
         }
 
         StringBuilder description = new StringBuilder("Firing Plan for ").append(get(0).getShooter().getChassis())
-                                                                         .append(" at ");
+                                          .append(" at ");
         Set<Integer> targets = new HashSet<>();
         // loop through all the targets for this firing plan, only show each target once.
         for (WeaponFireInfo weaponFireInfo : this) {
@@ -283,16 +298,14 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        long temp;
-        temp = Double.doubleToLongBits(utility);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + Double.hashCode(utility);
         result = 31 * result + target.hashCode();
         result = 31 * result + twist;
         return result;
     }
 
     /**
-     * Hole punchers before crit seekers
+     * Hole punchers before critical seekers
      */
     void sortPlan() {
         this.sort((o1, o2) -> {
@@ -321,32 +334,27 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
             AmmoMounted ammo1 = weapon1.getLinkedAmmo();
             AmmoMounted ammo2 = weapon2.getLinkedAmmo();
 
-            if (ammo1 != null) {
-                AmmoType ammoType = ammo1.getType();
-                if ((WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType1.getDamage())
-                        || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER))) {
-                    dmg1 = ammoType.getDamagePerShot();
-                }
-            }
-
-            if (dmg1 == -1) {
-                dmg1 = weaponType1.getDamage();
-            }
-
-            if (ammo2 != null) {
-                AmmoType ammoType = ammo2.getType();
-                if ((WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType2.getDamage())
-                        || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER))) {
-                    dmg2 = ammoType.getDamagePerShot();
-                }
-            }
-
-            if (dmg2 == -1) {
-                dmg2 = weaponType2.getDamage();
-            }
+            dmg1 = getDamageByClusterTable(dmg1, weaponType1, ammo1);
+            dmg2 = getDamageByClusterTable(dmg2, weaponType2, ammo2);
 
             return -Double.compare(dmg1, dmg2);
         });
+    }
+
+    private double getDamageByClusterTable(double damage, WeaponType weaponType, AmmoMounted ammoMounted) {
+        if (ammoMounted != null) {
+            AmmoType ammoType = ammoMounted.getType();
+            if ((WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType.getDamage()) ||
+                      (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER))) {
+                damage = ammoType.getDamagePerShot();
+            }
+        }
+
+        if (damage == -1) {
+            damage = weaponType.getDamage();
+        }
+        
+        return damage;
     }
 
     String getWeaponNames() {

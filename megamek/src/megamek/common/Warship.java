@@ -12,13 +12,13 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.cost.WarShipCostCalculator;
-import megamek.common.options.OptionsConstants;
+import static megamek.common.Compute.*;
 
 import java.io.Serial;
 
-import static megamek.common.Compute.*;
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.cost.WarShipCostCalculator;
+import megamek.common.options.OptionsConstants;
 
 /**
  * @author Jay Lawson
@@ -55,12 +55,12 @@ public class Warship extends Jumpship {
         return asewAffectedTurns;
     }
 
-    private static final TechAdvancement TA_WARSHIP = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement TA_WARSHIP = new TechAdvancement(TechBase.ALL)
             .setISAdvancement(2295, 2305, DATE_NONE, 2950, 3050)
             .setClanAdvancement(2295, 2305).setApproximate(true, false, false, false, false)
-            .setPrototypeFactions(F_TA).setProductionFactions(F_TH)
-            .setReintroductionFactions(F_FS, F_LC, F_DC).setTechRating(RATING_E)
-            .setAvailability(RATING_D, RATING_E, RATING_E, RATING_F)
+            .setPrototypeFactions(Faction.TA).setProductionFactions(Faction.TH)
+            .setReintroductionFactions(Faction.FS, Faction.LC, Faction.DC).setTechRating(TechRating.E)
+            .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
@@ -101,8 +101,8 @@ public class Warship extends Jumpship {
     }
 
     @Override
-    public int getWeaponArc(int wn) {
-        final Mounted<?> mounted = getEquipment(wn);
+    public int getWeaponArc(int weaponNumber) {
+        final Mounted<?> mounted = getEquipment(weaponNumber);
         int arc = switch (mounted.getLocation()) {
             case LOC_NOSE -> mounted.isInWaypointLaunchMode() ? ARC_NOSE_WPL : ARC_NOSE;
             case LOC_FRS -> mounted.isInWaypointLaunchMode() ? ARC_RIGHTSIDE_SPHERE_WPL : ARC_RIGHTSIDE_SPHERE;
@@ -133,19 +133,8 @@ public class Warship extends Jumpship {
     }
 
     @Override
-    public boolean hasActiveECM() {
-        // All warships automatically have ECM if in space
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
-            return super.hasActiveECM();
-        }
-        return getECMRange() >= 0;
-    }
-
-    @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                || !game.getBoard().inSpace()) {
+        if (!isActiveOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !isSpaceborne()) {
             return super.getECMRange();
         }
         int range = 2;

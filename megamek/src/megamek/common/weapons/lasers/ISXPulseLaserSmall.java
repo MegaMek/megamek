@@ -43,7 +43,7 @@ public class ISXPulseLaserSmall extends PulseLaserWeapon {
         shortRange = 2;
         mediumRange = 4;
         longRange = 5;
-        extremeRange = 8;
+        extremeRange = 7;
         waterShortRange = 1;
         waterMediumRange = 2;
         waterLongRange = 3;
@@ -57,10 +57,10 @@ public class ISXPulseLaserSmall extends PulseLaserWeapon {
         flags = flags.or(F_BURST_FIRE).andNot(F_PROTO_WEAPON);
         rulesRefs = "321, TO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setISAdvancement(DATE_NONE, 3047, 3078, DATE_NONE, DATE_NONE).setPrototypeFactions(F_LC,F_FS)
-            .setProductionFactions(F_LC)
+        techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+            .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
+            .setISAdvancement(DATE_NONE, 3047, 3078, DATE_NONE, DATE_NONE).setPrototypeFactions(Faction.LC,Faction.FS)
+            .setProductionFactions(Faction.LC)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

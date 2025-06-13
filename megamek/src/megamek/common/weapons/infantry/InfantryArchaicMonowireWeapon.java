@@ -36,7 +36,7 @@ public class InfantryArchaicMonowireWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryMonowire");
         addLookupName("Monowire");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 200;
         bv = 0.32;
         tonnage = .00025; 
@@ -44,11 +44,11 @@ public class InfantryArchaicMonowireWeapon extends InfantryWeapon {
         infantryDamage = 0.35;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, DATE_NONE, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2100, 2100, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2100, 2100, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_F);
+                .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.F);
 
     }
 }

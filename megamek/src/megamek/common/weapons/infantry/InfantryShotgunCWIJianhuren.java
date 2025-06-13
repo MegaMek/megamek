@@ -31,7 +31,7 @@ public class InfantryShotgunCWIJianhuren extends InfantryWeapon {
        name = "Shotgun (CWI Jianhuren)";
        setInternalName(name);
        addLookupName("CWI Jianhuren");
-       ammoType = AmmoType.T_INFANTRY;
+       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
        bv = .054;
        tonnage =  0.0027;
        infantryDamage =  0.14;
@@ -44,12 +44,12 @@ public class InfantryShotgunCWIJianhuren extends InfantryWeapon {
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #7";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_D)
-       .setAvailability(RATING_X,RATING_E,RATING_E,RATING_E)
+       .setTechBase(TechBase.IS)
+       .setTechRating(TechRating.D)
+       .setAvailability(AvailabilityValue.X,AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E)
        .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
        .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_CC);
+       .setProductionFactions(Faction.CC);
 
    }
 }

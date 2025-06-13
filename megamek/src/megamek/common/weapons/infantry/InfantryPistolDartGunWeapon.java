@@ -35,7 +35,7 @@ public class InfantryPistolDartGunWeapon extends InfantryWeapon {
         name = "Dart Gun";
         setInternalName(name);
         addLookupName("InfantryDartGun");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 40;
         bv = 0.01;
         tonnage = .00065;
@@ -46,11 +46,11 @@ public class InfantryPistolDartGunWeapon extends InfantryWeapon {
         ammoCost = 1;
         shots = 1;
         rulesRefs = " 273, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+                .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
 
     }
 }

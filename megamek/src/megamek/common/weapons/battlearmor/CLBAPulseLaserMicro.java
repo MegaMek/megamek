@@ -40,7 +40,7 @@ public class CLBAPulseLaserMicro extends PulseLaserWeapon {
         waterShortRange = 1;
         waterMediumRange = 2;
         waterLongRange = 2;
-        waterExtremeRange = 4;
+        waterExtremeRange = 2;
         tonnage = 0.160;
         criticals = 1;
         flags = flags.or(F_NO_FIRES).or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MEK_WEAPON)
@@ -51,15 +51,15 @@ public class CLBAPulseLaserMicro extends PulseLaserWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "258, TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        techAdvancement.setTechBase(TechBase.CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
-                .setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
+                .setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(3055, 3060, 3063, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, true, false, false, false)
-                .setPrototypeFactions(F_CSJ)
-                .setProductionFactions(F_CSJ);
+                .setPrototypeFactions(Faction.CSJ)
+                .setProductionFactions(Faction.CSJ);
     }
 
 }

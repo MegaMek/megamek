@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import megamek.MegaMek;
 import megamek.logging.MMLogger;
 
@@ -125,6 +126,14 @@ public enum SkillLevel {
     public boolean isHeroicOrGreater() {
         return isHeroic() || isLegendary();
     }
+    
+    public boolean isGreaterThan(SkillLevel skillLevel) {
+        return (!this.equals(skillLevel) && this.experienceLevel > skillLevel.experienceLevel);
+    }
+    
+    public boolean equalsOrGreaterThan(SkillLevel skillLevel) {
+        return (this.equals(skillLevel) || (this.isGreaterThan(skillLevel)));
+    }
     // endregion Boolean Comparisons
 
     /**
@@ -190,6 +199,10 @@ public enum SkillLevel {
                     return VETERAN;
                 case 3:
                     return ELITE;
+                case 4:
+                    return HEROIC;
+                case 5:
+                    return LEGENDARY;
                 default:
                     break;
             }

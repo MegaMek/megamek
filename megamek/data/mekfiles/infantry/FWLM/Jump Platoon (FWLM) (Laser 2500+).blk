@@ -1,0 +1,61 @@
+#Saved from version 0.50.05-SNAPSHOT on 2025-04-14
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Jump Platoon (FWLM)
+</Name>
+
+<Model>
+(Laser 2500+)
+</Model>
+
+<mul id:>
+1719
+</mul id:>
+
+<year>
+2500
+</year>
+
+<originalBuildYear>
+2500
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<Troopers Equipment>
+AntiMekGear
+Free Worlds League Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<notes>
+Intro date based on common availability of anti-Mek gear. Originally created to retain some anti-Mek infantry capability from the 3030s to the 3050s, due to encumbering nature of FWL advanced infantry armor kit.
+</notes>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<Primary>
+Laser Rifle
+</Primary>
+

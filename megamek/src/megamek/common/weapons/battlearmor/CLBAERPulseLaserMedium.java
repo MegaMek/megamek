@@ -37,11 +37,11 @@ public class CLBAERPulseLaserMedium extends PulseLaserWeapon {
         shortRange = 5;
         mediumRange = 9;
         longRange = 14;
-        extremeRange = 18;
+        extremeRange = 21;
         waterShortRange = 3;
         waterMediumRange = 5;
         waterLongRange = 8;
-        waterExtremeRange = 10;
+        waterExtremeRange = 12;
         tonnage = .8;
         criticals = 4;
         bv = 117;
@@ -49,13 +49,13 @@ public class CLBAERPulseLaserMedium extends PulseLaserWeapon {
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "258, TM";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-                .setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        techAdvancement.setTechBase(TechBase.CLAN)
+                .setIntroLevel(false).setUnofficial(false).setTechRating(TechRating.F)
+                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(DATE_NONE, 3057, 3082, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_CWF)
-                .setProductionFactions(F_CWF)
+                .setPrototypeFactions(Faction.CWF)
+                .setProductionFactions(Faction.CWF)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

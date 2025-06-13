@@ -1,15 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common;
 
@@ -29,8 +49,7 @@ public class QuirkEntry {
     private final String code;
 
     /**
-     * The location String ("LA", "FR" etc.) of this weapon quirk. Empty for unit
-     * quirks.
+     * The location String ("LA", "FR" etc.) of this weapon quirk. Empty for unit quirks.
      */
     private final String location;
 
@@ -38,38 +57,14 @@ public class QuirkEntry {
     private final int slot;
 
     /**
-     * The weapon internal name (e.g. CLERLargeLaser) of this weapon quirk. Empty
-     * for unit quirks.
+     * The weapon internal name (e.g. CLERLargeLaser) of this weapon quirk. Empty for unit quirks.
      */
     private final String weaponName; // The weapon's name.
 
     /**
-     * Use this constructor for building unit quirks.
-     *
-     * @deprecated
-     * @param code   The quirk being created.
-     * @param unitId The ID (chassis &amp; model) of the unit to which the quirk
-     *               belongs.
-     *
-     * @deprecated since 0.50.04 - Use {@link #QuirkEntry(String)} instead.
-     */
-    @Deprecated(since = "0.50.04", forRemoval = true)
-    public QuirkEntry(String code, String unitId) {
-        if (StringUtility.isNullOrBlank(code)) {
-            throw new IllegalArgumentException("Quirk definition missing for " + unitId);
-        }
-
-        this.code = code;
-        this.location = "";
-        this.slot = -1;
-        this.weaponName = "";
-    }
-
-    /**
      * Creates a unit quirk entry. The code should be a quirk code such as
-     * {@link megamek.common.options.OptionsConstants#QUIRK_POS_COMMAND_MEK}. The
-     * code may not be null or empty but is not otherwise checked if it is a valid
-     * value.
+     * {@link megamek.common.options.OptionsConstants#QUIRK_POS_COMMAND_MEK}. The code may not be null or empty but is
+     * not otherwise checked if it is a valid value.
      *
      * @param code The quirk
      */
@@ -89,40 +84,7 @@ public class QuirkEntry {
      *
      * @param code       The quirk being created.
      * @param location   The weapon's location (RT, LL, FF, LW, etc)
-     * @param slot       The critical slot number (0-based) of the weapon's first
-     *                   critical.
-     * @param weaponName The MegaMek name for the weapon (i.e. ISERLargeLaser)
-     * @param unitId     The ID (chassis &amp; model) of the unit to which the quirk
-     *                   belongs.
-     *
-     * @deprecated since 0.50.04 - Use
-     *             {@link #QuirkEntry(String, String, int, String)} instead.
-     */
-    @Deprecated(since = "0.50.04", forRemoval = true)
-    public QuirkEntry(String code, String location, int slot, String weaponName, String unitId) {
-        if (StringUtility.isNullOrBlank(code)) {
-            throw new IllegalArgumentException("Quirk definition missing for " + unitId);
-        } else if (StringUtility.isNullOrBlank(location)) {
-            throw new IllegalArgumentException("No location for " + code + " : " + unitId);
-        } else if (StringUtility.isNullOrBlank(weaponName)) {
-            throw new IllegalArgumentException("No weapon for " + code + " : " + unitId);
-        } else if (slot < 0) {
-            throw new IllegalArgumentException("Invalid slot index (" + slot + ") for " + code + " : " + unitId);
-        }
-
-        this.code = code;
-        this.location = location;
-        this.slot = slot;
-        this.weaponName = weaponName;
-    }
-
-    /**
-     * Use this constructor for building weapon quirks.
-     *
-     * @param code       The quirk being created.
-     * @param location   The weapon's location (RT, LL, FF, LW, etc)
-     * @param slot       The critical slot number (0-based) of the weapon's first
-     *                   critical.
+     * @param slot       The critical slot number (0-based) of the weapon's first critical.
      * @param weaponName The MegaMek name for the weapon (i.e. ISERLargeLaser)
      */
     public QuirkEntry(String code, String location, int slot, String weaponName) {
@@ -143,32 +105,28 @@ public class QuirkEntry {
     }
 
     /**
-     * @return The location String ("LA", "FR" etc.) of this weapon quirk. Empty for
-     *         unit quirks.
+     * @return The location String ("LA", "FR" etc.) of this weapon quirk. Empty for unit quirks.
      */
     public String getLocation() {
         return location;
     }
 
     /**
-     * @return The code (OptionsConstants.*) of this quirk. Not useful as a display
-     *         name.
+     * @return The code (OptionsConstants.*) of this quirk. Not useful as a display name.
      */
     public String getQuirk() {
         return code;
     }
 
     /**
-     * @return The slot (0 - 11 at most) of this weapon quirk. Returns -1 for unit
-     *         quirks.
+     * @return The slot (0 - 11 at most) of this weapon quirk. Returns -1 for unit quirks.
      */
     public int getSlot() {
         return slot;
     }
 
     /**
-     * @return The weapon internal name (e.g. CLERLargeLaser) of this weapon quirk.
-     *         Empty for unit quirks.
+     * @return The weapon internal name (e.g. CLERLargeLaser) of this weapon quirk. Empty for unit quirks.
      */
     public String getWeaponName() {
         return weaponName;
@@ -183,8 +141,10 @@ public class QuirkEntry {
             return false;
         }
         final QuirkEntry other = (QuirkEntry) obj;
-        return Objects.equals(location, other.location) && Objects.equals(weaponName, other.weaponName)
-                && (slot == other.slot) && Objects.equals(code, other.code);
+        return Objects.equals(location, other.location) &&
+                     Objects.equals(weaponName, other.weaponName) &&
+                     (slot == other.slot) &&
+                     Objects.equals(code, other.code);
     }
 
     @Override

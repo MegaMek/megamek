@@ -37,7 +37,7 @@ public class InfantryArchaicHeavyCrossbowWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryHeavyCrossbow");
         addLookupName("Heavy Crossbow");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 20;
         bv = 0.02;
         tonnage = .004;
@@ -45,11 +45,11 @@ public class InfantryArchaicHeavyCrossbowWeapon extends InfantryWeapon {
         infantryDamage = 0.02;
         infantryRange = 0;
         rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
-                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_B);
+                .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.A)
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.B);
 
     }
 }

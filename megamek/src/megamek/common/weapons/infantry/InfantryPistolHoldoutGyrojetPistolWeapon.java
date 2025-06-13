@@ -59,7 +59,7 @@ public class InfantryPistolHoldoutGyrojetPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryHoldoutGyrojetpistol");
         addLookupName("Holdout Gyrojet Pistol");
-        ammoType = AmmoType.T_INFANTRY;
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 30;
         bv = 0.04;
         tonnage = .00005;
@@ -70,11 +70,11 @@ public class InfantryPistolHoldoutGyrojetPistolWeapon extends InfantryWeapon {
         ammoCost = 1;
         shots = 2;
         rulesRefs = " 273, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+        techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_D)
-                .setAvailability(RATING_D, RATING_D, RATING_C, RATING_B);
+                .setClanApproximate(false, false, false, false, false).setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B);
 
     }
 }

@@ -87,11 +87,18 @@ public class AvailabilityPanel {
 
         public static class FactionCellData {
             Icon icon;
-            String text;
+            String factionCode;
+            String factionName;
 
-            public FactionCellData(Icon icon, String text) {
+            public FactionCellData(Icon icon, String factionCode) {
                 this.icon = icon;
-                this.text = text;
+                this.factionCode = factionCode;
+                FactionRecord faction = RAT_GENERATOR.getFaction(factionCode);
+                if (faction != null && faction.getName() != null) {
+                    this.factionName = faction.getName();
+                } else {
+                    this.factionName = factionCode;
+                }
             }
         }
 
@@ -122,16 +129,15 @@ public class AvailabilityPanel {
                                                  getInsets().left - getInsets().right - // Panel border
                                                  (data.icon != null ? data.icon.getIconWidth() : 0) -
                                                  5 - // Strut width
-                                                 5; // Small buffer for text label itself
+                                                 50; // Buffer for text label itself to encourage word-wrap
                     if (textContentWidth < 10) textContentWidth = 10; // Minimum width
-
                     textLabel.setText("<html><body style='width: " + textContentWidth + "px'>" +
-                                            (data.text != null ? data.text.replace("\n", "<br>") : "") +
+                                            (data.factionName != null ? data.factionName : "Unknown") +
                                             "</body></html>");
                     iconLabel.setVisible(data.icon != null);
                 } else {
                     iconLabel.setIcon(null);
-                    textLabel.setText(value == null ? "" : "<html>" + value.toString().replace("\n", "<br>") + "</html>");
+                    textLabel.setText(value == null ? "" : "<html>" + value.toString() + "</html>");
                     iconLabel.setVisible(false);
                 }
 
@@ -140,7 +146,7 @@ public class AvailabilityPanel {
                     setForeground(table.getSelectionForeground());
                     textLabel.setForeground(table.getSelectionForeground()); // Ensure text color changes
                 } else {
-                    setBackground(table.getBackground());
+                    setBackground(row % 2 == 0 ? table.getBackground() : slightlyDarker(table.getBackground()));
                     setForeground(table.getForeground());
                     textLabel.setForeground(table.getForeground());
                 }
@@ -315,10 +321,28 @@ public class AvailabilityPanel {
                 col.setHeaderValue(model.getColumnName(col.getModelIndex()));
                 DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
                 renderer.setHorizontalAlignment(SwingConstants.CENTER);
-                col.setCellRenderer(renderer);
+                col.setCellRenderer(new DefaultTableCellRenderer() {
+                    @Override
+                    public Component getTableCellRendererComponent(JTable table, Object value,
+                          boolean isSelected, boolean hasFocus,
+                          int row, int column) {
+                        Component c = super.getTableCellRendererComponent(table, value,
+                              isSelected, hasFocus, row, column);
+                        if (!isSelected) {
+                            c.setBackground(row % 2 == 0 ? table.getBackground() : slightlyDarker(table.getBackground()));
+                        }
+                        setHorizontalAlignment(SwingConstants.CENTER);
+                        return c;
+                    }
+                });
             }
             scrollableTable.getTableHeader().revalidate();
             scrollableTable.getTableHeader().repaint();
+        }
+
+        private static Color slightlyDarker(Color color) {
+            if (color == null) return Color.LIGHT_GRAY;
+            return color.darker();
         }
 
         /**
@@ -560,9 +584,9 @@ public class AvailabilityPanel {
         newGridModel.setColumnIdentifiers(finalColumnTitles.toArray());
 
         if (record != null) {
-            for (String factionName : record.getIncludedFactions()) {
+            for (String factionCode : record.getIncludedFactions()) {
                 List<Object> rowData = new ArrayList<>();
-                String baseAbbr = factionName.split("\\.")[0];
+                String baseAbbr = factionCode.split("\\.")[0];
                 ImageIcon factionIcon = RAT_GENERATOR.getFactionLogo(0, baseAbbr, Color.WHITE);
                 Icon finalIcon = null;
                 if (factionIcon != null) {
@@ -578,12 +602,12 @@ public class AvailabilityPanel {
                         }
                     }
                 }
-                rowData.add(new FixedColumnGrid.FactionCellData(finalIcon, factionName));
+                rowData.add(new FixedColumnGrid.FactionCellData(finalIcon, factionCode));
 
                 for (Era era : erasToDisplay) {
                     String availabilityText = eraFactionAvailabilityCache
                                                     .getOrDefault(era, Collections.emptyMap())
-                                                    .getOrDefault(factionName, "-");
+                                                    .getOrDefault(factionCode, "-");
                     if (availabilityText.isEmpty()) {
                         availabilityText = "-";
                     }

@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -360,8 +361,14 @@ public class AvailabilityRating {
         //If an availability code is marked with +, it's for top-tier equipment (rating A/Keshik) and drops by 1 for each lower rating.
         //– means the opposite: it's for the lowest quality, and the number goes down for better ratings.
         StringBuilder result = new StringBuilder();
-        ArrayList<String> ratingLevels = new ArrayList<>(faction.getRatingLevels());
-        Collections.reverse(ratingLevels);
+        ArrayList<String> ratingLevels;
+        if (faction == null) {
+            logger.warn("FactionRecord is null, cannot explode availability by ratings for {}", unitName);
+            ratingLevels = new ArrayList<>(List.of("A", "B", "C", "D", "F"));
+        } else {
+            ratingLevels = new ArrayList<>(faction.getRatingLevels());
+            Collections.reverse(ratingLevels);
+        }
         int currentAvailability = availability;
         if (ratingAdjustment < 0) {
             currentAvailability-=ratingLevels.size() -1;

@@ -4624,7 +4624,7 @@ exact "Puma (Adder) TC" "meks/Puma_TC.png"
 #exact "Puma (Adder) TC" "meks/Puma_TC-CO.png"
 #PWWKA
 chassis "Pwwka" "meks/Pwwka_Mech.png"
-chassis "Pwwka_airmech" "meks/Pwwka_AirMech.png"
+chassis "Pwwka_AIRMEK" "meks/Pwwka_AirMech.png"
 chassis "Pwwka_fighter" "meks/Pwwka_Fighter.png"
 chassis "Quasimodo" "meks/Quasimodo.png"
 chassis "Quasit" "meks/Quasit.png"
@@ -5963,55 +5963,55 @@ exact "Zeus-X ZEU-X4" "meks/ZeusX_X4.png"
 ###LAND AIR MEKS (LAMS)
 ##PIXIE LAMS
 chassis "Phoenix Hawk LAM" "meks/Phoenix Hawk LAM_Mech.png"
-chassis "Phoenix Hawk LAM_airmech" "meks/Phoenix Hawk LAM_Airmech.png"
+chassis "Phoenix Hawk LAM_AIRMEK" "meks/Phoenix Hawk LAM_Airmech.png"
 chassis "Phoenix Hawk LAM_fighter" "meks/Phoenix Hawk LAM_Fighter.png"
 #
 chassis "Phoenix Hawk LAM Mk I" "meks/Phoenix Hawk LAM_MK_I_Mech.png"
-chassis "Phoenix Hawk LAM Mk I_airmech" "meks/Phoenix Hawk LAM_MK_I_Airmech.png"
+chassis "Phoenix Hawk LAM Mk I_AIRMEK" "meks/Phoenix Hawk LAM_MK_I_Airmech.png"
 chassis "Phoenix Hawk LAM Mk I_fighter" "meks/Phoenix Hawk LAM_MK_I_Fighter.png"
 #
 exact "Phoenix Hawk LAM Mk I PHX-HK1R" "meks/Phoenix Hawk LAM_HK1R_Mech.png"
-exact "Phoenix Hawk LAM Mk I PHX-HK1R_airmech" "meks/Phoenix Hawk LAM_HK1R_Airmech.png"
+exact "Phoenix Hawk LAM Mk I PHX-HK1R_AIRMEK" "meks/Phoenix Hawk LAM_HK1R_Airmech.png"
 exact "Phoenix Hawk LAM Mk I PHX-HK1R_fighter" "meks/Phoenix Hawk LAM_HK1R_Fighter.png"
 #
 exact "Phoenix Hawk LAM PHX-HK1RB" "meks/Phoenix Hawk LAM_HK1RB_Mech.png"
-exact "Phoenix Hawk LAM PHX-HK1RB_airmech" "meks/Phoenix Hawk LAM_HK1RB_Airmech.png"
+exact "Phoenix Hawk LAM PHX-HK1RB_AIRMEK" "meks/Phoenix Hawk LAM_HK1RB_Airmech.png"
 exact "Phoenix Hawk LAM PHX-HK1RB_fighter" "meks/Phoenix Hawk LAM_HK1RB_Fighter.png"
 #
 exact "Phoenix Hawk LAM PHX-HK2M" "meks/Phoenix Hawk LAM_HK2M_Mech.png"
-exact "Phoenix Hawk LAM PHX-HK2M_airmech" "meks/Phoenix Hawk LAM_HK2M_Airmech.png"
+exact "Phoenix Hawk LAM PHX-HK2M_AIRMEK" "meks/Phoenix Hawk LAM_HK2M_Airmech.png"
 exact "Phoenix Hawk LAM PHX-HK2M_fighter" "meks/Phoenix Hawk LAM_HK2M_Fighter.png"
 #SCREAMER LAM
 chassis "Screamer LAM" "meks/Screamer LAM_Mech.png"
-chassis "Screamer LAM_airmech" "meks/Screamer LAM_AirMech.png"
+chassis "Screamer LAM_AIRMEK" "meks/Screamer LAM_AirMech.png"
 chassis "Screamer LAM_fighter" "meks/Screamer LAM_Fighter.png"
 #SHADOWHAWK LAM
 chassis "Shadow Hawk LAM" "meks/Shadow Hawk LAM_Mech.png"
 chassis "Shadow Hawk LAM_fighter" "meks/Shadow Hawk LAM_Fighter.png"
 #STINGER LAMS
 chassis "Stinger LAM Mk I" "meks/Stinger LAM_mech.png"
-chassis "Stinger LAM Mk I_airmech" "meks/Stinger LAM_airmech.png"
+chassis "Stinger LAM Mk I_AIRMEK" "meks/Stinger LAM_airmech.png"
 chassis "Stinger LAM Mk I_fighter" "meks/Stinger LAM_fighter.png"
 chassis "Stinger LAM" "meks/Stinger LAM_mech.png"
-chassis "Stinger LAM_airmech" "meks/Stinger LAM_airmech.png"
+chassis "Stinger LAM_AIRMEK" "meks/Stinger LAM_airmech.png"
 chassis "Stinger LAM_fighter" "meks/Stinger LAM_fighter.png"
 #WANETA LAM
 chassis "Waneta" "meks/Waneta LAM Mech.png"
-chassis "Waneta_airmech" "meks/Waneta LAM AirMech.png"
+chassis "Waneta_AIRMEK" "meks/Waneta LAM AirMech.png"
 chassis "Waneta_fighter" "meks/Waneta LAM Fighter.png"
 #WASP LAM
 chassis "Wasp LAM Mk I" "meks/Wasp LAM Mk I Mech.png"
-chassis "Wasp LAM Mk I_airmech" "meks/Wasp LAM Mk I AirMech.png"
+chassis "Wasp LAM Mk I_AIRMEK" "meks/Wasp LAM Mk I AirMech.png"
 chassis "Wasp LAM Mk I_fighter" "meks/Wasp LAM Mk I Fighter.png"
 chassis "Wasp LAM" "meks/Wasp LAM Mech.png"
-chassis "Wasp LAM_airmech" "meks/Wasp LAM AirMech.png"
+chassis "Wasp LAM_AIRMEK" "meks/Wasp LAM AirMech.png"
 chassis "Wasp LAM_fighter" "meks/Wasp LAM Fighter.png"
 exact "Wasp LAM WSP-110" "meks/Wasp LAM_Mech_110.png"
-exact "Wasp LAM WSP-110_airmech" "meks/Wasp LAM_Airmech_110.png"
+exact "Wasp LAM WSP-110_AIRMEK" "meks/Wasp LAM_Airmech_110.png"
 exact "Wasp LAM WSP-110_fighter" "meks/Wasp LAM_Airmech_110.png"
 #YUREI LAM
 chassis "Yurei" "meks/Yurei LAM_Mech.png"
-chassis "Yurei_airmech" "meks/Yurei LAM_AirMech.png"
+chassis "Yurei_AIRMEK" "meks/Yurei LAM_AirMech.png"
 chassis "Yurei_fighter" "meks/Yurei LAM_Fighter.png"
 
 ###DROPSHIPS

@@ -1635,7 +1635,6 @@ public class ClientGUI extends AbstractClientGUI
         if (getMiniReportDisplayDialog() != null) {
             setMiniReportLocation(visible);
             conditionalRequestFocus(visible);
-            getMiniReportDisplayDialog().setAlwaysOnTop(false);
         }
     }
 
@@ -1714,7 +1713,6 @@ public class ClientGUI extends AbstractClientGUI
 
         if (getUnitDisplayDialog() != null) {
             setUnitDisplayLocation(visible);
-            getUnitDisplayDialog().setAlwaysOnTop(visible);
         }
     }
 
@@ -1969,8 +1967,6 @@ public class ClientGUI extends AbstractClientGUI
      */
     public InformDialog doInformBotherDialog(String title, String message, boolean includeCheckBox) {
         InformDialog informDialog = new InformDialog(frame, title, message, includeCheckBox);
-        informDialog.setAlwaysOnTop(true);
-        informDialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
         informDialog.setVisible(true);
         informDialog.dispose();
         return informDialog;
@@ -1988,7 +1984,6 @@ public class ClientGUI extends AbstractClientGUI
     public boolean doYesNoDialog(String title, String question) {
         ConfirmDialog confirm = new ConfirmDialog(frame, title, question);
         confirm.setVisible(true);
-        confirm.setAlwaysOnTop(true);
         return confirm.getAnswer();
     }
 

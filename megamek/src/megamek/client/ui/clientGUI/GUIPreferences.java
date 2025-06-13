@@ -33,6 +33,18 @@
  */
 package megamek.client.ui.clientGUI;
 
+import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
+import megamek.client.ui.util.PlayerColour;
+import megamek.common.Configuration;
+import megamek.common.EntityMovementType;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.WeaponSortOrder;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.preference.PreferenceStoreProxy;
+
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -43,18 +55,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-
-import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
-import megamek.client.ui.util.PlayerColour;
-import megamek.common.Configuration;
-import megamek.common.EntityMovementType;
-import megamek.common.annotations.Nullable;
-import megamek.common.enums.WeaponSortOrder;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.preference.PreferenceStoreProxy;
 
 public class GUIPreferences extends PreferenceStoreProxy {
 
@@ -138,7 +138,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String PLANETARY_CONDITIONS_SHOW_LABELS = "PlanetaryConditionsShowLabels";
     public static final String PLANETARY_CONDITIONS_SHOW_VALUES = "PlanetaryConditionsShowValues";
     public static final String PLANETARY_CONDITIONS_SHOW_INDICATORS = "PlanetaryConditionsShowIndicators";
-    public static final String PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY = "PlanetaryConditionsBackgroundTransparency";
+    public static final String PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY =
+          "PlanetaryConditionsBackgroundTransparency";
 
     public static final String TRACE_OVERLAY_TRANSPARENCY = "TraceOverlayTransparency";
     public static final String TRACE_OVERLAY_SCALE = "TraceOverlayScale";
@@ -3549,7 +3550,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         final String[] codesText = text.split(" ");
         if (codesText.length == 3) {
             int[] codes = new int[codesText.length];
-            for (int i = 0; i < codesText.length; i++) {
+            for (int i = 0;
+                  i < codesText.length;
+                  i++) {
                 codes[i] = Integer.parseInt(codesText[i]);
             }
             return new Color(codes[0], codes[1], codes[2]);

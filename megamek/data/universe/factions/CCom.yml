@@ -1,0 +1,12 @@
+key: CCom
+name: Capellan Commonality
+capital: Terra
+successor: CC
+tags:
+  - MINOR
+  - IS
+color:
+  red: 242
+  green: 145
+  blue: 197
+nameGenerator: CC

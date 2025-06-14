@@ -1,0 +1,9 @@
+key: LA.HG
+name: Hesperus Guards
+yearsActive:
+  - start: 2755
+    end: 2950
+ratingLevels:
+  - F
+fallBackFactions:
+  - LA

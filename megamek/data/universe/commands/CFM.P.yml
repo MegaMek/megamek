@@ -1,0 +1,15 @@
+key: CFM.P
+name: Kindraa Payne
+yearsActive:
+  - start: 2823
+    end: 3066
+tags:
+  - CLAN
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CFM

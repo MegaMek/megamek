@@ -1,0 +1,9 @@
+key: MSC.AH
+name: Atrean Hussars
+yearsActive:
+  - start: 3082
+    end: 3138
+ratingLevels:
+  - C
+fallBackFactions:
+  - MSC

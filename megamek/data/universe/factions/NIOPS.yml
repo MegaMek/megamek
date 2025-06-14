@@ -1,0 +1,33 @@
+key: NIOPS
+name: Niops Association
+capital: "Niops (Niops V, VI, VII)"
+yearsActive:
+  - start: 2760
+tags:
+  - MINOR
+  - PERIPHERY
+color:
+  red: 205
+  green: 173
+  blue: 0
+logo: Periphery/Niops Association.png
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+  - 1
+  - 2
+  - 2
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.CM

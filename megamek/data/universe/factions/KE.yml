@@ -1,0 +1,22 @@
+key: KE
+name: Khwarazm Empire
+capital: Terra
+tags:
+  - MINOR
+  - DEEP_PERIPHERY
+color:
+  red: 80
+  green: 80
+  blue: 80
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+  - 1
+  - 2
+  - 2

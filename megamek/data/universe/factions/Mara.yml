@@ -1,0 +1,12 @@
+key: Mara
+name: Marlette Association
+capital: Terra
+successor: FS
+tags:
+  - MINOR
+  - IS
+color:
+  red: 27
+  green: 98
+  blue: 229
+nameGenerator: FS

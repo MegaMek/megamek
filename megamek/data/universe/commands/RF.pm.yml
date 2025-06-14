@@ -1,0 +1,9 @@
+key: RF.pm
+name: Planetary Militia
+yearsActive:
+  - start: 3086
+ratingLevels:
+  - F
+fallBackFactions:
+  - RF
+  - IS.pm

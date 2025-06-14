@@ -1,0 +1,7 @@
+key: MERC.GDL
+name: Gray Death Legion
+yearsActive:
+  - start: 3024
+    end: 3065
+fallBackFactions:
+  - MERC

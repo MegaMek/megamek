@@ -684,8 +684,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             if (m_pMain.getSelectedIndex() == TAB_FORCE_GENERATOR) {
                 m_pForceGen.addChosenUnits((String) m_chPlayer.getSelectedItem());
             } else {
-                // MM-style key, not IO-style
-                String faction = m_pFormationOptions.getFaction().getKey();
                 ArrayList<Entity> entities = new ArrayList<>(armyModel.getAllUnits().size());
                 Client client = null;
                 if (m_chPlayer.getSelectedIndex() > 0) {
@@ -695,10 +693,13 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 if (client == null) {
                     client = m_client;
                 }
-                // Set faction based on generated RAT faction
-                m_clientgui.getClient().getGame().getTeamForPlayer(client.getLocalPlayer()).setFaction(faction);
-                String msg = m_clientgui.getClient().getLocalPlayer() + " set team Faction to: " + faction;
-                m_clientgui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
+                if (m_pFormationOptions.getFaction() != null) {
+                    // Set faction based on generated RAT faction
+                    String faction = m_pFormationOptions.getFaction().getKey();
+                    m_clientgui.getClient().getGame().getTeamForPlayer(client.getLocalPlayer()).setFaction(faction);
+                    String msg = m_clientgui.getClient().getLocalPlayer() + " set team Faction to: " + faction;
+                    m_clientgui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
+                }
                 for (MekSummary ms : armyModel.getAllUnits()) {
                     try {
                         Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
@@ -721,7 +722,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     }
                 }
                 client.sendAddEntity(entities);
-                msg = m_clientgui.getClient().getLocalPlayer() +
+                String msg = m_clientgui.getClient().getLocalPlayer() +
                             " loaded Units from Random Army for player: " +
                             m_chPlayer.getSelectedItem() +
                             " [" +

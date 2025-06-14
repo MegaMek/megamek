@@ -1,0 +1,36 @@
+key: PG
+name: Principality of Gibson
+capital: Gibson
+yearsActive:
+  - start: 3079
+    end: 3086
+successor: RF
+tags:
+  - MINOR
+  - IS
+color:
+  red: 250
+  green: 250
+  blue: 250
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - RF
+  - IS
+  - FWL

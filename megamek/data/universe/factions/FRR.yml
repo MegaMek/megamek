@@ -1,0 +1,41 @@
+key: FRR
+name: Free Rasalhague Republic
+capital: Rasalhague
+capitalChanges: 
+  3052: Orestes
+yearsActive:
+  - start: 3034
+    end: 3103
+successor: RD
+tags:
+  - PLAYABLE
+  - MINOR
+  - IS
+  - CONTROLLING
+  - GENEROUS
+color:
+  red: 128
+  green: 168
+  blue: 191
+logo: Inner Sphere/Free Rasalhague Republic.png
+background: Inner Sphere/Free Rasalhague Republic.png
+camos: Free Rasalhague Republic
+nameGenerator: FRR
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+  - 0
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS

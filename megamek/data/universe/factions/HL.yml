@@ -1,0 +1,38 @@
+key: HL
+name: Hanseatic League
+capital: Bremen (HL)
+yearsActive:
+  - start: 2891
+    end: 3141
+successor: CEI
+tags:
+  - PLAYABLE
+  - DEEP_PERIPHERY
+  - STINGY
+  - CONTROLLING
+color:
+  red: 219
+  green: 112
+  blue: 147
+logo: Periphery/Hanseatic League.png
+background: Periphery/Hanseatic League.png
+camos: Hanseatic League
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 3
+  - 3
+  - 2
+  - 1
+  - 2
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.Deep

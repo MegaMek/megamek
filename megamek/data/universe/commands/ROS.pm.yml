@@ -1,0 +1,9 @@
+key: ROS.pm
+name: Planetary Militia
+yearsActive:
+  - start: 3081
+ratingLevels:
+  - PG
+fallBackFactions:
+  - ROS
+  - IS.pm

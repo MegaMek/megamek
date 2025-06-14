@@ -28,13 +28,16 @@
 package megamek.common.universe;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.MMConstants;
-import megamek.client.ui.swing.CommonSettingsDialog;
+import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.common.annotations.Nullable;
+import megamek.common.jacksonadapters.ColorDeserializer;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -92,6 +95,9 @@ public final class Factions2 {
     private void loadFactionsFromFile() {
         LOGGER.info("Loading Faction and Command data...");
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(Color.class, new ColorDeserializer());
+        mapper.registerModule(module);
         loadFactionsFromDirectory(MMConstants.FACTIONS_DIR, mapper);
         loadFactionsFromDirectory(MMConstants.COMMANDS_DIR, mapper);
         String userDir = PreferenceManager.getClientPreferences().getUserDir();

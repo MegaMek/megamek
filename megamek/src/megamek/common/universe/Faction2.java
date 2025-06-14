@@ -345,4 +345,9 @@ public class Faction2 {
     private List<FactionTag> tagsSerializer() {
         return tags.stream().sorted(Comparator.comparing(Enum::name)).toList();
     }
+
+    @Override
+    public String toString() {
+        return key;
+    }
 }

@@ -24,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common.universe;
 
@@ -55,5 +60,18 @@ class Faction2Test {
         assertFalse(faction2.isActiveInYear(2000));
         assertFalse(faction2.isActiveInYear(3000));
         assertFalse(faction2.isActiveInYear(4000));
+    }
+
+    @Test
+    void testPerformsBatchall() {
+        // If the following faction codes ever change or their batchall behavior is changed, this test will fail
+        // I assume this isn't likely to happen anytime soon
+        var cbsFaction = Factions2.getInstance().getFaction("CBS");
+        assertTrue(cbsFaction.isPresent());
+        assertTrue(cbsFaction.get().performsBatchalls());
+
+        var laFaction = Factions2.getInstance().getFaction("LA");
+        assertTrue(laFaction.isPresent());
+        assertFalse(laFaction.get().performsBatchalls());
     }
 }

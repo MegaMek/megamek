@@ -1,4 +1,4 @@
-name: JavaDoc Generation
+name: JavaDoc Generation on PR
 
 on:
   pull_request:

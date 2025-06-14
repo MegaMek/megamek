@@ -369,8 +369,10 @@ test {
     useJUnitPlatform()
     dependsOn(checkstyleMain)
 
+    minHeapSize = "1024m"
+    maxHeapSize = "8192m"
+
     finalizedBy jacocoTestReport
-    jvmArgs = mmJvmOptions
 }
 
 jacocoTestReport {

@@ -8,6 +8,7 @@ successor: CWE
 tags:
   - SMALL
   - CLAN
+  - BATCHALL
 color:
   red: 160
   green: 82

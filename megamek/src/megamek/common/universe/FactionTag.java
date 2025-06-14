@@ -87,5 +87,7 @@ public enum FactionTag {
     /** Faction is controlling with mercenary command rights (Camops p. 42) */
     CONTROLLING,
     /** Faction is lenient with mercenary command rights (Camops p. 42) */
-    LENIENT
+    LENIENT,
+    /** Faction performs batchall */
+    BATCHALL
 }

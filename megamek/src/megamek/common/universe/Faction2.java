@@ -346,6 +346,13 @@ public class Faction2 {
         return tags.stream().sorted(Comparator.comparing(Enum::name)).toList();
     }
 
+    /**
+     * @return True if this faction performs Batchalls.
+     */
+    public boolean performsBatchalls() {
+        return tags.contains(FactionTag.BATCHALL);
+    }
+
     @Override
     public String toString() {
         return key;

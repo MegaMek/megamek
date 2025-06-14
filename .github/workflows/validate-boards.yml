@@ -2,9 +2,9 @@ name: Validate Boards
 
 on:
   push:
-    branches: [master]
+    branches: [ master ]
     paths:
-      # This set of paths is the reasonable set which
+      # This set of paths is the reasonable set that
       # should trigger a validation of the boards in MM.
       # If any changes are made to Board that use
       # a new class, update these blocks.
@@ -14,7 +14,7 @@ on:
       - "megamek/src/megamek/common/Terrains.java"
       - "megamek/src/megamek/utilities/BoardsValidator.java"
   pull_request:
-    branches: [master]
+    branches: [ master ]
     paths:
       - "**.board"
       - "megamek/src/megamek/common/Board.java"
@@ -30,9 +30,9 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        java-distribution: [temurin]
-        java-version: [17]
+        os: [ ubuntu-latest ]
+        java-distribution: [ temurin ]
+        java-version: [ 17, 21 ]
 
     steps:
       - name: "Check out MegaMek"

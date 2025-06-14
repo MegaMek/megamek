@@ -71,7 +71,7 @@ public class EntityViewPane extends AbstractTabbedPane {
         addTab(resources.getString("Summary.title"), summaryPanel);
         addTab(resources.getString("TRO.title"), troPanel);
         addTab(resources.getString("ASCard.title"), cardPanel);
-        addTab("FactionAvailability", factionPanel.getPanel());
+        addTab(resources.getString("FactionAvailability.title"), factionPanel.getPanel());
     }
 
     /**

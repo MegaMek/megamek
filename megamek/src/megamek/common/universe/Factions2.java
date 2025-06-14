@@ -60,27 +60,63 @@ import java.util.zip.ZipFile;
  */
 public final class Factions2 {
 
-    private static final MMLogger LOGGER = MMLogger.create(Factions2.class);
-    private static Factions2 instance;
+    /*
+    Temporary information that should be kept until this migration is really done:
 
-    private final Map<String, Faction2> factions = new HashMap<>();
+    + move together MHQ and RAT Faction information
+    + separate to factions, commands, technical factions?
+    + unify rat fallback ("parent" and "alternate")
+    X single fallback for rating system? auto-fallback to IS/CLAN? (another time)
+    X better era mods yaml, like: AOW: 1; (another time)
+    + create new MM Faction class, read in yaml
+    + use in RATGen
+    + use in MHQ
+    + use in MML
+    + altNames (without year) is not used anywhere; retire
+    + save factions from RATGenEd: problem factionrecords are not factions, how to save back to faction
+    + add camos folder -> problem: varying with year
+    X add specific camos for commands (another time)
+    + standard naming for changes with year
+    + change startingplanet to capital
+    X exact dates? (seems unnecessary)
+    + add lance/star sizes formation sizes
+    - add aero lance sizes (cant find)
+    + test MM force generation
+    + test MML faction chooser
+    + test MHQ planet and system info
+    X clean up Tamar Pact: TamP, TamPact, NTamP (data, not the task here)
 
-    private Factions2() {
-        loadFactionsFromFile();
-    }
+    RAT factions not found in MHQ factions: PP BH SE TamPact SL3 IS Periphery VesMar MalCon Blessed Order BAN
+    and all commands
 
-    public static synchronized Factions2 getInstance() {
-        if (instance == null) {
-            instance = new Factions2();
+    MHQ factions not found in RAT factions: DoL, SCW, SCon, GDL, NONE, IE, CCon, CCom, AC, OMA, AE, AG, MalC,
+    VSM, ARC, ARD, MRep, FWLR, ARL, JF, RP, BC, TGU, RU, CRep, SIMA, NDC, ABN, TiC, RTR, FCo, KE, SP, THW, CH,
+    ChP, THa, NTamP, REB, DIS, Alf, TU, LR, FoO, FoS, DT, FFR, MA, ME, NOC, RON, ACPS, SIS, IND, Mara, RPG, WA,
+    UND, IoS, SSUP, PD, TamP, SKP, AXP, CTL
+
+    */
+
+        private static final MMLogger LOGGER = MMLogger.create(Factions2.class);
+        private static Factions2 instance;
+
+        private final Map<String, Faction2> factions = new HashMap<>();
+
+        private Factions2() {
+            loadFactionsFromFile();
         }
 
-        return instance;
-    }
+        public static synchronized Factions2 getInstance() {
+            if (instance == null) {
+                instance = new Factions2();
+            }
 
-    /**
-     * @return All available factions. The returned Collection is a view of the internal faction list and must not be
-     * modified.
-     */
+            return instance;
+        }
+
+        /**
+         * @return All available factions. The returned Collection is a view of the internal faction list and must not be
+         * modified.
+         */
     public Collection<Faction2> getFactions() {
         return factions.values();
     }

@@ -33,21 +33,6 @@
  */
 package megamek.client.ui.dialogs.miniReport;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.geom.Rectangle2D;
-import java.util.Comparator;
-import java.util.List;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.text.Document;
-
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -67,6 +52,21 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.Document;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.Rectangle2D;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * Shows reports, with an Okay JButton
  */
@@ -83,6 +83,7 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
     private JComboBox<String> comboPlayer = new JComboBox<>();
     private JComboBox<String> comboEntity = new JComboBox<>();
     private JComboBox<String> comboQuick = new JComboBox<>();
+    private JComboBox<String> comboFilter = new JComboBox<>();
     private IClientGUI currentClientgui;
     private Client currentClient;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
@@ -149,7 +150,7 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         butQuickFilter = new JButton(Messages.getString("MiniReportDisplay.KeywordFilter"));
         butQuickFilter.addActionListener(this);
         butQuickFilter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_KEY_FILTER), "MiniReportDisplay.KeywordFilter");
+              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_FILTER), "MiniReportDisplay.KeywordFilter");
         butQuickFilter.getActionMap().put("MiniReportDisplay.KeywordFilter", new AbstractAction() {
 
             @Override
@@ -159,7 +160,7 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         });
         butQuickFilter.setToolTipText(Messages.getString("MiniReportDisplay.tooltip.KeywordFilter")
               + ": "
-              + KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_FILTER));
+              + KeyCommandBind.getDesc(KeyCommandBind.REPORT_FILTER));
 
         comboQuick.addActionListener(this);
         comboQuick.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
@@ -199,6 +200,27 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
               + Messages.getString("MiniReportDisplay.tooltip.ComboQuickInfo")
               + "</html>");
 
+        comboFilter.addActionListener(this);
+        comboFilter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_FILTER_KEY_SELNEXT),
+                    "MiniReportDisplay" + ".comboFilterNext");
+        comboFilter.getActionMap().put("MiniReportDisplay.comboFilterNext", new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (comboFilter.getItemCount() > 1) {
+                    comboFilter.setSelectedIndex((comboFilter.getSelectedIndex() + 1) % comboFilter.getItemCount());
+                }
+            }
+        });
+        comboFilter.setToolTipText("<html>"
+              + Messages.getString("MiniReportDisplay.tooltip.ComboFilterNext")
+              + ": "
+              + KeyCommandBind.getDesc(KeyCommandBind.REPORT_FILTER_KEY_SELNEXT)
+              + "<br>"
+              + Messages.getString("MiniReportDisplay.tooltip.ComboFilterInfo")
+              + "</html>");
+
         setLayout(new BorderLayout());
 
         JPanel p = new JPanel();
@@ -213,6 +235,7 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         p.add(comboQuick);
         p.add(butQuickSearchUp);
         p.add(butQuickSearchDown);
+        p.add(comboFilter);
         p.add(butQuickFilter);
         p.add(butSwitchLocation);
 
@@ -226,15 +249,20 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         add(panelMain, BorderLayout.CENTER);
 
         doLayout();
+        refreshSearchPanel();
     }
 
-    private void filterReport(String selectedKeyword) {
+    private void filterReport(String selectedFilterKeyword) {
         String filterResult = "";
-        String[] keywords = selectedKeyword.split(" ");
+        String[] keywords = selectedFilterKeyword.split(" ");
         String[] htmlLines = currentClient.phaseReport.split("<br>");
-        for (int i = 0; i < htmlLines.length; i++) {
+        for (int i = 0;
+              i < htmlLines.length;
+              i++) {
             String htmlLine = htmlLines[i];
-            for (int j = 0; j < keywords.length; j++) {
+            for (int j = 0;
+                  j < keywords.length;
+                  j++) {
                 String word = keywords[j];
                 if (htmlLine.replaceAll("<[^>]*>", "").toUpperCase().contains(word.toUpperCase())) {
                     if (i > 0 && htmlLines[i - 1].contains("<img")) {
@@ -268,6 +296,22 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
     private void filterButtonReset() {
         butQuickFilter.setText("Filter");
         filterEnabled = false;
+    }
+
+    public void refreshSearchPanel() {
+        comboPlayer.setVisible(GUIP.getMiniReportShowPlayers());
+        butPlayerSearchDown.setVisible(GUIP.getMiniReportShowPlayers());
+        butPlayerSearchUp.setVisible(GUIP.getMiniReportShowPlayers());
+        comboEntity.setVisible(GUIP.getMiniReportShowUnits());
+        butEntitySearchDown.setVisible(GUIP.getMiniReportShowUnits());
+        butEntitySearchUp.setVisible(GUIP.getMiniReportShowUnits());
+        comboQuick.setVisible(GUIP.getMiniReportShowKeywords());
+        butQuickSearchDown.setVisible(GUIP.getMiniReportShowKeywords());
+        butQuickSearchUp.setVisible(GUIP.getMiniReportShowKeywords());
+        comboFilter.setVisible(GUIP.getMiniReportShowFilter());
+        butQuickFilter.setVisible(GUIP.getMiniReportShowFilter());
+        updateQuickChoice();
+        updateFilterChoice();
     }
 
     private void searchTextPane(String searchPattern, Boolean searchDown) {
@@ -351,7 +395,9 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         int len = (name.length() < MRD_MAXNAMELENGHT ? name.length() : MRD_MAXNAMELENGHT);
         String displayNane = String.format("%-12s", name).substring(0, len);
         found = false;
-        for (int i = 0; i < comboBox.getItemCount(); i++) {
+        for (int i = 0;
+              i < comboBox.getItemCount();
+              i++) {
             if (comboBox.getItemAt(i).equals(displayNane)) {
                 found = true;
                 break;
@@ -399,12 +445,30 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         }
     }
 
+    private void updateFilterChoice() {
+        String lastChoice = (String) comboFilter.getSelectedItem();
+        lastChoice = (lastChoice != null) ? lastChoice : Messages.getString("MiniReportDisplay.Damage");
+        comboFilter.removeAllItems();
+        comboFilter.setEnabled(true);
+        String[] keywords = CP.getReportFilterKeywords().split("\n");
+        for (String keyword : keywords) {
+            comboFilter.addItem(keyword);
+        }
+        comboFilter.setSelectedItem(lastChoice);
+        if (comboFilter.getItemCount() <= 1) {
+            comboFilter.setEnabled(false);
+        } else if (comboFilter.getSelectedIndex() < 0) {
+            comboFilter.setSelectedIndex(0);
+        }
+    }
+
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
             updatePlayerChoice();
             updateEntityChoice();
             updateQuickChoice();
+            updateFilterChoice();
         }
         super.setVisible(visible);
     }
@@ -427,13 +491,13 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
             searchPattern(comboQuick, false);
         } else if (ae.getSource().equals(butQuickFilter)) {
             if (!filterEnabled) {
-                filterReport(comboQuick.getItemAt(comboQuick.getSelectedIndex()));
+                filterReport(comboFilter.getItemAt(comboFilter.getSelectedIndex()));
             } else {
                 filterReportOutput(currentClient.phaseReport);
                 filterButtonReset();
             }
 
-        } else if (ae.getSource().equals(comboQuick)) {
+        } else if (ae.getSource().equals(comboFilter)) {
             filterButtonReset();
         }
     }
@@ -480,7 +544,9 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
             startIndex = tabs.getTabCount() + 1;
         }
 
-        for (int round = startIndex; round <= numRounds; round++) {
+        for (int round = startIndex;
+              round <= numRounds;
+              round++) {
             String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
             tabs.add(Messages.getString("MiniReportDisplay.Round") + " " + round, loadHtmlScrollPane(text));
         }
@@ -547,7 +613,8 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
                     break;
                 default:
                     if ((!e.getNewPhase().equals((e.getOldPhase()))) && ((e.getNewPhase().isReport())
-                          || ((e.getNewPhase().isOnMap()) && (tabs.getTabCount() == 0)))) {
+                                                                               || ((e.getNewPhase().isOnMap()) && (
+                          tabs.getTabCount() == 0)))) {
                         addReportPages(e.getNewPhase());
                         updatePlayerChoice();
                         updateEntityChoice();

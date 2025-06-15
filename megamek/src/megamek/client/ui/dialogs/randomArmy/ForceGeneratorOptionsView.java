@@ -49,7 +49,6 @@ import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.UnitType;
 import megamek.common.options.OptionsConstants;
-import megamek.common.universe.Factions2;
 import megamek.logging.MMLogger;
 
 /**

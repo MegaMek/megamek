@@ -262,16 +262,16 @@ public class Faction2 {
      * @throws IOException When an error occurs
      */
     public void saveToFile(File file) throws IOException {
-        ObjectMapper YAML_MAPPER = new ObjectMapper(new YAMLFactory()
+        ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory()
               .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
               .disable(YAMLGenerator.Feature.SPLIT_LINES)
               .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
               .enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR));
         SimpleModule module = new SimpleModule();
         module.addSerializer(Color.class, new ColorSerializer());
-        YAML_MAPPER.registerModule(module);
-        YAML_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        YAML_MAPPER.writeValue(file, this);
+        yamlMapper.registerModule(module);
+        yamlMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        yamlMapper.writeValue(file, this);
     }
 
     /**
@@ -332,7 +332,7 @@ public class Faction2 {
     }
 
     @JsonGetter("postInvasionHonorRating")
-    public HonorRating getPostInvasionHonorRatingSerializer() {
+    private HonorRating getPostInvasionHonorRatingSerializer() {
         return postInvasionHonorRating != HonorRating.NONE ? postInvasionHonorRating : null;
     }
 

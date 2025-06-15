@@ -55,7 +55,7 @@ import java.util.zip.ZipFile;
  * This class manages the unified Faction2 class that combines MHQ's Faction and the RATGenerator's FactionRecord and
  * makes it available to all project parts.
  * <p>
- * Facion data is loaded from data/universe/factions and .../commands, as well as from the same folders in the user
+ * Faction data is loaded from data/universe/factions and .../commands, as well as from the same folders in the user
  * directory, if available.
  */
 public final class Factions2 {

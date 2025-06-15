@@ -52,12 +52,15 @@ public class ColorSerializer extends StdSerializer<Color> {
 
     @Override
     public void serialize(Color value, JsonGenerator jgen, SerializerProvider provider)
-          throws IOException, JsonProcessingException {
+          throws IOException {
 
         jgen.writeStartObject();
         jgen.writeNumberField("red", value.getRed());
         jgen.writeNumberField("green", value.getGreen());
         jgen.writeNumberField("blue", value.getBlue());
+        if (value.getAlpha() < 255) {
+            jgen.writeNumberField("alpha", value.getAlpha());
+        }
         jgen.writeEndObject();
     }
 }

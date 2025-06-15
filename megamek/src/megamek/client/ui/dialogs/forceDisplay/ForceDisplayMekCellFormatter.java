@@ -46,7 +46,6 @@ import megamek.common.util.CollectionUtil;
 class ForceDisplayMekCellFormatter {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private int W_INDICATORS = 10;
 
     private ForceDisplayMekCellFormatter() {
     }
@@ -56,6 +55,19 @@ class ForceDisplayMekCellFormatter {
      * for the compact display mode. Assumes that no enemy or blind-drop-hidden units are provided.
      */
     static String formatUnitCompact(Entity entity, Client client, int row) {
+        String tglInfos = GUIP.getForceDisplayInfos();
+        boolean tglPilot = tglInfos.charAt(0) == '1';
+        boolean tglMP = tglInfos.charAt(1) == '1';
+        ;
+        boolean tglHeat = tglInfos.charAt(2) == '1';
+        ;
+        boolean tglDmg = tglInfos.charAt(3) == '1';
+        ;
+        boolean tglArmor = tglInfos.charAt(4) == '1';
+        ;
+        boolean tglTons = tglInfos.charAt(5) == '1';
+        ;
+
         Game game = client.getGame();
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
@@ -135,49 +147,71 @@ class ForceDisplayMekCellFormatter {
 
         // Pilot
         Crew pilot = entity.getCrew();
-        if (pilot.getSlotCount() > 1 || entity instanceof FighterSquadron) {
-            result.append(formatCell(
-                                "<I>" +
-                                Messages.getString("ChatLounge.multipleCrew") +
-                                      "</I>", 150));
-        } else if ((pilot.getNickname(0) != null) && !pilot.getNickname(0).isEmpty()) {
-            String txt = UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + "<B>'";
-            txt += pilot.getNickname(0).toUpperCase() + "'</B></FONT>";
-            if (!pilot.getStatusDesc(0).isEmpty()) {
-                txt += " (" + pilot.getStatusDesc(0) + ")";
+
+        if (tglPilot) {
+            if (pilot.getSlotCount() > 1 || entity instanceof FighterSquadron) {
+                result.append(formatCell(
+                      "<I>" +
+                            Messages.getString("ChatLounge.multipleCrew") +
+                            "</I>", 150));
+            } else if ((pilot.getNickname(0) != null) && !pilot.getNickname(0).isEmpty()) {
+                String txt = UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + "<B>'";
+                txt += pilot.getNickname(0).toUpperCase() + "'</B></FONT>";
+                if (!pilot.getStatusDesc(0).isEmpty()) {
+                    txt += " (" + pilot.getStatusDesc(0) + ")";
+                }
+                result.append(formatCell(txt, 150));
+            } else {
+                result.append(formatCell(pilot.getDesc(0), 150));
             }
-            result.append(formatCell(txt, 150));
-        } else {
-            result.append(formatCell(pilot.getDesc(0), 150));
+
+            final boolean rpgSkills = options.booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
+            result.append(formatCell(pilot.getSkillsAsString(rpgSkills), 50));
+        }
+        //result.append("<td width='100'>" + UnitToolTip.getDamageLevelDesc(entity, true) + divClose);
+        if (tglMP) {
+            if (entity.getJumpMP() != 0) {
+                result.append(formatCell("MP: " +
+                                               entity.getWalkMP() +
+                                               "/" +
+                                               entity.getRunMP() + "/" + entity.getJumpMP(),
+                      100));
+            } else {
+                result.append(formatCell("MP: " +
+                                               entity.getWalkMP() +
+                                               "/" +
+                                               entity.getRunMP(),
+                      100));
+            }
         }
 
-        final boolean rpgSkills = options.booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-        result.append(formatCell(pilot.getSkillsAsString(rpgSkills), 50));
+        if (tglHeat) {
+            result.append(formatCell("Heat: " +
+                                           entity.getHeat() +
+                                           "/" +
+                                           entity.getHeatCapacity(), 100));
+        }
 
-        //result.append("<td width='100'>" + UnitToolTip.getDamageLevelDesc(entity, true) + divClose);
+        if (tglDmg) {
 
-        result.append(formatCell("MP: " +
-                                       entity.getWalkMP() +
-                                       "/" +
-                                       entity.getRunMP() + "/" + entity.getJumpMP(), 100));
+        }
 
-        result.append(formatCell("Heat: " +
-                                       entity.getHeat() +
-                                       "/" +
-                                       entity.getHeatCapacity(), 100));
+        if (tglArmor) {
+            result.append(formatCell("A: " +
+                                           entity.getTotalArmor() +
+                                           "/" + entity.getTotalOArmor(), 100));
+            result.append(formatCell("I: " +
+                                           entity.getTotalInternal() +
+                                           "/" + entity.getTotalOInternal(), 100));
+        }
 
-        result.append(formatCell("A: " +
-                            entity.getTotalArmor() +
-                                       "/" + entity.getTotalOArmor(), 100));
-        result.append(formatCell("I: " +
-                            entity.getTotalInternal() +
-                                       "/" + entity.getTotalOInternal(), 100));
-
-        // Tonnage
-        NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
-        String tonnage = formatter.format(entity.getWeight());
-        tonnage += "t";
-        result.append(formatCell(tonnage, 40));
+        if (tglTons) {
+            // Tonnage
+            NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
+            String tonnage = formatter.format(entity.getWeight());
+            tonnage += "t";
+            result.append(formatCell(tonnage, 40));
+        }
 
         // Alpha Strike Unit Role
         if (!entity.isUnitGroup()) {

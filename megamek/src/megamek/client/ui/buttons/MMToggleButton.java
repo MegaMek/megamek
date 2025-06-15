@@ -18,10 +18,10 @@
  */
 package megamek.client.ui.buttons;
 
+import javax.swing.JToggleButton;
+
 import megamek.MMConstants;
 import megamek.client.ui.util.FlatLafStyleBuilder;
-
-import javax.swing.*;
 
 /**
  * A JToggleButton that shows a check mark and cross mark to make its
@@ -40,6 +40,15 @@ public class MMToggleButton extends JToggleButton {
     public MMToggleButton(String text) {
         super();
         setText(text);
+        // The standard UI font doesn't show unicode characters (on Win10)
+        new FlatLafStyleBuilder().font(MMConstants.FONT_DIALOG).apply(this);
+        addActionListener(event -> setText(getText()));
+    }
+
+    public MMToggleButton(String text, boolean selection) {
+        super();
+        setText(text);
+        setSelected(selection);
         // The standard UI font doesn't show unicode characters (on Win10)
         new FlatLafStyleBuilder().font(MMConstants.FONT_DIALOG).apply(this);
         addActionListener(event -> setText(getText()));

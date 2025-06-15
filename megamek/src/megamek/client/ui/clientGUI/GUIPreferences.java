@@ -33,18 +33,6 @@
  */
 package megamek.client.ui.clientGUI;
 
-import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
-import megamek.client.ui.util.PlayerColour;
-import megamek.common.Configuration;
-import megamek.common.EntityMovementType;
-import megamek.common.annotations.Nullable;
-import megamek.common.enums.WeaponSortOrder;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.preference.PreferenceStoreProxy;
-
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -55,6 +43,18 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+
+import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
+import megamek.client.ui.util.PlayerColour;
+import megamek.common.Configuration;
+import megamek.common.EntityMovementType;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.WeaponSortOrder;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.preference.PreferenceStoreProxy;
 
 public class GUIPreferences extends PreferenceStoreProxy {
 
@@ -182,6 +182,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FORCE_DISPLAY_AUTO_DISPLAY_REPORT_PHASE = "ForceDisplayAutoDisplayReportPhase";
     public static final String FORCE_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE = "ForceDisplayAutoDisplayNonReportPhase";
     public static final String FORCE_DISPLAY_ENABLED = "ForceDisplayEnabled";
+    public static final String FORCE_DISPLAY_INFOS = "ForceDisplayInfos";
 
     public static final String UNIT_DISPLAY_POS_X = "UnitDisplayPosX";
     public static final String UNIT_DISPLAY_POS_Y = "UnitDisplayPosY";
@@ -636,6 +637,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FORCE_DISPLAY_ENABLED, false);
         store.setDefault(FORCE_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(FORCE_DISPLAY_SIZE_WIDTH, 300);
+        store.setDefault(FORCE_DISPLAY_INFOS, "100101");
 
         store.setDefault(UNIT_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(UNIT_DISPLAY_SIZE_WIDTH, 300);
@@ -3687,4 +3689,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setNagForOddSizedBoard(boolean value) {
         store.setValue(NAG_FOR_ODD_SIZED_BOARD, value);
     }
+
+    public void setForceDisplayInfos(String value) {store.setValue(FORCE_DISPLAY_INFOS, value);}
+
+    public String getForceDisplayInfos() {return getString(FORCE_DISPLAY_INFOS);}
 }

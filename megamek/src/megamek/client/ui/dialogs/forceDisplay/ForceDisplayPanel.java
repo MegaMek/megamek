@@ -14,12 +14,13 @@
 package megamek.client.ui.dialogs.forceDisplay;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.Window;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -33,9 +34,10 @@ import javax.swing.tree.TreeSelectionModel;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
+import megamek.client.ui.buttons.MMToggleButton;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
 import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.common.Entity;
@@ -76,10 +78,45 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         this.client = client;
         this.game = client.getGame();
 
+        JPanel pnlTop = new JPanel();
+        MMToggleButton btnPilot = new MMToggleButton("Pilot", true); // and skill
+        MMToggleButton btnMP = new MMToggleButton("MP", false);
+        MMToggleButton btnHeat = new MMToggleButton("Heat", false);
+        MMToggleButton btnDmgDesc = new MMToggleButton("Damage", true);
+        MMToggleButton btnArmor = new MMToggleButton("Armor", false);
+        MMToggleButton btnTonnage = new MMToggleButton("Tonnage", true);
+        ActionListener toggleListener = e -> {
+            boolean[] infos = { btnPilot.isSelected(), btnMP.isSelected(), btnHeat.isSelected(),
+                                btnDmgDesc.isSelected(), btnArmor.isSelected(), btnTonnage.isSelected() };
+            StringBuilder sb = new StringBuilder();
+            for (boolean b : infos) {
+                sb.append(b ? '1' : '0');
+            }
+            GUIP.setForceDisplayInfos(sb.toString());
+            System.out.println(sb.toString());
+            refreshTree();
+        };
+
+        btnPilot.addActionListener(toggleListener);
+        btnMP.addActionListener(toggleListener);
+        btnHeat.addActionListener(toggleListener);
+        btnDmgDesc.addActionListener(toggleListener);
+        btnArmor.addActionListener(toggleListener);
+        btnTonnage.addActionListener(toggleListener);
+
         setupForce();
         refreshTree();
 
         setLayout(new BorderLayout());
+        pnlTop.setLayout(new GridLayout());
+        pnlTop.add(btnPilot);
+        pnlTop.add(btnPilot);
+        pnlTop.add(btnMP);
+        pnlTop.add(btnHeat);
+        pnlTop.add(btnDmgDesc);
+        pnlTop.add(btnArmor);
+        pnlTop.add(btnTonnage);
+        add(pnlTop, BorderLayout.NORTH);
         JScrollPane sp = new JScrollPane(forceTree);
         add(sp, BorderLayout.CENTER);
 

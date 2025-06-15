@@ -61,7 +61,7 @@ import java.util.zip.ZipFile;
 public final class Factions2 {
 
     /*
-    Temporary information that should be kept until this migration is really done:
+    Temporary information about this migration:
 
     + move together MHQ and RAT Faction information
     + separate to factions, commands, technical factions?
@@ -96,27 +96,27 @@ public final class Factions2 {
 
     */
 
-        private static final MMLogger LOGGER = MMLogger.create(Factions2.class);
-        private static Factions2 instance;
+    private static final MMLogger LOGGER = MMLogger.create(Factions2.class);
+    private static Factions2 instance;
 
-        private final Map<String, Faction2> factions = new HashMap<>();
+    private final Map<String, Faction2> factions = new HashMap<>();
 
-        private Factions2() {
-            loadFactionsFromFile();
+    private Factions2() {
+        loadFactionsFromFile();
+    }
+
+    public static synchronized Factions2 getInstance() {
+        if (instance == null) {
+            instance = new Factions2();
         }
 
-        public static synchronized Factions2 getInstance() {
-            if (instance == null) {
-                instance = new Factions2();
-            }
+        return instance;
+    }
 
-            return instance;
-        }
-
-        /**
-         * @return All available factions. The returned Collection is a view of the internal faction list and must not be
-         * modified.
-         */
+    /**
+     * @return All available factions. The returned Collection is a view of the internal faction list and must not be
+     *       modified.
+     */
     public Collection<Faction2> getFactions() {
         return factions.values();
     }

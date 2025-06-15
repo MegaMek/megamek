@@ -1,0 +1,8 @@
+key: LA.LR
+name: Lyran Regulars
+yearsActive:
+  - start: 2341
+ratingLevels:
+  - F
+fallBackFactions:
+  - LA

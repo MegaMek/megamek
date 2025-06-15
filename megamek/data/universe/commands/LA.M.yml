@@ -1,0 +1,8 @@
+key: LA.M
+name: Regional Militia
+yearsActive:
+  - start: 2341
+ratingLevels:
+  - F
+fallBackFactions:
+  - LA

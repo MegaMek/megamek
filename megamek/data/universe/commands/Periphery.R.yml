@@ -1,0 +1,12 @@
+key: Periphery.R
+name: The Rift
+tags:
+  - PERIPHERY
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery

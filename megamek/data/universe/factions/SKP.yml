@@ -1,0 +1,23 @@
+key: SKP
+name: Styk Protectorate
+capital: Styk
+tags:
+  - MINOR
+  - IS
+color:
+  red: 0
+  green: 139
+  blue: 139
+nameGenerator: CC
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+  - 0

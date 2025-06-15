@@ -1,0 +1,9 @@
+key: OP.OH
+name: Oriente Hussars
+yearsActive:
+  - start: 3086
+    end: 3139
+ratingLevels:
+  - F
+fallBackFactions:
+  - OP

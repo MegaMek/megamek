@@ -1,0 +1,8 @@
+key: DC.NSR
+name: New Samarkand Regulars
+yearsActive:
+  - start: 3082
+ratingLevels:
+  - A
+fallBackFactions:
+  - DC

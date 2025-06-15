@@ -1,0 +1,10 @@
+key: FWL.MM
+name: Marik Militia
+yearsActive:
+  - start: 2238
+    end: 3079
+  - start: 3139
+ratingLevels:
+  - F
+fallBackFactions:
+  - FWL

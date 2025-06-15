@@ -1,0 +1,25 @@
+key: CWOV
+name: Clan Wolverine
+capital: Terra
+yearsActive:
+  - start: 2807
+    end: 2823
+tags:
+  - MINOR
+  - CLAN
+color:
+  red: 143
+  green: 188
+  blue: 143
+logo: Clan/Clan Wolverine.png
+background: Clan/Clan Wolverine.png
+camos: Clans/Wolverine
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN

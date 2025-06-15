@@ -1,0 +1,9 @@
+key: CC.CR
+name: Chesterton Regulars
+yearsActive:
+  - start: 2832
+    end: 3060
+ratingLevels:
+  - C
+fallBackFactions:
+  - CC

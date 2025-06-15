@@ -1,0 +1,35 @@
+key: TD
+name: Tortuga Dominions
+capital: Tortuga Prime
+yearsActive:
+  - start: 2785
+tags:
+  - PIRATE
+  - PERIPHERY
+color:
+  red: 34
+  green: 139
+  blue: 34
+logo: Periphery/Tortuga Dominions.png
+background: Tortuga Dominions/Tortuga Dominions.png
+eraMods:
+  - 0
+  - 1
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+  - 1
+  - 2
+  - 2
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.HR
+  - PIR

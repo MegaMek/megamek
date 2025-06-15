@@ -1,0 +1,27 @@
+key: FR
+name: Fronc Reaches
+capital: Fronc
+yearsActive:
+  - start: 3066
+tags:
+  - PERIPHERY
+color:
+  red: 128
+  green: 169
+  blue: 127
+logo: Periphery/Fronc Reaches.png
+camos: Fronc Reaches
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+  - 2
+  - 2
+fallBackFactions:
+  - NCR

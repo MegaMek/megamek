@@ -1,0 +1,10 @@
+key: RCM.pm
+name: Planetary Militia
+yearsActive:
+  - start: 3075
+    end: 3139
+ratingLevels:
+  - F
+fallBackFactions:
+  - IS.pm
+  - RCM

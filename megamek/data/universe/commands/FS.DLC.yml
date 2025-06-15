@@ -1,0 +1,9 @@
+key: FS.DLC
+name: Deneb Light Cavalry
+yearsActive:
+  - start: 2780
+    end: 3081
+ratingLevels:
+  - C
+fallBackFactions:
+  - FS

@@ -1,0 +1,21 @@
+key: AB
+name: Azami Brotherhood
+capital: Algedi
+yearsActive:
+  - start: 2450
+    end: 2516
+  - start: 3075
+    end: 3081
+tags:
+  - MINOR
+  - IS
+color:
+  red: 238
+  green: 66
+  blue: 244
+nameGenerator: DC
+ratingLevels:
+  - D
+fallBackFactions:
+  - DC.AL
+  - DC

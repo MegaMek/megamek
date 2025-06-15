@@ -1,8 +1,0 @@
-key: LA.RG
-name: Royal Guards
-yearsActive:
-  - start: 2341
-ratingLevels:
-  - A
-fallBackFactions:
-  - LA

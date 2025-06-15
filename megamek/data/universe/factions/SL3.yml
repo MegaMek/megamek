@@ -1,0 +1,11 @@
+key: SL3
+name: Star League (Clan Wolf)
+yearsActive:
+  - start: 3151
+ratingLevels:
+  - C
+  - B
+  - A
+fallBackFactions:
+  - CWE
+  - ROS

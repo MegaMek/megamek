@@ -1,0 +1,11 @@
+key: WA
+name: Western Alliance
+capital: Terra
+successor: TA
+tags:
+  - MINOR
+  - IS
+color:
+  red: 0
+  green: 20
+  blue: 220

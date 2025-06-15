@@ -1,0 +1,9 @@
+key: CGB.FRR
+name: Kungsarmé
+yearsActive:
+  - start: 3079
+    end: 3103
+ratingLevels:
+  - A
+fallBackFactions:
+  - FRR

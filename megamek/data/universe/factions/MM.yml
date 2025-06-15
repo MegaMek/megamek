@@ -1,0 +1,32 @@
+key: MM
+name: Mica Majority
+capital: Mica II
+yearsActive:
+  - start: 2855
+tags:
+  - MINOR
+  - PERIPHERY
+color:
+  red: 240
+  green: 230
+  blue: 140
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+  - 1
+  - 2
+  - 2
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.OS

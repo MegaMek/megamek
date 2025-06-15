@@ -1,0 +1,23 @@
+key: SP
+name: Sarna Protectorate
+capital: Terra
+tags:
+  - MINOR
+  - IS
+color:
+  red: 184
+  green: 134
+  blue: 11
+nameGenerator: CC
+eraMods:
+  - 1
+  - 0
+  - 0
+  - 1
+  - 1
+  - 2
+  - 2
+  - 1
+  - 0
+  - 1
+  - 0

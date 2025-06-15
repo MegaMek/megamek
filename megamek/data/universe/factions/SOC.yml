@@ -1,0 +1,20 @@
+key: SOC
+name: The Society
+capital: Terra
+yearsActive:
+  - start: 3072
+    end: 3075
+tags:
+  - CLAN
+color:
+  red: 147
+  green: 112
+  blue: 219
+logo: Clan/The Society.png
+background: Clan/The Society.png
+camos: Clans/Society
+nameGenerator: Clan
+ratingLevels:
+  - PG
+fallBackFactions:
+  - CLAN

@@ -1,0 +1,10 @@
+key: FWL.FWG
+name: Free Worlds Guards
+yearsActive:
+  - start: 2426
+    end: 3079
+  - start: 3138
+ratingLevels:
+  - A
+fallBackFactions:
+  - FWL

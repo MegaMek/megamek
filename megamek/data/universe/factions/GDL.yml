@@ -1,0 +1,22 @@
+key: GDL
+name: Galatean Defense League
+capital: Galatea
+tags:
+  - MINOR
+  - IS
+color:
+  red: 102
+  green: 255
+  blue: 255
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+  - 1

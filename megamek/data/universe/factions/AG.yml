@@ -1,0 +1,12 @@
+key: AG
+name: Alliance of Galedon
+capital: Terra
+successor: DC
+tags:
+  - MINOR
+  - IS
+color:
+  red: 128
+  green: 66
+  blue: 244
+nameGenerator: DC

@@ -1,0 +1,21 @@
+key: Stone
+name: Stone's Coalition
+capital: Terra
+yearsActive:
+  - start: 3073
+    end: 3081
+tags:
+  - MINOR
+  - IS
+color:
+  red: 164
+  green: 164
+  blue: 122
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - ROS

@@ -1,0 +1,15 @@
+key: FFR
+name: Finmark Free Republic
+capital: Finmark
+tags:
+  - MINOR
+  - PERIPHERY
+color:
+  red: 191
+  green: 171
+  blue: 120
+eraMods:
+  - 0
+  - 0
+  - 1
+  - 1

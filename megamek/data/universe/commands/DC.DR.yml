@@ -1,0 +1,10 @@
+key: DC.DR
+name: Dieron Regulars
+yearsActive:
+  - start: 2319
+    end: 3081
+  - start: 3135
+ratingLevels:
+  - D
+fallBackFactions:
+  - DC

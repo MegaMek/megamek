@@ -1,0 +1,21 @@
+key: RON
+name: Ronin
+capital: Predlitz
+tags:
+  - MINOR
+  - IS
+color:
+  red: 237
+  green: 28
+  blue: 36
+nameGenerator: DC
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 2
+fallBackFactions:
+  - DC

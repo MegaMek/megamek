@@ -1,0 +1,9 @@
+key: OP.OG
+name: Orloff Grenadiers
+yearsActive:
+  - start: 3086
+    end: 3139
+ratingLevels:
+  - A
+fallBackFactions:
+  - OP

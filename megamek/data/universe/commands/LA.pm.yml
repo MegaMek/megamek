@@ -1,0 +1,9 @@
+key: LA.pm
+name: Planetary Militia
+yearsActive:
+  - start: 2341
+ratingLevels:
+  - F
+fallBackFactions:
+  - LA
+  - IS.pm

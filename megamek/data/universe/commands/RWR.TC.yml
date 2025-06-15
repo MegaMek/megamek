@@ -1,0 +1,13 @@
+key: RWR.TC
+name: Rim Worlds Republic - Terran Corps
+yearsActive:
+  - start: 2765
+    end: 2779
+tags:
+  - PERIPHERY
+ratingLevels:
+  - B
+  - A
+fallBackFactions:
+  - Periphery.R
+  - SL.R

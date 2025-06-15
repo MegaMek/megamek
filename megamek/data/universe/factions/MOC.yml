@@ -1,0 +1,37 @@
+key: MOC
+name: Magistracy of Canopus
+capital: Canopus IV
+yearsActive:
+  - start: 2530
+tags:
+  - PLAYABLE
+  - LENIENT
+  - PERIPHERY
+  - GENEROUS
+color:
+  red: 77
+  green: 168
+  blue: 153
+logo: Periphery/Magistracy of Canopus.png
+background: Periphery/Magistracy of Canopus.png
+camos: Magistracy of Canopus
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 2
+  - 1
+  - 1
+  - 1
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.CM

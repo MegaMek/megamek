@@ -1,0 +1,28 @@
+key: CvW
+name: Covenant Worlds
+capital: Bordon
+yearsActive:
+  - start: 3137
+successor: FWL
+tags:
+  - MINOR
+  - IS
+color:
+  red: 102
+  green: 51
+  blue: 51
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - -1
+fallBackFactions:
+  - ROS
+  - FWL

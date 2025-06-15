@@ -1,0 +1,17 @@
+key: OZP
+name: Ohrensen-Zion Province
+capital: Ohrensen
+yearsActive:
+  - start: 3078
+    end: 3081
+successor: ROS
+tags:
+  - MINOR
+  - IS
+color:
+  red: 160
+  green: 165
+  blue: 94
+nameGenerator: CC
+fallBackFactions:
+  - FWL

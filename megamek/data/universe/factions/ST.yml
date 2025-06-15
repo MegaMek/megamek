@@ -1,0 +1,17 @@
+key: ST
+name: Saiph Triumvirate
+capital: Saiph
+yearsActive:
+  - start: 3057
+    end: 3068
+successor: WOB
+tags:
+  - MINOR
+  - IS
+color:
+  red: 128
+  green: 128
+  blue: 0
+nameGenerator: CC
+fallBackFactions:
+  - CM

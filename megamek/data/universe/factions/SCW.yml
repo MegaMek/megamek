@@ -1,0 +1,12 @@
+key: SCW
+name: Sian Commonwealth
+capital: Terra
+successor: CC
+tags:
+  - MINOR
+  - IS
+color:
+  red: 2
+  green: 166
+  blue: 79
+nameGenerator: CC

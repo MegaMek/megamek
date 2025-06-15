@@ -1,0 +1,11 @@
+key: SL.2
+name: Second Star League
+yearsActive:
+  - start: 3058
+    end: 3067
+ratingLevels:
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS

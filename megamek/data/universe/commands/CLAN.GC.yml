@@ -1,0 +1,10 @@
+key: CLAN.GC
+name: Grand Council (Ebon Keshik)
+yearsActive:
+  - start: 2820
+tags:
+  - CLAN
+ratingLevels:
+  - Keshik
+fallBackFactions:
+  - CLAN.HW

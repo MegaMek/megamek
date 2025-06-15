@@ -1050,6 +1050,13 @@ public class TestMek extends TestEntity {
                             .append(misc.getName()).append("\n");
                     illegal = true;
                 }
+                if (!illegal &&
+                          (misc.hasFlag(MiscTypeFlag.F_DOUBLE_HEAT_SINK)
+                                 || misc.hasFlag(MiscTypeFlag.F_COMPACT_HEAT_SINK)
+                                 || misc.hasFlag(MiscTypeFlag.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE))) {
+                    buff.append("Industrial Meks may only mount standard single heat sinks\n");
+                    illegal = true;
+                }
             } else {
                 if (misc.hasFlag(MiscType.F_INDUSTRIAL_TSM)
                         || misc.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
@@ -1115,10 +1122,6 @@ public class TestMek extends TestEntity {
             }
             if ((mek.getGyroType() != Mek.GYRO_STANDARD) && (mek.getGyroType() != Mek.GYRO_SUPERHEAVY)) {
                 buff.append("industrial meks can only mount standard gyros\n");
-                illegal = true;
-            }
-            if (hasDoubleHeatSinks()) {
-                buff.append("Industrial Meks cannot mount double heat sinks\n");
                 illegal = true;
             }
             switch (mek.hasEngine() ? engine.getEngineType() : Engine.NONE) {

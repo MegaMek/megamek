@@ -93,7 +93,6 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
                 sb.append(b ? '1' : '0');
             }
             GUIP.setForceDisplayInfos(sb.toString());
-            System.out.println(sb.toString());
             refreshTree();
         };
 

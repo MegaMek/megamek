@@ -122,7 +122,7 @@ class ForceDisplayMekCellFormatter {
         result.append(formatCell(
                             UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) +
                             id +
-                                  "</FONT>", 10));
+                                  "</FONT>", 20));
 
         // Done
         if (!game.getPhase().isReport()) {
@@ -168,7 +168,7 @@ class ForceDisplayMekCellFormatter {
             final boolean rpgSkills = options.booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
             result.append(formatCell(pilot.getSkillsAsString(rpgSkills), 50));
         }
-        //result.append("<td width='100'>" + UnitToolTip.getDamageLevelDesc(entity, true) + divClose);
+
         if (tglMP) {
             if (entity.getJumpMP() != 0) {
                 result.append(formatCell("MP: " +
@@ -186,14 +186,14 @@ class ForceDisplayMekCellFormatter {
         }
 
         if (tglHeat) {
-            result.append(formatCell("Heat: " +
+            result.append(formatCell("H: " +
                                            entity.getHeat() +
                                            "/" +
                                            entity.getHeatCapacity(), 100));
         }
 
         if (tglDmg) {
-
+            result.append(formatCell(UnitToolTip.getDamageLevelDesc(entity, true), 100));
         }
 
         if (tglArmor) {

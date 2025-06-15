@@ -867,6 +867,12 @@ public class TestMek extends TestEntity {
                 buff.append("UMUs cannot be mounted with jump jets\n");
             }
 
+            if (!illegal && misc.hasFlag(MiscType.F_UMU)
+                      && !(mek.locationIsTorso(m.getLocation()) || mek.locationIsLeg(m.getLocation()))) {
+                illegal = true;
+                buff.append("UMUs must be mounted in the torso or legs\n");
+            }
+
             if (misc.hasFlag(MiscType.F_MASC)
                     && misc.hasSubType(MiscType.S_SUPERCHARGER)) {
                 if (mek instanceof LandAirMek) {

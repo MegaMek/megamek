@@ -32,18 +32,12 @@
  */
 package megamek.client.ui.dialogs.unitSelectorDialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Desktop;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.VolatileImage;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,7 +67,9 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.eras.Era;
 import megamek.common.eras.Eras;
+import megamek.common.util.ManagedVolatileImage;
 import megamek.logging.MMLogger;
+import megamek.utilities.ImageUtilities;
 
 public class AvailabilityPanel {
     private static final MMLogger logger = MMLogger.create(AvailabilityPanel.class);
@@ -88,11 +84,11 @@ public class AvailabilityPanel {
         private static final int FIXED_COLUMN_WIDTH = 200;
 
         public static class FactionCellData {
-            Icon icon;
+            ImageIcon icon;
             String factionCode;
             String factionName;
 
-            public FactionCellData(Icon icon, String factionCode) {
+            public FactionCellData(ImageIcon icon, String factionCode) {
                 this.icon = icon;
                 this.factionCode = factionCode;
                 FactionRecord faction = RAT_GENERATOR.getFaction(factionCode);
@@ -105,44 +101,61 @@ public class AvailabilityPanel {
         }
 
         private static class FactionCellRenderer extends JPanel implements TableCellRenderer {
-            private final JLabel iconLabel = new JLabel();
+            private ManagedVolatileImage factionImage;
             private final JLabel textLabel = new JLabel();
+            private boolean showIcon = false;
             private int textContentWidth = 0;
+            private static final int ICON_SIZE = 32; // Fixed height for icon
+            private static final int ICON_MARGIN = 5;
 
             public FactionCellRenderer() {
                 setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
                 setOpaque(true);
                 setBorder(new EmptyBorder(2, 5, 2, 5)); // Padding for the whole cell
-                iconLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
-                iconLabel.setVerticalAlignment(SwingConstants.CENTER);
                 textLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
                 textLabel.setVerticalAlignment(SwingConstants.CENTER);
-                add(iconLabel);
-                add(Box.createHorizontalStrut(5)); // Gap between icon and text
-                add(textLabel);
+                add(textLabel, BorderLayout.CENTER);
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                
+                if (showIcon && factionImage != null) {
+                    Graphics2D g2d = (Graphics2D) g.create();
+                    UIUtil.setHighQualityRendering(g2d);
+                    
+                    // Draw the icon on the left side, vertically centered
+                    VolatileImage img = factionImage.getImage();
+                    int iconY = (getHeight() - ICON_SIZE) / 2;
+                    g2d.drawImage(img, ICON_MARGIN, iconY, null);
+                    
+                    g2d.dispose();
+                }
             }
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                if (value instanceof FactionCellData data) {
-                    iconLabel.setIcon(data.icon);
-                    // Adjusted width calculation for HTML body to account for panel padding and strut
-                    int textContentWidth = FIXED_COLUMN_WIDTH -
-                                                 getInsets().left - getInsets().right - // Panel border
-                                                 (data.icon != null ? data.icon.getIconWidth() : 0) -
-                                                 5 - // Strut width
-                                                 30; // Buffer for text label itself to encourage word-wrap
-                    if (textContentWidth < 10) textContentWidth = 10; // Minimum width
-                    this.textContentWidth = textContentWidth;
-                    textLabel.setText("<html><body style='width: " + textContentWidth + "px'>" +
-                                            (data.factionName != null ? data.factionName : "Unknown") +
-                                            "</body></html>");
-                    iconLabel.setVisible(data.icon != null);
+            if (value instanceof FactionCellData data) {
+                this.textContentWidth = FIXED_COLUMN_WIDTH -
+                                             getInsets().left - getInsets().right - // Panel border
+                                             ICON_SIZE -
+                                             ICON_MARGIN -
+                                             30;
+                // Create ManagedVolatileImage for the icon
+                if (data.icon != null) {
+                    factionImage = new ManagedVolatileImage(data.icon.getImage(), 
+                        Transparency.TRANSLUCENT, ICON_SIZE, ICON_SIZE);
+                    showIcon = true;
                 } else {
-                    iconLabel.setIcon(null);
-                    textLabel.setText(value == null ? "" : "<html>" + value.toString() + "</html>");
-                    iconLabel.setVisible(false);
+                    factionImage = null;
+                    showIcon = false;
                 }
+                textLabel.setBorder(new EmptyBorder(0, ICON_SIZE + ICON_MARGIN, 0, 0));
+                textLabel.setText("<html><body style='width: " + textContentWidth + "px'>" +
+                                        (data.factionName != null ? data.factionName : "Unknown") +
+                                        "</body></html>");
+            }
 
                 if (isSelected) {
                     setBackground(table.getSelectionBackground());
@@ -159,7 +172,9 @@ public class AvailabilityPanel {
             @Override
             public Dimension getPreferredSize() {
                 Dimension size = super.getPreferredSize();
+                int minHeight = showIcon ? ICON_SIZE : 0;
                 String text = textLabel.getText();
+                int textHeight = 0;
                 if (text != null && text.contains("<html>")) {
                     if (this.textContentWidth > 0) {
                         try {
@@ -173,16 +188,20 @@ public class AvailabilityPanel {
                             }
                             if (view != null) {
                                 view.setSize(this.textContentWidth, 0);
-                                float textHeight = view.getPreferredSpan(View.Y_AXIS);
-                                int totalTextHeight = (int) Math.ceil(textHeight) + getInsets().top + getInsets().bottom;
-                                Icon icon = iconLabel.getIcon();
-                                int iconHeight = (icon != null) ? icon.getIconHeight() + getInsets().top + getInsets().bottom : 0;
-                                size.height = Math.max(size.height, Math.max(totalTextHeight, iconHeight));
+                                textHeight = (int) view.getPreferredSpan(View.Y_AXIS);
                             }
                         } catch (NumberFormatException ignored) {
+                            // Fallback
+                            textHeight = textLabel.getPreferredSize().height;
                         }
                     }
+                } else {
+                    textHeight = textLabel.getPreferredSize().height;
                 }
+                int contentHeight = Math.max(minHeight, textHeight);
+                Insets insets = getInsets();
+                int totalHeight = contentHeight + insets.top + insets.bottom;
+                size.height = Math.max(size.height, totalHeight);
                 return size;
             }
         }
@@ -622,21 +641,7 @@ public class AvailabilityPanel {
                 List<Object> rowData = new ArrayList<>();
                 String baseAbbr = factionCode.split("\\.")[0];
                 ImageIcon factionIcon = RAT_GENERATOR.getFactionLogo(0, baseAbbr, Color.WHITE);
-                Icon finalIcon = null;
-                if (factionIcon != null) {
-                    Image img = factionIcon.getImage();
-                    int iconDisplayHeight = 32;
-                    int originalWidth = img.getWidth(null);
-                    int originalHeight = img.getHeight(null);
-                    if (originalHeight > 0 && originalWidth > 0) {
-                        int scaledWidth = (originalWidth * iconDisplayHeight) / originalHeight;
-                        if (scaledWidth > 0) {
-                            Image scaledImg = img.getScaledInstance(scaledWidth, iconDisplayHeight, Image.SCALE_SMOOTH);
-                            finalIcon = new ImageIcon(scaledImg);
-                        }
-                    }
-                }
-                rowData.add(new FixedColumnGrid.FactionCellData(finalIcon, factionCode));
+                rowData.add(new FixedColumnGrid.FactionCellData(factionIcon, factionCode));
 
                 for (Era era : erasToDisplay) {
                     String availabilityText = eraFactionAvailabilityCache
@@ -645,7 +650,7 @@ public class AvailabilityPanel {
                     if (availabilityText.isEmpty()) {
                         availabilityText = "-";
                     }
-                    rowData.add("<HTML><CENTER>" + availabilityText.replace("\n", "<BR>") + "</CENTER></HTML>");
+                    rowData.add("<html><center>" + availabilityText.replace("\n", "<br>") + "</center></html>");
                 }
                 newGridModel.addRow(rowData.toArray());
             }

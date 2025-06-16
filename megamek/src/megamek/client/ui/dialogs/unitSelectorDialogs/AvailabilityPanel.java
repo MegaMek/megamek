@@ -64,6 +64,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.text.View;
 
 import megamek.client.ratgenerator.AvailabilityRating;
 import megamek.client.ratgenerator.FactionRecord;
@@ -72,9 +73,10 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.eras.Era;
 import megamek.common.eras.Eras;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 public class AvailabilityPanel {
+    private static final MMLogger logger = MMLogger.create(AvailabilityPanel.class);
 
 
     private static class FixedColumnGrid extends JPanel {
@@ -105,6 +107,7 @@ public class AvailabilityPanel {
         private static class FactionCellRenderer extends JPanel implements TableCellRenderer {
             private final JLabel iconLabel = new JLabel();
             private final JLabel textLabel = new JLabel();
+            private int textContentWidth = 0;
 
             public FactionCellRenderer() {
                 setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -121,16 +124,16 @@ public class AvailabilityPanel {
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                if (value instanceof FactionCellData) {
-                    FactionCellData data = (FactionCellData) value;
+                if (value instanceof FactionCellData data) {
                     iconLabel.setIcon(data.icon);
                     // Adjusted width calculation for HTML body to account for panel padding and strut
                     int textContentWidth = FIXED_COLUMN_WIDTH -
                                                  getInsets().left - getInsets().right - // Panel border
                                                  (data.icon != null ? data.icon.getIconWidth() : 0) -
                                                  5 - // Strut width
-                                                 50; // Buffer for text label itself to encourage word-wrap
+                                                 30; // Buffer for text label itself to encourage word-wrap
                     if (textContentWidth < 10) textContentWidth = 10; // Minimum width
+                    this.textContentWidth = textContentWidth;
                     textLabel.setText("<html><body style='width: " + textContentWidth + "px'>" +
                                             (data.factionName != null ? data.factionName : "Unknown") +
                                             "</body></html>");
@@ -151,6 +154,36 @@ public class AvailabilityPanel {
                     textLabel.setForeground(table.getForeground());
                 }
                 return this;
+            }
+
+            @Override
+            public Dimension getPreferredSize() {
+                Dimension size = super.getPreferredSize();
+                String text = textLabel.getText();
+                if (text != null && text.contains("<html>")) {
+                    if (this.textContentWidth > 0) {
+                        try {
+                            JLabel tempLabel = new JLabel(text);
+                            tempLabel.setFont(textLabel.getFont());
+                            tempLabel.setSize(this.textContentWidth, Integer.MAX_VALUE);
+                            View view = (View) tempLabel.getClientProperty("html");
+                            if (view == null) {
+                                tempLabel.getPreferredSize();
+                                view = (View) tempLabel.getClientProperty("html");
+                            }
+                            if (view != null) {
+                                view.setSize(this.textContentWidth, 0);
+                                float textHeight = view.getPreferredSpan(View.Y_AXIS);
+                                int totalTextHeight = (int) Math.ceil(textHeight) + getInsets().top + getInsets().bottom;
+                                Icon icon = iconLabel.getIcon();
+                                int iconHeight = (icon != null) ? icon.getIconHeight() + getInsets().top + getInsets().bottom : 0;
+                                size.height = Math.max(size.height, Math.max(totalTextHeight, iconHeight));
+                            }
+                        } catch (NumberFormatException ignored) {
+                        }
+                    }
+                }
+                return size;
             }
         }
 
@@ -360,12 +393,13 @@ public class AvailabilityPanel {
                     scrollHeight = getPreferredRowHeight(scrollableTable, row);
                 }
 
-                int maxHeight = Math.max(fixedTable.getRowHeight(), Math.max(fixedHeight, scrollHeight));
-                if (maxHeight <= 0 && fixedHeight > 0) {
-                    maxHeight = fixedHeight;
+                int maxHeight = Math.max(fixedHeight, scrollHeight);
+                if (maxHeight <= 0) {
+                    maxHeight = fixedTable.getRowHeight();
                 }
-                if (maxHeight <= 0) maxHeight = UIManager.getFont("Table.font").getSize() + 4; // Default based on font
-
+                if (maxHeight <= 0) {
+                    maxHeight = UIManager.getFont("Table.font").getSize() + 4; // Default based on font
+                }
                 if (fixedTable.getRowCount() > row) fixedTable.setRowHeight(row, maxHeight);
                 if (scrollableTable.getRowCount() > row) scrollableTable.setRowHeight(row, maxHeight);
             }
@@ -391,7 +425,7 @@ public class AvailabilityPanel {
                     height = Math.max(height, compHeight);
                 } catch (Exception e) {
                     // Could happen if renderer is misbehaving or data is unusual
-                    LogManager.getLogger().warn("Could not get preferred height for cell ({}, {}): {}", row, column, e.getMessage());
+                    logger.warn("Could not get preferred height for cell ({}, {}): {}", row, column, e.getMessage());
                 }
             }
             return height;
@@ -456,7 +490,7 @@ public class AvailabilityPanel {
             @Override
             public void tableChanged(TableModelEvent e) {
                 SwingUtilities.invokeLater(() -> {
-                    if (e.getType() == TableModelEvent.HEADER_ROW) {
+                    if (e.getFirstRow() == TableModelEvent.HEADER_ROW) {
                         setupFixedColumns();
                         setupScrollableColumns();
                     }
@@ -578,7 +612,7 @@ public class AvailabilityPanel {
 
         for (Era era : erasToDisplay) {
             String link = String.format("<HTML><A HREF=\"http://www.masterunitlist.info/Era/Details/%s\">%s</A></HTML>",
-                  era.mulId(), era.toString().replace("\n", "<br>"));
+                  era.mulId(), era.name().replace("\n", "<br>"));
             finalColumnTitles.add(link);
         }
         newGridModel.setColumnIdentifiers(finalColumnTitles.toArray());

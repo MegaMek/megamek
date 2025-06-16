@@ -79,15 +79,20 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         this.game = client.getGame();
 
         JPanel pnlTop = new JPanel();
-        MMToggleButton btnPilot = new MMToggleButton("Pilot", true); // and skill
-        MMToggleButton btnMP = new MMToggleButton("MP", false);
-        MMToggleButton btnHeat = new MMToggleButton("Heat", false);
-        MMToggleButton btnDmgDesc = new MMToggleButton("Damage", true);
-        MMToggleButton btnArmor = new MMToggleButton("Armor", false);
-        MMToggleButton btnTonnage = new MMToggleButton("Tonnage", true);
+        //GUIP.setForceDisplayInfos("00000000");
+        String prefs = GUIP.getForceDisplayInfos();
+        MMToggleButton btnId = new MMToggleButton("ID", prefs.charAt(0) == '1');
+        MMToggleButton btnPilot = new MMToggleButton("Pilot", prefs.charAt(1) == '1'); // and skill
+        MMToggleButton btnMP = new MMToggleButton("MP", prefs.charAt(2) == '1');
+        MMToggleButton btnHeat = new MMToggleButton("Heat", prefs.charAt(3) == '1');
+        MMToggleButton btnDmgDesc = new MMToggleButton("Damage", prefs.charAt(4) == '1');
+        MMToggleButton btnArmor = new MMToggleButton("Armor", prefs.charAt(5) == '1');
+        MMToggleButton btnTonnage = new MMToggleButton("Tonnage", prefs.charAt(6) == '1');
+        MMToggleButton btnRole = new MMToggleButton("Role", prefs.charAt(7) == '1');
         ActionListener toggleListener = e -> {
-            boolean[] infos = { btnPilot.isSelected(), btnMP.isSelected(), btnHeat.isSelected(),
-                                btnDmgDesc.isSelected(), btnArmor.isSelected(), btnTonnage.isSelected() };
+            boolean[] infos = { btnId.isSelected(), btnPilot.isSelected(), btnMP.isSelected(), btnHeat.isSelected(),
+                                btnDmgDesc.isSelected(), btnArmor.isSelected(), btnTonnage.isSelected(),
+                                btnRole.isSelected() };
             StringBuilder sb = new StringBuilder();
             for (boolean b : infos) {
                 sb.append(b ? '1' : '0');
@@ -96,18 +101,21 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
             refreshTree();
         };
 
+        btnId.addActionListener(toggleListener);
         btnPilot.addActionListener(toggleListener);
         btnMP.addActionListener(toggleListener);
         btnHeat.addActionListener(toggleListener);
         btnDmgDesc.addActionListener(toggleListener);
         btnArmor.addActionListener(toggleListener);
         btnTonnage.addActionListener(toggleListener);
+        btnRole.addActionListener(toggleListener);
 
         setupForce();
         refreshTree();
 
         setLayout(new BorderLayout());
         pnlTop.setLayout(new GridLayout());
+        pnlTop.add(btnId);
         pnlTop.add(btnPilot);
         pnlTop.add(btnPilot);
         pnlTop.add(btnMP);
@@ -115,6 +123,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         pnlTop.add(btnDmgDesc);
         pnlTop.add(btnArmor);
         pnlTop.add(btnTonnage);
+        pnlTop.add(btnRole);
         add(pnlTop, BorderLayout.NORTH);
         JScrollPane sp = new JScrollPane(forceTree);
         add(sp, BorderLayout.CENTER);

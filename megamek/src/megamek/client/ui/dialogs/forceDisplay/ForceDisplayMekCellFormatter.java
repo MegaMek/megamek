@@ -56,17 +56,14 @@ class ForceDisplayMekCellFormatter {
      */
     static String formatUnitCompact(Entity entity, Client client, int row) {
         String tglInfos = GUIP.getForceDisplayInfos();
-        boolean tglPilot = tglInfos.charAt(0) == '1';
-        boolean tglMP = tglInfos.charAt(1) == '1';
-        ;
-        boolean tglHeat = tglInfos.charAt(2) == '1';
-        ;
-        boolean tglDmg = tglInfos.charAt(3) == '1';
-        ;
-        boolean tglArmor = tglInfos.charAt(4) == '1';
-        ;
-        boolean tglTons = tglInfos.charAt(5) == '1';
-        ;
+        boolean tglId = tglInfos.charAt(0) == '1';
+        boolean tglPilot = tglInfos.charAt(1) == '1';
+        boolean tglMP = tglInfos.charAt(2) == '1';
+        boolean tglHeat = tglInfos.charAt(3) == '1';
+        boolean tglDmg = tglInfos.charAt(4) == '1';
+        boolean tglArmor = tglInfos.charAt(5) == '1';
+        boolean tglTons = tglInfos.charAt(6) == '1';
+        boolean tglRole = tglInfos.charAt(7) == '1';
 
         Game game = client.getGame();
         GameOptions options = game.getOptions();
@@ -118,11 +115,14 @@ class ForceDisplayMekCellFormatter {
             result.append(formatCell(UIUtil.fontHTML(color) + "\u25AD" + "</FONT>", 10));
         }
 
-        String id = MessageFormat.format("[{0}] ", entity.getId());
-        result.append(formatCell(
-                            UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) +
-                            id +
-                                  "</FONT>", 20));
+        // ID
+        if (tglId) {
+            String id = MessageFormat.format("[{0}] ", entity.getId());
+            result.append(formatCell(
+                  UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) +
+                        id +
+                        "</FONT>", 20));
+        }
 
         // Done
         if (!game.getPhase().isReport()) {
@@ -132,7 +132,7 @@ class ForceDisplayMekCellFormatter {
             } else {
                 done = "\u2611 ";
             }
-            result.append(formatCell(UIUtil.fontHTML(color) + done + "</FONT>", 20));
+            result.append(formatCell(UIUtil.fontHTML(color) + done + "</FONT>", 25));
         }
 
         // Unit name
@@ -140,73 +140,108 @@ class ForceDisplayMekCellFormatter {
         if (entity.isPartOfFighterSquadron()) {
             result.append(formatCell(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) +
                                 entity.getShortNameRaw() +
-                                           "</FONT>", 170, entity.getOwner().getColour().getColour()));
+                                           "</FONT>", 180, entity.getOwner().getColour().getColour()));
         } else {
-            result.append(formatCell(entity.getShortNameRaw(), 170, entity.getOwner().getColour().getColour()));
+            result.append(formatCell(entity.getShortNameRaw(), 180, entity.getOwner().getColour().getColour()));
         }
 
         // Pilot
         Crew pilot = entity.getCrew();
-
         if (tglPilot) {
             if (pilot.getSlotCount() > 1 || entity instanceof FighterSquadron) {
                 result.append(formatCell(
                       "<I>" +
                             Messages.getString("ChatLounge.multipleCrew") +
                             "</I>", 150));
-            } else if ((pilot.getNickname(0) != null) && !pilot.getNickname(0).isEmpty()) {
-                String txt = UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + "<B>'";
-                txt += pilot.getNickname(0).toUpperCase() + "'</B></FONT>";
+            } else {
+                String txt = "";
+                if ((pilot.getNickname(0) != null) && !pilot.getNickname(0).isEmpty()) {
+                    txt += UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) +
+                                 "<B>'" +
+                                 pilot.getNickname(0).toUpperCase() +
+                                 "'</B></FONT>";
+                } else {
+                    txt += pilot.getName(0).toUpperCase();
+                }
+                // Pilot Status
                 if (!pilot.getStatusDesc(0).isEmpty()) {
-                    txt += " (" + pilot.getStatusDesc(0) + ")";
+                    txt += "<br><font color='" +
+                                 UIUtil.hexColor(GUIP.getCautionColor()) +
+                                 "'>" +
+                                 pilot.getStatusDesc(0) +
+                                 "</font>";
                 }
                 result.append(formatCell(txt, 150));
-            } else {
-                result.append(formatCell(pilot.getDesc(0), 150));
             }
 
             final boolean rpgSkills = options.booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-            result.append(formatCell(pilot.getSkillsAsString(rpgSkills), 50));
+            result.append(formatCell("(" + pilot.getSkillsAsString(rpgSkills) + ")", 50));
         }
 
+        // Movement Points MP
         if (tglMP) {
             if (entity.getJumpMP() != 0) {
                 result.append(formatCell("MP: " +
                                                entity.getWalkMP() +
                                                "/" +
                                                entity.getRunMP() + "/" + entity.getJumpMP(),
-                      100));
+                      90));
             } else {
                 result.append(formatCell("MP: " +
                                                entity.getWalkMP() +
                                                "/" +
                                                entity.getRunMP(),
-                      100));
+                      90));
             }
         }
 
+        // Heat
         if (tglHeat) {
-            result.append(formatCell("H: " +
-                                           entity.getHeat() +
-                                           "/" +
-                                           entity.getHeatCapacity(), 100));
+            if (entity.getHeatCapacity() != 999) { // if unit is not a vehicle (999 heat sinks)
+                result.append(formatCell("H: <font color='" +
+                                               UIUtil.hexColor(GUIP.getColorForHeat(entity.getHeat())) +
+                                               "'>" +
+                                               entity.getHeat() +
+                                               "/" +
+                                               entity.getHeatCapacity() +
+                                               "</font>", 70));
+            } else {
+                result.append(formatCell("-", 70));
+            }
+
         }
 
+        // Damage Description
         if (tglDmg) {
-            result.append(formatCell(UnitToolTip.getDamageLevelDesc(entity, true), 100));
+            result.append(formatCell(UnitToolTip.getDamageLevelDesc(entity, true), 110));
         }
 
+        // Damage Values - Armor / Internal
         if (tglArmor) {
-            result.append(formatCell("A: " +
+            Color clr = GUIP.getUnitToolTipFGColor();
+            if ((double) entity.getTotalArmor() / entity.getTotalOArmor() <= 0.5) {
+                clr = GUIP.getCautionColor();
+            } else if ((double) entity.getTotalArmor() / entity.getTotalOArmor() <= 0.1) {
+                clr = GUIP.getWarningColor();
+            }
+            result.append(formatCell("A: <font color='" + UIUtil.hexColor(clr) + "'>" +
                                            entity.getTotalArmor() +
-                                           "/" + entity.getTotalOArmor(), 100));
-            result.append(formatCell("I: " +
+                                           "/" + entity.getTotalOArmor() + "</font>", 90));
+
+            clr = GUIP.getUnitToolTipFGColor();
+            ;
+            if ((double) entity.getTotalInternal() / entity.getTotalOInternal() <= 0.5) {
+                clr = GUIP.getCautionColor();
+            } else if ((double) entity.getTotalInternal() / entity.getTotalOInternal() <= 0.1) {
+                clr = GUIP.getWarningColor();
+            }
+            result.append(formatCell("I: <font color='" + UIUtil.hexColor(clr) + "'>" +
                                            entity.getTotalInternal() +
-                                           "/" + entity.getTotalOInternal(), 100));
+                                           "/" + entity.getTotalOInternal() + "</font>", 90));
         }
 
+        // Tonnage
         if (tglTons) {
-            // Tonnage
             NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
             String tonnage = formatter.format(entity.getWeight());
             tonnage += "t";
@@ -214,10 +249,11 @@ class ForceDisplayMekCellFormatter {
         }
 
         // Alpha Strike Unit Role
-        if (!entity.isUnitGroup()) {
-            result.append(formatCell(entity.getRole().toString(), 100));
+        if (tglRole) {
+            if (!entity.isUnitGroup()) {
+                result.append(formatCell(entity.getRole().toString(), 100));
+            }
         }
-
         if (pilot.countOptions() > 0) {
             String quirks = Messages.getString("ChatLounge.abilities");
             result.append(UIUtil.fontHTML(GUIP.getUnitToolTipQuirkColor()) + quirks + "</FONT>");

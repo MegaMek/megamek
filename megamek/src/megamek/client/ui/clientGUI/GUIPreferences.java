@@ -490,7 +490,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public static final int HIDE = 0;
     public static final int SHOW = 1;
-    public static final int MAUNAL = 2;
+    public static final int MANUAL = 2;
 
     public static GUIPreferences getInstance() {
         return instance;
@@ -637,7 +637,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FORCE_DISPLAY_ENABLED, false);
         store.setDefault(FORCE_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(FORCE_DISPLAY_SIZE_WIDTH, 300);
-        store.setDefault(FORCE_DISPLAY_INFOS, "100101");
+        store.setDefault(FORCE_DISPLAY_INFOS, "11001011");
 
         store.setDefault(UNIT_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(UNIT_DISPLAY_SIZE_WIDTH, 300);

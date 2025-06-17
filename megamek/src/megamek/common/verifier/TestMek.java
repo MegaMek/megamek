@@ -862,9 +862,16 @@ public class TestMek extends TestEntity {
         for (Mounted<?> m : getEntity().getMisc()) {
             final MiscType misc = (MiscType) m.getType();
 
-            if (misc.hasFlag(MiscType.F_UMU) && (mek.getJumpType() != Mek.JUMP_NONE)) {
-                illegal = true;
-                buff.append("UMUs cannot be mounted with jump jets\n");
+            // TO:AUE p.104
+            if (misc.hasFlag(MiscType.F_UMU)) {
+                if (mek.getJumpType() != Mek.JUMP_NONE) {
+                    illegal = true;
+                    buff.append("UMUs cannot be mounted with jump jets\n");
+                }
+                if (!mek.locationIsTorso(m.getLocation()) && !mek.locationIsLeg(m.getLocation())) {
+                    illegal = true;
+                    buff.append("UMUs must be mounted in the torso or legs\n");
+                }
             }
 
             if (misc.hasFlag(MiscType.F_MASC)
@@ -1050,6 +1057,14 @@ public class TestMek extends TestEntity {
                             .append(misc.getName()).append("\n");
                     illegal = true;
                 }
+
+                // TM p.71
+                if (misc.hasFlag(MiscTypeFlag.F_DOUBLE_HEAT_SINK)
+                                 || misc.hasFlag(MiscTypeFlag.F_COMPACT_HEAT_SINK)
+                                 || misc.hasFlag(MiscTypeFlag.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                    buff.append("Industrial Meks may only mount standard single heat sinks\n");
+                    illegal = true;
+                }
             } else {
                 if (misc.hasFlag(MiscType.F_INDUSTRIAL_TSM)
                         || misc.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
@@ -1115,10 +1130,6 @@ public class TestMek extends TestEntity {
             }
             if ((mek.getGyroType() != Mek.GYRO_STANDARD) && (mek.getGyroType() != Mek.GYRO_SUPERHEAVY)) {
                 buff.append("industrial meks can only mount standard gyros\n");
-                illegal = true;
-            }
-            if (hasDoubleHeatSinks()) {
-                buff.append("Industrial Meks cannot mount double heat sinks\n");
                 illegal = true;
             }
             switch (mek.hasEngine() ? engine.getEngineType() : Engine.NONE) {

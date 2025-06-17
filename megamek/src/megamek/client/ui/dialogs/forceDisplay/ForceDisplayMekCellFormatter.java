@@ -55,21 +55,6 @@ class ForceDisplayMekCellFormatter {
      * for the compact display mode. Assumes that no enemy or blind-drop-hidden units are provided.
      */
     static String formatUnitCompact(Entity entity, Client client, int row) {
-        String tglInfos = GUIP.getForceDisplayInfos();
-        boolean tglId = tglInfos.charAt(0) == '1';
-        boolean tglPilot = tglInfos.charAt(1) == '1';
-        boolean tglMP = tglInfos.charAt(2) == '1';
-        boolean tglHeat = tglInfos.charAt(3) == '1';
-        boolean tglWeapons = tglInfos.charAt(4) == '1';
-        boolean tglDmg = tglInfos.charAt(5) == '1';
-        boolean tglArmor = tglInfos.charAt(6) == '1';
-        boolean tglTons = tglInfos.charAt(7) == '1';
-        boolean tglRole = tglInfos.charAt(8) == '1';
-        boolean tglECM = tglInfos.charAt(9) == '1';
-        boolean tglQuirks = tglInfos.charAt(10) == '1';
-        boolean tglC3 = tglInfos.charAt(11) == '1';
-        boolean tglMisc = tglInfos.charAt(12) == '1';
-
         Game game = client.getGame();
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
@@ -121,7 +106,7 @@ class ForceDisplayMekCellFormatter {
         }
 
         // ID
-        if (tglId) {
+        if (GUIP.getForceDisplayBtnID()) {
             String id = MessageFormat.format("[{0}] ", entity.getId());
             result.append(formatCell(
                   UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) +
@@ -152,7 +137,7 @@ class ForceDisplayMekCellFormatter {
 
         // Pilot
         Crew pilot = entity.getCrew();
-        if (tglPilot) {
+        if (GUIP.getForceDisplayBtnPilot()) {
             if (pilot.getSlotCount() > 1 || entity instanceof FighterSquadron) {
                 result.append(formatCell(
                       "<I>" +
@@ -184,7 +169,7 @@ class ForceDisplayMekCellFormatter {
         }
 
         // Movement Points MP
-        if (tglMP) {
+        if (GUIP.getForceDisplayBtnMP()) {
             if (entity.getJumpMP() != 0) {
                 result.append(formatCell("MP: " +
                                                entity.getWalkMP() +
@@ -201,7 +186,7 @@ class ForceDisplayMekCellFormatter {
         }
 
         // Heat
-        if (tglHeat) {
+        if (GUIP.getForceDisplayBtnHeat()) {
             if (entity.getHeatCapacity() != 999) { // if unit is not a vehicle (999 heat sinks)
                 result.append(formatCell("H: <font color='" +
                                                UIUtil.hexColor(GUIP.getColorForHeat(entity.getHeat())) +
@@ -217,17 +202,17 @@ class ForceDisplayMekCellFormatter {
         }
 
         // Weapons
-        if (tglWeapons) {
+        if (GUIP.getForceDisplayBtnWeapons()) {
             result.append(formatCell(UnitToolTip.getWeaponList(entity).toString(), 320));
         }
 
         // Damage Description
-        if (tglDmg) {
+        if (GUIP.getForceDisplayBtnDamageDesc()) {
             result.append(formatCell(UnitToolTip.getDamageLevelDesc(entity, true), 110));
         }
 
         // Damage Values - Armor / Internal
-        if (tglArmor) {
+        if (GUIP.getForceDisplayBtnArmor()) {
             Color clr = GUIP.getUnitToolTipFGColor();
             if ((double) entity.getTotalArmor() / entity.getTotalOArmor() <= 0.5) {
                 clr = GUIP.getCautionColor();
@@ -251,7 +236,7 @@ class ForceDisplayMekCellFormatter {
         }
 
         // Tonnage
-        if (tglTons) {
+        if (GUIP.getForceDisplayBtnTonnage()) {
             NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
             String tonnage = formatter.format(entity.getWeight());
             tonnage += "t";
@@ -259,13 +244,13 @@ class ForceDisplayMekCellFormatter {
         }
 
         // Alpha Strike Unit Role
-        if (tglRole) {
+        if (GUIP.getForceDisplayBtnRole()) {
             if (!entity.isUnitGroup()) {
                 result.append(formatCell(entity.getRole().toString(), 100));
             }
         }
 
-        if (tglPilot) {
+        if (GUIP.getForceDisplayBtnPilot()) {
             if (pilot.countOptions() > 0) {
                 String quirks = Messages.getString("ChatLounge.abilities");
                 result.append(formatCell(UIUtil.fontHTML(GUIP.getUnitToolTipQuirkColor()) + quirks + "</FONT>", 50));
@@ -274,7 +259,7 @@ class ForceDisplayMekCellFormatter {
             }
         }
 
-        if (tglECM) {
+        if (GUIP.getForceDisplayBtnECM()) {
             // ECM
             if (entity.hasActiveECM()) {
                 result.append(formatCell(fontHTML(GUIP.getUnitToolTipHighlightColor()) + ECM_SIGN + "</FONT>", 20));
@@ -284,7 +269,7 @@ class ForceDisplayMekCellFormatter {
         }
 
         // Quirk Count
-        if (tglQuirks) {
+        if (GUIP.getForceDisplayBtnQuirks()) {
             int quirkCount = entity.countQuirks() + entity.countWeaponQuirks();
             if (quirkCount > 0) {
                 result.append(formatCell(fontHTML(GUIP.getUnitToolTipHighlightColor()) + QUIRKS_SIGN + "</FONT>", 100));
@@ -294,7 +279,7 @@ class ForceDisplayMekCellFormatter {
         }
 
         // C3 ...
-        if (tglC3) {
+        if (GUIP.getForceDisplayBtnC3()) {
             String txt = "";
             if (entity.hasC3i() || entity.hasNavalC3()) {
                 String msg_c3i = Messages.getString("ChatLounge.C3i");
@@ -339,7 +324,7 @@ class ForceDisplayMekCellFormatter {
             }
         }
 
-        if (tglMisc) {
+        if (GUIP.getForceDisplayBtnMisc()) {
             // Loaded onto another unit
             if (isCarried) {
                 Entity loader = entity.getGame().getEntity(entity.getTransportId());

@@ -79,43 +79,46 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         this.game = client.getGame();
 
         JPanel pnlTop = new JPanel();
-        //GUIP.setForceDisplayInfos("111111111111111111");
-        String prefs = GUIP.getForceDisplayInfos();
-        MMToggleButton btnId = new MMToggleButton(Messages.getString("ForceDisplay.Button.ID"), prefs.charAt(0) == '1');
+        MMToggleButton btnId = new MMToggleButton(Messages.getString("ForceDisplay.Button.ID"),
+              GUIP.getForceDisplayBtnID());
         MMToggleButton btnPilot = new MMToggleButton(Messages.getString("ForceDisplay.Button.Pilot"),
-              prefs.charAt(1) == '1'); // and skill
-        MMToggleButton btnMP = new MMToggleButton(Messages.getString("ForceDisplay.Button.MP"), prefs.charAt(2) == '1');
+              GUIP.getForceDisplayBtnPilot()); // and skill
+        MMToggleButton btnMP = new MMToggleButton(Messages.getString("ForceDisplay.Button.MP"),
+              GUIP.getForceDisplayBtnMP());
         MMToggleButton btnHeat = new MMToggleButton(Messages.getString("ForceDisplay.Button.Heat"),
-              prefs.charAt(3) == '1');
+              GUIP.getForceDisplayBtnHeat());
         MMToggleButton btnWeapons = new MMToggleButton(Messages.getString("ForceDisplay.Button.Weapons"),
-              prefs.charAt(4) == '1');
+              GUIP.getForceDisplayBtnWeapons());
         MMToggleButton btnDmgDesc = new MMToggleButton(Messages.getString("ForceDisplay.Button.DamageDesc"),
-              prefs.charAt(5) == '1');
+              GUIP.getForceDisplayBtnDamageDesc());
         MMToggleButton btnArmor = new MMToggleButton(Messages.getString("ForceDisplay.Button.Armor"),
-              prefs.charAt(6) == '1');
+              GUIP.getForceDisplayBtnArmor());
         MMToggleButton btnTonnage = new MMToggleButton(Messages.getString("ForceDisplay.Button.Tonnage"),
-              prefs.charAt(7) == '1');
+              GUIP.getForceDisplayBtnTonnage());
         MMToggleButton btnRole = new MMToggleButton(Messages.getString("ForceDisplay.Button.Role"),
-              prefs.charAt(8) == '1');
+              GUIP.getForceDisplayBtnRole());
         MMToggleButton btnECM = new MMToggleButton(Messages.getString("ForceDisplay.Button.ECM"),
-              prefs.charAt(9) == '1');
+              GUIP.getForceDisplayBtnECM());
         MMToggleButton btnQuirks = new MMToggleButton(Messages.getString("ForceDisplay.Button.Quirks"),
-              prefs.charAt(10) == '1');
+              GUIP.getForceDisplayBtnQuirks());
         MMToggleButton btnC3 = new MMToggleButton(Messages.getString("ForceDisplay.Button.C3"),
-              prefs.charAt(11) == '1');
+              GUIP.getForceDisplayBtnC3());
         MMToggleButton btnMisc = new MMToggleButton(Messages.getString("ForceDisplay.Button.Misc"),
-              prefs.charAt(12) == '1');
+              GUIP.getForceDisplayBtnMisc());
         ActionListener toggleListener = e -> {
-            boolean[] infos = { btnId.isSelected(), btnPilot.isSelected(), btnMP.isSelected(), btnHeat.isSelected(),
-                                btnWeapons.isSelected(),
-                                btnDmgDesc.isSelected(), btnArmor.isSelected(), btnTonnage.isSelected(),
-                                btnRole.isSelected(), btnECM.isSelected(), btnQuirks.isSelected(), btnC3.isSelected(),
-                                btnMisc.isSelected() };
-            StringBuilder sb = new StringBuilder();
-            for (boolean b : infos) {
-                sb.append(b ? '1' : '0');
-            }
-            GUIP.setForceDisplayInfos(sb.toString());
+            GUIP.setForceDisplayBtnID(btnId.isSelected());
+            GUIP.setForceDisplayBtnPilot(btnPilot.isSelected());
+            GUIP.setForceDisplayBtnMP(btnMP.isSelected());
+            GUIP.setForceDisplayBtnHeat(btnHeat.isSelected());
+            GUIP.setForceDisplayBtnWeapons(btnWeapons.isSelected());
+            GUIP.setForceDisplayBtnDamageDesc(btnDmgDesc.isSelected());
+            GUIP.setForceDisplayBtnArmor(btnArmor.isSelected());
+            GUIP.setForceDisplayBtnTonnage(btnTonnage.isSelected());
+            GUIP.setForceDisplayBtnRole(btnRole.isSelected());
+            GUIP.setForceDisplayBtnECM(btnECM.isSelected());
+            GUIP.setForceDisplayBtnQuirks(btnQuirks.isSelected());
+            GUIP.setForceDisplayBtnC3(btnC3.isSelected());
+            GUIP.setForceDisplayBtnMisc(btnMisc.isSelected());
             refreshTree();
         };
 

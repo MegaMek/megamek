@@ -1135,7 +1135,7 @@ public class TestSupportVehicle extends TestEntity {
 
         for (WeaponMounted mounted : supportVee.getWeaponList()) {
             if (!isValidWeapon(mounted)) {
-                buff.append(mounted.getType().getName()).append(" is not a valid weapon for this unit.\n");
+                buff.append(mounted.getType().getName()).append(" is not a valid weapon for this unit\n");
                 correct = false;
             }
 
@@ -1153,10 +1153,6 @@ public class TestSupportVehicle extends TestEntity {
             EquipmentType type = mounted.getType();
             if ((type instanceof MiscType) && !type.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)) {
                 buff.append(type.getName()).append(" cannot be used by support vehicles.\n");
-                correct = false;
-            } else if (isSmallSupportVehicle()
-                    && (type instanceof WeaponType) && !type.hasFlag(WeaponType.F_INFANTRY)) {
-                buff.append("Small support vehicles cannot mount %s\n".formatted(mounted.getName()));
                 correct = false;
             } else if ((type instanceof WeaponType)
                     && !isSmallSupportVehicle()

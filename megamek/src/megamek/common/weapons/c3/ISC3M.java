@@ -58,4 +58,9 @@ public class ISC3M extends TAGWeapon {
                 .setProductionFactions(Faction.DC)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
+
+    @Override
+    public boolean isC3Equipment() {
+        return true;
+    }
 }

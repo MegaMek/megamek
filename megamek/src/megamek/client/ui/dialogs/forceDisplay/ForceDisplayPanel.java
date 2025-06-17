@@ -143,7 +143,6 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         pnlTop.setLayout(new GridLayout());
         pnlTop.add(btnId);
         pnlTop.add(btnPilot);
-        pnlTop.add(btnPilot);
         pnlTop.add(btnMP);
         pnlTop.add(btnHeat);
         pnlTop.add(btnWeapons);

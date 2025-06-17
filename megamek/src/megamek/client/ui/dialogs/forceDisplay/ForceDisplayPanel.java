@@ -106,19 +106,19 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         MMToggleButton btnMisc = new MMToggleButton(Messages.getString("ForceDisplay.Button.Misc"),
               GUIP.getForceDisplayBtnMisc());
         ActionListener toggleListener = e -> {
-            GUIP.setForceDisplayBtnID(btnId.isSelected());
-            GUIP.setForceDisplayBtnPilot(btnPilot.isSelected());
-            GUIP.setForceDisplayBtnMP(btnMP.isSelected());
-            GUIP.setForceDisplayBtnHeat(btnHeat.isSelected());
-            GUIP.setForceDisplayBtnWeapons(btnWeapons.isSelected());
-            GUIP.setForceDisplayBtnDamageDesc(btnDmgDesc.isSelected());
-            GUIP.setForceDisplayBtnArmor(btnArmor.isSelected());
-            GUIP.setForceDisplayBtnTonnage(btnTonnage.isSelected());
-            GUIP.setForceDisplayBtnRole(btnRole.isSelected());
-            GUIP.setForceDisplayBtnECM(btnECM.isSelected());
-            GUIP.setForceDisplayBtnQuirks(btnQuirks.isSelected());
-            GUIP.setForceDisplayBtnC3(btnC3.isSelected());
-            GUIP.setForceDisplayBtnMisc(btnMisc.isSelected());
+            if (e.getSource().equals(btnId)) {GUIP.setForceDisplayBtnID(btnId.isSelected());}
+            if (e.getSource().equals(btnPilot)) {GUIP.setForceDisplayBtnPilot(btnPilot.isSelected());}
+            if (e.getSource().equals(btnMP)) {GUIP.setForceDisplayBtnMP(btnMP.isSelected());}
+            if (e.getSource().equals(btnHeat)) {GUIP.setForceDisplayBtnHeat(btnHeat.isSelected());}
+            if (e.getSource().equals(btnWeapons)) {GUIP.setForceDisplayBtnWeapons(btnWeapons.isSelected());}
+            if (e.getSource().equals(btnDmgDesc)) {GUIP.setForceDisplayBtnDamageDesc(btnDmgDesc.isSelected());}
+            if (e.getSource().equals(btnArmor)) {GUIP.setForceDisplayBtnArmor(btnArmor.isSelected());}
+            if (e.getSource().equals(btnTonnage)) {GUIP.setForceDisplayBtnTonnage(btnTonnage.isSelected());}
+            if (e.getSource().equals(btnRole)) {GUIP.setForceDisplayBtnRole(btnRole.isSelected());}
+            if (e.getSource().equals(btnECM)) {GUIP.setForceDisplayBtnECM(btnECM.isSelected());}
+            if (e.getSource().equals(btnQuirks)) {GUIP.setForceDisplayBtnQuirks(btnQuirks.isSelected());}
+            if (e.getSource().equals(btnC3)) {GUIP.setForceDisplayBtnC3(btnC3.isSelected());}
+            if (e.getSource().equals(btnMisc)) {GUIP.setForceDisplayBtnMisc(btnMisc.isSelected());}
             refreshTree();
         };
 

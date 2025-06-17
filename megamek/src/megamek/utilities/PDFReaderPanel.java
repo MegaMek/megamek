@@ -36,6 +36,7 @@ import static megamek.common.internationalization.I18n.getTextAt;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Window;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -52,42 +53,71 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
 /**
- * A Swing-based dialog that enables users to view and navigate PDF documents.
+ * {@code PDFReaderUtilityPanel} is a reusable Swing {@link JPanel} component for viewing and navigating PDF
+ * documents.
  *
- * <p>This utility leverages the {@code PDFBox} library to render each page of a PDF as an image, providing a seamless,
- * scrollable reading experience even for multipage documents. The dialog offers intuitive zoom controls, including zoom
- * in, zoom out, and reset to the default zoom. It also manages progress feedback for loading and rendering operations,
- * ensuring a responsive and user-friendly interface.</p>
+ * <p>This utility leverages the Apache PDFBox library to render each page of a PDF document as an image. Users can
+ * scroll through pages and use zoom controls (zoom in, zoom out, and reset zoom) to adjust the viewing scale. All
+ * rendering and file I/O operations that might block the Event Dispatch Thread are performed asynchronously using
+ * {@link SwingWorker}, ensuring UI responsiveness even for large documents.</p>
  *
  * <p><b>Features</b></p>
  * <ul>
- *     <li>Open and display multipage PDF files in a dedicated dialog</li>
+ *     <li>Open and display multipage PDF files in a dedicated panel</li>
  *     <li>Render each page as a Swing image component for fast display and scrolling</li>
  *     <li>Zoom in and out with predefined DPI steps and boundaries</li>
  *     <li>Reset zoom to the default DPI value</li>
  *     <li>Progress dialog for time-consuming operations</li>
  *     <li>Thread-safe UI updates using SwingWorker</li>
- *     <li>Automatic closing & resource cleanup on dialog disposal</li>
+ *     <li>Automatic resource cleanup</li>
  * </ul>
  *
  * <p><b>Typical usage:</b></p>
- * {@code PDFReaderUtility pdfViewer = new PDFReaderUtility(parentFrame, "/path/to/File.pdf", "My PDF Viewer");}
+ * {@code PDFReaderUtilityPanel pdfViewer = new PDFReaderUtilityPanel(ownerWindow, "/path/to/File.pdf");}
  *
  * @author Illiani
  * @since 0.50.07
  */
-public class PDFReaderUtility extends JDialog {
-    private static final String RESOURCE_BUNDLE = "megamek/common/PDFReaderUtility";
-    static MMLogger LOGGER = MMLogger.create(PDFReaderUtility.class);
+public class PDFReaderPanel extends JPanel {
+    private static final String RESOURCE_BUNDLE = "megamek/common/PDFReaderPanel";
+    static MMLogger LOGGER = MMLogger.create(PDFReaderPanel.class);
 
+    /**
+     * The padding (in pixels) to use around PDF pages and UI elements, scaled appropriately for the current UI
+     * settings.
+     */
     private static final int PADDING = UIUtil.scaleForGUI(10);
-    private static final Dimension DEFAULT_DIALOG_SIZE = UIUtil.scaleForGUI(1350, 800);
+
+    /**
+     * The default initial size of the PDF reader panel window, scaled for the user's display.
+     */
+    private static final Dimension DEFAULT_PANEL_SIZE = UIUtil.scaleForGUI(1350, 800);
+
+    /**
+     * Standard size for zoom control buttons in the panel, scaled for the user's display.
+     */
     private static final Dimension BUTTON_SIZE = UIUtil.scaleForGUI(100, 30);
 
+    /**
+     * The default DPI (dots per inch) value used for rendering PDF pages.
+     */
     private static final int DEFAULT_DPI = 150;
+
+    /**
+     * The minimum allowed DPI for rendering PDF pages.
+     */
     private static final int MIN_DPI = 50;
+
+    /**
+     * The maximum allowed DPI for rendering PDF pages.
+     */
     private static final int MAX_DPI = 600;
+
+    /**
+     * The value (in DPI) by which the zoom level increases or decreases with each zoom step.
+     */
     private static final int ZOOM_STEP = 25;
+
     private int currentDpi = DEFAULT_DPI;
 
     private PDDocument document;
@@ -98,38 +128,36 @@ public class PDFReaderUtility extends JDialog {
     private final JButton zoomOutButton;
     private final JButton resetZoomButton;
     private JDialog progressDialog;
-
+    private final Window owner;
 
     /**
-     * Constructs and displays a modal dialog for viewing a PDF file.
+     * Constructs and initializes a {@link JPanel} for viewing a PDF file.
      *
-     * <p>The dialog is initialized with zoom controls and begins rendering the pages of the provided PDF document
+     * <p>The panel is initialized with zoom controls and begins rendering the pages of the provided PDF document
      * path. Operations that may block the UI, such as rendering or file IO, are performed off the Event Dispatch
-     * Thread. The dialog appears in the center of the specified parent window.</p>
+     * Thread. The panel can be embedded inside dialogs, frames, or other containers.</p>
      *
-     * @param parent  the parent window (can be null for a top-level dialog)
+     * @param ownerWindow the owner {@link Window} for dialogs (can be null)
      * @param pdfPath file system path of the PDF document to display
-     * @param title   dialog window title
      *
      * @author Illiani
      * @since 0.50.07
      */
-    public PDFReaderUtility(Window parent, String pdfPath, String title) {
-        super(parent, title);
+    public PDFReaderPanel(Window ownerWindow, String pdfPath) {
+        super(new BorderLayout());
+        this.owner = ownerWindow;
 
-        zoomInButton = getButton(getTextAt(RESOURCE_BUNDLE, "PDFReaderUtility.button.zoomIn"));
+        zoomInButton = getCustomButton(getTextAt(RESOURCE_BUNDLE, "PDFReaderUtility.button.zoomIn"));
         zoomInButton.setSize(BUTTON_SIZE);
 
-        zoomOutButton = getButton(getTextAt(RESOURCE_BUNDLE, "PDFReaderUtility.button.zoomOut"));
+        zoomOutButton = getCustomButton(getTextAt(RESOURCE_BUNDLE, "PDFReaderUtility.button.zoomOut"));
         zoomOutButton.setSize(BUTTON_SIZE);
 
-        resetZoomButton = getButton(getTextAt(RESOURCE_BUNDLE, "PDFReaderUtility.button.zoomReset"));
+        resetZoomButton = getCustomButton(getTextAt(RESOURCE_BUNDLE, "PDFReaderUtility.button.zoomReset"));
         resetZoomButton.setSize(BUTTON_SIZE);
 
-        setSize(DEFAULT_DIALOG_SIZE);
-        setLocationRelativeTo(parent);
+        setPreferredSize(DEFAULT_PANEL_SIZE);
         processDisplay(pdfPath);
-        setVisible(true);
     }
 
     /**
@@ -214,7 +242,7 @@ public class PDFReaderUtility extends JDialog {
                     get(); // Re-throw exception if occurred
                     JScrollPane scrollPane = new JScrollPane(pnlPages);
                     scrollPane.setBorder(BorderFactory.createCompoundBorder(
-                          getBorder(),
+                          getCustomBorder(),
                           BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING)
                     ));
 
@@ -227,32 +255,21 @@ public class PDFReaderUtility extends JDialog {
                     zoomOutButton.addActionListener(e -> zoom(currentDpi - ZOOM_STEP));
                     resetZoomButton.addActionListener(e -> zoom(DEFAULT_DPI));
 
-                    getContentPane().setLayout(new BorderLayout());
-                    getContentPane().add(scrollPane, BorderLayout.CENTER);
-                    getContentPane().add(zoomPanel, BorderLayout.NORTH);
+                    removeAll();
+                    add(scrollPane, BorderLayout.CENTER);
+                    add(zoomPanel, BorderLayout.NORTH);
 
-                    PDFReaderUtility.this.document = tempDocument;
+                    PDFReaderPanel.this.document = tempDocument;
 
-                    addWindowListener(new java.awt.event.WindowAdapter() {
-                        public void windowClosing(java.awt.event.WindowEvent e) {
-                            try {
-                                if (tempDocument != null) {
-                                    tempDocument.close();
-                                }
-                            } catch (Exception ignored) {}
-                        }
-                    });
-
-                    getContentPane().revalidate();
-                    getContentPane().repaint();
+                    revalidate();
+                    repaint();
 
                 } catch (Exception ex) {
                     LOGGER.error("Failed to load or render PDF: {}\n{}", pdfPath, ex);
-                    JOptionPane.showMessageDialog(PDFReaderUtility.this,
+                    JOptionPane.showMessageDialog(owner,
                           "Could not open PDF:\n" + ex.getMessage(),
                           "Error",
                           JOptionPane.ERROR_MESSAGE);
-                    dispose();
                 } finally {
                     showProgressDialog(null, false);
                 }
@@ -275,10 +292,9 @@ public class PDFReaderUtility extends JDialog {
      * @author Illiani
      * @since 0.50.07
      */
-    protected static Border getBorder() {
+    protected static Border getCustomBorder() {
         return BorderFactory.createLineBorder(UIUtil.uiGray());
     }
-
 
     /**
      * Utility method to create a {@link JButton} with the given localized text label.
@@ -294,7 +310,7 @@ public class PDFReaderUtility extends JDialog {
      * @author Illiani
      * @since 0.50.07
      */
-    protected static JButton getButton(String buttonLabel) {
+    protected static JButton getCustomButton(String buttonLabel) {
         return new JButton(buttonLabel);
     }
 
@@ -355,7 +371,7 @@ public class PDFReaderUtility extends JDialog {
     /**
      * A data record used to pass image update information from a {@link SwingWorker} to the UI thread.
      *
-     * <p>Each {@code PageUpdate} bundles the page index and the corresponding rendered image, so that the
+     * <p>Each {@link #PageUpdate} call bundles the page index and the corresponding rendered image, so that the
      * {@link JLabel} objects showing each page can be updated efficiently.</p>
      *
      * @param pageIndex zero-based index of the page in the PDF
@@ -398,7 +414,8 @@ public class PDFReaderUtility extends JDialog {
     private void showProgressDialog(String message, boolean show) {
         if (show) {
             if (progressDialog == null) {
-                progressDialog = new JDialog(this,
+                Frame frameOwner = (owner instanceof Frame) ? (Frame) owner : null;
+                progressDialog = new JDialog(frameOwner,
                       getTextAt(RESOURCE_BUNDLE, "PDFReaderUtility.progressDialog.title"),
                       true);
                 progressDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -410,35 +427,12 @@ public class PDFReaderUtility extends JDialog {
                 panel.add(bar, BorderLayout.CENTER);
                 progressDialog.getContentPane().add(panel);
                 progressDialog.pack();
-                progressDialog.setLocationRelativeTo(this);
+                progressDialog.setLocationRelativeTo(owner);
                 progressDialog.setResizable(false);
             }
             SwingUtilities.invokeLater(() -> progressDialog.setVisible(true));
         } else if (progressDialog != null) {
             SwingUtilities.invokeLater(() -> progressDialog.setVisible(false));
         }
-    }
-
-    /**
-     * Closes the dialog and ensures that any open PDF resources are properly released.
-     *
-     * <p>This overrides {@link JDialog#dispose()}, and performs cleanup such as closing open files, ending
-     * background tasks, and preventing potential resource leaks.</p>
-     *
-     * @author Illiani
-     * @since 0.50.07
-     */
-    @Override
-    public void dispose() {
-        // Close the PDF document resource if it's open
-        try {
-            if (document != null) {
-                document.close();
-            }
-        } catch (Exception ex) {
-            LOGGER.warn("Failed to close PDF document: {}", ex.getMessage());
-        }
-        // Always call the superclass's 'dispose' to properly dispose the dialog
-        super.dispose();
     }
 }

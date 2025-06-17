@@ -280,7 +280,6 @@ class ForceDisplayMekCellFormatter {
 
         // C3 ...
         if (GUIP.getForceDisplayBtnC3()) {
-            String txt = "";
             if (entity.hasC3i() || entity.hasNavalC3()) {
                 String msg_c3i = Messages.getString("ChatLounge.C3i");
                 String msg_nc3 = Messages.getString("ChatLounge.NC3");
@@ -393,7 +392,7 @@ class ForceDisplayMekCellFormatter {
             }
         }
 
-        return UnitToolTip.wrapWithHTML(formatRow(result.toString(), entity, row));
+        return UnitToolTip.wrapWithHTML(formatRow(result.toString(), row));
     }
 
     /**
@@ -487,10 +486,7 @@ class ForceDisplayMekCellFormatter {
         current.append(";>");
     }
 
-    static String formatRow(String text, Entity entity, int row) {
-        //Color color = entity.getOwner().getColour().getColour();
-        //String rowBGColor = color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ",";
-
+    static String formatRow(String text, int row) {
         String rowBGColor = "0,0,0,0";
         if ((row & 1) == 0) {  //check if even line
             rowBGColor = "0,0,0,0.1";

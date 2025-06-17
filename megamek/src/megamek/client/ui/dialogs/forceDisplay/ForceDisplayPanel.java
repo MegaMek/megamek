@@ -79,20 +79,27 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         this.game = client.getGame();
 
         JPanel pnlTop = new JPanel();
-        //GUIP.setForceDisplayInfos("00000000");
+        //GUIP.setForceDisplayInfos("111111111111111111");
         String prefs = GUIP.getForceDisplayInfos();
         MMToggleButton btnId = new MMToggleButton("ID", prefs.charAt(0) == '1');
         MMToggleButton btnPilot = new MMToggleButton("Pilot", prefs.charAt(1) == '1'); // and skill
         MMToggleButton btnMP = new MMToggleButton("MP", prefs.charAt(2) == '1');
         MMToggleButton btnHeat = new MMToggleButton("Heat", prefs.charAt(3) == '1');
-        MMToggleButton btnDmgDesc = new MMToggleButton("Damage", prefs.charAt(4) == '1');
-        MMToggleButton btnArmor = new MMToggleButton("Armor", prefs.charAt(5) == '1');
-        MMToggleButton btnTonnage = new MMToggleButton("Tonnage", prefs.charAt(6) == '1');
-        MMToggleButton btnRole = new MMToggleButton("Role", prefs.charAt(7) == '1');
+        MMToggleButton btnWeapons = new MMToggleButton("Weapons", prefs.charAt(4) == '1');
+        MMToggleButton btnDmgDesc = new MMToggleButton("Damage", prefs.charAt(5) == '1');
+        MMToggleButton btnArmor = new MMToggleButton("Armor", prefs.charAt(6) == '1');
+        MMToggleButton btnTonnage = new MMToggleButton("Tonnage", prefs.charAt(7) == '1');
+        MMToggleButton btnRole = new MMToggleButton("Role", prefs.charAt(8) == '1');
+        MMToggleButton btnECM = new MMToggleButton("ECM", prefs.charAt(9) == '1');
+        MMToggleButton btnQuirks = new MMToggleButton("Quirks", prefs.charAt(10) == '1');
+        MMToggleButton btnC3 = new MMToggleButton("C3", prefs.charAt(11) == '1');
+        MMToggleButton btnMisc = new MMToggleButton("Misc.", prefs.charAt(12) == '1');
         ActionListener toggleListener = e -> {
             boolean[] infos = { btnId.isSelected(), btnPilot.isSelected(), btnMP.isSelected(), btnHeat.isSelected(),
+                                btnWeapons.isSelected(),
                                 btnDmgDesc.isSelected(), btnArmor.isSelected(), btnTonnage.isSelected(),
-                                btnRole.isSelected() };
+                                btnRole.isSelected(), btnECM.isSelected(), btnQuirks.isSelected(), btnC3.isSelected(),
+                                btnMisc.isSelected() };
             StringBuilder sb = new StringBuilder();
             for (boolean b : infos) {
                 sb.append(b ? '1' : '0');
@@ -105,10 +112,15 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         btnPilot.addActionListener(toggleListener);
         btnMP.addActionListener(toggleListener);
         btnHeat.addActionListener(toggleListener);
+        btnWeapons.addActionListener(toggleListener);
         btnDmgDesc.addActionListener(toggleListener);
         btnArmor.addActionListener(toggleListener);
         btnTonnage.addActionListener(toggleListener);
         btnRole.addActionListener(toggleListener);
+        btnECM.addActionListener(toggleListener);
+        btnQuirks.addActionListener(toggleListener);
+        btnC3.addActionListener(toggleListener);
+        btnMisc.addActionListener(toggleListener);
 
         setupForce();
         refreshTree();
@@ -120,10 +132,15 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         pnlTop.add(btnPilot);
         pnlTop.add(btnMP);
         pnlTop.add(btnHeat);
+        pnlTop.add(btnWeapons);
         pnlTop.add(btnDmgDesc);
         pnlTop.add(btnArmor);
         pnlTop.add(btnTonnage);
         pnlTop.add(btnRole);
+        pnlTop.add(btnECM);
+        pnlTop.add(btnQuirks);
+        pnlTop.add(btnC3);
+        pnlTop.add(btnMisc);
         add(pnlTop, BorderLayout.NORTH);
         JScrollPane sp = new JScrollPane(forceTree);
         add(sp, BorderLayout.CENTER);

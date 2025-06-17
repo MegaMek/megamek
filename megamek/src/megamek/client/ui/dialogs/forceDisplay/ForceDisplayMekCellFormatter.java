@@ -60,10 +60,15 @@ class ForceDisplayMekCellFormatter {
         boolean tglPilot = tglInfos.charAt(1) == '1';
         boolean tglMP = tglInfos.charAt(2) == '1';
         boolean tglHeat = tglInfos.charAt(3) == '1';
-        boolean tglDmg = tglInfos.charAt(4) == '1';
-        boolean tglArmor = tglInfos.charAt(5) == '1';
-        boolean tglTons = tglInfos.charAt(6) == '1';
-        boolean tglRole = tglInfos.charAt(7) == '1';
+        boolean tglWeapons = tglInfos.charAt(4) == '1';
+        boolean tglDmg = tglInfos.charAt(5) == '1';
+        boolean tglArmor = tglInfos.charAt(6) == '1';
+        boolean tglTons = tglInfos.charAt(7) == '1';
+        boolean tglRole = tglInfos.charAt(8) == '1';
+        boolean tglECM = tglInfos.charAt(9) == '1';
+        boolean tglQuirks = tglInfos.charAt(10) == '1';
+        boolean tglC3 = tglInfos.charAt(11) == '1';
+        boolean tglMisc = tglInfos.charAt(12) == '1';
 
         Game game = client.getGame();
         GameOptions options = game.getOptions();
@@ -211,6 +216,11 @@ class ForceDisplayMekCellFormatter {
 
         }
 
+        // Weapons
+        if (tglWeapons) {
+            result.append(formatCell(UnitToolTip.getWeaponList(entity).toString(), 320));
+        }
+
         // Damage Description
         if (tglDmg) {
             result.append(formatCell(UnitToolTip.getDamageLevelDesc(entity, true), 110));
@@ -254,129 +264,148 @@ class ForceDisplayMekCellFormatter {
                 result.append(formatCell(entity.getRole().toString(), 100));
             }
         }
-        if (pilot.countOptions() > 0) {
-            String quirks = Messages.getString("ChatLounge.abilities");
-            result.append(UIUtil.fontHTML(GUIP.getUnitToolTipQuirkColor()) + quirks + "</FONT>");
+
+        if (tglPilot) {
+            if (pilot.countOptions() > 0) {
+                String quirks = Messages.getString("ChatLounge.abilities");
+                result.append(formatCell(UIUtil.fontHTML(GUIP.getUnitToolTipQuirkColor()) + quirks + "</FONT>", 50));
+            } else {
+                result.append(formatCell("-", 50));
+            }
         }
 
-        // ECM
-        if (entity.hasActiveECM()) {
-            result.append(fontHTML(GUIP.getUnitToolTipHighlightColor()) + ECM_SIGN + "</FONT>");
+        if (tglECM) {
+            // ECM
+            if (entity.hasActiveECM()) {
+                result.append(formatCell(fontHTML(GUIP.getUnitToolTipHighlightColor()) + ECM_SIGN + "</FONT>", 20));
+            } else {
+                result.append(formatCell("-", 20));
+            }
         }
 
         // Quirk Count
-        int quirkCount = entity.countQuirks() + entity.countWeaponQuirks();
-        if (quirkCount > 0) {
-            result.append(fontHTML(GUIP.getUnitToolTipHighlightColor()) + QUIRKS_SIGN + "</FONT>");
+        if (tglQuirks) {
+            int quirkCount = entity.countQuirks() + entity.countWeaponQuirks();
+            if (quirkCount > 0) {
+                result.append(formatCell(fontHTML(GUIP.getUnitToolTipHighlightColor()) + QUIRKS_SIGN + "</FONT>", 100));
+            } else {
+                result.append(formatCell("-", 100));
+            }
         }
 
         // C3 ...
-        if (entity.hasC3i() || entity.hasNavalC3()) {
-            String msg_c3i = Messages.getString("ChatLounge.C3i");
-            String msg_nc3 = Messages.getString("ChatLounge.NC3");
+        if (tglC3) {
+            String txt = "";
+            if (entity.hasC3i() || entity.hasNavalC3()) {
+                String msg_c3i = Messages.getString("ChatLounge.C3i");
+                String msg_nc3 = Messages.getString("ChatLounge.NC3");
 
-            String c3Name = entity.hasC3i() ? msg_c3i : msg_nc3;
-            if (entity.calculateFreeC3Nodes() >= 5) {
-                c3Name += UNCONNECTED_SIGN;
-            } else {
-                c3Name += CONNECTED_SIGN + entity.getC3NetId();
-            }
-            result.append(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + c3Name + "</FONT>");
-        }
-
-        if (entity.hasC3()) {
-            String msg_c3sabrv = Messages.getString("ChatLounge.C3SAbrv");
-            String msg_c3m = Messages.getString("ChatLounge.C3M");
-            String msg_c3mcc = Messages.getString("ChatLounge.C3MCC");
-            String c3 = "";
-
-            if (entity.getC3Master() == null) {
-                if (entity.hasC3S()) {
-                    c3 = msg_c3sabrv + UNCONNECTED_SIGN;
-                }
-                if (entity.hasC3M()) {
-                     c3 = msg_c3m;
-                }
-            } else if (entity.C3MasterIs(entity)) {
-                result.append(msg_c3mcc);
-            } else {
-                if (entity.hasC3S()) {
-                    c3 = msg_c3sabrv + CONNECTED_SIGN;
+                String c3Name = entity.hasC3i() ? msg_c3i : msg_nc3;
+                if (entity.calculateFreeC3Nodes() >= 5) {
+                    c3Name += UNCONNECTED_SIGN;
                 } else {
-                    c3 = msg_c3m + CONNECTED_SIGN;
+                    c3Name += CONNECTED_SIGN + entity.getC3NetId();
+                }
+                result.append(formatCell(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + c3Name + "</FONT>",
+                      70));
+            } else if (entity.hasC3()) {
+                String msg_c3sabrv = Messages.getString("ChatLounge.C3SAbrv");
+                String msg_c3m = Messages.getString("ChatLounge.C3M");
+                String msg_c3mcc = Messages.getString("ChatLounge.C3MCC");
+                String c3 = "";
+
+                if (entity.getC3Master() == null) {
+                    if (entity.hasC3S()) {
+                        c3 = msg_c3sabrv + UNCONNECTED_SIGN;
+                    }
+                    if (entity.hasC3M()) {
+                        c3 = msg_c3m;
+                    }
+                } else if (entity.C3MasterIs(entity)) {
+                    result.append(msg_c3mcc);
+                } else {
+                    if (entity.hasC3S()) {
+                        c3 = msg_c3sabrv + CONNECTED_SIGN;
+                    } else {
+                        c3 = msg_c3m + CONNECTED_SIGN;
+                    }
+
+                    c3 += entity.getC3Master().getChassis();
                 }
 
-                c3 += entity.getC3Master().getChassis();
-            }
-
-            result.append(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + c3 + "</FONT>");
-        }
-
-        // Loaded onto another unit
-        if (isCarried) {
-            Entity loader = entity.getGame().getEntity(entity.getTransportId());
-            result.append(DOT_SPACER);
-            String carried = "(" + loader.getChassis() + " [" + entity.getTransportId() + "])";
-            carried = "<I>" + carried + "</I>";
-            result.append(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + carried + "</FONT>");
-        }
-
-        if (entity.countPartialRepairs() > 0) {
-            result.append(DOT_SPACER);
-            result.append(UIUtil.fontHTML(GUIP.getWarningColor()) + "Partial Repairs" + "</FONT>");
-        }
-
-        // Offboard deployment
-        if (entity.isOffBoard()) {
-            result.append(DOT_SPACER);
-            String msg_offboard = Messages.getString("ChatLounge.compact.deploysOffBoard");
-            msg_offboard = "<I>" + msg_offboard + "</I>";
-            result.append(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + msg_offboard + "</FONT>");
-        } else if (!entity.isDeployed()) {
-            result.append(DOT_SPACER);
-            String msg_deploy = Messages.getString("ChatLounge.compact.deployRound", entity.getDeployRound());
-            String msg_zone = "";
-            if (entity.getStartingPos(false) != Board.START_NONE) {
-                msg_zone = Messages.getString("ChatLounge.compact.deployZone",
-                        IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos(false)]);
-            }
-            msg_deploy = "<I>" + msg_deploy + msg_zone + "</I>";
-            result.append(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + msg_deploy + "</FONT>");
-        }
-
-        // Starting values for Altitude / Velocity / Elevation
-        if (!isCarried) {
-            if (entity.isAero()) {
-                IAero aero = (IAero) entity;
-                result.append(DOT_SPACER);
-                String msg_vel = Messages.getString("ChatLounge.compact.velocity") + ": ";
-                msg_vel += aero.getCurrentVelocity();
-                String msg_alt = "";
-                String msg_fuel = "";
-                if (!game.getBoard().isSpace()) {
-                    msg_alt = ", " + Messages.getString("ChatLounge.compact.altitude") + ": ";
-                    msg_alt += aero.getAltitude();
-                }
-                if (options.booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
-                    msg_fuel = ", " + Messages.getString("ChatLounge.compact.fuel") + ": ";
-                    msg_fuel += aero.getCurrentFuel();
-                }
-                msg_vel = "<I>" + msg_vel + msg_alt + msg_fuel + "</I>";
-                result.append(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + msg_vel + "</FONT>");
-            } else if (entity.getPosition() != null && ((entity.getElevation() != 0) || (entity instanceof VTOL))) {
-                result.append(DOT_SPACER);
-                String msg_ele = Messages.getString("ChatLounge.compact.elevation") + ": ";
-                msg_ele += entity.getElevation();
-                msg_ele = "<I>" + msg_ele + "</I>;";
-                result.append(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + msg_ele + "</FONT>");
+                result.append(formatCell(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + c3 + "</FONT>", 70));
+            } else {
+                result.append(formatCell("-", 70));
             }
         }
 
-        // Owner
-        if (!localPlayer.equals(owner)) {
-            result.append(DOT_SPACER);
-            String player = entity.getOwner().getName() + " \u2691 ";
-            result.append(UIUtil.fontHTML(color) + player + "</FONT>");
+        if (tglMisc) {
+            // Loaded onto another unit
+            if (isCarried) {
+                Entity loader = entity.getGame().getEntity(entity.getTransportId());
+                result.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+                String carried = "(" + loader.getChassis() + " [" + entity.getTransportId() + "])";
+                carried = "<I>" + carried + "</I>";
+                result.append(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + carried + "</FONT>");
+            }
+
+            if (entity.countPartialRepairs() > 0) {
+                result.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+                result.append(UIUtil.fontHTML(GUIP.getWarningColor()) + "Partial Repairs" + "</FONT>");
+            }
+
+            // Offboard deployment
+            if (entity.isOffBoard()) {
+                result.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+                String msg_offboard = Messages.getString("ChatLounge.compact.deploysOffBoard");
+                msg_offboard = "<I>" + msg_offboard + "</I>";
+                result.append(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + msg_offboard + "</FONT>");
+            } else if (!entity.isDeployed()) {
+                result.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+                String msg_deploy = Messages.getString("ChatLounge.compact.deployRound", entity.getDeployRound());
+                String msg_zone = "";
+                if (entity.getStartingPos(false) != Board.START_NONE) {
+                    msg_zone = Messages.getString("ChatLounge.compact.deployZone",
+                          IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos(false)]);
+                }
+                msg_deploy = "<I>" + msg_deploy + msg_zone + "</I>";
+                result.append(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + msg_deploy + "</FONT>");
+            }
+
+            // Starting values for Altitude / Velocity / Elevation
+            if (!isCarried) {
+                if (entity.isAero()) {
+                    IAero aero = (IAero) entity;
+                    result.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+                    String msg_vel = Messages.getString("ChatLounge.compact.velocity") + ": ";
+                    msg_vel += aero.getCurrentVelocity();
+                    String msg_alt = "";
+                    String msg_fuel = "";
+                    if (!game.getBoard().isSpace()) {
+                        msg_alt = ", " + Messages.getString("ChatLounge.compact.altitude") + ": ";
+                        msg_alt += aero.getAltitude();
+                    }
+                    if (options.booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
+                        msg_fuel = ", " + Messages.getString("ChatLounge.compact.fuel") + ": ";
+                        msg_fuel += aero.getCurrentFuel();
+                    }
+                    msg_vel = "<I>" + msg_vel + msg_alt + msg_fuel + "</I>";
+                    result.append(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + msg_vel + "</FONT>");
+                } else if (entity.getPosition() != null && ((entity.getElevation() != 0) || (entity instanceof VTOL))) {
+                    result.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+                    String msg_ele = Messages.getString("ChatLounge.compact.elevation") + ": ";
+                    msg_ele += entity.getElevation();
+                    msg_ele = "<I>" + msg_ele + "</I>;";
+                    result.append(UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + msg_ele + "</FONT>");
+                }
+            }
+
+            // Owner
+            if (!localPlayer.equals(owner)) {
+                result.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+                String player = entity.getOwner().getName() + " \u2691 ";
+                result.append(UIUtil.fontHTML(color) + player + "</FONT>");
+            }
         }
 
         return UnitToolTip.wrapWithHTML(formatRow(result.toString(), entity, row));

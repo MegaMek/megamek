@@ -1002,6 +1002,10 @@ public final class UnitToolTip {
         return new StringBuilder().append(table);
     }
 
+    public static StringBuilder getWeaponList(Entity entity) {
+        return weaponList(entity);
+    }
+
     /**
      * Gather names, counts, Clan/IS
      */

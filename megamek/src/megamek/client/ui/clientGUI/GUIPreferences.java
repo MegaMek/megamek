@@ -637,7 +637,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FORCE_DISPLAY_ENABLED, false);
         store.setDefault(FORCE_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(FORCE_DISPLAY_SIZE_WIDTH, 300);
-        store.setDefault(FORCE_DISPLAY_INFOS, "11001011");
+        store.setDefault(FORCE_DISPLAY_INFOS, "1100010111111");
 
         store.setDefault(UNIT_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(UNIT_DISPLAY_SIZE_WIDTH, 300);

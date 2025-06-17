@@ -81,19 +81,30 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         JPanel pnlTop = new JPanel();
         //GUIP.setForceDisplayInfos("111111111111111111");
         String prefs = GUIP.getForceDisplayInfos();
-        MMToggleButton btnId = new MMToggleButton("ID", prefs.charAt(0) == '1');
-        MMToggleButton btnPilot = new MMToggleButton("Pilot", prefs.charAt(1) == '1'); // and skill
-        MMToggleButton btnMP = new MMToggleButton("MP", prefs.charAt(2) == '1');
-        MMToggleButton btnHeat = new MMToggleButton("Heat", prefs.charAt(3) == '1');
-        MMToggleButton btnWeapons = new MMToggleButton("Weapons", prefs.charAt(4) == '1');
-        MMToggleButton btnDmgDesc = new MMToggleButton("Damage", prefs.charAt(5) == '1');
-        MMToggleButton btnArmor = new MMToggleButton("Armor", prefs.charAt(6) == '1');
-        MMToggleButton btnTonnage = new MMToggleButton("Tonnage", prefs.charAt(7) == '1');
-        MMToggleButton btnRole = new MMToggleButton("Role", prefs.charAt(8) == '1');
-        MMToggleButton btnECM = new MMToggleButton("ECM", prefs.charAt(9) == '1');
-        MMToggleButton btnQuirks = new MMToggleButton("Quirks", prefs.charAt(10) == '1');
-        MMToggleButton btnC3 = new MMToggleButton("C3", prefs.charAt(11) == '1');
-        MMToggleButton btnMisc = new MMToggleButton("Misc.", prefs.charAt(12) == '1');
+        MMToggleButton btnId = new MMToggleButton(Messages.getString("ForceDisplay.Button.ID"), prefs.charAt(0) == '1');
+        MMToggleButton btnPilot = new MMToggleButton(Messages.getString("ForceDisplay.Button.Pilot"),
+              prefs.charAt(1) == '1'); // and skill
+        MMToggleButton btnMP = new MMToggleButton(Messages.getString("ForceDisplay.Button.MP"), prefs.charAt(2) == '1');
+        MMToggleButton btnHeat = new MMToggleButton(Messages.getString("ForceDisplay.Button.Heat"),
+              prefs.charAt(3) == '1');
+        MMToggleButton btnWeapons = new MMToggleButton(Messages.getString("ForceDisplay.Button.Weapons"),
+              prefs.charAt(4) == '1');
+        MMToggleButton btnDmgDesc = new MMToggleButton(Messages.getString("ForceDisplay.Button.DamageDesc"),
+              prefs.charAt(5) == '1');
+        MMToggleButton btnArmor = new MMToggleButton(Messages.getString("ForceDisplay.Button.Armor"),
+              prefs.charAt(6) == '1');
+        MMToggleButton btnTonnage = new MMToggleButton(Messages.getString("ForceDisplay.Button.Tonnage"),
+              prefs.charAt(7) == '1');
+        MMToggleButton btnRole = new MMToggleButton(Messages.getString("ForceDisplay.Button.Role"),
+              prefs.charAt(8) == '1');
+        MMToggleButton btnECM = new MMToggleButton(Messages.getString("ForceDisplay.Button.ECM"),
+              prefs.charAt(9) == '1');
+        MMToggleButton btnQuirks = new MMToggleButton(Messages.getString("ForceDisplay.Button.Quirks"),
+              prefs.charAt(10) == '1');
+        MMToggleButton btnC3 = new MMToggleButton(Messages.getString("ForceDisplay.Button.C3"),
+              prefs.charAt(11) == '1');
+        MMToggleButton btnMisc = new MMToggleButton(Messages.getString("ForceDisplay.Button.Misc"),
+              prefs.charAt(12) == '1');
         ActionListener toggleListener = e -> {
             boolean[] infos = { btnId.isSelected(), btnPilot.isSelected(), btnMP.isSelected(), btnHeat.isSelected(),
                                 btnWeapons.isSelected(),

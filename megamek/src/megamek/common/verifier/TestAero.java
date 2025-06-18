@@ -864,7 +864,8 @@ public class TestAero extends TestEntity {
                     return false;
                 }
             } else if ((eq.hasFlag(MiscType.F_BLUE_SHIELD) || eq.hasFlag(MiscType.F_LIFTHOIST)
-                    || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())) && (location != Aero.LOC_FUSELAGE)) {
+                       || eq.is(EquipmentTypeLookup.IS_CASE) || eq.is(EquipmentTypeLookup.IS_CASE_P))
+                       && (location != Aero.LOC_FUSELAGE)) {
                 buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
                 return false;
             }

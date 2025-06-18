@@ -237,7 +237,7 @@ public class PDFReaderPanel extends JPanel {
             protected void done() {
                 try {
                     get(); // Re-throw exception if occurred
-                    JScrollPaneWithSpeed scrollPane = new JScrollPaneWithSpeed(pnlPages);
+                    FastJScrollPane scrollPane = new FastJScrollPane(pnlPages);
                     scrollPane.setBorder(BorderFactory.createCompoundBorder(
                           getCustomBorder(),
                           BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING)

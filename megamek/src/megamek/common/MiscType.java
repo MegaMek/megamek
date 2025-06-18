@@ -4495,7 +4495,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "CASE";
-        misc.setInternalName("ISCASE");
+        misc.setInternalName(EquipmentTypeLookup.IS_CASE);
         misc.addLookupName("IS CASE");
         misc.tonnage = 0.5f;
         misc.criticals = 1;
@@ -4527,7 +4527,7 @@ public class MiscType extends EquipmentType {
         // TODO Game rules - See IO pg 71 (specifically the explosion part)
 
         misc.name = "CASE-P (Prototype)";
-        misc.setInternalName("ISCASEPrototype");
+        misc.setInternalName(EquipmentTypeLookup.IS_CASE_P);
         misc.addLookupName("Prototype CASE");
         misc.tonnage = 0.5f;
         misc.criticals = 1;

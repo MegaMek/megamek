@@ -1645,10 +1645,11 @@ public class TestMek extends TestEntity {
                 }
                 return false;
             }
-            if ((eq.hasFlag(MiscType.F_FUEL) || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())
-                    || eq.hasFlag(MiscType.F_LADDER) || eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
-                    || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER))
-                    && !mek.locationIsTorso(location)) {
+            if ((eq.hasFlag(MiscType.F_FUEL) || eq.is(EquipmentTypeLookup.IS_CASE)
+                       || eq.is(EquipmentTypeLookup.IS_CASE_P)
+                       || eq.hasFlag(MiscType.F_LADDER) || eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
+                       || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER))
+                      && !mek.locationIsTorso(location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a torso location.\n");
                 }

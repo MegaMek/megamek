@@ -938,22 +938,21 @@ public class TestTank extends TestEntity {
     }
 
     /**
-     * Determines whether a piece of equipment should be mounted in the body
-     * location.
+     * @param type An equipment type to test
      *
-     * @param eq The equipment
-     * @return Whether the equipment needs to be assigned to the body location.
+     * @return True when the given equipment type can only be mounted in the body location of a vehicle (both CV and SV)
      */
-    public static boolean isBodyEquipment(EquipmentType eq) {
-        if (eq instanceof MiscType) {
-            return eq.hasFlag(MiscType.F_CHASSIS_MODIFICATION)
-                    || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())
-                    || eq.hasFlag(MiscType.F_CASEII)
-                    || eq.hasFlag(MiscType.F_JUMP_JET)
-                    || eq.hasFlag(MiscType.F_FUEL)
-                    || eq.hasFlag(MiscType.F_BLUE_SHIELD);
+    public static boolean isBodyEquipment(EquipmentType type) {
+        if (type instanceof MiscType) {
+            return type.hasFlag(MiscType.F_CHASSIS_MODIFICATION)
+                         || type.hasFlag(MiscType.F_CASE)
+                         || type.is(EquipmentTypeLookup.IS_CASE_P)
+                         || type.hasFlag(MiscType.F_CASEII)
+                         || type.hasFlag(MiscType.F_JUMP_JET)
+                         || type.hasFlag(MiscType.F_FUEL)
+                         || type.hasFlag(MiscType.F_BLUE_SHIELD);
         } else {
-            return eq instanceof AmmoType;
+            return type instanceof AmmoType;
         }
     }
 }

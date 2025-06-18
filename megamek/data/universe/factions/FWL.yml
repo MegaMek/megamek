@@ -1,0 +1,39 @@
+key: FWL
+name: Free Worlds League
+capital: Atreus (FWL)
+yearsActive:
+  - start: 2271
+tags:
+  - PLAYABLE
+  - MAJOR
+  - IS
+  - CONTROLLING
+  - GENEROUS
+color:
+  red: 164
+  green: 54
+  blue: 149
+logo: Inner Sphere/Free Worlds League.png
+background: Inner Sphere/Free Worlds League.png
+camos: Free Worlds League
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 1
+  - 1
+  - 2
+  - 2
+  - 0
+  - 0
+  - 1
+  - 0
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS

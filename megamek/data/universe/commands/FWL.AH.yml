@@ -1,0 +1,9 @@
+key: FWL.AH
+name: Atrean Hussars
+yearsActive:
+  - start: 2923
+    end: 3079
+ratingLevels:
+  - C
+fallBackFactions:
+  - FWL

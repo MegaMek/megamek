@@ -1,0 +1,35 @@
+key: SC
+name: Stewart Commonality
+capital: Stewart
+yearsActive:
+  - start: 3079
+    end: 3082
+successor: MSC
+tags:
+  - MINOR
+  - IS
+color:
+  red: 76
+  green: 0
+  blue: 153
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 1
+  - 1
+  - 2
+  - 2
+  - 0
+  - 0
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS
+  - FWL
+  - MSC

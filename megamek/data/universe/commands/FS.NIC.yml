@@ -1,0 +1,8 @@
+key: FS.NIC
+name: New Ivaarsen Chasseurs
+yearsActive:
+  - start: 3020
+ratingLevels:
+  - B
+fallBackFactions:
+  - FS

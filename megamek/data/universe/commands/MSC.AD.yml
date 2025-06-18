@@ -1,0 +1,9 @@
+key: MSC.AD
+name: Atrean Dragoons
+yearsActive:
+  - start: 3082
+    end: 3138
+ratingLevels:
+  - B
+fallBackFactions:
+  - MSC

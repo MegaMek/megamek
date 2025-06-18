@@ -1,0 +1,17 @@
+key: DS
+name: Duchy of Small
+capital: Small World
+yearsActive:
+  - start: 3057
+    end: 3066
+successor: FS
+tags:
+  - MINOR
+  - IS
+color:
+  red: 107
+  green: 142
+  blue: 35
+nameGenerator: CC
+fallBackFactions:
+  - CM

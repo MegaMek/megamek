@@ -1,0 +1,30 @@
+key: ARC
+name: Aurigan Coalition
+nameChanges:
+  3022: Arano Restoration
+  3026: Aurigan Coalition
+capital: Coromodir
+capitalChanges: 
+  3022: New Abilene
+  3026: Coromodir
+tags:
+  - PLAYABLE
+  - LENIENT
+  - MINOR
+  - PERIPHERY
+  - GENEROUS
+color:
+  red: 255
+  green: 36
+  blue: 0
+logo: Periphery/Aurigan Coalition.png
+background: Periphery/Aurigan Coalition.png
+camos: Aurigan Coalition
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 3
+  - 3

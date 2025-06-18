@@ -1,0 +1,9 @@
+key: FC.FCC
+name: Federated Commonwealth Corps
+yearsActive:
+  - start: 3028
+    end: 3057
+ratingLevels:
+  - A
+fallBackFactions:
+  - FC

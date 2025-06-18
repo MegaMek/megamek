@@ -1,0 +1,10 @@
+key: FC.pm
+name: Planetary Militia
+yearsActive:
+  - start: 3028
+    end: 3057
+ratingLevels:
+  - F
+fallBackFactions:
+  - LA.pm
+  - FS.pm

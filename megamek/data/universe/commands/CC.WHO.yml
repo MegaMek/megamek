@@ -1,0 +1,8 @@
+key: CC.WHO
+name: Warrior House Orders
+yearsActive:
+  - start: 2864
+ratingLevels:
+  - B
+fallBackFactions:
+  - CC

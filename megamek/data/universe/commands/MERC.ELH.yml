@@ -1,0 +1,7 @@
+key: MERC.ELH
+name: Eridani Light Horse
+yearsActive:
+  - start: 2780
+    end: 3081
+fallBackFactions:
+  - MERC

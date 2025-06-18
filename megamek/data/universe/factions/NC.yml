@@ -1,0 +1,36 @@
+key: NC
+name: Nueva Castile
+capital: Asturias
+yearsActive:
+  - start: 2392
+    end: 3080
+successor: CEI
+tags:
+  - PLAYABLE
+  - DEEP_PERIPHERY
+  - STINGY
+  - CONTROLLING
+color:
+  red: 0
+  green: 255
+  blue: 0
+logo: Periphery/Nueva Castile.png
+background: Periphery/Nueva Castile.png
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.Deep

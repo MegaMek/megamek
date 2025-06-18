@@ -1,0 +1,8 @@
+key: CC.SIS
+name: St Ives Sentinels
+yearsActive:
+  - start: 3062
+ratingLevels:
+  - B
+fallBackFactions:
+  - CC

@@ -1,0 +1,8 @@
+key: CC.DC
+name: Death Commandos
+yearsActive:
+  - start: 2988
+ratingLevels:
+  - A
+fallBackFactions:
+  - CC

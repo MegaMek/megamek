@@ -1,0 +1,23 @@
+key: PoR
+name: Principality of Rasalhague
+capital: Rasalhague
+yearsActive:
+  - start: 2260
+    end: 2510
+successor: DC
+tags:
+  - MINOR
+  - IS
+color:
+  red: 128
+  green: 168
+  blue: 191
+nameGenerator: FRR
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS

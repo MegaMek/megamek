@@ -1,0 +1,35 @@
+key: MSC
+name: Marik-Stewart Commonwealth
+capital: Marik
+yearsActive:
+  - start: 3082
+    end: 3138
+successor: FWL
+tags:
+  - IS
+color:
+  red: 117
+  green: 65
+  blue: 113
+logo: Inner Sphere/Marik-Stewart Commonwealth.png
+background: Inner Sphere/Free Worlds League.png
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS

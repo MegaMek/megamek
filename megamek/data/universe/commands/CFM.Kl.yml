@@ -1,0 +1,15 @@
+key: CFM.Kl
+name: Kindraa Kline
+yearsActive:
+  - start: 2823
+    end: 3067
+tags:
+  - CLAN
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CFM

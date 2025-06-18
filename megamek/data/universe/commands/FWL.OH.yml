@@ -1,0 +1,10 @@
+key: FWL.OH
+name: Oriente Hussars
+yearsActive:
+  - start: 2245
+    end: 3079
+  - start: 3139
+ratingLevels:
+  - F
+fallBackFactions:
+  - FWL

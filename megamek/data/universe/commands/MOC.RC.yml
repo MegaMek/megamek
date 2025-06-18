@@ -1,0 +1,10 @@
+key: MOC.RC
+name: Raventhir Footmen
+yearsActive:
+  - start: 3055
+tags:
+  - PERIPHERY
+ratingLevels:
+  - C
+fallBackFactions:
+  - MOC

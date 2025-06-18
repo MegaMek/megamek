@@ -1,0 +1,24 @@
+key: IND
+name: Independent
+capital: Terra
+tags:
+  - IS
+  - SMALL
+  - CHAOS
+color:
+  red: 191
+  green: 179
+  blue: 153
+background: Independent.png
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 2
+  - 0
+  - 0
+  - 1
+  - 1

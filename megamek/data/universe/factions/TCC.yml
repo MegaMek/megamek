@@ -1,0 +1,17 @@
+key: TCC
+name: Terracap Confederation
+capital: Terra Firma
+yearsActive:
+  - start: 3057
+    end: 3068
+successor: WOB
+tags:
+  - MINOR
+  - IS
+color:
+  red: 233
+  green: 150
+  blue: 122
+nameGenerator: CC
+fallBackFactions:
+  - CM

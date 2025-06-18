@@ -1,0 +1,8 @@
+key: FS.PMM
+name: Periphery March Militia
+yearsActive:
+  - start: 3080
+ratingLevels:
+  - C
+fallBackFactions:
+  - FS

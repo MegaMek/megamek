@@ -1,0 +1,39 @@
+key: CC
+name: Capellan Confederation
+capital: Sian
+yearsActive:
+  - start: 2367
+tags:
+  - PLAYABLE
+  - MAJOR
+  - IS
+  - STINGY
+  - CONTROLLING
+color:
+  red: 0
+  green: 127
+  blue: 14
+logo: Inner Sphere/Capellan Confederation.png
+background: Inner Sphere/Capellan Confederation.png
+camos: Capellan Confederation
+nameGenerator: CC
+eraMods:
+  - 1
+  - 0
+  - 0
+  - 1
+  - 1
+  - 2
+  - 2
+  - 1
+  - 0
+  - 1
+  - 0
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS

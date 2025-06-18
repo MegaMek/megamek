@@ -1,0 +1,7 @@
+key: Blessed Order
+name: Blessed Order
+yearsActive:
+  - start: 3128
+    end: 3141
+fallBackFactions:
+  - CS

@@ -32,25 +32,22 @@
  */
 package megamek.utilities;
 
-import static megamek.common.internationalization.I18n.getTextAt;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Window;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.*;
-import javax.swing.border.Border;
-
 import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.MathUtility;
 import megamek.logging.MMLogger;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import static megamek.common.internationalization.I18n.getTextAt;
 
 /**
  * {@code PDFReaderUtilityPanel} is a reusable Swing {@link JPanel} component for viewing and navigating PDF
@@ -240,7 +237,7 @@ public class PDFReaderPanel extends JPanel {
             protected void done() {
                 try {
                     get(); // Re-throw exception if occurred
-                    JScrollPane scrollPane = new JScrollPane(pnlPages);
+                    JScrollPaneWithSpeed scrollPane = new JScrollPaneWithSpeed(pnlPages);
                     scrollPane.setBorder(BorderFactory.createCompoundBorder(
                           getCustomBorder(),
                           BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING)

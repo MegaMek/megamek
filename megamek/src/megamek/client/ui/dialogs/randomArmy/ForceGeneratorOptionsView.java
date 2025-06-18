@@ -593,19 +593,19 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         FactionRecord oldFaction = (FactionRecord) cbFaction.getSelectedItem();
         cbFaction.removeActionListener(this);
         cbFaction.removeAllItems();
-        RATGenerator.getInstance()
-              .getFactionList()
-              .stream()
+        List<FactionRecord> activePoliticalFactions = RATGenerator.getInstance().getFactionList().stream()
               .filter(fr -> !fr.getKey().contains(".") && fr.isActiveInYear(currentYear))
-              .sorted(Comparator.comparing(fr -> fr.getName(currentYear)))
-              .forEach(fr -> cbFaction.addItem(fr));
+              .sorted(Comparator.comparing(fr -> fr.getName(currentYear))).toList();
+        ((DefaultComboBoxModel<FactionRecord>) cbFaction.getModel()).addAll(activePoliticalFactions);
         cbFaction.setSelectedItem(oldFaction);
         if (cbFaction.getSelectedItem() == null ||
                   !cbFaction.getSelectedItem().toString().equals(Objects.requireNonNull(oldFaction).toString())) {
             cbFaction.setSelectedItem(RATGenerator.getInstance().getFaction("IS"));
         }
-        forceDesc.setFaction(Objects.requireNonNull(cbFaction.getSelectedItem()).toString());
-        refreshSubFactions();
+        if (cbFaction.getSelectedItem() != null) {
+            forceDesc.setFaction(Objects.requireNonNull(cbFaction.getSelectedItem()).toString());
+            refreshSubFactions();
+        }
         cbFaction.addActionListener(this);
     }
 

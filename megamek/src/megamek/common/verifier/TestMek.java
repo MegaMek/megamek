@@ -814,7 +814,7 @@ public class TestMek extends TestEntity {
         boolean illegal = super.hasIllegalEquipmentCombinations(buff);
 
         boolean hasStealth = mek.hasStealth();
-        boolean hasC3 = mek.hasC3();
+        boolean hasC3 = mek.hasAnyC3System();
         boolean hasHarjelII = false;
         boolean hasHarjelIII = false;
         boolean hasNullSig = false;
@@ -1119,7 +1119,7 @@ public class TestMek extends TestEntity {
         if (mek.isIndustrial()) {
             if ((mek.getCockpitType() == Mek.COCKPIT_INDUSTRIAL
                     || mek.getCockpitType() == Mek.COCKPIT_PRIMITIVE_INDUSTRIAL) && hasC3) {
-                buff.append("industrial mek without advanced fire control can't use c3 computer\n");
+                buff.append("Industrial meks without advanced fire control cannot use C3 equipment\n");
                 illegal = true;
             }
             if ((mek.getJumpType() != Mek.JUMP_STANDARD)
@@ -1645,10 +1645,11 @@ public class TestMek extends TestEntity {
                 }
                 return false;
             }
-            if ((eq.hasFlag(MiscType.F_FUEL) || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())
-                    || eq.hasFlag(MiscType.F_LADDER) || eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
-                    || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER))
-                    && !mek.locationIsTorso(location)) {
+            if ((eq.hasFlag(MiscType.F_FUEL) || eq.is(EquipmentTypeLookup.IS_CASE)
+                       || eq.is(EquipmentTypeLookup.IS_CASE_P)
+                       || eq.hasFlag(MiscType.F_LADDER) || eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
+                       || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER))
+                      && !mek.locationIsTorso(location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a torso location.\n");
                 }

@@ -19,6 +19,8 @@ import java.text.NumberFormat;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.miscGear.AntiMekGear;
+import megamek.common.weapons.c3.ISC3M;
+import megamek.common.weapons.c3.ISC3MBS;
 import megamek.common.weapons.ppc.CLERPPC;
 import megamek.common.weapons.ppc.ISERPPC;
 import megamek.common.weapons.ppc.ISHeavyPPC;
@@ -4301,6 +4303,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 250000;
         misc.flags = misc.flags.or(F_C3S)
+                           .or(MiscTypeFlag.ANY_C3)
                            .or(F_MEK_EQUIPMENT)
                            .or(F_TANK_EQUIPMENT)
                            .or(F_SUPPORT_TANK_EQUIPMENT)
@@ -4336,6 +4339,7 @@ public class MiscType extends EquipmentType {
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         // December 2021 - Errata request to change common date
         misc.flags = misc.flags.or(F_C3I)
+                           .or(MiscTypeFlag.ANY_C3)
                            .or(F_MEK_EQUIPMENT)
                            .or(F_TANK_EQUIPMENT)
                            .or(F_SUPPORT_TANK_EQUIPMENT)
@@ -4366,6 +4370,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 2;
         misc.cost = 500000;
         misc.flags = misc.flags.or(F_C3SBS)
+                           .or(MiscTypeFlag.ANY_C3)
                            .or(F_MEK_EQUIPMENT)
                            .or(F_TANK_EQUIPMENT)
                            .or(F_SUPPORT_TANK_EQUIPMENT)
@@ -4401,6 +4406,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 2800000;
         // TODO: implement game rules
         misc.flags = misc.flags.or(F_C3EM)
+                           .or(MiscTypeFlag.ANY_C3)
                            .or(F_MEK_EQUIPMENT)
                            .or(F_TANK_EQUIPMENT)
                            .or(F_SUPPORT_TANK_EQUIPMENT)
@@ -4438,6 +4444,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 62500;
         misc.flags = misc.flags.or(F_C3S)
+                           .or(MiscTypeFlag.ANY_C3)
                            .or(F_BA_EQUIPMENT)
                            .andNot(F_MEK_EQUIPMENT)
                            .andNot(F_TANK_EQUIPMENT)
@@ -4470,6 +4477,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 125000;
         misc.flags = misc.flags.or(F_C3I)
+                           .or(MiscTypeFlag.ANY_C3)
                            .or(F_BA_EQUIPMENT)
                            .andNot(F_MEK_EQUIPMENT)
                            .andNot(F_TANK_EQUIPMENT)
@@ -4495,7 +4503,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "CASE";
-        misc.setInternalName("ISCASE");
+        misc.setInternalName(EquipmentTypeLookup.IS_CASE);
         misc.addLookupName("IS CASE");
         misc.tonnage = 0.5f;
         misc.criticals = 1;
@@ -4527,7 +4535,7 @@ public class MiscType extends EquipmentType {
         // TODO Game rules - See IO pg 71 (specifically the explosion part)
 
         misc.name = "CASE-P (Prototype)";
-        misc.setInternalName("ISCASEPrototype");
+        misc.setInternalName(EquipmentTypeLookup.IS_CASE_P);
         misc.addLookupName("Prototype CASE");
         misc.tonnage = 0.5f;
         misc.criticals = 1;
@@ -5895,6 +5903,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 1100000; // we assume that WOR had a typo there.
         misc.flags = misc.flags.or(F_NOVA)
+                           .or(MiscTypeFlag.ANY_C3)
                            .or(F_ECM)
                            .or(F_BAP)
                            .or(F_MEK_EQUIPMENT)
@@ -7594,6 +7603,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_NAVAL_C3)
+                           .or(MiscTypeFlag.ANY_C3)
                            .or(F_DS_EQUIPMENT)
                            .or(F_JS_EQUIPMENT)
                            .or(F_WS_EQUIPMENT)
@@ -11833,5 +11843,10 @@ public class MiscType extends EquipmentType {
     @Override
     public String toString() {
         return "[Misc] " + internalName;
+    }
+
+    @Override
+    public boolean isC3Equipment() {
+        return hasFlag(MiscTypeFlag.ANY_C3);
     }
 }

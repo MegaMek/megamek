@@ -33,6 +33,7 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
@@ -312,7 +313,7 @@ public class TestSupportVehicle extends TestEntity {
          */
         public boolean validFor(Entity supportVehicle) {
             return supportVehicle.isSupportVehicle() && allowedTypes.contains(SVType.getVehicleType(supportVehicle))
-                    && (!smallOnly || (supportVehicle.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT))
+                    && (!smallOnly || (isSmallSupportVehicle(supportVehicle)))
                     // Hydrofoil has a specific upper weight limit rather than a weight class.
                     && (!this.equals(HYDROFOIL) || supportVehicle.getWeight() <= 100.0)
                     // Can't put a turret on a convertible
@@ -639,10 +640,7 @@ public class TestSupportVehicle extends TestEntity {
      * @return Whether the vehicle can use sponson turrets.
      */
     public static boolean sponsonLegal(SVType type, boolean small) {
-        return !small
-                && (type != SVType.FIXED_WING)
-                && (type != SVType.AIRSHIP)
-                && (type != SVType.SATELLITE);
+        return !small && (type != SVType.FIXED_WING) && (type != SVType.AIRSHIP) && (type != SVType.SATELLITE);
     }
 
     /**
@@ -650,12 +648,11 @@ public class TestSupportVehicle extends TestEntity {
      *
      * @param type  The support vehicle type
      * @param small Whether the {@link Entity} is a small support vehicle
+     *
      * @return Whether the vehicle can use pintle turrets.
      */
     public static boolean pintleLegal(SVType type, boolean small) {
-        return small
-                && (type != SVType.FIXED_WING)
-                && (type != SVType.NAVAL);
+        return small && (type != SVType.FIXED_WING) && (type != SVType.NAVAL);
     }
 
     private final Entity supportVee;
@@ -671,7 +668,7 @@ public class TestSupportVehicle extends TestEntity {
 
     public TestSupportVehicle(Entity supportVehicle, TestEntityOption options, String fileString) {
         super(options, supportVehicle.getEngine(), null);
-        this.supportVee = supportVehicle;
+        supportVee = supportVehicle;
         testTank = supportVehicle instanceof Tank tankVehicle ? new TestTank(tankVehicle, options, fileString) : null;
         testAero = supportVehicle instanceof Aero aeroVehicle ? new TestAero(aeroVehicle, options, fileString) : null;
     }
@@ -750,7 +747,7 @@ public class TestSupportVehicle extends TestEntity {
      * @return The rounded weight, in tons
      */
     private double ceilWeight(double val) {
-        if (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+        if (isSmallSupportVehicle()) {
             // Deal first with possible variances from floating point precision by rounding
             // to the gram, then round the result up to the next kilogram. Then convert back
             // to metric tons.
@@ -851,7 +848,7 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public double getWeightAmmo() {
-        if (getEntity().getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+        if (isSmallSupportVehicle()) {
             double weight = 0;
             for (Mounted<?> mounted : getEntity().getWeaponList()) {
                 weight += getSmallSVAmmoWeight(mounted);
@@ -864,10 +861,9 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public double getWeightPowerAmp() {
-        // Small support vees only use infantry weapons, which do not require
-        // amplifiers.
-        if (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-            return 0.0;
+        // Small support vees only use infantry weapons, which do not require amplifiers
+        if (isSmallSupportVehicle()) {
+            return 0;
         }
 
         if (!engine.isFusion() && (engine.getEngineType() != Engine.FISSION)) {
@@ -895,7 +891,7 @@ public class TestSupportVehicle extends TestEntity {
 
             return ceilWeight(weight / 10);
         }
-        return 0.0;
+        return 0;
     }
 
     private static final EquipmentBitSet EXCLUDE = MiscType.F_BASIC_FIRECONTROL.asEquipmentBitSet().or(MiscType.F_ADVANCED_FIRECONTROL)
@@ -921,13 +917,8 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public int getCountHeatSinks() {
-        // Small support vees can't mount heavy weapons, so no reason to iterate through
-        // them to check.
-        if (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-            return 0;
-        }
-
-        return heatNeutralHSRequirement();
+        // Small support vees can't mount heavy weapons, so no reason to iterate through them to check.
+        return isSmallSupportVehicle() ? 0 : heatNeutralHSRequirement();
     }
 
     @Override
@@ -960,7 +951,7 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public StringBuffer printAmmo(StringBuffer buff, int posLoc, int posWeight) {
-        if (getEntity().getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+        if (!isSmallSupportVehicle()) {
             return super.printAmmo(buff, posLoc, posWeight);
         }
         for (Mounted<?> mounted : getEntity().getWeaponList()) {
@@ -987,13 +978,11 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     public boolean canUseSponsonTurret() {
-        return sponsonLegal(SVType.getVehicleType(getEntity()),
-                getEntity().getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT);
+        return sponsonLegal(SVType.getVehicleType(getEntity()), isSmallSupportVehicle());
     }
 
     public boolean canUsePintleTurret() {
-        return pintleLegal(SVType.getVehicleType(getEntity()),
-                getEntity().getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT);
+        return pintleLegal(SVType.getVehicleType(getEntity()), isSmallSupportVehicle());
     }
 
     @Override
@@ -1005,8 +994,6 @@ public class TestSupportVehicle extends TestEntity {
         }
 
         if (!allowOverweightConstruction() && !correctWeight(buff)) {
-            buff.insert(0, printTechLevel() + printShortMovement());
-            buff.append(printWeightCalculation()).append("\n");
             correct = false;
         }
 
@@ -1103,6 +1090,8 @@ public class TestSupportVehicle extends TestEntity {
         int hardPoints = 0;
         boolean sponson = false;
         boolean pintle = false;
+        boolean hasAdvancedFireControl = false;
+
         for (Mounted<?> mounted : supportVee.getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)
                     && (getEntity() instanceof Aero || getEntity() instanceof VTOL)) {
@@ -1121,8 +1110,11 @@ public class TestSupportVehicle extends TestEntity {
                 sponson = true;
             } else if (mounted.getType().hasFlag(MiscType.F_PINTLE_TURRET)) {
                 pintle = true;
+            } else if (mounted.getType().hasFlag(MiscTypeFlag.F_ADVANCED_FIRECONTROL)) {
+                hasAdvancedFireControl = true;
             }
         }
+
         if (hardPoints > supportVee.getWeight() / 10.0) {
             buff.append("Exceeds maximum of one external stores hard point per 10 tons.\n");
             correct = false;
@@ -1141,9 +1133,9 @@ public class TestSupportVehicle extends TestEntity {
         }
         double weaponWeight = 0.0;
 
-        for (Mounted<?> mounted : supportVee.getWeaponList()) {
+        for (WeaponMounted mounted : supportVee.getWeaponList()) {
             if (!isValidWeapon(mounted)) {
-                buff.append(mounted.getType().getName()).append(" is not a valid weapon for this unit.\n");
+                buff.append(mounted.getType().getName()).append(" is not a valid weapon for this unit\n");
                 correct = false;
             }
 
@@ -1158,29 +1150,28 @@ public class TestSupportVehicle extends TestEntity {
             correct = false;
         }
         for (Mounted<?> mounted : supportVee.getEquipment()) {
-            if ((mounted.getType() instanceof MiscType)
-                    && !mounted.getType().hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)) {
-                buff.append(mounted.getType().getName()).append(" cannot be used by support vehicles.\n");
+            EquipmentType type = mounted.getType();
+            if ((type instanceof MiscType) && !type.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)) {
+                buff.append(type.getName()).append(" cannot be used by support vehicles.\n");
                 correct = false;
-            } else if ((supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT)
-                    && (((mounted.getType() instanceof WeaponType)
-                            && !mounted.getType().hasFlag(WeaponType.F_INFANTRY))
-                            || ((mounted.getType() instanceof MiscType)
-                                    && mounted.getType().hasFlag(MiscType.F_HEAVY_EQUIPMENT)))) {
-                buff.append("Small support vehicles cannot mount heavy weapons or equipment (")
-                        .append(mounted.getName()).append(").\n");
+            } else if ((type instanceof WeaponType)
+                    && !isSmallSupportVehicle()
+                    && !type.hasFlag(WeaponType.F_TANK_WEAPON)) {
+                buff.append(type.getName()).append(" cannot be used by support vehicles.\n");
                 correct = false;
-            } else if ((mounted.getType() instanceof WeaponType)
-                    && (supportVee.getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT)
-                    && !mounted.getType().hasFlag(WeaponType.F_TANK_WEAPON)) {
-                buff.append(mounted.getType().getName()).append(" cannot be used by support vehicles.\n");
-                correct = false;
-            } else if (!TestTank.legalForMotiveType(mounted.getType(), supportVee.getMovementMode(), true)) {
-                buff.append(mounted.getType().getName()).append(" is incompatible with ")
+            } else if (!TestTank.legalForMotiveType(type, supportVee.getMovementMode(), true)) {
+                buff.append(type.getName()).append(" is incompatible with ")
                         .append(supportVee.getMovementModeAsString());
                 correct = false;
             }
+
+            // TM p.209
+            if (type.isC3Equipment() && !hasAdvancedFireControl) {
+                buff.append("Support vehicles without advanced fire control cannot mount C3 equipment\n");
+                correct = false;
+            }
         }
+
         for (int loc = 0; loc < supportVee.locations(); loc++) {
             int count = 0;
 
@@ -1234,6 +1225,19 @@ public class TestSupportVehicle extends TestEntity {
         }
 
         return correct;
+    }
+
+    private boolean isSmallSupportVehicle() {
+        return isSmallSupportVehicle(getEntity());
+    }
+
+    public static boolean isSmallSupportVehicle(Entity entity) {
+        return entity.isSupportVehicle() && (entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT);
+    }
+
+    public static boolean isSmallSupportVehicleWeapon(EquipmentType type) {
+        // I don't see an explicit rule that excludes archaic weapons but it seems to make sense
+        return (type instanceof InfantryWeapon) && !type.hasFlag(WeaponType.F_INF_ARCHAIC);
     }
 
     @Override
@@ -1321,7 +1325,7 @@ public class TestSupportVehicle extends TestEntity {
                 illegal = true;
             }
 
-            if (mod.smallOnly && (supportVee.getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT)) {
+            if (mod.smallOnly && !isSmallSupportVehicle()) {
                 buff.append(mod.equipment.getName())
                         .append(" is only valid with small support vehicles.\n");
                 illegal = true;
@@ -1352,7 +1356,7 @@ public class TestSupportVehicle extends TestEntity {
     boolean hasInsufficientSeating(StringBuffer buff) {
         // Small SVs are required to provide seating for all crew. M/L have
         // seating provided as part of the structure.
-        if (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+        if (isSmallSupportVehicle()) {
             int minCrew = Compute.getFullCrewSize(supportVee);
 
             // Pillion and ejection seating are subclasses of StandardSeatCargoBay
@@ -1372,13 +1376,13 @@ public class TestSupportVehicle extends TestEntity {
         return false;
     }
 
-    private boolean isValidWeapon(Mounted<?> weapon) {
-        if (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-            return weapon.getType().hasFlag(WeaponType.F_INFANTRY)
-                    && !weapon.getType().hasFlag(WeaponType.F_INFANTRY_ONLY);
+    private boolean isValidWeapon(WeaponMounted weapon) {
+        if (isSmallSupportVehicle()) {
+            return isSmallSupportVehicleWeapon(weapon.getType());
+        } else {
+            //TODO: Align with UnitUtil.isSupportVehicleEquipment()
+            return weapon.getType().hasFlag(WeaponType.F_TANK_WEAPON);
         }
-
-        return weapon.getType().hasFlag(WeaponType.F_TANK_WEAPON);
     }
 
     public boolean correctCriticals(StringBuffer buff) {
@@ -1397,7 +1401,7 @@ public class TestSupportVehicle extends TestEntity {
             }
         }
 
-        if (supportVee.getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+        if (!isSmallSupportVehicle()) {
             for (Mounted<?> mount : supportVee.getAmmo()) {
                 if ((mount.getLocation() == Entity.LOC_NONE) && !mount.isOneShotAmmo()) {
                     unallocated.add(mount);
@@ -1609,7 +1613,7 @@ public class TestSupportVehicle extends TestEntity {
      */
     public int getAmmoSlots() {
         // Small SV ammo occupies the same slot as the weapon.
-        if (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+        if (isSmallSupportVehicle()) {
             return 0;
         }
 

@@ -60,4 +60,9 @@ public class ISC3MBS extends TAGWeapon {
                 .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
+
+    @Override
+    public boolean isC3Equipment() {
+        return true;
+    }
 }

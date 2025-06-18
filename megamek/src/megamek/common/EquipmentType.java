@@ -44,6 +44,8 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.util.YamlEncDec;
 import megamek.common.util.YamlSerializerEquipmentType;
 import megamek.common.weapons.autocannons.HVACWeapon;
+import megamek.common.weapons.c3.ISC3M;
+import megamek.common.weapons.c3.ISC3MBS;
 import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
@@ -1804,5 +1806,13 @@ public class EquipmentType implements ITechnology {
      */
     public boolean isArmorable() {
         return isHittable();
+    }
+
+    /**
+     * @return True if this equipment type is any type of C3 equipment, meaning C3S/M and variations of those, C3i,
+     * Nova CEWS, NC3 and BA C3. Note that this returns true for some MiscTypes as well as some WeaponTypes.
+     */
+    public boolean isC3Equipment() {
+        return false;
     }
 }

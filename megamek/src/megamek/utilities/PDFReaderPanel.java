@@ -289,7 +289,7 @@ public class PDFReaderPanel extends JPanel {
      * @author Illiani
      * @since 0.50.07
      */
-    protected static Border getCustomBorder() {
+    protected Border getCustomBorder() {
         return BorderFactory.createLineBorder(UIUtil.uiGray());
     }
 
@@ -307,7 +307,7 @@ public class PDFReaderPanel extends JPanel {
      * @author Illiani
      * @since 0.50.07
      */
-    protected static JButton getCustomButton(String buttonLabel) {
+    protected JButton getCustomButton(String buttonLabel) {
         return new JButton(buttonLabel);
     }
 

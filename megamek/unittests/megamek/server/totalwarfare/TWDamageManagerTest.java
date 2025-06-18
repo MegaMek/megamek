@@ -52,6 +52,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.BindException;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -85,8 +86,15 @@ class TWDamageManagerTest {
         newMan = new TWDamageManagerModular(gameMan, game);
         
         // Need servers to handle unit destruction (sad face)
-        server = new Server(null, random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
-              gameMan, false, "", null, true);
+        for (int port=MMConstants.MIN_PORT_FOR_QUICK_GAME; port<=MMConstants.MAX_PORT; port++) {
+            try {
+                server = new Server(null, random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
+                      gameMan, false, "", null, true);
+                break;
+            } catch (BindException e) {
+                // Try the next one
+            }
+        }
         
         // Player for certain checks and messages
         player = new Player(1, "Test");

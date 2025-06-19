@@ -1,0 +1,8 @@
+key: CC.TG
+name: Tikonov Guards
+yearsActive:
+  - start: 3134
+ratingLevels:
+  - C
+fallBackFactions:
+  - CC

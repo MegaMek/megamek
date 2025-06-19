@@ -1,0 +1,10 @@
+key: MOC.MRG
+name: Magistracy Royal Guard
+yearsActive:
+  - start: 2530
+tags:
+  - PERIPHERY
+ratingLevels:
+  - A
+fallBackFactions:
+  - MOC

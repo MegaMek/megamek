@@ -1,0 +1,8 @@
+key: FS.CMM
+name: Capellan March Militia
+yearsActive:
+  - start: 2754
+ratingLevels:
+  - D
+fallBackFactions:
+  - FS

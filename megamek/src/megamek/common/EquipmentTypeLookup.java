@@ -82,6 +82,8 @@ public class EquipmentTypeLookup {
 
     @EquipmentName public static final String HITCH = "Hitch";
     @EquipmentName public static final String CLAN_CASE = "CLCASE";
+    @EquipmentName public static final String IS_CASE = "ISCASE";
+    @EquipmentName public static final String IS_CASE_P = "ISCASEPrototype";
     @EquipmentName public static final String COOLANT_POD = "Coolant Pod";
     @EquipmentName public static final String MEK_TRACKS = "Tracks";
     @EquipmentName public static final String QUADVEE_WHEELS = "QuadVee Wheels";

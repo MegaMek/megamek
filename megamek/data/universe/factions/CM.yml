@@ -1,0 +1,22 @@
+key: CM
+name: Chaos March
+capital: Terra
+yearsActive:
+  - start: 3057
+    end: 3069
+tags:
+  - IS
+  - SMALL
+  - CHAOS
+color:
+  red: 169
+  green: 169
+  blue: 169
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS

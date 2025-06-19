@@ -1,0 +1,22 @@
+key: OMA
+name: Ozawa Mercantile Association
+capital: Terra
+tags:
+  - TRADER
+color:
+  red: 206
+  green: 244
+  blue: 66
+nameGenerator: DC
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 1
+  - 1
+  - 2
+  - 2
+  - 0
+  - 0
+  - 1
+  - 0

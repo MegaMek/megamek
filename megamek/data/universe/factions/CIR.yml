@@ -1,0 +1,34 @@
+key: CIR
+name: Circinus Federation
+capital: Circinus
+yearsActive:
+  - start: 2785
+    end: 3081
+tags:
+  - PERIPHERY
+color:
+  red: 198
+  green: 36
+  blue: 58
+logo: Periphery/Circinus Federation.png
+background: Periphery/Circinus Federation.png
+camos: Circinus Federation
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.MW
+  - WOB.PM

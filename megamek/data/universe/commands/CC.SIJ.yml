@@ -1,0 +1,9 @@
+key: CC.SIJ
+name: St Ives Janissaries
+yearsActive:
+  - start: 3055
+    end: 3079
+ratingLevels:
+  - B
+fallBackFactions:
+  - CC

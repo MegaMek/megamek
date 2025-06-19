@@ -1,0 +1,31 @@
+key: CI
+name: Chainelane Isles
+capital: Terra
+tags:
+  - MINOR
+  - DEEP_PERIPHERY
+color:
+  red: 255
+  green: 80
+  blue: 93
+logo: Periphery/Chainelane Isles.png
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+  - 1
+  - 2
+  - 2
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.R

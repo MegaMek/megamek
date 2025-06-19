@@ -1,0 +1,9 @@
+key: FWL.pm
+name: Planetary Militia
+yearsActive:
+  - start: 2271
+ratingLevels:
+  - F
+fallBackFactions:
+  - FWL
+  - IS.pm

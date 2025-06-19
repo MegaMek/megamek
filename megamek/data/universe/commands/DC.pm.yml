@@ -1,0 +1,9 @@
+key: DC.pm
+name: Planetary Militia
+yearsActive:
+  - start: 2319
+ratingLevels:
+  - F
+fallBackFactions:
+  - IS.pm
+  - DC

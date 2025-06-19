@@ -1,0 +1,24 @@
+key: JF
+name: JàrnFòlk
+capital: Trondheim (JF)
+tags:
+  - MINOR
+  - DEEP_PERIPHERY
+color:
+  red: 153
+  green: 50
+  blue: 204
+logo: Periphery/JarnFolk.png
+nameGenerator: FRR
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+  - 1
+  - 2
+  - 2

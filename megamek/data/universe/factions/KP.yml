@@ -1,0 +1,17 @@
+key: KP
+name: Kittery Prefecture
+capital: Terra
+yearsActive:
+  - start: 3072
+    end: 3081
+successor: ROS
+tags:
+  - MINOR
+  - IS
+color:
+  red: 224
+  green: 126
+  blue: 39
+nameGenerator: FS
+fallBackFactions:
+  - CM

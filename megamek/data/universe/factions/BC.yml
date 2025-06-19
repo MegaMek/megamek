@@ -1,0 +1,11 @@
+key: BC
+name: Buena Collective
+capital: Buena
+tags:
+  - MINOR
+  - IS
+color:
+  red: 0
+  green: 130
+  blue: 186
+nameGenerator: LA

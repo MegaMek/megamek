@@ -1,0 +1,11 @@
+key: ME
+name: Muskegon Coalition
+capital: Muskegon
+successor: FS
+tags:
+  - MINOR
+  - IS
+color:
+  red: 27
+  green: 229
+  blue: 195

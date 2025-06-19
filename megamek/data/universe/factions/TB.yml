@@ -1,0 +1,32 @@
+key: TB
+name: Republic of the Barrens
+capital: Terra
+yearsActive:
+  - start: 3100
+tags:
+  - PERIPHERY
+  - CHAOS
+color:
+  red: 255
+  green: 255
+  blue: 224
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 2
+  - 2
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.DD

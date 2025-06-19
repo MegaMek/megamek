@@ -1,0 +1,8 @@
+key: DC.SL
+name: Sword of Light
+yearsActive:
+  - start: 2319
+ratingLevels:
+  - A
+fallBackFactions:
+  - DC

@@ -1,0 +1,12 @@
+key: MA
+name: Mosiro Archipelago
+capital: Mosiro
+successor: DA
+tags:
+  - MINOR
+  - IS
+color:
+  red: 164
+  green: 54
+  blue: 149
+nameGenerator: FWL

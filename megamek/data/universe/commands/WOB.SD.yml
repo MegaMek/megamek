@@ -1,0 +1,9 @@
+key: WOB.SD
+name: Shadow Divisions
+yearsActive:
+  - start: 3067
+    end: 3081
+ratingLevels:
+  - A
+fallBackFactions:
+  - WOB

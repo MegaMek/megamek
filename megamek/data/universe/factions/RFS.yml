@@ -1,0 +1,36 @@
+key: RFS
+name: Regulan Free States
+capital: Regulus
+yearsActive:
+  - start: 3079
+    end: 3086
+tags:
+  - MINOR
+  - IS
+color:
+  red: 164
+  green: 54
+  blue: 149
+nameGenerator: FWL
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 1
+  - 1
+  - 2
+  - 2
+  - 0
+  - 0
+  - 1
+  - 0
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - RF
+  - IS
+  - FWL

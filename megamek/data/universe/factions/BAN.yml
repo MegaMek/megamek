@@ -1,0 +1,10 @@
+key: BAN
+name: Bandit Caste
+yearsActive:
+  - start: 2830
+tags:
+  - CLAN
+ratingLevels:
+  - Solahma
+fallBackFactions:
+  - CLAN

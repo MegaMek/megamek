@@ -1,0 +1,32 @@
+key: TH
+name: Terran Hegemony
+capital: Terra
+yearsActive:
+  - start: 2315
+    end: 2788
+tags:
+  - PLAYABLE
+  - IS
+  - SUPER
+  - CONTROLLING
+  - GENEROUS
+color:
+  red: 223
+  green: 122
+  blue: 41
+logo: Inner Sphere/Terran Hegemony.png
+background: Inner Sphere/Terran Hegemony.png
+eraMods:
+  - -1
+  - -1
+  - -1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - SL
+  - IS
+  - SL.R

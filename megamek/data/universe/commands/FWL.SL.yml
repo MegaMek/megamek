@@ -1,0 +1,9 @@
+key: FWL.SL
+name: Sirian Lancers
+yearsActive:
+  - start: 2950
+    end: 3079
+ratingLevels:
+  - D
+fallBackFactions:
+  - FWL

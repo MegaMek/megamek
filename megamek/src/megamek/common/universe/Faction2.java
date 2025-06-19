@@ -32,19 +32,30 @@
  */
 package megamek.common.universe;
 
-import com.fasterxml.jackson.annotation.*;
+import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeMap;
+
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import megamek.MMConstants;
 import megamek.client.ratgenerator.FactionRecord;
-
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.List;
 
 /**
  * This is a Faction class that unifies MHQ's Faction and the RATGenerator's FactionRecord and makes it available to all
@@ -80,7 +91,7 @@ public class Faction2 {
     private final NavigableMap<Integer, String> capitalChanges = new TreeMap<>();
     private final ArrayList<FactionRecord.DateRange> yearsActive = new ArrayList<>();
     private String successor;
-    private final Set<FactionTag> tags = new HashSet<>();
+    private Set<FactionTag> tags = new HashSet<>();
     private Color color = Color.LIGHT_GRAY;
     private String logo;
     private String background;
@@ -113,6 +124,10 @@ public class Faction2 {
     public String getName(int year) {
         final Map.Entry<Integer, String> nameByYear = nameChanges.floorEntry(year);
         return (nameByYear == null) ? name : nameByYear.getValue();
+    }
+
+    public void setTags(final Set<FactionTag> tags) {
+        this.tags = tags;
     }
 
     public Set<FactionTag> getTags() {

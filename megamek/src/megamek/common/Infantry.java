@@ -726,6 +726,9 @@ public class Infantry extends Entity {
 
     @Override
     public int getOInternal(int loc) {
+        if (loc != LOC_INFANTRY) {
+            return 0;
+        }
         return isConventionalInfantry() ? originalTrooperCount : super.getOInternal(loc);
     }
 

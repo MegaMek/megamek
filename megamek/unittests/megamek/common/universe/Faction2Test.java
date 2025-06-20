@@ -39,6 +39,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class Faction2Test {
 
+    static Factions2 getTestFactions2() {
+        return new Factions2("testresources/data/universe/factions");
+    }
+
     @Test
     void isActiveInYear() {
         // A faction with no active year entries must count as always active
@@ -64,13 +68,12 @@ class Faction2Test {
 
     @Test
     void testPerformsBatchall() {
-        // If the following faction codes ever change or their batchall behavior is changed, this test will fail
-        // I assume this isn't likely to happen anytime soon
-        var cbsFaction = Factions2.getInstance().getFaction("CBS");
+        var testFactions = getTestFactions2();
+        var cbsFaction = testFactions.getFaction("CBS");
         assertTrue(cbsFaction.isPresent());
         assertTrue(cbsFaction.get().performsBatchalls());
 
-        var laFaction = Factions2.getInstance().getFaction("LA");
+        var laFaction = testFactions.getFaction("LA");
         assertTrue(laFaction.isPresent());
         assertFalse(laFaction.get().performsBatchalls());
     }

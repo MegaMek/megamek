@@ -126,10 +126,6 @@ public class Faction2 {
         return (nameByYear == null) ? name : nameByYear.getValue();
     }
 
-    public void setTags(final Set<FactionTag> tags) {
-        this.tags = tags;
-    }
-
     public Set<FactionTag> getTags() {
         return tags;
     }

@@ -469,7 +469,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private JCheckBox displayFireDisplayDuringFirePhases;
 
     // Report
+    private final JCheckBox chkReportShowPlayers = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.showReportPlayerList"));
+    private final JCheckBox chkReportShowUnits = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.showReportUnitList"));
+    private final JCheckBox chkReportShowKeywords = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.showReportKeywordsList"));
     private JTextPane reportKeywordsTextPane;
+    private JTextPane reportFilterKeywordsTextPane;
+    private final JCheckBox chkReportShowFilter = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.showReportFilterList"));
     private ColourSelectorButton csbReportLinkColor;
     private ColourSelectorButton csbReportSuccessColor;
     private ColourSelectorButton csbReportMissColor;
@@ -1579,6 +1588,26 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         addLineSpacer(comps);
 
+        row = new ArrayList<>();
+        row.add(chkReportShowPlayers);
+        chkReportShowPlayers.setToolTipText(Messages.getString(
+              "CommonSettingsDialog.showReportPlayerList.tooltip"));
+        chkReportShowPlayers.setSelected(GUIP.getMiniReportShowPlayers());
+        comps.add(row);
+
+        row = new ArrayList<>();
+        row.add(chkReportShowUnits);
+        chkReportShowUnits.setToolTipText(Messages.getString(
+              "CommonSettingsDialog.showReportUnitList.tooltip"));
+        chkReportShowUnits.setSelected(GUIP.getMiniReportShowUnits());
+        comps.add(row);
+
+        row = new ArrayList<>();
+        row.add(chkReportShowKeywords);
+        chkReportShowKeywords.setToolTipText(Messages.getString(
+              "CommonSettingsDialog.showReportKeywordsList.tooltip"));
+        chkReportShowKeywords.setSelected(GUIP.getMiniReportShowKeywords());
+        comps.add(row);
         JLabel reportKeywordsLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportKeywords") + ": ");
         reportKeywordsTextPane = new JTextPane();
         row = new ArrayList<>();
@@ -2240,6 +2269,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             stampFormat.setEnabled(stampFilenames.isSelected());
             stampFormat.setText(CLIENT_PREFERENCES.getStampFormat());
             reportKeywordsTextPane.setText(CLIENT_PREFERENCES.getReportKeywords());
+            reportFilterKeywordsTextPane.setText(CLIENT_PREFERENCES.getReportFilterKeywords());
             showIPAddressesInChat.setSelected(CLIENT_PREFERENCES.getShowIPAddressesInChat());
             startSearchlightsOn.setSelected(CLIENT_PREFERENCES.getStartSearchlightsOn());
 
@@ -2753,6 +2783,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         CLIENT_PREFERENCES.setStampFilenames(stampFilenames.isSelected());
         CLIENT_PREFERENCES.setStampFormat(stampFormat.getText());
         CLIENT_PREFERENCES.setReportKeywords(reportKeywordsTextPane.getText());
+        CLIENT_PREFERENCES.setReportFilterKeywords(reportFilterKeywordsTextPane.getText());
         CLIENT_PREFERENCES.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
         CLIENT_PREFERENCES.setStartSearchlightsOn(startSearchlightsOn.isSelected());
         CLIENT_PREFERENCES.setEnableExperimentalBotFeatures(enableExperimentalBotFeatures.isSelected());
@@ -3110,6 +3141,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setReportrInfoColo(csbReportInfoColor.getColour());
         GUIP.setReportFontType(fontTypeChooserReportFont.getSelectedItem().toString());
         GUIP.setMiniReportShowSprites(showReportSprites.isSelected());
+        GUIP.setMiniReportShowPlayers(chkReportShowPlayers.isSelected());
+        GUIP.setMiniReportShowUnits(chkReportShowUnits.isSelected());
+        GUIP.setMiniReportShowKeywords(chkReportShowKeywords.isSelected());
+        GUIP.setMiniReportShowFilter(chkReportShowFilter.isSelected());
+        if ((clientgui != null) && (clientgui.getMiniReportDisplay() != null)) {
+            clientgui.getMiniReportDisplay().refreshSearchPanel();
+        }
 
         GUIP.setUnitOverviewTextShadowColor(csbUnitOverviewTextShadowColor.getColour());
         GUIP.setUnitOverviewConditionShadowColor(csbUnitOverviewConditionShadowColor.getColour());

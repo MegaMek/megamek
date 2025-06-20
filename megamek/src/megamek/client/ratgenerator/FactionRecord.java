@@ -126,7 +126,10 @@ public class FactionRecord {
         setPeriphery(faction2.isPeriphery());
         setParentFactions(String.join(",", faction2.getFallBackFactions()));
         setRatings(String.join(",", faction2.getRatingLevels()));
-        List<String> dateRanges = faction2.getYearsActive().stream().map(FactionRecord.DateRange::toString).toList();
+        List<String> dateRanges = new ArrayList<>(faction2.getYearsActive().stream().map(DateRange::toString).toList());
+        if (dateRanges.isEmpty()) {
+            dateRanges.add("-");
+        }
         try {
             setYears(String.join(",", dateRanges));
         } catch (ParseException exception) {

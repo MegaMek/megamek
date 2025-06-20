@@ -1430,7 +1430,16 @@ public class RATGenerator {
         // As a temporary measure, the RAT Generator factions are populated from the new unified factions
         // list instead of using that directly.
         var yamlFactions = Factions2.getInstance();
-        yamlFactions.getFactions().stream().map(FactionRecord::new).forEach(f -> factions.put(f.getKey(), f));
+        yamlFactions.getFactions().stream()
+              .map(FactionRecord::new)
+              .forEach(f -> factions.put(f.getKey(), f));
+        // Since the unification of MHQ and RatGen factions, every faction can create a FactionRecord but not every
+        // FactionRecord has enough data to produce units, so remove those
+        List<String> toRemove = factions.values().stream()
+                                      .filter(fr -> fr.getRatingLevelSystem().isEmpty())
+                                      .map(FactionRecord::getKey)
+                                      .toList();
+        toRemove.forEach(factions::remove);
     }
 
     /**

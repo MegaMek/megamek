@@ -28664,6 +28664,7 @@ TargetRoll nTargetRoll,
             DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
             HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(ammo,
                   center,
+                  targetHex.getBoardId(),
                   falloff,
                   targetLevel,
                   false,

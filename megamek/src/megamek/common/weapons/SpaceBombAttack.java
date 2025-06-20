@@ -23,6 +23,7 @@ import megamek.common.AmmoType;
 import megamek.common.IBomber;
 import megamek.common.Game;
 import megamek.common.ToHitData;
+import megamek.common.WeaponTypeFlag;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -47,7 +48,7 @@ public class SpaceBombAttack extends Weapon {
         criticals = 0;
         bv = 0;
         cost = 0;
-        flags = flags.or(F_SPACE_BOMB).or(F_SOLO_ATTACK);
+        flags = flags.or(F_SPACE_BOMB).or(F_SOLO_ATTACK).or(WeaponTypeFlag.INTERNAL_REPRESENTATION);
         hittable = false;
         capital = true;
         techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);

@@ -933,6 +933,9 @@ public class MekView {
         wpnTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                 TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_CENTER);
         for (WeaponMounted mounted : entity.getWeaponList()) {
+            if (mounted.getType().hasFlag(WeaponTypeFlag.INTERNAL_REPRESENTATION)) {
+                continue;
+            }
             String[] row = { mounted.getDesc() + quirkMarker(mounted),
                     entity.joinLocationAbbr(mounted.allLocations(), 3), "", "" };
             WeaponType wtype = mounted.getType();

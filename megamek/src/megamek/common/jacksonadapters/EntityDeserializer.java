@@ -64,6 +64,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String SHOTS = "shots";
     public static final String FLEE_AREA = "fleefrom";
     private static final String AREA = "area";
+    private static final String BOMBS = "bombs";
 
     public EntityDeserializer() {
         this(null);
@@ -94,6 +95,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         assignRemaining(entity, node);
         assignCrits(entity, node);
         assignAmmos(entity, node);
+        assignBombs(entity, node);
         assignFleeArea(entity, node);
         return entity;
     }
@@ -326,6 +328,18 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
             } else {
                 throw new IllegalArgumentException("Invalid ammo slot " + location + ":" + (slot + 1) + " on " + entity);
             }
+        }
+    }
+
+    private void assignBombs(Entity entity, JsonNode node) {
+        if (node.has(BOMBS) && entity instanceof IBomber bomber) {
+            JsonNode bombsNode = node.get(BOMBS);
+            BombLoadout loadout = new BombLoadout();
+            bombsNode.fieldNames().forEachRemaining(name -> {
+                var bombNode = bombsNode.get(name);
+                loadout.put(BombType.BombTypeEnum.valueOf(name), bombNode.asInt());
+            });
+            bomber.setExtBombChoices(loadout);
         }
     }
 

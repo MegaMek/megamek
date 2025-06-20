@@ -414,6 +414,9 @@ public class ScenarioV2 implements Scenario {
                             entityId++;
                         }
                         twGame.addEntity(unit);
+                        if (unit instanceof IBomber bomber) {
+                            bomber.applyBombs();
+                        }
                         // Grounded DropShips don't set secondary positions unless they're part of a
                         // game and can verify
                         // they're not on a space map.

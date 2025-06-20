@@ -34,13 +34,12 @@ public class AeroSpaceFighter extends Aero {
 
     @Override
     public void autoSetMaxBombPoints() {
-        // Aerospace fighters can carry both external and internal ordnances, if
-        // configured and quirked
-        // appropriately
+        // Aerospace fighters can carry both external and internal ordnances, if configured and quirked appropriately
         maxExtBombPoints = (int) Math.round(getWeight() / 5);
         // Can't check quirk here, as they don't exist in unit files yet.
         maxIntBombPoints = getTransportBays().stream()
-                                 .mapToInt(tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0)
+                                 .filter(tb -> tb instanceof CargoBay)
+                                 .mapToInt(tb -> (int) Math.floor(tb.getUnused()))
                                  .sum();
     }
 

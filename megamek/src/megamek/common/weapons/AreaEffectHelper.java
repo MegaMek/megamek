@@ -1016,6 +1016,14 @@ public class AreaEffectHelper {
         );
     }
 
+    public static HashMap<Entry<Integer, Coords>, Integer> shapeBlast(
+          @Nullable AmmoType ammo, Coords center, DamageFalloff falloff, int height, boolean artillery,
+          boolean flak, boolean asfFlak, Game game, boolean excludeCenter) {
+        // LEGACY - replace with boardId version
+        return shapeBlast(ammo, center, Game.DEFAULT_BOARD_ID, falloff, height, artillery, flak, asfFlak, game,
+              excludeCenter);
+    }
+
     /**
      * @param ammo              AmmoType of the attack.
      * @param center            Coordinates of center of blast.
@@ -1029,7 +1037,7 @@ public class AreaEffectHelper {
      * @return                  (height, Coords): damage map.
      */
     public static HashMap<Entry<Integer, Coords>, Integer> shapeBlast(
-          @Nullable AmmoType ammo, Coords center, DamageFalloff falloff, int height, boolean artillery,
+          @Nullable AmmoType ammo, Coords center, int boardId, DamageFalloff falloff, int height, boolean artillery,
           boolean flak, boolean asfFlak, Game game, boolean excludeCenter) {
 
         HashMap<Entry<Integer, Coords>, Integer> blastShape = new LinkedHashMap<>();
@@ -1060,7 +1068,7 @@ public class AreaEffectHelper {
             }
         }
 
-        Hex hex = game.getBoard().getHex(center);
+        Hex hex = game.getHex(center, boardId);
         boolean effectivelyAE = (hex != null && hex.containsAnyTerrainOf(Set.of(Terrains.BUILDING, Terrains.WATER)));
         // 1. Handle Artillery-specific blast column (N levels up from _any_ hit where N
         // is base damage / 10 for most artillery, damage / 25 for Cruise Missiles)

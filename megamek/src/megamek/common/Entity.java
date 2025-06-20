@@ -4630,7 +4630,7 @@ public abstract class Entity extends TurnOrdered
                       game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB) &&
                       m.getType().hasFlag(AmmoType.F_SPACE_BOMB) &&
                       isBomber() &&
-                      game.getBoard().isSpace()) {
+                      isSpaceborne()) {
                 try {
                     WeaponMounted bomb = (WeaponMounted) addEquipment(spaceBomb, m.getLocation(), false);
                     if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
@@ -4643,7 +4643,7 @@ public abstract class Entity extends TurnOrdered
                 foundSpaceBomb = true;
             }
 
-            if (!game.getBoard().isSpace() &&
+            if (!isSpaceborne() &&
                       m.getType().hasFlag(AmmoType.F_GROUND_BOMB) &&
                       !((this instanceof LandAirMek) && (getConversionMode() == LandAirMek.CONV_MODE_MEK))) {
                 if (addedBombAttacks < 1) {

@@ -40,7 +40,10 @@ import megamek.logging.MMLogger;
  * @author Neoancient
  */
 public class FactionRecord {
+
     private final static MMLogger logger = MMLogger.create(FactionRecord.class);
+
+    public static final String ALWAYS_ACTIVE = "-";
 
     /**
      * Proportions of Clan/SL/Omni tech are given for major commands in the various
@@ -126,7 +129,10 @@ public class FactionRecord {
         setPeriphery(faction2.isPeriphery());
         setParentFactions(String.join(",", faction2.getFallBackFactions()));
         setRatings(String.join(",", faction2.getRatingLevels()));
-        List<String> dateRanges = faction2.getYearsActive().stream().map(FactionRecord.DateRange::toString).toList();
+        List<String> dateRanges = new ArrayList<>(faction2.getYearsActive().stream().map(DateRange::toString).toList());
+        if (dateRanges.isEmpty()) {
+            dateRanges.add(ALWAYS_ACTIVE);
+        }
         try {
             setYears(String.join(",", dateRanges));
         } catch (ParseException exception) {
@@ -281,7 +287,7 @@ public class FactionRecord {
         int offset = 0;
         try {
             for (String range : ranges) {
-                if (range.equals("-")) {
+                if (range.equals(ALWAYS_ACTIVE)) {
                     yearsActive.add(new DateRange(null, null));
                 } else if (range.startsWith("-")) {
                     yearsActive.add(new DateRange(null, Integer.parseInt(range.substring(1))));

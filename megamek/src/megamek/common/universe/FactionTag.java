@@ -94,5 +94,10 @@ public enum FactionTag {
     /** Faction is lenient with mercenary command rights (Camops p. 42) */
     LENIENT,
     /** Faction performs batchall */
-    BATCHALL
+    BATCHALL,
+    /**
+     * Represents an aggregate of independent 'factions', rather than a singular organization. For example, "PIR"
+     * (pirates) is used to abstractly represent all pirates, not individual pirate groups.
+     */
+    AGGREGATE,
 }

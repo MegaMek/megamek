@@ -54,7 +54,6 @@ public class AltitudeBombAttack extends Weapon {
         cost = 0;
         flags = flags.or(F_ALT_BOMB).or(WeaponTypeFlag.INTERNAL_REPRESENTATION);
         hittable = false;
-        capital = true;
         techAdvancement.setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);
     }
 

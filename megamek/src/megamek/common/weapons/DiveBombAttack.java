@@ -27,10 +27,13 @@ import megamek.common.WeaponTypeFlag;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
 
+import java.io.Serial;
+
 /**
  * @author Jay Lawson
  */
 public class DiveBombAttack extends Weapon {
+    @Serial
     private static final long serialVersionUID = -179884141546884171L;
 
     public DiveBombAttack() {
@@ -51,20 +54,15 @@ public class DiveBombAttack extends Weapon {
         cost = 0;
         flags = flags.or(F_DIVE_BOMB).or(F_SOLO_ATTACK).or(WeaponTypeFlag.INTERNAL_REPRESENTATION);
         hittable = false;
-        capital = true;
-        techAdvancement.setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);
+        techAdvancement.setAvailability(AvailabilityValue.B,
+              AvailabilityValue.B,
+              AvailabilityValue.B,
+              AvailabilityValue.B);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              TWGameManager manager) {
+          TWGameManager manager) {
         return new BombAttackHandler(toHit, waa, game, manager);
     }
 }

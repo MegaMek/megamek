@@ -27,10 +27,13 @@ import megamek.common.WeaponTypeFlag;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
 
+import java.io.Serial;
+
 /**
  * @author Jay Lawson
  */
 public class SpaceBombAttack extends Weapon {
+    @Serial
     private static final long serialVersionUID = -7842514353177676459L;
 
     public SpaceBombAttack() {
@@ -50,20 +53,15 @@ public class SpaceBombAttack extends Weapon {
         cost = 0;
         flags = flags.or(F_SPACE_BOMB).or(F_SOLO_ATTACK).or(WeaponTypeFlag.INTERNAL_REPRESENTATION);
         hittable = false;
-        capital = true;
-        techAdvancement.setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C);
+        techAdvancement.setAvailability(AvailabilityValue.C,
+              AvailabilityValue.C,
+              AvailabilityValue.C,
+              AvailabilityValue.C);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, TWGameManager manager) {
+          WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new SpaceBombAttackHandler(toHit, waa, game, manager);
     }
 }

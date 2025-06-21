@@ -274,7 +274,7 @@ public class BombAttackHandler extends WeaponHandler {
                     }
                 }
                 // Capture drop hex info
-                HexTarget dropHex = new HexTarget(drop, target.getTargetType());
+                HexTarget dropHex = new HexTarget(drop, target.getBoardId(), target.getTargetType());
                 dropHex.setTargetLevel(((HexTarget) target).getTargetLevel());
 
                 if (type == BombTypeEnum.INFERNO) {

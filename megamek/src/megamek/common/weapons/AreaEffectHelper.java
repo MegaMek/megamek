@@ -249,7 +249,7 @@ public class AreaEffectHelper {
             if (thinAir) {
                 damage = (int) Math.ceil(damage / 2.0);
             }
-            gameManager.artilleryDamageHex(bCoords, center, damage, ammo, attacker.getId(),
+            gameManager.artilleryDamageHex(bCoords, boardId, center, damage, ammo, attacker.getId(),
                 attacker, null, false, bLevel, height, vPhaseReport, false,
                 entitiesToExclude, false, falloff);
 

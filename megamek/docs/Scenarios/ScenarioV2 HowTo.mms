@@ -338,14 +338,28 @@ factions:
             shots: 2
             # type: xyz (TODO)
 
-        # bombs for any IBomber types (LAM and aero units); currently only adds external bombs; the bombs are not
-        # validated
+        # Bombs for any IBomber types (LAM and aero units);
         bombs:
+          # bombs can be given directly, which will place them on external hardpoints
           HE: 1
           CLUSTER: 2
           LG: 3
           # other types, see BombTypeEnum
           # RL, TAG, AAA, AS, ASEW, ARROW, HOMING, INFERNO, LAA, THUNDER, TORPEDO, ALAMO, FAE_SMALL, FAE_LARGE, RLP
+
+        # alternatively, bombs can be separated into internal and external; in this case, do not give bombs directly
+        # internal requires the IBB quirk
+        bombs:
+          internal:
+            HE: 2
+            LG: 2
+          external:
+            CLUSTER: 1
+
+        # bombs:
+        #   HE: 1    <---- wrong, must use external:
+        #   internal:
+        #     CLUSTER: 2
 
         # Optional: give details of the crew/pilot - currently only for single pilots (TODO)
         # by default, the pilot is an unnamed 4/5 pilot

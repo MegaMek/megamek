@@ -57,6 +57,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String REMAINING = "remaining";
     private static final String ARMOR = "armor";
     private static final String INTERNAL = "internal";
+    private static final String EXTERNAL = "external";
     private static final String FORCE = "force";
     private static final String CRITS = "crits";
     private static final String AMMO = "ammo";
@@ -334,13 +335,28 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private void assignBombs(Entity entity, JsonNode node) {
         if (node.has(BOMBS) && entity instanceof IBomber bomber) {
             JsonNode bombsNode = node.get(BOMBS);
-            BombLoadout loadout = new BombLoadout();
-            bombsNode.fieldNames().forEachRemaining(name -> {
-                var bombNode = bombsNode.get(name);
-                loadout.put(BombType.BombTypeEnum.valueOf(name), bombNode.asInt());
-            });
-            bomber.setExtBombChoices(loadout);
+            // bombs must use the external and/or internal keywords or give the bombs directly, in which case they are
+            // external
+            if (bombsNode.has(EXTERNAL) || bombsNode.has(INTERNAL)) {
+                if (bombsNode.has(EXTERNAL)) {
+                    bomber.setExtBombChoices(readBombLoadout(bombsNode.get(EXTERNAL)));
+                }
+                if (bombsNode.has(INTERNAL)) {
+                    bomber.setIntBombChoices(readBombLoadout(bombsNode.get(INTERNAL)));
+                }
+            } else {
+                bomber.setExtBombChoices(readBombLoadout(bombsNode));
+            }
         }
+    }
+
+    private BombLoadout readBombLoadout(JsonNode node) {
+        BombLoadout loadout = new BombLoadout();
+        node.fieldNames().forEachRemaining(name -> {
+            var bombNode = node.get(name);
+            loadout.put(BombType.BombTypeEnum.valueOf(name), bombNode.asInt());
+        });
+        return loadout;
     }
 
     private void assignFleeArea(Entity entity, JsonNode node) {

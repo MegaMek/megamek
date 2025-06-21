@@ -1806,8 +1806,11 @@ public abstract class TestEntity implements TestEntityOption {
         }
 
         if (getEntity() instanceof IBomber bomber) {
-            if (bomber.getBombPoints() > bomber.getMaxBombPoints()) {
-                buff.append("Bomb storage capacity exceeded\n");
+            if (bomber.getBombPoints(true) > bomber.getMaxExtBombPoints()) {
+                buff.append("External bomb storage capacity exceeded\n");
+                illegal = true;
+            } else if (bomber.getBombPoints() - bomber.getBombPoints(true) > bomber.getMaxIntBombPoints()) {
+                buff.append("Internal bomb storage capacity exceeded\n");
                 illegal = true;
             }
         }

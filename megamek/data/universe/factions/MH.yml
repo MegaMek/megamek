@@ -36,3 +36,4 @@ ratingLevels:
 fallBackFactions:
   - Periphery.ME
 formationBaseSize: 5
+rankSystem: MHAF

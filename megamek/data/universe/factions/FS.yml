@@ -36,3 +36,4 @@ ratingLevels:
   - A
 fallBackFactions:
   - IS
+rankSystem: AFFS

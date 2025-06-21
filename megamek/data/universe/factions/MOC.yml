@@ -35,3 +35,4 @@ ratingLevels:
   - A
 fallBackFactions:
   - Periphery.CM
+rankSystem: MAF

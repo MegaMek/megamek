@@ -27,3 +27,4 @@ fallBackFactions:
   - IS
 formationBaseSize: 6
 formationGrouping: 6
+rankSystem: CG

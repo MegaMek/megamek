@@ -1435,11 +1435,7 @@ public class RATGenerator {
               .forEach(f -> factions.put(f.getKey(), f));
         // Since the unification of MHQ and RatGen factions, every faction can create a FactionRecord but not every
         // FactionRecord has enough data to produce units, so remove those
-        List<String> toRemove = factions.values().stream()
-                                      .filter(fr -> fr.getRatingLevelSystem().isEmpty())
-                                      .map(FactionRecord::getKey)
-                                      .toList();
-        toRemove.forEach(factions::remove);
+        factions.values().removeIf(fr -> fr.getRatingLevelSystem().isEmpty());
     }
 
     /**

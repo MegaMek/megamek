@@ -102,7 +102,7 @@ public class Faction2 {
     private final HonorRating postInvasionHonorRating = HonorRating.NONE;
     private int formationBaseSize = UNKNOWN;
     private int formationGrouping = UNKNOWN;
-    private String rankSystem = UNKNOWN + "";
+    private String rankSystem = null;
 
     public List<String> getRatingLevels() {
         return ratingLevels;

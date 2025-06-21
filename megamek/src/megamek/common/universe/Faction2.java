@@ -238,7 +238,7 @@ public class Faction2 {
     /**
      * Retrieves the rank system identifier for this faction.
      *
-     * <p>The method checks the `rankSystem` field; if it is set and not {@link #UNKNOWN}, its value is returned
+     * <p>The method checks the `rankSystem` field; if it is set and not {@code null}, its value is returned
      * directly.</p>
      *
      * <p>If the rank system is unspecified but there are fallback factions, the method iterates through each
@@ -254,7 +254,7 @@ public class Faction2 {
      * @since 0.50.07
      */
     public String getRankSystem() {
-        if (!Objects.equals(rankSystem, UNKNOWN + "")) {
+        if (rankSystem != null) {
             return rankSystem;
         } else if (!fallBackFactions.isEmpty()) {
             for (String factionCode : fallBackFactions) {

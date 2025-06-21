@@ -369,6 +369,20 @@ public class Faction2 {
         return tags.contains(FactionTag.BATCHALL);
     }
 
+    /**
+     * @return {@code true} if the faction is an aggregate of independent 'factions', rather than a singular
+     *       organization.
+     *
+     *       <p>For example, "PIR" (pirates) is used to abstractly represent all pirates, not individual pirate
+     *       groups.</p>
+     *
+     * @author Illiani
+     * @since 0.50.07
+     */
+    public boolean isAggregate() {
+        return tags.contains(FactionTag.AGGREGATE);
+    }
+
     @Override
     public String toString() {
         return key;

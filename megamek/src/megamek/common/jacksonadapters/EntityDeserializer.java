@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import megamek.common.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.scenario.Scenario;
+import megamek.common.scenario.ScenarioLoaderException;
 
 public class EntityDeserializer extends StdDeserializer<Entity> {
 
@@ -354,7 +355,11 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         BombLoadout loadout = new BombLoadout();
         node.fieldNames().forEachRemaining(name -> {
             var bombNode = node.get(name);
-            loadout.put(BombType.BombTypeEnum.valueOf(name), bombNode.asInt());
+            try {
+                loadout.put(BombType.BombTypeEnum.valueOf(name), bombNode.asInt());
+            } catch (IllegalArgumentException e) {
+                throw new ScenarioLoaderException("Cannot parse bomb type " + name);
+            }
         });
         return loadout;
     }

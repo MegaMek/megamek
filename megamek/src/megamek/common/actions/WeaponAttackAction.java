@@ -4121,6 +4121,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
             te = (Entity) target;
         }
 
+        boolean isBombing = wtype != null &&
+                                   (wtype.hasFlag(WeaponType.F_ALT_BOMB) || wtype.hasFlag(WeaponType.F_DIVE_BOMB));
+
         // Generic modifiers that apply to airborne and ground attackers
 
         // actuator & sensor damage to attacker (includes partial repairs)
@@ -4134,7 +4137,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // Secondary targets modifier, if this is not a iNarc Nemesis confused attack
-        // Also does not apply for altitude bombing or strafing
+        // Also does not apply to attacks that are intrinsically multi-target (altitude bombing and strafing)
         if (!isNemesisConfused && wtype != null && !wtype.hasFlag(WeaponType.F_ALT_BOMB) && !isStrafing) {
             toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
         }
@@ -4241,57 +4244,48 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 }
             }
 
-            // air-to-ground strikes
+            // A2G attacks
             if (Compute.isAirToGround(ae, target) || (ae.isMakingVTOLGroundAttack())) {
-                // When altitude bombing, add the altitude as a modifier
-                if (wtype != null && wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
-                    toHit.addModifier(ae.getAltitude(), Messages.getString("WeaponAttackAction.BombAltitude"));
-                    // -2 for the Golden Goose SPA
+                // TW p.243
+                if (isBombing) {
+                    toHit.addModifier(2, Messages.getString("WeaponAttackAction.Bombing"));
+                    if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                        toHit.addModifier(ae.getAltitude(), Messages.getString("WeaponAttackAction.BombAltitude"));
+                    }
+                    // CO p.75
                     if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
                         toHit.addModifier(-2, Messages.getString("WeaponAttackAction.GoldenGoose"));
                     }
-                    // +4 Modifier for strafing
                 } else if (isStrafing) {
                     toHit.addModifier(+4, Messages.getString("WeaponAttackAction.Strafing"));
-                    // Additional +2 if flying at Nap-of-Earth
-                    if (ae.getAltitude() == 1) {
+                    if (ae.isNOE()) {
                         toHit.addModifier(+2, Messages.getString("WeaponAttackAction.StrafingNoe"));
-                    }
-                    // Additional Nap-of-Earth restrictions for strafing
-                    if (ae.getAltitude() == 1) {
+                        // Nap-of-Earth terrain effects
                         Coords prevCoords = ae.passedThroughPrevious(target.getPosition());
                         Hex prevHex = game.getHex(prevCoords, ae.getPassedThroughBoardId());
                         toHit.append(Compute.getStrafingTerrainModifier(game, eistatus, prevHex));
                     }
-                } else {
-                    // +2 modifier for striking
+                } else { // Striking
                     toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AtgStrike"));
+                    // CO p.75
                     if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
-                        if (wtype != null && wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
-                            // -2 for the Golden Goose SPA if dive bombing
-                            toHit.addModifier(-2, Messages.getString("WeaponAttackAction.GoldenGoose"));
-                        } else {
-                            // -1 for the Golden Goose SPA on strike attacks
-                            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GoldenGoose"));
+                        toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GoldenGoose"));
+                    }
+                }
+            }
+
+            // units making A2G attacks are easier to hit by A2A attacks, TW p.241
+            if (Compute.isAirToAir(game, ae, target) && (te != null)) {
+                for (EntityAction action : game.getActionsVector()) {
+                    if (action instanceof WeaponAttackAction attack) {
+                        if ((attack.getEntityId() == te.getId()) && attack.isAirToGround(game)) {
+                            toHit.addModifier(-3, Messages.getString("WeaponAttackAction.TeGroundAttack"));
+                            break;
                         }
                     }
                 }
             }
-            // units making air to ground attacks are easier to hit by air-to-air
-            // attacks
-            if (Compute.isAirToAir(game, ae, target)) {
-                for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
-                    EntityAction ea = i.nextElement();
-                    if (!(ea instanceof WeaponAttackAction)) {
-                        continue;
-                    }
-                    WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                    if ((te != null && prevAttack.getEntityId() == te.getId()) && prevAttack.isAirToGround(game)) {
-                        toHit.addModifier(-3, Messages.getString("WeaponAttackAction.TeGroundAttack"));
-                        break;
-                    }
-                }
-            }
+
             // grounded aero
             if (!ae.isAirborne() && !ae.isSpaceborne()) {
                 if (ae.isFighter()) {

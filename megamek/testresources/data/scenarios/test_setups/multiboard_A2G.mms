@@ -30,32 +30,20 @@ factions:
   - name: P1
 
     units:
-      #  - fullname: Atlas AS7-D
-      #    at: [ 13,10 ]
-      #    board: 5
-      #    facing: 2
+        - fullname: Atlas AS7-D
+          at: [ 13,10 ]
+          board: 5
+          facing: 2
 
-        # TODO why do bombs allow indirect attacks?
-       # TODO do bombs do damage now?
-
-      - fullname: Cheetah IIC
-        at: [ 20, 17 ]
-        board: 2
-        facing: 1
-        altitude: 5
-        bombs:
-          HE: 5
-
-
-      - fullname: Cheetah IIC
-        at: [ 21, 14 ]
-        board: 2
-        facing: 2
-        altitude: 5
-        bombs:
-          internal:
-            HE: 2
-            LG: 2
-          external:
-            CLUSTER: 1
+        - fullname: Cheetah IIC
+          at: [ 21, 14 ]
+          board: 2
+          facing: 2
+          altitude: 5
+          bombs:
+            internal:
+              HE: 2
+              LG: 2
+            external:
+              CLUSTER: 1
 

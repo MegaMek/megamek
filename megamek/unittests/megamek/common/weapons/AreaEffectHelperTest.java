@@ -184,7 +184,7 @@ class AreaEffectHelperTest {
         // is defined as D - 10 / level, not "R1 falloff".
         assertEquals(7, shape.size());
         assertEquals(10, shape.get(Map.entry(0, centerPoint)));
-        assertEquals(null, shape.get(Map.entry(1, centerPoint)));
+        assertNull(shape.get(Map.entry(1, centerPoint)));
         assertEquals(1, shape.get(Map.entry(0, centerPoint.translated(0, 1))));
     }
 

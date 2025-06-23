@@ -739,7 +739,8 @@ public class AreaEffectHelper {
                 radius = getFuelAirBlastRadiusIndex((bomb.getInternalName()));
             }
             if (bomb.getBombType() == BombTypeEnum.CLUSTER) {
-                falloff = 5;
+                damage = 5;
+                falloff = 0;
                 radius = 1;
                 clusterMunitionsFlag = true;
             }
@@ -1151,8 +1152,9 @@ public class AreaEffectHelper {
             blastRing.put(Map.entry(height, center), falloff.damage);
         }
 
-        int blastDamage = (falloff.clusterMunitionsFlag) ? falloff.damage : falloff.damage - falloff.falloff;
-        for (int ring = 1; blastDamage > 0; ring++, blastDamage -= falloff.falloff) {
+        // Note that Cluster Bombs have no damage falloff (5/5 damage) but only R1.
+        int blastDamage = falloff.damage - falloff.falloff;
+        for (int ring = 1; blastDamage > 0 && ring <= falloff.radius; ring++, blastDamage -= falloff.falloff) {
             List<Coords> ringCoords = center.allAtDistance(ring);
             for (Coords c: ringCoords) {
                 blastRing.put(Map.entry(height, c), blastDamage);

@@ -1805,6 +1805,16 @@ public abstract class TestEntity implements TestEntityOption {
                     w -> w.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
         }
 
+        if (getEntity() instanceof IBomber bomber) {
+            if (bomber.getBombPoints(true) > bomber.getMaxExtBombPoints()) {
+                buff.append("External bomb storage capacity exceeded\n");
+                illegal = true;
+            } else if (bomber.getBombPoints() - bomber.getBombPoints(true) > bomber.getMaxIntBombPoints()) {
+                buff.append("Internal bomb storage capacity exceeded\n");
+                illegal = true;
+            }
+        }
+
         return illegal;
     }
 

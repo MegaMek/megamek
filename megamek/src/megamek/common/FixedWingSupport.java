@@ -237,21 +237,15 @@ public class FixedWingSupport extends ConvFighter {
 
     @Override
     public void autoSetMaxBombPoints() {
-        // fixed wing support craft need external stores hardpoints or the Internal Bomb
-        // Bay quirk
-        // to be able to carry bombs.
-        int bombpoints = 0;
-        for (Mounted<?> misc : getMisc()) {
-            if (misc.getType().hasFlag(MiscType.F_EXTERNAL_STORES_HARDPOINT)) {
-                bombpoints++;
-            }
-        }
-        maxExtBombPoints = bombpoints;
+        // fixed wing support craft need external stores hardpoints or the Internal Bomb Bay quirk to be able to
+        // carry bombs
+        maxExtBombPoints = countMisc(EquipmentTypeLookup.SV_EXTERNAL_HARDPOINT);
 
-        // fixed-wing support craft may also use internal transport bays as bomb bays
-        // with Internal Bomb Bay quirk.
-        maxIntBombPoints = getTransportBays().stream().mapToInt(
-                tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0).sum();
+        // fixed-wing support craft may also use internal transport bays as bomb bays with Internal Bomb Bay quirk
+        maxIntBombPoints = getTransportBays().stream()
+                                 .filter(tb -> tb instanceof CargoBay)
+                                 .mapToInt(tb -> (int) Math.floor(tb.getUnused()))
+                                 .sum();
     }
 
     @Override

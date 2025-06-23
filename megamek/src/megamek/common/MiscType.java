@@ -8224,7 +8224,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.tonnage = 0.2;
         misc.cost = 5000;
-        misc.name = "External Stores Hardpoint";
+        misc.name = EquipmentTypeLookup.SV_EXTERNAL_HARDPOINT;
         misc.setInternalName(misc.name);
         misc.flags = misc.flags.or(F_EXTERNAL_STORES_HARDPOINT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.industrial = true;

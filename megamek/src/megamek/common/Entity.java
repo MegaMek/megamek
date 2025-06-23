@@ -14135,6 +14135,8 @@ public abstract class Entity extends TurnOrdered
             return "Infantry";
         } else if ((typeId & ETYPE_PROTOMEK) == ETYPE_PROTOMEK) {
             return "ProtoMek";
+        } else if ((typeId & ETYPE_HANDHELD_WEAPON) == ETYPE_HANDHELD_WEAPON) {
+            return "Handheld Weapon";
         } else {
             return "Unknown";
         }
@@ -14204,6 +14206,8 @@ public abstract class Entity extends TurnOrdered
             return "VTOL";
         } else if ((typeId & ETYPE_TANK) == ETYPE_TANK) {
             return "Tank";
+        } else if ((typeId & ETYPE_HANDHELD_WEAPON) == ETYPE_HANDHELD_WEAPON) {
+            return "Handheld Weapon";
         } else {
             return "Unknown";
         }

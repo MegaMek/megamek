@@ -470,8 +470,10 @@ public class FighterSquadron extends AeroSpaceFighter {
             int currBombPoints = (int) Math.round(fighter.getWeight() / 5);
             maxExtBombPoints = Math.min(maxExtBombPoints, currBombPoints);
             // Internal (cargo bay) bomb points; requires IBB to utilize
-            currBombPoints = getTransportBays().stream().mapToInt(
-                    tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0).sum();
+            currBombPoints = getTransportBays().stream()
+                                     .filter(tb -> tb instanceof CargoBay)
+                                     .mapToInt(tb -> (int) Math.floor(tb.getUnused()))
+                                     .sum();
             maxIntBombPoints = Math.min(maxIntBombPoints, currBombPoints);
         }
     }

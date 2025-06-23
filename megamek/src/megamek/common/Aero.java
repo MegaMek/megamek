@@ -567,6 +567,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         return maxExtBombPoints;
     }
 
+    /**
+     * Recalculates the internal and external hardpoints that this aero unit has. TM p.217, TW p.245
+     */
     public void autoSetMaxBombPoints() {
         // Stock Aerospace units cannot carry bombs
         maxExtBombPoints = maxIntBombPoints = 0;

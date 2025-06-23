@@ -623,9 +623,9 @@
 			</model>
 		</chassis>
 		<chassis name='Assassin' unitType='Mek'>
-			<availability>IS:4,FS:4,LA:4,CC:1,MERC:3,CS:3-,CIH!Front Line:2!Second Line:1,TC:1,MOC:1</availability>
+			<availability>IS:4,FS:4,LA:4,CC:1,MERC:3,CS:3-,CCC:1,CIH!Front Line:2!Second Line:1,TC:1,MOC:1</availability>
 			<model name='ASN-21'>
-				<availability>IS:8,CIH:8,Periphery:8</availability>
+				<availability>IS:8,CCC:8,CIH:8,Periphery:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Athena Cruiser' unitType='Warship'>
@@ -2317,7 +2317,7 @@
 			</model>
 		</chassis>
 		<chassis name='Griffin' unitType='Mek'>
-			<availability>IS:9,LA:9,DC:8,CC:7,MERC:6,CS:4,PP:4,CLAN:6,CB:5,CHH:5,CIH:5+,CSR:5,CSA:5,CSV:5,CWI:5,CWOV:5,Periphery:5,TC:7,MOC:7,OA:6,NIOPS:4,Periphery.Deep:5</availability>
+			<availability>IS:9,DC:8,CC:7,MERC:6,CS:4,PP:4,CLAN:6,CB:5,CHH:5,CIH:5+,CSR:5,CSA:5,CSV:5,CWI:5,CWOV:5,Periphery:5,TC:7,MOC:7,OA:6,NIOPS:4,Periphery.Deep:5</availability>
 			<model name='GRF-1N'>
 				<availability>IS:8,PP:8,CCC:3-,CIH:3-,CJF:3-,Periphery:8,Periphery.Deep:8</availability>
 			</model>
@@ -2631,7 +2631,7 @@
 			</model>
 		</chassis>
 		<chassis name='Hoplite' unitType='Mek'>
-			<availability>FS:5,LA:5,DC:4,FWL:5,CC:5,PP:3+,CBS:4+,CGB:5+,CGS:5+,CHH:6+,CJF:4+,CNC:3+,TC:5,MOC:4,OA:4</availability>
+			<availability>FS:5,LA:5,DC:4,FWL:5,CC:5,PP:3+,CBS:4+,CGB:5+,CGS:5+,CHH:6+,CJF:4,CNC:3+,TC:5,MOC:4,OA:4</availability>
 			<model name='HOP-4B'>
                 <roles>inf_support,fire_support</roles>
 				<availability>CC:2</availability>
@@ -5214,7 +5214,7 @@
 			</model>
 		</chassis>
 		<chassis name='Wyvern' unitType='Mek'>
-			<availability>FS:6,DC:6,CC:6,MERC:5,CS:6,PP:6,CLAN:4,CCC:3,CGB:3,CGS:3,CIH:2-,CJF:3,CMG:4-,CDS:3,CSJ:2,CSR:3,CSV:3,CW:3,CWOV:3,NIOPS:6,TC:5</availability>
+			<availability>FS:6,DC:6,CC:6,MERC:5,CS:6,PP:6,CLAN:4,CCC:3,CGB:3,CGS:3,CIH:2-,CJF:3,CMG:4-,CDS:3,CSJ:2,CSR:3,CSV:3,CW:3,CWOV:3,TC:5,NIOPS:6</availability>
 			<model name='WVE-5N'>
 				<roles>urban</roles>
 				<availability>FS:8,DC:8,CC:8,CS:8,PP:6,CBS:4-,CB:4-,CCO:4-,CFM:4-,TC:8,NIOPS:8</availability>

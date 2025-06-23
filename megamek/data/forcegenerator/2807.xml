@@ -447,9 +447,9 @@
 			</model>
 		</chassis>
 		<chassis name='Assassin' unitType='Mek'>
-			<availability>IS:4,FS:4,FS.CMM:4,LA:4,CC:1,MERC:3,CS:3-,TC:1,MOC:1</availability>
+			<availability>IS:4,FS:4,FS.CMM:4,LA:4,CC:1,MERC:3,CS:3-,CCC:1,CIH!Front Line:2!Second Line:1,TC:1,MOC:1</availability>
 			<model name='ASN-21'>
-				<availability>IS:8,Periphery:8</availability>
+				<availability>IS:8,CCC:8,CIH:8,Periphery:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Athena Cruiser' unitType='Warship'>

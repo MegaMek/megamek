@@ -4630,7 +4630,7 @@ public abstract class Entity extends TurnOrdered
                       game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB) &&
                       m.getType().hasFlag(AmmoType.F_SPACE_BOMB) &&
                       isBomber() &&
-                      game.getBoard().isSpace()) {
+                      isSpaceborne()) {
                 try {
                     WeaponMounted bomb = (WeaponMounted) addEquipment(spaceBomb, m.getLocation(), false);
                     if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
@@ -4643,7 +4643,7 @@ public abstract class Entity extends TurnOrdered
                 foundSpaceBomb = true;
             }
 
-            if (!game.getBoard().isSpace() &&
+            if (!isSpaceborne() &&
                       m.getType().hasFlag(AmmoType.F_GROUND_BOMB) &&
                       !((this instanceof LandAirMek) && (getConversionMode() == LandAirMek.CONV_MODE_MEK))) {
                 if (addedBombAttacks < 1) {
@@ -14135,6 +14135,8 @@ public abstract class Entity extends TurnOrdered
             return "Infantry";
         } else if ((typeId & ETYPE_PROTOMEK) == ETYPE_PROTOMEK) {
             return "ProtoMek";
+        } else if ((typeId & ETYPE_HANDHELD_WEAPON) == ETYPE_HANDHELD_WEAPON) {
+            return "Handheld Weapon";
         } else {
             return "Unknown";
         }
@@ -14204,6 +14206,8 @@ public abstract class Entity extends TurnOrdered
             return "VTOL";
         } else if ((typeId & ETYPE_TANK) == ETYPE_TANK) {
             return "Tank";
+        } else if ((typeId & ETYPE_HANDHELD_WEAPON) == ETYPE_HANDHELD_WEAPON) {
+            return "Handheld Weapon";
         } else {
             return "Unknown";
         }

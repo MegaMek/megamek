@@ -1,0 +1,16 @@
+key: MRB
+name: Mercenary Bonding Authority
+capital: Twycross
+yearsActive:
+  - start: 3133
+tags:
+  - CLAN
+  - MERC
+  - SPECIAL
+  - CORPORATION
+color:
+  red: 169
+  green: 169
+  blue: 169
+fallBackFactions:
+  - CDS

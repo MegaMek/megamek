@@ -1728,4 +1728,6 @@ class ComputeToHit {
         srt.setSpecialResolution(true);
         return toHit;
     }
+
+    private ComputeToHit() { }
 }

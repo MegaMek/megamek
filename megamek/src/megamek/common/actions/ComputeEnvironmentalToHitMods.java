@@ -150,4 +150,6 @@ class ComputeEnvironmentalToHitMods {
         }
         return toHit;
     }
+
+    private ComputeEnvironmentalToHitMods() { }
 }

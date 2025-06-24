@@ -376,4 +376,6 @@ class ComputeTargetToHitMods {
 
         return toHit;
     }
+
+    private ComputeTargetToHitMods() { }
 }

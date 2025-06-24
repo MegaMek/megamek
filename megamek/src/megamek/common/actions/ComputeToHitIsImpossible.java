@@ -1948,4 +1948,6 @@ class ComputeToHitIsImpossible {
         }
         return true;
     }
+
+    private ComputeToHitIsImpossible() { }
 }

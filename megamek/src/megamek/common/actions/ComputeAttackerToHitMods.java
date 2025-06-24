@@ -396,4 +396,6 @@ class ComputeAttackerToHitMods {
 
         return toHit;
     }
+
+    private ComputeAttackerToHitMods() { }
 }

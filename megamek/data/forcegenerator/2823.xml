@@ -3381,7 +3381,7 @@
 			<availability>LA:4+,DC:4+,FWL:4+,CLAN:5+,CBS:4+,CCC:4+,CFM:4+,CGS:4+,CHH:4+,CMG:4+,CNC:3+,CDS:3+,CSR:4+,CSA:3+,CWI:4+,CWOV:3+</availability>
 			<model name='LNX-9Q'>
                 <roles>raider</roles>
-				<availability>CLAN:8,IS:6+</availability>
+				<availability>IS:8,CLAN:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Lyonesse Escort' unitType='Small Craft'>

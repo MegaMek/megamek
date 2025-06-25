@@ -3192,7 +3192,7 @@
 			<availability>FS:3+,FWL:3+,CBS:3+,CCC:2+,CMG:3+,CDS!Front Line:2!Second Line:1</availability>
 			<model name='KY2-D-02'>
 				<roles>fire_support</roles>
-				<availability>FS:8,FWL:8,CLAN:8</availability>
+				<availability>FS:8,FWL:8,CBS:8,CCC:8,CMG:8,CDS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='LRM Carrier' unitType='Tank'>
@@ -4666,7 +4666,7 @@
 			</model>
 		</chassis>
 		<chassis name='Scorpion' unitType='Mek'>
-			<availability>LA:5-,DC:5-,FWL:5-,CC:5-,MERC:5-,CS:3-,CGS:2-,Periphery:5-,NIOPS:3-,Periphery.Deep:5-,BAN:2-</availability>
+			<availability>LA:5-,DC:5-,FWL:5-,CC:5-,MERC:5-,CS:3-,CGS:2-,Periphery:5-,NIOPS:3-,Periphery.Deep:5-</availability>
 			<model name='SCP-1N'>
 				<availability>IS:8,MERC:8,CGS:8,Periphery:8,Periphery.Deep:8</availability>
 			</model>
@@ -4692,7 +4692,7 @@
 			</model>
 		</chassis>
 		<chassis name='Sentinel' unitType='Mek'>
-			<availability>FS:3,LA:5,DC:3,FWL:3,CC:1,CS:4,CLAN:5-,CBS:6-,CB:4-,CCO:4-,CFM:6-,CGB:5-,CHH:4-,CJF:4-,CNC:4-,CDS:3,CSJ:4-,CSR:6-,CSA:4-,CSV:4-,CWI:4-,CLAN:6,NIOPS:4,BAN:2</availability>
+			<availability>FS:3,LA:5,DC:3,FWL:3,CC:1,CS:4,CLAN:5-,CBS:6-,CB:4-,CCO:4-,CFM:6-,CGB:5-,CHH:4-,CJF:4-,CNC:4-,CDS:3,CSJ:4-,CSR:6-,CSA:4-,CSV:4-,CWI:4-,NIOPS:4,BAN:2</availability>
 			<model name='STN-1S'>
 				<availability>LA:1,FWL:1,FS:1</availability>
 			</model>

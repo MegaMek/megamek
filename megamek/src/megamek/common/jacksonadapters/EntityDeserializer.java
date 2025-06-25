@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import megamek.common.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.scenario.Scenario;
+import megamek.common.scenario.ScenarioLoaderException;
 
 public class EntityDeserializer extends StdDeserializer<Entity> {
 
@@ -57,6 +58,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String REMAINING = "remaining";
     private static final String ARMOR = "armor";
     private static final String INTERNAL = "internal";
+    private static final String EXTERNAL = "external";
     private static final String FORCE = "force";
     private static final String CRITS = "crits";
     private static final String AMMO = "ammo";
@@ -64,6 +66,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String SHOTS = "shots";
     public static final String FLEE_AREA = "fleefrom";
     private static final String AREA = "area";
+    private static final String BOMBS = "bombs";
 
     public EntityDeserializer() {
         this(null);
@@ -94,6 +97,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         assignRemaining(entity, node);
         assignCrits(entity, node);
         assignAmmos(entity, node);
+        assignBombs(entity, node);
         assignFleeArea(entity, node);
         return entity;
     }
@@ -327,6 +331,37 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
                 throw new IllegalArgumentException("Invalid ammo slot " + location + ":" + (slot + 1) + " on " + entity);
             }
         }
+    }
+
+    private void assignBombs(Entity entity, JsonNode node) {
+        if (node.has(BOMBS) && entity instanceof IBomber bomber) {
+            JsonNode bombsNode = node.get(BOMBS);
+            // bombs must use the external and/or internal keywords or give the bombs directly, in which case they are
+            // external
+            if (bombsNode.has(EXTERNAL) || bombsNode.has(INTERNAL)) {
+                if (bombsNode.has(EXTERNAL)) {
+                    bomber.setExtBombChoices(readBombLoadout(bombsNode.get(EXTERNAL)));
+                }
+                if (bombsNode.has(INTERNAL)) {
+                    bomber.setIntBombChoices(readBombLoadout(bombsNode.get(INTERNAL)));
+                }
+            } else {
+                bomber.setExtBombChoices(readBombLoadout(bombsNode));
+            }
+        }
+    }
+
+    private BombLoadout readBombLoadout(JsonNode node) {
+        BombLoadout loadout = new BombLoadout();
+        node.fieldNames().forEachRemaining(name -> {
+            var bombNode = node.get(name);
+            try {
+                loadout.put(BombType.BombTypeEnum.valueOf(name), bombNode.asInt());
+            } catch (IllegalArgumentException e) {
+                throw new ScenarioLoaderException("Cannot parse bomb type " + name);
+            }
+        });
+        return loadout;
     }
 
     private void assignFleeArea(Entity entity, JsonNode node) {

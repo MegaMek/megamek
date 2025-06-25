@@ -20,6 +20,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.WeaponTypeFlag;
 
 /**
  * @author Sebastian Brocks
@@ -29,7 +30,7 @@ public abstract class InfantryAttack extends Weapon {
 
     public InfantryAttack() {
         super();
-        flags = flags.or(F_NO_FIRES).or(F_SOLO_ATTACK).or(F_INFANTRY_ATTACK);
+        flags = flags.or(F_NO_FIRES).or(F_SOLO_ATTACK).or(F_INFANTRY_ATTACK).or(WeaponTypeFlag.INTERNAL_REPRESENTATION);
         heat = 0;
         damage = DAMAGE_SPECIAL;
         ammoType = AmmoType.AmmoTypeEnum.NA;

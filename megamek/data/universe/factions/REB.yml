@@ -3,6 +3,7 @@ name: Rebels
 capital: Terra
 tags:
   - REBEL
+  - AGGREGATE
 color:
   red: 192
   green: 192

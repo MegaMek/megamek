@@ -23,6 +23,7 @@ import megamek.common.AmmoType;
 import megamek.common.IBomber;
 import megamek.common.Game;
 import megamek.common.ToHitData;
+import megamek.common.WeaponTypeFlag;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -51,9 +52,8 @@ public class AltitudeBombAttack extends Weapon {
         criticals = 0;
         bv = 0;
         cost = 0;
-        flags = flags.or(F_ALT_BOMB);
+        flags = flags.or(F_ALT_BOMB).or(WeaponTypeFlag.INTERNAL_REPRESENTATION);
         hittable = false;
-        capital = true;
         techAdvancement.setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);
     }
 

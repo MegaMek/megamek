@@ -94,6 +94,9 @@ public class BombType extends AmmoType {
             return weaponName;
         }
 
+        /**
+         * @return The amount of hardpoint space that one of this bomb type takes up when carried by a fighter unit.
+         */
         public int getCost() {
             return cost;
         }

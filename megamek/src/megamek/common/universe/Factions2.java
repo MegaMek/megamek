@@ -114,6 +114,17 @@ public final class Factions2 {
     }
 
     /**
+     * This constructor is intended for unit testing only and will load factions *only* from the provided path. The
+     * path is used as it is.
+     *
+     * @param factionsDataPath The path to load factions data from
+     */
+    public Factions2(String factionsDataPath) {
+        ObjectMapper mapper = getLoadMapper();
+        loadFactionsFromDirectory(factionsDataPath, mapper);
+    }
+
+    /**
      * @return All available factions. The returned Collection is a view of the internal faction list and must not be
      *       modified.
      */
@@ -135,10 +146,7 @@ public final class Factions2 {
      */
     private void loadFactionsFromFile() {
         LOGGER.info("Loading Faction and Command data...");
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(Color.class, new ColorDeserializer());
-        mapper.registerModule(module);
+        ObjectMapper mapper = getLoadMapper();
         loadFactionsFromDirectory(MMConstants.FACTIONS_DIR, mapper);
         loadFactionsFromDirectory(MMConstants.COMMANDS_DIR, mapper);
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
@@ -147,6 +155,17 @@ public final class Factions2 {
             loadFactionsFromDirectory(new File(userDir, MMConstants.COMMANDS_DIR).toString(), mapper);
         }
         LOGGER.info(String.format("Loaded a total of %d factions and commands", factions.size()));
+    }
+
+    /**
+     * @return The Jackson ObjectMapper that should be used to load factions from the yaml files
+     */
+    private ObjectMapper getLoadMapper() {
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(Color.class, new ColorDeserializer());
+        mapper.registerModule(module);
+        return mapper;
     }
 
     /**

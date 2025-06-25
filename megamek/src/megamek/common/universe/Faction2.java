@@ -35,15 +35,7 @@ package megamek.common.universe;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -77,12 +69,14 @@ import megamek.client.ratgenerator.FactionRecord;
  * avoid repetition.
  */
 @SuppressWarnings("unused") // Class fields are assigned when factions are loaded from YAML files
-@JsonPropertyOrder({"key", "name", "nameChanges", "capital", "capitalChanges", "yearsActive", "successor",
-      "tags", "color", "logo", "background", "camos", "camosChanges", "nameGenerator", "eraMods", "ratingLevels",
-      "fallBackFactions", "preInvasionHonorRating", "postInvasionHonorRating", "formationBaseSize", "formationGrouping"})
+@JsonPropertyOrder({ "key", "name", "nameChanges", "capital", "capitalChanges", "yearsActive", "successor", "tags",
+                     "color", "logo", "background", "camos", "camosChanges", "nameGenerator", "eraMods", "ratingLevels",
+                     "fallBackFactions", "preInvasionHonorRating", "postInvasionHonorRating", "formationBaseSize",
+                     "formationGrouping", "rankSystem" })
 public class Faction2 {
-
     private static final int UNKNOWN = -1;
+    private static final String DEFAULT_RANK_SYSTEM_INNER_SPHERE = "SLDF";
+    private static final String DEFAULT_RANK_SYSTEM_CLAN = "CLAN";
 
     private String key;
     private String name;
@@ -108,6 +102,7 @@ public class Faction2 {
     private final HonorRating postInvasionHonorRating = HonorRating.NONE;
     private int formationBaseSize = UNKNOWN;
     private int formationGrouping = UNKNOWN;
+    private String rankSystem = null;
 
     public List<String> getRatingLevels() {
         return ratingLevels;
@@ -124,10 +119,6 @@ public class Faction2 {
     public String getName(int year) {
         final Map.Entry<Integer, String> nameByYear = nameChanges.floorEntry(year);
         return (nameByYear == null) ? name : nameByYear.getValue();
-    }
-
-    public void setTags(final Set<FactionTag> tags) {
-        this.tags = tags;
     }
 
     public Set<FactionTag> getTags() {
@@ -244,6 +235,38 @@ public class Faction2 {
         return isClan() ? 5 : 3;
     }
 
+    /**
+     * Retrieves the rank system identifier for this faction.
+     *
+     * <p>The method checks the `rankSystem` field; if it is set and not {@code null}, its value is returned
+     * directly.</p>
+     *
+     * <p>If the rank system is unspecified but there are fallback factions, the method iterates through each
+     * fallback faction, returning the first available rank system found among them.</p>
+     *
+     * <p>If no fallback faction provides a rank system, the method returns a default value based on whether the
+     * faction is a clan or not.</p>
+     *
+     * @return the rank system identifier for this faction, or a default value ({@link #DEFAULT_RANK_SYSTEM_CLAN} for
+     *       Clan factions, {@link #DEFAULT_RANK_SYSTEM_INNER_SPHERE} for non-Clan factions) if not specified.
+     *
+     * @author Illiani
+     * @since 0.50.07
+     */
+    public String getRankSystem() {
+        if (rankSystem != null) {
+            return rankSystem;
+        } else if (!fallBackFactions.isEmpty()) {
+            for (String factionCode : fallBackFactions) {
+                Optional<Faction2> fallBackFaction = Factions2.getInstance().getFaction(factionCode);
+                if (fallBackFaction.isPresent()) {
+                    return fallBackFaction.get().getRankSystem();
+                }
+            }
+        }
+        return isClan() ? DEFAULT_RANK_SYSTEM_CLAN : DEFAULT_RANK_SYSTEM_INNER_SPHERE;
+    }
+
     @JsonIgnore
     public boolean isClan() {
         return is(FactionTag.CLAN);
@@ -357,8 +380,13 @@ public class Faction2 {
     }
 
     @JsonGetter("formationBaseSize")
-    private Integer originalformationBaseSize() {
+    private Integer originalFormationBaseSize() {
         return formationBaseSize != UNKNOWN ? formationBaseSize : null;
+    }
+
+    @JsonGetter("rankSystem")
+    private String originalRankSystem() {
+        return !Objects.equals(rankSystem, UNKNOWN + "") ? rankSystem : null;
     }
 
     @JsonGetter("tags") // sorts tags alphabetically (would be random otherwise)
@@ -371,6 +399,20 @@ public class Faction2 {
      */
     public boolean performsBatchalls() {
         return tags.contains(FactionTag.BATCHALL);
+    }
+
+    /**
+     * @return {@code true} if the faction is an aggregate of independent 'factions', rather than a singular
+     *       organization.
+     *
+     *       <p>For example, "PIR" (pirates) is used to abstractly represent all pirates, not individual pirate
+     *       groups.</p>
+     *
+     * @author Illiani
+     * @since 0.50.07
+     */
+    public boolean isAggregate() {
+        return tags.contains(FactionTag.AGGREGATE);
     }
 
     @Override

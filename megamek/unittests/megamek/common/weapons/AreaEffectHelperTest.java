@@ -48,8 +48,12 @@ class AreaEffectHelperTest {
     static Player player1 = new Player(0, "Test1");
     static Player player2 = new Player(1, "Test2");
     static AmmoType mockLTAmmoType = (AmmoType) EquipmentType.get("ISLongTom Ammo");
+    static AmmoType mockLTClusterAmmoType = (AmmoType) EquipmentType.get("ISLongTom Cluster Ammo");
     static AmmoType mockSniperAmmoType = (AmmoType) EquipmentType.get("ISSniper Ammo");
+    static AmmoType mockSniperClusterAmmoType = (AmmoType) EquipmentType.get("ISSniper Cluster Ammo");
+    static AmmoType mockThumperClusterAmmoType = (AmmoType) EquipmentType.get("ISThumper Cluster Ammo");
     static AmmoType mockBombHEAmmoType = (AmmoType) EquipmentType.get("HEBomb");
+    static AmmoType mockBombClusterAmmoType = (AmmoType) EquipmentType.get("ClusterBomb");
     static AmmoType mockBombFAEAmmoType = (AmmoType) EquipmentType.get("FABombSmall Ammo");
 
     @BeforeAll
@@ -105,6 +109,83 @@ class AreaEffectHelperTest {
         // We expect a disk of 6 + 12 hexes centered around the centerPoint, but no centerPoint
         assertEquals(18, shape.size());
         assertFalse(shape.containsKey(Map.entry(0, centerPoint)));
+    }
+
+    @Test
+    void testClusterBombCorrectDamageShape() {
+        game.setBoard(new Board(16,17));
+        Coords centerPoint = new Coords(7,7);
+
+        int height = 0;
+
+        // This a non-artillery attack.
+        HashMap<Map.Entry<Integer, Coords>, Integer> shape = AreaEffectHelper.shapeBlast(
+              mockBombClusterAmmoType,
+              centerPoint, height, false, false, false, game, false
+        );
+
+        // Cluster Bomb has R1 and does 5 points of damage across the entire area
+        assertEquals(7, shape.size());
+        assertEquals(5, shape.get(Map.entry(0, centerPoint)));
+        assertEquals(5, shape.get(Map.entry(0, centerPoint.translated(0, 1))));
+    }
+
+    @Test
+    void testClusterLongTomCorrectDamageShape() {
+        game.setBoard(new Board(16,17));
+        Coords centerPoint = new Coords(7,7);
+
+        // This a Cluster artillery attack.
+        AmmoType ammo = mockLTClusterAmmoType;
+        DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
+        HashMap<Map.Entry<Integer, Coords>, Integer> shape = AreaEffectHelper.shapeBlast(
+              ammo, centerPoint, falloff, 0, true, false, false, game, false
+        );
+
+        // Cluster Long Tom has R1 and does  20/10 damage, plus 10 damage @ 1 level above center
+        assertEquals(8, shape.size());
+        assertEquals(20, shape.get(Map.entry(0, centerPoint)));
+        assertEquals(10, shape.get(Map.entry(1, centerPoint)));
+        assertEquals(10, shape.get(Map.entry(0, centerPoint.translated(0, 1))));
+    }
+
+    @Test
+    void testClusterSniperCorrectDamageShape() {
+        game.setBoard(new Board(16,17));
+        Coords centerPoint = new Coords(7,7);
+
+        // This a Cluster artillery attack.
+        AmmoType ammo = mockSniperClusterAmmoType;
+        DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
+        HashMap<Map.Entry<Integer, Coords>, Integer> shape = AreaEffectHelper.shapeBlast(
+              ammo, centerPoint, falloff, 0, true, false, false, game, false
+        );
+
+        // Cluster Sniper has R1 and does  15/5 damage, plus 5 damage @ 1 level above center
+        assertEquals(8, shape.size());
+        assertEquals(15, shape.get(Map.entry(0, centerPoint)));
+        assertEquals(5, shape.get(Map.entry(1, centerPoint)));
+        assertEquals(5, shape.get(Map.entry(0, centerPoint.translated(0, 1))));
+    }
+
+    @Test
+    void testClusterThumperCorrectDamageShape() {
+        game.setBoard(new Board(16,17));
+        Coords centerPoint = new Coords(7,7);
+
+        // This a Cluster artillery attack.
+        AmmoType ammo = mockThumperClusterAmmoType;
+        DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
+        HashMap<Map.Entry<Integer, Coords>, Integer> shape = AreaEffectHelper.shapeBlast(
+              ammo, centerPoint, falloff, 0, true, false, false, game, false
+        );
+
+        // Cluster Thumper has R1 and does  10/1 damage.  No level 1 damage because vertical falloff
+        // is defined as D - 10 / level, not "R1 falloff".
+        assertEquals(7, shape.size());
+        assertEquals(10, shape.get(Map.entry(0, centerPoint)));
+        assertNull(shape.get(Map.entry(1, centerPoint)));
+        assertEquals(1, shape.get(Map.entry(0, centerPoint.translated(0, 1))));
     }
 
     @Test

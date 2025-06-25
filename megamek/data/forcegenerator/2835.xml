@@ -1878,9 +1878,9 @@
 			</model>
 		</chassis>
 		<chassis name='Corvis' unitType='Mek'>
-			<availability>CHH!Keshik:3,CGB:1+</availability>
+			<availability>CGB:1+,CHH!Keshik:3</availability>
 			<model name=''>
-				<availability>CHH:8,CGB:8</availability>
+				<availability>CGB:8,CHH:8</availability>
 			</model>
 		</chassis>
         <chassis name='Corx Mobile Tunnel Miner' unitType='Tank'>
@@ -2727,15 +2727,15 @@
 			</model>
 		</chassis>
 		<chassis name='Great Wyrm' unitType='Mek'>
-			<availability>CMG!Keshik:3,CBS:1+:2846,CB:1+:2846,CJF:1+:2846,CNC:1+:2846,CSJ:1+:2846,CSA:1+:2845,CW:1+:2846</availability>
+			<availability>CBS:1+:2846,CB:1+:2846,CJF:1+:2846,CMG!Keshik:3,CNC:1+:2846,CSJ:1+:2846,CSA:1+:2845,CW:1+:2846</availability>
 			<model name=''>
 				<availability>CLAN:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Griffin IIC' unitType='Mek'>
-			<availability>CSJ!Keshik:3,CNC:1+:2853</availability>
+			<availability>CNC:1+:2853,CSJ!Keshik:3</availability>
 			<model name=''>
-				<availability>CSJ:8,CNC:8</availability>
+				<availability>CNC:8,CSJ:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Griffin' unitType='Mek'>
@@ -4420,7 +4420,7 @@
 			</model>
 		</chassis>
 		<chassis name='Naja' unitType='Mek'>
-			<availability>CLAN!Front Line:1,CBS!Keshik:1!Front Line:1,CB:0,CCC!Keshik:3!Front Line:1,CFM:1+,BAN:0</availability>
+			<availability>CLAN!Front Line:1,CBS!Keshik:1!Front Line:1,CCC!Keshik:3!Front Line:1,CFM:1+,BAN:0</availability>
             <model name=''>
                 <availability>CLAN:8,CCC:3+</availability>
             </model>

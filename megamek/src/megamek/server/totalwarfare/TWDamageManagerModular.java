@@ -1089,203 +1089,201 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         damage = applyModularArmor(aero, hit, damage, ammoExplosion, damageIS, reportVec);
 
         // Allocate the damage
-        while (damage > 0) {
-            // first check for ammo explosions on aeros separately, because it must be done before standard to
-            // capital damage conversions
-            if ((hit.getLocation() == Aero.LOC_AFT) && !damageIS) {
-                for (Mounted<?> mAmmo : aero.getAmmo()) {
-                    if (mAmmo.isDumping() &&
-                              !mAmmo.isDestroyed() &&
-                              !mAmmo.isHit() &&
-                              !(mAmmo.getType() instanceof BombType)) {
-                        // doh. explode it
-                        reportVec.addAll(manager.explodeEquipment(aero, mAmmo.getLocation(), mAmmo));
-                        mAmmo.setHit(true);
-                    }
+        // first check for ammo explosions on aeros separately, because it must be done before standard to
+        // capital damage conversions
+        if ((hit.getLocation() == Aero.LOC_AFT) && !damageIS) {
+            for (Mounted<?> mAmmo : aero.getAmmo()) {
+                if (mAmmo.isDumping() &&
+                          !mAmmo.isDestroyed() &&
+                          !mAmmo.isHit() &&
+                          !(mAmmo.getType() instanceof BombType)) {
+                    // doh. explode it
+                    reportVec.addAll(manager.explodeEquipment(aero, mAmmo.getLocation(), mAmmo));
+                    mAmmo.setHit(true);
                 }
             }
+        }
 
-            // Report this either way
-            if (!ammoExplosion) {
-                report = new Report(6065);
+        // Report this either way
+        if (!ammoExplosion) {
+            report = new Report(6065);
+            report.subject = entityId;
+            report.indent(2);
+            report.addDesc(aero);
+            report.add(damage);
+            if (damageIS) {
+                report.messageId = 6070;
+            }
+            report.add(aero.getLocationAbbr(hit));
+            reportVec.addElement(report);
+        }
+
+        // Capital fighters receive damage differently
+        if (aero.isCapitalFighter()) {
+            aero.setCurrentDamage(aero.getCurrentDamage() + damage);
+            aero.setCapArmor(aero.getCapArmor() - damage);
+            report = new Report(9065);
+            report.subject = entityId;
+            report.indent(2);
+            report.newlines = 0;
+            report.addDesc(aero);
+            report.add(damage);
+            reportVec.addElement(report);
+            report = new Report(6085);
+            report.subject = entityId;
+            report.add(Math.max(aero.getCapArmor(), 0));
+            reportVec.addElement(report);
+            // check to see if this destroyed the entity
+            if (aero.getCapArmor() <= 0) {
+                // Lets auto-eject if we can!
+                // Aeros eject if the SI Destroyed switch is on
+                if (aero.isAutoEject() &&
+                          (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
+                                 (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
+                                        aero.isCondEjectSIDest()))) {
+                    reportVec.addAll(manager.ejectEntity(aero, true, false));
+                }
+                reportVec.addAll(manager.destroyEntity(aero, "Structural Integrity Collapse"));
+                aero.doDisbandDamage();
+                aero.setCapArmor(0);
+                if (hit.getAttackerId() != Entity.NONE) {
+                    manager.creditKill(aero, game.getEntity(hit.getAttackerId()));
+                }
+            }
+            // check for aero crits from natural 12 or threshold; LAMs take damage as meks
+            manager.checkAeroCrits(reportVec, aero, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
+            
+            // Return early
+            return;
+        }
+
+        damage = applyEntityArmorDamage(aero, hit, damage, ammoExplosion, damageIS, areaSatArty, reportVec, mods);
+
+        if (damage > 0) {
+            // If this is an Aero, then I need to apply internal damage
+            // to the SI after halving it. Return from here to prevent
+            // further processing
+
+            // check for large craft ammo explosions here: damage vented through armor, excess
+            // dissipating, much like Tank CASE.
+            if (ammoExplosion && aero.isLargeCraft()) {
+                aero.damageThisPhase += damage;
+                report = new Report(6128);
                 report.subject = entityId;
                 report.indent(2);
-                report.addDesc(aero);
                 report.add(damage);
-                if (damageIS) {
-                    report.messageId = 6070;
-                }
-                report.add(aero.getLocationAbbr(hit));
-                reportVec.addElement(report);
-            }
-
-            // Capital fighters receive damage differently
-            if (aero.isCapitalFighter()) {
-                aero.setCurrentDamage(aero.getCurrentDamage() + damage);
-                aero.setCapArmor(aero.getCapArmor() - damage);
-                report = new Report(9065);
-                report.subject = entityId;
-                report.indent(2);
-                report.newlines = 0;
-                report.addDesc(aero);
-                report.add(damage);
-                reportVec.addElement(report);
-                report = new Report(6085);
-                report.subject = entityId;
-                report.add(Math.max(aero.getCapArmor(), 0));
-                reportVec.addElement(report);
-                // check to see if this destroyed the entity
-                if (aero.getCapArmor() <= 0) {
-                    // Lets auto-eject if we can!
-                    // Aeros eject if the SI Destroyed switch is on
-                    if (aero.isAutoEject() &&
-                              (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
-                                     (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                                            aero.isCondEjectSIDest()))) {
-                        reportVec.addAll(manager.ejectEntity(aero, true, false));
-                    }
-                    reportVec.addAll(manager.destroyEntity(aero, "Structural Integrity Collapse"));
-                    aero.doDisbandDamage();
-                    aero.setCapArmor(0);
-                    if (hit.getAttackerId() != Entity.NONE) {
-                        manager.creditKill(aero, game.getEntity(hit.getAttackerId()));
+                int loc = hit.getLocation();
+                //Roll for broadside weapons so fore/aft side armor facing takes the damage
+                if (loc == Warship.LOC_LBS) {
+                    int locRoll = Compute.d6();
+                    if (locRoll < 4) {
+                        loc = Jumpship.LOC_FLS;
+                    } else {
+                        loc = Jumpship.LOC_ALS;
                     }
                 }
-                // check for aero crits from natural 12 or threshold; LAMs take damage as meks
-                manager.checkAeroCrits(reportVec, aero, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
-                
-                // Return early
-                return;
+                if (loc == Warship.LOC_RBS) {
+                    int locRoll = Compute.d6();
+                    if (locRoll < 4) {
+                        loc = Jumpship.LOC_FRS;
+                    } else {
+                        loc = Jumpship.LOC_ARS;
+                    }
+                }
+                report.add(aero.getLocationAbbr(loc));
+                reportVec.add(report);
+                if (damage > aero.getArmor(loc)) {
+                    aero.setArmor(IArmorState.ARMOR_DESTROYED, loc);
+                    report = new Report(6090);
+                } else {
+                    aero.setArmor(aero.getArmor(loc) - damage, loc);
+                    report = new Report(6085);
+                    report.add(aero.getArmor(loc));
+                }
+                report.subject = entityId;
+                report.indent(3);
+                reportVec.add(report);
+                damage = 0;
             }
 
-            damage = applyEntityArmorDamage(aero, hit, damage, ammoExplosion, damageIS, areaSatArty, reportVec, mods);
-
-            if (damage > 0) {
-                // If this is an Aero, then I need to apply internal damage
-                // to the SI after halving it. Return from here to prevent
-                // further processing
-
-                // check for large craft ammo explosions here: damage vented through armor, excess
-                // dissipating, much like Tank CASE.
-                if (ammoExplosion && aero.isLargeCraft()) {
-                    aero.damageThisPhase += damage;
-                    report = new Report(6128);
+            // check for overpenetration
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE)) {
+                int opRoll = Compute.d6(1);
+                if (((aero instanceof Jumpship) && !(aero instanceof Warship) && (opRoll > 3)) ||
+                          ((aero instanceof Dropship) && (opRoll > 4)) ||
+                          ((aero instanceof Warship) && (aero.getOSI() <= 30) && (opRoll > 5))) {
+                    // over-penetration happened
+                    report = new Report(9090);
+                    report.subject = entityId;
+                    report.newlines = 0;
+                    reportVec.addElement(report);
+                    int new_loc = aero.getOppositeLocation(hit.getLocation());
+                    damage = Math.min(damage, aero.getArmor(new_loc));
+                    // We don't want to deal negative damage
+                    damage = Math.max(damage, 0);
+                    report = new Report(6065);
                     report.subject = entityId;
                     report.indent(2);
+                    report.newlines = 0;
+                    report.addDesc(aero);
                     report.add(damage);
-                    int loc = hit.getLocation();
-                    //Roll for broadside weapons so fore/aft side armor facing takes the damage
-                    if (loc == Warship.LOC_LBS) {
-                        int locRoll = Compute.d6();
-                        if (locRoll < 4) {
-                            loc = Jumpship.LOC_FLS;
-                        } else {
-                            loc = Jumpship.LOC_ALS;
-                        }
-                    }
-                    if (loc == Warship.LOC_RBS) {
-                        int locRoll = Compute.d6();
-                        if (locRoll < 4) {
-                            loc = Jumpship.LOC_FRS;
-                        } else {
-                            loc = Jumpship.LOC_ARS;
-                        }
-                    }
-                    report.add(aero.getLocationAbbr(loc));
-                    reportVec.add(report);
-                    if (damage > aero.getArmor(loc)) {
-                        aero.setArmor(IArmorState.ARMOR_DESTROYED, loc);
-                        report = new Report(6090);
+                    report.add(aero.getLocationAbbr(new_loc));
+                    reportVec.addElement(report);
+                    aero.setArmor(aero.getArmor(new_loc) - damage, new_loc);
+                    if ((aero instanceof Warship) || (aero instanceof Dropship)) {
+                        damage = 2;
                     } else {
-                        aero.setArmor(aero.getArmor(loc) - damage, loc);
-                        report = new Report(6085);
-                        report.add(aero.getArmor(loc));
-                    }
-                    report.subject = entityId;
-                    report.indent(3);
-                    reportVec.add(report);
-                    damage = 0;
-                }
-
-                // check for overpenetration
-                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE)) {
-                    int opRoll = Compute.d6(1);
-                    if (((aero instanceof Jumpship) && !(aero instanceof Warship) && (opRoll > 3)) ||
-                              ((aero instanceof Dropship) && (opRoll > 4)) ||
-                              ((aero instanceof Warship) && (aero.getOSI() <= 30) && (opRoll > 5))) {
-                        // over-penetration happened
-                        report = new Report(9090);
-                        report.subject = entityId;
-                        report.newlines = 0;
-                        reportVec.addElement(report);
-                        int new_loc = aero.getOppositeLocation(hit.getLocation());
-                        damage = Math.min(damage, aero.getArmor(new_loc));
-                        // We don't want to deal negative damage
-                        damage = Math.max(damage, 0);
-                        report = new Report(6065);
-                        report.subject = entityId;
-                        report.indent(2);
-                        report.newlines = 0;
-                        report.addDesc(aero);
-                        report.add(damage);
-                        report.add(aero.getLocationAbbr(new_loc));
-                        reportVec.addElement(report);
-                        aero.setArmor(aero.getArmor(new_loc) - damage, new_loc);
-                        if ((aero instanceof Warship) || (aero instanceof Dropship)) {
-                            damage = 2;
-                        } else {
-                            damage = 0;
-                        }
-                    }
-                }
-
-                // divide damage in half
-                // do not divide by half if it is an ammo explosion
-                // Minimum SI damage is now 1 (per errata: https://bg.battletech.com/forums/index.php?topic=81913.0 )
-                if (!ammoExplosion &&
-                          !nukeS2S &&
-                          !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
-                    damage = (int) Math.round(damage / 2.0);
-                    critSI = true;
-                }
-
-                // Now apply damage to the structural integrity
-                aero.setSI(aero.getSI() - damage);
-                aero.damageThisPhase += damage;
-                // send the report
-                report = new Report(1210);
-                report.subject = entityId;
-                report.newlines = 1;
-                if (!ammoExplosion) {
-                    report.messageId = 9005;
-                }
-                //Only for fighters
-                if (ammoExplosion && !aero.isLargeCraft()) {
-                    report.messageId = 9006;
-                }
-                report.add(damage);
-                report.add(Math.max(aero.getSI(), 0));
-                reportVec.addElement(report);
-                // check to see if this would destroy the ASF
-                if (aero.getSI() <= 0) {
-                    // Lets auto-eject if we can!
-                    if (aero.isAutoEject() &&
-                              (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
-                                     (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                                            aero.isCondEjectSIDest()))) {
-                        reportVec.addAll(manager.ejectEntity(aero, true, false));
-                    } else {
-                        reportVec.addAll(manager.destroyEntity(aero,
-                              "Structural Integrity Collapse",
-                              damageType != DamageType.CRASH));
-                    }
-                    aero.setSI(0);
-                    if (hit.getAttackerId() != Entity.NONE) {
-                        manager.creditKill(aero, game.getEntity(hit.getAttackerId()));
+                        damage = 0;
                     }
                 }
             }
-            // All damage should now be handled
+
+            // divide damage in half
+            // do not divide by half if it is an ammo explosion
+            // Minimum SI damage is now 1 (per errata: https://bg.battletech.com/forums/index.php?topic=81913.0 )
+            if (!ammoExplosion &&
+                      !nukeS2S &&
+                      !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                damage = (int) Math.round(damage / 2.0);
+                critSI = true;
+            }
+
+            // Now apply damage to the structural integrity
+            aero.setSI(aero.getSI() - damage);
+            aero.damageThisPhase += damage;
+            // send the report
+            report = new Report(1210);
+            report.subject = entityId;
+            report.newlines = 1;
+            if (!ammoExplosion) {
+                report.messageId = 9005;
+            }
+            //Only for fighters
+            if (ammoExplosion && !aero.isLargeCraft()) {
+                report.messageId = 9006;
+            }
+            report.add(damage);
+            report.add(Math.max(aero.getSI(), 0));
+            reportVec.addElement(report);
+            // check to see if this would destroy the ASF
+            if (aero.getSI() <= 0) {
+                // Lets auto-eject if we can!
+                if (aero.isAutoEject() &&
+                          (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
+                                 (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
+                                        aero.isCondEjectSIDest()))) {
+                    reportVec.addAll(manager.ejectEntity(aero, true, false));
+                } else {
+                    reportVec.addAll(manager.destroyEntity(aero,
+                          "Structural Integrity Collapse",
+                          damageType != DamageType.CRASH));
+                }
+                aero.setSI(0);
+                if (hit.getAttackerId() != Entity.NONE) {
+                    manager.creditKill(aero, game.getEntity(hit.getAttackerId()));
+                }
+            }
+            // All damage should have been applied by now
             damage = 0;
         }
 

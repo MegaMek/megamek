@@ -1,0 +1,13 @@
+key: MG
+name: Mercenary Guild
+capital: Solaris
+yearsActive:
+  - start: 3000
+  - end: 2789
+tags:
+  - IS
+  - MERC
+  - SPECIAL
+  - CORPORATION
+fallBackFactions:
+  - MERC

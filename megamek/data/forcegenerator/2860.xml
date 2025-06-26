@@ -3496,7 +3496,7 @@
 			</model>
 		</chassis>
 		<chassis name='Kyudo' unitType='Mek'>
-			<availability>FS:2+,FWL:2+,CBS!Front Line:2!Second Line:1,CMG!Second Line:1,CDS!Secodn Line:1</availability>
+			<availability>FS:2+,FWL:2+,CBS!Front Line:2!Second Line:1,CMG!Second Line:1,CDS!Second Line:1</availability>
 			<model name='KY2-D-02'>
 				<roles>fire_support</roles>
 				<availability>FS:8,FWL:8,CBS:8,CMG:8,CDS:8</availability>

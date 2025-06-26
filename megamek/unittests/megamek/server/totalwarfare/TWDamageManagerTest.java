@@ -735,4 +735,27 @@ class TWDamageManagerTest {
         assertTrue(gameMan.checkForPSRFromDamage(asf2));
     }
 
+    @Test
+    void damageAeroSIWithHalvedDamageTransfer() throws FileNotFoundException {
+        String unit = "Seydlitz C.blk";
+        AeroSpaceFighter asf = loadASF(unit);
+
+        // Validate starting armor and SI
+        assertEquals(11, asf.getArmor(AeroSpaceFighter.LOC_LWING));
+        assertEquals(11, asf.getSI());
+
+        // Deal 13 points of damage (should fill 11 circles and deal 1 SI damage without overflowing and 
+        // destroying the unit)
+        HitData hit = new HitData(AeroSpaceFighter.LOC_LWING);
+        hit.setGeneralDamageType(HitData.DAMAGE_MISSILE);
+        DamageInfo damageInfo = new DamageInfo(asf, hit, 13);
+        newMan.damageEntity(damageInfo);
+
+        assertEquals(IArmorState.ARMOR_DESTROYED, asf.getArmor(AeroSpaceFighter.LOC_LWING));
+        assertEquals(10, asf.getSI());
+        assertTrue(asf.wasCritThresh());
+        assertTrue(gameMan.checkForPSRFromDamage(asf));
+        assertFalse(asf.isDestroyed());
+        assertFalse(asf.isDoomed());
+    }
 }

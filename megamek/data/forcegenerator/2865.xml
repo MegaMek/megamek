@@ -3143,7 +3143,7 @@
 		<chassis name='Hunchback' unitType='Mek'>
 			<availability>IS:5,DC:6,FWL:8,CC:6,CS:5-,CB!Front Line:3!Second Line:2!Solahma:1,CCO!Second Line:3!Solahma:2!Provisional Garrison:1,CSJ:3-,Periphery:5,Periphery.MW:6,Periphery.ME:6,NIOPS:5-,Periphery.Deep:5</availability>
 			<model name='HBK-4G'>
-				<availability>General:8,Periphery.Deep:8,Periphery:8</availability>
+				<availability>IS:8,CB:8,CCO:8,CSJ:8,Periphery:8,NIOPS:8,Periphery.Deep:8</availability>
 			</model>
 			<model name='HBK-4H'>
 				<availability>IS:2,FWL:3,FS:3,MERC:3,Periphery:3</availability>
@@ -3810,7 +3810,7 @@
 			</model>
 		</chassis>
 		<chassis name='Lynx' unitType='Mek'>
-			<availability>LA:1,DC:1,FWL:1,CLAN!Front Line:3!Second Line:2!Solahma:1,CBS:4+,CB:5+,CCC:4+,CCO:5+,CGS:4+,CIH:4+,CJF:4+,CMG:4+,CNC!Front Line:3!Second Line:1,CSJ:5+,CSR!Front Line:2!Second Line:1,CW!Keshik:4!Front Line:4!Second Line:3!Solahma:2!Provisional Garrison:1,BAN:2+</availability>
+			<availability>LA:1,DC:1,FWL:1,CLAN!Front Line:3!Second Line:2!Solahma:1,CBS:4+,CB:5+,CCC:4+,CCO:5+,CGS:4+,CIH:4+,CJF:4+,CMG:4+,CNC!Front Line:3!Second Line:1,CSJ:5+,CSR!Front Line:2!Second Line:1,CSA!Keshik:2!Front Line:3!Second Line:2!Solahma:1,CW!Keshik:4!Front Line:4!Second Line:3!Solahma:2!Provisional Garrison:1,BAN:2+</availability>
 			<model name='C'>
                 <roles>raider</roles>
 				<availability>CCC!Keshik:8!Front Line:8,CGS:3+,CJF:3+,CNC:1+,CSJ!Keshik:3!Front Line:1,CW:3+</availability>

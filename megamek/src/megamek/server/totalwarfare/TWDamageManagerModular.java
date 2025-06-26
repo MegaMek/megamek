@@ -1153,6 +1153,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 }
                 // check for aero crits from natural 12 or threshold; LAMs take damage as meks
                 manager.checkAeroCrits(reportVec, aero, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
+                
+                // Return early
+                return;
             }
 
             damage = applyEntityArmorDamage(aero, hit, damage, ammoExplosion, damageIS, areaSatArty, reportVec, mods);
@@ -1265,8 +1268,6 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 reportVec.addElement(report);
                 // check to see if this would destroy the ASF
                 if (aero.getSI() <= 0) {
-                    // Set damage to 0 to avoid infinite loop!
-                    damage = 0;
                     // Lets auto-eject if we can!
                     if (aero.isAutoEject() &&
                               (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
@@ -1284,6 +1285,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                     }
                 }
             }
+            // All damage should now be handled
+            damage = 0;
         }
 
         // Damage _applied_ by this attack should be original damageThisPhase minus current value

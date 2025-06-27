@@ -48,6 +48,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import megamek.MMConstants;
 import megamek.client.ratgenerator.FactionRecord;
+import megamek.common.annotations.Nullable;
 
 /**
  * This is a Faction class that unifies MHQ's Faction and the RATGenerator's FactionRecord and makes it available to all
@@ -72,7 +73,7 @@ import megamek.client.ratgenerator.FactionRecord;
 @JsonPropertyOrder({ "key", "name", "nameChanges", "capital", "capitalChanges", "yearsActive", "successor", "tags",
                      "color", "logo", "background", "camos", "camosChanges", "nameGenerator", "eraMods", "ratingLevels",
                      "fallBackFactions", "preInvasionHonorRating", "postInvasionHonorRating", "formationBaseSize",
-                     "formationGrouping", "rankSystem" })
+                     "formationGrouping", "rankSystem", "factionLeaders" })
 public class Faction2 {
     private static final int UNKNOWN = -1;
     private static final String DEFAULT_RANK_SYSTEM_INNER_SPHERE = "SLDF";
@@ -103,6 +104,7 @@ public class Faction2 {
     private int formationBaseSize = UNKNOWN;
     private int formationGrouping = UNKNOWN;
     private String rankSystem = null;
+    private List<FactionLeaderData> factionLeaders = new ArrayList<>();
 
     public List<String> getRatingLevels() {
         return ratingLevels;
@@ -267,6 +269,49 @@ public class Faction2 {
         return isClan() ? DEFAULT_RANK_SYSTEM_CLAN : DEFAULT_RANK_SYSTEM_INNER_SPHERE;
     }
 
+    /**
+     * Returns the list of leaders for this faction.
+     *
+     * @return a list containing all {@link FactionLeaderData} objects associated with this faction
+     *
+     * @author Illiani
+     * @since 0.50.07
+     */
+    public List<FactionLeaderData> getFactionLeaders() {
+        return factionLeaders;
+    }
+
+    /**
+     * Sets the list of leaders for this faction.
+     *
+     * @param factionLeaders the list of {@link FactionLeaderData} to associate with this faction
+     *
+     * @author Illiani
+     * @since 0.50.07
+     */
+    public void setFactionLeaders(List<FactionLeaderData> factionLeaders) {
+        this.factionLeaders = factionLeaders;
+    }
+
+    /**
+     * Retrieves the faction leader in power during the specified year.
+     *
+     * @param year the year to check for a valid leader
+     *
+     * @return the {@link FactionLeaderData} for the leader valid in the given year, or {@code null} if none found
+     *
+     * @author Illiani
+     * @since 0.50.07
+     */
+    public @Nullable FactionLeaderData getFactionLeaderForYear(final int year) {
+        for (FactionLeaderData leader : factionLeaders) {
+            if (leader.isValidInYear(year)) {
+                return leader;
+            }
+        }
+        return null;
+    }
+
     @JsonIgnore
     public boolean isClan() {
         return is(FactionTag.CLAN);
@@ -387,6 +432,11 @@ public class Faction2 {
     @JsonGetter("rankSystem")
     private String originalRankSystem() {
         return !Objects.equals(rankSystem, UNKNOWN + "") ? rankSystem : null;
+    }
+
+    @JsonGetter("factionLeaders")
+    private List<FactionLeaderData> originalFactionLeaders() {
+        return !Objects.equals(factionLeaders, new ArrayList<>()) ? factionLeaders : null;
     }
 
     @JsonGetter("tags") // sorts tags alphabetically (would be random otherwise)

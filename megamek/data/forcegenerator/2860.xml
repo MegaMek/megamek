@@ -4664,7 +4664,7 @@
 			</model>
 			<model name='PXH-1b &apos;Special&apos;'>
 				<roles>command,recon</roles>
-				<availability>CLAN:8,CGS:4,CIH:5-,BAN:3</availability>
+				<availability>CLAN:8,CGS:4,CIH:5-,NIOPS:4+,BAN:3</availability>
 			</model>
 			<model name='PXH-1c &apos;Special&apos;'>
 				<roles>command,recon</roles>

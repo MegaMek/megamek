@@ -857,8 +857,7 @@ class ComputeToHitIsImpossible {
                 }
                 // Can't strike from above altitude 5. Dive bombing uses a different test below
                 if ((attacker.getAltitude() > 5) &&
-                          !wtype.hasFlag(WeaponType.F_DIVE_BOMB) &&
-                          !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                      !wtype.hasAnyFlag(WeaponType.F_DIVE_BOMB, WeaponType.F_ALT_BOMB)) {
                     return Messages.getString("WeaponAttackAction.AttackerTooHigh");
                 }
                 // Can't strafe from above altitude 3
@@ -869,25 +868,12 @@ class ComputeToHitIsImpossible {
                 if ((attacker.getAltitude() == 1) && isStrafing) {
                     Vector<Coords> passedThrough = attacker.getPassedThrough();
                     if (passedThrough.isEmpty() || passedThrough.get(0).equals(target.getPosition())) {
-                        // TW pg 243 says units flying at NOE have a harder time
-                        // establishing LoS while strafing and hence have to
-                        // consider the adjacent hex along the flight place in the
-                        // direction of the attack. What if there is no adjacent
-                        // hex? The rules don't address this. We could
-                        // theoretically consider last turns movement, but that's
-                        // cumbersome, so we'll just assume it's impossible - Arlith
+                        // TW pg 243 says units flying at NOE have a harder time establishing LoS while strafing and
+                        // hence have to consider the adjacent hex along the flight place in the direction of the
+                        // attack. What if there is no adjacent hex? The rules don't address this. We could
+                        // theoretically consider last turns movement, but that's cumbersome, so we'll just assume
+                        // it's impossible - Arlith
                         return Messages.getString("WeaponAttackAction.TooCloseForStrafe");
-                    }
-                    // Otherwise, check for a dead-zone, TW pg 243
-                    Coords prevCoords = attacker.passedThroughPrevious(target.getPosition());
-                    Hex prevHex = game.getHex(prevCoords, attacker.getPassedThroughBoardId());
-                    Hex currHex = game.getHexOf(target);
-                    int prevElev = prevHex.getLevel();
-                    int currElev = currHex.getLevel();
-                    //should this check be outside the present if()?
-                    if ((prevElev - currElev - target.relHeight()) > 2) {
-                        //FIXME - dead zone for strafing??? I dont think that exists
-                        return Messages.getString("WeaponAttackAction.DeadZone");
                     }
                 }
 
@@ -911,22 +897,23 @@ class ComputeToHitIsImpossible {
                 // only certain weapons can be used for air to ground attacks
                 if (attacker.isAero()) {
                     // Spheroids can't strafe
-                    if (isStrafing && ((IAero) attacker).isSpheroid()) {
+                    if (isStrafing && attacker.isSpheroid()) {
                         return Messages.getString("WeaponAttackAction.NoSpheroidStrafing");
                     }
-                    // Spheroid craft can only use aft or aft-side mounted weapons for strike
-                    // attacks
-                    if (((IAero) attacker).isSpheroid()) {
+                    // Spheroid craft can only use aft or aft-side mounted weapons for strike attacks
+                    if (attacker.isSpheroid()) {
                         if ((weapon.getLocation() != Aero.LOC_AFT) && !weapon.isRearMounted()) {
                             return Messages.getString("WeaponAttackAction.InvalidDSAtgArc");
                         }
-                        // LAMs can't use leg or rear-mounted weapons
+
                     } else if (attacker instanceof LandAirMek) {
+                        // LAMs can't use leg or rear-mounted weapons
                         if ((weapon.getLocation() == Mek.LOC_LLEG) ||
                                   (weapon.getLocation() == Mek.LOC_RLEG) ||
                                   weapon.isRearMounted()) {
                             return Messages.getString("WeaponAttackAction.InvalidAeroDSAtgArc");
                         }
+
                     } else {
                         // and other types of aero can't use aft or rear-mounted weapons
                         if ((weapon.getLocation() == Aero.LOC_AFT) || weapon.isRearMounted()) {
@@ -981,10 +968,8 @@ class ComputeToHitIsImpossible {
             } else if ((attacker instanceof VTOL) && isStrafing) {
                 // VTOL Strafing
                 if (!(wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
-                            (wtype.hasFlag(WeaponType.F_LASER) ||
-                                   wtype.hasFlag(WeaponType.F_PPC) ||
-                                   wtype.hasFlag(WeaponType.F_PLASMA) ||
-                                   wtype.hasFlag(WeaponType.F_PLASMA_MFUK))) || wtype.hasFlag(WeaponType.F_FLAMER)) {
+                      (wtype.hasAnyFlag(WeaponType.F_LASER, WeaponType.F_PPC, WeaponType.F_PLASMA,
+                            WeaponType.F_PLASMA_MFUK))) || wtype.hasFlag(WeaponType.F_FLAMER)) {
                     return Messages.getString("WeaponAttackAction.StrafeDirectEnergyOnly");
                 }
                 if (weapon.getLocation() != VTOL.LOC_FRONT &&

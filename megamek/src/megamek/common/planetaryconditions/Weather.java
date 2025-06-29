@@ -202,9 +202,8 @@ public enum Weather {
                 || isHeavySnow();
     }
 
-    public boolean isHeavyRainOrModerateSnowOrSnowFlurries() {
+    public boolean isHeavyRainOrSnowFlurries() {
         return isHeavyRain()
-                || isModerateSnow()
                 || isSnowFlurries();
     }
 

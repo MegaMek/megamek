@@ -14,6 +14,7 @@
 package megamek.common.weapons.lasers;
 
 import megamek.common.SimpleTechLevel;
+import megamek.common.WeaponTypeFlag;
 
 /**
  * @author Andrew Hunter
@@ -46,6 +47,7 @@ public class CLHeavyLaserLarge extends LaserWeapon {
         shortAV = 16;
         medAV = 16;
         maxRange = RANGE_MED;
+        flags = flags.or(WeaponTypeFlag.HEAVY_LASER);
         rulesRefs = "226, TM";
         //Jan 22 - Errata issued by CGL (Greekfire) for Heavy Lasers
         techAdvancement.setTechBase(TechBase.CLAN)

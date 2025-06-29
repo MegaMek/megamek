@@ -11946,6 +11946,10 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
+    /**
+     * @return The ID of a unit that this unit is grappling or grappled by; Entity.NONE if not grappling anything and
+     *       not being grappled.
+     */
     public int getGrappled() {
         return Entity.NONE;
     }

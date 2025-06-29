@@ -41,6 +41,8 @@ import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 
 import java.util.EnumSet;
 
+import static megamek.common.AmmoType.AmmoTypeEnum.*;
+
 class ComputeTargetToHitMods {
 
     /**
@@ -50,10 +52,8 @@ class ComputeTargetToHitMods {
      * for Artillery or ADA)
      *
      * @param game                The current {@link Game}
-     * @param ae                  The Entity making this attack
+     * @param attacker            The Entity making this attack
      * @param target              The Targetable object being attacked
-     * @param ttype               The targetable object type
-     * @param los                 The calculated LOS between attacker and target
      * @param toHit               The running total ToHitData for this WeaponAttackAction
      * @param aimingAt            An int value representing the location being aimed at - used by immobile target
      *                            calculations
@@ -72,12 +72,13 @@ class ComputeTargetToHitMods {
      * @param isPointBlankShot    flag that indicates whether or not this is a PBS by a hidden unit
      * @param usesAmmo            flag that indicates whether or not the WeaponType being used is ammo-fed
      */
-    static ToHitData compileTargetToHitMods(Game game, Entity ae, Targetable target, int ttype, LosEffects los,
+    static ToHitData compileTargetToHitMods(Game game, Entity attacker, Targetable target,
           ToHitData toHit, int aimingAt, AimingMode aimingMode, int distance, WeaponType wtype, WeaponMounted weapon,
           AmmoType atype, EnumSet<AmmoType.Munitions> munition, boolean isArtilleryDirect, boolean isArtilleryIndirect,
           boolean isAttackerInfantry, boolean exchangeSwarmTarget, boolean isIndirect, boolean isPointBlankShot,
           boolean usesAmmo) {
-        if (ae == null || target == null) {
+
+        if (attacker == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
             return toHit;
         }
@@ -87,35 +88,31 @@ class ComputeTargetToHitMods {
             toHit = new ToHitData();
         }
 
-        Entity te = null;
-        if (ttype == Targetable.TYPE_ENTITY) {
-            // Some weapons only target valid entities
-            te = (Entity) target;
-        }
+        Entity entityTarget = (target instanceof Entity entity) ? entity : null;
 
         // Modifiers related to a special action the target is taking
 
         // evading bonuses
-        if ((te != null) && te.isEvading()) {
-            toHit.addModifier(te.getEvasionBonus(), Messages.getString("WeaponAttackAction.TeEvading"));
+        if ((entityTarget != null) && entityTarget.isEvading()) {
+            toHit.addModifier(entityTarget.getEvasionBonus(), Messages.getString("WeaponAttackAction.TeEvading"));
         }
 
         // Infantry taking cover per TacOps special rules
-        if ((te instanceof Infantry) && ((Infantry) te).isTakingCover()) {
-            if (te.getPosition().direction(ae.getPosition()) == te.getFacing()) {
+        if ((entityTarget instanceof Infantry infantry) && infantry.isTakingCover()) {
+            if (entityTarget.getPosition().direction(attacker.getPosition()) == entityTarget.getFacing()) {
                 toHit.addModifier(+3, Messages.getString("WeaponAttackAction.FireThruCover"));
             }
         }
 
         // target prone
         ToHitData proneMod = null;
-        if ((te != null) && te.isProne()) {
+        if ((entityTarget != null) && entityTarget.isProne()) {
             // easier when point-blank
             if (distance <= 1) {
-                // TW, pg. 221: Swarm Mek attacks apply prone/immobile mods as normal.
+                // TW, p.221: Swarm Mek attacks apply prone/immobile mods as normal
                 proneMod = new ToHitData(-2, Messages.getString("WeaponAttackAction.ProneAdj"));
             } else {
-                // Harder at range.
+                // Harder at range
                 proneMod = new ToHitData(1, Messages.getString("WeaponAttackAction.ProneRange"));
             }
         }
@@ -126,17 +123,16 @@ class ComputeTargetToHitMods {
         // Special effects affecting the target
 
         // Target grappled?
-        if (te != null) {
-            int grapple = te.getGrappled();
+        if (entityTarget != null) {
+            int grapple = entityTarget.getGrappled();
             if (grapple != Entity.NONE) {
                 // -4 bonus if attacking the entity you're grappling
-                if ((grapple == ae.getId()) && (te.getGrappleSide() == Entity.GRAPPLE_BOTH)) {
+                if ((grapple == attacker.getId()) && (entityTarget.getGrappleSide() == Entity.GRAPPLE_BOTH)) {
                     toHit.addModifier(-4, Messages.getString("WeaponAttackAction.Grappled"));
                     // -2 bonus if grappling the target at range with a chain whip
-                } else if ((grapple == ae.getId()) && (te.getGrappleSide() != Entity.GRAPPLE_BOTH)) {
+                } else if ((grapple == attacker.getId()) && (entityTarget.getGrappleSide() != Entity.GRAPPLE_BOTH)) {
                     toHit.addModifier(-2, Messages.getString("WeaponAttackAction.GrappledByChain"));
-                    // +1 penalty if firing at a target grappled by another unit. This does not
-                    // apply to Swarm LRMs
+                    // +1 penalty if firing at a target grappled by another unit. This does not apply to Swarm LRMs
                 } else if (!exchangeSwarmTarget) {
                     toHit.addModifier(1, Messages.getString("WeaponAttackAction.FireIntoMelee"));
                 } else {
@@ -149,31 +145,32 @@ class ComputeTargetToHitMods {
         // Special Equipment and Quirks that the target possesses
 
         // ECM suite generating Ghost Targets
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET) &&
-                  !isIndirect &&
-                  !isArtilleryIndirect &&
-                  !isArtilleryDirect) {
-            int ghostTargetMod = Compute.getGhostTargetNumber(ae, ae.getPosition(), target.getPosition());
-            if ((ghostTargetMod > -1) && !ae.isConventionalInfantry()) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET)
+              && !isIndirect
+              && !isArtilleryIndirect
+              && !isArtilleryDirect) {
+
+            int ghostTargetMod = Compute.getGhostTargetNumber(attacker, attacker.getPosition(), target.getPosition());
+            if ((ghostTargetMod > -1) && !attacker.isConventionalInfantry()) {
                 int bapMod = 0;
-                if (ae.hasBAP()) {
+                if (attacker.hasBAP()) {
                     bapMod = 1;
                 }
                 int tcMod = 0;
-                if (ae.hasTargComp() &&
-                          wtype != null &&
-                          wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
-                          !wtype.hasFlag(WeaponType.F_CWS) &&
-                          !wtype.hasFlag(WeaponType.F_TASER) &&
-                          (atype != null) &&
-                          (!usesAmmo ||
-                                 !(((atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX) ||
-                                          (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX_THB)) &&
-                                         (munition.contains(AmmoType.Munitions.M_CLUSTER))))) {
+                boolean isLBX = (atype != null)
+                      && atype.getAmmoType().isAnyOf(AC_LBX, AC_LBX_THB)
+                      && munition.contains(AmmoType.Munitions.M_CLUSTER);
+
+                if (attacker.hasTargComp()
+                      && (wtype != null)
+                      && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
+                      && !wtype.hasAnyFlag(WeaponType.F_CWS, WeaponType.F_TASER)
+                      && (atype != null)
+                      && !(usesAmmo && isLBX)) {
                     tcMod = 2;
                 }
-                int ghostTargetMoF = (ae.getCrew().getSensorOps() + ghostTargetMod) -
-                                           (ae.getGhostTargetOverride() + bapMod + tcMod);
+                int ghostTargetMoF = (attacker.getCrew().getSensorOps() + ghostTargetMod) -
+                                           (attacker.getGhostTargetOverride() + bapMod + tcMod);
                 if (ghostTargetMoF > 1) {
                     // according to this rules clarification the +4 max is on
                     // the PSR not on the to-hit roll
@@ -191,31 +188,25 @@ class ComputeTargetToHitMods {
         // Movement and Position modifiers
 
         // target movement - ignore for pointblank shots from hidden units
-        if ((te != null) && !isPointBlankShot) {
+        if ((entityTarget != null) && !isPointBlankShot) {
             ToHitData thTemp = Compute.getTargetMovementModifier(game, target.getId());
             toHit.append(thTemp);
 
             // semiguided ammo negates this modifier, if TAG succeeded
-            if ((atype != null) &&
-                      ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
-                      (munition.contains(AmmoType.Munitions.M_SEMIGUIDED)) &&
-                      (te.getTaggedBy() != WeaponAttackAction.UNASSIGNED)) {
+            if ((atype != null)
+                  && atype.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, NLRM, MEK_MORTAR)
+                  && munition.contains(AmmoType.Munitions.M_SEMIGUIDED)
+                  && (entityTarget.getTaggedBy() != WeaponAttackAction.UNASSIGNED)) {
                 int nAdjust = thTemp.getValue();
                 if (nAdjust > 0) {
                     toHit.append(new ToHitData(-nAdjust, Messages.getString("WeaponAttackAction.SemiGuidedTag")));
                 }
             }
+
             // precision ammo reduces this modifier
-            else if ((atype != null) &&
-                           ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
-                                  (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
-                                  (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
-                                  (atype.getAmmoType() == AmmoType.AmmoTypeEnum.PAC)) &&
-                           (munition.contains(AmmoType.Munitions.M_PRECISION))) {
+            else if ((atype != null)
+                  && atype.getAmmoType().isAnyOf(AC, LAC, AC_IMP, PAC)
+                  && munition.contains(AmmoType.Munitions.M_PRECISION)) {
                 int nAdjust = Math.min(2, thTemp.getValue());
                 if (nAdjust > 0) {
                     toHit.append(new ToHitData(-nAdjust, Messages.getString("WeaponAttackAction.Precision")));
@@ -224,8 +215,8 @@ class ComputeTargetToHitMods {
         }
 
         // Ground-to-air attacks against a target flying at NOE
-        if (Compute.isGroundToAir(ae, target) && (null != te) && te.isNOE()) {
-            if (te.passedWithin(ae.getPosition(), 1)) {
+        if (Compute.isGroundToAir(attacker, target) && (null != entityTarget) && entityTarget.isNOE()) {
+            if (entityTarget.passedWithin(attacker.getPosition(), 1)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.TeNoe"));
             } else {
                 toHit.addModifier(+3, Messages.getString("WeaponAttackAction.TeNoe"));
@@ -234,11 +225,11 @@ class ComputeTargetToHitMods {
 
         // Ground-to-air attacks against a target flying at any other altitude (if
         // StratOps Velocity mods are on)
-        if (Compute.isGroundToAir(ae, target) &&
-                  game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE) &&
-                  (null != te) &&
-                  (te.isAero())) {
-            int vMod = ((IAero) te).getCurrentVelocity();
+        if (Compute.isGroundToAir(attacker, target)
+              && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE)
+              && (null != entityTarget)
+              && entityTarget.isAero()) {
+            int vMod = ((IAero) entityTarget).getCurrentVelocity();
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AA_MOVE_MOD)) {
                 vMod = Math.min(vMod / 2, 4);
             }
@@ -246,15 +237,14 @@ class ComputeTargetToHitMods {
         }
 
         // target immobile
-        boolean mekMortarMunitionsIgnoreImmobile = wtype != null &&
-                                                         wtype.hasFlag(WeaponType.F_MEK_MORTAR) &&
-                                                         (atype != null) &&
-                                                         (munition.contains(AmmoType.Munitions.M_AIRBURST));
+        boolean mekMortarMunitionsIgnoreImmobile = (wtype != null)
+                    && wtype.hasFlag(WeaponType.F_MEK_MORTAR)
+                    && (atype != null)
+                    && munition.contains(AmmoType.Munitions.M_AIRBURST);
         if (wtype != null && !(wtype instanceof ArtilleryCannonWeapon) && !mekMortarMunitionsIgnoreImmobile) {
             ToHitData immobileMod;
-            // grounded dropships are treated as immobile as well for purpose of
-            // the mods
-            if ((null != te) && !te.isAirborne() && !te.isSpaceborne() && (te instanceof Dropship)) {
+            // grounded dropships are treated as immobile as well for purpose of the mods
+            if (entityTarget instanceof Dropship && !entityTarget.isAirborne() && !entityTarget.isSpaceborne()) {
                 immobileMod = new ToHitData(-4, Messages.getString("WeaponAttackAction.ImmobileDs"));
             } else {
                 if (Compute.allowAimedShotWith(weapon, aimingMode)) {
@@ -272,67 +262,64 @@ class ComputeTargetToHitMods {
         // Unit-specific modifiers
 
         // -1 to hit a SuperHeavy mek
-        if ((te instanceof Mek) && ((Mek) te).isSuperHeavy()) {
+        if ((entityTarget instanceof Mek) && entityTarget.isSuperHeavy()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMek"));
         }
 
         // large support tanks get a -1 per TW
-        if ((te != null) &&
-                  (te.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) &&
-                  !te.isAirborne() &&
-                  !te.isSpaceborne()) {
+        if ((entityTarget != null)
+              && (entityTarget.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT)
+              && !entityTarget.isAirborne()
+              && !entityTarget.isSpaceborne()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeLargeSupportUnit"));
         }
 
         // "grounded small craft" get a -1 per TW
-        if ((te instanceof SmallCraft) &&
-                  (te.getUnitType() == UnitType.SMALL_CRAFT) &&
-                  !te.isAirborne() &&
-                  !te.isSpaceborne()) {
+        if ((entityTarget instanceof SmallCraft)
+              && entityTarget.isSmallCraft()
+              && !entityTarget.isAirborne()
+              && !entityTarget.isSpaceborne()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeGroundedSmallCraft"));
         }
 
         // Battle Armor targets are hard for Meks and Tanks to hit.
-        if (!isAttackerInfantry && (te instanceof BattleArmor)) {
+        if (!isAttackerInfantry && (entityTarget instanceof BattleArmor)) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.BaTarget"));
         }
 
-        if ((te instanceof Infantry) && te.isConventionalInfantry()) {
+        if ((entityTarget instanceof Infantry infantry) && entityTarget.isConventionalInfantry()) {
             // infantry squads are also hard to hit
-            if (((Infantry) te).isSquad()) {
+            if (infantry.isSquad()) {
                 toHit.addModifier(1, Messages.getString("WeaponAttackAction.SquadTarget"));
             }
-            InfantryMount mount = ((Infantry) te).getMount();
+            InfantryMount mount = infantry.getMount();
             if ((mount != null) && (mount.getSize().toHitMod != 0)) {
                 toHit.addModifier(mount.getSize().toHitMod, Messages.getString("WeaponAttackAction.MountSize"));
             }
-        }
 
-        // pl-masc makes foot infantry harder to hit - IntOps p.84
-        if ((te instanceof Infantry) &&
-                  te.hasAbility(OptionsConstants.MD_PL_MASC) &&
-                  te.getMovementMode().isLegInfantry() &&
-                  te.isConventionalInfantry()) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.PlMasc"));
+            // pl-masc makes foot infantry harder to hit - IntOps p.84
+            if (infantry.hasAbility(OptionsConstants.MD_PL_MASC) && infantry.getMovementMode().isLegInfantry()) {
+                toHit.addModifier(1, Messages.getString("WeaponAttackAction.PlMasc"));
+            }
         }
 
         // Ejected MekWarriors are harder to hit
-        if (te instanceof MekWarrior) {
+        if (entityTarget instanceof MekWarrior) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.MwTarget"));
         }
 
         // Aerospace target modifiers
-        if (te != null && te.isAero() && te.isAirborne()) {
-            IAero a = (IAero) te;
+        if ((entityTarget != null) && entityTarget.isAero() && entityTarget.isAirborne()) {
+            IAero iAeroTarget = (IAero) entityTarget;
 
             // is the target at zero velocity
-            if ((a.getCurrentVelocity() == 0) && !(a.isSpheroid() && !a.isSpaceborne())) {
+            if ((iAeroTarget.getCurrentVelocity() == 0) && !(iAeroTarget.isSpheroid() && !iAeroTarget.isSpaceborne())) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.ImmobileAero"));
             }
 
             // get mods for direction of attack
-            if (!(a.isSpheroid() && !a.isSpaceborne())) {
-                int side = ComputeSideTable.sideTable(ae, te);
+            if (!(iAeroTarget.isSpheroid() && !iAeroTarget.isSpaceborne())) {
+                int side = ComputeSideTable.sideTable(attacker, entityTarget);
 
                 // +1 if shooting at an aero approaching nose-on
                 if (side == ToHitData.SIDE_FRONT) {
@@ -346,20 +333,15 @@ class ComputeTargetToHitMods {
 
             // Target hidden in the sensor shadow of a larger spacecraft
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW) &&
-                      a.isSpaceborne()) {
-                for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
-                    if (!en.isEnemyOf(te) &&
-                              en.isLargeCraft() &&
-                              ((en.getWeight() - te.getWeight()) >= -WeaponAttackAction.STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
+                      iAeroTarget.isSpaceborne()) {
+                for (Entity other : Compute.getAdjacentEntitiesAlongAttack(attacker.getPosition(), target.getPosition(), game)) {
+                    if (createsSensorShadow(entityTarget, other)) {
                         toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorShadow"));
                         break;
                     }
                 }
-                for (Entity en : game.getEntitiesVector(target.getPosition())) {
-                    if (!en.isEnemyOf(te) &&
-                              en.isLargeCraft() &&
-                              !en.equals((Entity) a) &&
-                              ((en.getWeight() - te.getWeight()) >= -WeaponAttackAction.STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
+                for (Entity other : game.getEntitiesVector(target.getPosition(), target.getBoardId())) {
+                    if (createsSensorShadow(entityTarget, other) && !other.equals(iAeroTarget)) {
                         toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorShadow"));
                         break;
                     }
@@ -368,13 +350,19 @@ class ComputeTargetToHitMods {
         }
 
         // Quirks
-        ComputeAbilityMods.processAttackerQuirks(toHit, ae, te, weapon);
+        ComputeAbilityMods.processAttackerQuirks(toHit, attacker, entityTarget, weapon);
 
         // SPAs
-        ComputeAbilityMods.processAttackerSPAs(toHit, ae, te, weapon, game);
-        ComputeAbilityMods.processDefenderSPAs(toHit, ae, te, weapon, game);
+        ComputeAbilityMods.processAttackerSPAs(toHit, attacker, entityTarget, weapon, game);
+        ComputeAbilityMods.processDefenderSPAs(toHit, attacker, entityTarget, game);
 
         return toHit;
+    }
+
+    private static boolean createsSensorShadow(Entity target, Entity other) {
+        return !other.isEnemyOf(target)
+              && other.isLargeCraft()
+              && (other.getWeight() - target.getWeight() >= -WeaponAttackAction.STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF);
     }
 
     private ComputeTargetToHitMods() { }

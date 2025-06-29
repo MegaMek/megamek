@@ -576,7 +576,7 @@ class ComputeToHit {
               isArtilleryIndirect);
 
         // Collect the modifiers for the crew/pilot
-        toHit = ComputeAttackerToHitMods.compileCrewToHitMods(game, ae, te, toHit, weapon);
+        toHit = ComputeAttackerToHitMods.compileCrewToHitMods(game, ae, toHit, weapon);
 
         // Collect the modifiers for the attacker's condition/actions
         if (ae != null) {
@@ -642,8 +642,6 @@ class ComputeToHit {
         toHit = ComputeTargetToHitMods.compileTargetToHitMods(game,
               ae,
               target,
-              ttype,
-              los,
               toHit,
               aimingAt,
               aimingMode,
@@ -679,7 +677,6 @@ class ComputeToHit {
               weaponId,
               atype,
               ammo,
-              munition,
               isAttackerInfantry,
               inSameBuilding,
               isIndirect,
@@ -1552,7 +1549,7 @@ class ComputeToHit {
 
             // SPAs
             ComputeAbilityMods.processAttackerSPAs(toHit, ae, te, weapon, game);
-            ComputeAbilityMods.processDefenderSPAs(toHit, ae, te, weapon, game);
+            ComputeAbilityMods.processDefenderSPAs(toHit, ae, te, game);
 
             return artilleryIndirectToHit(ae, target, toHit, wtype, weapon, srt);
         }
@@ -1612,7 +1609,7 @@ class ComputeToHit {
 
         // SPAs
         ComputeAbilityMods.processAttackerSPAs(toHit, ae, te, weapon, game);
-        ComputeAbilityMods.processDefenderSPAs(toHit, ae, te, weapon, game);
+        ComputeAbilityMods.processDefenderSPAs(toHit, ae, te, game);
 
         // If an airborne unit occupies the target hex, standard artillery ammo makes a
         // flak attack against it

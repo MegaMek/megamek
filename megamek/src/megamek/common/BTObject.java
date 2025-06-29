@@ -387,7 +387,10 @@ public interface BTObject {
      * <p>
      * Note that this is not equivalent to "this instanceof Aero" as LAMs are not an Aero subclass. It is also not
      * equivalent to "this instanceof IAero" as LAMs are always IAero but only return true for isAero() when they are
-     * in fighter conversion mode.
+     * in fighter conversion mode. The following cast can be safely made:
+     * <pre>{@code if (entity.isAero()) {
+     *     IAero iAero = (IAero) entity;
+     * }}</pre>
      *
      * @return True when this may use aerospace movement (aerospace and LAM units)
      */

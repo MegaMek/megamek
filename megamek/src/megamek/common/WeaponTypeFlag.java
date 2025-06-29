@@ -118,5 +118,10 @@ public enum WeaponTypeFlag implements EquipmentFlag {
      * A weapon with this flag is not an actual weapon but only used as an internal representation of an attack. It
      * should be hidden in the readout, tooltip and RS but shown in the unit display's weapon list where it is used.
      */
-    INTERNAL_REPRESENTATION
+    INTERNAL_REPRESENTATION,
+
+    /**
+     * Denotes Clan Heavy Lasers (S, M, L)
+     */
+    HEAVY_LASER
 }

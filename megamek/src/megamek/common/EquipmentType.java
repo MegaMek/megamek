@@ -526,6 +526,9 @@ public class EquipmentType implements ITechnology {
         return flags.get(flag);
     }
 
+    /**
+     * @return True when the equipment has at least one of the given flags.
+     */
     public boolean hasAnyFlag(EquipmentFlag... flags) {
         return Arrays.stream(flags).anyMatch(this::hasFlag);
     }

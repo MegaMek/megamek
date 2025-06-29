@@ -50,15 +50,16 @@ class ComputeEnvironmentalToHitMods {
      * effects. These affect everyone on the board.
      *
      * @param game                The current {@link Game}
-     * @param ae                  The attacking entity
+     * @param attacker            The attacking entity
      * @param target              The Targetable object being attacked
      * @param wtype               The WeaponType of the weapon being used
      * @param atype               The AmmoType being used for this attack
      * @param toHit               The running total ToHitData for this WeaponAttackAction
      * @param isArtilleryIndirect flag that indicates whether this is an indirect-fire artillery attack
      */
-    static ToHitData compileEnvironmentalToHitMods(Game game, Entity ae, Targetable target, WeaponType wtype,
+    static ToHitData compileEnvironmentalToHitMods(Game game, Entity attacker, Targetable target, WeaponType wtype,
           AmmoType atype, ToHitData toHit, boolean isArtilleryIndirect) {
+
         PlanetaryConditions conditions = game.getPlanetaryConditions();
 
         if (toHit == null) {
@@ -68,84 +69,79 @@ class ComputeEnvironmentalToHitMods {
 
         // Night combat modifiers
         if (!isArtilleryIndirect) {
-            toHit.append(AbstractAttackAction.nightModifiers(game, target, atype, ae, true));
+            toHit.append(AbstractAttackAction.nightModifiers(game, target, atype, attacker, true));
         }
 
         TargetRoll weatherToHitMods = new TargetRoll();
 
-        // weather mods (not in space)
-        int weatherMod = conditions.getWeatherHitPenalty(ae);
-        if ((weatherMod != 0) && !ae.isSpaceborne()) {
-            weatherToHitMods.addModifier(weatherMod, conditions.getWeather().toString());
-        }
+        boolean isEnergy = (wtype != null) && wtype.hasFlag(WeaponType.F_ENERGY);
+        boolean isMissile = (wtype != null) && wtype.hasFlag(WeaponType.F_MISSILE);
+        boolean isDirectFireBallistic = (wtype != null) &&
+                                              wtype.hasFlag(WeaponType.F_BALLISTIC) &&
+                                              wtype.hasFlag(WeaponType.F_DIRECT_FIRE);
 
-        // wind mods (not in space)
-        if (!ae.isSpaceborne()) {
+        if (!attacker.isSpaceborne()) {
+            // weather mods
+            int weatherMod = conditions.getWeatherHitPenalty(attacker);
+            if (weatherMod != 0) {
+                weatherToHitMods.addModifier(weatherMod, conditions.getWeather().toString());
+            }
+
+            // wind mods, TO:AR p.59
             if (conditions.getWind().isModerateGale()) {
-                if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
+                if (isMissile) {
                     weatherToHitMods.addModifier(1, conditions.getWind().toString());
                 }
             } else if (conditions.getWind().isStrongGale()) {
-                if (wtype != null && wtype.hasFlag(WeaponType.F_BALLISTIC) && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                if (isDirectFireBallistic) {
                     weatherToHitMods.addModifier(1, conditions.getWind().toString());
-                } else if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
+                } else if (isMissile) {
                     weatherToHitMods.addModifier(2, conditions.getWind().toString());
                 }
             } else if (conditions.getWind().isStorm()) {
-                if (wtype != null && wtype.hasFlag(WeaponType.F_BALLISTIC) && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                if (isDirectFireBallistic) {
                     weatherToHitMods.addModifier(2, conditions.getWind().toString());
-                } else if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
+                } else if (isMissile) {
                     weatherToHitMods.addModifier(3, conditions.getWind().toString());
                 }
             } else if (conditions.getWind().isTornadoF1ToF3()) {
-                if (wtype != null && wtype.hasFlag(WeaponType.F_ENERGY)) {
+                if (isEnergy) {
                     weatherToHitMods.addModifier(2, conditions.getWind().toString());
-                } else if (wtype != null &&
-                                 wtype.hasFlag(WeaponType.F_BALLISTIC) &&
-                                 wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                } else if (isDirectFireBallistic) {
                     weatherToHitMods.addModifier(3, conditions.getWind().toString());
                 }
             } else if (conditions.getWind().isTornadoF4()) {
                 weatherToHitMods.addModifier(3, conditions.getWind().toString());
             }
-        }
 
-        // fog mods (not in space)
-        if (wtype != null &&
-                  wtype.hasFlag(WeaponType.F_ENERGY) &&
-                  !ae.isSpaceborne() &&
-                  conditions.getFog().isFogHeavy()) {
-            weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.HeavyFog"));
-        }
+            // fog mods
+            if (isEnergy && conditions.getFog().isFogHeavy()) {
+                weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.HeavyFog"));
+            }
 
-        // blowing sand mods
-        if (wtype != null &&
-                  wtype.hasFlag(WeaponType.F_ENERGY) &&
-                  !ae.isSpaceborne() &&
-                  conditions.isBlowingSandActive()) {
-            weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.BlowingSand"));
+            // blowing sand mods
+            if (isEnergy && conditions.isBlowingSandActive()) {
+                weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.BlowingSand"));
+            }
         }
 
         if (weatherToHitMods.getValue() > 0) {
-            if ((ae.getCrew() != null) && ae.hasAbility(OptionsConstants.UNOFF_WEATHERED)) {
+            if ((attacker.getCrew() != null) && attacker.hasAbility(OptionsConstants.UNOFF_WEATHERED)) {
                 weatherToHitMods.addModifier(-1, Messages.getString("WeaponAttackAction.Weathered"));
             }
             toHit.append(weatherToHitMods);
         }
 
         // gravity mods (not in space)
-        if (!ae.isSpaceborne()) {
+        if (!attacker.isSpaceborne()) {
             int mod = (int) Math.floor(Math.abs((conditions.getGravity() - 1.0f) / 0.2f));
-            if ((mod != 0) &&
-                      wtype != null &&
-                      ((wtype.hasFlag(WeaponType.F_BALLISTIC) && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) ||
-                             wtype.hasFlag(WeaponType.F_MISSILE))) {
+            if ((mod != 0) && (isDirectFireBallistic || isMissile)) {
                 toHit.addModifier(mod, Messages.getString("WeaponAttackAction.Gravity"));
             }
         }
 
         // Electro-Magnetic Interference
-        if (conditions.getEMI().isEMI() && !ae.isConventionalInfantry()) {
+        if (conditions.getEMI().isEMI() && !attacker.isConventionalInfantry()) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.EMI"));
         }
         return toHit;

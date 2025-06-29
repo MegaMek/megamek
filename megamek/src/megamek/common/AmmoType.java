@@ -33,15 +33,7 @@
  */
 package megamek.common;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.WeaponMounted;
@@ -218,6 +210,13 @@ public class AmmoType extends EquipmentType {
          */
         public static AmmoTypeEnum fromIndex(int index) {
             return INDEX_LOOKUP.getOrDefault(index, NA);
+        }
+
+        /**
+         * @return True if this ammo type is any of the given types
+         */
+        public boolean isAnyOf(AmmoTypeEnum type, AmmoTypeEnum... otherTypes) {
+            return (this == type) || Arrays.stream(otherTypes).anyMatch(t -> this == t);
         }
     }
 

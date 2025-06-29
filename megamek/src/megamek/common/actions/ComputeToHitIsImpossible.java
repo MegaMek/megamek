@@ -839,7 +839,7 @@ class ComputeToHitIsImpossible {
                     return Messages.getString("WeaponAttackAction.AttackerTooHigh");
                 }
                 // Additional Nap-of-Earth restrictions for strafing
-                if ((attacker.getAltitude() == 1) && isStrafing) {
+                if ((attacker.isNOE()) && isStrafing) {
                     Vector<Coords> passedThrough = attacker.getPassedThrough();
                     if (passedThrough.isEmpty() || passedThrough.get(0).equals(target.getPosition())) {
                         // TW pg 243 says units flying at NOE have a harder time establishing LoS while strafing and
@@ -848,6 +848,16 @@ class ComputeToHitIsImpossible {
                         // theoretically consider last turns movement, but that's cumbersome, so we'll just assume
                         // it's impossible - Arlith
                         return Messages.getString("WeaponAttackAction.TooCloseForStrafe");
+                    }
+
+                    // Strafing dead-zone, TW pg 243
+                    Coords prevCoords = attacker.passedThroughPrevious(target.getPosition());
+                    Hex prevHex = game.getHex(prevCoords, attacker.getPassedThroughBoardId());
+                    Hex currHex = game.getHexOf(target);
+                    int prevElev = prevHex.getLevel();
+                    int currElev = currHex.getLevel();
+                    if ((prevElev - currElev - target.relHeight()) > 2) {
+                        return Messages.getString("WeaponAttackAction.DeadZone");
                     }
                 }
 

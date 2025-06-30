@@ -702,8 +702,7 @@ public class PlanetaryConditions implements Serializable {
             } else {
                 otherRange = 5;
             }
-        } else if (getWeather().isHeavyRainOrModerateSnowOrSnowFlurries() &&
-                         getWind().isStrongerThan(Wind.LIGHT_GALE)) {
+        } else if (getWeather().isHeavyRainOrSnowFlurries()) {
             if (isMekOrVee || isLowAltitudeAero) {
                 otherRange = 15;
             } else if (isAero) {

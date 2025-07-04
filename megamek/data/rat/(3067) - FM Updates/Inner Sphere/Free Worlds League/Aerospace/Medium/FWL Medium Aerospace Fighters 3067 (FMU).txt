@@ -1,0 +1,12 @@
+FWL Medium Aerospace Fighters 3067 (FMU)
+Corsair CSR-V12M,1
+Hellcat HCT-213,2
+F92 Stingray,3
+F92 Stingray,4
+F90 Stingray,5
+F94 Stingray,6
+F94 Stingray,5
+Ironsides IRN-SD1,4
+Lightning LTN-G15,3
+TR11 Transit,2
+TR10 Transit,1

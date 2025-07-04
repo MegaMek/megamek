@@ -1,0 +1,12 @@
+FWL Heavy Aerospace Fighters 3067 (FMU)
+Thunderbird TRB-D36,1
+Chippewa CHP-W5,2
+Hammerhead HMR-HD,3
+Riever F-100,4
+Eagle EGL-R5,5
+Riever F-100,6
+Riever F-700,5
+Riever F-100B,4
+Transgressor TR-14,3
+Riever F-100A,2
+Riever F-100A,1

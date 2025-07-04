@@ -9,4 +9,4 @@ Hawk Moth Gunship,5
 Pegasus Scout Hover Tank (3058 Upgrade),4
 Galleon,3
 Saladin Assault Hover Tank (LB-X),2
-Warrior Attack Helicoper H-8,1
+Warrior Attack Helicopter H-8,1

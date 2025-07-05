@@ -210,30 +210,30 @@ factionLeaders:
   - title: "Chancellor"
     firstName: "Tormax"
     surname: "Liao"
-    gender: MALE"
+    gender: "MALE"
     startYear: 2980
     endYear: 2990
   - title: "Chancellor"
     firstName: "Maximilian"
     surname: "Liao"
-    gender: MALE"
+    gender: "MALE"
     startYear: 2990
     endYear: 3036
   - title: "Chancellor"
     firstName: "Ramano"
     surname: "Liao"
-    gender: MALE"
+    gender: "MALE"
     startYear: 3036
     endYear: 3052
   - title: "Chancellor"
     firstName: "Sun-Tzu"
     surname: "Liao"
-    gender: MALE"
+    gender: "MALE"
     startYear: 3052
     endYear: 3113
   - title: "Chancellor"
     firstName: "Daoshen"
     surname: "Liao"
-    gender: MALE"
+    gender: "MALE"
     startYear: 3113
     endYear: 3152

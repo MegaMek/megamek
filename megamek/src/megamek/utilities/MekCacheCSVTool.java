@@ -81,10 +81,10 @@ public final class MekCacheCSVTool {
                 }
 
                 csvLine = new StringBuilder();
-                csvLine.append(unit.getChassis()).append(DELIM);
+                csvLine.append(unit.getFullChassis()).append(DELIM);
                 csvLine.append(unit.getModel()).append(DELIM);
                 csvLine.append(unit.getMulId()).append(DELIM);
-                csvLine.append(unit.getChassis()).append(" ").append(unit.getModel()).append(DELIM);
+                csvLine.append(unit.getFullChassis()).append(" ").append(unit.getModel()).append(DELIM);
                 csvLine.append(unit.isClan()).append(DELIM);
                 csvLine.append(unit.getSource()).append(DELIM);
                 csvLine.append(unit.getSourceFile()).append(DELIM);

@@ -9,3 +9,10 @@ color:
   green: 130
   blue: 186
 nameGenerator: LA
+factionLeaders:
+  - title: "Warlord"
+    firstName: "Diego"
+    surname: "Widmer"
+    gender: "MALE"
+    startYear: 3146
+    endYear: 3148

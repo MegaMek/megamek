@@ -34,3 +34,10 @@ fallBackFactions:
   - OP
   - IS
   - FWL
+factionLeaders:
+  - title: "Duke"
+    firstName: "Anton"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 3078
+    endYear: 3015

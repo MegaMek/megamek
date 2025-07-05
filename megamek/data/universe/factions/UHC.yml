@@ -21,3 +21,18 @@ ratingLevels:
   - A
 fallBackFactions:
   - FS
+factionLeaders:
+  - title: "Maharaja"
+    firstName: "Naval"
+    surname: "Patel"
+    gender: "MALE"
+    startYear: 2412
+    # unofficial (we don't have a canon endYear)
+    endYear: 2540
+  - title: "Maharaja"
+    firstName: "Sadhvi"
+    surname: "Garg"
+    gender: "FEMALE"
+    startYear: 2540
+    # unofficial (we don't have a canon endYear)
+    endYear: 2580

@@ -10,3 +10,34 @@ color:
   green: 134
   blue: 11
 nameGenerator: CC
+factionLeaders:
+  - title: "Premier"
+    firstName: "Emmanuel"
+    surname: "Brunn"
+    gender: "MALE"
+    # Unofficial: we know they served in 2225, but not when their reign began or ended
+    startYear: 2205
+    # Unofficial: we know they served in 2225, but not when their reign began or ended
+    endYear: 2245
+  - title: "Premier"
+    firstName: "Casin"
+    surname: "Chandler"
+    gender: "MALE"
+    # Unofficial: we know they served in 2304, but not when their reign began or ended
+    startYear: 2284
+    # Unofficial: we know they served in 2304, but not when their reign began or ended
+    endYear: 2324
+  - title: "Premier"
+    firstName: "Alexi"
+    surname: "Nimzovich"
+    gender: "MALE"
+    # Unofficial: we know they served in 2363, but not when their reign began or ended
+    startYear: 2343
+    # Unofficial: we know they served in 2363, but not when their reign began or ended
+    endYear: 2383
+  - title: "Premier"
+    firstName: "Lorete"
+    surname: "Montog-Chandler"
+    gender: "MALE"
+    startYear: 3057
+    endYear: 3059

@@ -34,3 +34,21 @@ ratingLevels:
 fallBackFactions:
   - Periphery.HR
   - TC
+factionLeaders:
+  - title: "Acting President"
+    firstName: "Cham"
+    surname: "Kithrong"
+    gender: "MALE"
+    startYear: 3067
+    endYear: 3080
+  - title: "Protector"
+    firstName: "Erik"
+    surname: "Martens-Calderon"
+    gender: "MALE"
+    startYear: 3067
+    endYear: 3120
+  - title: "Protector"
+    firstName: "Sam"
+    surname: "Calderon"
+    gender: "MALE"
+    startYear: 3120

@@ -13,3 +13,10 @@ eraMods:
   - -1
   - -1
   - -1
+factionLeaders:
+  - title: "Emperor"
+    firstName: "Stefan"
+    surname: "Armaris"
+    gender: "MALE"
+    startYear: 2766
+    endYear: 2780

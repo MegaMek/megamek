@@ -23,3 +23,14 @@ fallBackFactions:
   - CNC
   - FWL
   - CLAN.IS
+factionLeaders:
+  - title: "Star Colonel"
+    firstName: "Rikkard"
+    surname: "Nova Cat"
+    gender: "MALE"
+    startYear: 3138
+  - title: "ovKhan"
+    firstName: "Petr"
+    surname: Kalasa"
+    gender: "MALE"
+    startYear: 3138

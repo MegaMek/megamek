@@ -18,3 +18,10 @@ eraMods:
   - 0
   - 3
   - 3
+factionLeaders:
+  - title: "Director"
+    firstName: "Santiago"
+    surname: "Espinosa"
+    gender: "MALE"
+    startYear: 3022
+    endYear: 3025

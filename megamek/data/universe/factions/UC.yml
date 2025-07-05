@@ -36,3 +36,17 @@ ratingLevels:
 fallBackFactions:
   - NC
   - Periphery.Deep
+factionLeaders:
+  - title: "Caliph"
+    firstName: "Joshua"
+    surname: "Murray"
+    gender: "MALE"
+    # Unofficial, we don't have a canon startYear
+    startYear: 3017
+    endYear: 3057
+  - title: "Caliph"
+    firstName: "Lise"
+    surname: "Burrill"
+    gender: "FEMALE"
+    startYear: 3057
+    endYear: 3080

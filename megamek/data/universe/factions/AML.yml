@@ -17,3 +17,9 @@ ratingLevels:
   - Front Line
 fallBackFactions:
   - CJF
+factionLeaders:
+  - title: "Syndic"
+    firstName: "Marena"
+    surname: ""
+    gender: "FEMALE"
+    startYear: 3151

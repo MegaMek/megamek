@@ -8,3 +8,178 @@ color:
   red: 181
   green: 58
   blue: 33
+factionLeaders:
+  - title: "Protector"
+    firstName: "Samantha"
+    surname: "Calderon"
+    gender: "FEMALE"
+    startYear: 2253
+    endYear: 2268
+  - title: "Protector"
+    firstName: "Timothy"
+    surname: "Calderon"
+    gender: "MALE"
+    startYear: 2268
+    endYear: 2330
+  - title: "Protector"
+    firstName: "Sandra"
+    surname: "Calderon"
+    gender: "FEMALE"
+    startYear: 2330
+    endYear: 2335
+  - title: "Protector"
+    firstName: "Richard"
+    surname: "Calderon"
+    gender: "MALE"
+    startYear: 2335
+    endYear: 2387
+  - title: "Protector"
+    firstName: "Daniel"
+    surname: "Calderon"
+    gender: "MALE"
+    startYear: 2387
+    endYear: 2390
+  - title: "Admiral"
+    firstName: "Sigur"
+    surname: "Fonn"
+    gender: "MALE"
+    startYear: 2390
+    endYear: 2415
+  - title: "Protector"
+    firstName: "Amanda"
+    surname: "Calderon"
+    gender: "FEMALE"
+    startYear: 2415
+    # Unofficial: we don't have a canon endYear
+    endYear: 2475
+  - title: "Protector"
+    firstName: "Amalthia"
+    surname: "Calderon"
+    gender: "FEMALE"
+    # Unofficial: we don't have a canon startYear
+    startYear: 2475
+    endYear: 2557
+  - title: "Protector"
+    firstName: "Caterina"
+    surname: "Calderon"
+    gender: "FEMALE"
+    startYear: 2557
+    endYear: 2574
+  - title: "Protector"
+    firstName: "Mitchell"
+    surname: "Calderon"
+    gender: "MALE"
+    startYear: 2574
+    endYear: 2587
+  - title: "Protector"
+    firstName: "Henry"
+    surname: "Calderon"
+    gender: "MALE"
+    startYear: 2596
+    endYear: 2629
+  - title: "Protector"
+    firstName: "Carlos"
+    surname: "Calderon"
+    gender: "MALE"
+    startYear: 2629
+    endYear: 2650
+  - title: "Protector"
+    firstName: "Consuelo"
+    surname: "Calderon"
+    gender: "FEMALE"
+    startYear: 2650
+    endYear: 2671
+  - title: "Protector"
+    firstName: "Reginald"
+    surname: "Calderon"
+    gender: "MALE"
+    startYear: 2671
+    endYear: 2687
+  - title: "Protector"
+    firstName: "Jenterra"
+    surname: "Calderon"
+    gender: "FEMALE"
+    startYear: 2687
+    endYear: 2694
+  - title: "Protector"
+    firstName: "Brandon"
+    surname: "Calderon"
+    gender: "FEMALE"
+    startYear: 2694
+    endYear: 2725
+  - title: "Protector"
+    firstName: "Hampton"
+    surname: "Calderon"
+    gender: "FEMALE"
+    startYear: 2725
+    endYear: 2726
+  - title: "Protector"
+    firstName: "Nicoletta"
+    surname: "Calderon"
+    gender: "FEMALE"
+    startYear: 2726
+    endYear: 2801
+  - title: "Protector"
+    firstName: "Semyon"
+    surname: "Calderon"
+    gender: "MALE"
+    startYear: 2801
+    endYear: 2816
+  - title: "Protector"
+    firstName: "Rayna"
+    surname: "Arantino"
+    gender: "FEMALE"
+    startYear: 2816
+    # Unofficial: we don't have a canon endYear
+    endYear: 2842
+  - title: "Protector"
+    firstName: "Ignatius"
+    surname: "Calderon"
+    gender: "MALE"
+    startYear: 2842
+    endYear: 2884
+  - title: "Protector"
+    firstName: "Zarantha"
+    surname: "Calderon"
+    gender: "FEMALE"
+    # Unofficial: we don't have a canon startYear
+    startYear: 2884
+    endYear: 3017
+  - title: "Protector"
+    firstName: "Thomas"
+    surname: "Calderon"
+    gender: "MALE"
+    # Unofficial: we don't have a canon startYear
+    startYear: 3017
+    endYear: 3055
+  - title: "Protector"
+    firstName: "Jeffrey"
+    surname: "Calderon"
+    gender: "MALE"
+    startYear: 3055
+    endYear: 3061
+  - title: "Protector"
+    firstName: "Grover"
+    surname: "Shraplen"
+    gender: "MALE"
+    startYear: 3061
+    endYear: 3074
+  - title: "Protector"
+    firstName: "Boris"
+    surname: "Tharn"
+    gender: "MALE"
+    startYear: 3076
+    # Unofficial: we don't have a canon endYear
+    endYear: 3116
+  - title: "Protector"
+    firstName: "James"
+    surname: "Urratia"
+    gender: "MALE"
+    # Unofficial: we don't have a canon startYear
+    startYear: 3116
+    endYear: 3127
+  - title: "Protector"
+    firstName: "Kaff"
+    surname: "Doru"
+    gender: "MALE"
+    startYear: 3127

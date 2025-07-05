@@ -32,3 +32,26 @@ ratingLevels:
 fallBackFactions:
   - Periphery.R
   - PIR
+factionLeaders:
+  - title: "Baron"
+    firstName: "Nico"
+    surname: "von Strang"
+    gender: "MALE"
+    startYear: 2780
+    #Unofficial: we don't have a canon endYear
+    endYear: 2800
+  - title: "Baron"
+    firstName: "Otto"
+    surname: "von Strang"
+    gender: "MALE"
+    #Unofficial: we don't have a canon startYear
+    startYear: 3005
+    #Unofficial: we don't have a canon endYear
+    endYear: 3045
+  - title: "Baron"
+    firstName: "Stepan"
+    surname: "von Strang"
+    gender: "MALE"
+    #Unofficial: we don't have a canon startYear
+    startYear: 3045
+    endYear: 3049

@@ -20,3 +20,26 @@ eraMods:
   - 0
   - 1
   - 0
+factionLeaders:
+  - title: "Duke"
+    firstName: "Russel"
+    surname: "Sherris"
+    gender: "MALE"
+    # Unofficial: we only know that he served in 3025, so we're extrapolating
+    startYear: 3005
+    # Unofficial: we only know that he served in 3025, so we're extrapolating
+    endYear: 3045
+  - title: "Duke"
+    firstName: "Cantrelle"
+    surname: "Sherris"
+    gender: "FEMALE"
+    # Unofficial: we only know that she served in 3067, so we're extrapolating
+    startYear: 3047
+    # Unofficial: we only know that she served in 3067, so we're extrapolating
+    endYear: 3087
+  - title: "Duke"
+    firstName: "Verna"
+    surname: "Sherris"
+    gender: "MALE"
+    # Unofficial: we only know that she served in 3151, so we're extrapolating
+    startYear: 3131

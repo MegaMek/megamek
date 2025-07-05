@@ -42,3 +42,27 @@ fallBackFactions:
   - Periphery.Deep
   - CGS
   - UC
+factionLeaders:
+  - title: "Khan"
+    firstName: "Colin"
+    surname: "Yeh"
+    gender: "MALE"
+    startYear: 3080
+    endYear: 3086
+  - title: "Khan"
+    firstName: "Connor"
+    surname: "Rood"
+    gender: "MALE"
+    startYear: 3086
+    endYear: 3108
+  - title: "Khan"
+    firstName: "Enrico"
+    surname: "Kirov"
+    gender: "MALE"
+    startYear: 3108
+    endYear: 3137
+  - title: "Khan"
+    firstName: "Magon"
+    surname: "Scott"
+    gender: "MALE"
+    startYear: 3137

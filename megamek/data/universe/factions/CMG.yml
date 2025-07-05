@@ -25,3 +25,30 @@ ratingLevels:
   - Keshik
 fallBackFactions:
   - CLAN
+factionLeaders:
+  - title: "Khan"
+    firstName: "Mitchell"
+    surname: "Loris"
+    gender: "MALE"
+    startYear: 2807
+    endYear: 2844
+  - title: "Khan"
+    firstName: "Davis"
+    surname: "Riley"
+    gender: "MALE"
+    startYear: 2844
+    endYear: 2845
+  - title: "Khan"
+    firstName: "Jes"
+    surname: "Greenhalgh"
+    gender: "FEMALE"
+    startYear: 2845
+    # Unofficial: we don't have a canon endYear
+    endYear: 2865
+  - title: "Khan"
+    firstName: "Walter"
+    surname: "Martindale"
+    gender: "MALE"
+    # Unofficial: we don't have a canon startYear
+    startYear: 2865
+    endYear: 2868

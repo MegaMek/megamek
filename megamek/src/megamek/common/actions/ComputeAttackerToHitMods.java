@@ -41,6 +41,8 @@ import megamek.common.weapons.InfantryAttack;
 
 import java.util.EnumSet;
 
+import static megamek.common.AmmoType.AmmoTypeEnum.*;
+
 class ComputeAttackerToHitMods {
 
     /**
@@ -49,7 +51,7 @@ class ComputeAttackerToHitMods {
      * methods.
      *
      * @param game              The current {@link Game}
-     * @param ae                The Entity making this attack
+     * @param attacker          The Entity making this attack
      * @param target            The Targetable object being attacked
      * @param los               The calculated LOS between attacker and target
      * @param toHit             The running total ToHitData for this WeaponAttackAction
@@ -66,18 +68,18 @@ class ComputeAttackerToHitMods {
      * @param isWeaponFieldGuns flag that indicates whether the attack is being made with infantry field guns
      * @param usesAmmo          flag that indicates if the WeaponType being used is ammo-fed
      */
-    static ToHitData compileAttackerToHitMods(Game game, Entity ae, Targetable target, LosEffects los,
+    static ToHitData compileAttackerToHitMods(Game game, Entity attacker, Targetable target, LosEffects los,
           ToHitData toHit, int aimingAt, AimingMode aimingMode, WeaponType wtype, Mounted<?> weapon, int weaponId,
           AmmoType atype, EnumSet<AmmoType.Munitions> munition, boolean isFlakAttack, boolean isHaywireINarced,
           boolean isNemesisConfused, boolean isWeaponFieldGuns, boolean usesAmmo) {
+        
         if (toHit == null) {
             // Without valid toHit data, the rest of this will fail
             toHit = new ToHitData();
         }
 
-        // if we don't have a weapon, that we are attacking with, then the rest of this
-        // is
-        // either meaningless or likely to fail
+        // if we don't have a weapon, that we are attacking with, then the rest of this is either meaningless or 
+        // likely to fail
         if (weaponId == WeaponType.WEAPON_NA) {
             return toHit;
         }
@@ -85,217 +87,206 @@ class ComputeAttackerToHitMods {
         // Modifiers related to an action the attacker is taking
 
         // attacker movement
-        toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
+        toHit.append(Compute.getAttackerMovementModifier(game, attacker.getId()));
 
         // attacker prone
-        if (weaponId > WeaponType.WEAPON_NA) {
-            toHit.append(Compute.getProneMods(game, ae, weaponId));
-        }
+        toHit.append(Compute.getProneMods(game, attacker, weaponId));
 
         // add penalty for called shots and change hit table, if necessary
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS) && weapon != null) {
             int call = weapon.getCalledShot().getCall();
             if ((call > CalledShot.CALLED_NONE) && !aimingMode.isNone()) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                      megamek.client.ui.Messages.getString("WeaponAttackAction.CantAimAndCallShots"));
+                      Messages.getString("WeaponAttackAction.CantAimAndCallShots"));
             }
 
             switch (call) {
                 case CalledShot.CALLED_NONE:
                     break;
                 case CalledShot.CALLED_HIGH:
-                    toHit.addModifier(+3, megamek.client.ui.Messages.getString("WeaponAttackAction.CalledHigh"));
+                    toHit.addModifier(+3, Messages.getString("WeaponAttackAction.CalledHigh"));
                     toHit.setHitTable(ToHitData.HIT_ABOVE);
                     break;
                 case CalledShot.CALLED_LOW:
                     if (los.getTargetCover() == LosEffects.COVER_HORIZONTAL) {
                         return new ToHitData(TargetRoll.IMPOSSIBLE,
-                              megamek.client.ui.Messages.getString("WeaponAttackAction.CalledLowPartCover"));
+                              Messages.getString("WeaponAttackAction.CalledLowPartCover"));
                     }
-                    toHit.addModifier(+3, megamek.client.ui.Messages.getString("WeaponAttackAction.CalledLow"));
+                    toHit.addModifier(+3, Messages.getString("WeaponAttackAction.CalledLow"));
                     toHit.setHitTable(ToHitData.HIT_BELOW);
                     break;
                 case CalledShot.CALLED_LEFT:
                     // handled by Compute#targetSideTable
-                    toHit.addModifier(+3, megamek.client.ui.Messages.getString("WeaponAttackAction.CalledLeft"));
+                    toHit.addModifier(+3, Messages.getString("WeaponAttackAction.CalledLeft"));
                     break;
                 case CalledShot.CALLED_RIGHT:
                     // handled by Compute#targetSideTable
-                    toHit.addModifier(+3, megamek.client.ui.Messages.getString("WeaponAttackAction.CalledRight"));
+                    toHit.addModifier(+3, Messages.getString("WeaponAttackAction.CalledRight"));
                     break;
             }
         }
 
-        // Dropping units get hit with a +2 dropping penalty AND the +3 Jumping penalty
-        // (SO p22)
-        if (ae.isAirborne() && !ae.isAero()) {
-            toHit.addModifier(+2, megamek.client.ui.Messages.getString("WeaponAttackAction.Dropping"));
-            toHit.addModifier(+3, megamek.client.ui.Messages.getString("WeaponAttackAction.Jumping"));
+        // Dropping units get hit with a +2 dropping penalty AND the +3 Jumping penalty, SO p.22
+        if (attacker.isAirborne() && !attacker.isAero()) {
+            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.Dropping"));
+            toHit.addModifier(+3, Messages.getString("WeaponAttackAction.Jumping"));
         }
 
         // Infantry taking cover suffer a +1 penalty
-        if ((ae instanceof Infantry) && ((Infantry) ae).isTakingCover()) {
-            if (ae.getPosition().direction(target.getPosition()) == ae.getFacing()) {
-                toHit.addModifier(+1, megamek.client.ui.Messages.getString("WeaponAttackAction.FireThruCover"));
+        if ((attacker instanceof Infantry infantry) && infantry.isTakingCover()) {
+            if (attacker.getPosition().direction(target.getPosition()) == attacker.getFacing()) {
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.FireThruCover"));
             }
         }
 
         // Quadvee converting to a new mode
-        if (ae instanceof QuadVee && ae.isConvertingNow()) {
-            toHit.addModifier(+3, megamek.client.ui.Messages.getString("WeaponAttackAction.QuadVeeConverting"));
+        if (attacker instanceof QuadVee && attacker.isConvertingNow()) {
+            toHit.addModifier(+3, Messages.getString("WeaponAttackAction.QuadVeeConverting"));
         }
 
         // we are bracing
-        if (ae.isBracing() && (ae.braceLocation() == weapon.getLocation())) {
-            toHit.addModifier(-2, megamek.client.ui.Messages.getString("WeaponAttackAction.Bracing"));
+        if ((weapon != null) && attacker.isBracing() && (attacker.braceLocation() == weapon.getLocation())) {
+            toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Bracing"));
         }
 
         // Secondary targets modifier,
         // if this is not a iNarc Nemesis confused attack
         // Inf field guns don't get secondary target mods, TO pg 311
         if (!isNemesisConfused && !isWeaponFieldGuns) {
-            toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
+            toHit.append(Compute.getSecondaryTargetMod(game, attacker, target));
         }
 
         // if we're spotting for indirect fire, add +1
-        if (ae.isSpotting() &&
-                  !ae.getCrew().hasActiveCommandConsole() &&
-                  game.getTagInfo().stream().noneMatch(inf -> inf.attackerId == ae.getId())) {
-            toHit.addModifier(+1, megamek.client.ui.Messages.getString("WeaponAttackAction.AeSpotting"));
+        if (attacker.isSpotting() &&
+                  !attacker.getCrew().hasActiveCommandConsole() &&
+                  game.getTagInfo().stream().noneMatch(inf -> inf.attackerId == attacker.getId())) {
+            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeSpotting"));
         }
 
         // Special effects (like tasers) affecting the attacker
 
         // Attacker is battle armor and affected by BA taser feedback
-        if (ae.getTaserFeedBackRounds() > 0) {
-            toHit.addModifier(1, megamek.client.ui.Messages.getString("WeaponAttackAction.AeTaserFeedback"));
+        if (attacker.getTaserFeedBackRounds() > 0) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeTaserFeedback"));
         }
 
-        // If a unit is suffering from electromagnetic interference, they get a
-        // blanket +2. Sucks to be them.
-        if (ae.isSufferingEMI()) {
-            toHit.addModifier(+2, megamek.client.ui.Messages.getString("WeaponAttackAction.EMI"));
+        // If a unit is suffering from electromagnetic interference, they get a blanket +2. Sucks to be them.
+        if (attacker.isSufferingEMI()) {
+            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.EMI"));
         }
 
         // heat
-        if (ae.getHeatFiringModifier() != 0) {
-            toHit.addModifier(ae.getHeatFiringModifier(), megamek.client.ui.Messages.getString("WeaponAttackAction.Heat"));
+        if (attacker.getHeatFiringModifier() != 0) {
+            toHit.addModifier(attacker.getHeatFiringModifier(), Messages.getString("WeaponAttackAction.Heat"));
         }
 
         // Attacker hit with an iNarc Haywire pod
         if (isHaywireINarced) {
-            toHit.addModifier(1, megamek.client.ui.Messages.getString("WeaponAttackAction.iNarcHaywire"));
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.iNarcHaywire"));
         }
 
         // Attacker affected by Taser interference
-        if (ae.getTaserInterferenceRounds() > 0) {
-            toHit.addModifier(ae.getTaserInterference(), megamek.client.ui.Messages.getString("WeaponAttackAction.AeHitByTaser"));
+        if (attacker.getTaserInterferenceRounds() > 0) {
+            toHit.addModifier(attacker.getTaserInterference(), Messages.getString("WeaponAttackAction.AeHitByTaser"));
         }
 
         // Attacker affected by TSEMP interference
-        if (ae.getTsempEffect() == MMConstants.TSEMP_EFFECT_INTERFERENCE) {
-            toHit.addModifier(+2, megamek.client.ui.Messages.getString("WeaponAttackAction.AeTsemped"));
+        if (attacker.getTsempEffect() == MMConstants.TSEMP_EFFECT_INTERFERENCE) {
+            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeTsemped"));
         }
 
         // Special Equipment that that attacker possesses
 
         // Attacker has an AES system
-        if (weapon != null && ae.hasFunctionalArmAES(weapon.getLocation()) && !weapon.isSplit()) {
-            toHit.addModifier(-1, megamek.client.ui.Messages.getString("WeaponAttackAction.AES"));
+        if ((weapon != null) && attacker.hasFunctionalArmAES(weapon.getLocation()) && !weapon.isSplit()) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.AES"));
         }
 
         // Heavy infantry have +1 penalty
-        if ((ae instanceof Infantry) && ae.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR)) {
-            toHit.addModifier(1, megamek.client.ui.Messages.getString("WeaponAttackAction.HeavyArmor"));
+        if ((attacker instanceof Infantry) && attacker.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR)) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.HeavyArmor"));
         }
 
         // industrial cockpit: +1 to hit, +2 for primitive
-        if ((ae instanceof Mek) && (((Mek) ae).getCockpitType() == Mek.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
-            toHit.addModifier(2, megamek.client.ui.Messages.getString("WeaponAttackAction.PrimIndustrialNoAfc"));
-        } else if ((ae instanceof Mek) && !((Mek) ae).hasAdvancedFireControl()) {
-            toHit.addModifier(1, megamek.client.ui.Messages.getString("WeaponAttackAction.IndustrialNoAfc"));
+        if ((attacker instanceof Mek mek) && (mek.getCockpitType() == Mek.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
+            toHit.addModifier(2, Messages.getString("WeaponAttackAction.PrimIndustrialNoAfc"));
+        } else if ((attacker instanceof Mek) && !((Mek) attacker).hasAdvancedFireControl()) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.IndustrialNoAfc"));
         }
 
         // primitive industrial cockpit with advanced firing control: +1 to hit
-        if ((ae instanceof Mek) &&
-                  (((Mek) ae).getCockpitType() == Mek.COCKPIT_PRIMITIVE) &&
-                  ((Mek) ae).isIndustrial()) {
-            toHit.addModifier(1, megamek.client.ui.Messages.getString("WeaponAttackAction.PrimIndustrialAfc"));
+        if ((attacker instanceof Mek mek) && (mek.getCockpitType() == Mek.COCKPIT_PRIMITIVE) && mek.isIndustrial()) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.PrimIndustrialAfc"));
         }
 
         // Support vehicle basic/advanced fire control systems
-        if ((ae instanceof SupportTank) || (ae instanceof SupportVTOL)) {
-            if (!ae.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) &&
-                      !ae.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
-                toHit.addModifier(2, megamek.client.ui.Messages.getString("WeaponAttackAction.SupVeeNoFc"));
-            } else if (ae.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) &&
-                             !(ae.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))) {
-                toHit.addModifier(1, megamek.client.ui.Messages.getString("WeaponAttackAction.SupVeeBfc"));
+        if ((attacker instanceof SupportTank) || (attacker instanceof SupportVTOL)) {
+            if (!attacker.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) &&
+                      !attacker.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.SupVeeNoFc"));
+            } else if (attacker.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) &&
+                             !(attacker.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))) {
+                toHit.addModifier(1, Messages.getString("WeaponAttackAction.SupVeeBfc"));
             }
         }
 
         // Is the attacker hindered by a shield?
-        if (ae.hasShield() && weapon != null) {
-            // active shield has already been checked as it makes shots
-            // impossible
+        if (attacker.hasShield() && (weapon != null)) {
+            // active shield has already been checked as it makes shots impossible
             // time to check passive defense and no defense
-
-            if (ae.hasPassiveShield(weapon.getLocation(), weapon.isRearMounted())) {
-                toHit.addModifier(+2, megamek.client.ui.Messages.getString("WeaponAttackAction.PassiveShield"));
-            } else if (ae.hasNoDefenseShield(weapon.getLocation())) {
-                toHit.addModifier(+1, megamek.client.ui.Messages.getString("WeaponAttackAction.Shield"));
+            if (attacker.hasPassiveShield(weapon.getLocation(), weapon.isRearMounted())) {
+                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.PassiveShield"));
+            } else if (attacker.hasNoDefenseShield(weapon.getLocation())) {
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Shield"));
             }
         }
 
         // add targeting computer (except with LBX cluster ammo)
         if (aimingMode.isTargetingComputer() && (aimingAt != Entity.LOC_NONE)) {
-            if (ae.hasActiveEiCockpit()) {
-                if (ae.hasTargComp()) {
-                    toHit.addModifier(2, megamek.client.ui.Messages.getString("WeaponAttackAction.AimWithTCompEi"));
+            if (attacker.hasActiveEiCockpit()) {
+                if (attacker.hasTargComp()) {
+                    toHit.addModifier(2, Messages.getString("WeaponAttackAction.AimWithTCompEi"));
                 } else {
-                    toHit.addModifier(6, megamek.client.ui.Messages.getString("WeaponAttackAction.AimWithEiOnly"));
+                    toHit.addModifier(6, Messages.getString("WeaponAttackAction.AimWithEiOnly"));
                 }
             } else {
-                toHit.addModifier(3, megamek.client.ui.Messages.getString("WeaponAttackAction.AimWithTCompOnly"));
+                toHit.addModifier(3, Messages.getString("WeaponAttackAction.AimWithTCompOnly"));
             }
         } else {
             // LB-X cluster, HAG flak, flak ammo ineligible for TC bonus
-            boolean usesLBXCluster = usesAmmo &&
-                                           (atype != null) &&
-                                           (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX ||
-                                                  atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX_THB) &&
-                                           munition.contains(AmmoType.Munitions.M_CLUSTER);
-            boolean usesHAGFlak = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.AmmoTypeEnum.HAG && isFlakAttack;
-            boolean isSBGauss = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.AmmoTypeEnum.SBGAUSS;
+            boolean usesLBXCluster = usesAmmo
+                  && (atype != null)
+                  && (atype.getAmmoType() == AC_LBX || atype.getAmmoType() == AC_LBX_THB)
+                  && munition.contains(AmmoType.Munitions.M_CLUSTER);
+            boolean usesHAGFlak = usesAmmo && (atype != null) && (atype.getAmmoType() == HAG) && isFlakAttack;
+            boolean isSBGauss = usesAmmo && (atype != null) && (atype.getAmmoType() == SBGAUSS);
             boolean isFlakAmmo = usesAmmo && (atype != null) && (munition.contains(AmmoType.Munitions.M_FLAK));
-            if (ae.hasTargComp() &&
-                      wtype != null &&
-                      wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
-                      !wtype.hasFlag(WeaponType.F_CWS) &&
-                      !wtype.hasFlag(WeaponType.F_TASER) &&
-                      (!usesAmmo || !(usesLBXCluster || usesHAGFlak || isSBGauss || isFlakAmmo))) {
-                toHit.addModifier(-1, megamek.client.ui.Messages.getString("WeaponAttackAction.TComp"));
+            if (attacker.hasTargComp()
+                  && (wtype != null)
+                  && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
+                  && !wtype.hasAnyFlag(WeaponType.F_CWS, WeaponType.F_TASER)
+                  && (!usesAmmo || !(usesLBXCluster || usesHAGFlak || isSBGauss || isFlakAmmo))) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TComp"));
             }
         }
 
         // penalty for an active void signature system
-        if (ae.isVoidSigActive()) {
-            toHit.addModifier(1, megamek.client.ui.Messages.getString("WeaponAttackAction.AeVoidSig"));
+        if (attacker.isVoidSigActive()) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeVoidSig"));
         }
 
         // Critical damage effects
 
         // actuator & sensor damage to attacker (includes partial repairs)
         if (weapon != null) {
-            toHit.append(Compute.getDamageWeaponMods(ae, weapon));
+            toHit.append(Compute.getDamageWeaponMods(attacker, weapon));
         }
 
         // Vehicle criticals
-        if (ae instanceof Tank) {
-            Tank tank = (Tank) ae;
-            int sensors = tank.getSensorHits();
-            if (sensors > 0) {
-                toHit.addModifier(sensors, megamek.client.ui.Messages.getString("WeaponAttackAction.SensorDamage"));
+        if (attacker instanceof Tank tank) {
+            int sensorHits = tank.getSensorHits();
+            if (sensorHits > 0) {
+                toHit.addModifier(sensorHits, Messages.getString("WeaponAttackAction.SensorDamage"));
             }
             if (weapon != null && tank.isStabiliserHit(weapon.getLocation())) {
                 toHit.addModifier(Compute.getAttackerMovementModifier(game, tank.getId()).getValue(),
@@ -312,14 +303,13 @@ class ComputeAttackerToHitMods {
      * methods.
      *
      * @param game   The current {@link Game}
-     * @param ae     The Entity making this attack
-     * @param te     The target Entity
+     * @param attacker     The Entity making this attack
      * @param toHit  The running total ToHitData for this WeaponAttackAction
      * @param weapon The weapon being used (it's type should be WeaponType!)
      */
-    static ToHitData compileCrewToHitMods(Game game, Entity ae, Entity te, ToHitData toHit, Mounted<?> weapon) {
+    static ToHitData compileCrewToHitMods(Game game, Entity attacker, ToHitData toHit, Mounted<?> weapon) {
 
-        if (ae == null) {
+        if (attacker == null) {
             // These checks won't work without a valid attacker
             return toHit;
         }
@@ -332,46 +322,43 @@ class ComputeAttackerToHitMods {
         // Now for modifiers affecting the attacker's crew
 
         // Bonuses for dual cockpits, etc
-        // Bonus to gunnery if both crew members are active; a pilot who takes the
-        // gunner's role get +1.
-        if (ae instanceof Mek && ((Mek) ae).getCockpitType() == Mek.COCKPIT_DUAL) {
-            if (!ae.getCrew().isActive(ae.getCrew().getCrewType().getGunnerPos())) {
-                toHit.addModifier(1, megamek.client.ui.Messages.getString("WeaponAttackAction.GunnerHit"));
-            } else if (ae.getCrew().hasDedicatedGunner()) {
-                toHit.addModifier(-1, megamek.client.ui.Messages.getString("WeaponAttackAction.DualCockpit"));
+        // Bonus to gunnery if both crew members are active; a pilot who takes the gunner's role get +1.
+        if ((attacker instanceof Mek mek) && (mek.getCockpitType() == Mek.COCKPIT_DUAL)) {
+            if (!attacker.getCrew().isActive(attacker.getCrew().getCrewType().getGunnerPos())) {
+                toHit.addModifier(1, Messages.getString("WeaponAttackAction.GunnerHit"));
+            } else if (attacker.getCrew().hasDedicatedGunner()) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.DualCockpit"));
             }
         }
 
-        // The pilot or technical officer can take over the gunner's duties but suffers
-        // a +2 penalty.
-        if ((ae instanceof TripodMek || ae instanceof QuadVee) && !ae.getCrew().hasDedicatedGunner()) {
-            toHit.addModifier(+2, megamek.client.ui.Messages.getString("WeaponAttackAction.GunnerHit"));
+        // The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
+        if ((attacker instanceof TripodMek || attacker instanceof QuadVee) && !attacker.getCrew().hasDedicatedGunner()) {
+            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.GunnerHit"));
         }
 
         // Fatigue
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE) &&
-                  ae.getCrew().isGunneryFatigued()) {
-            toHit.addModifier(1, megamek.client.ui.Messages.getString("WeaponAttackAction.Fatigue"));
+                  attacker.getCrew().isGunneryFatigued()) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.Fatigue"));
         }
 
         // Injuries
 
         // Aero unit pilot/crew hits
-        if (ae instanceof Aero) {
-            int pilothits = ae.getCrew().getHits();
-            if ((pilothits > 0) && !ae.isCapitalFighter()) {
-                toHit.addModifier(pilothits, megamek.client.ui.Messages.getString("WeaponAttackAction.PilotHits"));
+        if (attacker instanceof Aero) {
+            int pilotHits = attacker.getCrew().getHits();
+            if ((pilotHits > 0) && !attacker.isCapitalFighter()) {
+                toHit.addModifier(pilotHits, Messages.getString("WeaponAttackAction.PilotHits"));
             }
         }
 
         // Vehicle crew hits
-        if (ae instanceof Tank) {
-            Tank tank = (Tank) ae;
+        if (attacker instanceof Tank tank) {
             if (tank.isCommanderHit()) {
-                if (ae instanceof VTOL) {
-                    toHit.addModifier(+1, megamek.client.ui.Messages.getString("WeaponAttackAction.CopilotHit"));
+                if (attacker instanceof VTOL) {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.CopilotHit"));
                 } else {
-                    toHit.addModifier(+1, megamek.client.ui.Messages.getString("WeaponAttackAction.CmdrHit"));
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.CmdrHit"));
                 }
             }
         }
@@ -379,19 +366,16 @@ class ComputeAttackerToHitMods {
         // Manei Domini Upgrades
 
         // VDNI
-        if (ae.hasAbility(OptionsConstants.MD_VDNI) || ae.hasAbility(OptionsConstants.MD_BVDNI)) {
-            toHit.addModifier(-1, megamek.client.ui.Messages.getString("WeaponAttackAction.Vdni"));
+        if (attacker.hasAbility(OptionsConstants.MD_VDNI) || attacker.hasAbility(OptionsConstants.MD_BVDNI)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
         }
 
-        WeaponType wtype = ((weapon != null) && (weapon.getType() instanceof WeaponType)) ?
-                                 (WeaponType) weapon.getType() :
-                                 null;
-
-        if (ae.isConventionalInfantry()) {
-            // check for cyber eye laser sighting on ranged attacks
-            if (ae.hasAbility(OptionsConstants.MD_CYBER_IMP_LASER) && !(wtype instanceof InfantryAttack)) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MdEye"));
-            }
+        // check for cyber eye laser sighting on ranged attacks
+        if (attacker.isConventionalInfantry()
+              && attacker.hasAbility(OptionsConstants.MD_CYBER_IMP_LASER)
+              && (weapon != null)
+              && !(weapon.getType() instanceof InfantryAttack)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MdEye"));
         }
 
         return toHit;

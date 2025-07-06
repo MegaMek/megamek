@@ -33,34 +33,29 @@
 package megamek.common.actions;
 
 import megamek.client.ui.Messages;
-import megamek.common.Crew;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
+import static megamek.common.Terrains.*;
+
 class ComputeAbilityMods {
 
-    static ToHitData processAttackerQuirks(ToHitData toHit, Entity ae, Targetable target, Mounted<?> weapon) {
+    static void processAttackerQuirks(ToHitData toHit, Entity attacker, Targetable target, Mounted<?> weapon) {
 
         // Anti-air targeting quirk vs airborne unit
-        if (ae.hasQuirk(OptionsConstants.QUIRK_POS_ANTI_AIR) && (target instanceof Entity)) {
+        if (attacker.hasQuirk(OptionsConstants.QUIRK_POS_ANTI_AIR) && (target instanceof Entity)) {
             if (target.isAirborneVTOLorWIGE() || target.isAirborne()) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.AaVsAir"));
             }
         }
 
         // Sensor ghosts quirk
-        if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_SENSOR_GHOSTS)) {
+        if (attacker.hasQuirk(OptionsConstants.QUIRK_NEG_SENSOR_GHOSTS)) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorGhosts"));
         }
 
@@ -76,7 +71,7 @@ class ComputeAbilityMods {
             }
             // Stable Weapon - Reduces running/flanking penalty by 1
             if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON) &&
-                      (ae.moved == EntityMovementType.MOVE_RUN)) {
+                      (attacker.moved == EntityMovementType.MOVE_RUN)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.StableWeapon"));
             }
             // +1 for a Misrepaired Weapon - See StratOps Partial Repairs
@@ -88,69 +83,64 @@ class ComputeAbilityMods {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.MisreplacedWeapon"));
             }
         }
-        return toHit;
     }
 
-    static ToHitData processAttackerSPAs(ToHitData toHit, Entity ae, Targetable target, WeaponMounted weapon,
+    static void processAttackerSPAs(ToHitData toHit, Entity attacker, @Nullable Targetable target, WeaponMounted weapon,
           Game game) {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
 
         // blood stalker SPA
-        if (ae.getBloodStalkerTarget() > Entity.NONE) {
-            // Issue #5275 - Attacker with bloodstalker SPA, `target` can be null if a
-            // building etc.
-            if ((target != null) && (ae.getBloodStalkerTarget() == target.getId())) {
+        if (attacker.getBloodStalkerTarget() > Entity.NONE) {
+            // Attacker with bloodstalker SPA, target can be null if a building etc.
+            if ((target != null) && (attacker.getBloodStalkerTarget() == target.getId())) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BloodStalkerTarget"));
             } else {
                 toHit.addModifier(+2, Messages.getString("WeaponAttackAction.BloodStalkerNonTarget"));
             }
         }
 
-        WeaponType wtype = (weapon != null) ? weapon.getType() : null;
 
-        if (wtype != null) {
+        if (weapon != null) {
+            WeaponType wtype = weapon.getType();
+
             // Unofficial weapon class specialist - Does not have an unspecialized penalty
-            if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_LASER) && wtype.hasFlag(WeaponType.F_ENERGY)) {
+            if (attacker.hasAbility(OptionsConstants.UNOFF_GUNNERY_LASER) && wtype.hasFlag(WeaponType.F_ENERGY)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunLSkill"));
             }
 
-            if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_BALLISTIC) && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+            if (attacker.hasAbility(OptionsConstants.UNOFF_GUNNERY_BALLISTIC) && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunBSkill"));
             }
 
-            if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_MISSILE) && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            if (attacker.hasAbility(OptionsConstants.UNOFF_GUNNERY_MISSILE) && wtype.hasFlag(WeaponType.F_MISSILE)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunMSkill"));
             }
 
             // Is the pilot a weapon specialist?
-            if (wtype instanceof BayWeapon &&
-                      weapon.getBayWeapons()
-                            .stream()
-                            .allMatch(w -> ae.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, w.getName()))) {
-                // All weapons in a bay must match the specialization
+            if ((wtype instanceof BayWeapon) && isSpecialistForAllBayWeapons(attacker, weapon)) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.WeaponSpec"));
-            } else if (ae.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, wtype.getName())) {
+
+            } else if (attacker.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, wtype.getName())) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.WeaponSpec"));
-            } else if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST)) {
-                // aToW style gunnery specialist: -1 to specialized weapon and +1 to all other
-                // weapons
-                // Note that weapon specialist supersedes gunnery specialization, so if you have
-                // a specialization in Medium Lasers and a Laser specialization, you only get
-                // the -2 specialization mod
+
+            } else if (attacker.hasAbility(OptionsConstants.GUNNERY_SPECIALIST)) {
+                // aToW style gunnery specialist: -1 to specialized weapon and +1 to all other weapons
+                // Note that weapon specialist supersedes gunnery specialization, so if you have a specialization in
+                // Medium Lasers and a Laser specialization, you only get the -2 specialization mod
                 if (wtype.hasFlag(WeaponType.F_ENERGY)) {
-                    if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_ENERGY)) {
+                    if (attacker.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_ENERGY)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.EnergySpec"));
                     } else {
                         toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
                     }
                 } else if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-                    if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_BALLISTIC)) {
+                    if (attacker.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_BALLISTIC)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BallisticSpec"));
                     } else {
                         toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
                     }
                 } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
-                    if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_MISSILE)) {
+                    if (attacker.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_MISSILE)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MissileSpec"));
                     } else {
                         toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
@@ -159,40 +149,38 @@ class ComputeAbilityMods {
             }
 
             // SPA Environmental Specialist
-            // Could be pattern-matching instanceof in Java 17
-            if (target instanceof Entity) {
-                Entity te = (Entity) target;
+            if (target instanceof Entity targetEntity) {
 
                 // Fog Specialist
-                if (ae.getCrew()
+                if (attacker.getCrew()
                           .getOptions()
                           .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                          .equals(Crew.ENVSPC_FOG) &&
-                          wtype.hasFlag(WeaponType.F_ENERGY) &&
-                          !te.isSpaceborne() &&
-                          conditions.getFog().isFogHeavy()) {
+                          .equals(Crew.ENVSPC_FOG)
+                          && wtype.hasFlag(WeaponType.F_ENERGY)
+                          && !targetEntity.isSpaceborne()
+                          && conditions.getFog().isFogHeavy()) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.FogSpec"));
                 }
 
                 // Light Specialist
-                if (ae.getCrew()
+                if (attacker.getCrew()
                           .getOptions()
                           .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
                           .equals(Crew.ENVSPC_LIGHT)) {
-                    if (!te.isIlluminated() &&
+                    if (!targetEntity.isIlluminated() &&
                               conditions.getLight().isDuskOrFullMoonOrGlareOrMoonlessOrSolarFlareOrPitchBack()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.LightSpec"));
-                    } else if (te.isIlluminated() && conditions.getLight().isPitchBack()) {
+                    } else if (targetEntity.isIlluminated() && conditions.getLight().isPitchBack()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.LightSpec"));
                     }
                 }
 
                 // Rain Specialist
-                if (ae.getCrew()
+                if (attacker.getCrew()
                           .getOptions()
                           .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
                           .equals(Crew.ENVSPC_RAIN)) {
-                    if (conditions.getWeather().isLightRain() && ae.isConventionalInfantry()) {
+                    if (conditions.getWeather().isLightRain() && attacker.isConventionalInfantry()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
                     }
 
@@ -202,11 +190,11 @@ class ComputeAbilityMods {
                 }
 
                 // Snow Specialist
-                if (ae.getCrew()
+                if (attacker.getCrew()
                           .getOptions()
                           .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
                           .equals(Crew.ENVSPC_SNOW)) {
-                    if (conditions.getWeather().isLightSnow() && ae.isConventionalInfantry()) {
+                    if (conditions.getWeather().isLightSnow() && attacker.isConventionalInfantry()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
@@ -220,7 +208,7 @@ class ComputeAbilityMods {
                 }
 
                 // Wind Specialist
-                if (ae.getCrew()
+                if (attacker.getCrew()
                           .getOptions()
                           .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
                           .equals(Crew.ENVSPC_WIND)) {
@@ -228,9 +216,8 @@ class ComputeAbilityMods {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
-                    if (wtype.hasFlag(WeaponType.F_MISSILE) &&
-                              wtype.hasFlag(WeaponType.F_BALLISTIC) &&
-                              conditions.getWind().isStrongGaleOrStorm()) {
+                    if (wtype.hasFlag(WeaponType.F_MISSILE) && wtype.hasFlag(WeaponType.F_BALLISTIC)
+                              && conditions.getWind().isStrongGaleOrStorm()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
                     }
 
@@ -240,54 +227,55 @@ class ComputeAbilityMods {
                 }
             }
         }
-
-        return toHit;
     }
 
-    static ToHitData processDefenderSPAs(ToHitData toHit, Entity ae, Entity te, Mounted<?> weapon, Game game) {
+    private static boolean isSpecialistForAllBayWeapons(Entity attacker, WeaponMounted weapon) {
+        if (!(weapon.getType() instanceof BayWeapon)) {
+            throw new IllegalArgumentException("Only call for BayWeapons!");
+        }
+        return weapon.getBayWeapons()
+                     .stream()
+                     .allMatch(w ->
+                                     attacker.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, w.getName()));
+    }
 
-        if (null == te) {
-            return toHit;
+    static void processDefenderSPAs(ToHitData toHit, Entity attacker, Entity target, Game game) {
+
+        if (null == target) {
+            return;
         }
 
         // Shaky Stick - Target gets a +1 bonus against Ground-to-Air attacks
-        if (te.hasAbility(OptionsConstants.PILOT_SHAKY_STICK) &&
-                  (te.isAirborne() || te.isAirborneVTOLorWIGE()) &&
-                  !ae.isAirborne() &&
-                  !ae.isAirborneVTOLorWIGE()) {
+        if (target.hasAbility(OptionsConstants.PILOT_SHAKY_STICK)
+                  && (target.isAirborne() || target.isAirborneVTOLorWIGE())
+                  && !attacker.isAirborne()
+                  && !attacker.isAirborneVTOLorWIGE()) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.ShakyStick"));
         }
         // Terrain Abilities - Offboard units don't have a hex, so if an offboard unit has one of these
         // it will cause a NPE. Let's check to make sure the target entity is on the board:
-        if (game.hasBoardLocationOf(te)) {
+        if (game.hasBoardLocationOf(target)) {
+
             // Urban Guerrilla - Target gets a +1 bonus in any sort of urban terrain
-            if (te.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA) &&
-                      (game.getHexOf(te).containsTerrain(Terrains.PAVEMENT) ||
-                             game.getHexOf(te).containsTerrain(Terrains.ROAD) ||
-                             game.getHexOf(te).containsTerrain(Terrains.RUBBLE) ||
-                             game.getHexOf(te).containsTerrain(Terrains.BUILDING) ||
-                             game.getHexOf(te).containsTerrain(Terrains.ROUGH))) {
+            Hex targetHex = game.getHexOf(target);
+            if (target.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA)
+                      && targetHex.containsAnyTerrainOf(PAVEMENT, ROAD, RUBBLE, BUILDING, ROUGH)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.UrbanGuerilla"));
             }
-            // Forest Ranger - Target gets a +1 bonus in wooded terrain when moving at
-            // walking speed or greater
-            if (te.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER) &&
-                      (game.getHexOf(te).containsTerrain(Terrains.WOODS) ||
-                             game.getHexOf(te).containsTerrain(Terrains.JUNGLE)) &&
-                      te.moved == EntityMovementType.MOVE_WALK) {
+
+            // Forest Ranger - Target gets a +1 bonus in wooded terrain when moving at walking speed or greater
+            if (target.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)
+                      && targetHex.hasVegetation() && (target.moved == EntityMovementType.MOVE_WALK)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.ForestRanger"));
             }
-            // Swamp Beast - Target gets a +1 bonus in mud/swamp terrain when
-            // running/flanking
-            if (te.hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST) &&
-                      (game.getHexOf(te).containsTerrain(Terrains.MUD) ||
-                             game.getHexOf(te).containsTerrain(Terrains.SWAMP)) &&
-                      te.moved == EntityMovementType.MOVE_RUN) {
+
+            // Swamp Beast - Target gets a +1 bonus in mud/swamp terrain when running/flanking
+            if (target.hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST)
+                      && targetHex.containsAnyTerrainOf(MUD, SWAMP)
+                      && (target.moved == EntityMovementType.MOVE_RUN)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SwampBeast"));
             }
         }
-
-        return toHit;
     }
 
     private ComputeAbilityMods() { }

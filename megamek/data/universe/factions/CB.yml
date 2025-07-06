@@ -45,7 +45,8 @@ factionLeaders:
     surname: "Van Houten"
     gender: "MALE"
     startYear: 2824
-    endYear: ????
+    # Unofficial: we don't have a canon endYear
+    endYear: 2858
   - title: "Khan"
     firstName: "Zenos"
     surname: "Danforth"

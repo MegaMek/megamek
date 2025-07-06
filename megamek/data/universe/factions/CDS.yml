@@ -45,7 +45,8 @@ factionLeaders:
     surname: "Nagasawa"
     gender: "FEMALE"
     startYear: 2821
-    endYear: ????
+    ## Unofficial: we don't have a canon end to their reign
+    endYear: 2861
   - title: "Khan"
     firstName: "Damon"
     surname: "Clarke"
@@ -81,14 +82,14 @@ factionLeaders:
     ## Unofficial: we don't have a canon end to her reign, but we know she ruled in 3085
     endYear: 3100
   - title: "Khan"
-    firstName: "Xoc "
+    firstName: "Xoc"
     surname: "Hammond"
     gender: "MALE"
     ## Unofficial: we don't have a canon start to their reign
     startYear: 3100
     endYear: 3113
   - title: "Khan"
-    firstName: "Xoc "
-    surname: "Hammond"
+    firstName: "Mori"
+    surname: "Hawker"
     gender: "FEMALE"
     startYear: 3113

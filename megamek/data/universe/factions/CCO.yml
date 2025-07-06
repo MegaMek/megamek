@@ -78,7 +78,8 @@ factionLeaders:
     surname: "Kielman"
     gender: "FEMALE"
     startYear: 2954
-    endYear: ????
+    # Unofficial: we don't have a canonical endYear
+    endYear: 2984
   - title: "Khan"
     firstName: "Tatiana"
     surname: "Steele"

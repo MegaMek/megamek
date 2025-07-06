@@ -51,13 +51,6 @@ factionLeaders:
     gender: "MALE"
     startYear: 2988
     endYear: 3022
-  - title: "High Lord"
-    firstName: "Tamati"
-    surname: "Arano"
-    honorific: "II"
-    gender: "MALE"
-    startYear: 2988
-    endYear: 3022
   - title: "High Lady"
     firstName: "Kamea"
     surname: "Espinosa"

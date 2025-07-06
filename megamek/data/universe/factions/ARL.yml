@@ -48,6 +48,6 @@ factionLeaders:
   - title: "Grand Duchess"
     firstName: "Callandre"
     surname: "Kell"
-    gender: "MALE"
+    gender: "FEMALE"
     startYear: 3122
     endYear: 3146

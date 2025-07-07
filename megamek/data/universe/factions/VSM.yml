@@ -8,3 +8,9 @@ color:
   red: 235
   green: 162
   blue: 235
+factionLeaders:
+  - title: "Duke"
+    firstName: "Vedet"
+    surname: "Brewer"
+    gender: "MALE"
+    startYear: 3151

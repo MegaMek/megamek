@@ -1,7 +1,7 @@
 key: CJF
 name: Clan Jade Falcon
 capital: Ironhold
-capitalChanges: 
+capitalChanges:
   3052: Sudeten
 yearsActive:
   - start: 2807
@@ -26,3 +26,89 @@ ratingLevels:
   - Keshik
 fallBackFactions:
   - CLAN.IS
+factionLeaders:
+  - title: "Khan"
+    firstName: "Elizabeth"
+    surname: "Hazen"
+    gender: "FEMALE"
+    startYear: 2807
+    endYear: 2823
+  - title: "Khan"
+    firstName: "Lisa"
+    surname: "Buhallin"
+    gender: "FEMALE"
+    # Unofficial: we don't have a canon startYear but know she reigned in 2823
+    startYear: 2823
+    # Unofficial: we don't have a canon endYear but know she reigned in 2823
+    endYear: 2843
+  - title: "Khan"
+    firstName: "Patricia"
+    surname: "Bailey"
+    gender: "FEMALE"
+    # Unofficial: we don't have a canon startYear
+    startYear: 2843
+    # Unofficial: we don't have a canon endYear
+    endYear: 2863
+  - title: "Khan"
+    firstName: "Natalie"
+    surname: "Buhallin"
+    gender: "FEMALE"
+    # Unofficial: we don't have a canon startYear
+    startYear: 2863
+    # Unofficial: we don't have a canon endYear
+    endYear: 2977
+  - title: "Khan"
+    firstName: "Ackerley"
+    surname: "Hazen"
+    gender: "FEMALE"
+    startYear: 2977
+    # Unofficial: we don't have a canon endYear
+    endYear: 2980
+  - title: "Khan"
+    firstName: "Yvonne"
+    surname: "Hazen"
+    gender: "FEMALE"
+    startYear: 2980
+    endYear: 3048
+  - title: "Khan"
+    firstName: "Elias"
+    surname: "Crichell"
+    gender: "MALE"
+    startYear: 3048
+    endYear: 3057
+  - title: "Khan"
+    firstName: "Marthe"
+    surname: "Pryde"
+    gender: "FEMALE"
+    startYear: 3057
+    endYear: 3076
+  - title: "Khan"
+    firstName: "Samantha"
+    surname: "Clees"
+    gender: "FEMALE"
+    startYear: 3076
+    # Unofficial: we don't have a canon endYear
+    endYear: 3126
+  - title: "Khan"
+    firstName: "Ruel"
+    surname: "Chistu"
+    gender: "MALE"
+    startYear: 3126
+    endYear: 3129
+  - title: "Khan"
+    firstName: "Jana"
+    surname: "Pryde"
+    gender: "FEMALE"
+    startYear: 3129
+    endYear: 3136
+  - title: "Khan"
+    firstName: "Malvina"
+    surname: "Hazen"
+    gender: "FEMALE"
+    startYear: 3136
+    endYear: 3151
+  - title: "Khan"
+    firstName: "Jiyi"
+    surname: "Chistu"
+    gender: "FEMALE"
+    startYear: 3151

@@ -25,3 +25,55 @@ ratingLevels:
   - Keshik
 fallBackFactions:
   - CLAN.HW
+factionLeaders:
+  - title: "Khan"
+    firstName: "Raymond"
+    surname: "Sainze"
+    gender: "MALE"
+    startYear: 3807
+    endYear: 2817
+  - title: "Khan"
+    firstName: "Vernon"
+    surname: "Payne"
+    gender: "MALE"
+    startYear: 2817
+    # Unofficial: we don't have a canon endYear
+    endYear: 2847
+  - title: "Khan"
+    firstName: "Mikhail"
+    surname: "Faraday"
+    gender: "MALE"
+    # Unofficial: we don't have a canon startYear
+    startYear: 2847
+    # Unofficial: we don't have a canon endYear
+    endYear: 2877
+  - title: "Khan"
+    firstName: "Eudora"
+    surname: "Payne"
+    gender: "FEMALE"
+    startYear: 3048
+    endYear: 3050
+  - title: "Khan"
+    firstName: "Victoria"
+    surname: "Tanaga"
+    gender: "FEMALE"
+    startYear: 3050
+    endYear: 3052
+  - title: "Khan"
+    firstName: "Amanda"
+    surname: "Carrol"
+    gender: "FEMALE"
+    startYear: 3052
+    endYear: 3067
+  - title: "Khan"
+    firstName: "Garret"
+    surname: "Sainze"
+    gender: "MALE"
+    startYear: 3067
+    endYear: 3071
+  - title: "Khan"
+    firstName: "Amanda"
+    surname: "Carrol"
+    gender: "FEMALE"
+    startYear: 3071
+    endYear: 3073

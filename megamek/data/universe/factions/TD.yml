@@ -33,3 +33,75 @@ ratingLevels:
 fallBackFactions:
   - Periphery.HR
   - PIR
+factionLeaders:
+  - title: "Major"
+    firstName: "Frederick"
+    surname: "Koloniv"
+    gender: "MALE"
+    startYear: 2589
+    endYear: 2604
+  - title: "Duke"
+    firstName: "Mitch"
+    surname: "Hibbert"
+    gender: "MALE"
+    startYear: 2604
+    # Unofficial, we don't have a canon endYear
+    endYear: 2644
+  - title: "Lord"
+    firstName: "Kalvin"
+    surname: "Bar-Dyness"
+    gender: "MALE"
+    # Unofficial, we don't have a canon startYear
+    startYear: 2995
+    endYear: 3015
+  - title: "Dame"
+    firstName: "Paula"
+    surname: "Trevaline"
+    gender: "FEMALE"
+    startYear: 3015
+    endYear: 3042
+  - title: "Major"
+    firstName: "Twyla"
+    surname: "Sumeral"
+    gender: "FEMALE"
+    startYear: 3054
+    # Unofficial, know her reign ended in the 3070s, but not the exact year
+    endYear: 3075
+  - title: "Precentor"
+    firstName: "William"
+    surname: "Derer"
+    gender: "MALE"
+    # Unofficial, know his reign started in the 3070s, but not the exact year
+    startYear: 3054
+    # Unofficial, we don't have canonical endYear
+    endYear: 3080
+  - title: "King"
+    firstName: "Ravannion"
+    surname: ""
+    gender: "MALE"
+    startYear: 3080
+    endYear: 3080
+  - title: "King"
+    firstName: "Kevin"
+    surname: "Langstrom"
+    gender: "MALE"
+    startYear: 3080
+    endYear: 3080
+  - title: "King"
+    firstName: "Kevin"
+    surname: "Langstrom"
+    gender: "MALE"
+    startYear: 3080
+    endYear: 3080
+  - title: "Duke"
+    firstName: "Ian"
+    surname: "Scoli"
+    gender: "MALE"
+    startYear: 3127
+    endYear: 3130
+  - title: "King"
+    firstName: "Alastar"
+    surname: "Firebeard"
+    gender: "MALE"
+    # Unofficial, we don't have a canon startYear
+    startYear: 3130

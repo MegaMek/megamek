@@ -10,3 +10,9 @@ ratingLevels:
   - A
 fallBackFactions:
   - LA
+factionLeaders:
+  - title: "Governor-General"
+    firstName: "Sarah"
+    surname: "Regis"
+    gender: "FEMALE"
+    startYear: 3151

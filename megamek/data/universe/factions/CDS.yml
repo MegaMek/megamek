@@ -33,3 +33,63 @@ fallBackFactions:
   - CLAN.IS
 preInvasionHonorRating: LIBERAL
 postInvasionHonorRating: LIBERAL
+factionLeaders:
+  - title: "Khan"
+    firstName: "David"
+    surname: "Kalasa"
+    gender: "MALE"
+    startYear: 2807
+    endYear: 2821
+  - title: "Khan"
+    firstName: "Karen"
+    surname: "Nagasawa"
+    gender: "FEMALE"
+    startYear: 2821
+    ## Unofficial: we don't have a canon end to their reign
+    endYear: 2861
+  - title: "Khan"
+    firstName: "Damon"
+    surname: "Clarke"
+    gender: "MALE"
+    startYear: 2984
+    ## Unofficial: we don't have a canon end to his reign
+    endYear: 3004
+  - title: "Khan"
+    firstName: "Kevin"
+    surname: "Arbott"
+    gender: "MALE"
+    ## Unofficial: we don't have a canon start to his reign
+    startYear: 3004
+    ## Unofficial: we don't have a canon end to his reign
+    endYear: 3046
+  - title: "Khan"
+    firstName: "Ian"
+    surname: "Hawker"
+    gender: "MALE"
+    startYear: 3046
+    endYear: 3062
+  - title: "Khan"
+    firstName: "Barbara"
+    surname: "Sennet"
+    gender: "FEMALE"
+    startYear: 3062
+    endYear: 3080
+  - title: "Khan"
+    firstName: "Naomi"
+    surname: "Nagasawa"
+    gender: "FEMALE"
+    startYear: 3080
+    ## Unofficial: we don't have a canon end to her reign, but we know she ruled in 3085
+    endYear: 3100
+  - title: "Khan"
+    firstName: "Xoc"
+    surname: "Hammond"
+    gender: "MALE"
+    ## Unofficial: we don't have a canon start to their reign
+    startYear: 3100
+    endYear: 3113
+  - title: "Khan"
+    firstName: "Mori"
+    surname: "Hawker"
+    gender: "FEMALE"
+    startYear: 3113

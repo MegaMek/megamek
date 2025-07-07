@@ -29,3 +29,54 @@ ratingLevels:
 fallBackFactions:
   - CLAN.IS
 preInvasionHonorRating: OPPORTUNISTIC
+factionLeaders:
+  - title: "Khan"
+    firstName: "Phillip"
+    surname: "Drummond"
+    gender: "MALE"
+    startYear: 2807
+    endYear: 2822
+  - title: "Khan"
+    firstName: "Sandra"
+    surname: "Rosse"
+    gender: "FEMALE"
+    startYear: 2822
+    endYear: 2823
+  - title: "Khan"
+    firstName: "Phillip"
+    surname: "Drummond"
+    gender: "MALE"
+    startYear: 2823
+    endYear: 2858
+  - title: "Khan"
+    firstName: "Abram"
+    surname: "Radick"
+    gender: "MALE"
+    # Unofficial: we know his reign ended in 3035, but not the canon startYear
+    startYear: 3015
+    endYear: 3035
+  - title: "Khan"
+    firstName: "Severen"
+    surname: "Leroux"
+    gender: "MALE"
+    startYear: 3035
+    endYear: 3060
+  - title: "Khan"
+    firstName: "Santin"
+    surname: "West"
+    gender: "MALE"
+    startYear: 3060
+    endYear: 3098
+  - title: "Khan"
+    firstName: "Ajax"
+    surname: "Drummond"
+    gender: "MALE"
+    startYear: 3098
+    # Unofficial: we don't have a canon endYear
+    endYear: 3120
+  - title: "Khan"
+    firstName: "Jacali"
+    surname: "Nostra"
+    gender: "MALE"
+    startYear: 3120
+    endYear: 3142

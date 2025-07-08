@@ -925,7 +925,7 @@ public class MULParser {
             Infantry inf = (Infantry) entity;
             String armorDiv = entityTag.getAttribute(ATTR_ARMOR_DIVISOR);
             if (!armorDiv.isBlank()) {
-                inf.setArmorDamageDivisor(Double.parseDouble(armorDiv));
+                inf.setCustomArmorDamageDivisor(Double.parseDouble(armorDiv));
             }
 
             if (!entityTag.getAttribute(ATTR_ARMOR_ENC).isBlank()) {

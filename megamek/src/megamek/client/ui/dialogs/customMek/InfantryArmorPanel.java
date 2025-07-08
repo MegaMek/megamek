@@ -189,7 +189,7 @@ public class InfantryArmorPanel extends JPanel {
             infantry.setArmorKit(armorKits.get(cbArmorKit.getSelectedIndex() - 1));
         } else {
             infantry.setArmorKit(null);
-            infantry.setArmorDamageDivisor(MathUtility.parseDouble(fldDivisor.getText(), 0.0));
+            infantry.setCustomArmorDamageDivisor(MathUtility.parseDouble(fldDivisor.getText(), 0.0));
             infantry.setArmorEncumbering(chEncumber.isSelected());
             infantry.setSpaceSuit(chSpaceSuit.isSelected());
             infantry.setDEST(chDEST.isSelected());

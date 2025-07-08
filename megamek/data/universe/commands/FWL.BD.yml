@@ -1,0 +1,9 @@
+key: FWL.BD
+name: Bolan Defenders
+yearsActive:
+  - start: 2558
+    end: 2950
+ratingLevels:
+  - D
+fallBackFactions:
+  - FWL

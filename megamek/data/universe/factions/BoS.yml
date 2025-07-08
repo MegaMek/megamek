@@ -1,0 +1,57 @@
+key: BoS
+name: Barony of Strang
+capital: Von Strang's World
+yearsActive:
+  - start: 2779
+    end: 3049
+tags:
+  - MINOR
+  - PERIPHERY
+color:
+  red: 164
+  green: 54
+  blue: 149
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+  - 1
+  - 2
+  - 2
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.R
+  - PIR
+factionLeaders:
+  - title: "Baron"
+    firstName: "Nico"
+    surname: "von Strang"
+    gender: "MALE"
+    startYear: 2780
+    #Unofficial: we don't have a canon endYear
+    endYear: 2800
+  - title: "Baron"
+    firstName: "Otto"
+    surname: "von Strang"
+    gender: "MALE"
+    #Unofficial: we don't have a canon startYear
+    startYear: 3005
+    #Unofficial: we don't have a canon endYear
+    endYear: 3045
+  - title: "Baron"
+    firstName: "Stepan"
+    surname: "von Strang"
+    gender: "MALE"
+    #Unofficial: we don't have a canon startYear
+    startYear: 3045
+    endYear: 3049

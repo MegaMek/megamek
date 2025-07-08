@@ -1,0 +1,15 @@
+key: CFM.FT
+name: Kindraa Faraday-Tanaga
+yearsActive:
+  - start: 2823
+    end: 3073
+tags:
+  - CLAN
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CFM

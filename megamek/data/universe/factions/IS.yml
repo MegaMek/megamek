@@ -1,0 +1,11 @@
+key: IS
+name: Inner Sphere - General
+tags:
+  - IS
+  - AGGREGATE
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A

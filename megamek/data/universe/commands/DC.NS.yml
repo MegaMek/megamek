@@ -1,0 +1,9 @@
+key: DC.NS
+name: Night Stalkers
+yearsActive:
+  - start: 3020
+    end: 3076
+ratingLevels:
+  - D
+fallBackFactions:
+  - DC

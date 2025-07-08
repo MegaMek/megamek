@@ -45,6 +45,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;
+import megamek.utils.ServerFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -94,13 +95,7 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         when(mockBoard.getSpecialHexDisplayTable()).thenReturn(new Hashtable<>());
         game.setBoard(mockBoard);
 
-        server = new Server(null,
-              random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
-              gameManager,
-              false,
-              "",
-              null,
-              true);
+        server = ServerFactory.createServer(gameManager);
     }
 
     Mek createMek(String chassis, String model, String crewName, Player owner) {

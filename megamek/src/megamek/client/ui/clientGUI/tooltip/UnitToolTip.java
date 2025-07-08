@@ -959,7 +959,9 @@ public final class UnitToolTip {
      * are weapons) and special Infantry attacks (Swarm Attacks and the like).
      */
     private static boolean isNotTTRelevant(WeaponType wtype) {
-        return wtype.hasFlag(WeaponType.F_C3M) || wtype.hasFlag(WeaponType.F_C3MBS) || wtype instanceof InfantryAttack;
+        return wtype.hasFlag(WeaponType.F_C3M) ||
+                     wtype.hasFlag(WeaponType.F_C3MBS) ||
+                     wtype.hasFlag(WeaponTypeFlag.INTERNAL_REPRESENTATION);
     }
 
     /**
@@ -1000,6 +1002,10 @@ public final class UnitToolTip {
         String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0", tbody);
 
         return new StringBuilder().append(table);
+    }
+
+    public static StringBuilder getWeaponList(Entity entity) {
+        return weaponList(entity);
     }
 
     /**

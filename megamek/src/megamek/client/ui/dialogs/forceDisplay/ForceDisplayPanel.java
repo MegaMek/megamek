@@ -14,12 +14,13 @@
 package megamek.client.ui.dialogs.forceDisplay;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.Window;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -33,9 +34,10 @@ import javax.swing.tree.TreeSelectionModel;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
+import megamek.client.ui.buttons.MMToggleButton;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
 import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.common.Entity;
@@ -76,10 +78,83 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         this.client = client;
         this.game = client.getGame();
 
+        JPanel pnlTop = new JPanel();
+        MMToggleButton btnId = new MMToggleButton(Messages.getString("ForceDisplay.Button.ID"),
+              GUIP.getForceDisplayBtnID());
+        MMToggleButton btnPilot = new MMToggleButton(Messages.getString("ForceDisplay.Button.Pilot"),
+              GUIP.getForceDisplayBtnPilot()); // and skill
+        MMToggleButton btnMP = new MMToggleButton(Messages.getString("ForceDisplay.Button.MP"),
+              GUIP.getForceDisplayBtnMP());
+        MMToggleButton btnHeat = new MMToggleButton(Messages.getString("ForceDisplay.Button.Heat"),
+              GUIP.getForceDisplayBtnHeat());
+        MMToggleButton btnWeapons = new MMToggleButton(Messages.getString("ForceDisplay.Button.Weapons"),
+              GUIP.getForceDisplayBtnWeapons());
+        MMToggleButton btnDmgDesc = new MMToggleButton(Messages.getString("ForceDisplay.Button.DamageDesc"),
+              GUIP.getForceDisplayBtnDamageDesc());
+        MMToggleButton btnArmor = new MMToggleButton(Messages.getString("ForceDisplay.Button.Armor"),
+              GUIP.getForceDisplayBtnArmor());
+        MMToggleButton btnTonnage = new MMToggleButton(Messages.getString("ForceDisplay.Button.Tonnage"),
+              GUIP.getForceDisplayBtnTonnage());
+        MMToggleButton btnRole = new MMToggleButton(Messages.getString("ForceDisplay.Button.Role"),
+              GUIP.getForceDisplayBtnRole());
+        MMToggleButton btnECM = new MMToggleButton(Messages.getString("ForceDisplay.Button.ECM"),
+              GUIP.getForceDisplayBtnECM());
+        MMToggleButton btnQuirks = new MMToggleButton(Messages.getString("ForceDisplay.Button.Quirks"),
+              GUIP.getForceDisplayBtnQuirks());
+        MMToggleButton btnC3 = new MMToggleButton(Messages.getString("ForceDisplay.Button.C3"),
+              GUIP.getForceDisplayBtnC3());
+        MMToggleButton btnMisc = new MMToggleButton(Messages.getString("ForceDisplay.Button.Misc"),
+              GUIP.getForceDisplayBtnMisc());
+        ActionListener toggleListener = e -> {
+            if (e.getSource().equals(btnId)) {GUIP.setForceDisplayBtnID(btnId.isSelected());}
+            if (e.getSource().equals(btnPilot)) {GUIP.setForceDisplayBtnPilot(btnPilot.isSelected());}
+            if (e.getSource().equals(btnMP)) {GUIP.setForceDisplayBtnMP(btnMP.isSelected());}
+            if (e.getSource().equals(btnHeat)) {GUIP.setForceDisplayBtnHeat(btnHeat.isSelected());}
+            if (e.getSource().equals(btnWeapons)) {GUIP.setForceDisplayBtnWeapons(btnWeapons.isSelected());}
+            if (e.getSource().equals(btnDmgDesc)) {GUIP.setForceDisplayBtnDamageDesc(btnDmgDesc.isSelected());}
+            if (e.getSource().equals(btnArmor)) {GUIP.setForceDisplayBtnArmor(btnArmor.isSelected());}
+            if (e.getSource().equals(btnTonnage)) {GUIP.setForceDisplayBtnTonnage(btnTonnage.isSelected());}
+            if (e.getSource().equals(btnRole)) {GUIP.setForceDisplayBtnRole(btnRole.isSelected());}
+            if (e.getSource().equals(btnECM)) {GUIP.setForceDisplayBtnECM(btnECM.isSelected());}
+            if (e.getSource().equals(btnQuirks)) {GUIP.setForceDisplayBtnQuirks(btnQuirks.isSelected());}
+            if (e.getSource().equals(btnC3)) {GUIP.setForceDisplayBtnC3(btnC3.isSelected());}
+            if (e.getSource().equals(btnMisc)) {GUIP.setForceDisplayBtnMisc(btnMisc.isSelected());}
+            refreshTree();
+        };
+
+        btnId.addActionListener(toggleListener);
+        btnPilot.addActionListener(toggleListener);
+        btnMP.addActionListener(toggleListener);
+        btnHeat.addActionListener(toggleListener);
+        btnWeapons.addActionListener(toggleListener);
+        btnDmgDesc.addActionListener(toggleListener);
+        btnArmor.addActionListener(toggleListener);
+        btnTonnage.addActionListener(toggleListener);
+        btnRole.addActionListener(toggleListener);
+        btnECM.addActionListener(toggleListener);
+        btnQuirks.addActionListener(toggleListener);
+        btnC3.addActionListener(toggleListener);
+        btnMisc.addActionListener(toggleListener);
+
         setupForce();
         refreshTree();
 
         setLayout(new BorderLayout());
+        pnlTop.setLayout(new GridLayout());
+        pnlTop.add(btnId);
+        pnlTop.add(btnPilot);
+        pnlTop.add(btnMP);
+        pnlTop.add(btnHeat);
+        pnlTop.add(btnWeapons);
+        pnlTop.add(btnDmgDesc);
+        pnlTop.add(btnArmor);
+        pnlTop.add(btnTonnage);
+        pnlTop.add(btnRole);
+        pnlTop.add(btnECM);
+        pnlTop.add(btnQuirks);
+        pnlTop.add(btnC3);
+        pnlTop.add(btnMisc);
+        add(pnlTop, BorderLayout.NORTH);
         JScrollPane sp = new JScrollPane(forceTree);
         add(sp, BorderLayout.CENTER);
 

@@ -57,6 +57,8 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
     implementation 'org.apache.logging.log4j:log4j-core:2.24.3'
 
+    implementation 'org.apache.pdfbox:pdfbox:3.0.5'
+
     implementation 'org.freemarker:freemarker:2.3.34'
 
     implementation 'org.commonmark:commonmark:0.24.0'
@@ -150,11 +152,11 @@ ${jvmOptions}
     }
 }
 
-tasks.register("copyLicenseFiles", Sync) {
-    description = "Copy the license files to the root of the folder."
+tasks.register("stageLicenseFiles", Sync) {
+    description = "Copy the license files to the build folder."
     group = 'build'
     from "../"
-    into fileStagingDir
+    into "${layout.buildDirectory.get()}/licenses"
 
     includes = [
             'LICENSE',
@@ -165,12 +167,22 @@ tasks.register("copyLicenseFiles", Sync) {
 
 }
 
+tasks.register("copyLicenseFiles", Copy) {
+    description "Copies from the build folder to the staging folder"
+    group = 'build'
+
+    dependsOn stageLicenseFiles
+
+    from "${layout.buildDirectory.get()}/licenses"
+    into fileStagingDir
+}
+
 tasks.register('copyFiles', Copy) {
     description = 'Stages files that are to be copied into the distribution.'
     group = 'build'
 
-    dependsOn generateDynamicFiles
     dependsOn copyLicenseFiles
+    dependsOn generateDynamicFiles
 
     from projectDir
     include "${data}/**"
@@ -359,8 +371,10 @@ test {
     useJUnitPlatform()
     dependsOn(checkstyleMain)
 
+    minHeapSize = "1024m"
+    maxHeapSize = "8192m"
+
     finalizedBy jacocoTestReport
-    jvmArgs = mmJvmOptions
 }
 
 jacocoTestReport {

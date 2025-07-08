@@ -1,0 +1,9 @@
+key: DC.SHIN
+name: Shin Legion
+yearsActive:
+  - start: 3036
+    end: 3061
+ratingLevels:
+  - C
+fallBackFactions:
+  - DC

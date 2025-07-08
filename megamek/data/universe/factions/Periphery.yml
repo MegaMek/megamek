@@ -1,0 +1,11 @@
+key: Periphery
+name: Periphery
+tags:
+  - PERIPHERY
+  - AGGREGATE
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A

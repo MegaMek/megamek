@@ -138,7 +138,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String PLANETARY_CONDITIONS_SHOW_LABELS = "PlanetaryConditionsShowLabels";
     public static final String PLANETARY_CONDITIONS_SHOW_VALUES = "PlanetaryConditionsShowValues";
     public static final String PLANETARY_CONDITIONS_SHOW_INDICATORS = "PlanetaryConditionsShowIndicators";
-    public static final String PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY = "PlanetaryConditionsBackgroundTransparency";
+    public static final String PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY =
+          "PlanetaryConditionsBackgroundTransparency";
 
     public static final String TRACE_OVERLAY_TRANSPARENCY = "TraceOverlayTransparency";
     public static final String TRACE_OVERLAY_SCALE = "TraceOverlayScale";
@@ -181,6 +182,19 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FORCE_DISPLAY_AUTO_DISPLAY_REPORT_PHASE = "ForceDisplayAutoDisplayReportPhase";
     public static final String FORCE_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE = "ForceDisplayAutoDisplayNonReportPhase";
     public static final String FORCE_DISPLAY_ENABLED = "ForceDisplayEnabled";
+    public static final String FORCE_DISPLAY_BTN_ID = "ForceDisplayBtnID";
+    public static final String FORCE_DISPLAY_BTN_PILOT = "ForceDisplayBtnPilot";
+    public static final String FORCE_DISPLAY_BTN_MP = "ForceDisplayBtnMP";
+    public static final String FORCE_DISPLAY_BTN_HEAT = "ForceDisplayBtnHeat";
+    public static final String FORCE_DISPLAY_BTN_WEAPONS = "ForceDisplayBtnWeapons";
+    public static final String FORCE_DISPLAY_BTN_DAMAGEDESC = "ForceDisplayBtnDamageDesc";
+    public static final String FORCE_DISPLAY_BTN_ARMOR = "ForceDisplayBtnArmor";
+    public static final String FORCE_DISPLAY_BTN_TONNAGE = "ForceDisplayBtnTonnage";
+    public static final String FORCE_DISPLAY_BTN_ROLE = "ForceDisplayBtnRole";
+    public static final String FORCE_DISPLAY_BTN_ECM = "ForceDisplayBtnECM";
+    public static final String FORCE_DISPLAY_BTN_QUIRKS = "ForceDisplayBtnQuirks";
+    public static final String FORCE_DISPLAY_BTN_C3 = "ForceDisplayBtnC3";
+    public static final String FORCE_DISPLAY_BTN_MISC = "ForceDisplayBtnMisc";
 
     public static final String UNIT_DISPLAY_POS_X = "UnitDisplayPosX";
     public static final String UNIT_DISPLAY_POS_Y = "UnitDisplayPosY";
@@ -488,7 +502,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public static final int HIDE = 0;
     public static final int SHOW = 1;
-    public static final int MAUNAL = 2;
+    public static final int MANUAL = 2;
 
     public static GUIPreferences getInstance() {
         return instance;
@@ -635,6 +649,19 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FORCE_DISPLAY_ENABLED, false);
         store.setDefault(FORCE_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(FORCE_DISPLAY_SIZE_WIDTH, 300);
+        store.setDefault(FORCE_DISPLAY_BTN_ID, true);
+        store.setDefault(FORCE_DISPLAY_BTN_PILOT, true);
+        store.setDefault(FORCE_DISPLAY_BTN_MP, false);
+        store.setDefault(FORCE_DISPLAY_BTN_HEAT, false);
+        store.setDefault(FORCE_DISPLAY_BTN_WEAPONS, false);
+        store.setDefault(FORCE_DISPLAY_BTN_DAMAGEDESC, true);
+        store.setDefault(FORCE_DISPLAY_BTN_ARMOR, false);
+        store.setDefault(FORCE_DISPLAY_BTN_TONNAGE, true);
+        store.setDefault(FORCE_DISPLAY_BTN_ROLE, true);
+        store.setDefault(FORCE_DISPLAY_BTN_ECM, true);
+        store.setDefault(FORCE_DISPLAY_BTN_QUIRKS, true);
+        store.setDefault(FORCE_DISPLAY_BTN_C3, true);
+        store.setDefault(FORCE_DISPLAY_BTN_MISC, true);
 
         store.setDefault(UNIT_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(UNIT_DISPLAY_SIZE_WIDTH, 300);
@@ -3549,7 +3576,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         final String[] codesText = text.split(" ");
         if (codesText.length == 3) {
             int[] codes = new int[codesText.length];
-            for (int i = 0; i < codesText.length; i++) {
+            for (int i = 0;
+                  i < codesText.length;
+                  i++) {
                 codes[i] = Integer.parseInt(codesText[i]);
             }
             return new Color(codes[0], codes[1], codes[2]);
@@ -3684,4 +3713,56 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setNagForOddSizedBoard(boolean value) {
         store.setValue(NAG_FOR_ODD_SIZED_BOARD, value);
     }
+
+    public void setForceDisplayBtnID(boolean value) {store.setValue(FORCE_DISPLAY_BTN_ID, value);}
+
+    public boolean getForceDisplayBtnID() {return getBoolean(FORCE_DISPLAY_BTN_ID);}
+
+    public void setForceDisplayBtnPilot(boolean value) {store.setValue(FORCE_DISPLAY_BTN_PILOT, value);}
+
+    public boolean getForceDisplayBtnPilot() {return getBoolean(FORCE_DISPLAY_BTN_PILOT);}
+
+    public void setForceDisplayBtnMP(boolean value) {store.setValue(FORCE_DISPLAY_BTN_MP, value);}
+
+    public boolean getForceDisplayBtnMP() {return getBoolean(FORCE_DISPLAY_BTN_MP);}
+
+    public void setForceDisplayBtnHeat(boolean value) {store.setValue(FORCE_DISPLAY_BTN_HEAT, value);}
+
+    public boolean getForceDisplayBtnHeat() {return getBoolean(FORCE_DISPLAY_BTN_HEAT);}
+
+    public void setForceDisplayBtnWeapons(boolean value) {store.setValue(FORCE_DISPLAY_BTN_WEAPONS, value);}
+
+    public boolean getForceDisplayBtnWeapons() {return getBoolean(FORCE_DISPLAY_BTN_WEAPONS);}
+
+    public void setForceDisplayBtnDamageDesc(boolean value) {store.setValue(FORCE_DISPLAY_BTN_DAMAGEDESC, value);}
+
+    public boolean getForceDisplayBtnDamageDesc() {return getBoolean(FORCE_DISPLAY_BTN_DAMAGEDESC);}
+
+    public void setForceDisplayBtnArmor(boolean value) {store.setValue(FORCE_DISPLAY_BTN_ARMOR, value);}
+
+    public boolean getForceDisplayBtnArmor() {return getBoolean(FORCE_DISPLAY_BTN_ARMOR);}
+
+    public void setForceDisplayBtnTonnage(boolean value) {store.setValue(FORCE_DISPLAY_BTN_TONNAGE, value);}
+
+    public boolean getForceDisplayBtnTonnage() {return getBoolean(FORCE_DISPLAY_BTN_TONNAGE);}
+
+    public void setForceDisplayBtnRole(boolean value) {store.setValue(FORCE_DISPLAY_BTN_ROLE, value);}
+
+    public boolean getForceDisplayBtnRole() {return getBoolean(FORCE_DISPLAY_BTN_ROLE);}
+
+    public void setForceDisplayBtnECM(boolean value) {store.setValue(FORCE_DISPLAY_BTN_ECM, value);}
+
+    public boolean getForceDisplayBtnECM() {return getBoolean(FORCE_DISPLAY_BTN_ECM);}
+
+    public void setForceDisplayBtnQuirks(boolean value) {store.setValue(FORCE_DISPLAY_BTN_QUIRKS, value);}
+
+    public boolean getForceDisplayBtnQuirks() {return getBoolean(FORCE_DISPLAY_BTN_QUIRKS);}
+
+    public void setForceDisplayBtnC3(boolean value) {store.setValue(FORCE_DISPLAY_BTN_C3, value);}
+
+    public boolean getForceDisplayBtnC3() {return getBoolean(FORCE_DISPLAY_BTN_C3);}
+
+    public void setForceDisplayBtnMisc(boolean value) {store.setValue(FORCE_DISPLAY_BTN_MISC, value);}
+
+    public boolean getForceDisplayBtnMisc() {return getBoolean(FORCE_DISPLAY_BTN_MISC);}
 }

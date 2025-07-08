@@ -30,6 +30,8 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
+import megamek.common.weapons.artillery.ArtilleryWeapon;
 
 /**
  * @author Jay Lawson (Taharqa)
@@ -177,14 +179,20 @@ public class TestInfantry extends TestEntity {
 
         max = maxSquadSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1), inf.getMount());
         if (inf.getSquadSize() > max) {
-            buff.append("Maximum squad size is " + max + "\n\n");
+            buff.append("Maximum squad size is ").append(max).append("\n\n");
             correct = false;
+        }
+
+        max = maxSquadCount(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
+              inf.getSpecializations(), inf.getMount());
+        if (inf.getSquadCount() > max) {
+            buff.append("Maximum squad count is ").append(max).append("\n\n");
         }
 
         max = maxUnitSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
                 inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS), inf.getMount());
         if (inf.getShootingStrength() > max) {
-            buff.append("Maximum platoon size is " + max + "\n\n");
+            buff.append("Maximum platoon size is ").append(max).append("\n\n");
             correct = false;
         }
 
@@ -197,10 +205,66 @@ public class TestInfantry extends TestEntity {
             buff.append("Infantry may not have more than one armor kit!\n");
             correct = false;
         }
+
+        if (infantry.hasFieldWeapon()) {
+            // These tests include field artillery
+            Mounted<?> firstFieldGun = infantry.originalFieldWeapons().get(0);
+            EquipmentType fieldGunType = firstFieldGun.getType();
+            int fieldGunCount = infantry.originalFieldWeapons().size();
+
+            if (fieldGunCount > 1) {
+                if (isFieldArtilleryWeapon(firstFieldGun)) {
+                    buff.append("Infantry may only use a single field artillery weapon!\n");
+                    correct = false;
+                }
+                for (Mounted<?> fieldGun : infantry.originalFieldWeapons()) {
+                    if (fieldGun.getType() != fieldGunType) {
+                        buff.append("All field guns must be of the same type and size!\n");
+                        correct = false;
+                    }
+                }
+            }
+
+            int troopersRequired = fieldGunCount * fieldGunCrewRequirement(fieldGunType, infantry);
+            if (troopersRequired > infantry.getOriginalTrooperCount()) {
+                buff.append("Insufficient troopers to operate the field guns!\n");
+                correct = false;
+            }
+        }
+
         if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
+    }
+
+    /**
+     * @return True if the given equipment type is suitable as a field artillery weapon for a conventional infantry
+     * unit; false for a null equipment type.
+     */
+    public static boolean isFieldArtilleryType(@Nullable EquipmentType equipmentType) {
+        return (equipmentType instanceof ArtilleryWeapon) || (equipmentType instanceof ArtilleryCannonWeapon);
+    }
+
+    /**
+     * @return True if the given equipment is suitable as a field artillery weapon for a conventional infantry
+     * unit; false for a null equipment.
+     */
+    public static boolean isFieldArtilleryWeapon(@Nullable Mounted<?> mounted) {
+        return (mounted != null) && isFieldArtilleryType(mounted.getType());
+    }
+
+    /**
+     * Returns the number of troopers of the given infantry required to operate each of the given field gun equipment.
+     * Neither parameter is checked for correctness. The returned result is never 0.
+     *
+     * @param equip    The weapon type to be used as a field gun
+     * @param infantry The infantry unit
+     *
+     * @return The troopers required to operate the field gun
+     */
+    public static int fieldGunCrewRequirement(EquipmentType equip, Infantry infantry) {
+        return Math.max(2, (int) Math.ceil(equip.getTonnage(infantry)));
     }
 
     public static int maxSecondaryWeapons(Infantry inf) {
@@ -261,6 +325,47 @@ public class TestInfantry extends TestEntity {
             return 10; // use foot infantry limit
         } else {
             return mount.getSize().troopsPerCreature;
+        }
+    }
+
+    /**
+     * The maximum number of squads in a platoon based on its movement mode.
+     * @param movementMode      The platoon's movement mode
+     * @param alt               True indicates that VTOL is microlite and INF_UMU is motorized.
+     * @param specialization    The infantry's specialization, if any.
+     * @param mount             The mount if the unit is beast-mounted, otherwise null.
+     * @return The maximum number of squads/creatures per platoon.
+     */
+    public static int maxSquadCount(EntityMovementMode movementMode, boolean alt,
+          int specialization, @Nullable InfantryMount mount) {
+
+        if (mount == null) {
+            int squads = switch (movementMode) {
+                case VTOL, HOVER, WHEELED, TRACKED, SUBMARINE -> 4;
+                case INF_UMU -> alt ? 2 : 4;
+                default -> 5;
+            };
+
+            if ((specialization & (Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS)) > 0) {
+                squads = Math.min(squads, 2);
+            }
+
+            if ((specialization & Infantry.PARATROOPS) > 0) {
+                squads = Math.min(squads, 3);
+            }
+
+            if ((specialization & Infantry.MARINES) > 0) {
+                squads = Math.min(squads, 4);
+            }
+
+            return squads;
+
+        } else {
+            // For Very Large and Monstrous (but not Large) creatures, each creature is one squad.
+            if (mount.getSize() == InfantryMount.BeastSize.LARGE) {
+                return 5;
+            }
+            return mount.getSize().creaturesPerPlatoon;
         }
     }
 

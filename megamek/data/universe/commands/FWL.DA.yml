@@ -1,0 +1,9 @@
+key: FWL.DA
+name: Defenders of Andurien
+yearsActive:
+  - start: 2514
+    end: 3039
+ratingLevels:
+  - F
+fallBackFactions:
+  - FWL

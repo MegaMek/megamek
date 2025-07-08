@@ -42,7 +42,8 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_NO_FIRES, // can not start fires
     F_NO_AIM,
     F_ONESHOT,
-    F_SOLO_ATTACK, // must be only weapon attacking
+    /** A weapon with this flag can only be fired alone, i.e. it must be the only weapon attacking */
+    F_SOLO_ATTACK,
     F_PROTOTYPE, // War of 3039 prototypes
     F_REPEATING,
 
@@ -112,4 +113,15 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_INF_NONPENETRATING,
     F_INF_POINT_BLANK,
     F_INF_SUPPORT,
+
+    /**
+     * A weapon with this flag is not an actual weapon but only used as an internal representation of an attack. It
+     * should be hidden in the readout, tooltip and RS but shown in the unit display's weapon list where it is used.
+     */
+    INTERNAL_REPRESENTATION,
+
+    /**
+     * Denotes Clan Heavy Lasers (S, M, L)
+     */
+    HEAVY_LASER
 }

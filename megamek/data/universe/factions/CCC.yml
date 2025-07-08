@@ -1,0 +1,120 @@
+key: CCC
+name: Clan Cloud Cobra
+capital: Homer
+yearsActive:
+  - start: 2807
+    end: 3085
+tags:
+  - PLAYABLE
+  - MINOR
+  - CLAN
+  - BATCHALL
+color:
+  red: 147
+  green: 112
+  blue: 219
+logo: Clan/Clan Cloud Cobra.png
+background: Clan/Clan Cloud Cobra.png
+camos: Clans/Cloud Cobra
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN.HW
+preInvasionHonorRating: OPPORTUNISTIC
+factionLeaders:
+  - title: "Khan"
+    firstName: "Windham"
+    surname: "Khatib"
+    gender: "MALE"
+    startYear: 2807
+    endYear: 2823
+  - title: "Khan"
+    firstName: "Rafe"
+    surname: "Kardaan"
+    gender: "MALE"
+    startYear: 2823
+    endYear: 2843
+  - title: "Khan"
+    firstName: "Josef"
+    surname: "Mannix"
+    gender: "MALE"
+    # Unofficial: we know they reigned in 2868, but not their exact tenure
+    startYear: 2868
+    # Unofficial: we know they reigned in 2868, but not their exact tenure
+    endYear: 2880
+  - title: "Khan"
+    firstName: "Samson"
+    surname: "McCloud"
+    gender: "MALE"
+    # Unofficial: we know they reigned in 2880, but not their exact tenure
+    startYear: 2880
+    # Unofficial: we know they still reigned in 2894, but not their exact tenure
+    endYear: 2910
+  - title: "Khan"
+    firstName: "Ward"
+    surname: "Kardaan"
+    gender: "MALE"
+    startYear: 2910
+    # Unofficial: we know they still reigned in 2911, but not their exact tenure
+    endYear: 2935
+  - title: "Khan"
+    firstName: "Tobias"
+    surname: "Khatib"
+    gender: "MALE"
+    startYear: 2935
+    endYear: 2947
+  - title: "Khan"
+    firstName: "Patrick"
+    surname: "McCloud"
+    gender: "MALE"
+    # Unofficial: we know they still reigned in 2954, but not their exact tenure
+    startYear: 2947
+    endYear: 2954
+  - title: "Khan"
+    firstName: "Tharan"
+    surname: "Kon-Dakar"
+    gender: "MALE"
+    # Unofficial: we know they reigned in 2965, but not their exact tenure
+    startYear: 2954
+    # Unofficial: we know they still reigned in 2973, but not their exact tenure
+    endYear: 2973
+  - title: "Khan"
+    firstName: "Felipe"
+    surname: "Kardaan"
+    gender: "MALE"
+    # Unofficial: we know they reigned in 2992, but not their exact tenure
+    startYear: 2992
+    # Unofficial: we know they reigned in 2992, but not their exact tenure
+    endYear: 2992
+  - title: "Khan"
+    firstName: "Terrel"
+    surname: "N'Buta"
+    gender: "MALE"
+    # Unofficial: we know they reigned in 2996, but not their exact tenure
+    startYear: 2996
+    # Unofficial: we know they reigned in 2996, but not their exact tenure
+    endYear: 2996
+  - title: "Khan"
+    firstName: "Tova"
+    surname: "N'Buta"
+    gender: "FEMALE"
+    # Unofficial: we know they reigned in 3037, but not their exact tenure
+    startYear: 2996
+    endYear: 3037
+  - title: "Khan"
+    firstName: "Din"
+    surname: "Steiner"
+    gender: "FEMALE"
+    startYear: 3037
+    endYear: 3074
+  - title: "Khan"
+    firstName: "Hollyann"
+    surname: "Kardaan"
+    gender: "FEMALE"
+    startYear: 3074
+    endYear: 3085

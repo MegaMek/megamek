@@ -1,0 +1,25 @@
+key: DGM
+name: Duchy of Graham-Marik
+capital: Loyalty
+yearsActive:
+  - start: 3079
+    end: 3082
+successor: MSC
+tags:
+  - MINOR
+  - IS
+color:
+  red: 143
+  green: 190
+  blue: 192
+nameGenerator: FWL
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS
+  - FWL
+  - MSC

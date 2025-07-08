@@ -41,7 +41,7 @@ import static megamek.client.ui.SharedUtility.predictLeapFallDamage;
 
 public abstract class PathRanker implements IPathRanker {
     private final static MMLogger logger = MMLogger.create(PathRanker.class);
-    private static final BotLogger botLogger = new BotLogger(PathRanker.class.getSimpleName());
+    private static final BotLogger botLogger = new BotLogger();
     // TODO: Introduce PathRankerCacheHelper class that contains "global" path
     // ranker state
     // TODO: Introduce FireControlCacheHelper class that contains "global" Fire
@@ -148,14 +148,14 @@ public abstract class PathRanker implements IPathRanker {
             return returnPaths;
         }
         botLogger.append(game, true);
-        // log the top 50 paths
-        int numPathsToLog = Math.min(50, returnPaths.size());
+        // log at most 500 paths
         int i = 0;
+        int maxRankedPaths = Math.max(500, returnPaths.size());
         for (RankedPath rankedPath : returnPaths) {
-            if (i >= numPathsToLog) {
+            if (maxRankedPaths == i) {
                 break;
             }
-            botLogger.append(rankedPath, i == 0);
+            botLogger.append(rankedPath, i);
             i++;
         }
 
@@ -334,7 +334,7 @@ public abstract class PathRanker implements IPathRanker {
     /**
      * Calculates the probability that a unit can successfully complete the given movement path.
      * <p>
-     * This method evaluates all piloting skill rolls required along the path and computes the 
+     * This method evaluates all piloting skill rolls required along the path and computes the
      * combined probability of passing all of them. It accounts for:
      * <ul>
      *   <li>Piloting skill rolls from difficult terrain, elevation changes, etc.</li>
@@ -346,7 +346,7 @@ public abstract class PathRanker implements IPathRanker {
      * separately when evaluating immobile status. Results are cached to avoid redundant
      * calculations during path evaluation.
      * <p>
-     * The probability is expressed as a value between 0.0 (guaranteed failure) and 
+     * The probability is expressed as a value between 0.0 (guaranteed failure) and
      * 1.0 (guaranteed success).
      *
      * @param movePath The movement path to evaluate

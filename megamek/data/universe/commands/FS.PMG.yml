@@ -1,0 +1,8 @@
+key: FS.PMG
+name: Periphery March Guard
+yearsActive:
+  - start: 3080
+ratingLevels:
+  - A
+fallBackFactions:
+  - FS

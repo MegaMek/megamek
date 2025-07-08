@@ -726,7 +726,21 @@ public class Infantry extends Entity {
 
     @Override
     public int getOInternal(int loc) {
-        return isConventionalInfantry() ? originalTrooperCount : super.getOInternal(loc);
+        if (!isConventionalInfantry()) {
+            return super.getOInternal(loc);
+        }
+        if (loc != LOC_INFANTRY) {
+            return 0;
+        }
+        return originalTrooperCount;
+    }
+
+    /**
+     * @return The full original strength of this infantry unit; for conventional infantry, this is the original
+     * trooper count, for BA the original squad size.
+     */
+    public int getOriginalTrooperCount() {
+        return originalTrooperCount;
     }
 
     @Override
@@ -1742,7 +1756,7 @@ public class Infantry extends Entity {
      * @return True if this infantry has a field artillery weapon that is not destroyed.
      */
     public boolean hasActiveFieldArtillery() {
-        return activeFieldWeapons().stream().anyMatch(gun -> gun.getType().hasFlag(WeaponType.F_ARTILLERY));
+        return activeFieldWeapons().stream().anyMatch(TestInfantry::isFieldArtilleryWeapon);
     }
 
     /**

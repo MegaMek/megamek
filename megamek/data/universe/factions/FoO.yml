@@ -1,0 +1,12 @@
+key: FoO
+name: Federation of Oriente
+capital: Oriente
+successor: FWL
+tags:
+  - MINOR
+  - IS
+color:
+  red: 163
+  green: 112
+  blue: 120
+nameGenerator: FWL

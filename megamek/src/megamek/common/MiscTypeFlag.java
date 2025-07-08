@@ -56,6 +56,12 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_C3SBS,
     F_NAVAL_C3,
 
+    /**
+     * All C3-like equipment (C3, C3i, Naval C3, Nova CEWS and BA C3). Note that C3M and C3MBS are weapons and cannot
+     * have this flag.
+     */
+    ANY_C3,
+
     F_ARTEMIS,
     F_TARGCOMP,
     F_ARTEMIS_V,

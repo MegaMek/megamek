@@ -1,0 +1,14 @@
+key: FWL.CP
+name: Clan Protectorate
+yearsActive:
+  - start: 3139
+tags:
+  - CLAN
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CP

@@ -72,8 +72,6 @@ import megamek.common.weapons.tag.ISTAG;
 import megamek.common.weapons.unofficial.*;
 import megamek.logging.MMLogger;
 
-// TODO add XML support back in.
-
 /**
  * A type of mek or vehicle weapon. There is only one instance of this weapon
  * for all weapons of this type.
@@ -283,32 +281,6 @@ public class WeaponType extends EquipmentType {
     // Used for BA vs BA damage for BA Plasma Rifle
     public static final int WEAPON_PLASMA = 15;
 
-    public static String[] classNames = {
-            "Unknown",
-            "Laser",
-            "Point Defense",
-            "PPC",
-            "Pulse Laser",
-            "Artillery",
-            "Plasma",
-            "AC",
-            "LBX",
-            "LRM",
-            "SRM",
-            "MRM",
-            "ATM",
-            "Rocket Launcher",
-            "Capital Laser",
-            "Capital PPC",
-            "Capital AC",
-            "Capital Gauss",
-            "Capital Missile",
-            "AR10", "Screen",
-            "Sub Capital Cannon",
-            "Capital Mass Driver",
-            "AMS"
-    };
-
     public static final int BFCLASS_STANDARD = 0;
     public static final int BFCLASS_LRM = 1;
     public static final int BFCLASS_SRM = 2;
@@ -365,13 +337,6 @@ public class WeaponType extends EquipmentType {
     protected boolean subCapital = false;
     protected int atClass = CLASS_NONE;
 
-    /**
-     * @return true if the weapon type is able to be fired indirectly.
-     */
-    public boolean canIndirect() {
-        return false;
-    }
-
     public void setDamage(int inD) {
         damage = inD;
     }
@@ -383,20 +348,6 @@ public class WeaponType extends EquipmentType {
 
     public void setMinimumRange(int inMR) {
         minimumRange = inMR;
-    }
-
-    public void setRanges(int sho, int med, int lon, int ext) {
-        shortRange = sho;
-        mediumRange = med;
-        longRange = lon;
-        extremeRange = ext;
-    }
-
-    public void setWaterRanges(int sho, int med, int lon, int ext) {
-        waterShortRange = sho;
-        waterMediumRange = med;
-        waterLongRange = lon;
-        waterExtremeRange = ext;
     }
 
     public void setAmmoType(AmmoTypeEnum inAT) {
@@ -738,63 +689,39 @@ public class WeaponType extends EquipmentType {
      */
     public EquipmentType getBayType(boolean capitalOnly) {
         // Return the correct weapons bay for the given type of weapon
-        switch (getAtClass()) {
-            case CLASS_LASER:
-                return EquipmentType.get(EquipmentTypeLookup.LASER_BAY);
-            case CLASS_AMS:
-                return EquipmentType.get(EquipmentTypeLookup.AMS_BAY);
-            case CLASS_POINT_DEFENSE:
-                return EquipmentType.get(EquipmentTypeLookup.POINT_DEFENSE_BAY);
-            case CLASS_PPC:
-                return EquipmentType.get(EquipmentTypeLookup.PPC_BAY);
-            case CLASS_PULSE_LASER:
-                return EquipmentType.get(EquipmentTypeLookup.PULSE_LASER_BAY);
-            case CLASS_ARTILLERY:
-                return EquipmentType.get(EquipmentTypeLookup.ARTILLERY_BAY);
-            case CLASS_PLASMA:
-                return EquipmentType.get(EquipmentTypeLookup.PLASMA_BAY);
-            case CLASS_AC:
-                return EquipmentType.get(EquipmentTypeLookup.AC_BAY);
-            case CLASS_LBX_AC:
-                return EquipmentType.get(EquipmentTypeLookup.LBX_AC_BAY);
-            case CLASS_LRM:
-                return EquipmentType.get(EquipmentTypeLookup.LRM_BAY);
-            case CLASS_SRM:
-                return EquipmentType.get(EquipmentTypeLookup.SRM_BAY);
-            case CLASS_MRM:
-                return EquipmentType.get(EquipmentTypeLookup.MRM_BAY);
-            case CLASS_MML:
-                return EquipmentType.get(EquipmentTypeLookup.MML_BAY);
-            case CLASS_THUNDERBOLT:
-                return EquipmentType.get(EquipmentTypeLookup.THUNDERBOLT_BAY);
-            case CLASS_ATM:
-                return EquipmentType.get(EquipmentTypeLookup.ATM_BAY);
-            case CLASS_ROCKET_LAUNCHER:
-                return EquipmentType.get(EquipmentTypeLookup.ROCKET_LAUNCHER_BAY);
-            case CLASS_CAPITAL_LASER:
-                return (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SCL_BAY)
+        return switch (getAtClass()) {
+            case CLASS_LASER -> EquipmentType.get(EquipmentTypeLookup.LASER_BAY);
+            case CLASS_AMS -> EquipmentType.get(EquipmentTypeLookup.AMS_BAY);
+            case CLASS_POINT_DEFENSE -> EquipmentType.get(EquipmentTypeLookup.POINT_DEFENSE_BAY);
+            case CLASS_PPC -> EquipmentType.get(EquipmentTypeLookup.PPC_BAY);
+            case CLASS_PULSE_LASER -> EquipmentType.get(EquipmentTypeLookup.PULSE_LASER_BAY);
+            case CLASS_ARTILLERY -> EquipmentType.get(EquipmentTypeLookup.ARTILLERY_BAY);
+            case CLASS_PLASMA -> EquipmentType.get(EquipmentTypeLookup.PLASMA_BAY);
+            case CLASS_AC -> EquipmentType.get(EquipmentTypeLookup.AC_BAY);
+            case CLASS_LBX_AC -> EquipmentType.get(EquipmentTypeLookup.LBX_AC_BAY);
+            case CLASS_LRM -> EquipmentType.get(EquipmentTypeLookup.LRM_BAY);
+            case CLASS_SRM -> EquipmentType.get(EquipmentTypeLookup.SRM_BAY);
+            case CLASS_MRM -> EquipmentType.get(EquipmentTypeLookup.MRM_BAY);
+            case CLASS_MML -> EquipmentType.get(EquipmentTypeLookup.MML_BAY);
+            case CLASS_THUNDERBOLT -> EquipmentType.get(EquipmentTypeLookup.THUNDERBOLT_BAY);
+            case CLASS_ATM -> EquipmentType.get(EquipmentTypeLookup.ATM_BAY);
+            case CLASS_ROCKET_LAUNCHER -> EquipmentType.get(EquipmentTypeLookup.ROCKET_LAUNCHER_BAY);
+            case CLASS_CAPITAL_LASER ->
+                  (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SCL_BAY)
                         : EquipmentType.get(EquipmentTypeLookup.CAPITAL_LASER_BAY);
-            case CLASS_CAPITAL_PPC:
-                return EquipmentType.get(EquipmentTypeLookup.CAPITAL_PPC_BAY);
-            case CLASS_CAPITAL_AC:
-                return (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SCC_BAY)
-                        : EquipmentType.get(EquipmentTypeLookup.CAPITAL_AC_BAY);
-            case CLASS_CAPITAL_GAUSS:
-                return EquipmentType.get(EquipmentTypeLookup.CAPITAL_GAUSS_BAY);
-            case CLASS_CAPITAL_MD:
-                return EquipmentType.get(EquipmentTypeLookup.CAPITAL_MASS_DRIVER_BAY);
-            case CLASS_CAPITAL_MISSILE:
-                return (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SC_MISSILE_BAY)
+            case CLASS_CAPITAL_PPC -> EquipmentType.get(EquipmentTypeLookup.CAPITAL_PPC_BAY);
+            case CLASS_CAPITAL_AC -> (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SCC_BAY)
+                  : EquipmentType.get(EquipmentTypeLookup.CAPITAL_AC_BAY);
+            case CLASS_CAPITAL_GAUSS -> EquipmentType.get(EquipmentTypeLookup.CAPITAL_GAUSS_BAY);
+            case CLASS_CAPITAL_MD -> EquipmentType.get(EquipmentTypeLookup.CAPITAL_MASS_DRIVER_BAY);
+            case CLASS_CAPITAL_MISSILE ->
+                  (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SC_MISSILE_BAY)
                         : EquipmentType.get(EquipmentTypeLookup.CAPITAL_MISSILE_BAY);
-            case CLASS_TELE_MISSILE:
-                return EquipmentType.get(EquipmentTypeLookup.TELE_CAPITAL_MISSILE_BAY);
-            case CLASS_AR10:
-                return EquipmentType.get(EquipmentTypeLookup.AR10_BAY);
-            case CLASS_SCREEN:
-                return EquipmentType.get(EquipmentTypeLookup.SCREEN_LAUNCHER_BAY);
-            default:
-                return EquipmentType.get(EquipmentTypeLookup.MISC_BAY);
-        }
+            case CLASS_TELE_MISSILE -> EquipmentType.get(EquipmentTypeLookup.TELE_CAPITAL_MISSILE_BAY);
+            case CLASS_AR10 -> EquipmentType.get(EquipmentTypeLookup.AR10_BAY);
+            case CLASS_SCREEN -> EquipmentType.get(EquipmentTypeLookup.SCREEN_LAUNCHER_BAY);
+            default -> EquipmentType.get(EquipmentTypeLookup.MISC_BAY);
+        };
     }
 
     /**

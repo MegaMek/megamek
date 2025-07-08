@@ -18,11 +18,6 @@
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
-
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -33,6 +28,11 @@ import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Sprite for an entity. Changes whenever the entity changes. Consists of an image, drawn from the Tile Manager; facing
@@ -45,6 +45,8 @@ public class EntitySprite extends Sprite {
     private static final int STATUS_BAR_LENGTH = 24;
     private static final int STATUS_BAR_X = 55;
     private static final int MAX_TMM_PIPS = 6;
+    private static final int BIGGER_PIP_SCALE = 2;
+    private static final int BIGGER_PIP_OFFSET = 1;
     private static final int TMM_PIP_SIZE = STATUS_BAR_LENGTH / MAX_TMM_PIPS;
     private static final boolean DIRECT = true;
     private static final Color LABEL_CRITICAL_BACK = new Color(200, 0, 0, 200);
@@ -178,7 +180,9 @@ public class EntitySprite extends Sprite {
         } else {
             String[] tokens = entity.getChassis().split(" ");
             int i = tokens.length - 1;
-            for (; i > 0; i--) {
+            for (;
+                  i > 0;
+                  i--) {
                 if (!REMOVABLE_NAME_PARTS.contains(tokens[i])) {
                     break;
                 }
@@ -190,27 +194,27 @@ public class EntitySprite extends Sprite {
     /** Returns the string with some content shortened like Battle Armor -> BA */
     private static String abbreviateUnitName(String unitName) {
         return unitName.replace("(Standard)", "")
-                     .replace("Battle Armor", "BA")
-                     .replace("Standard", "Std.")
-                     .replace("Vehicle", "Veh.")
-                     .replace("Medium", "Med.")
-                     .replace("Support", "Spt.")
-                     .replace("Heavy", "Hvy.")
-                     .replace("Light", "Lgt.")
-                     .replace("Assault", "Asslt.")
-                     .replace("Transport", "Trnsp.")
-                     .replace("Command", "Cmd.")
-                     .replace("Mechanized", "Mechn.")
-                     .replace("Wheeled", "Whee.")
-                     .replace("Platoon", "Plt.")
-                     .replace("Artillery", "Arty.")
-                     .replace("Defense", "Def.")
-                     .replace("Hovercraft", "Hov.")
-                     .replace("Platoon", "Plt.")
-                     .replace("Reconnaissance", "Rcn.")
-                     .replace("Recon", "Rcn.")
-                     .replace("Tank", "Tk.")
-                     .replace("Hover ", "Hov. ");
+              .replace("Battle Armor", "BA")
+              .replace("Standard", "Std.")
+              .replace("Vehicle", "Veh.")
+              .replace("Medium", "Med.")
+              .replace("Support", "Spt.")
+              .replace("Heavy", "Hvy.")
+              .replace("Light", "Lgt.")
+              .replace("Assault", "Asslt.")
+              .replace("Transport", "Trnsp.")
+              .replace("Command", "Cmd.")
+              .replace("Mechanized", "Mechn.")
+              .replace("Wheeled", "Whee.")
+              .replace("Platoon", "Plt.")
+              .replace("Artillery", "Arty.")
+              .replace("Defense", "Def.")
+              .replace("Hovercraft", "Hov.")
+              .replace("Platoon", "Plt.")
+              .replace("Reconnaissance", "Rcn.")
+              .replace("Recon", "Rcn.")
+              .replace("Tank", "Tk.")
+              .replace("Hover ", "Hov. ");
     }
 
     private String pilotNick() {
@@ -462,8 +466,8 @@ public class EntitySprite extends Sprite {
 
         // create image for buffer
         GraphicsConfiguration config = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                                             .getDefaultScreenDevice()
-                                             .getDefaultConfiguration();
+              .getDefaultScreenDevice()
+              .getDefaultConfiguration();
         image = config.createCompatibleImage(bounds.width, bounds.height, Transparency.TRANSLUCENT);
         Graphics2D graph = (Graphics2D) image.getGraphics();
         UIUtil.setHighQualityRendering(graph);
@@ -479,8 +483,8 @@ public class EntitySprite extends Sprite {
                 // draw the unit icon translucent if: hidden from the enemy (and activated graphics setting); or
                 // submerged
                 boolean translucentHiddenUnits = GUIP.getTranslucentHiddenUnits();
-                boolean shouldBeTranslucent = (trackThisEntitiesVisibilityInfo(entity) && !entity.isVisibleToEnemy()) ||
-                                                    entity.isHidden();
+                boolean shouldBeTranslucent = (trackThisEntitiesVisibilityInfo(entity) && !entity.isVisibleToEnemy())
+                      || entity.isHidden();
                 if ((shouldBeTranslucent && translucentHiddenUnits) || (entity.relHeight() < 0)) {
                     graph.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
                 }
@@ -722,10 +726,12 @@ public class EntitySprite extends Sprite {
                 // Draw a label border with player colors or team coloring
                 if (GUIP.getUnitLabelBorder()) {
                     if (GUIP.getTeamColoring()) {
-                        boolean isLocalTeam = entity.getOwner().getTeam() ==
-                                                    bv.getClientgui().getClient().getLocalPlayer().getTeam();
+                        boolean isLocalTeam = entity.getOwner().getTeam() == bv.getClientgui()
+                              .getClient()
+                              .getLocalPlayer()
+                              .getTeam();
                         boolean isLocalPlayer = entity.getOwner()
-                                                      .equals(bv.getClientgui().getClient().getLocalPlayer());
+                              .equals(bv.getClientgui().getClient().getLocalPlayer());
                         if (isLocalPlayer) {
                             graph.setColor(GUIP.getMyUnitColor());
                         } else if (isLocalTeam) {
@@ -780,11 +786,12 @@ public class EntitySprite extends Sprite {
 
             // draw facing
             graph.setColor(Color.white);
-            if ((entity.getFacing() != -1) &&
-                      !((entity instanceof Infantry) &&
-                              !((Infantry) entity).hasFieldWeapon() &&
-                              !((Infantry) entity).isTakingCover()) &&
-                      !((entity instanceof IAero) && ((IAero) entity).isSpheroid() && !board.isSpace())) {
+            if ((entity.getFacing() != -1) && !((entity instanceof Infantry)
+                                                      && !((Infantry) entity).hasFieldWeapon()
+                                                      && !((Infantry) entity).isTakingCover()) && !(
+                  (entity instanceof IAero)
+                        && ((IAero) entity).isSpheroid()
+                        && !board.isSpace())) {
                 // Indicate a stacked unit with the same facing that can still move
                 if (shouldIndicateNotDone() && bv.game.getPhase().isMovement()) {
                     var tr = graph.getTransform();
@@ -857,33 +864,47 @@ public class EntitySprite extends Sprite {
 
             // TMM pips show if done in movement, or on all units during firing
             int pipOption = GUIP.getTMMPipMode();
-            if ((pipOption != 0) &&
-                      !isGunEmplacement &&
-                      !entity.isAero() &&
-                      ((entity.isDone() && bv.game.getPhase().isMovement()) || bv.game.getPhase().isFiring())) {
+            int pipScaleFactor = 1;
+            int pipOffset = 0;
+            if (pipOption == 3 || pipOption == 4) { // bigger pips
+                pipScaleFactor = BIGGER_PIP_SCALE;
+                pipOffset = BIGGER_PIP_OFFSET;
+            }
+            if ((pipOption != 0) && !isGunEmplacement && !entity.isAero() && ((entity.isDone() && bv.game.getPhase()
+                  .isMovement()) || bv.game.getPhase().isFiring())) {
                 int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
-                Color tmmColor = (pipOption == 1) ? Color.WHITE : GUIP.getColorForMovement(entity.moved);
+                Color tmmColor = (pipOption == 1 || pipOption == 3) ? Color.WHITE :
+                      GUIP.getColorForMovement(entity.moved);
                 graph.setColor(Color.darkGray);
-                graph.fillRect(STATUS_BAR_X, 12 + TMM_PIP_SIZE, STATUS_BAR_LENGTH, TMM_PIP_SIZE);
+                graph.fillRect(STATUS_BAR_X - (pipOffset * (MAX_TMM_PIPS - 1)),
+                      12 + TMM_PIP_SIZE,
+                      STATUS_BAR_LENGTH + (pipOffset * MAX_TMM_PIPS),
+                      TMM_PIP_SIZE * pipScaleFactor + 1);
                 if (tmm >= 0) {
                     // draw left to right for positive TMM
-                    for (int i = 0; i < MAX_TMM_PIPS; i++) {
+                    for (int i = 0;
+                          i < MAX_TMM_PIPS;
+                          i++) {
                         graph.setColor(Color.DARK_GRAY);
                         graph.setColor(i < tmm ? tmmColor : Color.BLACK);
-                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE),
-                              12 + TMM_PIP_SIZE,
-                              TMM_PIP_SIZE - 1,
-                              TMM_PIP_SIZE - 1);
+                        graph.fillRect(STATUS_BAR_X - (pipOffset * (MAX_TMM_PIPS - 1)) + 1 + i * (TMM_PIP_SIZE
+                                                                                                        + pipOffset),
+                              13 + TMM_PIP_SIZE,
+                              TMM_PIP_SIZE - pipScaleFactor + pipOffset,
+                              TMM_PIP_SIZE * pipScaleFactor - 1);
                     }
                 } else {
                     // draw pips right to left for negative TMM
-                    for (int i = 0; i < MAX_TMM_PIPS; i++) {
+                    for (int i = 0;
+                          i < MAX_TMM_PIPS;
+                          i++) {
                         graph.setColor(Color.DARK_GRAY);
                         graph.setColor(i >= (MAX_TMM_PIPS + tmm) ? tmmColor : Color.BLACK);
-                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE),
-                              12 + TMM_PIP_SIZE,
-                              TMM_PIP_SIZE - 1,
-                              TMM_PIP_SIZE - 1);
+                        graph.fillRect(STATUS_BAR_X - (pipOffset * MAX_TMM_PIPS - 1) + 1 + i * (TMM_PIP_SIZE
+                                                                                                      + pipOffset),
+                              13 + TMM_PIP_SIZE,
+                              TMM_PIP_SIZE - pipScaleFactor + pipOffset,
+                              TMM_PIP_SIZE * pipScaleFactor - 1);
                     }
                 }
             }
@@ -899,9 +920,9 @@ public class EntitySprite extends Sprite {
     private boolean shouldIndicateNotDone() {
         var hexEntities = bv.game.getEntitiesVector(entity.getPosition(), entity.getBoardId());
         return hexEntities.stream()
-                     .filter(e -> hexEntities.indexOf(entity) > hexEntities.indexOf(e))
-                     .filter(e -> e.getFacing() == entity.getFacing())
-                     .anyMatch(e -> !e.isDone());
+              .filter(e -> hexEntities.indexOf(entity) > hexEntities.indexOf(e))
+              .filter(e -> e.getFacing() == entity.getFacing())
+              .anyMatch(e -> !e.isDone());
     }
 
     private @Nullable Color getDamageColor() {

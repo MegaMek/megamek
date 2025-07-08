@@ -1,0 +1,8 @@
+key: MOC.pm
+name: Planetary Militia
+yearsActive:
+  - start: 2530
+ratingLevels:
+  - F
+fallBackFactions:
+  - MOC

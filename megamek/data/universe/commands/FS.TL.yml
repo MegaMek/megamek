@@ -1,0 +1,9 @@
+key: FS.TL
+name: Tancredi Loyalists
+yearsActive:
+  - start: 2540
+    end: 3000
+ratingLevels:
+  - C
+fallBackFactions:
+  - FS

@@ -1,0 +1,12 @@
+key: DoL
+name: Duchy of Liao
+capital: Terra
+successor: CC
+tags:
+  - MINOR
+  - IS
+color:
+  red: 2
+  green: 166
+  blue: 79
+nameGenerator: CC

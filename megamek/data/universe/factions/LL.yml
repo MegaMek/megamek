@@ -1,0 +1,36 @@
+key: LL
+name: Lothian League
+capital: Lothario
+yearsActive:
+  - start: 2815
+    end: 3055
+  - start: 3087
+tags:
+  - MINOR
+  - PERIPHERY
+color:
+  red: 255
+  green: 140
+  blue: 0
+logo: Periphery/Lothian League.png
+camos: Lothian League
+eraMods:
+  - 0
+  - 0
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+  - 1
+  - 2
+  - 2
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.MW

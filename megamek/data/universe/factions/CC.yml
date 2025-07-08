@@ -1,0 +1,239 @@
+key: CC
+name: Capellan Confederation
+capital: Sian
+yearsActive:
+  - start: 2367
+tags:
+  - PLAYABLE
+  - MAJOR
+  - IS
+  - STINGY
+  - CONTROLLING
+color:
+  red: 0
+  green: 127
+  blue: 14
+logo: Inner Sphere/Capellan Confederation.png
+background: Inner Sphere/Capellan Confederation.png
+camos: Capellan Confederation
+nameGenerator: CC
+eraMods:
+  - 1
+  - 0
+  - 0
+  - 1
+  - 1
+  - 2
+  - 2
+  - 1
+  - 0
+  - 1
+  - 0
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - IS
+rankSystem: CCAF
+factionLeaders:
+  - title: "Chancellor"
+    firstName: "Franco"
+    surname: "Martell Liao"
+    gender: "MALE"
+    startYear: 2367
+    endYear: 2395
+  - title: "Chancellor"
+    firstName: "Kurnath"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 2395
+    endYear: 2399
+  - title: "Chancellor"
+    firstName: "Aleisha"
+    surname: "Liao"
+    gender: "FEMALE"
+    startYear: 2399
+    endYear: 2415
+  - title: "Chancellor"
+    firstName: "Arden"
+    surname: "Baxter"
+    gender: "MALE"
+    startYear: 2415
+    endYear: 2425
+  - title: "Chancellor"
+    firstName: "Stephen"
+    surname: "Edward Liao"
+    gender: "MALE"
+    startYear: 2425
+    endYear: 2450
+  - title: "Chancellor"
+    firstName: "Duncan"
+    surname: "Edward Liao"
+    gender: "MALE"
+    startYear: 2450
+    endYear: 2452
+  - title: "Chancellor"
+    firstName: "Jasmine"
+    surname: "Liao"
+    gender: "FEMALE"
+    startYear: 2452
+    endYear: 2477
+  - title: "Chancellor"
+    firstName: "Edmund"
+    surname: "Salindar"
+    gender: "MALE"
+    startYear: 2477
+    endYear: 2482
+  - title: "Chancellor"
+    firstName: "Raxal"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 2482
+    endYear: 2482
+  - title: "Chancellor"
+    firstName: "Hendrik"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 2482
+    endYear: 2520
+  - title: "Chancellor"
+    firstName: "Kalvin"
+    surname: "Thomas Liao"
+    gender: "MALE"
+    startYear: 2520
+    endYear: 2530
+  - title: "Chancellor"
+    firstName: "Mica"
+    surname: "Liao"
+    gender: "FEMALE"
+    startYear: 2530
+    endYear: 2542
+  - title: "Chancellor"
+    firstName: "Salicia"
+    surname: "Liao"
+    gender: "FEMALE"
+    startYear: 2542
+    endYear: 2551
+  - title: "Chancellor"
+    firstName: "Terrence"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 2551
+    endYear: 2571
+  - title: "Chancellor"
+    firstName: "Ursula"
+    surname: "Gabriel Liao"
+    gender: "FEMALE"
+    startYear: 2571
+    endYear: 2599
+  - title: "Chancellor"
+    firstName: "Normann"
+    surname: "Aris"
+    gender: "FEMALE"
+    startYear: 2599
+    endYear: 2611
+  - title: "Chancellor"
+    firstName: "Sundermann"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 2611
+    endYear: 2663
+  - title: "Chancellor"
+    firstName: "Androsar"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 2663
+    endYear: 2719
+  - title: "Chancellor"
+    firstName: "Warex"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 2719
+    endYear: 2760
+  - title: "Chancellor"
+    firstName: "Barbara"
+    surname: "Liao"
+    gender: "FEMALE"
+    startYear: 2760
+    endYear: 2795
+  - title: "Chancellor"
+    firstName: "Sandol"
+    surname: "Quinn"
+    gender: "MALE"
+    startYear: 2795
+    endYear: 2801
+  - title: "Chancellor"
+    firstName: "Ilsa"
+    surname: "Liao"
+    gender: "FEMALE"
+    startYear: 2801
+    endYear: 2828
+  - title: "Chancellor"
+    firstName: "Laurelli"
+    surname: "Liao"
+    gender: "FEMALE"
+    startYear: 2828
+    endYear: 2860
+  - title: "Chancellor"
+    firstName: "Dainmar"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 2860
+    endYear: 2866
+  - title: "Chancellor"
+    firstName: "Otto"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 2866
+    endYear: 2917
+  - title: "Chancellor"
+    firstName: "Merlin"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 2917
+    endYear: 2942
+  - title: "Chancellor"
+    firstName: "Tarlak"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 2942
+    endYear: 2950
+  - title: "Chancellor"
+    firstName: "Ingrid"
+    surname: "Liao"
+    gender: "FEMALE"
+    startYear: 2950
+    endYear: 2980
+  - title: "Chancellor"
+    firstName: "Tormax"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 2980
+    endYear: 2990
+  - title: "Chancellor"
+    firstName: "Maximilian"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 2990
+    endYear: 3036
+  - title: "Chancellor"
+    firstName: "Ramano"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 3036
+    endYear: 3052
+  - title: "Chancellor"
+    firstName: "Sun-Tzu"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 3052
+    endYear: 3113
+  - title: "Chancellor"
+    firstName: "Daoshen"
+    surname: "Liao"
+    gender: "MALE"
+    startYear: 3113
+    endYear: 3152

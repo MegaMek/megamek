@@ -22,6 +22,7 @@ import megamek.common.event.*;
 import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;
+import megamek.utils.ServerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,8 +65,7 @@ public class BasicGameTest {
     public void setUp() throws Exception {
         Compute.d6();
         gameManager = new TWGameManager();
-        server = new Server(null, random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
-            gameManager, false, "", null, true);
+        server = ServerFactory.createServer(gameManager);
         Thread.sleep(1000);
         client = new HeadlessClient("watcher", LOCALHOST_IP, server.getPort());
     }

@@ -1,0 +1,54 @@
+key: CMG
+name: Clan Mongoose
+capital: Terra
+yearsActive:
+  - start: 2807
+    end: 2868
+successor: CSJ
+tags:
+  - MINOR
+  - CLAN
+  - BATCHALL
+color:
+  red: 100
+  green: 149
+  blue: 237
+logo: Clan/Clan Mongoose.png
+background: Clan/Clan Mongoose.png
+camos: Clans/Mongoose
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Solahma
+  - Second Line
+  - Front Line
+  - Keshik
+fallBackFactions:
+  - CLAN
+factionLeaders:
+  - title: "Khan"
+    firstName: "Mitchell"
+    surname: "Loris"
+    gender: "MALE"
+    startYear: 2807
+    endYear: 2844
+  - title: "Khan"
+    firstName: "Davis"
+    surname: "Riley"
+    gender: "MALE"
+    startYear: 2844
+    endYear: 2845
+  - title: "Khan"
+    firstName: "Jes"
+    surname: "Greenhalgh"
+    gender: "FEMALE"
+    startYear: 2845
+    # Unofficial: we don't have a canon endYear
+    endYear: 2865
+  - title: "Khan"
+    firstName: "Walter"
+    surname: "Martindale"
+    gender: "MALE"
+    # Unofficial: we don't have a canon startYear
+    startYear: 2865
+    endYear: 2868

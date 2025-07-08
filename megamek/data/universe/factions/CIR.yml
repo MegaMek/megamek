@@ -1,0 +1,54 @@
+key: CIR
+name: Circinus Federation
+capital: Circinus
+yearsActive:
+  - start: 2785
+    end: 3081
+tags:
+  - PERIPHERY
+color:
+  red: 198
+  green: 36
+  blue: 58
+logo: Periphery/Circinus Federation.png
+background: Periphery/Circinus Federation.png
+camos: Circinus Federation
+eraMods:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 2
+  - 3
+  - 3
+  - 2
+  - 1
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A
+fallBackFactions:
+  - Periphery.MW
+  - WOB.PM
+factionLeaders:
+  - title: "President"
+    firstName: "C. J."
+    surname: "McIntyre"
+    gender: "MALE"
+    # Unofficial: we don't have a canon startYear but know he reigned in 2990
+    startYear: 2990
+    endYear: 3037
+  - title: "President"
+    firstName: "H. R."
+    surname: "McIntyre"
+    gender: "MALE"
+    startYear: 3037
+    endYear: 3067
+  - title: "President"
+    firstName: "Calvin"
+    surname: "McIntyre"
+    gender: "MALE"
+    startYear: 3067
+    endYear: 3081

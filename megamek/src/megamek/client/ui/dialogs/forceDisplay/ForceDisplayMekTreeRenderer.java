@@ -23,7 +23,6 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
-
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.UIManager;
@@ -32,10 +31,10 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.client.ui.tileset.EntityImage;
-import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
+import megamek.client.ui.tileset.EntityImage;
+import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.Entity;
@@ -85,7 +84,7 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
             entity = (Entity) value;
             this.row = row;
             Player owner = entity.getOwner();
-            setText(ForceDisplayMekCellFormatter.formatUnitCompact(entity, client));
+            setText(ForceDisplayMekCellFormatter.formatUnitCompact(entity, client, row));
             int size = UIUtil.scaleForGUI(20);
             boolean showAsUnknown = owner.isEnemyOf(localPlayer)
                     && !EntityVisibilityUtils.detectedOrHasVisual(localPlayer, client.getGame(), entity);

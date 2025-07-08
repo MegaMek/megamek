@@ -1,0 +1,8 @@
+key: FS.SF
+name: Syrtis Fusiliers
+yearsActive:
+  - start: 2418
+ratingLevels:
+  - C
+fallBackFactions:
+  - FS

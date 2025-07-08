@@ -1,0 +1,27 @@
+key: SA
+name: Senatorial Alliance
+capital: Augustine
+yearsActive:
+  - start: 3135
+    end: 3138
+successor: AA
+tags:
+  - MINOR
+  - IS
+color:
+  red: 255
+  green: 102
+  blue: 153
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - -1
+fallBackFactions:
+  - ROS

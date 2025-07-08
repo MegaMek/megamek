@@ -1,0 +1,19 @@
+key: AG
+name: Alliance of Galedon
+capital: Galedon
+successor: DC
+tags:
+  - MINOR
+  - IS
+color:
+  red: 128
+  green: 66
+  blue: 244
+nameGenerator: DC
+factionLeaders:
+  - title: "Director"
+    firstName: "Shiro"
+    surname: "Kurita"
+    gender: "MALE"
+    startYear: 2302
+    endYear: 2319

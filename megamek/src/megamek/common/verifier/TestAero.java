@@ -585,7 +585,6 @@ public class TestAero extends TestEntity {
             correct = false;
         }
         int[] numWeapons = new int[aero.locations()];
-        int numBombs = 0;
 
         for (WeaponMounted m : aero.getWeaponList()) {
             if (m.getLocation() == Entity.LOC_NONE) {
@@ -636,11 +635,7 @@ public class TestAero extends TestEntity {
                 }
             }
 
-            if (m.getType().hasFlag(WeaponType.F_DIVE_BOMB)
-                    || m.getType().hasFlag(WeaponType.F_ALT_BOMB)
-                    || m.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
-                numBombs++;
-            } else {
+            if (!m.getType().hasFlag(WeaponTypeFlag.INTERNAL_REPRESENTATION)) {
                 numWeapons[m.getLocation()]++;
             }
         }
@@ -651,12 +646,6 @@ public class TestAero extends TestEntity {
                 buff.append("Invalid armor type! Armor: ")
                         .append(ArmorType.forEntity(aero))
                         .append("\n");
-                return false;
-            }
-            if (numBombs > aero.getMaxBombPoints()) {
-                buff.append("Invalid number of bombs! Unit can mount ").append(aero.getMaxBombPoints())
-                        .append(" but ").append(numBombs).append("are present!");
-                buff.append("\n");
                 return false;
             }
 
@@ -846,7 +835,7 @@ public class TestAero extends TestEntity {
         if (buffer == null) {
             buffer = new StringBuffer();
         }
-        if (eq instanceof AmmoType) {
+        if (eq instanceof AmmoType && !(eq instanceof BombType)) {
             if (location != Aero.LOC_FUSELAGE) {
                 buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
                 return false;
@@ -864,7 +853,8 @@ public class TestAero extends TestEntity {
                     return false;
                 }
             } else if ((eq.hasFlag(MiscType.F_BLUE_SHIELD) || eq.hasFlag(MiscType.F_LIFTHOIST)
-                    || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())) && (location != Aero.LOC_FUSELAGE)) {
+                       || eq.is(EquipmentTypeLookup.IS_CASE) || eq.is(EquipmentTypeLookup.IS_CASE_P))
+                       && (location != Aero.LOC_FUSELAGE)) {
                 buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
                 return false;
             }

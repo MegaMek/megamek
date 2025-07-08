@@ -1,0 +1,59 @@
+key: ARC
+name: Aurigan Coalition
+nameChanges:
+  3022: Arano Restoration
+  3026: Aurigan Coalition
+capital: Coromodir
+capitalChanges: 
+  3022: New Abilene
+  3026: Coromodir
+tags:
+  - PLAYABLE
+  - LENIENT
+  - MINOR
+  - PERIPHERY
+  - GENEROUS
+color:
+  red: 255
+  green: 36
+  blue: 0
+logo: Periphery/Aurigan Coalition.png
+background: Periphery/Aurigan Coalition.png
+camos: Aurigan Coalition
+eraMods:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 3
+  - 3
+rankSystem: ACM
+factionLeaders:
+  - title: "High Lady"
+    firstName: "Keona"
+    surname: "Arano"
+    gender: "FEMALE"
+    startYear: 2910
+    # Unofficial: we don't have a canon endYear
+    endYear: 2949
+  - title: "High Lord"
+    firstName: "Tamati"
+    surname: "Arano"
+    gender: "MALE"
+    # Unofficial: we don't have a canon startYear
+    startYear: 2949
+    endYear: 2988
+  - title: "High Lord"
+    firstName: "Tamati"
+    surname: "Arano"
+    honorific: "II"
+    gender: "MALE"
+    startYear: 2988
+    endYear: 3022
+  - title: "High Lady"
+    firstName: "Kamea"
+    surname: "Espinosa"
+    gender: "FEMALE"
+    startYear: 3022
+    endYear: 3028

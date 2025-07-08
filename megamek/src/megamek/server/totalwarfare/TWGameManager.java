@@ -9837,7 +9837,7 @@ public class TWGameManager extends AbstractGameManager {
                 AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
                 // TODO: this logic seems to be a bit off, rules need to be checked.
                 if (atype != null &&
-                          (atype.getAmmoType() == AmmoTypeEnum.ARROW_IV 
+                          (atype.getAmmoType() == AmmoTypeEnum.ARROW_IV
                           || ammoUsed.isHomingAmmoInHomingMode())) {
                     isHomingMissile = true;
                 }
@@ -11115,7 +11115,7 @@ TargetRoll nTargetRoll,
             int tf = jungle.getTerrainFactor() - nDamage;
             int level = jungle.getLevel();
             int folEl = h.terrainLevel(Terrains.FOLIAGE_ELEV);
-            if (tf < 0) {
+            if (tf <= 0) {
                 h.removeTerrain(Terrains.JUNGLE);
                 h.removeTerrain(Terrains.FOLIAGE_ELEV);
                 h.addTerrain(new Terrain(Terrains.ROUGH, 1));
@@ -28332,29 +28332,6 @@ TargetRoll nTargetRoll,
         return reports;
     }
 
-    public Vector<Integer> artilleryDamageHex(Coords coords, Coords attackSource, int damage, AmmoType ammo,
-          int subjectId, Entity killer, Entity exclude, boolean flak, int altitude, int targetLevel,
-          Vector<Report> vPhaseReport, boolean asfFlak, Vector<Integer> alreadyHit, boolean variableDamage,
-          DamageFalloff falloff) {
-        // LEGACY replace with board Id version
-        return artilleryDamageHex(coords,
-              0,
-              attackSource,
-              damage,
-              ammo,
-              subjectId,
-              killer,
-              exclude,
-              flak,
-              altitude,
-              targetLevel,
-              vPhaseReport,
-              asfFlak,
-              alreadyHit,
-              variableDamage,
-              falloff);
-    }
-
     /**
      * deal area saturation damage to an individual hex
      *
@@ -28664,6 +28641,7 @@ TargetRoll nTargetRoll,
             DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
             HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(ammo,
                   center,
+                  targetHex.getBoardId(),
                   falloff,
                   targetLevel,
                   false,
@@ -28676,6 +28654,7 @@ TargetRoll nTargetRoll,
                 Coords bCoords = entry.getValue();
                 int bLevel = entry.getKey();
                 alreadyHit = artilleryDamageHex(bCoords,
+                      targetHex.getBoardId(),
                       center,
                       blastShape.get(entry),
                       ammo,

@@ -1,0 +1,7 @@
+key: MERC.pm
+name: Security Forces
+ratingLevels:
+  - F
+fallBackFactions:
+  - IS.pm
+  - MERC

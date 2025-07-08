@@ -249,7 +249,7 @@ public class AreaEffectHelper {
             if (thinAir) {
                 damage = (int) Math.ceil(damage / 2.0);
             }
-            gameManager.artilleryDamageHex(bCoords, center, damage, ammo, attacker.getId(),
+            gameManager.artilleryDamageHex(bCoords, boardId, center, damage, ammo, attacker.getId(),
                 attacker, null, false, bLevel, height, vPhaseReport, false,
                 entitiesToExclude, false, falloff);
 
@@ -739,7 +739,8 @@ public class AreaEffectHelper {
                 radius = getFuelAirBlastRadiusIndex((bomb.getInternalName()));
             }
             if (bomb.getBombType() == BombTypeEnum.CLUSTER) {
-                falloff = 5;
+                damage = 5;
+                falloff = 0;
                 radius = 1;
                 clusterMunitionsFlag = true;
             }
@@ -1016,6 +1017,14 @@ public class AreaEffectHelper {
         );
     }
 
+    public static HashMap<Entry<Integer, Coords>, Integer> shapeBlast(
+          @Nullable AmmoType ammo, Coords center, DamageFalloff falloff, int height, boolean artillery,
+          boolean flak, boolean asfFlak, Game game, boolean excludeCenter) {
+        // LEGACY - replace with boardId version
+        return shapeBlast(ammo, center, Game.DEFAULT_BOARD_ID, falloff, height, artillery, flak, asfFlak, game,
+              excludeCenter);
+    }
+
     /**
      * @param ammo              AmmoType of the attack.
      * @param center            Coordinates of center of blast.
@@ -1029,7 +1038,7 @@ public class AreaEffectHelper {
      * @return                  (height, Coords): damage map.
      */
     public static HashMap<Entry<Integer, Coords>, Integer> shapeBlast(
-          @Nullable AmmoType ammo, Coords center, DamageFalloff falloff, int height, boolean artillery,
+          @Nullable AmmoType ammo, Coords center, int boardId, DamageFalloff falloff, int height, boolean artillery,
           boolean flak, boolean asfFlak, Game game, boolean excludeCenter) {
 
         HashMap<Entry<Integer, Coords>, Integer> blastShape = new LinkedHashMap<>();
@@ -1060,7 +1069,7 @@ public class AreaEffectHelper {
             }
         }
 
-        Hex hex = game.getBoard().getHex(center);
+        Hex hex = game.getHex(center, boardId);
         boolean effectivelyAE = (hex != null && hex.containsAnyTerrainOf(Set.of(Terrains.BUILDING, Terrains.WATER)));
         // 1. Handle Artillery-specific blast column (N levels up from _any_ hit where N
         // is base damage / 10 for most artillery, damage / 25 for Cruise Missiles)
@@ -1143,8 +1152,9 @@ public class AreaEffectHelper {
             blastRing.put(Map.entry(height, center), falloff.damage);
         }
 
-        int blastDamage = (falloff.clusterMunitionsFlag) ? falloff.damage : falloff.damage - falloff.falloff;
-        for (int ring = 1; blastDamage > 0; ring++, blastDamage -= falloff.falloff) {
+        // Note that Cluster Bombs have no damage falloff (5/5 damage) but only R1.
+        int blastDamage = falloff.damage - falloff.falloff;
+        for (int ring = 1; blastDamage > 0 && ring <= falloff.radius; ring++, blastDamage -= falloff.falloff) {
             List<Coords> ringCoords = center.allAtDistance(ring);
             for (Coords c: ringCoords) {
                 blastRing.put(Map.entry(height, c), blastDamage);

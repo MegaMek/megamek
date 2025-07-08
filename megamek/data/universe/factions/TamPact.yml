@@ -1,0 +1,18 @@
+key: TamPact
+name: Tamar Pact
+yearsActive:
+  - start: 3151
+tags:
+  - MINOR
+ratingLevels:
+  - F
+  - D
+  - A
+fallBackFactions:
+  - LA
+factionLeaders:
+  - title: "Governor-General"
+    firstName: "Sarah"
+    surname: "Regis"
+    gender: "FEMALE"
+    startYear: 3151

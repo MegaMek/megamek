@@ -1,0 +1,10 @@
+key: DC.O
+name: Otomo
+yearsActive:
+  - start: 2571
+    end: 2900
+  - start: 3050
+ratingLevels:
+  - A
+fallBackFactions:
+  - DC

@@ -1302,10 +1302,21 @@ public class Infantry extends Entity {
         return divisor;
     }
 
+    /**
+     * Gets the damage divisor of this entity's custom armor kit.
+     * Meaningless when the infantry possesses a normal, non-custom armor kit, so check for one first.
+     * @return The damage divisor of the custom armor kit, or 1.0 for no armor.
+     */
     public double getCustomArmorDamageDivisor() {
         return customArmorDamageDivisor;
     }
 
+    /**
+     * Creates a custom armor kit for this entity.
+     * Should not be set for anything other than a custom armor kit, see {@link #calcDamageDivisor()}
+     *  to add any other source of damage divisor.
+     * @param d The damage divisor of the custom armor kit. Set it to 1.0 for no armor.
+     */
     public void setCustomArmorDamageDivisor(double d) {
         customArmorDamageDivisor = d;
     }

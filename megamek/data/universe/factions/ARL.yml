@@ -20,3 +20,34 @@ eraMods:
   - 0
   - 0
   - 1
+factionLeaders:
+  - title: "Grand Duke"
+    firstName: "Morgan"
+    surname: "Kell"
+    gender: "MALE"
+    startYear: 3052
+    endYear: 3083
+  - title: "Grand Duchess"
+    firstName: "Caitlin"
+    surname: "Kell"
+    gender: "FEMALE"
+    startYear: 3083
+    endYear: 3083
+  - title: "Grand Duke"
+    firstName: "Martin"
+    surname: "Kell"
+    gender: "MALE"
+    startYear: 3083
+    endYear: 3104
+  - title: "Grand Duchess"
+    firstName: "Maria"
+    surname: "Kell"
+    gender: "MALE"
+    startYear: 3104
+    endYear: 3122
+  - title: "Grand Duchess"
+    firstName: "Callandre"
+    surname: "Kell"
+    gender: "FEMALE"
+    startYear: 3122
+    endYear: 3146

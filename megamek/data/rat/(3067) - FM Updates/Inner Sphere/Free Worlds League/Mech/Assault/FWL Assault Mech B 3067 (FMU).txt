@@ -1,0 +1,12 @@
+FWL Assault Mech B 3067 (FMU)
+Albatross ALB-3U,1
+Longbow LGB-7Q,2
+CP 11-A Cyclops,3
+Victor VTR-9K,4
+CP 11-A Cyclops,5
+Stalker STK-5M,6
+BattleMaster BLR-5M,5
+Awesome AWS-9M,4
+Sirrocco SRC-3C,3
+Banshee BNC-5S,2
+Cerebus MR-V2,1

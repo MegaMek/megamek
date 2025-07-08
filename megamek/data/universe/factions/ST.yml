@@ -15,3 +15,10 @@ color:
 nameGenerator: CC
 fallBackFactions:
   - CM
+factionLeaders:
+  - title: "Count"
+    firstName: "Ledo"
+    surname: "Balantine"
+    gender: "MALE"
+    startYear: 2058
+    endYear: 3068

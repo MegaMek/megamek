@@ -179,14 +179,20 @@ public class TestInfantry extends TestEntity {
 
         max = maxSquadSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1), inf.getMount());
         if (inf.getSquadSize() > max) {
-            buff.append("Maximum squad size is " + max + "\n\n");
+            buff.append("Maximum squad size is ").append(max).append("\n\n");
             correct = false;
+        }
+
+        max = maxSquadCount(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
+              inf.getSpecializations(), inf.getMount());
+        if (inf.getSquadCount() > max) {
+            buff.append("Maximum squad count is ").append(max).append("\n\n");
         }
 
         max = maxUnitSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
                 inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS), inf.getMount());
         if (inf.getShootingStrength() > max) {
-            buff.append("Maximum platoon size is " + max + "\n\n");
+            buff.append("Maximum platoon size is ").append(max).append("\n\n");
             correct = false;
         }
 
@@ -319,6 +325,47 @@ public class TestInfantry extends TestEntity {
             return 10; // use foot infantry limit
         } else {
             return mount.getSize().troopsPerCreature;
+        }
+    }
+
+    /**
+     * The maximum number of squads in a platoon based on its movement mode.
+     * @param movementMode      The platoon's movement mode
+     * @param alt               True indicates that VTOL is microlite and INF_UMU is motorized.
+     * @param specialization    The infantry's specialization, if any.
+     * @param mount             The mount if the unit is beast-mounted, otherwise null.
+     * @return The maximum number of squads/creatures per platoon.
+     */
+    public static int maxSquadCount(EntityMovementMode movementMode, boolean alt,
+          int specialization, @Nullable InfantryMount mount) {
+
+        if (mount == null) {
+            int squads = switch (movementMode) {
+                case VTOL, HOVER, WHEELED, TRACKED, SUBMARINE -> 4;
+                case INF_UMU -> alt ? 2 : 4;
+                default -> 5;
+            };
+
+            if ((specialization & (Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS)) > 0) {
+                squads = Math.min(squads, 2);
+            }
+
+            if ((specialization & Infantry.PARATROOPS) > 0) {
+                squads = Math.min(squads, 3);
+            }
+
+            if ((specialization & Infantry.MARINES) > 0) {
+                squads = Math.min(squads, 4);
+            }
+
+            return squads;
+
+        } else {
+            // For Very Large and Monstrous (but not Large) creatures, each creature is one squad.
+            if (mount.getSize() == InfantryMount.BeastSize.LARGE) {
+                return 5;
+            }
+            return mount.getSize().creaturesPerPlatoon;
         }
     }
 

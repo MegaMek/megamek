@@ -136,6 +136,7 @@ public final class ProtoMekBay extends UnitBay {
 
     @Override
     public String getNameForRecordSheets() {
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         return "ProtoMech";
     }
 }

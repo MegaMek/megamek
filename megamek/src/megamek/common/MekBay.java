@@ -100,6 +100,7 @@ public final class MekBay extends UnitBay {
 
     @Override
     public String getNameForRecordSheets() {
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         return "Mech";
     }
 }

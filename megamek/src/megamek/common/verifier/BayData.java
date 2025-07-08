@@ -30,7 +30,7 @@ import megamek.common.InfantryTransporter.PlatoonType;
 public enum BayData {
     MEK ("Mek", 150.0, 2, MekBay.techAdvancement(),
             (size, num) -> new MekBay(size, 1, num)),
-    PROTOMEK ("Protomek", 10.0, 6, ProtoMekBay.techAdvancement(),
+    PROTOMEK ("ProtoMek Point", 50.0, 6, ProtoMekBay.techAdvancement(),
             (size, num) -> new ProtoMekBay(size, 1, num)),
     VEHICLE_HEAVY ("Heavy Vehicle", 100.0, 8, HeavyVehicleBay.techAdvancement(),
             (size, num) -> new HeavyVehicleBay(size, 1, num)),

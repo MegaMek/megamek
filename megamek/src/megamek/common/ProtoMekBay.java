@@ -14,8 +14,9 @@
 package megamek.common;
 
 /**
- * Represents a volume of space set aside for carrying ProtoMeks aboard large spacecraft and mobile
- * structures
+ * Represents a volume of space set aside for carrying ProtoMek points aboard large spacecraft and mobile
+ * structures.
+ *
  */
 public final class ProtoMekBay extends UnitBay {
     private static final long serialVersionUID = 927162989742234173L;
@@ -33,12 +34,12 @@ public final class ProtoMekBay extends UnitBay {
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
      *
-     * @param space The weight of troops (in tons) this space can carry.
+     * @param space The number of ProtoMeks that can fit in this bay.
      * @param bayNumber
      */
     public ProtoMekBay(double space, int doors, int bayNumber) {
-        totalSpace = space;
-        currentSpace = space;
+        totalSpace = Math.ceil(space / 5);
+        currentSpace = totalSpace;
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
@@ -59,7 +60,7 @@ public final class ProtoMekBay extends UnitBay {
 
         // We must have enough space for the new troops.
         // TODO : POSSIBLE BUG : we may have to take the Math.ceil() of the weight.
-        if (getUnused() < 1) {
+        if (getUnused() < 0.2) {
             result = false;
         }
 
@@ -75,8 +76,8 @@ public final class ProtoMekBay extends UnitBay {
     @Override
     public String getUnusedString(boolean showRecovery) {
         return "ProtoMek " + numDoorsString() + " - "
-                + String.format("%1$,.0f", getUnused())
-                + (getUnused() > 1 ? " units" : " unit");
+                + String.format("%1$,.0f", getUnusedSlots())
+                + (getUnusedSlots() > 1 ? " units" : " unit");
     }
 
     @Override
@@ -86,12 +87,12 @@ public final class ProtoMekBay extends UnitBay {
 
     @Override
     public double getWeight() {
-        return totalSpace * 10;
+        return totalSpace * 50;
     }
 
     @Override
     public int getPersonnel(boolean clan) {
-        return (int) totalSpace * 6;
+        return (int) Math.ceil(totalSpace) * 6;
     }
 
     @Override
@@ -120,6 +121,21 @@ public final class ProtoMekBay extends UnitBay {
     @Override
     public long getCost() {
         // Cost is per five cubicles
-        return 10000L * (long) Math.ceil(totalSpace / 5);
+        return 10000L * (long) Math.ceil(totalSpace);
+    }
+
+    @Override
+    public double spaceForUnit(Entity unit) {
+        return 0.2;
+    }
+
+    @Override
+    public double getUnusedSlots() {
+        return getUnused() * 5;
+    }
+
+    @Override
+    public String getNameForRecordSheets() {
+        return "ProtoMech";
     }
 }

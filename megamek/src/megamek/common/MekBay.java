@@ -97,4 +97,9 @@ public final class MekBay extends UnitBay {
     public long getCost() {
         return 20000L * (long) totalSpace;
     }
+
+    @Override
+    public String getNameForRecordSheets() {
+        return "Mech";
+    }
 }

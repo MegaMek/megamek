@@ -13,10 +13,10 @@
  */
 package megamek.common;
 
-import megamek.common.annotations.Nullable;
-
 import java.io.Serializable;
 import java.util.List;
+
+import megamek.common.annotations.Nullable;
 
 /**
  * Classes that implement this interface have the ability to load, carry, and
@@ -155,5 +155,9 @@ public interface Transporter extends Serializable {
 
     default String getType() {
         return "Unknown";
+    }
+
+    default String getNameForRecordSheets() {
+        return getType();
     }
 }

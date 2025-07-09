@@ -112,15 +112,14 @@ public final class FluffImageHelper {
     private static @Nullable File findFluffFile(BTObject unit, boolean recordSheet) {
         List<File> fileCandidates = new ArrayList<>();
         var fluffDir = new File(Configuration.fluffImagesDir(), FluffImageHelper.getFluffPath(unit));
-        var rsFluffSuperDir = new File(Configuration.fluffImagesDir(), "rs");
+        var rsFluffSuperDir = new File(Configuration.imagesDir(), "rs");
         var rsFluffDir = new File(rsFluffSuperDir, FluffImageHelper.getFluffPath(unit));
 
         List<String> nameCandidates = nameCandidates(unit);
 
         // UserDir matches
-        // For internal use: in [user dir]/data/images/fluff/rs/<type> images for record
-        // sheets can be placed
-        // These will be preferentially loaded when the recordSheet paremeter is true
+        // For internal use: in [user dir]/data/images/rs/<type> images for record sheets can be placed; these will
+        // be preferentially loaded when the recordSheet paremeter is true (i.e. when called from RS printing)
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
         if (!userDir.isBlank() && new File(userDir).isDirectory()) {
             var fluffUserDir = new File(userDir, fluffDir.toString());

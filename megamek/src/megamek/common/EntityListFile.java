@@ -924,9 +924,9 @@ public class EntityListFile {
             // Save some values for conventional infantry
             if (entity.isConventionalInfantry()) {
                 Infantry inf = (Infantry) entity;
-                if (inf.getArmorDamageDivisor() != 1) {
+                if (inf.getCustomArmorDamageDivisor() != 1) {
                     output.write("\" " + MULParser.ATTR_ARMOR_DIVISOR + "=\"");
-                    output.write(inf.getArmorDamageDivisor() + "");
+                    output.write(inf.getCustomArmorDamageDivisor() + "");
                 }
                 if (inf.isArmorEncumbering()) {
                     output.write("\" " + MULParser.ATTR_ARMOR_ENC + "=\"1");

@@ -47,7 +47,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         infantry.autoSetInternal();
 
         if (dataFile.exists("InfantryArmor")) {
-            infantry.setArmorDamageDivisor(dataFile.getDataAsInt("InfantryArmor")[0]);
+            infantry.setCustomArmorDamageDivisor(dataFile.getDataAsInt("InfantryArmor")[0]);
         }
 
         if (!dataFile.exists("motion_type")) {
@@ -172,7 +172,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
         if (dataFile.exists("armordivisor")) {
             try {
-                infantry.setArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
+                infantry.setCustomArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
             } catch (NumberFormatException ex) {
                 throw new EntityLoadingException("Could not read armor divisor");
             }

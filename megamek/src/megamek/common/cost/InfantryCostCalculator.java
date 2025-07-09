@@ -54,7 +54,7 @@ public class InfantryCostCalculator {
             armorCost = armor.getCost(infantry, false, Infantry.LOC_INFANTRY);
         } else {
             // add in infantry armor cost
-            if (infantry.getArmorDamageDivisor() > 1) {
+            if (infantry.getCustomArmorDamageDivisor() > 1) {
                 if (infantry.isArmorEncumbering()) {
                     armorCost += 1600;
                 } else {

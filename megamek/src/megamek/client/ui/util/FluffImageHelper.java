@@ -170,7 +170,10 @@ public final class FluffImageHelper {
 
         String sanitizedChassis = sanitize(unit.generalName());
         String sanitizedModel = sanitize(unit.specificName());
-        candidates.add((sanitizedChassis + " " + sanitizedModel).trim());
+        // Check for an empty model so the order more specific -> less specific name candidate is always kept
+        if (!sanitizedModel.isBlank()) {
+            candidates.add((sanitizedChassis + " " + sanitizedModel).trim());
+        }
         if (unit instanceof Mek mek && !mek.getClanChassisName().isBlank()) {
             addClanChassisVariants(mek.getFullChassis(), candidates, sanitizedModel, mek.getClanChassisName());
         } else if (unit instanceof MekSummary mekSummary && mekSummary.isMek()
@@ -184,10 +187,13 @@ public final class FluffImageHelper {
 
     private static void addClanChassisVariants(String fullChassis, List<String> candidates, String sanitizedModel,
           String clanChassis) {
+
         String sanitizedFullChassis = sanitize(fullChassis);
-        candidates.add((sanitizedFullChassis + " " + sanitizedModel).trim());
         String sanitizedClanChassis = sanitize(clanChassis);
-        candidates.add((sanitizedClanChassis + " " + sanitizedModel).trim());
+        if (!sanitizedModel.isBlank()) {
+            candidates.add((sanitizedFullChassis + " " + sanitizedModel).trim());
+            candidates.add((sanitizedClanChassis + " " + sanitizedModel).trim());
+        }
         candidates.add(sanitizedFullChassis);
         candidates.add(sanitizedClanChassis);
     }

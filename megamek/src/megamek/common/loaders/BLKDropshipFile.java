@@ -131,8 +131,6 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
         }
         a.setOriginalWalkMP(dataFile.getDataAsInt("SafeThrust")[0]);
 
-        a.setEngine(new Engine(400, 0, 0));
-
         // Switch older files with standard armor to aerospace
         int at = EquipmentType.T_ARMOR_AEROSPACE;
         if (dataFile.exists("armor_type")) {

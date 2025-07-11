@@ -1910,7 +1910,7 @@
 			</model>
 			<model name='EXC-B2b'>
 				<roles>cavalry,fire_support</roles>
-				<availability>PP:2+,CLAN:2+,CGB:3+,CJF:3+,CSJ:3+   </availability>
+				<availability>PP:2+,CLAN:2+,CGB:3+,CJF:3+,CSJ:3+</availability>
 			</model>
 		</chassis>
 		<chassis name='Explorer JumpShip' unitType='Jumpship'>
@@ -3835,7 +3835,7 @@
 			<availability>FS:8,FWL:8,MERC:8,CS:6,PP:5,CLAN:3-,CB:2-,CIH:4-,CWI:2-,Periphery:3,NIOPS:6</availability>
 			<model name='OTL-4D'>
                 <roles>raider</roles>
-				<availability>IS:8,MERC:8,PP:8,CLAN:8,Periphery:8</availability>
+				<availability>IS:8,MERC:8,PP:8,CLAN:8,Periphery:8,NIOPS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Overlord C' unitType='Dropship'>

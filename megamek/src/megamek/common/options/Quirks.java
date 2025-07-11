@@ -96,7 +96,7 @@ public class Quirks extends AbstractOptions {
         //Improved Communications
         //Variable Range Targeting
         //VTOL Rotor Arrangement (no vee adv move rules)
-        //Compact Mek
+        //Compact Mech
 
         IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS);
         addOption(negQuirk, QUIRK_NEG_BAD_REP_IS, false);

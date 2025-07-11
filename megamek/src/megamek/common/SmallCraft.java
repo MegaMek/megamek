@@ -80,6 +80,11 @@ public class SmallCraft extends Aero {
                                                                              AvailabilityValue.F)
                                                                        .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
+    public SmallCraft() {
+        // A placeholder engine for SC and DS
+        setEngine(new Engine(400, 0, 0));
+    }
+
     @Override
     public int getUnitType() {
         return UnitType.SMALL_CRAFT;

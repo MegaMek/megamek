@@ -26,7 +26,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import megamek.client.ui.clientGUI.*;
-import megamek.client.ui.panels.BoardEditorPanel;
+import megamek.client.ui.boardeditor.BoardEditorPanel;
 
 /**
  * This class implements a KeyEventDispatcher, which handles all generated

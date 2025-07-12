@@ -627,7 +627,7 @@
 			</model>
             <model name='C'>
                 <roles>command,fire_support</roles>
-                <availability>CLAN:2+,CBS:1+,CFM:1+</availability>
+                <availability>CLAN:2+,CBS:1+,CFM:1+,BAN:0</availability>
             </model>
 		</chassis>
 		<chassis name='Ares Assault Craft' unitType='Small Craft'>
@@ -885,7 +885,7 @@
 			</model>
 			<model name='BL-7-KNT'>
                 <roles>command</roles>
-				<availability>LA:8-,FWL:4-,MERC:8-,FS:8-,DC:8-</availability>
+				<availability>FS:8-,LA:8-,DC:8-,FWL:4-,MERC:8-</availability>
 			</model>
 			<model name='BL-7-KNT-L'>
                 <roles>command</roles>
@@ -1055,7 +1055,7 @@
 			</model>
 			<model name='CPLT-C1b'>
 				<roles>fire_support</roles>
-				<availability>CC:2+,DC:2+,CFM:8,CWI:8</availability>
+				<availability>DC:2+,CC:2+,CFM:8,CWI:8</availability>
 			</model>
 			<model name='CPLT-C4'>
 				<roles>fire_support</roles>
@@ -1086,9 +1086,9 @@
 			</model>
 		</chassis>
 		<chassis name='Cestus' unitType='Mek'>
-			<availability>IS:3+,FS:6,CS:4,CB:3+,CFM:2+,CJF:3+,CSJ:3+,NIOPS:4</availability>
+			<availability>IS:3+,FS:6,CS:4,CB:3+,CFM:2+,CJF:3+,CSJ:3+,NIOPS:4+</availability>
 			<model name='CTS-6Y'>
-				<availability>IS:8,CB:8,CFM:5,CJF:8,CSJ:8</availability>
+				<availability>IS:8,CB:8,CFM:5,CJF:8,CSJ:8,NIOPS:8</availability>
 			</model>
 			<model name='CTS-6Y-EC'>
 				<availability>CFM!Keshik:8</availability>
@@ -1696,7 +1696,7 @@
 		<chassis name='Crusader' unitType='Mek'>
 			<availability>IS:8,CS:6-,CLAN:3,CDS:2,Periphery:6,NIOPS:6-,Periphery.Deep:6,BAN:4</availability>
 			<model name='CRD-2R'>
-				<availability>IS:3+,CLAN:8,Periphery:3+,NIOPS:5,Periphery.Deep:0,BAN:4</availability>
+				<availability>IS:3+,CLAN:8,Periphery:3+,NIOPS:5,Periphery.Deep:0,BAN:2+</availability>
 			</model>
 			<model name='CRD-3D'>
 				<availability>FS:5</availability>
@@ -2003,7 +2003,7 @@
 			<availability>FS:2+,LA:2+,DC:2+,CS:5,CLAN:3+,NIOPS:5,BAN:0</availability>
 			<model name='EXC-B1'>
 				<roles>cavalry,fire_support</roles>
-				<availability>LA:8</availability>
+				<availability>LA:8,CGS:4-,CDS:4-,CW:4-</availability>
 			</model>
 			<model name='EXC-B2'>
 				<roles>cavalry,fire_support</roles>
@@ -3525,7 +3525,7 @@
 			</model>
 			<model name='MAD-3R'>
                 <roles>command</roles>
-				<availability>IS:8,CS:4-,TC:6,Periphery:8,BAN:8</availability>
+				<availability>IS:8,CS:4-,Periphery:8,TC:6,BAN:8</availability>
 			</model>
 		</chassis>
         <chassis name='Marco' unitType='Mek'>
@@ -5500,7 +5500,7 @@
 		<chassis name='Warhammer' unitType='Mek'>
 			<availability>IS:8,LA:9,FWL:9,CS:6-,CLAN:6+,CB:5+,CCC:5+,CHH:5+,CIH:4-,CMG:5+,CNC:5+,CSR:5+,CSV:5+,Periphery:6,NIOPS:6-,Periphery.Deep:6,BAN:5+</availability>
             <model name='C'>
-                <availability>CLAN:2+</availability>
+                <availability>CLAN:2+,BAN:0</availability>
             </model>
 			<model name='WHM-6D'>
 				<availability>FS:4:2835</availability>

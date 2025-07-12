@@ -1076,9 +1076,9 @@
 			</model>
 		</chassis>
 		<chassis name='Cestus' unitType='Mek'>
-			<availability>IS:3+,FS:6,CS:4,CB:3+,CFM:2+,CJF:3+,CSJ:3+,NIOPS:4</availability>
+			<availability>IS:3+,FS:6,CS:4,CB:3+,CFM:2+,CJF:3+,CSJ:3+,NIOPS:4+</availability>
 			<model name='CTS-6Y'>
-				<availability>IS:8,CB:8,CFM:5,CJF:8,CSJ:8</availability>
+				<availability>IS:8,CB:8,CFM:5,CJF:8,CSJ:8,NIOPS:8</availability>
 			</model>
 			<model name='CTS-6Y-EC'>
 				<availability>CFM!Keshik:3</availability>

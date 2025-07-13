@@ -1089,7 +1089,7 @@
 			<availability>IS:3,DC:5,CC:5,MERC:2,CS:2,CFM:4+,CDS:3,CWI:3+,CW:3-,Periphery:1,NIOPS:2</availability>
 			<model name='CPLT-A1'>
 				<roles>fire_support</roles>
-				<availability>CC:4,FWL:3,DC:3</availability>
+				<availability>DC:3,FWL:3,CC:4</availability>
 			</model>
 			<model name='CPLT-C1'>
 				<roles>fire_support</roles>
@@ -1128,7 +1128,7 @@
 			</model>
 		</chassis>
 		<chassis name='Cestus' unitType='Mek'>
-			<availability>IS:3+,FS:5,LA:3+,CS:4,CB:3+,CFM:2+,CJF!Front Line:2!Second Line:1,CSJ!Front Line:2!Second Line:1,NIOPS:4</availability>
+			<availability>IS:3+,FS:5,LA:3+,CS:4,CB:3+,CFM:2+,CJF!Front Line:2!Second Line:1,CSJ!Front Line:2!Second Line:1,NIOPS:4+</availability>
 			<model name='CTS-6Y'>
 				<availability>IS:8,CB:8,CFM:5,CJF:8,CSJ:8,NIOPS:8</availability>
 			</model>
@@ -1159,7 +1159,7 @@
 				<availability>CS:4,CFM:8,CGB:5,CHH:5,CIH:8,CDS:4-,NIOPS:5</availability>
 			</model>
 			<model name='CHP-1Nb'>
-				<availability>CDS:3+,CSV!Front Line:3!Second Line:2!Solahma:1</availability>
+				<availability>CDS:3+,CSV:8</availability>
 			</model>
 			<model name='CHP-2N'>
 				<availability>IS:7</availability>
@@ -2434,7 +2434,7 @@
 			</model>
 		</chassis>
 		<chassis name='Flashman' unitType='Mek'>
-			<availability>LA:6,FWL:3,CLAN!Keshik:4!Front Line:4!Second Line:3!Solahma:2!Provisional Garrison:1,CJF!Keshik:5!Front Line:5!Second Line:4!Solahma:3!Provisional Garrison:2,CS:5,Periphery.R:3,NIOPS:5,BAN:3+</availability>
+			<availability>LA:6,FWL:3,CS:5,CLAN!Keshik:4!Front Line:4!Second Line:3!Solahma:2!Provisional Garrison:1,CJF!Keshik:5!Front Line:5!Second Line:4!Solahma:3!Provisional Garrison:2,Periphery.R:3,NIOPS:5,BAN:3+</availability>
 			<model name='FLS-7K'>
 				<availability>LA:6,FWL:8,Periphery.R:8</availability>
 			</model>
@@ -4496,7 +4496,7 @@
 				<availability>IS:8,MERC:8,Periphery:8,Periphery.Deep:8,BAN:8</availability>
 			</model>
             <model name='ON1-Kb'>
-                <availability>CLAN:8,CW:3+,BAN:0</availability>
+                <availability>CLAN:8,CW:4+,BAN:0</availability>
             </model>
 			<model name='ON1-V'>
 				<availability>IS:3,CW:1-,TC:3,OA:3</availability>

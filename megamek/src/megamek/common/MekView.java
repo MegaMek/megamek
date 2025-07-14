@@ -110,6 +110,8 @@ public class MekView {
 
     private final ViewFormatting formatting;
 
+    private final String messageNone = Messages.getString("MekView.None");
+
     /**
      * Compiles information about an {@link Entity} useful for showing a summary of
      * its abilities.
@@ -795,9 +797,7 @@ public class MekView {
                   (inf.getMount() != null) && (inf.getMount().getSize() != InfantryMount.BeastSize.LARGE)
                         ? Messages.getString("MekView.CreaturesComposition")
                         : Messages.getString("MekView.SquadComposition");
-            String squadComposition = squadCompositionFormat.formatted(
-                  inf.getSquadCount(),
-                  inf.getSquadSize());
+            String squadComposition = squadCompositionFormat.formatted(inf.getSquadCount());
             retVal.add(new LabeledElement(Messages.getString("MekView.Composition"), squadComposition));
 
         } else {
@@ -1016,7 +1016,7 @@ public class MekView {
         if (inf.getSecondaryWeapon() != null) {
             return "%s (%d per Squad)".formatted(inf.getSecondaryWeapon().getDesc(), inf.getSecondaryWeaponsPerSquad());
         } else {
-            return "None";
+            return messageNone;
         }
     }
 
@@ -1026,17 +1026,21 @@ public class MekView {
 
         if (isInf && !isBA) {
             Infantry inf = (Infantry) entity;
-            retVal.add(new LabeledElement("Primary Weapon",
-                    (null != inf.getPrimaryWeapon()) ? inf.getPrimaryWeapon().getDesc() : "None"));
-            retVal.add(new LabeledElement("Secondary Weapon", secondaryCIWeaponDescriptor(inf)));
-            retVal.add(new LabeledElement("Damage per trooper", "%3.3f".formatted(inf.getDamagePerTrooper())));
+            retVal.add(new LabeledElement(Messages.getString("MekView.PrimaryWeapon"),
+                    (null != inf.getPrimaryWeapon()) ? inf.getPrimaryWeapon().getDesc() : messageNone));
+            retVal.add(new LabeledElement(Messages.getString("MekView.SecondWeapon"),
+                  secondaryCIWeaponDescriptor(inf)));
+            retVal.add(new LabeledElement(Messages.getString("MekView.DmgPerTrooper"),
+                  "%3.3f".formatted(inf.getDamagePerTrooper())));
 
             if (inf.hasFieldWeapon()) {
                 retVal.add(new SingleLine());
                 List<Mounted<?>> fieldGuns = inf.originalFieldWeapons();
                 EquipmentType fieldGunType = fieldGuns.get(0).getType();
                 List<Mounted<?>> activeFieldGuns = inf.activeFieldWeapons();
-                String typeName = TestInfantry.isFieldArtilleryType(fieldGunType) ? "Artillery" : "Gun";
+                String typeName = TestInfantry.isFieldArtilleryType(fieldGunType)
+                      ? Messages.getString("MekView.FieldArty")
+                      : Messages.getString("MekView.FieldGun");
                 String fieldGunText;
                 String gunCount = TestInfantry.isFieldArtilleryType(fieldGunType) ?
                       "" :
@@ -1049,7 +1053,7 @@ public class MekView {
                 } else {
                     fieldGunText = "%s%s".formatted(fieldGunType.getName(), gunCount);
                 }
-                retVal.add(new LabeledElement("Field " + typeName, fieldGunText));
+                retVal.add(new LabeledElement(typeName, fieldGunText));
             }
             return retVal;
         }
@@ -1281,7 +1285,7 @@ public class MekView {
 
             String[] row = { mounted.getDesc(), entity.joinLocationAbbr(mounted.allLocations(), 3), "" };
             if (entity.isConventionalInfantry()) {
-                // son't display the location on CI
+                // don't display the location on CI
                 row[1] = "";
             }
             if (entity.isClan()

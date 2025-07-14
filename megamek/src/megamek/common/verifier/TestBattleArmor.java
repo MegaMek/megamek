@@ -1295,13 +1295,13 @@ public class TestBattleArmor extends TestEntity {
                     currentErrors.add(mount.getName() + " is not a legal BattleArmor weapon");
                 }
 
-            } else if (mount.getType() instanceof MiscType) {
+            } else if (mount.getType() instanceof MiscType misc) {
 
-                if (!mount.getType().hasFlag(MiscType.F_BA_EQUIPMENT)) {
+                if (!misc.hasFlag(MiscType.F_BA_EQUIPMENT)) {
                     currentErrors.add(mount.getName() + " is not legal BattleArmor equipment");
                 }
 
-                if (mount.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+                if (misc.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
                     if ((battleArmor.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD)
                             || (battleArmor.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT)) {
                         currentErrors.add("Quad and Assault BattleArmor cannot use magnetic clamps");
@@ -1311,19 +1311,23 @@ public class TestBattleArmor extends TestEntity {
                     }
                 }
 
-                if (mount.getType().hasFlag(MiscType.F_PARAFOIL)) {
+                if (misc.hasFlag(MiscType.F_PARAFOIL)) {
                     if ((mount.getBaMountLoc() != BattleArmor.MOUNT_LOC_BODY)
                             && (mount.getBaMountLoc() != Entity.LOC_NONE)) {
                         currentErrors.add("A parafoil can only be mounted in the body location");
                     }
                 }
 
-                if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) && ba.hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
+                if (misc.hasFlag(MiscType.F_PARTIAL_WING) && ba.hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
                     currentErrors.add("BattleArmor may not mount a jump booster and partial wings!");
                 }
 
-                if (mount.getType().hasFlag(MiscType.F_MECHANICAL_JUMP_BOOSTER) && ba.hasMyomerBooster()) {
+                if (misc.hasFlag(MiscType.F_MECHANICAL_JUMP_BOOSTER) && ba.hasMyomerBooster()) {
                     currentErrors.add("BattleArmor may not mount a mechanical jump booster and a myomer booster!");
+                }
+
+                if (misc.hasFlag(MiscType.F_MODULAR_WEAPON_MOUNT) && ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
+                    currentErrors.add("Quad BattleArmor cannot use a Standard Modular Weapon Mount");
                 }
             }
         }

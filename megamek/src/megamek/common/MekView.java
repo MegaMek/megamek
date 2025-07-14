@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.DiscordFormat;
 import megamek.common.verifier.TestEntity;
+import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -231,6 +233,7 @@ public class MekView {
                         specList.addItem(Infantry.getSpecializationName(spec));
                     }
                 }
+                sLoadout.add(new SingleLine());
                 sLoadout.add(specList);
             }
 
@@ -249,6 +252,7 @@ public class MekView {
                     for (String aug : augmentations) {
                         augList.addItem(aug);
                     }
+                    sLoadout.add(new SingleLine());
                     sLoadout.add(augList);
                 }
             }
@@ -285,7 +289,7 @@ public class MekView {
         DecimalFormatSymbols unusualSymbols = new DecimalFormatSymbols();
         unusualSymbols.setDecimalSeparator('.');
         unusualSymbols.setGroupingSeparator(',');
-        DecimalFormat dFormatter = new DecimalFormat("#,###.##", unusualSymbols);
+        DecimalFormat dFormatter = new DecimalFormat("#,###", unusualSymbols);
         sHead.add(new LabeledElement(Messages.getString("MekView.BV"),
                 dFormatter.format(entity.calculateBattleValue(false, ignorePilotBV))));
         double cost = entity.getCost(false);
@@ -315,7 +319,59 @@ public class MekView {
         // current one here to restore it
         int originalMode = entity.getConversionMode();
         entity.setConversionMode(0);
-        if (!isGunEmplacement) {
+        if (entity.isConventionalInfantry() && (entity instanceof Infantry infantry)) {
+            InfantryMount mount = infantry.getMount();
+            int walkMP = entity.getWalkMP();
+            int runMP = entity.getRunMP();
+            int jumpMP = entity.getJumpMP();
+            int umuMP = entity.getAllUMUCount();
+            StringJoiner movement = new StringJoiner("/");
+            if (!infantry.getMovementMode().isSubmarine() || ((mount != null) && (mount.getSecondaryGroundMP() > 0))) {
+                movement.add(walkMP + "");
+            }
+            if (runMP > walkMP) {
+                // Infantry fast movement option; otherwise run mp = walk mp
+                movement.add("%d (Fast)".formatted(runMP));
+            }
+            if (jumpMP > 0) {
+                String modeLetter = entity.getMovementMode().isVTOL() ? "V" : "J";
+                movement.add("%d (%s)".formatted(jumpMP, modeLetter));
+            }
+            if (umuMP > 0) {
+                movement.add("%d (U)".formatted(umuMP));
+            }
+            sBasic.add(new SingleLine());
+            sBasic.add(new LabeledElement(Messages.getString("MekView.Movement"), movement.toString()));
+
+            if (mount != null) {
+                StringJoiner mountFeatures = new StringJoiner(", ", " (", ")");
+                mountFeatures.add(mount.getSize().displayName());
+                if (mount.getMovementMode().isSubmarine()) {
+                    mountFeatures.add(Messages.getString("MekView.Submarine"));
+                } else if (mount.getMovementMode().isVTOL()) {
+                    mountFeatures.add(Messages.getString("MekView.VTOL"));
+                }
+                sBasic.add(new LabeledElement(
+                      Messages.getString("MekView.Mount"),
+                      "%s%s".formatted(mount.getName(), mountFeatures)));
+
+                if ((mount.getBurstDamageDice() > 0) || (mount.getVehicleDamage() > 0)) {
+                    sBasic.add(new LabeledElement(
+                          Messages.getString("MekView.MountBonusDamage"),
+                          "+%dD6 (%d)".formatted(mount.getBurstDamageDice(), mount.getVehicleDamage())));
+                }
+                if ((mount.getMaxWaterDepth() > 0) && (mount.getMaxWaterDepth() < Integer.MAX_VALUE)) {
+                    sBasic.add(new LabeledElement(
+                          Messages.getString("MekView.MountWaterDepth"),
+                          mount.getMaxWaterDepth() + ""));
+                }
+                if (mount.getMovementMode().isSubmarine() && (mount.getUWEndurance() < Integer.MAX_VALUE)) {
+                    sBasic.add(new LabeledElement(
+                          Messages.getString("MekView.MountWaterEndurance"),
+                          Messages.getString("MekView.MountWaterEnduranceValue").formatted(mount.getUWEndurance())));
+                }
+            }
+        } else if (!isGunEmplacement) {
             sBasic.add(new SingleLine());
             StringBuilder moveString = new StringBuilder();
             moveString.append(entity.getWalkMP()).append("/").append(entity.getRunMPasString());
@@ -364,9 +420,6 @@ public class MekView {
                             .append(" piloting)")
                             .append(warningEnd());
                 }
-            }
-            if (entity.isConventionalInfantry() && ((Infantry) entity).getMount() != null) {
-                moveString.append(" (").append(((Infantry) entity).getMount().getName()).append(")");
             }
 
             // TODO : Add STOL message as part of the movement line
@@ -729,10 +782,24 @@ public class MekView {
         int maxArmor = (entity.getTotalInternal() * 2) + 3;
         if (isInf && !isBA) {
             Infantry inf = (Infantry) entity;
-            retVal.add(new LabeledElement(Messages.getString("MekView.Men"),
-                    entity.getTotalInternal()
-                            + " (" + inf.getSquadSize() + "/" + inf.getSquadCount()
-                            + ")"));
+
+            String troopers = inf.getShootingStrength() + "";
+            if (inf.getShootingStrength() < inf.getOriginalTrooperCount()) {
+                troopers = "<font color=%s>%d</font>".formatted(
+                      (inf.getShootingStrength() == 0 ? "red" : "yellow"),
+                      inf.getShootingStrength());
+            }
+            retVal.add(new LabeledElement(Messages.getString("MekView.Men"), troopers));
+
+            String squadCompositionFormat =
+                  (inf.getMount() != null) && (inf.getMount().getSize() != InfantryMount.BeastSize.LARGE)
+                        ? Messages.getString("MekView.CreaturesComposition")
+                        : Messages.getString("MekView.SquadComposition");
+            String squadComposition = squadCompositionFormat.formatted(
+                  inf.getSquadCount(),
+                  inf.getSquadSize());
+            retVal.add(new LabeledElement(Messages.getString("MekView.Composition"), squadComposition));
+
         } else {
             String internal = String.valueOf(entity.getTotalInternal());
             if (isMek) {
@@ -746,8 +813,8 @@ public class MekView {
 
         if (isInf && !isBA) {
             Infantry inf = (Infantry) entity;
-            retVal.add(new LabeledElement(Messages.getString("MekView.Armor"),
-                    inf.getArmorDesc()));
+            retVal.add(new LabeledElement(Messages.getString("MekView.Armor"), getInfantryArmor(inf)));
+            retVal.add(new LabeledElement(Messages.getString("MekView.DamageDivisor"), getDamageDivisor(inf)));
         } else {
             String armor = String.valueOf(entity.getTotalArmor());
             if (isMek) {
@@ -813,6 +880,43 @@ public class MekView {
             retVal.add(locTable);
         }
         return retVal;
+    }
+
+    private static String getDamageDivisor(Infantry inf) {
+        double damageDivisor = inf.calcDamageDivisor();
+        String format = (damageDivisor == (int) damageDivisor) ? "%1.0f" : "%1.1f";
+        String divisorAsString = format.formatted(inf.calcDamageDivisor());
+        if (inf.isArmorEncumbering()) {
+            divisorAsString += "E";
+        }
+        return divisorAsString;
+    }
+
+    private String getInfantryArmor(Infantry infantry) {
+        String armorDescription = "None";
+        EquipmentType armorKit = infantry.getArmorKit();
+        if (armorKit != null) {
+            armorDescription = armorKit.getName();
+            StringJoiner abilities = new StringJoiner(", ", " (", ")");
+            abilities.setEmptyValue("");
+
+            if (infantry.hasSpaceSuit()) {
+                abilities.add("Spacesuit");
+            }
+
+            if (infantry.hasDEST()) {
+                abilities.add("DEST");
+            }
+
+            // Sneak Suit abilities are part of the armor name and don't need to be listed
+            if (!infantry.hasSneakCamo()
+                  && (infantry.getCrew() != null && infantry.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR))) {
+                abilities.add("Camo");
+            }
+
+            armorDescription += abilities.toString();
+        }
+        return armorDescription;
     }
 
     private List<ViewElement> getSIandArmor() {
@@ -908,6 +1012,14 @@ public class MekView {
         return retVal;
     }
 
+    private String secondaryCIWeaponDescriptor(Infantry inf) {
+        if (inf.getSecondaryWeapon() != null) {
+            return "%s (%d per Squad)".formatted(inf.getSecondaryWeapon().getDesc(), inf.getSecondaryWeaponsPerSquad());
+        } else {
+            return "None";
+        }
+    }
+
     private List<ViewElement> getWeapons(boolean showDetail) {
 
         List<ViewElement> retVal = new ArrayList<>();
@@ -916,12 +1028,30 @@ public class MekView {
             Infantry inf = (Infantry) entity;
             retVal.add(new LabeledElement("Primary Weapon",
                     (null != inf.getPrimaryWeapon()) ? inf.getPrimaryWeapon().getDesc() : "None"));
-            retVal.add(new LabeledElement("Secondary Weapon",
-                    (null != inf.getSecondaryWeapon()) ? inf.getSecondaryWeapon().getDesc()
-                            + " (" + inf.getSecondaryWeaponsPerSquad() + ")" : "None"));
-            retVal.add(new LabeledElement("Damage per trooper",
-                    String.format("%3.3f", inf.getDamagePerTrooper())));
-            retVal.add(new SingleLine());
+            retVal.add(new LabeledElement("Secondary Weapon", secondaryCIWeaponDescriptor(inf)));
+            retVal.add(new LabeledElement("Damage per trooper", "%3.3f".formatted(inf.getDamagePerTrooper())));
+
+            if (inf.hasFieldWeapon()) {
+                retVal.add(new SingleLine());
+                List<Mounted<?>> fieldGuns = inf.originalFieldWeapons();
+                EquipmentType fieldGunType = fieldGuns.get(0).getType();
+                List<Mounted<?>> activeFieldGuns = inf.activeFieldWeapons();
+                String typeName = TestInfantry.isFieldArtilleryType(fieldGunType) ? "Artillery" : "Gun";
+                String fieldGunText;
+                String gunCount = TestInfantry.isFieldArtilleryType(fieldGunType) ?
+                      "" :
+                      " (%s)".formatted(activeFieldGuns.size());
+                if (activeFieldGuns.isEmpty()) {
+                    fieldGunText = "<font color=red>%s (destroyed)</font>".formatted(fieldGunType.getName());
+                } else if (activeFieldGuns.size() < fieldGuns.size()) {
+                    fieldGunText = "<font color=yellow>%s%s</font>"
+                          .formatted(fieldGunType.getName(), gunCount);
+                } else {
+                    fieldGunText = "%s%s".formatted(fieldGunType.getName(), gunCount);
+                }
+                retVal.add(new LabeledElement("Field " + typeName, fieldGunText));
+            }
+            return retVal;
         }
 
         if (entity.getWeaponList().isEmpty()) {
@@ -1042,7 +1172,10 @@ public class MekView {
 
     private ViewElement getAmmo() {
         TableElement ammoTable = new TableElement(4);
-        ammoTable.setColNames("Ammo", "Loc", "Shots", entity.isOmni() ? "Omni" : "");
+        ammoTable.setColNames("Ammo",
+              entity.isConventionalInfantry() ? "" : "Loc",
+              "Shots",
+              entity.isOmni() ? "Omni" : "");
         ammoTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                 TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_CENTER);
 
@@ -1053,6 +1186,10 @@ public class MekView {
 
             String[] row = { mounted.getName(), entity.getLocationAbbr(mounted.getLocation()),
                     String.valueOf(mounted.getBaseShotsLeft()), "" };
+            if (entity.isConventionalInfantry()) {
+                // dont display the location on CI
+                row[1] = "";
+            }
             if (entity.isOmni()) {
                 row[3] = Messages.getString(mounted.isOmniPodMounted() ? "MekView.Pod" : "MekView.Fixed");
             }
@@ -1119,29 +1256,34 @@ public class MekView {
         List<ViewElement> retVal = new ArrayList<>();
 
         TableElement miscTable = new TableElement(3);
-        miscTable.setColNames("Equipment", "Loc", entity.isOmni() ? "Omni" : "");
+        miscTable.setColNames("Equipment", entity.isConventionalInfantry() ? "" : "Loc", entity.isOmni() ? "Omni" : "");
         miscTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                 TableElement.JUSTIFIED_CENTER);
         int nEquip = 0;
         for (Mounted<?> mounted : entity.getMisc()) {
             String name = mounted.getName();
             if ((((mounted.getLocation() == Entity.LOC_NONE)
-                    // Meks can have zero-slot equipment in LOC_NONE that needs to be shown.
-                    && (!isMek || mounted.getCriticals() > 0)))
-                    || name.contains("Jump Jet")
-                    || (name.contains("CASE")
-                            && !name.contains("II")
-                            && entity.isClan())
-                    || (name.contains("Heat Sink")
-                            && !name.contains("Radical"))
-                    || EquipmentType.isArmorType(mounted.getType())
-                    || EquipmentType.isStructureType(mounted.getType())) {
+                  // Meks can have zero-slot equipment in LOC_NONE that needs to be shown.
+                  && (!isMek || mounted.getCriticals() > 0)))
+                  || name.contains("Jump Jet")
+                  || (name.contains("CASE")
+                  && !name.contains("II")
+                  && entity.isClan())
+                  || (name.contains("Heat Sink")
+                  && !name.contains("Radical"))
+                  || EquipmentType.isArmorType(mounted.getType())
+                  || EquipmentType.isStructureType(mounted.getType())
+                  || mounted.getType().hasFlag(MiscType.F_ARMOR_KIT)) {
                 // These items are displayed elsewhere, so skip them here.
                 continue;
             }
             nEquip++;
 
             String[] row = { mounted.getDesc(), entity.joinLocationAbbr(mounted.allLocations(), 3), "" };
+            if (entity.isConventionalInfantry()) {
+                // son't display the location on CI
+                row[1] = "";
+            }
             if (entity.isClan()
                     && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
                 row[0] += Messages.getString("MekView.IS");

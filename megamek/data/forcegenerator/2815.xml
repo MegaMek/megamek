@@ -2554,11 +2554,11 @@
             </model>
         </chassis>
 		<chassis name='Helepolis' unitType='Mek'>
-			<availability>PP:2+</availability>
+			<availability>PP:2+,CLAN:2-,CHH:3-</availability>
 			<model name='HEP-3H'>
 				<roles>mixed_artillery</roles>
 				<deployedWith>Helepolis</deployedWith>
-				<availability>General:8</availability>
+				<availability>PP:8,CLAN:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Hellcat II' unitType='AeroSpaceFighter'>

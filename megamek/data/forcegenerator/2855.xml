@@ -1094,7 +1094,7 @@
 			</model>
 			<model name='CPLT-C1'>
 				<roles>fire_support</roles>
-				<availability>IS:8,CC:8,MERC:8,CDS:8,Periphery:8,Periphery.Deep:8,BAN:6</availability>
+				<availability>IS:8,CC:8,MERC:8,CDS:8,Periphery:8,Periphery.Deep:8</availability>
 			</model>
 			<model name='CPLT-C1b'>
 				<roles>fire_support</roles>
@@ -2002,7 +2002,7 @@
 		<chassis name='Crusader' unitType='Mek'>
 			<availability>IS:8,CS:6-,CLAN:2,CBS:3,CB:3,CCC:3,Periphery:6,NIOPS:6-,Periphery.Deep:6,BAN:4</availability>
 			<model name='CRD-2R'>
-				<availability>IS:2+,CLAN:8,Periphery:2+,BAN:2+</availability>
+				<availability>IS:2+,CLAN:8,Periphery:2+,NIOPS:5,BAN:2+</availability>
 			</model>
 			<model name='CRD-3D'>
 				<availability>FS:5</availability>
@@ -3023,6 +3023,14 @@
                 <roles>cargo,civilian</roles>
                 <deployedWith>req:Hector Road Train Tractor</deployedWith>
                 <availability>CLAN:3,BAN:3,IS:3,FWL:3</availability>
+            </model>
+        </chassis>
+        <chassis name='Helepolis' unitType='Mek'>
+            <availability>CHH:1-</availability>
+            <model name='HEP-3H'>
+                <roles>mixed_artillery</roles>
+                <deployedWith>Helepolis</deployedWith>
+                <availability>CHH:8</availability>
             </model>
         </chassis>
 		<chassis name='Hellcat II' unitType='AeroSpaceFighter'>
@@ -6077,7 +6085,7 @@
 				<availability>IS:8,CCC:1-,CFM:1-,CHH:1-,CMG:1,CNC:1-,CSJ:1-,Periphery:8,Periphery.Deep:8,BAN:6-</availability>
 			</model>
 			<model name='WHM-6Rb'>
-				<availability>FS:2+,LA:2+,CC:2+,FWL:2+,CLAN:3-,CBS:4-,CCC:4-,CCO:4-,CFM:4-,CGB:4-,CIH:4-,CMG:4-,CSR:4-,BAN:5</availability>
+				<availability>FS:2+,LA:2+,FWL:2+,CC:2+,CLAN:3-,CBS:4-,CCC:4-,CCO:4-,CFM:4-,CGB:4-,CIH:4-,CMG:4-,CSR:4-,BAN:5</availability>
 			</model>
 			<model name='WHM-6Rk'>
                 <roles>cavalry</roles>

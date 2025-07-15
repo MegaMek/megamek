@@ -2673,6 +2673,14 @@
                 <availability>CLAN:3,PP:3,IS:3,FWL:3</availability>
             </model>
         </chassis>
+        <chassis name='Helepolis' unitType='Mek'>
+            <availability>CLAN:2-,CHH:3-</availability>
+            <model name='HEP-3H'>
+                <roles>mixed_artillery</roles>
+                <deployedWith>Helepolis</deployedWith>
+                <availability>CLAN:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Hellcat II' unitType='AeroSpaceFighter'>
 			<availability>CC:4,MOC:3+,CLAN:6,IS:3,FS:4,TC:3+,CS:6,OA:3+,LA:4,FWL:4,NIOPS:6,DC:4</availability>
 			<model name='HCT-213B'>

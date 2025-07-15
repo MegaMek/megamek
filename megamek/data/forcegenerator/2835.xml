@@ -6087,10 +6087,10 @@
 				<availability>CC:4</availability>
 			</model>
 			<model name='WHM-6R'>
-				<availability>IS:8,CLAN:1-,Periphery:8,Periphery.Deep:8,BAN:6-</availability>
+				<availability>IS:8,CLAN:1-,Periphery:8,NIOPS:3-,Periphery.Deep:8,BAN:6-</availability>
 			</model>
 			<model name='WHM-6Rb'>
-				<availability>FS:3+,LA:3+,FWL:3+,CC:3+,CLAN:4-,BAN:5</availability>
+				<availability>FS:3+,LA:3+,FWL:3+,CC:3+,CLAN:4-,NIOPS:6,BAN:5</availability>
 			</model>
 			<model name='WHM-6Rk'>
                 <roles>cavalry</roles>

@@ -5418,10 +5418,10 @@
 				<availability>CC:4</availability>
 			</model>
 			<model name='WHM-6R'>
-				<availability>IS:8,PP:8,CLAN:1-,CBS:2-,CB:2-,CCO:2-,CGS:2-,CJF:2-,CNC:2-,CSJ:2-,CSA:2-,CWOV:2-,Periphery:8,Periphery.Deep:8</availability>
+				<availability>IS:8,PP:8,CLAN:1-,CBS:2-,CB:2-,CCO:2-,CGS:2-,CJF:2-,CNC:2-,CSJ:2-,CSA:2-,CWOV:2-,Periphery:8,NIOPS:3-,Periphery.Deep:8</availability>
 			</model>
 			<model name='WHM-6Rb'>
-				<availability>FS:4+,LA:4+,FWL:4+,CC:4+,CLAN:5</availability>
+				<availability>FS:4+,LA:4+,FWL:4+,CC:4+,CLAN:5,NIOPS:6</availability>
 			</model>
 			<model name='WHM-6Rk'>
                 <roles>cavalry</roles>

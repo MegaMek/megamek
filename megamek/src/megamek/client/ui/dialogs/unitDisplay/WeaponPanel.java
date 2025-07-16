@@ -409,6 +409,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private ArrayList<AmmoMounted> vAmmo;
     private Entity entity;
 
+    /**
+     * Used to make sure that multiple removeListeners() calls (that have no cumulative effect) are not overbalanced by
+     * multiple addListeners() calls. This would happen when one method that needs to use removeL [stuff ...] addL calls
+     * another that needs to do the same.
+     */
+    private int listenerCounter = 0;
+
     private int minTopMargin = 8;
     private int minLeftMargin = 8;
 
@@ -2817,10 +2824,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     private void addListeners() {
-        comboWeaponSortOrder.addActionListener(this);
-        m_chAmmo.addActionListener(this);
-        m_chBayWeapon.addActionListener(this);
-        weaponList.addListSelectionListener(this);
+        if (listenerCounter >= 0) {
+            comboWeaponSortOrder.addActionListener(this);
+            m_chAmmo.addActionListener(this);
+            m_chBayWeapon.addActionListener(this);
+            weaponList.addListSelectionListener(this);
+        }
+        listenerCounter++;
     }
 
     private void removeListeners() {
@@ -2828,6 +2838,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         m_chAmmo.removeActionListener(this);
         m_chBayWeapon.removeActionListener(this);
         weaponList.removeListSelectionListener(this);
+        listenerCounter--;
     }
 
     public Targetable getPrevTarget() {

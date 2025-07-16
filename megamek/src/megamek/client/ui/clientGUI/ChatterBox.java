@@ -51,7 +51,6 @@ public class ChatterBox implements KeyListener {
     public LinkedList<String> history;
     public int historyBookmark = -1;
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private ChatterBoxOverlay cb2;
 
     private static final String CB_KEY_ADVANCED_CHATBOXSIZE = "AdvancedChatboxSize";
 
@@ -59,46 +58,39 @@ public class ChatterBox implements KeyListener {
         client = clientgui.getClient();
         clientGUI = clientgui;
         client.getGame().addGameListener(new GameListenerAdapter() {
-            @Override
-            public void gamePlayerChat(GamePlayerChatEvent e) {
-                chatArea.append('\n' + e.getMessage());
+
+            private void refreshPlayerListDialog(ClientGUI clientgui) {
                 PlayerListDialog pld = clientgui.getPlayerListDialog();
                 if (pld != null) {
                     pld.refreshPlayerList(playerList, client);
                 }
+            }
+
+            @Override
+            public void gamePlayerChat(GamePlayerChatEvent e) {
+                chatArea.append('\n' + e.getMessage());
+                refreshPlayerListDialog(clientgui);
                 moveToEnd();
             }
 
             @Override
             public void gamePlayerChange(GamePlayerChangeEvent e) {
-                PlayerListDialog pld = clientgui.getPlayerListDialog();
-                if (pld != null) {
-                    pld.refreshPlayerList(playerList, client);
-                }
+                refreshPlayerListDialog(clientgui);
             }
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
-                PlayerListDialog pld = clientgui.getPlayerListDialog();
-                if (pld != null) {
-                    pld.refreshPlayerList(playerList, client);
-                }
+                refreshPlayerListDialog(clientgui);
             }
 
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                PlayerListDialog pld = clientgui.getPlayerListDialog();
-                if (pld != null) {
-                    pld.refreshPlayerList(playerList, client);
-                }
+                refreshPlayerListDialog(clientgui);
             }
 
             @Override
             public void gameEntityNew(GameEntityNewEvent e) {
-                PlayerListDialog pld = clientgui.getPlayerListDialog();
-                if (pld != null) {
-                    pld.refreshPlayerList(playerList, client);
-                }
+                refreshPlayerListDialog(clientgui);
 
                 if (PreferenceManager.getClientPreferences().getPrintEntityChange()) {
                     systemMessage(e.getNumberOfEntities() + " " + Messages.getString("ChatterBox.entitiesAdded"));
@@ -107,10 +99,7 @@ public class ChatterBox implements KeyListener {
 
             @Override
             public void gameEntityRemove(GameEntityRemoveEvent e) {
-                PlayerListDialog pld = clientgui.getPlayerListDialog();
-                if (pld != null) {
-                    pld.refreshPlayerList(playerList, client);
-                }
+                refreshPlayerListDialog(clientgui);
             }
 
             @Override
@@ -255,25 +244,17 @@ public class ChatterBox implements KeyListener {
             historyBookmark--;
             fetchHistory();
         }
-        if (cb2 != null) {
-            cb2.setMessage(inputField.getText()+ev.getKeyChar());
-        }
         moveToEnd();
     }
 
-    public void fetchHistory() {
+    public String fetchHistory() {
         try {
             inputField.setText(history.get(historyBookmark));
-            if (cb2 != null) {
-                cb2.setMessage(inputField.getText());
-            }
         } catch (IndexOutOfBoundsException ioobe) {
             inputField.setText("");
-            if (cb2 != null) {
-                cb2.setMessage("");
-            }
             historyBookmark = -1;
         }
+        return inputField.getText();
     }
 
     @Override
@@ -288,9 +269,5 @@ public class ChatterBox implements KeyListener {
 
     public void setMessage(String message) {
         inputField.setText(message);
-    }
-
-    public void setChatterBox2(ChatterBoxOverlay cb2) {
-        this.cb2 = cb2;
     }
 }

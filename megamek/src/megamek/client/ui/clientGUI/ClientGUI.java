@@ -25,7 +25,6 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.Image;
@@ -291,7 +290,6 @@ public class ClientGUI extends AbstractClientGUI
 
     public MegaMekController controller;
     private ChatterBox cb;
-    public ChatterBoxOverlay cb2;
     private boolean wasBoardFocused = false;
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
     private MovementModifierSpriteHandler movementModifierSpriteHandler;
@@ -555,8 +553,8 @@ public class ClientGUI extends AbstractClientGUI
      * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
-        cb.systemMessage(message);
-        cb2.addChatMessage(Messages.getString("ChatterBox.MegaMek") + " " + message);
+        client.getGame().fireGameEvent(new GamePlayerChatEvent(this, null,
+              "\n" + Messages.getString("ChatterBox.MegaMek") + " " + message));
     }
 
     /**
@@ -629,16 +627,7 @@ public class ClientGUI extends AbstractClientGUI
             panTop.add(splitPaneA, BorderLayout.CENTER);
             initializeFocusTracking();
 
-            // TODO: extract to function that can be called here and at gameBoardNew()
-            BoardView boardView = new BoardView(client.getGame(), controller, ClientGUI.this, 0);
-            boardView.getPanel().setPreferredSize(clientGuiPanel.getSize());
-            boardView.addBoardViewListener(ClientGUI.this);
             cb = new ChatterBox(this);
-            cb2 = new ChatterBoxOverlay(ClientGUI.this, boardView, controller);
-            cb.setChatterBox2(cb2);
-            cb2.setChatterBox(cb);
-            boardView.getPanel().addKeyListener(cb2);
-            boardView.addOverlay(cb2);
 
         } catch (Exception ex) {
             logger.fatal(ex, "initialize");
@@ -2504,9 +2493,7 @@ public class ClientGUI extends AbstractClientGUI
                     boardViews.put(boardId, boardView);
                     boardView.getPanel().setPreferredSize(clientGuiPanel.getSize());
                     boardView.addBoardViewListener(ClientGUI.this);
-                    cb2 = new ChatterBoxOverlay(ClientGUI.this, boardView, controller);
-                    cb.setChatterBox2(cb2);
-                    cb2.setChatterBox(cb);
+                    var cb2 = new ChatterBoxOverlay(ClientGUI.this, boardView, controller, cb);
                     offBoardOverlay = new OffBoardTargetOverlay(ClientGUI.this);
                     boardView.getPanel().addKeyListener(cb2);
                     boardView.addOverlay(cb2);
@@ -2984,9 +2971,9 @@ public class ClientGUI extends AbstractClientGUI
 
     @Override
     public void clearChatBox() {
-        if (cb2 != null) {
-            cb2.clearMessage();
-            setChatBoxActive(false);
+        Optional<IBoardView> ibv = getCurrentBoardView();
+        if (ibv.isPresent() && ibv.get() instanceof BoardView bv) {
+            bv.setChatterBoxActive(false);
         }
     }
 

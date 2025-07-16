@@ -38,7 +38,7 @@ public class CLBALRM5 extends LRMWeapon {
         minimumRange = WEAPON_NA;
         tonnage = .175;
         criticals = 4;
-        bv = 0;
+        bv = 55;
         cost = 30000;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";

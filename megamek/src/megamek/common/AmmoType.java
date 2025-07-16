@@ -8358,7 +8358,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoTypeEnum.LRM;
         ammo.shots = 100;
-        ammo.bv = 5;
+        ammo.bv = 4;
         ammo.kgPerShot = 24.99;
         /*
          * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
@@ -13769,7 +13769,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoTypeEnum.LRM;
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
-        ammo.bv = 5;
+        ammo.bv = 4;
         ammo.kgPerShot = 25;
         ammo.rulesRefs = "261, TM";
         ammo.techAdvancement.setTechBase(TechBase.CLAN)

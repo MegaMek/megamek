@@ -955,7 +955,7 @@
 			</model>
 			<model name='BMB-12D'>
 				<roles>fire_support</roles>
-				<availability>CLAN:8,CS:8,FWL:3+,DC:3+,NIOPS:8,BAN:8</availability>
+				<availability>FWL:3+,DC:3+,CS:8,CLAN:8,NIOPS:8</availability>
 			</model>
 		</chassis>
         <chassis name='Brunel Dump Truck' unitType='Tank'>
@@ -2275,7 +2275,7 @@
 			</model>
 		</chassis>
 		<chassis name='Excalibur' unitType='Mek'>
-			<availability>FS:1+,LA:1+,DC:1+,CS:5,CLAN!Front Line:2!Second Line:1,CBS:3+,CGS:3+,CIH:3+,CJF:3+,CMG:3+,CNC:3+,CSR:3+,NIOPS:5</availability>
+			<availability>FS:1+,LA:1+,DC:1+,CS:5,CLAN!Front Line:2!Second Line:1,CBS:3+,CGS:3+,CIH:3+,CJF:3+,CMG:3+,CNC:3+,CSR:3+,NIOPS:5,BAN:0</availability>
 			<model name='EXC-B1'>
 				<roles>cavalry,fire_support</roles>
 				<availability>LA:8,CDS:4-</availability>
@@ -3591,7 +3591,7 @@
 			</model>
 			<model name='C 2'>
                 <roles>cavalry,anti_aircraft</roles>
-				<availability>CB:2+,CGM:4+,CIH!Keshik:5!Front Line:3!Second Line:1</availability>
+				<availability>CB:2+,CFM:4+,CIH!Keshik:5!Front Line:3!Second Line:1</availability>
 			</model>
 			<model name='LNC25-01'>
 				<roles>cavalry,anti_aircraft</roles>
@@ -3904,7 +3904,7 @@
 			<availability>IS:4,FS:5,LA:5,DC:5,CS:8,CLAN!Front Line:3!Second Line:2!Solahma:1,CBS:4+,CCC:4+,CGS:4+,CIH:3+,CMG:3+,CDS:4+,CSJ:4+,TC:3+,MOC:2+,NIOPS:8,BAN:2+</availability>
             <model name='C'>
                 <roles>command</roles>
-                <availability>CLAN:4+,CBS!Keshik:8,CB:3+,CCC:3+,CFM:3+,CGS:3+,CHH:2+,CIH:2+,CJF:4+,CMG:2+,CDS:3+,CSJ:3+,BAN:0</availability>
+                <availability>CLAN:4+,CBS!Keshik:8,CB:3+,CCC:3+,CFM:3+,CGS:3+,CHH:2+,CIH:2+,CMG:2+,CDS:3+,CSJ:3+,BAN:0</availability>
             </model>
 			<model name='MAD-1R'>
                 <roles>command</roles>
@@ -6030,7 +6030,7 @@
 				<availability>DC:1+</availability>
 			</model>
 			<model name='WHM-7A'>
-				<availability>CLAN!Second Line:2,CBS:3+,CB!Front Line:2!Second Line:1,CFM!Front Line:2!Second Line:1,CIH:4+,CMG!Front Line:2</availability>
+				<availability>CLAN!Second Line:2,CBS:3+,CB!Front Line:2!Second Line:1,CFM!Front Line:2!Second Line:1,CIH:4+,CMG!Front Line:2,BAN:0</availability>
 			</model>
 		</chassis>
 		<chassis name='Wasp LAM Mk I' unitType='Mek'>

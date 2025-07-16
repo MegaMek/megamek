@@ -2218,7 +2218,7 @@
 			</model>
 		</chassis>
 		<chassis name='Excalibur' unitType='Mek'>
-			<availability>FS:1+,LA:1+,DC:1+,CS:5,CLAN!Front Line:2!Second Line:1,CBS:3+,CB:3+,CGS:3+,CIH:3+,CJF:3+,CMG:3+,CNC:3+,CSR:3+,CSA:3+,CSV:3+,NIOPS:5</availability>
+			<availability>FS:1+,LA:1+,DC:1+,CS:5,CLAN!Front Line:2!Second Line:1,CBS:3+,CB:3+,CGS:3+,CIH:3+,CJF:3+,CMG:3+,CNC:3+,CSR:3+,CSA:3+,CSV:3+,NIOPS:5,BAN:0</availability>
 			<model name='EXC-B1'>
 				<roles>cavalry,fire_support</roles>
 				<availability>LA:8,CDS:4-</availability>
@@ -5951,7 +5951,7 @@
 				<availability>DC:1+</availability>
 			</model>
 			<model name='WHM-7A'>
-				<availability>CLAN!Second Line:2,CBS:3+,CB!Front Line:2!Second Line:1,CFM!Front Line:2!Second Line:1,CIH:4+,CMG!Front Line:2</availability>
+				<availability>CLAN!Second Line:2,CBS:3+,CB!Front Line:2!Second Line:1,CFM!Front Line:2!Second Line:1,CIH:4+,CMG!Front Line:2,BAN:0</availability>
 			</model>
 		</chassis>
 		<chassis name='Wasp LAM Mk I' unitType='Mek'>

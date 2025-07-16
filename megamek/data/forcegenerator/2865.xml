@@ -621,7 +621,7 @@
 			</model>
 			<model name='ARC-2Rb'>
 				<roles>command,fire_support</roles>
-				<availability>CLAN:4-,CB:3-,BAN:2+</availability>
+				<availability>CLAN:4-,CB:3-,NIOPS:5,BAN:2+</availability>
 			</model>
 			<model name='ARC-2S'>
 				<roles>command,fire_support</roles>

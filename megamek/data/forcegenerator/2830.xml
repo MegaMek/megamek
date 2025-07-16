@@ -623,7 +623,7 @@
 			</model>
 			<model name='ARC-2Rb'>
 				<roles>command,fire_support</roles>
-				<availability>CLAN:8,BAN:2+</availability>
+				<availability>CLAN:8,NIOPS:5,BAN:2+</availability>
 			</model>
             <model name='C'>
                 <roles>command,fire_support</roles>

@@ -90,13 +90,14 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, QUIRK_POS_VTOL_ROTOR_DUAL, false);
 
 
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 7 LINES
         //not yet implemented
         //Docking Arms (docking unimplemented)
         //Fast Reload (no game effect at present)
         //Improved Communications
         //Variable Range Targeting
         //VTOL Rotor Arrangement (no vee adv move rules)
-        //Compact Mek
+        //Compact Mech
 
         IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS);
         addOption(negQuirk, QUIRK_NEG_BAD_REP_IS, false);

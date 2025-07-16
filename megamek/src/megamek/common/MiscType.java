@@ -19,8 +19,6 @@ import java.text.NumberFormat;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.miscGear.AntiMekGear;
-import megamek.common.weapons.c3.ISC3M;
-import megamek.common.weapons.c3.ISC3MBS;
 import megamek.common.weapons.ppc.CLERPPC;
 import megamek.common.weapons.ppc.ISERPPC;
 import megamek.common.weapons.ppc.ISHeavyPPC;
@@ -121,6 +119,7 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_BASIC_MANIPULATOR = MiscTypeFlag.F_BASIC_MANIPULATOR;
     public static final MiscTypeFlag F_BATTLE_CLAW = MiscTypeFlag.F_BATTLE_CLAW;
     public static final MiscTypeFlag F_AP_MOUNT = MiscTypeFlag.F_AP_MOUNT;
+    public static final MiscTypeFlag F_MODULAR_WEAPON_MOUNT = MiscTypeFlag.F_MODULAR_WEAPON_MOUNT;
     public static final MiscTypeFlag F_MAST_MOUNT = MiscTypeFlag.F_MAST_MOUNT;
     public static final MiscTypeFlag F_FUEL = MiscTypeFlag.F_FUEL;
     public static final MiscTypeFlag F_BLUE_SHIELD = MiscTypeFlag.F_BLUE_SHIELD;
@@ -1735,6 +1734,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBAArmoredGlove());
         EquipmentType.addType(MiscType.createBAMagneticClamp());
         EquipmentType.addType(MiscType.createBAAPMount());
+        EquipmentType.addType(MiscType.createBAModularWeaponMount());
         EquipmentType.addType(MiscType.createCLBAMyomerBooster());
         EquipmentType.addType(MiscType.createISSingleHexECM());
         EquipmentType.addType(MiscType.createCLSingleHexECM());
@@ -11521,7 +11521,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAAPMount() {
         MiscType misc = new MiscType();
 
-        misc.name = "Anti Personnel Weapon Mount";
+        misc.name = "Anti-Personnel Weapon Mount";
         misc.setInternalName("BAAPMount");
         misc.tonnage = 0.005;
         misc.criticals = 1;
@@ -11532,6 +11532,7 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD)
               .setTechRating(TechRating.A)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setISAdvancement(DATE_ES, DATE_ES, 3050, DATE_NONE, DATE_NONE)
@@ -11542,6 +11543,36 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
+
+    public static MiscType createBAModularWeaponMount() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Standard Modular Weapon Mount";
+        misc.shortName = "Modular Weapon Mount";
+        misc.setInternalName("BAModularWeaponMount");
+        misc.addLookupName("BAMWMount");
+        misc.tonnage = 0.01;
+        misc.criticals = 1;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_MODULAR_WEAPON_MOUNT);
+        misc.bv = 0;
+        misc.rulesRefs = "271, TM";
+        // I coudn't find this information anywhere so I just copied it from the AP weapon mount
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setIntroLevel(false)
+              .setUnofficial(false)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+              .setISAdvancement(DATE_ES, DATE_ES, 3050, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, false, false, false)
+              .setClanAdvancement(DATE_ES, 2868, 2870, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, false, false, false)
+              .setProductionFactions(Faction.CWF);
+
+        return misc;
+    }
+
     // TODO - IO pg 52 - Battle Armor Detachable Missile Pack should really be a
     // piece of equipment.
 

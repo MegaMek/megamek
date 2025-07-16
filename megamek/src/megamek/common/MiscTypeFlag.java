@@ -133,6 +133,7 @@ public enum MiscTypeFlag implements EquipmentFlag {
 
 
     F_AP_MOUNT,
+    F_MODULAR_WEAPON_MOUNT,
     F_MAST_MOUNT,
     F_FUEL,
     F_BLUE_SHIELD,

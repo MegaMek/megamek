@@ -8,6 +8,7 @@ era:3052
 source:Force Manual Kurita
 rules level:2
 role:Skirmisher
+mul id:8289
 
 quirk:battle_fists_la
 quirk:battle_fists_ra

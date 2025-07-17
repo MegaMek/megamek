@@ -8,6 +8,7 @@ era:3052
 source:Force Manual Kurita
 rules level:2
 role:Sniper
+mul id:8298
 
 quirk:nimble_jumper
 quirk:imp_target_short

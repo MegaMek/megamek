@@ -158,13 +158,13 @@ public class MekViewPanel extends JPanel {
     }
 
     public void setMek(Entity entity, EntityReadout mekView) {
-        txtMek.setText(mekView.getMekReadout());
+        txtMek.setText(mekView.getReadout());
         txtMek.setCaretPosition(0);
         setFluffImage(entity);
     }
 
     public void setMek(Entity entity, EntityReadout mekView, String fontName) {
-        txtMek.setText(mekView.getMekReadout(fontName));
+        txtMek.setText(mekView.getReadout(fontName));
         txtMek.setCaretPosition(0);
         setFluffImage(entity);
     }
@@ -176,7 +176,7 @@ public class MekViewPanel extends JPanel {
     }
 
     public void setMek(Entity entity, boolean useAlternateCost) {
-        EntityReadout mekView = new EntityReadout(entity, false, useAlternateCost);
+        EntityReadout mekView = EntityReadout.createReadout(entity, false, useAlternateCost);
         setMek(entity, mekView);
     }
 
@@ -189,7 +189,7 @@ public class MekViewPanel extends JPanel {
 
 
 
-//        EntityReadout mekView = new EntityReadout(entity, false, false);
+//        EntityReadout mekView = EntityReadout.createReadout(entity, false, false);
         setMek(entity, mekView, fontName);
     }
 

@@ -278,8 +278,9 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                 try {
                     Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                     logger.info("Validating Entity: " + entity.getShortNameRaw());
-                    EntityReadout mekView = new EntityReadout(entity, false);
-                    StringBuffer sb = new StringBuffer(mekView.getMekReadout());
+//                    EntityReadout mekView = EntityReadout.createReadout(entity, false);
+                    EntityReadout mekView = EntityReadout.createReadout(entity, false);
+                    StringBuffer sb = new StringBuffer(mekView.getReadout());
                     TestEntity testEntity = TestEntity.getEntityVerifier(entity);
 
                     if (testEntity != null) {

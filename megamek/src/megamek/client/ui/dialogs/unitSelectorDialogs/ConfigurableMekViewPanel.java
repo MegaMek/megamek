@@ -133,8 +133,8 @@ public class ConfigurableMekViewPanel extends JPanel {
 
     private void copyToClipboard(ViewFormatting formatting) {
         if (entity != null) {
-            EntityReadout mekView = new EntityReadout(entity, false, false, formatting);
-            StringSelection stringSelection = new StringSelection(mekView.getMekReadout());
+            EntityReadout mekView = EntityReadout.createReadout(entity, false, false, formatting);
+            StringSelection stringSelection = new StringSelection(mekView.getReadout());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);
         }

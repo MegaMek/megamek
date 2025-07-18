@@ -45,6 +45,7 @@ import megamek.client.ui.dialogs.randomArmy.ForceGeneratorViewUi;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.dialogs.randomArmy.RandomArmyDialog;
 import megamek.client.ui.models.UnitTableModel;
+import megamek.client.ui.unitreadout.EntityReadout;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.*;
 import megamek.common.force.Force;

@@ -47,8 +47,9 @@ import javax.swing.text.html.HTMLDocument;
 import megamek.client.ui.util.FluffImageHelper;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedXPanel;
+import megamek.client.ui.util.ViewFormatting;
 import megamek.common.Entity;
-import megamek.common.MekView;
+import megamek.client.ui.unitreadout.EntityReadout;
 import megamek.common.Report;
 import megamek.common.templates.TROView;
 
@@ -156,13 +157,13 @@ public class MekViewPanel extends JPanel {
         addMouseWheelListener(wheelForwarder);
     }
 
-    public void setMek(Entity entity, MekView mekView) {
+    public void setMek(Entity entity, EntityReadout mekView) {
         txtMek.setText(mekView.getMekReadout());
         txtMek.setCaretPosition(0);
         setFluffImage(entity);
     }
 
-    public void setMek(Entity entity, MekView mekView, String fontName) {
+    public void setMek(Entity entity, EntityReadout mekView, String fontName) {
         txtMek.setText(mekView.getMekReadout(fontName));
         txtMek.setCaretPosition(0);
         setFluffImage(entity);
@@ -175,12 +176,20 @@ public class MekViewPanel extends JPanel {
     }
 
     public void setMek(Entity entity, boolean useAlternateCost) {
-        MekView mekView = new MekView(entity, false, useAlternateCost);
+        EntityReadout mekView = new EntityReadout(entity, false, useAlternateCost);
         setMek(entity, mekView);
     }
 
     public void setMek(Entity entity, String fontName) {
-        MekView mekView = new MekView(entity, false, false);
+        EntityReadout mekView = EntityReadout.createReadout(entity,
+              false,
+              false,
+              entity.getCrew() == null,
+              ViewFormatting.HTML);
+
+
+
+//        EntityReadout mekView = new EntityReadout(entity, false, false);
         setMek(entity, mekView, fontName);
     }
 

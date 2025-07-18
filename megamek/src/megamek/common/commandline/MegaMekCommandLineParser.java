@@ -27,7 +27,7 @@ import megamek.common.Entity;
 import megamek.common.MekFileParser;
 import megamek.common.MekSummary;
 import megamek.common.MekSummaryCache;
-import megamek.common.MekView;
+import megamek.client.ui.unitreadout.EntityReadout;
 import megamek.common.TechConstants;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
@@ -278,7 +278,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                 try {
                     Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                     logger.info("Validating Entity: " + entity.getShortNameRaw());
-                    MekView mekView = new MekView(entity, false);
+                    EntityReadout mekView = new EntityReadout(entity, false);
                     StringBuffer sb = new StringBuffer(mekView.getMekReadout());
                     TestEntity testEntity = TestEntity.getEntityVerifier(entity);
 

@@ -37,7 +37,7 @@ import javax.swing.JFrame;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.panels.alphaStrike.ConfigurableASCardPanel;
 import megamek.common.Entity;
-import megamek.common.ViewFormatting;
+import megamek.client.ui.util.ViewFormatting;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;

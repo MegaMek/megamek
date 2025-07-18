@@ -37,8 +37,8 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Entity;
-import megamek.common.MekView;
-import megamek.common.ViewFormatting;
+import megamek.client.ui.unitreadout.EntityReadout;
+import megamek.client.ui.util.ViewFormatting;
 import megamek.common.annotations.Nullable;
 
 /**
@@ -133,7 +133,7 @@ public class ConfigurableMekViewPanel extends JPanel {
 
     private void copyToClipboard(ViewFormatting formatting) {
         if (entity != null) {
-            MekView mekView = new MekView(entity, false, false, formatting);
+            EntityReadout mekView = new EntityReadout(entity, false, false, formatting);
             StringSelection stringSelection = new StringSelection(mekView.getMekReadout());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);

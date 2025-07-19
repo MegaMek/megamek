@@ -49,7 +49,7 @@ import megamek.common.verifier.TestInfantry;
  * The Entity information shown in the unit selector and many other places in MM, MML and MHQ.
  *
  */
-class InfantryReadout extends GeneralEntityReadout2 {
+class InfantryReadout extends GeneralEntityReadout {
 
     protected final Infantry infantry;
 
@@ -142,7 +142,7 @@ class InfantryReadout extends GeneralEntityReadout2 {
         List<ViewElement> result = super.createLoadoutBlock();
 
         if (infantry.getSpecializations() > 0) {
-            ItemList specList = new ItemList("Infantry Specializations");
+            var specList = new ItemList("Infantry Specializations");
             for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
                 int spec = 1 << i;
                 if (infantry.hasSpecialization(spec)) {
@@ -164,7 +164,7 @@ class InfantryReadout extends GeneralEntityReadout2 {
             }
 
             if (!augmentations.isEmpty()) {
-                ItemList augList = new ItemList("Augmentations");
+                var augList = new ItemList("Augmentations");
                 for (String aug : augmentations) {
                     augList.addItem(aug);
                 }

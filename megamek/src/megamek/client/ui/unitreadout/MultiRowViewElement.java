@@ -32,35 +32,7 @@
  */
 package megamek.client.ui.unitreadout;
 
-import megamek.client.ui.Messages;
-import megamek.client.ui.util.ViewFormatting;
-import megamek.common.ProtoMek;
+interface MultiRowViewElement extends ViewElement {
 
-import java.util.List;
-
-class ProtoMekReadout extends GeneralEntityReadout {
-
-    private final ProtoMek protoMek;
-
-    protected ProtoMekReadout(ProtoMek protoMek, boolean showDetail, boolean useAlternateCost, boolean ignorePilotBV,
-          ViewFormatting formatting) {
-
-        super(protoMek, showDetail, useAlternateCost, ignorePilotBV, formatting);
-        this.protoMek = protoMek;
-    }
-
-    @Override
-    protected ViewElement createEngineElement() {
-        return new EmptyElement();
-    }
-
-    protected ViewElement createTotalArmorElement() {
-        String armor = String.valueOf(protoMek.getTotalArmor());
-        return new LabeledElement(Messages.getString("MekView.Armor"), armor);
-    }
-
-    @Override
-    protected List<ViewElement> getWeapons(boolean showDetail) {
-        return ReadoutUtils.getWeaponsNoHeat(protoMek, showDetail, formatting);
-    }
+    void addRow(String... item);
 }

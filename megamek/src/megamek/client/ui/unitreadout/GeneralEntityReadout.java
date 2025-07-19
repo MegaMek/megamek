@@ -43,7 +43,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -85,7 +84,7 @@ import static megamek.client.ui.unitreadout.TableElement.*;
  * The information is encoded in a series of classes that implement a common {@link ViewElement} interface, which can
  * format the element in any of the available output formats.
  */
-class GeneralEntityReadout2 implements EntityReadout {
+class GeneralEntityReadout implements EntityReadout {
 
     private final Entity entity;
     protected final boolean showDetail;
@@ -115,8 +114,8 @@ class GeneralEntityReadout2 implements EntityReadout {
      * @param ignorePilotBV    If true then the BV calculation is done without including the pilot BV modifiers
      * @param formatting       Which formatting style to use: HTML, Discord, or None (plaintext)
      */
-    protected GeneralEntityReadout2(Entity entity, boolean showDetail, boolean useAlternateCost,
-                                 boolean ignorePilotBV, ViewFormatting formatting) {
+    protected GeneralEntityReadout(Entity entity, boolean showDetail, boolean useAlternateCost,
+                                   boolean ignorePilotBV, ViewFormatting formatting) {
 
         this.entity = entity;
         this.formatting = formatting;
@@ -134,10 +133,13 @@ class GeneralEntityReadout2 implements EntityReadout {
         List<ViewElement> result = new ArrayList<>();
         result.add(new UnitName(entity.getShortNameRaw()));
         result.add(new PlainLine(EntityReadoutUnitType.unitTypeAsString(entity)));
+
         result.add(new PlainLine());
         result.add(createTechLevelElement());
         result.add(createDesignInvalidElement());
         result.addAll(createTechTable(entity, formatting));
+
+        result.add(new PlainLine());
         result.add(createWeightElement());
         result.add(createBVElement());
         result.add(createCostElement());
@@ -190,7 +192,7 @@ class GeneralEntityReadout2 implements EntityReadout {
 
             if (!activeUnitQuirksNames.isEmpty()) {
                 result.add(new PlainLine());
-                ItemList list = new ItemList(Messages.getString("MekView.Quirks"));
+                var list = new ItemList(Messages.getString("MekView.Quirks"));
                 activeUnitQuirksNames.forEach(list::addItem);
                 result.add(list);
             }
@@ -208,7 +210,7 @@ class GeneralEntityReadout2 implements EntityReadout {
             }
             if (!wpQuirksList.isEmpty()) {
                 result.add(new PlainLine());
-                ItemList list = new ItemList(Messages.getString("MekView.WeaponQuirks"));
+                var list = new ItemList(Messages.getString("MekView.WeaponQuirks"));
                 wpQuirksList.forEach(list::addItem);
                 result.add(list);
             }
@@ -250,7 +252,7 @@ class GeneralEntityReadout2 implements EntityReadout {
                 String label = entity.hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)
                       ? Messages.getString("MekView.InvalidButIllegalQuirk")
                       : Messages.getString("MekView.InvalidReasons");
-                ItemList errorList = new ItemList(label);
+                var errorList = new ItemList(label);
                 Arrays.stream(errorLines).forEach(errorList::addItem);
                 result.add(errorList);
             }
@@ -259,6 +261,7 @@ class GeneralEntityReadout2 implements EntityReadout {
     }
 
     protected ViewElement createDesignInvalidElement() {
+        // Note that this has apparently no effect outside of a game
         return entity.isDesignValid()
               ? new EmptyElement()
               : new PlainLine(Messages.getString("MekView.DesignInvalid"));
@@ -381,8 +384,11 @@ class GeneralEntityReadout2 implements EntityReadout {
         result.add(createEngineElement());
         result.addAll(createSystemsElements());
         result.addAll(createFuelElements());
-        result.add(new PlainLine());
-        result.addAll(createArmorElements());
+        List<ViewElement> armorElements = createArmorElements();
+        if (!armorElements.isEmpty()) {
+            result.add(new PlainLine());
+            result.addAll(armorElements);
+        }
         return result;
     }
 
@@ -408,6 +414,16 @@ class GeneralEntityReadout2 implements EntityReadout {
 
     protected List<ViewElement> createTechTable(Entity entity, ViewFormatting formatting) {
         List<ViewElement> result = new ArrayList<>();
+        result.add(new LabeledElement(ViewElement.textWithTooltip(
+              Messages.getString("MekView.TechRating"), Messages.getString("MekView.TechRating.tooltip"), formatting),
+              entity.getFullRatingName()));
+
+        result.add(new LabeledElement(ViewElement.textWithTooltip(
+              Messages.getString("MekView.EarliestTechDate"),
+              Messages.getString("MekView.EarliestTechDate.tooltip"),
+              formatting),
+              entity.getEarliestTechDateAndEra()));
+
         TableElement tpTable = new TableElement(3);
 
         String tableSpacer = ViewFormatting.HTML.equals(formatting) ? "&nbsp;&nbsp;&nbsp;&nbsp;" : "    ";
@@ -415,7 +431,6 @@ class GeneralEntityReadout2 implements EntityReadout {
                 Messages.getString("MekView.Era"));
         tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
 
-        // Add rows to the table
         tpTable.addRow(ViewElement.textWithTooltip(Messages.getString("MekView.Prototype"),
               Messages.getString("MekView.Prototype.tooltip"), formatting), tableSpacer,
               ViewElement.splitDateRange(entity.getPrototypeRangeDate(), formatting));
@@ -434,19 +449,9 @@ class GeneralEntityReadout2 implements EntityReadout {
                   tableSpacer,
                   extinctRange);
         }
-
+        result.add(new PlainLine());
         result.add(tpTable);
 
-        result.add(new LabeledElement(ViewElement.textWithTooltip(
-              Messages.getString("MekView.TechRating"), Messages.getString("MekView.TechRating.tooltip"), formatting),
-              entity.getFullRatingName()));
-
-        result.add(new PlainLine());
-        result.add(new LabeledElement(ViewElement.textWithTooltip(
-              Messages.getString("MekView.EarliestTechDate"),
-              Messages.getString("MekView.EarliestTechDate.tooltip"),
-              formatting),
-              entity.getEarliestTechDateAndEra()));
         return result;
     }
 
@@ -556,7 +561,7 @@ class GeneralEntityReadout2 implements EntityReadout {
         }
 
         TableElement wpnTable = new TableElement(4);
-        wpnTable.setColNames("Weapons  ", "  Loc  ", "  Heat  ", entity.isOmni() ? "  Omni  " : "");
+        wpnTable.setColNames("Weapons", "Loc", "Heat", entity.isOmni() ? "Omni" : "");
         wpnTable.setJustification(JUSTIFIED_LEFT, JUSTIFIED_CENTER, JUSTIFIED_CENTER, JUSTIFIED_CENTER);
         for (WeaponMounted mounted : entity.getWeaponList()) {
             if (mounted.getType().hasFlag(WeaponTypeFlag.INTERNAL_REPRESENTATION)) {
@@ -646,7 +651,7 @@ class GeneralEntityReadout2 implements EntityReadout {
         return retVal;
     }
 
-    String quirkMarker(Mounted<?> mounted) {
+    static String quirkMarker(Mounted<?> mounted) {
         return (mounted.countQuirks() > 0) ? " (Q)" : "";
     }
 
@@ -761,23 +766,17 @@ class GeneralEntityReadout2 implements EntityReadout {
 
         List<ViewElement> specialElements = createSpecialMiscElements();
         if (!specialElements.isEmpty()) {
-            result.add(new PlainLine());
             result.addAll(specialElements);
         }
 
         String transportersString = entity.getUnusedString(formatting);
         if (!transportersString.isBlank()) {
-            result.add(new PlainLine());
-            // Reformat the list to a table to keep the formatting similar between blocks
-            TableElement transportTable = new TableElement(1);
-            transportTable.setColNames(Messages.getString("MekView.CarryingCapacity"));
-            transportTable.setJustification(JUSTIFIED_LEFT);
+            var transportsList = new ItemList(Messages.getString("MekView.CarryingCapacity"));
             String separator = formatting == ViewFormatting.HTML ? "<br>" : "\n";
-            String[] transportersLines = transportersString.split(separator);
-            for (String line : transportersLines) {
-                transportTable.addRow(line);
-            }
-            result.add(transportTable);
+            Arrays.stream(transportersString.split(separator)).forEach(transportsList::addItem);
+
+            result.add(new PlainLine());
+            result.add(transportsList);
         }
 
         return result;
@@ -790,7 +789,7 @@ class GeneralEntityReadout2 implements EntityReadout {
     private ViewElement getFailed() {
         Iterator<String> eFailed = entity.getFailedEquipment();
         if (eFailed.hasNext()) {
-            ItemList list = new ItemList("The following equipment slots failed to load:");
+            var list = new ItemList("The following equipment slots failed to load:");
             while (eFailed.hasNext()) {
                 list.addItem(eFailed.next());
             }

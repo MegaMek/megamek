@@ -34,14 +34,25 @@ package megamek.client.ui.unitreadout;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.ViewFormatting;
+import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
+import megamek.common.ITechnology;
 import megamek.common.Mounted;
 import megamek.common.Tank;
+import megamek.common.WeaponType;
+import megamek.common.WeaponTypeFlag;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
+import java.util.ArrayList;
 import java.util.List;
 
-class TankReadout extends GeneralEntityReadout2 {
+import static megamek.client.ui.unitreadout.TableElement.JUSTIFIED_CENTER;
+import static megamek.client.ui.unitreadout.TableElement.JUSTIFIED_LEFT;
+
+class TankReadout extends GeneralEntityReadout {
 
     private final Tank tank;
 
@@ -121,5 +132,10 @@ class TankReadout extends GeneralEntityReadout2 {
     @Override
     protected List<ViewElement> createSpecialMiscElements() {
         return ReadoutUtils.createChassisModList(tank);
+    }
+
+    @Override
+    protected List<ViewElement> getWeapons(boolean showDetail) {
+        return ReadoutUtils.getWeaponsNoHeat(tank, showDetail, formatting);
     }
 }

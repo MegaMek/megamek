@@ -45,7 +45,7 @@ import megamek.common.equipment.ArmorType;
 import java.util.ArrayList;
 import java.util.List;
 
-class AeroReadout extends GeneralEntityReadout2 {
+class AeroReadout extends GeneralEntityReadout {
 
     private final Aero aero;
 
@@ -194,7 +194,9 @@ class AeroReadout extends GeneralEntityReadout2 {
     protected List<ViewElement> createMiscMovementElements() {
         List<ViewElement> result = new ArrayList<>();
         if (aero instanceof ConvFighter && aero.isVSTOL()) {
-            result.add(new PlainLine(Messages.getString("MekView.VSTOL")));
+            result.add(new LabeledElement(Messages.getString("MekView.TOL"), Messages.getString("MekView.VSTOL")));
+        } else if (aero instanceof ConvFighter && aero.isSTOL()) {
+            result.add(new LabeledElement(Messages.getString("MekView.TOL"), Messages.getString("MekView.STOL")));
         }
         return result;
     }
@@ -202,6 +204,8 @@ class AeroReadout extends GeneralEntityReadout2 {
     @Override
     protected List<ViewElement> createSpecialMiscElements() {
         List<ViewElement> result = new ArrayList<>();
+
+        // Crew
         if (aero instanceof SmallCraft || aero instanceof Jumpship) {
             TableElement crewTable = new TableElement(2);
             crewTable.setColNames(Messages.getString("MekView.Crew"), "");
@@ -225,7 +229,17 @@ class AeroReadout extends GeneralEntityReadout2 {
             result.add(crewTable);
         }
 
+        // Chassis Mods
         result.addAll(ReadoutUtils.createChassisModList(aero));
         return result;
+    }
+
+    @Override
+    protected String createMovementString() {
+        if ((aero instanceof Jumpship jumpship) && !aero.isWarShip() && jumpship.getStationKeepingThrust() > 0) {
+            return "%1.1f (Station-keeping)".formatted(jumpship.getStationKeepingThrust());
+        } else {
+            return super.createMovementString();
+        }
     }
 }

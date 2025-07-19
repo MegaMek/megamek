@@ -54,7 +54,7 @@ import java.util.StringJoiner;
 import static megamek.client.ui.unitreadout.TableElement.JUSTIFIED_CENTER;
 import static megamek.client.ui.unitreadout.TableElement.JUSTIFIED_LEFT;
 
-class BattleArmorReadout extends GeneralEntityReadout2 {
+class BattleArmorReadout extends GeneralEntityReadout {
 
     BattleArmor battleArmor;
 
@@ -98,7 +98,7 @@ class BattleArmorReadout extends GeneralEntityReadout2 {
 
         if (!battleArmor.getWeaponList().isEmpty()) {
             TableElement wpnTable = new TableElement(4);
-            wpnTable.setColNames("Weapons  ", "  Loc  ");
+            wpnTable.setColNames("Weapons", "Loc");
             wpnTable.setJustification(JUSTIFIED_LEFT, JUSTIFIED_CENTER, JUSTIFIED_CENTER);
             for (WeaponMounted mounted : battleArmor.getWeaponList()) {
                 if (mounted.getType().hasFlag(WeaponTypeFlag.INTERNAL_REPRESENTATION)) {

@@ -60,4 +60,14 @@ class GunEmplacementReadout extends TankReadout {
     protected ViewElement createEngineElement() {
         return new EmptyElement();
     }
+
+    @Override
+    protected ViewElement createWeightElement() {
+        return new EmptyElement();
+    }
+
+    @Override
+    protected ViewElement createCostElement() {
+        return new EmptyElement();
+    }
 }

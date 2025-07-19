@@ -41,7 +41,7 @@ import java.util.*;
  * for columns individually. Plain text output requires a monospace font to line up correctly. For HTML and discord
  * output the background color of an individual row can be set.
  */
-class TableElement implements ViewElement {
+class TableElement implements MultiRowViewElement {
 
     static final int JUSTIFIED_LEFT = 0;
     static final int JUSTIFIED_CENTER = 1;
@@ -75,7 +75,7 @@ class TableElement implements ViewElement {
               Math.min(justification.length, this.justification.length));
     }
 
-    void addRow(String... row) {
+    public void addRow(String... row) {
         data.add(row);
         for (int i = 0; i < row.length; i++) {
             colWidth.merge(i, row[i].length(), Math::max);

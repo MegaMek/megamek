@@ -39,25 +39,29 @@ import megamek.common.annotations.Nullable;
 
 /**
  * The Entity information shown in the unit selector and many other places in MM, MML and MHQ.
+ * <p>The information is encoded in a series of classes that implement a common {@link ViewElement} interface, which
+ * can format the element in any of the available output formats.
  *
  * <p>
  * Goals for the Entity Readout:
  * <UL>
- * <LI> It is not bound to official source formatting such as TROs
- * <LI> Should be adaptable to various output formats, currently HTML, plain text and discord
- * <LI> Should show information sufficient to recreate the unit in MML - while undamaged - or fill in a record sheet
- * (omitting elements that are invariable like conversion equipment or directly set by the rules like engine slots)
- * <LI> Should highlight damaged and destroyed items and critical hits as well as current values (movement)
- * <LI> Should show current ammo values
+ * <LI> Should be adaptable to various output formats, currently HTML, plain text and discord, ideally on-the-fly
+ * rather than fixed at construction</LI>
+ * <LI> Should show information sufficient to recreate the unit in MML (while undamaged)</LI>
+ * <LI> Should highlight damaged and destroyed items and critical hits as well as current values (movement)</LI>
+ * <LI> Should show current ammo values</LI>
  * <LI> Need not show construction details without gameplay effects such as the maximum armor the unit type could carry
- * or the slot number on a mek
- * <LI> Need not show original values for damaged items unless those are relevant for gameplay
- * <LI> Should be organized into blocks that can be retrieved individually if necessary
+ * or the slot number of an item on a mek</LI>
+ * <LI> Should show derived stats when they are difficult or tedious to get (total armor, cost, BV etc.)</LI>
+ * <LI> Need not show original values for damaged items unless those are relevant for gameplay</LI>
+ * <LI> Should be organized into blocks that can be retrieved individually if necessary</LI>
  * </UL>
- *
- * <p>
- * The information is encoded in a series of classes that implement a common {@link ViewElement} interface, which can
- * format the element in any of the available output formats.
+ * To-Dos:
+ * <UL>
+ * <LI> Heat sink locations are not displayed</LI>
+ * <LI> Output formatting is given at construction time, although most elements can output for any formatting on
+ * the fly. This should be changed to always take a formatting parameter when obtaining the readout result.</LI>
+ * </UL>
  */
 public interface EntityReadout {
 
@@ -130,7 +134,7 @@ public interface EntityReadout {
         } else if (entity instanceof Tank tank) {
             return new TankReadout(tank, showDetail, useAlternateCost, ignorePilotBV, formatting);
         } else {
-            return new GeneralEntityReadout2(entity, showDetail, useAlternateCost, ignorePilotBV, formatting);
+            return new GeneralEntityReadout(entity, showDetail, useAlternateCost, ignorePilotBV, formatting);
         }
     }
 
@@ -170,21 +174,24 @@ public interface EntityReadout {
     String getFluffSection();
 
     /**
-     * @return A summary including all four sections.
+     * @return The formatted readout with all sections (including fluff texts, if present), using HTML output
+     * formatting.
      */
     default String getReadout() {
         return getReadout(null);
     }
 
     /**
-     * @return A summary including all sections, using the given font if applicable.
+     * @return The formatted readout with all sections (including fluff texts, if present), using the given font if
+     *       applicable.
      */
     default String getReadout(@Nullable String fontName) {
         return getReadout(fontName, ViewFormatting.HTML);
     }
 
     /**
-     * @return A summary including all four sections.
+     * @return The formatted readout with all sections (including fluff texts, if present), using the given font if
+     *       applicable and using the given output formatting.
      */
     String getReadout(@Nullable String fontName, ViewFormatting formatting);
 }

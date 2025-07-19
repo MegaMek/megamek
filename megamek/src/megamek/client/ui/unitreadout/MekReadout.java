@@ -29,7 +29,7 @@ import megamek.common.QuadVee;
 import java.util.ArrayList;
 import java.util.List;
 
-class MekReadout extends GeneralEntityReadout2 {
+class MekReadout extends GeneralEntityReadout {
 
     private final Mek mek;
 

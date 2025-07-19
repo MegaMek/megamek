@@ -469,17 +469,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             desc.append(")");
         }
         if (getEntity() instanceof BattleArmor) {
-            if (getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY) {
-                desc.append(" (Body)");
-            }
-            if (getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
-                desc.append(" (Left arm)");
-            }
-            if (getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
-                desc.append(" (Right arm)");
-            }
-            if (getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {
-                desc.append(" (Turret)");
+            if ((getBaMountLoc() >= BattleArmor.MOUNT_LOC_BODY) && (getBaMountLoc() <= BattleArmor.MOUNT_LOC_TURRET)) {
+                desc.append(" (%s)".formatted(BattleArmor.getBaMountLocAbbr(getBaMountLoc())));
             }
             if (isDWPMounted()) {
                 desc.append(" (DWP)");

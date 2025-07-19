@@ -44,7 +44,6 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.verifier.TestInfantry;
-import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * The Entity information shown in the unit selector and many other places in MM, MML and MHQ.

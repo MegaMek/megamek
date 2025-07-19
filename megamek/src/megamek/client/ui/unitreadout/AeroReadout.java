@@ -123,6 +123,7 @@ class AeroReadout extends GeneralEntityReadout2 {
                 }
                 locTable.addRow(row);
             }
+            retVal.add(new PlainLine());
             retVal.add(locTable);
         }
 
@@ -199,8 +200,8 @@ class AeroReadout extends GeneralEntityReadout2 {
     }
 
     @Override
-    protected List<ViewElement> getMisc() {
-        List<ViewElement> result = super.getMisc();
+    protected List<ViewElement> createSpecialMiscElements() {
+        List<ViewElement> result = new ArrayList<>();
         if (aero instanceof SmallCraft || aero instanceof Jumpship) {
             TableElement crewTable = new TableElement(2);
             crewTable.setColNames(Messages.getString("MekView.Crew"), "");
@@ -223,6 +224,8 @@ class AeroReadout extends GeneralEntityReadout2 {
             result.add(new PlainLine());
             result.add(crewTable);
         }
+
+        result.addAll(ReadoutUtils.createChassisModList(aero));
         return result;
     }
 }

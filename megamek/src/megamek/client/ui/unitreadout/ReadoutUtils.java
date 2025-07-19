@@ -32,32 +32,36 @@
  */
 package megamek.client.ui.unitreadout;
 
-import megamek.client.ui.util.ViewFormatting;
-import megamek.common.GunEmplacement;
+import megamek.common.Entity;
+import megamek.common.MiscType;
+import megamek.common.equipment.MiscMounted;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class GunEmplacementReadout extends TankReadout {
+/**
+ * This class contains some readout modules that are used by Entity types that are not in the same hierarchy (e.g.
+ * support vehicles that can be Aero and Tank) but still have only limited use.
+ */
+final class ReadoutUtils {
 
-    protected GunEmplacementReadout(GunEmplacement gunEmplacement, boolean showDetail, boolean useAlternateCost,
-          boolean ignorePilotBV, ViewFormatting formatting) {
+    static List<ViewElement> createChassisModList(Entity entity) {
 
-        super(gunEmplacement, showDetail, useAlternateCost, ignorePilotBV, formatting);
+        List<MiscMounted> chassisMods = entity.getMisc().stream()
+              .filter(m -> m.getType().hasFlag(MiscType.F_CHASSIS_MODIFICATION))
+              .toList();
+
+        if (chassisMods.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            List<ViewElement> result = new ArrayList<>();
+            ItemList list = new ItemList("Chassis Modifications");
+            chassisMods.forEach(mod -> list.addItem(mod.getShortName()));
+            result.add(list);
+            return result;
+        }
     }
 
-    @Override
-    protected List<ViewElement> createArmorElements() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    protected List<ViewElement> createMovementElements() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    protected ViewElement createEngineElement() {
-        return new EmptyElement();
-    }
+    private ReadoutUtils() { }
 }

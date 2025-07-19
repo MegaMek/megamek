@@ -41,9 +41,6 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 
 import java.util.List;
 
-import static megamek.client.ui.unitreadout.TableElement.JUSTIFIED_CENTER;
-import static megamek.client.ui.unitreadout.TableElement.JUSTIFIED_LEFT;
-
 class TankReadout extends GeneralEntityReadout2 {
 
     private final Tank tank;
@@ -119,5 +116,10 @@ class TankReadout extends GeneralEntityReadout2 {
             }
         }
         return ammoTable;
+    }
+
+    @Override
+    protected List<ViewElement> createSpecialMiscElements() {
+        return ReadoutUtils.createChassisModList(tank);
     }
 }

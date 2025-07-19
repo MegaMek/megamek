@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -142,6 +143,118 @@ class GeneralEntityReadout2 implements EntityReadout {
         result.add(createCostElement());
         result.add(createSourceElement());
         result.add(createRoleElement());
+        return result;
+    }
+
+    protected List<ViewElement> createLoadoutBlock() {
+        List<ViewElement> result = new ArrayList<>();
+
+        List<ViewElement> weapons = getWeapons(showDetail);
+        if (!weapons.isEmpty()) {
+            result.add(new PlainLine());
+            result.addAll(weapons);
+        }
+
+        if (showAmmoBlock(showDetail)) {
+            result.add(new PlainLine());
+            result.add(getAmmo());
+        }
+
+        if (entity instanceof IBomber) {
+            List<ViewElement> bombs = getBombs();
+            if (!bombs.isEmpty()) {
+                result.add(new PlainLine());
+                result.addAll(bombs);
+            }
+        }
+
+        result.addAll(getMisc()); // legacy comment: has to occur before basic is processed
+
+        ViewElement failedEquipment = getFailed();
+        if (!(failedEquipment instanceof EmptyElement)) {
+            result.add(new PlainLine());
+            result.add(failedEquipment);
+        }
+
+        return result;
+    }
+
+    protected List<ViewElement> createQuirksBlock() {
+        List<ViewElement> result = new ArrayList<>();
+        Game game = entity.getGame();
+
+        if ((game == null) || game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+            List<String> activeUnitQuirksNames = entity.getQuirks().activeQuirks().stream()
+                  .map(IOption::getDisplayableNameWithValue)
+                  .toList();
+
+            if (!activeUnitQuirksNames.isEmpty()) {
+                result.add(new PlainLine());
+                ItemList list = new ItemList(Messages.getString("MekView.Quirks"));
+                activeUnitQuirksNames.forEach(list::addItem);
+                result.add(list);
+            }
+
+            List<String> wpQuirksList = new ArrayList<>();
+            for (Mounted<?> weapon : entity.getWeaponList()) {
+                List<String> activeWeaponQuirksNames = weapon.getQuirks().activeQuirks().stream()
+                      .map(IOption::getDisplayableNameWithValue)
+                      .collect(Collectors.toList());
+                if (!activeWeaponQuirksNames.isEmpty()) {
+                    String wq = weapon.getDesc() + " (" + entity.getLocationAbbr(weapon.getLocation()) + "): ";
+                    wq += String.join(", ", activeWeaponQuirksNames);
+                    wpQuirksList.add(wq);
+                }
+            }
+            if (!wpQuirksList.isEmpty()) {
+                result.add(new PlainLine());
+                ItemList list = new ItemList(Messages.getString("MekView.WeaponQuirks"));
+                wpQuirksList.forEach(list::addItem);
+                result.add(list);
+            }
+        }
+        return result;
+    }
+
+    protected List<ViewElement> createFluffBlock() {
+        List<ViewElement> result = new ArrayList<>();
+        if (!entity.getFluff().getOverview().isEmpty()) {
+            result.add(new PlainLine());
+            result.add(new LabeledElement("Overview", entity.getFluff().getOverview()));
+        }
+        if (!entity.getFluff().getCapabilities().isEmpty()) {
+            result.add(new PlainLine());
+            result.add(new LabeledElement("Capabilities", entity.getFluff().getCapabilities()));
+        }
+        if (!entity.getFluff().getDeployment().isEmpty()) {
+            result.add(new PlainLine());
+            result.add(new LabeledElement("Deployment", entity.getFluff().getDeployment()));
+        }
+        if (!entity.getFluff().getHistory().isEmpty()) {
+            result.add(new PlainLine());
+            result.add(new LabeledElement("History", entity.getFluff().getHistory()));
+        }
+        return result;
+    }
+
+    protected List<ViewElement> createInvalidBlock() {
+        List<ViewElement> result = new ArrayList<>();
+        StringBuffer sb = new StringBuffer();
+        TestEntity testEntity = TestEntity.getEntityVerifier(entity);
+
+        if (testEntity != null) {
+            testEntity.correctEntity(sb);
+            if (!sb.isEmpty()) {
+                result.add(new PlainLine());
+                String[] errorLines = sb.toString().split("\n");
+                String label = entity.hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)
+                      ? Messages.getString("MekView.InvalidButIllegalQuirk")
+                      : Messages.getString("MekView.InvalidReasons");
+                ItemList errorList = new ItemList(label);
+                Arrays.stream(errorLines).forEach(errorList::addItem);
+                result.add(errorList);
+            }
+        }
         return result;
     }
 
@@ -264,24 +377,13 @@ class GeneralEntityReadout2 implements EntityReadout {
     }
 
     protected List<ViewElement> createBasicBlock() {
-        List<ViewElement> result = new ArrayList<>();
-        result.addAll(createMovementElements());
+        List<ViewElement> result = new ArrayList<>(createMovementElements());
         result.add(createEngineElement());
-        result.add(createBARElement());
         result.addAll(createSystemsElements());
         result.addAll(createFuelElements());
         result.add(new PlainLine());
         result.addAll(createArmorElements());
         return result;
-    }
-
-    protected ViewElement createBARElement() {
-        if (!entity.hasPatchworkArmor() && entity.hasBARArmor(1)) {
-            return new LabeledElement(Messages.getString("MekView.BARRating"),
-                  String.valueOf(entity.getBARRating(0)));
-        } else {
-            return new EmptyElement();
-        }
     }
 
     protected ViewElement createEngineElement() {
@@ -302,118 +404,6 @@ class GeneralEntityReadout2 implements EntityReadout {
 
     protected List<ViewElement> createFuelElements() {
         return Collections.emptyList();
-    }
-
-    protected List<ViewElement> createLoadoutBlock() {
-        List<ViewElement> result = new ArrayList<>();
-
-        List<ViewElement> weapons = getWeapons(showDetail);
-        if (!weapons.isEmpty()) {
-            result.add(new PlainLine());
-            result.addAll(weapons);
-        }
-
-        if (showAmmoBlock(showDetail)) {
-            result.add(new PlainLine());
-            result.add(getAmmo());
-        }
-
-        if (entity instanceof IBomber) {
-            List<ViewElement> bombs = getBombs();
-            if (!bombs.isEmpty()) {
-                result.add(new PlainLine());
-                result.addAll(bombs);
-            }
-        }
-
-        result.addAll(getMisc()); // legacy comment: has to occur before basic is processed
-
-        ViewElement failedEquipment = getFailed();
-        if (!(failedEquipment instanceof EmptyElement)) {
-            result.add(new PlainLine());
-            result.add(failedEquipment);
-        }
-
-        return result;
-    }
-
-    protected List<ViewElement> createQuirksBlock() {
-        List<ViewElement> result = new ArrayList<>();
-        Game game = entity.getGame();
-
-        if ((game == null) || game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            List<String> activeUnitQuirksNames = entity.getQuirks().activeQuirks().stream()
-                  .map(IOption::getDisplayableNameWithValue)
-                  .toList();
-
-            if (!activeUnitQuirksNames.isEmpty()) {
-                result.add(new PlainLine());
-                ItemList list = new ItemList(Messages.getString("MekView.Quirks"));
-                activeUnitQuirksNames.forEach(list::addItem);
-                result.add(list);
-            }
-
-            List<String> wpQuirksList = new ArrayList<>();
-            for (Mounted<?> weapon : entity.getWeaponList()) {
-                List<String> activeWeaponQuirksNames = weapon.getQuirks().activeQuirks().stream()
-                      .map(IOption::getDisplayableNameWithValue)
-                      .collect(Collectors.toList());
-                if (!activeWeaponQuirksNames.isEmpty()) {
-                    String wq = weapon.getDesc() + " (" + entity.getLocationAbbr(weapon.getLocation()) + "): ";
-                    wq += String.join(", ", activeWeaponQuirksNames);
-                    wpQuirksList.add(wq);
-                }
-            }
-            if (!wpQuirksList.isEmpty()) {
-                result.add(new PlainLine());
-                ItemList list = new ItemList(Messages.getString("MekView.WeaponQuirks"));
-                wpQuirksList.forEach(list::addItem);
-                result.add(list);
-            }
-        }
-        return result;
-    }
-
-    protected List<ViewElement> createFluffBlock() {
-        List<ViewElement> result = new ArrayList<>();
-        if (!entity.getFluff().getOverview().isEmpty()) {
-            result.add(new PlainLine());
-            result.add(new LabeledElement("Overview", entity.getFluff().getOverview()));
-        }
-        if (!entity.getFluff().getCapabilities().isEmpty()) {
-            result.add(new PlainLine());
-            result.add(new LabeledElement("Capabilities", entity.getFluff().getCapabilities()));
-        }
-        if (!entity.getFluff().getDeployment().isEmpty()) {
-            result.add(new PlainLine());
-            result.add(new LabeledElement("Deployment", entity.getFluff().getDeployment()));
-        }
-        if (!entity.getFluff().getHistory().isEmpty()) {
-            result.add(new PlainLine());
-            result.add(new LabeledElement("History", entity.getFluff().getHistory()));
-        }
-        return result;
-    }
-
-    protected List<ViewElement> createInvalidBlock() {
-        List<ViewElement> result = new ArrayList<>();
-        StringBuffer sb = new StringBuffer();
-        TestEntity testEntity = TestEntity.getEntityVerifier(entity);
-
-        if (testEntity != null) {
-            testEntity.correctEntity(sb);
-            if (!sb.isEmpty()) {
-                result.add(new PlainLine());
-                String[] errorLines = sb.toString().split("\n");
-                String label = entity.hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)
-                      ? Messages.getString("MekView.InvalidButIllegalQuirk")
-                      : Messages.getString("MekView.InvalidReasons");
-                ItemList errorList = new ItemList(label);
-                Arrays.stream(errorLines).forEach(errorList::addItem);
-                result.add(errorList);
-            }
-        }
-        return result;
     }
 
     protected List<ViewElement> createTechTable(Entity entity, ViewFormatting formatting) {
@@ -567,8 +557,7 @@ class GeneralEntityReadout2 implements EntityReadout {
 
         TableElement wpnTable = new TableElement(4);
         wpnTable.setColNames("Weapons  ", "  Loc  ", "  Heat  ", entity.isOmni() ? "  Omni  " : "");
-        wpnTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
-                TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_CENTER);
+        wpnTable.setJustification(JUSTIFIED_LEFT, JUSTIFIED_CENTER, JUSTIFIED_CENTER, JUSTIFIED_CENTER);
         for (WeaponMounted mounted : entity.getWeaponList()) {
             if (mounted.getType().hasFlag(WeaponTypeFlag.INTERNAL_REPRESENTATION)) {
                 continue;
@@ -577,20 +566,12 @@ class GeneralEntityReadout2 implements EntityReadout {
                     entity.joinLocationAbbr(mounted.allLocations(), 3), "", "" };
             WeaponType wtype = mounted.getType();
 
-            if (entity.isClan()
-                    && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
+            if (entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
                 row[0] += Messages.getString("MekView.IS");
             }
-            if (!entity.isClan()
-                    && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
+            if (!entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
                 row[0] += Messages.getString("MekView.Clan");
             }
-            /*
-             * TODO: this should probably go in the ammo table somewhere if
-             * (wtype.hasFlag(WeaponType.F_ONESHOT)) { sWeapons.append(" [")
-             * .append(mounted.getLinked().getDesc()).append("]");
-             * }
-             */
 
             int heat = wtype.getHeat();
             int bWeapDamaged = 0;
@@ -627,12 +608,10 @@ class GeneralEntityReadout2 implements EntityReadout {
                 for (WeaponMounted m : mounted.getBayWeapons()) {
                     row = new String[] { m.getDesc(), "", "", "" };
 
-                    if (entity.isClan()
-                            && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
+                    if (entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
                         row[0] += Messages.getString("MekView.IS");
                     }
-                    if (!entity.isClan()
-                            && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
+                    if (!entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
                         row[0] += Messages.getString("MekView.Clan");
                     }
                     if (m.isDestroyed()) {
@@ -647,8 +626,7 @@ class GeneralEntityReadout2 implements EntityReadout {
                 }
                 for (AmmoMounted m : mounted.getBayAmmo()) {
                     // Ignore ammo for one-shot launchers
-                    if ((m.getLinkedBy() != null)
-                            && m.getLinkedBy().isOneShot()) {
+                    if ((m.getLinkedBy() != null) && m.getLinkedBy().isOneShot()) {
                         continue;
                     }
                     if (mounted.getLocation() != Entity.LOC_NONE) {
@@ -668,7 +646,7 @@ class GeneralEntityReadout2 implements EntityReadout {
         return retVal;
     }
 
-    private String quirkMarker(Mounted<?> mounted) {
+    String quirkMarker(Mounted<?> mounted) {
         return (mounted.countQuirks() > 0) ? " (Q)" : "";
     }
 
@@ -708,36 +686,27 @@ class GeneralEntityReadout2 implements EntityReadout {
     private List<ViewElement> getBombs() {
         List<ViewElement> result = new ArrayList<>();
         IBomber bomber = (IBomber) entity;
-        BombLoadout intChoices = bomber.getIntBombChoices();
+        result.addAll(getBombLoadoutBombs(bomber.getIntBombChoices(), " [Int. Bay]"));
+        result.addAll(getBombLoadoutBombs(bomber.getExtBombChoices(), ""));
+        return result;
+    }
 
-        // Get internal bomb choices
-        for (Map.Entry<BombTypeEnum, Integer> entry : intChoices.entrySet()) {
+    protected List<ViewElement> getBombLoadoutBombs(BombLoadout loadout, String marker) {
+        List<ViewElement> result = new ArrayList<>();
+        for (Map.Entry<BombTypeEnum, Integer> entry : loadout.entrySet()) {
             BombTypeEnum bombType = entry.getKey();
             int count = entry.getValue();
             if (count > 0) {
-                result.add(new PlainLine(bombType.getDisplayName() + " (" + count + ") [Int. Bay]"));
-            }
-        }
-
-        // Get external bomb choices
-        BombLoadout extChoices = bomber.getExtBombChoices();
-        for (Map.Entry<BombTypeEnum, Integer> entry : extChoices.entrySet()) {
-            BombTypeEnum bombType = entry.getKey();
-            int count = entry.getValue();
-            if (count > 0) {
-                result.add(new PlainLine(bombType.getDisplayName() + " (" + count + ")"));
+                result.add(new PlainLine(bombType.getDisplayName() + " (" + count + ")" + marker));
             }
         }
         return result;
     }
 
-    protected List<ViewElement> getMisc() {
-        List<ViewElement> result = new ArrayList<>();
-
+    protected TableElement createMiscTable() {
         TableElement miscTable = new TableElement(3);
         miscTable.setColNames("Equipment", entity.isConventionalInfantry() ? "" : "Loc", entity.isOmni() ? "Omni" : "");
         miscTable.setJustification(JUSTIFIED_LEFT, JUSTIFIED_CENTER, JUSTIFIED_CENTER);
-        int nEquip = 0;
         for (Mounted<?> mounted : entity.getMisc()) {
             String name = mounted.getName();
             if ((((mounted.getLocation() == Entity.LOC_NONE)
@@ -748,11 +717,11 @@ class GeneralEntityReadout2 implements EntityReadout {
                   || (name.contains("Heat Sink") && !name.contains("Radical"))
                   || EquipmentType.isArmorType(mounted.getType())
                   || EquipmentType.isStructureType(mounted.getType())
+                  || mounted.getType().hasFlag(MiscType.F_CHASSIS_MODIFICATION)
                   || mounted.getType().hasFlag(MiscType.F_ARMOR_KIT)) {
                 // These items are displayed elsewhere, so skip them here.
                 continue;
             }
-            nEquip++;
 
             String[] row = { mounted.getDesc(), entity.joinLocationAbbr(mounted.allLocations(), 3), "" };
             if (entity.isConventionalInfantry()) {
@@ -778,10 +747,22 @@ class GeneralEntityReadout2 implements EntityReadout {
                 miscTable.addRow(row);
             }
         }
+        return miscTable;
+    }
 
-        if (nEquip > 0) {
+    protected List<ViewElement> getMisc() {
+        List<ViewElement> result = new ArrayList<>();
+
+        TableElement miscTable = createMiscTable();
+        if (!miscTable.isEmpty()) {
             result.add(new PlainLine());
             result.add(miscTable);
+        }
+
+        List<ViewElement> specialElements = createSpecialMiscElements();
+        if (!specialElements.isEmpty()) {
+            result.add(new PlainLine());
+            result.addAll(specialElements);
         }
 
         String transportersString = entity.getUnusedString(formatting);
@@ -800,6 +781,10 @@ class GeneralEntityReadout2 implements EntityReadout {
         }
 
         return result;
+    }
+
+    protected List<ViewElement> createSpecialMiscElements() {
+        return Collections.emptyList();
     }
 
     private ViewElement getFailed() {

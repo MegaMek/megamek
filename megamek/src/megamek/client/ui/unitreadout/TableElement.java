@@ -118,6 +118,10 @@ class TableElement implements ViewElement {
         }
     }
 
+    public boolean isEmpty() {
+        return data.isEmpty();
+    }
+
     @Override
     public String toPlainText() {
         final String COL_PADDING = "  ";

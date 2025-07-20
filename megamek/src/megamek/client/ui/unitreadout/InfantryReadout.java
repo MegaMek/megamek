@@ -179,7 +179,7 @@ class InfantryReadout extends GeneralEntityReadout {
     protected List<ViewElement> getWeapons(boolean showDetail) {
         List<ViewElement> result = new ArrayList<>();
         result.add(new LabeledElement(Messages.getString("MekView.PrimaryWeapon"),
-              (null != infantry.getPrimaryWeapon()) ? infantry.getPrimaryWeapon().getDesc() : messageNone));
+              (null != infantry.getPrimaryWeapon()) ? infantry.getPrimaryWeapon().getDesc() : MESSAGE_NONE));
         result.add(new LabeledElement(Messages.getString("MekView.SecondWeapon"),
               secondaryCIWeaponDescriptor()));
         result.add(new LabeledElement(Messages.getString("MekView.DmgPerTrooper"),
@@ -214,7 +214,7 @@ class InfantryReadout extends GeneralEntityReadout {
         if (infantry.getSecondaryWeapon() != null) {
             return "%s (%d per Squad)".formatted(infantry.getSecondaryWeapon().getDesc(), infantry.getSecondaryWeaponsPerSquad());
         } else {
-            return messageNone;
+            return MESSAGE_NONE;
         }
     }
 

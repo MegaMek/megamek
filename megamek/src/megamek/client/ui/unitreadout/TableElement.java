@@ -153,15 +153,18 @@ class TableElement implements MultiRowViewElement {
     @Override
     public String toHTML() {
         StringBuilder sb = new StringBuilder("<table cellspacing=\"0\" cellpadding=\"2\" border=\"0\">");
+        String headerTag = "TH";
+        String dataTag = "TD";
         if (colNames.length > 0) {
             sb.append("<tr>");
             for (int col = 0; col < colNames.length; col++) {
+                sb.append("<").append(headerTag);
                 if (justification[col] == JUSTIFIED_RIGHT) {
-                    sb.append("<th align=\"right\">");
+                    sb.append(" align=\"right\">");
                 } else if (justification[col] == JUSTIFIED_CENTER) {
-                    sb.append("<th align=\"center\">");
+                    sb.append(" align=\"center\">");
                 } else {
-                    sb.append("<th align=\"left\">");
+                    sb.append(" align=\"left\">");
                 }
                 if (justification[col] != JUSTIFIED_LEFT) {
                     sb.append("&nbsp;&nbsp;");
@@ -170,7 +173,7 @@ class TableElement implements MultiRowViewElement {
                 if (justification[col] != JUSTIFIED_RIGHT) {
                     sb.append("&nbsp;&nbsp;");
                 }
-                sb.append("</th>");
+                sb.append("</%s>".formatted(headerTag));
             }
             sb.append("</tr>\n");
         }
@@ -182,12 +185,13 @@ class TableElement implements MultiRowViewElement {
             }
             final String[] row = data.get(r);
             for (int col = 0; col < row.length; col++) {
+                sb.append("<").append(dataTag);
                 if (justification[col] == JUSTIFIED_RIGHT) {
-                    sb.append("<td align=\"right\">");
+                    sb.append(" align=\"right\">");
                 } else if (justification[col] == JUSTIFIED_CENTER) {
-                    sb.append("<td align=\"center\">");
+                    sb.append(" align=\"center\">");
                 } else {
-                    sb.append("<td align=\"left\">");
+                    sb.append(" align=\"left\">");
                 }
                 if (justification[col] != JUSTIFIED_LEFT) {
                     sb.append("&nbsp;&nbsp;");
@@ -196,7 +200,7 @@ class TableElement implements MultiRowViewElement {
                 if (justification[col] != JUSTIFIED_RIGHT) {
                     sb.append("&nbsp;&nbsp;");
                 }
-                sb.append("</td>");
+                sb.append("</%s>".formatted(dataTag));
             }
             sb.append("</tr>\n");
         }

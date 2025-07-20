@@ -38,8 +38,8 @@ import megamek.client.ui.util.DiscordFormat;
  * Basic one-line entry consisting of a label, a colon, and a value. In html and discord the label is bold.
  */
 class LabeledElement implements ViewElement {
-    private final String label;
-    private final String value;
+    protected final String label;
+    protected final String value;
 
     LabeledElement(String label, String value) {
         this.label = label;
@@ -53,9 +53,7 @@ class LabeledElement implements ViewElement {
 
     @Override
     public String toHTML() {
-        String lineFormat = "%s: <B>%s</B><BR>";
-//        String lineFormat = "<B>%s</B>: %s<BR>";
-        return lineFormat.formatted(label, value);
+        return "%s: <B>%s</B><BR>".formatted(label, value);
     }
 
     @Override

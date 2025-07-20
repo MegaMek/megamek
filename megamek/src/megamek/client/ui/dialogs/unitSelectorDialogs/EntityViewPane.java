@@ -49,7 +49,7 @@ import megamek.common.templates.TROView;
  */
 public class EntityViewPane extends AbstractTabbedPane {
     private final ConfigurableMekViewPanel summaryPanel = new ConfigurableMekViewPanel();
-    private final MekViewPanel troPanel = new MekViewPanel();
+    private final EntityReadoutPanel troPanel = new EntityReadoutPanel();
     private final ConfigurableASCardPanel cardPanel = new ConfigurableASCardPanel(getFrame());
     private final AvailabilityPanel factionPanel = new AvailabilityPanel(getFrame());
 
@@ -100,7 +100,7 @@ public class EntityViewPane extends AbstractTabbedPane {
             troPanel.reset();
             factionPanel.reset();
         } else {
-            troPanel.setMek(entity, TROView.createView(entity, ViewFormatting.HTML));
+            troPanel.showEntity(entity, TROView.createView(entity, ViewFormatting.HTML));
             factionPanel.setUnit(entity.getModel(), entity.getChassis());
         }
 

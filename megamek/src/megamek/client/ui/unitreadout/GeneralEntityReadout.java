@@ -54,6 +54,7 @@ import megamek.common.BombType.BombTypeEnum;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
@@ -86,23 +87,21 @@ import static megamek.client.ui.unitreadout.TableElement.*;
  */
 class GeneralEntityReadout implements EntityReadout {
 
+    protected static final String MESSAGE_NONE = Messages.getString("MekView.None");
+
     private final Entity entity;
     protected final boolean showDetail;
     protected final boolean useAlternateCost;
     protected final boolean ignorePilotBV;
+    protected final ViewFormatting formatting;
 
+    private final DecimalFormat dFormatter;
     private final List<ViewElement> sHead = new ArrayList<>();
     private final List<ViewElement> sBasic = new ArrayList<>();
     private final List<ViewElement> sLoadout = new ArrayList<>();
     private final List<ViewElement> sFluff = new ArrayList<>();
     private final List<ViewElement> sQuirks = new ArrayList<>();
     private final List<ViewElement> sInvalid = new ArrayList<>();
-
-    protected final ViewFormatting formatting;
-
-    protected final String messageNone = Messages.getString("MekView.None");
-
-    DecimalFormat dFormatter;
 
     /**
      * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
@@ -222,19 +221,19 @@ class GeneralEntityReadout implements EntityReadout {
         List<ViewElement> result = new ArrayList<>();
         if (!entity.getFluff().getOverview().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new LabeledElement("Overview", entity.getFluff().getOverview()));
+            result.add(new FluffTextElement("Overview", entity.getFluff().getOverview()));
         }
         if (!entity.getFluff().getCapabilities().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new LabeledElement("Capabilities", entity.getFluff().getCapabilities()));
+            result.add(new FluffTextElement("Capabilities", entity.getFluff().getCapabilities()));
         }
         if (!entity.getFluff().getDeployment().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new LabeledElement("Deployment", entity.getFluff().getDeployment()));
+            result.add(new FluffTextElement("Deployment", entity.getFluff().getDeployment()));
         }
         if (!entity.getFluff().getHistory().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new LabeledElement("History", entity.getFluff().getHistory()));
+            result.add(new FluffTextElement("History", entity.getFluff().getHistory()));
         }
         return result;
     }
@@ -319,7 +318,6 @@ class GeneralEntityReadout implements EntityReadout {
         entity.setConversionMode(0);
 
         result.add(new PlainLine());
-        // TODO : Show STOL
         result.add(new LabeledElement(Messages.getString("MekView.Movement"), createMovementString()));
         result.addAll(createMiscMovementElements());
         result.addAll(createConversionModeMovementElements());
@@ -611,7 +609,7 @@ class GeneralEntityReadout implements EntityReadout {
             // if this is a weapon bay, then cycle through weapons and ammo
             if ((wtype instanceof BayWeapon) && showDetail) {
                 for (WeaponMounted m : mounted.getBayWeapons()) {
-                    row = new String[] { m.getDesc(), "", "", "" };
+                    row = new String[] { "- " + m.getDesc(), "", "", "" };
 
                     if (entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
                         row[0] += Messages.getString("MekView.IS");
@@ -635,7 +633,7 @@ class GeneralEntityReadout implements EntityReadout {
                         continue;
                     }
                     if (mounted.getLocation() != Entity.LOC_NONE) {
-                        row = new String[] { m.getName(), String.valueOf(m.getBaseShotsLeft()), "", "" };
+                        row = new String[] { "- " + m.getName(), String.valueOf(m.getBaseShotsLeft()), "", "" };
                         if (m.isDestroyed()) {
                             wpnTable.addRowWithColor("red", row);
                         } else if (m.getUsableShotsLeft() < 1) {
@@ -712,19 +710,8 @@ class GeneralEntityReadout implements EntityReadout {
         TableElement miscTable = new TableElement(3);
         miscTable.setColNames("Equipment", entity.isConventionalInfantry() ? "" : "Loc", entity.isOmni() ? "Omni" : "");
         miscTable.setJustification(JUSTIFIED_LEFT, JUSTIFIED_CENTER, JUSTIFIED_CENTER);
-        for (Mounted<?> mounted : entity.getMisc()) {
-            String name = mounted.getName();
-            if ((((mounted.getLocation() == Entity.LOC_NONE)
-                  // Meks can have zero-slot equipment in LOC_NONE that needs to be shown.
-                  && (!(entity instanceof Mek) || mounted.getCriticals() > 0)))
-                  || name.contains("Jump Jet")
-                  || (name.contains("CASE") && !name.contains("II") && entity.isClan())
-                  || (name.contains("Heat Sink") && !name.contains("Radical"))
-                  || EquipmentType.isArmorType(mounted.getType())
-                  || EquipmentType.isStructureType(mounted.getType())
-                  || mounted.getType().hasFlag(MiscType.F_CHASSIS_MODIFICATION)
-                  || mounted.getType().hasFlag(MiscType.F_ARMOR_KIT)) {
-                // These items are displayed elsewhere, so skip them here.
+        for (MiscMounted mounted : entity.getMisc()) {
+            if (ReadoutUtils.hideMisc(mounted, entity)) {
                 continue;
             }
 

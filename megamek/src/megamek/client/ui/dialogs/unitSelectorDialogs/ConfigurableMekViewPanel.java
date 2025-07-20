@@ -29,6 +29,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
@@ -48,10 +49,12 @@ import megamek.common.annotations.Nullable;
 public class ConfigurableMekViewPanel extends JPanel {
 
     private final JComboBox<String> fontChooser;
+    private final JToggleButton detailButton = new JToggleButton(Messages.getString("CMVPanel.detail"));
     private final JButton copyHtmlButton = new JButton(Messages.getString("CMVPanel.copyHTML"));
     private final JButton copyTextButton = new JButton(Messages.getString("CMVPanel.copyText"));
+    private final JButton copyDiscordButton = new JButton(Messages.getString("CMVPanel.copyDiscord"));
     private final JButton mulButton = new JButton(Messages.getString("CMVPanel.MUL"));
-    private final MekViewPanel mekViewPanel = new MekViewPanel();
+    private final EntityReadoutPanel entityReadoutPanel = new EntityReadoutPanel();
     private int mulId;
     private Entity entity;
 
@@ -70,8 +73,8 @@ public class ConfigurableMekViewPanel extends JPanel {
 
         copyHtmlButton.addActionListener(ev -> copyToClipboard(ViewFormatting.HTML));
         copyTextButton.addActionListener(ev -> copyToClipboard(ViewFormatting.NONE));
-        // todo: create a copyDiscordButton
-        // The implementer of the Discord export cared only about the MML UI.
+        copyDiscordButton.addActionListener(ev -> copyToClipboard(ViewFormatting.DISCORD));
+        detailButton.addActionListener(ev -> updateReadout());
 
         mulButton.addActionListener(ev -> UIUtil.showMUL(mulId, this));
         mulButton.setToolTipText("Show the Master Unit List entry for this unit. Opens a browser window.");
@@ -81,12 +84,14 @@ public class ConfigurableMekViewPanel extends JPanel {
         fontChooserPanel.add(new JLabel(Messages.getString("CMVPanel.font")));
         fontChooserPanel.add(fontChooser);
         chooserLine.add(fontChooserPanel);
+        chooserLine.add(detailButton);
         chooserLine.add(copyHtmlButton);
         chooserLine.add(copyTextButton);
+        chooserLine.add(copyDiscordButton);
         chooserLine.add(mulButton);
 
         add(chooserLine);
-        add(mekViewPanel);
+        add(entityReadoutPanel);
         setEntity(entity);
     }
 
@@ -106,11 +111,9 @@ public class ConfigurableMekViewPanel extends JPanel {
         mulButton.setEnabled(mulId > 0);
         copyTextButton.setEnabled(entity != null);
         copyHtmlButton.setEnabled(entity != null);
-        if (entity != null) {
-            mekViewPanel.setMek(entity, GUIPreferences.getInstance().getSummaryFont());
-        } else {
-            mekViewPanel.reset();
-        }
+        copyDiscordButton.setEnabled(entity != null);
+        detailButton.setEnabled((entity != null) && entity.usesWeaponBays());
+        updateReadout();
     }
 
     /** Set the card to use a newly selected font. */
@@ -118,25 +121,48 @@ public class ConfigurableMekViewPanel extends JPanel {
         if (entity != null) {
             String selectedItem = (String) fontChooser.getSelectedItem();
             if ((selectedItem == null) || selectedItem.isBlank()) {
-                mekViewPanel.setMek(entity, MMConstants.FONT_SANS_SERIF);
+                entityReadoutPanel.showEntity(entity, MMConstants.FONT_SANS_SERIF);
                 GUIPreferences.getInstance().setSummaryFont("");
             } else {
-                mekViewPanel.setMek(entity, selectedItem);
+                entityReadoutPanel.showEntity(entity, selectedItem);
                 GUIPreferences.getInstance().setSummaryFont(selectedItem);
             }
         }
     }
 
+    private boolean detail() {
+        return detailButton.isSelected();
+    }
+
+    private boolean alternateCost() {
+        // for now
+        return false;
+    }
+
+    private boolean pilotBV(Entity entity) {
+        // for now
+        return entity.getCrew() != null;
+    }
+
     public void reset() {
-        mekViewPanel.reset();
+        entityReadoutPanel.reset();
     }
 
     private void copyToClipboard(ViewFormatting formatting) {
         if (entity != null) {
-            EntityReadout mekView = EntityReadout.createReadout(entity, false, false, formatting);
-            StringSelection stringSelection = new StringSelection(mekView.getReadout());
+            EntityReadout readout = EntityReadout.createReadout(entity, detail(), alternateCost(), formatting);
+            StringSelection stringSelection = new StringSelection(readout.getReadout());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);
+        }
+    }
+
+    private void updateReadout() {
+        if (entity != null) {
+            entityReadoutPanel.showEntity(entity, detail(), alternateCost(), !pilotBV(entity),
+                  ViewFormatting.HTML, GUIPreferences.getInstance().getSummaryFont());
+        } else {
+            entityReadoutPanel.reset();
         }
     }
 }

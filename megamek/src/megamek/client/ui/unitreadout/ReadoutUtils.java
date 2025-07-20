@@ -35,7 +35,9 @@ package megamek.client.ui.unitreadout;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.ITechnology;
+import megamek.common.Mek;
 import megamek.common.MiscType;
 import megamek.common.WeaponType;
 import megamek.common.WeaponTypeFlag;
@@ -167,6 +169,20 @@ final class ReadoutUtils {
         }
         retVal.add(wpnTable);
         return retVal;
+    }
+
+    static boolean hideMisc(MiscMounted mounted, Entity entity) {
+        String name = mounted.getName();
+        return (((mounted.getLocation() == Entity.LOC_NONE)
+              // Meks can have zero-slot equipment in LOC_NONE that needs to be shown.
+              && (!(entity instanceof Mek) || mounted.getCriticals() > 0)))
+              || name.contains("Jump Jet")
+              || (name.contains("CASE") && !name.contains("II") && entity.isClan())
+              || (name.contains("Heat Sink") && !name.contains("Radical"))
+              || EquipmentType.isArmorType(mounted.getType())
+              || EquipmentType.isStructureType(mounted.getType())
+              || mounted.getType().hasFlag(MiscType.F_CHASSIS_MODIFICATION)
+              || mounted.getType().hasFlag(MiscType.F_ARMOR_KIT);
     }
 
     private ReadoutUtils() { }

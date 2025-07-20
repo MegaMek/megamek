@@ -100,42 +100,4 @@ interface ViewElement {
             case NONE, DISCORD -> text;
         };
     }
-
-    /**
-     * Marks the beginning of a section of italicized text if using html output. For
-     * plain text
-     * returns an empty String.
-     *
-     * @return The starting element for italicized text.
-     */
-    static String italicsStart(ViewFormatting formatting) {
-        return switch (formatting) {
-            case HTML -> "<i>";
-            case NONE -> "";
-            case DISCORD -> DiscordFormat.UNDERLINE.toString();
-        };
-    }
-
-    /**
-     * Marks the end of a section of italicized text.
-     *
-     * @return The ending element for italicized text.
-     */
-    static String italicsEnd(ViewFormatting formatting) {
-        return switch (formatting) {
-            case HTML -> "</i>";
-            case NONE -> "";
-            case DISCORD -> DiscordFormat.RESET.toString();
-        };
-    }
-
-    /**
-     * Wraps the text in italics for html output. For plain text it returns the text unchanged.
-     * For discord output it adds the underline formatting.
-     * @param text The text to italicize.
-     * @return The text wrapped in italics for html or underlined for discord.
-     */
-    static String italicize(String text, ViewFormatting formatting) {
-        return italicsStart(formatting) + text + italicsEnd(formatting);
-    }
 }

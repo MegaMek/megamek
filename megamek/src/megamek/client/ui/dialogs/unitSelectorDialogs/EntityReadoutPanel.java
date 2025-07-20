@@ -60,32 +60,30 @@ import static megamek.MMConstants.MUL_URL_PREFIX;
  * @author Jay Lawson
  * @since November 2, 2009
  */
-public class MekViewPanel extends JPanel {
-
+public class EntityReadoutPanel extends JPanel {
     @Serial
     private static final long serialVersionUID = 2438490306644271135L;
 
-    private final JTextPane txtMek = new JTextPane();
-    private final JLabel lblMek = new JLabel();
-    private JScrollPane scrMek;
+    private final JTextPane readoutTextComponent = new JTextPane();
+    private final JLabel fluffImageComponent = new JLabel();
+    private final JScrollPane scrollPane = new JScrollPane(readoutTextComponent);
 
     public static final int DEFAULT_WIDTH = 360;
-    public static final int DEFAULT_HEIGHT = 600;
 
-    public MekViewPanel() {
-        this(-1, -1, true);
+    public EntityReadoutPanel() {
+        this(-1, -1);
     }
 
-    public MekViewPanel(int width, int height, boolean noBorder) {
-        Report.setupStylesheet(txtMek);
-        txtMek.setEditable(false);
-        txtMek.setBorder(new EmptyBorder(5, 10, 0, 0));
+    public EntityReadoutPanel(int width, int height) {
+        Report.setupStylesheet(readoutTextComponent);
+        readoutTextComponent.setEditable(false);
+        readoutTextComponent.setBorder(new EmptyBorder(5, 10, 0, 0));
         if (width != -1) {
-            txtMek.setMinimumSize(new Dimension(width, height));
-            txtMek.setPreferredSize(new Dimension(width, height));
+            readoutTextComponent.setMinimumSize(new Dimension(width, height));
+            readoutTextComponent.setPreferredSize(new Dimension(width, height));
         }
 
-        txtMek.addHyperlinkListener(pe -> {
+        readoutTextComponent.addHyperlinkListener(pe -> {
             if (HyperlinkEvent.EventType.ACTIVATED == pe.getEventType()) {
 
                 boolean isMulAddress = pe.getURL().toString().startsWith(MUL_URL_PREFIX);
@@ -97,18 +95,18 @@ public class MekViewPanel extends JPanel {
                     if (reference != null && reference.startsWith("#")) {
                         reference = reference.substring(1);
                         String finalReference = reference;
-                        SwingUtilities.invokeLater(() -> txtMek.scrollToReference(finalReference));
+                        SwingUtilities.invokeLater(() -> readoutTextComponent.scrollToReference(finalReference));
                     }
                 }
             }
         });
 
         // Add mouse motion listener to show tooltips for links.
-        txtMek.addMouseMotionListener(new MouseAdapter() {
+        readoutTextComponent.addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-                int pos = txtMek.viewToModel2D(e.getPoint());
-                if (pos >= 0 && txtMek.getDocument() instanceof HTMLDocument doc) {
+                int pos = readoutTextComponent.viewToModel2D(e.getPoint());
+                if (pos >= 0 && readoutTextComponent.getDocument() instanceof HTMLDocument doc) {
                     var elem = doc.getCharacterElement(pos);
                     if (elem != null) {
                         // The Element’s attributes may point us to a <SPAN> tag
@@ -118,34 +116,30 @@ public class MekViewPanel extends JPanel {
                         if (attrsAttribute instanceof AttributeSet attributeSet) {
                             String title = (String) attributeSet.getAttribute(HTML.getAttributeKey("title"));
                             if (title != null) {
-                                txtMek.setToolTipText(title);
+                                readoutTextComponent.setToolTipText(title);
                             }
                         }
                     }
                 }
             }
         });
-        scrMek = new JScrollPane(txtMek);
-        scrMek.getVerticalScrollBar().setUnitIncrement(16);
-
-        if (noBorder) {
-            scrMek.setBorder(null);
-        }
-        scrMek.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.setBorder(null);
+        scrollPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 
         var textPanel = new JPanel(new GridLayout(1, 1));
         if (width != -1) {
             textPanel.setMinimumSize(new Dimension(width, height));
             textPanel.setPreferredSize(new Dimension(width, height));
         }
-        textPanel.add(scrMek);
+        textPanel.add(scrollPane);
 
         var fluffPanel = new FixedXPanel();
         if (width != -1) {
             fluffPanel.setMinimumSize(new Dimension(width, height));
             fluffPanel.setPreferredSize(new Dimension(width, height));
         }
-        fluffPanel.add(lblMek);
+        fluffPanel.add(fluffImageComponent);
 
         JPanel p = new JPanel();
         p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
@@ -157,40 +151,44 @@ public class MekViewPanel extends JPanel {
         addMouseWheelListener(wheelForwarder);
     }
 
-    public void setMek(Entity entity, EntityReadout mekView) {
-        txtMek.setText(mekView.getReadout());
-        txtMek.setCaretPosition(0);
+    public void showEntity(Entity entity, EntityReadout mekView) {
+        readoutTextComponent.setText(mekView.getReadout());
+        readoutTextComponent.setCaretPosition(0);
         setFluffImage(entity);
     }
 
-    public void setMek(Entity entity, EntityReadout mekView, String fontName) {
-        txtMek.setText(mekView.getReadout(fontName));
-        txtMek.setCaretPosition(0);
+    public void showEntity(Entity entity, EntityReadout mekView, String fontName) {
+        readoutTextComponent.setText(mekView.getReadout(fontName));
+        readoutTextComponent.setCaretPosition(0);
         setFluffImage(entity);
     }
 
-    public void setMek(Entity entity, TROView troView) {
-        txtMek.setText(troView.processTemplate());
-        txtMek.setCaretPosition(0);
+    public void showEntity(Entity entity, TROView troView) {
+        readoutTextComponent.setText(troView.processTemplate());
+        readoutTextComponent.setCaretPosition(0);
         setFluffImage(entity);
     }
 
-    public void setMek(Entity entity, boolean useAlternateCost) {
+    public void showEntity(Entity entity, boolean useAlternateCost) {
         EntityReadout mekView = EntityReadout.createReadout(entity, false, useAlternateCost);
-        setMek(entity, mekView);
+        showEntity(entity, mekView);
     }
 
-    public void setMek(Entity entity, String fontName) {
+    public void showEntity(Entity entity, String fontName) {
         EntityReadout mekView = EntityReadout.createReadout(entity,
               false,
               false,
               entity.getCrew() == null,
               ViewFormatting.HTML);
+        showEntity(entity, mekView, fontName);
+    }
 
+    public void showEntity(Entity entity, boolean showDetail, boolean useAlternateCost,
+          boolean ignorePilotBV, ViewFormatting formatting, String fontName) {
 
-
-//        EntityReadout mekView = EntityReadout.createReadout(entity, false, false);
-        setMek(entity, mekView, fontName);
+        EntityReadout mekView = EntityReadout.createReadout(entity, showDetail, useAlternateCost,
+              ignorePilotBV, formatting);
+        showEntity(entity, mekView, fontName);
     }
 
     private void setFluffImage(Entity entity) {
@@ -200,21 +198,22 @@ public class MekViewPanel extends JPanel {
             if (image.getWidth(this) > DEFAULT_WIDTH) {
                 image = image.getScaledInstance(DEFAULT_WIDTH, -1, Image.SCALE_SMOOTH);
             }
-            lblMek.setIcon(new ImageIcon(image));
+            fluffImageComponent.setIcon(new ImageIcon(image));
         } else {
-            lblMek.setIcon(null);
+            fluffImageComponent.setIcon(null);
         }
     }
 
     public void reset() {
-        txtMek.setText("");
-        lblMek.setIcon(null);
+        readoutTextComponent.setText("");
+        fluffImageComponent.setIcon(null);
     }
 
     /** Forwards a mouse wheel scroll on the fluff image or free space to the TRO entry. */
     MouseWheelListener wheelForwarder = e -> {
-        MouseWheelEvent converted = (MouseWheelEvent) SwingUtilities.convertMouseEvent(MekViewPanel.this, e, scrMek);
-        for (MouseWheelListener listener : scrMek.getMouseWheelListeners()) {
+        MouseWheelEvent converted = (MouseWheelEvent) SwingUtilities.convertMouseEvent(EntityReadoutPanel.this, e,
+              scrollPane);
+        for (MouseWheelListener listener : scrollPane.getMouseWheelListeners()) {
             listener.mouseWheelMoved(converted);
         }
     };

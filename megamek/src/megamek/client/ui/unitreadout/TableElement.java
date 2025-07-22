@@ -33,6 +33,7 @@
 package megamek.client.ui.unitreadout;
 
 import megamek.client.ui.util.DiscordFormat;
+import megamek.client.ui.util.ViewFormatting;
 
 import java.util.*;
 
@@ -127,7 +128,8 @@ class TableElement implements MultiRowViewElement {
         final String COL_PADDING = "  ";
         StringBuilder sb = new StringBuilder();
         for (int col = 0; col < colNames.length; col++) {
-            sb.append(justify(justification[col], colNames[col], colWidth.get(col)));
+            sb.append(justify(justification[col], ReadoutMarkup.applyFormatting(colNames[col], ViewFormatting.NONE),
+                  colWidth.get(col)));
             if (col < colNames.length - 1) {
                 sb.append(COL_PADDING);
             }
@@ -140,7 +142,8 @@ class TableElement implements MultiRowViewElement {
         }
         for (String[] row : data) {
             for (int col = 0; col < row.length; col++) {
-                sb.append(justify(justification[col], row[col], colWidth.get(col)));
+                sb.append(justify(justification[col], ReadoutMarkup.applyFormatting(row[col], ViewFormatting.NONE),
+                      colWidth.get(col)));
                 if (col < row.length - 1) {
                     sb.append(COL_PADDING);
                 }
@@ -169,7 +172,7 @@ class TableElement implements MultiRowViewElement {
                 if (justification[col] != JUSTIFIED_LEFT) {
                     sb.append("&nbsp;&nbsp;");
                 }
-                sb.append(colNames[col]);
+                sb.append(ReadoutMarkup.applyFormatting(colNames[col], ViewFormatting.HTML));
                 if (justification[col] != JUSTIFIED_RIGHT) {
                     sb.append("&nbsp;&nbsp;");
                 }
@@ -196,7 +199,7 @@ class TableElement implements MultiRowViewElement {
                 if (justification[col] != JUSTIFIED_LEFT) {
                     sb.append("&nbsp;&nbsp;");
                 }
-                sb.append(row[col]);
+                sb.append(ReadoutMarkup.applyFormatting(row[col], ViewFormatting.HTML));
                 if (justification[col] != JUSTIFIED_RIGHT) {
                     sb.append("&nbsp;&nbsp;");
                 }
@@ -214,7 +217,9 @@ class TableElement implements MultiRowViewElement {
         StringBuilder sb = new StringBuilder();
         sb.append(DiscordFormat.UNDERLINE).append(DiscordFormat.ROW_SHADING);
         for (int col = 0; col < colNames.length; col++) {
-            sb.append(justify(justification[col], colNames[col], colWidth.get(col)));
+            sb.append(justify(justification[col], ReadoutMarkup.applyFormatting(colNames[col],
+                        ViewFormatting.DISCORD),
+                  colWidth.get(col)));
             if (col < colNames.length - 1) {
                 sb.append(COL_PADDING);
             }
@@ -227,7 +232,8 @@ class TableElement implements MultiRowViewElement {
                 sb.append(DiscordFormat.ROW_SHADING);
             }
             for (int col = 0; col < row.length; col++) {
-                sb.append(DiscordFormat.highlightNumbersForDiscord(justify(justification[col], row[col], colWidth.get(col))));
+                sb.append(DiscordFormat.highlightNumbersForDiscord(justify(justification[col],
+                      ReadoutMarkup.applyFormatting(row[col], ViewFormatting.DISCORD), colWidth.get(col))));
                 if (col < row.length - 1) {
                     sb.append(COL_PADDING);
                 }

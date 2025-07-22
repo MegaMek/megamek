@@ -105,16 +105,7 @@ class BattleArmorReadout extends GeneralEntityReadout {
                     continue;
                 }
                 String[] row = createEquipmentTableRow(mounted);
-
-                if (mounted.isDestroyed()) {
-                    if (mounted.isRepairable()) {
-                        wpnTable.addRowWithColor("yellow", row);
-                    } else {
-                        wpnTable.addRowWithColor("red", row);
-                    }
-                } else {
-                    wpnTable.addRow(row);
-                }
+                ReadoutUtils.addColoredWeaponRow(wpnTable, mounted, row);
             }
             result.add(wpnTable);
         }
@@ -126,7 +117,7 @@ class BattleArmorReadout extends GeneralEntityReadout {
         if (canSwarm(battleArmor)) {
             otherAttacks.add("Swarm Attack");
         }
-        if (otherAttacks.length()>0) {
+        if (otherAttacks.length() > 0) {
             if (!result.isEmpty()) {
                 result.add(new PlainLine());
             }
@@ -164,7 +155,11 @@ class BattleArmorReadout extends GeneralEntityReadout {
 
     private String sanitizeMountedDesc(Mounted<?> mounted) {
         String toRemove = " (%s)".formatted(BattleArmor.getBaMountLocAbbr(mounted.getBaMountLoc()));
-        String name = mounted.getType().hasFlag(MiscType.F_BA_MANIPULATOR) ? mounted.getShortName() : mounted.getDesc();
+        String name = mounted.getDesc();
+        EquipmentType type = mounted.getType();
+        if (type instanceof MiscType && type.hasFlag(MiscType.F_BA_MANIPULATOR)) {
+            name = mounted.getShortName();
+        }
         return name
               .replace(toRemove, "")
               .replace(" (DWP)", "")
@@ -200,12 +195,12 @@ class BattleArmorReadout extends GeneralEntityReadout {
             String[] row = { mounted.getName(), String.valueOf(mounted.getBaseShotsLeft()) };
 
             if (mounted.isDestroyed() || (mounted.getUsableShotsLeft() < 1)) {
-                ammoTable.addRowWithColor("red", row);
+                row[1] = ReadoutMarkup.markupDestroyed(row[1]);
             } else if (mounted.getUsableShotsLeft() < mounted.getOriginalShots()) {
-                ammoTable.addRowWithColor("yellow", row);
-            } else {
-                ammoTable.addRow(row);
+                row[1] = ReadoutMarkup.markupDamaged(row[1]);
             }
+            ammoTable.addRow(row);
+
         }
 
         return ammoTable;
@@ -230,10 +225,9 @@ class BattleArmorReadout extends GeneralEntityReadout {
             String[] row = createEquipmentTableRow(mounted);
 
             if (mounted.isDestroyed()) {
-                miscTable.addRowWithColor("red", row);
-            } else {
-                miscTable.addRow(row);
+                row[0] = ReadoutMarkup.markupDestroyed(row[0]);
             }
+            miscTable.addRow(row);
         }
 
         return miscTable;

@@ -52,7 +52,7 @@ class UnitName implements ViewElement {
 
     @Override
     public String toHTML() {
-        return "<font size=\"+1\"><b>" + unitName + "</b></font><br/>\n";
+        return "<font size=+1><b>" + unitName + "</b></font><br/>\n";
     }
 
     @Override

@@ -106,13 +106,13 @@ class TankReadout extends GeneralEntityReadout {
                 for (Mounted<?> current = mounted.getLinked(); current != null; current = current.getLinked()) {
                     shotsLeft += current.getUsableShotsLeft();
                 }
+
                 if (mounted.isDestroyed()) {
-                    ammoTable.addRowWithColor("red", row);
+                    row[2] = ReadoutMarkup.markupDestroyed(row[2]);
                 } else if (shotsLeft < 1) {
-                    ammoTable.addRowWithColor("yellow", row);
-                } else {
-                    ammoTable.addRow(row);
+                    row[2] = ReadoutMarkup.markupDamaged(row[2]);
                 }
+                ammoTable.addRow(row);
             }
         }
         return ammoTable;

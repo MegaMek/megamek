@@ -45,9 +45,6 @@ import java.util.stream.Collectors;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.util.DiscordFormat;
-import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.*;
 import megamek.common.BombType.BombTypeEnum;
@@ -55,11 +52,9 @@ import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.verifier.TestEntity;
-import megamek.common.weapons.bayweapons.BayWeapon;
 
 import static megamek.client.ui.unitreadout.TableElement.*;
 
@@ -515,11 +510,11 @@ class GeneralEntityReadout implements EntityReadout {
             }
 
             String[] row = { entity.getLocationName(loc),
-                             renderArmor(entity.getInternalForReal(loc), entity.getOInternal(loc), formatting),
+                             ReadoutUtils.renderArmor(entity.getInternalForReal(loc), entity.getOInternal(loc)),
                              "", "", "" };
 
             if (IArmorState.ARMOR_NA != entity.getArmorForReal(loc)) {
-                row[2] = renderArmor(entity.getArmorForReal(loc), entity.getOArmor(loc), formatting);
+                row[2] = ReadoutUtils.renderArmor(entity.getArmorForReal(loc), entity.getOArmor(loc));
             }
             if (entity.hasPatchworkArmor()) {
                 row[3] = ArmorType.forEntity(entity, loc).getName();
@@ -531,10 +526,10 @@ class GeneralEntityReadout implements EntityReadout {
             }
             locTable.addRow(row);
             if (entity.hasRearArmor(loc)) {
-                String rearArmor = renderArmor(
+                String rearArmor = ReadoutUtils.renderArmor(
                       entity.getArmorForReal(loc, true),
-                      entity.getOArmor(loc, true),
-                      formatting);
+                      entity.getOArmor(loc, true)
+                );
                 row = new String[] { entity.getLocationName(loc) + " (rear)", "", rearArmor, "", "" };
                 locTable.addRow(row);
             }
@@ -552,101 +547,7 @@ class GeneralEntityReadout implements EntityReadout {
     }
 
     protected List<ViewElement> getWeapons(boolean showDetail) {
-        List<ViewElement> retVal = new ArrayList<>();
-
-        if (entity.getWeaponList().isEmpty()) {
-            return retVal;
-        }
-
-        TableElement wpnTable = new TableElement(4);
-        wpnTable.setColNames("Weapons", "Loc", "Heat", entity.isOmni() ? "Omni" : "");
-        wpnTable.setJustification(JUSTIFIED_LEFT, JUSTIFIED_CENTER, JUSTIFIED_CENTER, JUSTIFIED_CENTER);
-        for (WeaponMounted mounted : entity.getWeaponList()) {
-            if (mounted.getType().hasFlag(WeaponTypeFlag.INTERNAL_REPRESENTATION)) {
-                continue;
-            }
-            String[] row = { mounted.getDesc() + quirkMarker(mounted),
-                    entity.joinLocationAbbr(mounted.allLocations(), 3), "", "" };
-            WeaponType wtype = mounted.getType();
-
-            if (entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
-                row[0] += Messages.getString("MekView.IS");
-            }
-            if (!entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
-                row[0] += Messages.getString("MekView.Clan");
-            }
-
-            int heat = wtype.getHeat();
-            int bWeapDamaged = 0;
-            if (wtype instanceof BayWeapon) {
-                // loop through weapons in bay and add up heat
-                heat = 0;
-                for (WeaponMounted m : mounted.getBayWeapons()) {
-                    heat = heat + m.getType().getHeat();
-                    if (m.isDestroyed()) {
-                        bWeapDamaged++;
-                    }
-                }
-            }
-            row[2] = String.valueOf(heat);
-
-            if (entity.isOmni()) {
-                row[3] = Messages.getString(mounted.isOmniPodMounted() ? "MekView.Pod" : "MekView.Fixed");
-            } else if (wtype instanceof BayWeapon && bWeapDamaged > 0 && !showDetail) {
-                row[3] = ViewElement.warningStart(formatting) + Messages.getString("MekView.WeaponDamage")
-                        + ")" + ViewElement.warningEnd(formatting);
-            }
-            if (mounted.isDestroyed()) {
-                if (mounted.isRepairable()) {
-                    wpnTable.addRowWithColor("yellow", row);
-                } else {
-                    wpnTable.addRowWithColor("red", row);
-                }
-            } else {
-                wpnTable.addRow(row);
-            }
-
-            // if this is a weapon bay, then cycle through weapons and ammo
-            if ((wtype instanceof BayWeapon) && showDetail) {
-                for (WeaponMounted m : mounted.getBayWeapons()) {
-                    row = new String[] { "- " + m.getDesc(), "", "", "" };
-
-                    if (entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
-                        row[0] += Messages.getString("MekView.IS");
-                    }
-                    if (!entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
-                        row[0] += Messages.getString("MekView.Clan");
-                    }
-                    if (m.isDestroyed()) {
-                        if (m.isRepairable()) {
-                            wpnTable.addRowWithColor("yellow", row);
-                        } else {
-                            wpnTable.addRowWithColor("red", row);
-                        }
-                    } else {
-                        wpnTable.addRow(row);
-                    }
-                }
-                for (AmmoMounted m : mounted.getBayAmmo()) {
-                    // Ignore ammo for one-shot launchers
-                    if ((m.getLinkedBy() != null) && m.getLinkedBy().isOneShot()) {
-                        continue;
-                    }
-                    if (mounted.getLocation() != Entity.LOC_NONE) {
-                        row = new String[] { "- " + m.getName(), String.valueOf(m.getBaseShotsLeft()), "", "" };
-                        if (m.isDestroyed()) {
-                            wpnTable.addRowWithColor("red", row);
-                        } else if (m.getUsableShotsLeft() < 1) {
-                            wpnTable.addRowWithColor("yellow", row);
-                        } else {
-                            wpnTable.addRow(row);
-                        }
-                    }
-                }
-            }
-        }
-        retVal.add(wpnTable);
-        return retVal;
+        return ReadoutUtils.getWeapons(entity, showDetail, formatting);
     }
 
     static String quirkMarker(Mounted<?> mounted) {
@@ -663,7 +564,7 @@ class GeneralEntityReadout implements EntityReadout {
         ammoTable.setColNames("Ammo", "Loc", "Shots", entity.isOmni() ? "Omni" : "");
         ammoTable.setJustification(JUSTIFIED_LEFT, JUSTIFIED_CENTER, JUSTIFIED_CENTER, JUSTIFIED_CENTER);
 
-        for (Mounted<?> mounted : entity.getAmmo()) {
+        for (AmmoMounted mounted : entity.getAmmo()) {
             if (hideAmmo(mounted)) {
                 continue;
             }
@@ -675,12 +576,11 @@ class GeneralEntityReadout implements EntityReadout {
             }
 
             if (mounted.isDestroyed() || (mounted.getUsableShotsLeft() < 1)) {
-                ammoTable.addRowWithColor("red", row);
-            } else if (mounted.getUsableShotsLeft() < mounted.getOriginalShots()) {
-                ammoTable.addRowWithColor("yellow", row);
-            } else {
-                ammoTable.addRow(row);
+                row[2] = ReadoutMarkup.markupDestroyed(row[2]);
+            } else if (mounted.getUsableShotsLeft() < mounted.getType().getShots()) {
+                row[2] = ReadoutMarkup.markupDamaged(row[2]);
             }
+            ammoTable.addRow(row);
         }
 
         return ammoTable;
@@ -734,10 +634,9 @@ class GeneralEntityReadout implements EntityReadout {
             }
 
             if (mounted.isDestroyed()) {
-                miscTable.addRowWithColor("red", row);
-            } else {
-                miscTable.addRow(row);
+                row[0] = ReadoutMarkup.markupDestroyed(row[0]);
             }
+            miscTable.addRow(row);
         }
         return miscTable;
     }
@@ -783,49 +682,6 @@ class GeneralEntityReadout implements EntityReadout {
             return list;
         }
         return new EmptyElement();
-    }
-
-    protected static String renderArmor(int nArmor, int origArmor, ViewFormatting formatting) {
-        double percentRemaining = ((double) nArmor) / ((double) origArmor);
-        String armor = Integer.toString(nArmor);
-
-        String warnBegin;
-        String warnEnd;
-        String cautionBegin;
-        String cautionEnd;
-
-        switch (formatting) {
-            case HTML:
-                warnBegin = "<FONT " + UIUtil.colorString(GUIPreferences.getInstance().getWarningColor()) + '>';
-                warnEnd = "</FONT>";
-                cautionBegin = "<FONT " + UIUtil.colorString(GUIPreferences.getInstance().getCautionColor()) + '>';
-                cautionEnd = "</FONT>";
-                break;
-            case NONE:
-                warnBegin = "";
-                warnEnd = "";
-                cautionBegin = "";
-                cautionEnd = "";
-                break;
-            case DISCORD:
-                warnBegin = DiscordFormat.RED.toString();
-                warnEnd = DiscordFormat.RESET.toString();
-                cautionBegin = DiscordFormat.YELLOW.toString();
-                cautionEnd = DiscordFormat.RESET.toString();
-                break;
-            default:
-                throw new IllegalStateException("Impossible");
-        }
-
-        if (percentRemaining < 0) {
-            return warnBegin + 'X' + warnEnd;
-        } else if (percentRemaining <= .25) {
-            return warnBegin + armor + warnEnd;
-        } else if (percentRemaining < 1.00) {
-            return cautionBegin + armor + cautionEnd;
-        } else {
-            return armor;
-        }
     }
 
     @Override

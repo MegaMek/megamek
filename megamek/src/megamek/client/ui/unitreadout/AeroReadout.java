@@ -57,22 +57,22 @@ class AeroReadout extends GeneralEntityReadout {
 
     @Override
     protected List<ViewElement> createArmorElements() {
-        List<ViewElement> retVal = new ArrayList<>();
+        List<ViewElement> result = new ArrayList<>();
 
-        retVal.add(new LabeledElement(Messages.getString("MekView.SI"),
-              renderArmor(aero.getSI(), aero.getOSI(), formatting)));
+        result.add(new LabeledElement(Messages.getString("MekView.SI"),
+              ReadoutUtils.renderArmor(aero.getSI(), aero.getOSI())));
 
         // if it is a jumpship get sail and KF integrity
         if (aero instanceof Jumpship jumpship) {
 
             // TODO: indicate damage.
             if (jumpship.hasSail()) {
-                retVal.add(new LabeledElement(Messages.getString("MekView.SailIntegrity"),
+                result.add(new LabeledElement(Messages.getString("MekView.SailIntegrity"),
                       String.valueOf(jumpship.getSailIntegrity())));
             }
 
             if (jumpship.getDriveCoreType() != Jumpship.DRIVE_CORE_NONE) {
-                retVal.add(new LabeledElement(Messages.getString("MekView.KFIntegrity"),
+                result.add(new LabeledElement(Messages.getString("MekView.KFIntegrity"),
                       String.valueOf(jumpship.getKFIntegrity())));
             }
         }
@@ -84,7 +84,7 @@ class AeroReadout extends GeneralEntityReadout {
         if (!aero.hasPatchworkArmor()) {
             armor += " " + ArmorType.forEntity(aero).getName();
         }
-        retVal.add(new LabeledElement(Messages.getString("MekView.Armor"),
+        result.add(new LabeledElement(Messages.getString("MekView.Armor"),
               armor));
 
         // Walk through the entity's locations.
@@ -112,7 +112,7 @@ class AeroReadout extends GeneralEntityReadout {
                 }
                 String[] row = { aero.getLocationName(loc), "", "" };
                 if (IArmorState.ARMOR_NA != aero.getArmor(loc)) {
-                    row[1] = renderArmor(aero.getArmor(loc), aero.getOArmor(loc), formatting);
+                    row[1] = ReadoutUtils.renderArmor(aero.getArmor(loc), aero.getOArmor(loc));
                 }
                 if (aero.hasPatchworkArmor()) {
                     row[2] = Messages.getString("MekView."
@@ -123,11 +123,11 @@ class AeroReadout extends GeneralEntityReadout {
                 }
                 locTable.addRow(row);
             }
-            retVal.add(new PlainLine());
-            retVal.add(locTable);
+            result.add(new PlainLine());
+            result.add(locTable);
         }
 
-        return retVal;
+        return result;
     }
 
     @Override

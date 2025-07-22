@@ -34,36 +34,35 @@ package megamek.client.ui.unitreadout;
 
 import megamek.client.ui.util.DiscordFormat;
 
+import java.util.Objects;
+
 /**
  * Displays a hyperlink. Does not add a line break after itself.
  */
-class HyperLinkElement implements ViewElement {
+class HyperLinkElement extends LabeledElement {
 
-    private final String label;
     private final String address;
-    private final String displayText;
 
     HyperLinkElement(String label, String address, String displayText) {
-        this.label = (label == null) ? "" : label;
+        super(Objects.requireNonNullElse(label, ""), displayText);
         this.address = address;
-        this.displayText = displayText;
     }
 
     @Override
     public String toPlainText() {
         String result = label.isBlank() ? "" : label + ": ";
-        return result + displayText + "\n";
+        return result + value + "\n";
     }
 
     @Override
     public String toHTML() {
         String result = label.isBlank() ? "" : "<B>" + label + "</B>: ";
-        return result + "<A HREF=" + address + ">" + displayText + "</A><BR>";
+        return result + "<A HREF=" + address + ">" + value + "</A><BR>";
     }
 
     @Override
     public String toDiscord() {
         String result = label.isBlank() ? "" : DiscordFormat.BOLD + label + ": " + DiscordFormat.RESET;
-        return result + displayText + "\n";
+        return result + value + "\n";
     }
 }

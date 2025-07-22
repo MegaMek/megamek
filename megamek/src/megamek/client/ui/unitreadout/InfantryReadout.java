@@ -40,6 +40,7 @@ import java.util.StringJoiner;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.*;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -198,10 +199,10 @@ class InfantryReadout extends GeneralEntityReadout {
                   "" :
                   " (%s)".formatted(activeFieldGuns.size());
             if (activeFieldGuns.isEmpty()) {
-                fieldGunText = "<font color=red>%s (destroyed)</font>".formatted(fieldGunType.getName());
+                fieldGunText = ReadoutMarkup.markupDestroyed("%s (destroyed)".formatted(fieldGunType.getName()));
             } else if (activeFieldGuns.size() < fieldGuns.size()) {
-                fieldGunText = "<font color=yellow>%s%s</font>"
-                      .formatted(fieldGunType.getName(), gunCount);
+                fieldGunText = ReadoutMarkup.markupDamaged("%s%s"
+                      .formatted(fieldGunType.getName(), gunCount));
             } else {
                 fieldGunText = "%s%s".formatted(fieldGunType.getName(), gunCount);
             }
@@ -223,10 +224,10 @@ class InfantryReadout extends GeneralEntityReadout {
         List<ViewElement> result = new ArrayList<>();
         
         String troopers = infantry.getShootingStrength() + "";
-        if (infantry.getShootingStrength() < infantry.getOriginalTrooperCount()) {
-            troopers = "<font color=%s>%d</font>".formatted(
-                  (infantry.getShootingStrength() == 0 ? "red" : "yellow"),
-                  infantry.getShootingStrength());
+        if (infantry.getShootingStrength() == 0) {
+            troopers = ReadoutMarkup.markupDestroyed("0");
+        } else if (infantry.getShootingStrength() < infantry.getOriginalTrooperCount()) {
+            troopers = ReadoutMarkup.markupDamaged(troopers);
         }
         result.add(new LabeledElement(Messages.getString("MekView.Men"), troopers));
 
@@ -290,7 +291,7 @@ class InfantryReadout extends GeneralEntityReadout {
         ammoTable.setColNames("Ammo", "Shots");
         ammoTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER);
 
-        for (Mounted<?> mounted : infantry.getAmmo()) {
+        for (AmmoMounted mounted : infantry.getAmmo()) {
             if (hideAmmo(mounted)) {
                 continue;
             }
@@ -298,12 +299,11 @@ class InfantryReadout extends GeneralEntityReadout {
             String[] row = { mounted.getName(), String.valueOf(mounted.getBaseShotsLeft()) };
 
             if (mounted.isDestroyed() || (mounted.getUsableShotsLeft() < 1)) {
-                ammoTable.addRowWithColor("red", row);
-            } else if (mounted.getUsableShotsLeft() < mounted.getOriginalShots()) {
-                ammoTable.addRowWithColor("yellow", row);
-            } else {
-                ammoTable.addRow(row);
+                row[1] = ReadoutMarkup.markupDestroyed(row[1]);
+            } else if (mounted.getUsableShotsLeft() < mounted.getType().getShots()) {
+                row[1] = ReadoutMarkup.markupDamaged(row[1]);
             }
+            ammoTable.addRow(row);
         }
 
         return ammoTable;

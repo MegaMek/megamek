@@ -100,4 +100,8 @@ interface ViewElement {
             case NONE, DISCORD -> text;
         };
     }
+
+    default String applyFormatting(String text, ViewFormatting formatting) {
+        return ReadoutMarkup.applyFormatting(text, formatting);
+    }
 }

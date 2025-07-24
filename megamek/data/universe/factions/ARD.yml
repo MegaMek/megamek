@@ -1,9 +1,13 @@
 key: ARD
 name: Aurigan Directorate
 capital: Coromodir
+yearsActive:
+  - start: 3022
+    end: 3025
 tags:
   - MINOR
   - PERIPHERY
+  - PLAYABLE
 color:
   red: 103
   green: 140

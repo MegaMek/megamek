@@ -1,10 +1,12 @@
 key: CS
-name: ComStar
+name: SLCOMNET
+nameChanges:
+  2788: ComStar
 capital: Terra
 capitalChanges: 
   3059: Tukayyid
 yearsActive:
-  - start: 2788
+  - start: 2784
     end: 3081
 tags:
   - PLAYABLE

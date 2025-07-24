@@ -1,21 +1,35 @@
 /*
- * Copyright (c) 2000-2008 - Ben Mazur (bmazur@sev.org).
- * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2008 - Ben Mazur (bmazur@sev.org).
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview;
 
@@ -406,6 +420,8 @@ public final class BoardView extends AbstractBoardView
     // noticeable performance hit (in iso mode), therefore the sprites are copied to specialized lists when created
     private final TreeSet<Sprite> overTerrainSprites = new TreeSet<>();
     private final TreeSet<HexSprite> behindTerrainHexSprites = new TreeSet<>();
+
+    private final List<HexDrawPlugin> hexDrawPlugins = new ArrayList<>();
 
     /**
      * Construct a new board view for the specified game
@@ -1629,7 +1645,7 @@ public final class BoardView extends AbstractBoardView
               true);
     }
 
-    private void drawHexBorder(Graphics2D graphics2D, Color color, double padding, double lineWidth) {
+    public void drawHexBorder(Graphics2D graphics2D, Color color, double padding, double lineWidth) {
         drawHexBorder(graphics2D, new Point(0, 0), color, padding, lineWidth);
     }
 
@@ -2482,15 +2498,6 @@ public final class BoardView extends AbstractBoardView
             }
         }
 
-        if (hex.containsTerrain(Terrains.DEPLOYMENT_ZONE) && (game.getPhase().isUnknown())) {
-            drawHexBorder(graphics2D, Color.yellow, 5, 5);
-            drawCenteredString("DZ " + Board.exitsAsIntList(hex.getTerrain(Terrains.DEPLOYMENT_ZONE).getExits()),
-                  0,
-                  (int) (50 * scale),
-                  font_note,
-                  graphics2D);
-        }
-
         // Set the text color according to Preferences or Light Gray in space
         graphics2D.setColor(GUIP.getBoardTextColor());
         if (game.getBoard(boardId).isSpace()) {
@@ -2681,6 +2688,10 @@ public final class BoardView extends AbstractBoardView
                     hexImage.setRGB(x, y, gray);
                 }
             }
+        }
+
+        for (var plugin : hexDrawPlugins) {
+            plugin.draw(graphics2D, hex, game, coords, this);
         }
 
         cacheEntry = new HexImageCacheEntry(hexImage);
@@ -5640,5 +5651,9 @@ public final class BoardView extends AbstractBoardView
     public void toggleShowDeployment() {
         showAllDeployment = !showAllDeployment;
         repaint();
+    }
+
+    public void addHexDrawPlugin(HexDrawPlugin plugin) {
+        hexDrawPlugins.add(plugin);
     }
 }

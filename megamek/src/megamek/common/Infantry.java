@@ -101,7 +101,7 @@ public class Infantry extends Entity {
     private int secondaryWeaponsPerSquad = 0;
 
     // Armor
-    private double damageDivisor = 1.0;
+    private double customArmorDamageDivisor = 1.0;
     private boolean encumbering = false;
     private boolean spaceSuit = false;
     private boolean dest = false;
@@ -1285,7 +1285,7 @@ public class Infantry extends Entity {
             divisor = ((MiscType) armorKit).getDamageDivisor();
         } else {
             // For custom armor kits, which aren't found by getArmorKit()
-            divisor = getArmorDamageDivisor();
+            divisor = getCustomArmorDamageDivisor();
         }
         // TSM implant reduces divisor to 0.5 if no other armor is worn
         if ((divisor == 1.0) && hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
@@ -1302,12 +1302,23 @@ public class Infantry extends Entity {
         return divisor;
     }
 
-    public double getArmorDamageDivisor() {
-        return damageDivisor;
+    /**
+     * Gets the damage divisor of this entity's custom armor kit.
+     * Meaningless when the infantry possesses a normal, non-custom armor kit, so check for one first.
+     * @return The damage divisor of the custom armor kit, or 1.0 for no armor.
+     */
+    public double getCustomArmorDamageDivisor() {
+        return customArmorDamageDivisor;
     }
 
-    public void setArmorDamageDivisor(double d) {
-        damageDivisor = d;
+    /**
+     * Creates a custom armor kit for this entity.
+     * Should not be set for anything other than a custom armor kit, see {@link #calcDamageDivisor()}
+     *  to add any other source of damage divisor.
+     * @param d The damage divisor of the custom armor kit. Set it to 1.0 for no armor.
+     */
+    public void setCustomArmorDamageDivisor(double d) {
+        customArmorDamageDivisor = d;
     }
 
     public boolean isArmorEncumbering() {
@@ -1521,7 +1532,6 @@ public class Infantry extends Entity {
                 setOriginalWalkMP(mount.getSecondaryGroundMP());
                 setOriginalJumpMP(mount.getMP());
             }
-            setArmorDamageDivisor(mount.getDamageDivisor());
         }
         calcDamageDivisor();
     }

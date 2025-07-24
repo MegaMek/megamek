@@ -942,8 +942,8 @@ public class BLKFile {
                 blk.writeBlockData("Secondary", infantry.getSecondaryWeapon().getInternalName());
             }
 
-            if (infantry.getArmorDamageDivisor() != 1) {
-                blk.writeBlockData("armordivisor", Double.toString(infantry.getArmorDamageDivisor()));
+            if (infantry.getCustomArmorDamageDivisor() != 1) {
+                blk.writeBlockData("armordivisor", Double.toString(infantry.getCustomArmorDamageDivisor()));
             }
             if (infantry.isArmorEncumbering()) {
                 blk.writeBlockData("encumberingarmor", "true");

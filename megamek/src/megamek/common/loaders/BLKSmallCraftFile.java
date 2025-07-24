@@ -16,12 +16,15 @@ package megamek.common.loaders;
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestEntity;
+import megamek.logging.MMLogger;
 
 /**
  * @author taharqa
  * @since April 6, 2002, 2:06 AM
  */
 public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
+
+    private final MMLogger logger = MMLogger.create(BLKSmallCraftFile.class);
 
     public BLKSmallCraftFile(BuildingBlock bb) {
         dataFile = bb;
@@ -118,8 +121,6 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
             throw new EntityLoadingException("Could not find SafeThrust block.");
         }
         a.setOriginalWalkMP(dataFile.getDataAsInt("SafeThrust")[0]);
-
-        a.setEngine(new Engine(400, 0, 0));
 
         // Switch older files with standard armor to aerospace
         int at = EquipmentType.T_ARMOR_AEROSPACE;
@@ -236,6 +237,15 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
                 if (etype != null) {
                     try {
                         int useLoc = TestEntity.eqRequiresLocation(t, etype) ? nLoc : SmallCraft.LOC_HULL;
+                        if (useLoc == SmallCraft.LOC_HULL) {
+                            // "Rear hull" isn't a valid mount point on small craft,
+                            // but bugs in unit construction may cause a unit to be saved with
+                            // such an impossible configuration.
+                            rearMount = false;
+                            logger.warn("Unit {} has a rear-facing hull-mounted {}, which is illegal. "
+                                        + "The error has been corrected but the unit data may have been constructed incorrectly.",
+                                  t, etype.getName());
+                        }
                         Mounted<?> mount = t.addEquipment(etype, useLoc, rearMount);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)

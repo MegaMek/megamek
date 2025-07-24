@@ -1,9 +1,13 @@
 key: ARD
 name: Aurigan Directorate
 capital: Coromodir
+yearsActive:
+  - start: 3022
+    end: 3025
 tags:
   - MINOR
   - PERIPHERY
+  - PLAYABLE
 color:
   red: 103
   green: 140
@@ -18,3 +22,10 @@ eraMods:
   - 0
   - 3
   - 3
+factionLeaders:
+  - title: "Director"
+    firstName: "Santiago"
+    surname: "Espinosa"
+    gender: "MALE"
+    startYear: 3022
+    endYear: 3025

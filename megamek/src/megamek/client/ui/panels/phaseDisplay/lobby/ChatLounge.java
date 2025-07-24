@@ -30,8 +30,6 @@ import static megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility.invalidBo
 import static megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility.isBoardFile;
 import static megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility.isValidStartPos;
 import static megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility.mekReadoutAction;
-import static megamek.client.ui.util.UIUtil.FixedXPanel;
-import static megamek.client.ui.util.UIUtil.FixedYPanel;
 import static megamek.client.ui.util.UIUtil.scaleForGUI;
 import static megamek.client.ui.util.UIUtil.setHighQualityRendering;
 import static megamek.client.ui.util.UIUtil.uiGray;
@@ -112,8 +110,6 @@ import megamek.client.ui.buttons.DialogButton;
 import megamek.client.ui.panels.phaseDisplay.lobby.PlayerTable.PlayerTableModel;
 import megamek.client.ui.dialogs.minimap.MinimapPanel;
 import megamek.client.ui.panels.phaseDisplay.AbstractPhaseDisplay;
-import megamek.client.ui.tileset.MMStaticDirectoryManager;
-import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedXPanel;
@@ -931,7 +927,6 @@ public class ChatLounge extends AbstractPhaseDisplay
             RulerDialog ruler = new RulerDialog(clientgui.getFrame(), client(), previewBV, boardPreviewGame);
             ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
             ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
-            ruler.setAlwaysOnTop(true);
             UIUtil.updateWindowBounds(ruler);
 
             // Most boards will be far too large on the standard zoom
@@ -1723,7 +1718,6 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         psd = new PlayerSettingsDialog(clientgui, c, previewBV);
         psd.setModal(false);
-        psd.setAlwaysOnTop(true);
         psd.showDialog();
     }
 
@@ -3304,7 +3298,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
         header.repaint();
     }
-    
+
     /**
      * Sets the column width of the given table column of the MekTable with the value stored in the GUIP.
      */

@@ -8,6 +8,7 @@ era:3042
 source:Force Manual Kurita
 rules level:2
 role:Brawler
+mul id:8284
 
 quirk:easy_maintain
 quirk:barrel_fists_la

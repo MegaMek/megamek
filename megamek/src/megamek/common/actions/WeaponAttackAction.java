@@ -483,7 +483,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         toHit = ComputeEnvironmentalToHitMods.compileEnvironmentalToHitMods(game, ae, target, null, null, toHit, false);
 
         // Collect the modifiers for the crew/pilot
-        toHit = ComputeAttackerToHitMods.compileCrewToHitMods(game, ae, te, toHit, null);
+        toHit = ComputeAttackerToHitMods.compileCrewToHitMods(game, ae, toHit, null);
 
         // Collect the modifiers for the attacker's condition/actions
         // Conventional fighter, Aerospace and fighter LAM attackers
@@ -530,8 +530,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
         toHit = ComputeTargetToHitMods.compileTargetToHitMods(game,
               ae,
               target,
-              ttype,
-              los,
               toHit,
               Entity.LOC_NONE,
               AimingMode.NONE,
@@ -567,7 +565,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
               weaponId,
               null,
               null,
-              EnumSet.of(AmmoType.Munitions.M_STANDARD),
               isAttackerInfantry,
               inSameBuilding,
               false,

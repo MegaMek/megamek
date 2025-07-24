@@ -26,3 +26,10 @@ eraMods:
   - -1
 fallBackFactions:
   - ROS
+factionLeaders:
+  - title: "Paladin"
+    firstName: "Thaddeus"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 3136
+    endYear: 3139

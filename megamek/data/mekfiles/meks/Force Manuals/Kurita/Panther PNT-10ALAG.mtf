@@ -8,6 +8,7 @@ era:3054
 source:Force Manual Kurita
 rules level:2
 role:Striker
+mul id:5865
 
 quirk:nimble_jumper
 quirk:imp_target_short

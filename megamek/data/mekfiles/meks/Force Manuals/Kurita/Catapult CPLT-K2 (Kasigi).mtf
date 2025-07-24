@@ -8,6 +8,7 @@ era:3052
 source:Force Manual Kurita
 rules level:2
 role:Sniper
+mul id:8286
 
 quirk:no_arms
 quirk:weak_head_1

@@ -25,3 +25,16 @@ eraMods:
   - 2
 fallBackFactions:
   - CC
+factionLeaders:
+  - title: "Supreme Lord"
+    firstName: "Pavel"
+    surname: "Ridzik"
+    gender: "MALE"
+    startYear: 3029
+    endYear: 3029
+  - title: "Supreme Lord"
+    firstName: "Ardan"
+    surname: "Sortek"
+    gender: "MALE"
+    startYear: 3029
+    endYear: 3031

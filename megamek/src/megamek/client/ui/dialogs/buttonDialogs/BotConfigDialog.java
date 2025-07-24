@@ -120,13 +120,13 @@ public class BotConfigDialog extends AbstractButtonDialog
     private final MMToggleButton forcedWithdrawalCheck = new TipMMToggleButton(Messages.getString(
           "BotConfigDialog.forcedWithdrawalCheck"));
 
-    private final MMToggleButton iAmAPirateCheck = 
+    private final MMToggleButton iAmAPirateCheck =
           new TipMMToggleButton(Messages.getString("BotConfigDialog.iAmAPirateCheck"));
     private final MMToggleButton ignoreDamageOutputCheck =
           new TipMMToggleButton(Messages.getString("BotConfigDialog.ignoreDamageOutput"));
-    private final MMToggleButton exclusiveHerdingCheck = 
+    private final MMToggleButton exclusiveHerdingCheck =
           new TipMMToggleButton(Messages.getString("BotConfigDialog.exclusiveHerdingCheck"));
-    private final MMToggleButton experimentalCheck = 
+    private final MMToggleButton experimentalCheck =
           new TipMMToggleButton(Messages.getString("BotConfigDialog.experimentalCheck"));
 
     private final JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
@@ -196,7 +196,6 @@ public class BotConfigDialog extends AbstractButtonDialog
     public BotConfigDialog(JFrame parent, @Nullable String botName, @Nullable BehaviorSettings behavior,
           @Nullable ClientGUI cg) {
         super(parent, "BotConfigDialog", "BotConfigDialog.title");
-        setAlwaysOnTop(true);
         fixedBotPlayerName = botName;
         isNewBot = botName == null;
         clientGui = cg;
@@ -408,7 +407,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         iAmAPirateCheck.setToolTipText(Messages.getString("BotConfigDialog.iAmAPirateCheckToolTip"));
         iAmAPirateCheck.addActionListener(this);
         panContent.add(iAmAPirateCheck);
-        
+
         ignoreDamageOutputCheck.setToolTipText(Messages.getString("BotConfigDialog.ignoreDamageOutputToolTip"));
         ignoreDamageOutputCheck.addActionListener(this);
         panContent.add(ignoreDamageOutputCheck);
@@ -417,7 +416,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         experimentalCheck.addActionListener(this);
 
         if (CLIENT_PREFERENCES.getEnableExperimentalBotFeatures()) {
-            
+
             panContent.add(experimentalCheck);
         }
 
@@ -693,7 +692,6 @@ public class BotConfigDialog extends AbstractButtonDialog
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addTargetButton) {
             var dlg = new BotConfigTargetHexDialog(getFrame(), clientGui);
-            dlg.setAlwaysOnTop(true);
             dlg.setVisible(true);
             if (dlg.getResult() == DialogResult.CONFIRMED) {
                 dlg.getSelectedCoords()
@@ -704,7 +702,6 @@ public class BotConfigDialog extends AbstractButtonDialog
 
         } else if (e.getSource() == addUnitButton) {
             var dlg = new BotConfigTargetUnitDialog(getFrame());
-            dlg.setAlwaysOnTop(true);
             dlg.setVisible(true);
             if (dlg.getResult() == DialogResult.CONFIRMED) {
                 dlg.getSelectedIDs()
@@ -737,12 +734,10 @@ public class BotConfigDialog extends AbstractButtonDialog
 
     /** Asks for a name and adds the current Behavior as a new Behavior Preset. */
     private void saveAsNewPreset() {
-        getFrame().setAlwaysOnTop(true);
         while (true) {
 
             String name = JOptionPane.showInputDialog(getFrame(), Messages.getString("BotConfigDialog.saveNewPrompt"));
             if (name == null || name.isBlank()) {
-                getFrame().setAlwaysOnTop(false);
                 return;
             }
             if (!behaviorSettingsFactory.getBehaviorNameList().contains(name)) {
@@ -750,7 +745,6 @@ public class BotConfigDialog extends AbstractButtonDialog
                 writePreset(name);
                 updatePresets();
                 presetsList.setSelectedValue(name, true);
-                getFrame().setAlwaysOnTop(false);
                 return;
             }
             // Incorrect name: notify the player and ask again

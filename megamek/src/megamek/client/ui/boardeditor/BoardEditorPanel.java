@@ -1,23 +1,37 @@
 /*
  * Copyright (c) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.client.ui.panels;
+package megamek.client.ui.boardeditor;
 
 import static megamek.common.Terrains.*;
 
@@ -51,7 +65,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
-import megamek.MMConstants;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
@@ -73,18 +86,13 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.KeyBindingsOverlay;
 import megamek.client.ui.dialogs.CommonAboutDialog;
 import megamek.client.ui.dialogs.ExitsDialog;
-import megamek.client.ui.dialogs.buttonDialogs.FloodDialog;
-import megamek.client.ui.dialogs.buttonDialogs.LevelChangeDialog;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.dialogs.buttonDialogs.MultiIntSelectorDialog;
 import megamek.client.ui.dialogs.randomMap.RandomMapDialog;
 import megamek.client.ui.dialogs.randomMap.ResizeMapDialog;
 import megamek.client.ui.dialogs.minimap.MinimapPanel;
-import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.tileset.TilesetManager;
-import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.MegaMekController;
-import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.common.Board;
@@ -96,7 +104,6 @@ import megamek.common.Hex;
 import megamek.common.MapSettings;
 import megamek.common.Terrain;
 import megamek.common.Terrains;
-import megamek.common.annotations.Nullable;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -114,125 +121,6 @@ public class BoardEditorPanel extends JPanel
       implements ItemListener, ListSelectionListener, ActionListener, DocumentListener, IMapSettingsObserver {
     private final static MMLogger LOGGER = MMLogger.create(BoardEditorPanel.class);
 
-    /**
-     * Class to make terrains in JComboBoxes easier. This enables keeping the terrain type int separate from the name
-     * that gets displayed and also provides a way to get tooltips.
-     *
-     * @author arlith
-     */
-    private static class TerrainHelper implements Comparable<TerrainHelper> {
-        private final int terrainType;
-
-        TerrainHelper(int terrain) {
-            terrainType = terrain;
-        }
-
-        public int getTerrainType() {
-            return terrainType;
-        }
-
-        @Override
-        public String toString() {
-            return Terrains.getEditorName(terrainType);
-        }
-
-        public String getTerrainTooltip() {
-            return Terrains.getEditorTooltip(terrainType);
-        }
-
-        @Override
-        public int compareTo(TerrainHelper o) {
-            return toString().compareTo(o.toString());
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (other instanceof Integer) {
-                return getTerrainType() == (Integer) other;
-            } else if (!(other instanceof TerrainHelper)) {
-                return false;
-            } else {
-                return getTerrainType() == ((TerrainHelper) other).getTerrainType();
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(getTerrainType());
-        }
-    }
-
-    /**
-     * Class to make it easier to display a <code>Terrain</code> in a JList or JComboBox.
-     *
-     * @author arlith
-     */
-    private static class TerrainTypeHelper implements Comparable<TerrainTypeHelper> {
-
-        Terrain terrain;
-
-        TerrainTypeHelper(Terrain terrain) {
-            this.terrain = terrain;
-        }
-
-        public Terrain getTerrain() {
-            return terrain;
-        }
-
-        @Override
-        public String toString() {
-            String baseString = Terrains.getDisplayName(terrain.getType(), terrain.getLevel());
-            if (baseString == null) {
-                baseString = Terrains.getEditorName(terrain.getType());
-                baseString += " " + terrain.getLevel();
-            }
-            if (terrain.hasExitsSpecified()) {
-                baseString += " (Exits: " + terrain.getExits() + ")";
-            }
-            return baseString;
-        }
-
-        public String getTooltip() {
-            return terrain.toString();
-        }
-
-        @Override
-        public int compareTo(TerrainTypeHelper o) {
-            return toString().compareTo(o.toString());
-        }
-    }
-
-    /**
-     * ListCellRenderer for rendering tooltips for each item in a list or combobox. Code from SourceForge:
-     * <a href="https://stackoverflow.com/questions/480261/java-swing-mouseover-text-on-jcombobox-items">...</a>
-     */
-    private static class ComboboxToolTipRenderer extends DefaultListCellRenderer {
-
-        private TerrainHelper[] terrains;
-        private List<TerrainTypeHelper> terrainTypes;
-
-        @Override
-        public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index,
-                                                      final boolean isSelected, final boolean cellHasFocus) {
-            if ((-1 < index) && (value != null)) {
-                if (terrainTypes != null) {
-                    list.setToolTipText(terrainTypes.get(index).getTooltip());
-                } else if (terrains != null) {
-                    list.setToolTipText(terrains[index].getTerrainTooltip());
-                }
-            }
-            return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        }
-
-        public void setTerrains(TerrainHelper... terrains) {
-            this.terrains = terrains;
-        }
-
-        public void setTerrainTypes(List<TerrainTypeHelper> terrainTypes) {
-            this.terrainTypes = terrainTypes;
-        }
-    }
-
     private final GUIPreferences guip = GUIPreferences.getInstance();
 
     private static final int BASE_TERRAINBUTTON_ICON_WIDTH = 70;
@@ -243,7 +131,7 @@ public class BoardEditorPanel extends JPanel
     private final JFrame frame = new JFrame();
     private final Game game = new Game();
     private Board board = game.getBoard();
-    private BoardView bv;
+    BoardView bv;
     boolean isDragging = false;
     private Component bvc;
     private final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForBoardEditor();
@@ -258,7 +146,7 @@ public class BoardEditorPanel extends JPanel
 
     // The active hex "brush"
     private HexCanvas canHex;
-    private Hex curHex = new Hex();
+    Hex curHex = new Hex();
 
     // Easy terrain access buttons
     private final List<ScalingIconButton> terrainButtons = new ArrayList<>();
@@ -271,7 +159,12 @@ public class BoardEditorPanel extends JPanel
     private ScalingIconButton buttonBr, buttonFT;
     private final List<ScalingIconToggleButton> brushButtons = new ArrayList<>();
     private ScalingIconToggleButton buttonBrush1, buttonBrush2, buttonBrush3;
-    private ScalingIconToggleButton buttonUpDn, buttonOOC;
+    private ScalingIconToggleButton buttonOOC;
+    private final List<ScalingIconToggleButton> paintModeButtons = new ArrayList<>();
+    private ScalingIconToggleButton buttonPaintTerrain, buttonRaiseLower, buttonDeployZone;
+
+    private final SpinnerNumberModel deploymentZoneSpnModel = new SpinnerNumberModel(1, 1, 31, 1);
+    private final JSpinner deploymentZoneChooser = new JSpinner(deploymentZoneSpnModel);
 
     // The brush size: 1 = 1 hex, 2 = radius 1, 3 = radius 2
     private int brushSize = 1;
@@ -280,7 +173,7 @@ public class BoardEditorPanel extends JPanel
     private ScalingIconButton butElevUp;
     private ScalingIconButton butElevDown;
     private JList<TerrainTypeHelper> lisTerrain;
-    private ComboboxToolTipRenderer lisTerrainRenderer;
+    private TerrainListRenderer lisTerrainRenderer;
     private ScalingIconButton butDelTerrain;
     private JComboBox<TerrainHelper> choTerrainType;
     private EditorTextField texTerrainLevel;
@@ -365,6 +258,8 @@ public class BoardEditorPanel extends JPanel
      */
     private boolean ignoreHotKeys = false;
 
+    private final DeploymentZoneDrawPlugin deploymentZoneDrawer = new DeploymentZoneDrawPlugin();
+
     /**
      * Creates and lays out a new Board Editor frame.
      */
@@ -378,6 +273,7 @@ public class BoardEditorPanel extends JPanel
             bv.setDisplayInvalidFields(true);
             bv.setTooltipProvider(new BoardEditorTooltip(bv));
             bvc = bv.getComponent(true);
+            bv.addHexDrawPlugin(deploymentZoneDrawer);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame,
                   Messages.getString("BoardEditor.CouldNotInitialize") + e,
@@ -422,7 +318,8 @@ public class BoardEditorPanel extends JPanel
                 Coords c = b.getCoords();
                 // return if there are no or no valid coords or if we click the same hex again unless Raise/Lower
                 // Terrain is active which should let us click the same hex
-                if ((c == null) || (c.equals(lastClicked) && !buttonUpDn.isSelected()) || !board.contains(c)) {
+                if ((c == null) || (c.equals(lastClicked) && (paintMode() != PaintMode.LOWER_RAISE_HEXLEVEL))
+                      || !board.contains(c)) {
                     return;
                 }
                 lastClicked = c;
@@ -433,7 +330,7 @@ public class BoardEditorPanel extends JPanel
                 boolean isLMB = (b.getButton() == MouseEvent.BUTTON1);
 
                 // Raise/Lower Terrain is selected
-                if (buttonUpDn.isSelected()) {
+                if (paintMode() == PaintMode.LOWER_RAISE_HEXLEVEL) {
                     // Mouse Button released
                     if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
                         hexLevelToDraw = -1000;
@@ -464,6 +361,19 @@ public class BoardEditorPanel extends JPanel
                         }
                     }
                     // ------- End Raise/Lower Terrain
+
+                } else if (paintMode() == PaintMode.DEPLOYMENT_ZONE) {
+                    if (isLMB || (b.getModifiers() & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+                        for (Coords h : getBrushCoords(c)) {
+                            saveToUndo(h);
+                            if (isCTRL) {
+                                removeDeploymentZone(h, (int) deploymentZoneChooser.getValue());
+                            } else {
+                                addDeploymentZone(h, (int) deploymentZoneChooser.getValue());
+                            }
+                        }
+                    }
+
                 } else if (isLMB || (b.getModifiers() & InputEvent.BUTTON1_DOWN_MASK) != 0) {
                     // 'isLMB' is true if a button 1 is associated to a click or release but not
                     // while dragging.
@@ -473,8 +383,7 @@ public class BoardEditorPanel extends JPanel
                     if (isALT) { // ALT-Click
                         setCurrentHex(board.getHex(b.getCoords()));
                     } else {
-                        LinkedList<Coords> allBrushHexes = getBrushCoords(c);
-                        for (Coords h : allBrushHexes) {
+                        for (Coords h : getBrushCoords(c)) {
                             // test if texture overwriting is active
                             if ((!buttonOOC.isSelected() || board.getHex(h).isClearHex()) && curHex.isValid(null)) {
                                 saveToUndo(h);
@@ -611,8 +520,8 @@ public class BoardEditorPanel extends JPanel
     /**
      * Sets up Scaling Icon ToggleButtons
      */
-    private ScalingIconToggleButton prepareToggleButton(String iconName, String buttonName,
-                                                        List<ScalingIconToggleButton> bList, int width) {
+    private ScalingIconToggleButton prepareToggleButton(String iconName,
+          List<ScalingIconToggleButton> bList, int width) {
         // Get the normal icon
         File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/" + iconName + ".png").getFile();
         Image imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
@@ -669,15 +578,24 @@ public class BoardEditorPanel extends JPanel
         buttonMg = prepareButton("ButtonMg", "Magma", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
         buttonCl = prepareButton("ButtonCl", "Clear", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
 
-        buttonBrush1 = prepareToggleButton("ButtonHex1", "Brush1", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
-        buttonBrush2 = prepareToggleButton("ButtonHex7", "Brush2", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
-        buttonBrush3 = prepareToggleButton("ButtonHex19", "Brush3", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+        buttonBrush1 = prepareToggleButton("ButtonHex1", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+        buttonBrush2 = prepareToggleButton("ButtonHex7", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+        buttonBrush3 = prepareToggleButton("ButtonHex19", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
         ButtonGroup brushGroup = new ButtonGroup();
         brushGroup.add(buttonBrush1);
         brushGroup.add(buttonBrush2);
         brushGroup.add(buttonBrush3);
-        buttonOOC = prepareToggleButton("ButtonOOC", "OOC", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
-        buttonUpDn = prepareToggleButton("ButtonUpDn", "UpDown", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+        buttonOOC = prepareToggleButton("ButtonOOC", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+
+        buttonPaintTerrain = prepareToggleButton("ButtonPaintTerrain", paintModeButtons,
+              BASE_ARROWBUTTON_ICON_WIDTH);
+        buttonRaiseLower = prepareToggleButton("ButtonUpDn", paintModeButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+        buttonDeployZone = prepareToggleButton("ButtonDepl", paintModeButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+        ButtonGroup paintModeGroup = new ButtonGroup();
+        paintModeGroup.add(buttonPaintTerrain);
+        paintModeGroup.add(buttonRaiseLower);
+        paintModeGroup.add(buttonDeployZone);
+        buttonPaintTerrain.setSelected(true);
 
         buttonUndo = prepareButton("ButtonUndo", "Undo", undoButtons, BASE_ARROWBUTTON_ICON_WIDTH);
         buttonRedo = prepareButton("ButtonRedo", "Redo", undoButtons, BASE_ARROWBUTTON_ICON_WIDTH);
@@ -887,6 +805,15 @@ public class BoardEditorPanel extends JPanel
         addManyButtons(brushButtonPanel, brushButtons);
         buttonBrush1.setSelected(true);
 
+        FixedYPanel paintModeButtonPanel = new FixedYPanel(new GridLayout(0, 3, 2, 2));
+        addManyButtons(paintModeButtonPanel, paintModeButtons);
+        deploymentZoneChooser.addChangeListener(e -> changeSelectedDeploymentZone());
+        deploymentZoneChooser.setEnabled(false);
+        buttonDeployZone.addActionListener(e -> deployZoneToggled());
+        buttonPaintTerrain.addActionListener(e -> deployZoneToggled());
+        buttonRaiseLower.addActionListener(e -> deployZoneToggled());
+        buttonBrush1.setSelected(true);
+
         FixedYPanel undoButtonPanel = new FixedYPanel(new GridLayout(1, 2, 2, 2));
         addManyButtons(undoButtonPanel, List.of(buttonUndo, buttonRedo));
 
@@ -904,7 +831,7 @@ public class BoardEditorPanel extends JPanel
         butElevDown.setToolTipText(Messages.getString("BoardEditor.butElevDown.toolTipText"));
 
         // Terrain List
-        lisTerrainRenderer = new ComboboxToolTipRenderer();
+        lisTerrainRenderer = new TerrainListRenderer();
         lisTerrain = new JList<>(new DefaultListModel<>());
         lisTerrain.addListSelectionListener(this);
         lisTerrain.setCellRenderer(lisTerrainRenderer);
@@ -917,7 +844,7 @@ public class BoardEditorPanel extends JPanel
         FixedYPanel panlisHex = new FixedYPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
         butDelTerrain = prepareButton("buttonRemT", "Delete Terrain", null, BASE_ARROWBUTTON_ICON_WIDTH);
         butDelTerrain.setEnabled(false);
-        canHex = new HexCanvas();
+        canHex = new HexCanvas(this);
         panlisHex.add(butDelTerrain);
         panlisHex.add(new JScrollPane(lisTerrain));
         panlisHex.add(canHex);
@@ -926,7 +853,7 @@ public class BoardEditorPanel extends JPanel
         // excluding terrains that are handled internally
         ArrayList<TerrainHelper> tList = new ArrayList<>();
         for (int i = 1; i < Terrains.SIZE; i++) {
-            if (!Terrains.AUTOMATIC.contains(i)) {
+            if (!Terrains.AUTOMATIC.contains(i) && (i != DEPLOYMENT_ZONE)) {
                 tList.add(new TerrainHelper(i));
             }
         }
@@ -937,7 +864,7 @@ public class BoardEditorPanel extends JPanel
         texTerrainLevel.addActionListener(this);
         texTerrainLevel.getDocument().addDocumentListener(this);
         choTerrainType = new JComboBox<>(terrains);
-        ComboboxToolTipRenderer renderer = new ComboboxToolTipRenderer();
+        TerrainListRenderer renderer = new TerrainListRenderer();
         renderer.setTerrains(terrains);
         choTerrainType.setRenderer(renderer);
         // Selecting a terrain type in the Dropdown should deselect
@@ -1086,6 +1013,10 @@ public class BoardEditorPanel extends JPanel
             panButtons.add(butSourceFile);
         }
 
+        var deploymentZoneChooserPanel = new FixedYPanel();
+        deploymentZoneChooserPanel.add(new JLabel("Deployment Zone: "));
+        deploymentZoneChooserPanel.add(deploymentZoneChooser);
+
         // Arrange everything
         setLayout(new BorderLayout());
         Box centerPanel = Box.createVerticalBox();
@@ -1095,6 +1026,9 @@ public class BoardEditorPanel extends JPanel
         centerPanel.add(terrainButtonPanel);
         centerPanel.add(Box.createVerticalStrut(10));
         centerPanel.add(brushButtonPanel);
+        centerPanel.add(Box.createVerticalStrut(10));
+        centerPanel.add(paintModeButtonPanel);
+        centerPanel.add(deploymentZoneChooserPanel);
         centerPanel.add(Box.createVerticalStrut(10));
         centerPanel.add(undoButtonPanel);
         centerPanel.add(Box.createVerticalGlue());
@@ -1188,7 +1122,13 @@ public class BoardEditorPanel extends JPanel
      */
     void paintHex(Coords c) {
         board.resetStoredElevation();
-        board.setHex(c, curHex.duplicate());
+        Hex newHex = curHex.duplicate();
+        // preserve deployment zones; these are painted in their own mode
+        Terrain deploymentZone = board.getHex(c).getTerrain(DEPLOYMENT_ZONE);
+        if (deploymentZone != null) {
+            newHex.addTerrain(deploymentZone);
+        }
+        board.setHex(c, newHex);
     }
 
     /**
@@ -1198,6 +1138,11 @@ public class BoardEditorPanel extends JPanel
         if (board.contains(c)) {
             Hex newHex = curHex.duplicate();
             newHex.setLevel(board.getHex(c).getLevel());
+            // preserve deployment zones; these are painted in their own mode
+            Terrain deploymentZone = board.getHex(c).getTerrain(DEPLOYMENT_ZONE);
+            if (deploymentZone != null) {
+                newHex.addTerrain(deploymentZone);
+            }
             board.resetStoredElevation();
             board.setHex(c, newHex);
         }
@@ -1224,12 +1169,51 @@ public class BoardEditorPanel extends JPanel
     }
 
     /**
+     * Apply the current Hex to the Board at the specified location.
+     */
+    public void addDeploymentZone(Coords c, int deploymentZoneToAdd) {
+        if (board.contains(c)) {
+            Hex hex = board.getHex(c);
+            if (hex.containsTerrain(DEPLOYMENT_ZONE)) {
+                var deploymentZones = hex.getTerrain(DEPLOYMENT_ZONE);
+                int currentZones = deploymentZones.getExits();
+                deploymentZones.setExits(currentZones | (1 << (deploymentZoneToAdd - 1)));
+            } else {
+                hex.addTerrain(new Terrain(DEPLOYMENT_ZONE, 0, true, 1 << (deploymentZoneToAdd - 1)));
+            }
+            board.setHex(c, hex);
+        }
+    }
+
+    /**
+     * Removes the given deployment zone from the Hex at Coord c. Does nothing if c is not on the board or the hex
+     * does not have that deployment zone. Removes the deployment zone terrain entirely if no zones are left in that
+     * hex.
+     */
+    public void removeDeploymentZone(Coords c, int deploymentZoneToRemove) {
+        if (board.contains(c) && board.getHex(c).containsTerrain(DEPLOYMENT_ZONE)) {
+            var hex = board.getHex(c);
+            var deploymentZones = hex.getTerrain(DEPLOYMENT_ZONE);
+            int currentZones = deploymentZones.getExits();
+            int newZones = currentZones & ~(1 << (deploymentZoneToRemove - 1));
+
+            if (newZones == 0) {
+                hex.removeTerrain(DEPLOYMENT_ZONE);
+            } else {
+                deploymentZones.setExits(newZones);
+            }
+            board.setHex(c, hex);
+        }
+    }
+
+    /**
      * Sets the working hex to <code>hex</code>; used for mouse ALT-click (eyedropper function).
      *
      * @param hex hex to set.
      */
     void setCurrentHex(Hex hex) {
         curHex = hex.duplicate();
+        curHex.removeTerrain(DEPLOYMENT_ZONE);
         texElev.setText(Integer.toString(curHex.getLevel()));
         refreshTerrainList();
         if (lisTerrain.getModel().getSize() > 0) {
@@ -1261,7 +1245,7 @@ public class BoardEditorPanel extends JPanel
         List<TerrainTypeHelper> types = new ArrayList<>();
         for (final int terrainType : terrainTypes) {
             final Terrain terrain = curHex.getTerrain(terrainType);
-            if ((terrain != null) && !Terrains.AUTOMATIC.contains(terrainType)) {
+            if ((terrain != null) && !Terrains.AUTOMATIC.contains(terrainType) && (terrainType != DEPLOYMENT_ZONE)) {
                 final TerrainTypeHelper tth = new TerrainTypeHelper(terrain);
                 types.add(tth);
             }
@@ -2007,7 +1991,7 @@ public class BoardEditorPanel extends JPanel
         } else if (ae.getSource().equals(buttonOJ)) {
             setConvenientTerrain(ae, new Terrain(Terrains.JUNGLE, 1), new Terrain(Terrains.FOLIAGE_ELEV, 1));
         } else if (ae.getSource().equals(buttonWa)) {
-            buttonUpDn.setSelected(false);
+            buttonRaiseLower.setSelected(false);
             if ((ae.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
                 int rapidsLevel = curHex.containsTerrain(Terrains.RAPIDS, 1) ? 2 : 1;
                 if (!curHex.containsTerrain(Terrains.WATER) || (curHex.getTerrain(Terrains.WATER).getLevel() == 0)) {
@@ -2039,7 +2023,7 @@ public class BoardEditorPanel extends JPanel
             setConvenientTerrain(ae, new Terrain(Terrains.SNOW, 1));
         } else if (ae.getSource().equals(buttonCl)) {
             curHex.removeAllTerrains();
-            buttonUpDn.setSelected(false);
+            buttonRaiseLower.setSelected(false);
             refreshTerrainList();
             repaintWorkingHex();
         } else if (ae.getSource().equals(buttonBrush1)) {
@@ -2052,7 +2036,7 @@ public class BoardEditorPanel extends JPanel
             brushSize = 3;
             lastClicked = null;
         } else if (ae.getSource().equals(buttonBu)) {
-            buttonUpDn.setSelected(false);
+            buttonRaiseLower.setSelected(false);
             if (((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) && ((ae.getModifiers() & ActionEvent.ALT_MASK) ==
                                                                               0)) {
                 curHex.removeAllTerrains();
@@ -2062,17 +2046,17 @@ public class BoardEditorPanel extends JPanel
             if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
                 curHex.removeAllTerrains();
             }
-            buttonUpDn.setSelected(false);
+            buttonRaiseLower.setSelected(false);
             setBasicBridge();
         } else if (ae.getSource().equals(buttonFT)) {
             if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
                 curHex.removeAllTerrains();
             }
-            buttonUpDn.setSelected(false);
+            buttonRaiseLower.setSelected(false);
             setBasicFuelTank();
         } else if (ae.getSource().equals(buttonRd)) {
             setConvenientTerrain(ae, new Terrain(Terrains.ROAD, 1));
-        } else if (ae.getSource().equals(buttonUpDn)) {
+        } else if (ae.getSource().equals(buttonRaiseLower)) {
             // Not so useful to only do on clear terrain
             buttonOOC.setSelected(false);
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_UNDO)) {
@@ -2310,7 +2294,7 @@ public class BoardEditorPanel extends JPanel
         if ((event.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
             curHex.removeAllTerrains();
         }
-        buttonUpDn.setSelected(false);
+        buttonRaiseLower.setSelected(false);
         for (var terrain : terrains) {
             curHex.addTerrain(terrain);
         }
@@ -2352,67 +2336,6 @@ public class BoardEditorPanel extends JPanel
         }
         if (event.getSource().equals(lisTerrain) && !noTextFieldUpdate) {
             refreshTerrainFromList();
-        }
-    }
-
-    /**
-     * Displays the currently selected hex picture, in component form
-     */
-    private class HexCanvas extends JPanel {
-
-        /** Returns list or an empty list when list is null. */
-        private List<Image> safeList(List<Image> list) {
-            return list == null ? Collections.emptyList() : list;
-        }
-
-        StringDrawer invalidString = new StringDrawer(Messages.getString("BoardEditor.INVALID")).at(HexTileset.HEX_W /
-                                                                                                          2,
-                    HexTileset.HEX_H / 2)
-                                           .color(guip.getWarningColor())
-                                           .outline(Color.WHITE, 1)
-                                           .font(FontHandler.notoFont().deriveFont(Font.BOLD))
-                                           .center();
-
-        @Override
-        public void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            if (curHex != null) {
-                // draw the terrain images
-                TilesetManager tm = bv.getTilesetManager();
-                g.drawImage(tm.baseFor(curHex), 0, 0, HexTileset.HEX_W, HexTileset.HEX_H, this);
-                for (final Image newVar : safeList(tm.supersFor(curHex))) {
-                    g.drawImage(newVar, 0, 0, this);
-                }
-                for (final Image newVar : safeList(tm.orthoFor(curHex))) {
-                    g.drawImage(newVar, 0, 0, this);
-                }
-                UIUtil.setHighQualityRendering(g);
-                // add level and INVALID if necessary
-                g.setColor(getForeground());
-                g.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 9));
-                g.drawString(Messages.getString("BoardEditor.LEVEL") + curHex.getLevel(), 24, 70);
-                List<String> errors = new ArrayList<>();
-                if (!curHex.isValid(errors)) {
-                    invalidString.draw(g);
-                    String tooltip = Messages.getString("BoardEditor.invalidHex") + String.join("<BR>", errors);
-                    setToolTipText(tooltip);
-                } else {
-                    setToolTipText(null);
-                }
-            } else {
-                g.clearRect(0, 0, 72, 72);
-            }
-        }
-
-        // Make the hex stubborn when resizing the frame
-        @Override
-        public Dimension getPreferredSize() {
-            return new Dimension(90, 90);
-        }
-
-        @Override
-        public Dimension getMinimumSize() {
-            return new Dimension(90, 90);
         }
     }
 
@@ -2483,235 +2406,26 @@ public class BoardEditorPanel extends JPanel
         }
     }
 
-    /**
-     * Specialized field for the BoardEditor that supports MouseWheel changes.
-     *
-     * @author Simon
-     */
-    public static class EditorTextField extends JTextField {
-        private int minValue = Integer.MIN_VALUE;
-        private int maxValue = Integer.MAX_VALUE;
-
-        /**
-         * Creates an EditorTextField based on JTextField. This is a specialized field for the BoardEditor that supports
-         * MouseWheel changes.
-         *
-         * @param text    the initial text
-         * @param columns as in JTextField
-         *
-         * @see javax.swing.JTextField#JTextField(String, int)
-         */
-        public EditorTextField(String text, int columns) {
-            super(text, columns);
-            // Automatically select all text when clicking the text field
-            addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    selectAll();
-                }
-            });
-            addMouseWheelListener(e -> {
-                if (e.getWheelRotation() < 0) {
-                    incValue();
-                } else {
-                    decValue();
-                }
-            });
-            setMargin(new Insets(1, 1, 1, 1));
-            setHorizontalAlignment(JTextField.CENTER);
-            setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, 20));
-            setCursor(Cursor.getDefaultCursor());
-        }
-
-        /**
-         * Creates an EditorTextField based on JTextField. This is a specialized field for the BoardEditor that supports
-         * MouseWheel changes.
-         *
-         * @param text    the initial text
-         * @param columns as in JTextField
-         * @param minimum a minimum value that the EditorTextField will generally adhere to when its own methods are
-         *                used to change its value.
-         *
-         * @author Simon/Juliez
-         * @see javax.swing.JTextField#JTextField(String, int)
-         */
-        public EditorTextField(String text, int columns, int minimum) {
-            this(text, columns);
-            minValue = minimum;
-        }
-
-        /**
-         * Creates an EditorTextField based on JTextField. This is a specialized field for the BoardEditor that supports
-         * MouseWheel changes.
-         *
-         * @param text    the initial text
-         * @param columns as in JTextField
-         * @param minimum a minimum value that the EditorTextField will generally adhere to when its own methods are
-         *                used to change its value.
-         * @param maximum a maximum value that the EditorTextField will generally adhere to when its own methods are
-         *                used to change its value.
-         *
-         * @author Simon/Juliez
-         * @see javax.swing.JTextField#JTextField(String, int)
-         */
-        public EditorTextField(String text, int columns, int minimum, int maximum) {
-            this(text, columns);
-            minValue = minimum;
-            maxValue = maximum;
-        }
-
-        /**
-         * Increases the EditorTextField's number by one, if a number is present.
-         */
-        public void incValue() {
-            int newValue = getNumber() + 1;
-            setNumber(newValue);
-        }
-
-        /**
-         * Lowers the EditorTextField's number by one, if a number is present and if that number is higher than the
-         * minimum value.
-         */
-        public void decValue() {
-            setNumber(getNumber() - 1);
-        }
-
-        /**
-         * Sets the text to <code>newValue</code>. If <code>newValue</code> is lower than the EditorTextField's minimum
-         * value, the minimum value will be set instead.
-         *
-         * @param newValue the value to be set
-         */
-        public void setNumber(int newValue) {
-            int value = Math.max(newValue, minValue);
-            value = Math.min(value, maxValue);
-            setText(Integer.toString(value));
-        }
-
-        /**
-         * Returns the text in the EditorTextField's as an int. Returns 0 when no parsable number (only letters) are
-         * present.
-         */
-        public int getNumber() {
-            try {
-                return Integer.parseInt(getText());
-            } catch (NumberFormatException ex) {
-                return 0;
-            }
+    private PaintMode paintMode() {
+        if (buttonRaiseLower.isSelected()) {
+            return PaintMode.LOWER_RAISE_HEXLEVEL;
+        } else if (buttonDeployZone.isSelected()) {
+            return PaintMode.DEPLOYMENT_ZONE;
+        } else {
+            return PaintMode.NORMAL;
         }
     }
 
-    /**
-     * A specialized JButton that only shows an icon but scales that icon according to the current GUI scaling when its
-     * rescale() method is called.
-     */
-    private static class ScalingIconButton extends JButton {
-
-        private final Image baseImage;
-        private Image baseRolloverImage;
-        private Image baseDisabledImage;
-        private final int baseWidth;
-
-        ScalingIconButton(Image image, int width) {
-            super();
-            Objects.requireNonNull(image);
-            baseImage = image;
-            baseWidth = width;
-            rescale();
-        }
-
-        /** Adapts all images of this button to the current gui scale. */
-        void rescale() {
-            int realWidth = UIUtil.scaleForGUI(baseWidth);
-            int realHeight = baseImage.getHeight(null) * realWidth / baseImage.getWidth(null);
-            setIcon(new ImageIcon(ImageUtil.getScaledImage(baseImage, realWidth, realHeight)));
-
-            if (baseRolloverImage != null) {
-                realHeight = baseRolloverImage.getHeight(null) * realWidth / baseRolloverImage.getWidth(null);
-                setRolloverIcon(new ImageIcon(ImageUtil.getScaledImage(baseRolloverImage, realWidth, realHeight)));
-            } else {
-                setRolloverIcon(null);
-            }
-
-            if (baseDisabledImage != null) {
-                realHeight = baseDisabledImage.getHeight(null) * realWidth / baseDisabledImage.getWidth(null);
-                setDisabledIcon(new ImageIcon(ImageUtil.getScaledImage(baseDisabledImage, realWidth, realHeight)));
-            } else {
-                setDisabledIcon(null);
-            }
-        }
-
-        /**
-         * Sets the unscaled base image to use as a mouse hover image for the button. image may be null. Passing null
-         * disables the hover image.
-         */
-        void setRolloverImage(@Nullable Image image) {
-            baseRolloverImage = image;
-        }
-
-        /**
-         * Sets the unscaled base image to use as a button disabled image for the button. image may be null. Passing
-         * null disables the button disabled image.
-         */
-        void setDisabledImage(@Nullable Image image) {
-            baseDisabledImage = image;
-        }
+    private void changeSelectedDeploymentZone() {
+        deploymentZoneDrawer.setSelectedDeploymentZone((Integer) deploymentZoneChooser.getValue());
+        bv.clearHexImageCache();
+        bv.repaint();
     }
 
-    /**
-     * A specialized JToggleButton that only shows an icon but scales that icon according to the current GUI scaling
-     * when its rescale() method is called.
-     */
-    private static class ScalingIconToggleButton extends JToggleButton {
-
-        private final Image baseImage;
-        private Image baseRolloverImage;
-        private Image baseSelectedImage;
-        private final int baseWidth;
-
-        ScalingIconToggleButton(Image image, int width) {
-            super();
-            Objects.requireNonNull(image);
-            baseImage = image;
-            baseWidth = width;
-            rescale();
-        }
-
-        /** Adapts all images of this button to the current gui scale. */
-        void rescale() {
-            int realWidth = UIUtil.scaleForGUI(baseWidth);
-            int realHeight = baseImage.getHeight(null) * realWidth / baseImage.getWidth(null);
-            setIcon(new ImageIcon(ImageUtil.getScaledImage(baseImage, realWidth, realHeight)));
-
-            if (baseRolloverImage != null) {
-                realHeight = baseRolloverImage.getHeight(null) * realWidth / baseRolloverImage.getWidth(null);
-                setRolloverIcon(new ImageIcon(ImageUtil.getScaledImage(baseRolloverImage, realWidth, realHeight)));
-            } else {
-                setRolloverIcon(null);
-            }
-
-            if (baseSelectedImage != null) {
-                realHeight = baseSelectedImage.getHeight(null) * realWidth / baseSelectedImage.getWidth(null);
-                setSelectedIcon(new ImageIcon(ImageUtil.getScaledImage(baseSelectedImage, realWidth, realHeight)));
-            } else {
-                setSelectedIcon(null);
-            }
-        }
-
-        /**
-         * Sets the unscaled base image to use as a mouse hover image for the button. image may be null. Passing null
-         * disables the hover image.
-         */
-        void setRolloverImage(@Nullable Image image) {
-            baseRolloverImage = image;
-        }
-
-        /**
-         * Sets the unscaled base image to use as a "toggle button is selected" image for the button. image may be null.
-         * Passing null disables the "is selected" image.
-         */
-        void setSelectedImage(@Nullable Image image) {
-            baseSelectedImage = image;
-        }
+    private void deployZoneToggled() {
+        deploymentZoneChooser.setEnabled(buttonDeployZone.isSelected());
+        deploymentZoneDrawer.setDeploymentZoneMode(buttonDeployZone.isSelected());
+        bv.clearHexImageCache();
+        bv.repaint();
     }
 }

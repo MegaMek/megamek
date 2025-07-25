@@ -18,13 +18,12 @@
  */
 package megamek.client.ui.dialogs.advancedsearch;
 
-import megamek.common.EquipmentType;
-import megamek.common.MiscType;
-import megamek.common.TechConstants;
-
-import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.table.AbstractTableModel;
+
+import megamek.common.EquipmentType;
+import megamek.common.TechConstants;
 
 /**
  * A table model for the advanced search weapon tab's equipment list
@@ -39,7 +38,7 @@ class EquipmentTableModel extends AbstractTableModel {
     static final int COL_INTERNAL_NAME = 5;
 
     private final TWAdvancedSearchPanel twAdvancedSearchPanel;
-    private final List<MiscType> equipment = new ArrayList<>();
+    private final List<EquipmentType> equipment = new ArrayList<>();
 
     EquipmentTableModel(TWAdvancedSearchPanel twAdvancedSearchPanel) {
         this.twAdvancedSearchPanel = twAdvancedSearchPanel;
@@ -81,13 +80,13 @@ class EquipmentTableModel extends AbstractTableModel {
         return getValueAt(0, c).getClass();
     }
 
-    void setData(List<MiscType> eq) {
+    void setData(List<EquipmentType> eq) {
         equipment.clear();
         equipment.addAll(eq);
         fireTableDataChanged();
     }
 
-    MiscType getEquipmentTypeAt(int row) {
+    EquipmentType getEquipmentTypeAt(int row) {
         return equipment.get(row);
     }
 

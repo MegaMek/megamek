@@ -68,7 +68,7 @@ import megamek.client.ui.dialogs.buttonDialogs.BotConfigDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.GameOptionsDialog;
 import megamek.client.ui.dialogs.helpDialogs.HelpDialog;
-import megamek.client.ui.panels.BoardEditorPanel;
+import megamek.client.ui.boardeditor.BoardEditorPanel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

@@ -9,6 +9,7 @@ era:3050
 source:Force Manual Kurita
 rules level:2
 role:Skirmisher
+mul id:8283
 
 quirk:low_profile
 quirk:imp_sensors

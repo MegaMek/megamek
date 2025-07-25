@@ -90,6 +90,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, QUIRK_POS_VTOL_ROTOR_DUAL, false);
 
 
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 7 LINES
         //not yet implemented
         //Docking Arms (docking unimplemented)
         //Fast Reload (no game effect at present)

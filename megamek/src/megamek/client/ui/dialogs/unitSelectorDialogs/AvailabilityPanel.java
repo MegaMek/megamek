@@ -49,7 +49,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -69,7 +68,6 @@ import megamek.common.eras.Era;
 import megamek.common.eras.Eras;
 import megamek.common.util.ManagedVolatileImage;
 import megamek.logging.MMLogger;
-import megamek.utilities.ImageUtilities;
 
 public class AvailabilityPanel {
     private static final MMLogger logger = MMLogger.create(AvailabilityPanel.class);
@@ -363,9 +361,11 @@ public class AvailabilityPanel {
          */
         private void setupScrollableColumns() {
             TableColumnModel scm = scrollableTable.getColumnModel();
-            for (int i = scm.getColumnCount() - 1; i >= 0; i--) {
-                if (scm.getColumn(i).getModelIndex() == 0) {
-                    scm.removeColumn(scm.getColumn(i));
+            if (scm.getColumnCount() != 1) {
+                for (int i = scm.getColumnCount() - 1; i >= 0; i--) {
+                    if (scm.getColumn(i).getModelIndex() == 0) {
+                        scm.removeColumn(scm.getColumn(i));
+                    }
                 }
             }
             for (int i = 0; i < scm.getColumnCount(); i++) {

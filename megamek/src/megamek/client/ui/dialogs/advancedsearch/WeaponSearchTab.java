@@ -18,24 +18,41 @@
  */
 package megamek.client.ui.dialogs.advancedsearch;
 
-import com.formdev.flatlaf.FlatClientProperties;
-import megamek.client.ui.Messages;
-import megamek.client.ui.util.FlatLafStyleBuilder;
-import megamek.client.ui.util.FontHandler;
-import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Event;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableRowSorter;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.util.List;
-import java.util.regex.PatternSyntaxException;
+
+import com.formdev.flatlaf.FlatClientProperties;
+import megamek.client.ui.Messages;
+import megamek.client.ui.util.FlatLafStyleBuilder;
+import megamek.client.ui.util.FontHandler;
+import megamek.client.ui.util.UIUtil;
+import megamek.common.AmmoType;
+import megamek.common.EquipmentType;
+import megamek.common.EquipmentTypeLookup;
+import megamek.common.MiscType;
+import megamek.common.TechConstants;
+import megamek.common.WeaponType;
+import megamek.common.annotations.Nullable;
 
 class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, FocusListener {
 
@@ -374,7 +391,7 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
                 @Override
                 public boolean include(Entry<? extends EquipmentTableModel, ? extends Integer> entry) {
                     EquipmentTableModel eqModel = entry.getModel();
-                    MiscType eq = eqModel.getEquipmentTypeAt(entry.getIdentifier());
+                    EquipmentType eq = eqModel.getEquipmentTypeAt(entry.getIdentifier());
                     String currTechClass = TechConstants.getTechName(eq.getTechLevel(parentPanel.gameYear));
                     boolean techLvlMatch = matchTechLvl(eq.getTechLevel(parentPanel.gameYear));
                     boolean techClassMatch = matchTechClass(currTechClass);
@@ -405,15 +422,17 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
      */
     private void populateWeaponsAndEquipmentChoices() {
         List<WeaponType> weapons = new ArrayList<>();
-        List<MiscType> equipment = new ArrayList<>();
+        List<EquipmentType> equipment = new ArrayList<>();
 
         for (EquipmentType et : EquipmentType.allTypes()) {
             if (et instanceof WeaponType) {
                 weapons.add((WeaponType) et);
             } else if (et instanceof MiscType) {
-                equipment.add((MiscType) et);
+                equipment.add(et);
             }
         }
+
+        equipment.add(EquipmentType.get(EquipmentTypeLookup.COOLANT_POD));
 
         weaponsModel.setData(weapons);
         equipmentModel.setData(equipment);
@@ -469,7 +488,19 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         }
     }
 
-    private boolean matchUnitTypeToMisc(MiscType eq) {
+    private boolean matchUnitTypeToMisc(EquipmentType eq) {
+        if (eq instanceof AmmoType at) {
+            if (!(at.getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD)) {
+                throw new IllegalArgumentException("The only support AmmoType here is the Coolant Pod");
+            }
+            // Check for coolant pods
+            return btnUnitTypeMek.isSelected() || btnUnitTypeAero.isSelected();
+        }
+
+        if (!(eq instanceof MiscType)) {
+            throw new IllegalArgumentException("Argument must be either Coolant Pod or MiscType");
+        }
+
         if (areAllUnitTypesSelected()) {
             return true;
         } else {

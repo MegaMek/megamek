@@ -490,8 +490,8 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
 
     private boolean matchUnitTypeToMisc(EquipmentType eq) {
         if (eq instanceof AmmoType at) {
-            if (!(at.getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD)) {
-                throw new IllegalArgumentException("The only support AmmoType here is the Coolant Pod");
+            if (at.getAmmoType() != AmmoType.AmmoTypeEnum.COOLANT_POD) {
+                throw new IllegalArgumentException("The only supported AmmoType here is the Coolant Pod");
             }
             // Check for coolant pods
             return btnUnitTypeMek.isSelected() || btnUnitTypeAero.isSelected();

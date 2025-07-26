@@ -32,18 +32,37 @@
  */
 package megamek.client.ui.unitreadout;
 
-/**
- * This Element is a LabeledElement that emphasizes its label rather than its data. To be used for potentially longer
- * texts.
- */
-class FluffTextElement extends LabeledElement {
+import megamek.client.ui.util.DiscordFormat;
 
-    FluffTextElement(String label, String value) {
-        super(label, value);
+import java.util.Objects;
+
+/**
+ * Displays a hyperlink.
+ */
+class HyperLinkLine extends LabeledLine {
+
+    private final String address;
+
+    HyperLinkLine(String label, String address, String displayText) {
+        super(Objects.requireNonNullElse(label, ""), displayText);
+        this.address = address;
+    }
+
+    @Override
+    public String toPlainText() {
+        String result = label.isBlank() ? "" : label + ": ";
+        return result + value + "\n";
     }
 
     @Override
     public String toHTML() {
-        return "<B>%s:</B> %s<BR>".formatted(label, value);
+        String result = label.isBlank() ? "" : "<B>" + label + "</B>: ";
+        return result + "<A HREF=" + address + ">" + value + "</A><BR>";
+    }
+
+    @Override
+    public String toDiscord() {
+        String result = label.isBlank() ? "" : DiscordFormat.BOLD + label + ": " + DiscordFormat.RESET;
+        return result + value + "\n";
     }
 }

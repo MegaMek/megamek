@@ -32,40 +32,19 @@
  */
 package megamek.client.ui.unitreadout;
 
-import megamek.client.ui.util.DiscordFormat;
-import megamek.client.ui.util.ViewFormatting;
+class TooltippedLabelledLine extends LabeledLine {
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+    private final String tooltip;
 
-/**
- * An element with a label, a colon, and a value. In html and discord the label is bold.
- */
-class LabeledElement implements ViewElement {
-
-    protected final String label;
-    protected ViewElement value;
-
-
-    LabeledElement(String label, ViewElement value) {
-        this.label = label;
-        this.value = value;
-    }
-
-    @Override
-    public String toPlainText() {
-        return label + ": " + value.toPlainText();
+    TooltippedLabelledLine(String label, String tooltip, String value) {
+        super(label, value);
+        this.tooltip = tooltip;
     }
 
     @Override
     public String toHTML() {
-        return "%s: <B>%s</B>".formatted(label, value.toHTML());
-    }
-
-    @Override
-    public String toDiscord() {
-        return label + ": " + DiscordFormat.BOLD + value.toDiscord() + DiscordFormat.RESET;
+        return "%s: <B>%s</B><BR>".formatted(
+              ViewElement.asHtmlTooltip(label, tooltip),
+              value.toHTML());
     }
 }

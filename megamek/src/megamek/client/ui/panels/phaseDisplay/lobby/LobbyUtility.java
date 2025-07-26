@@ -46,6 +46,7 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.dialogs.randomArmy.RandomArmyDialog;
 import megamek.client.ui.models.UnitTableModel;
 import megamek.client.ui.unitreadout.EntityReadout;
+import megamek.client.ui.unitreadout.LiveReadoutDialog;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.*;
 import megamek.common.force.Force;
@@ -551,6 +552,28 @@ public class LobbyUtility {
         }
 
         return result;
+    }
+
+    /**
+     * Shows the unit summaries for the given units, but not for hidden units (blind drop) and not for more than 10
+     * units at a time (because that's likely a misclick). The Entity Readout(s) will use a game listener to stay
+     * updated. Use this only for units that have been added to an actual game.
+     */
+    public static void liveEntityReadoutAction(Collection<Integer> entities, boolean canSeeAll, JFrame frame,
+          Game game) {
+        if (entities.size() > 10) {
+            LobbyErrors.showTenUnits(frame);
+        } else if (!canSeeAll) {
+            LobbyErrors.showCannotViewHidden(frame);
+        } else {
+            int index = 0;
+            for (int id : entities) {
+                LiveReadoutDialog dialog = new LiveReadoutDialog(frame, game, id);
+                dialog.setVisible(true);
+                dialog.setLocation(dialog.getLocation().x + index * 10, dialog.getLocation().y + index * 10);
+                index++;
+            }
+        }
     }
 
     /**

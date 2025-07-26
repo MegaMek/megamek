@@ -33,7 +33,6 @@
 package megamek.client.ui.unitreadout;
 
 import megamek.client.ui.util.DiscordFormat;
-import megamek.client.ui.util.ViewFormatting;
 
 import java.util.*;
 
@@ -44,15 +43,21 @@ import java.util.*;
  */
 class TableElement implements MultiRowViewElement {
 
+    private static final String HTML_ROW = "<TR>%s</TR>\n";
+    private static final String HTML_HEADER_CELL = "<TH %s>%s</TH>";
+    private static final String HTML_DATA_CELL = "<TD %s>%s</TD>";
+    private static final String HTML_TABLE = "<table cellspacing=0 cellpadding=2 border=0>%s</TABLE>\n";
+    private static final String HTML_NBSP = "&nbsp;";
+    private static final String PLAIN_COL_PADDING = "  ";
+
     static final int JUSTIFIED_LEFT = 0;
     static final int JUSTIFIED_CENTER = 1;
     static final int JUSTIFIED_RIGHT = 2;
 
     private final int[] justification;
     private final String[] colNames;
-    private final List<String[]> data = new ArrayList<>();
     private final Map<Integer, Integer> colWidth = new HashMap<>();
-    private final Map<Integer, String> colors = new HashMap<>();
+    private final List<ViewElement[]> data = new ArrayList<>();
 
     TableElement(int colCount) {
         justification = new int[colCount];
@@ -77,15 +82,23 @@ class TableElement implements MultiRowViewElement {
     }
 
     public void addRow(String... row) {
-        data.add(row);
+        ViewElement[] convertedRow = new ViewElement[row.length];
         for (int i = 0; i < row.length; i++) {
-            colWidth.merge(i, row[i].length(), Math::max);
+            convertedRow[i] = (row[i] == null) ? new EmptyElement() : new PlainElement(row[i]);
         }
+        addRow(convertedRow);
     }
 
-    void addRowWithColor(String color, String... row) {
-        addRow(row);
-        colors.put(data.size() - 1, color);
+    public void addRow(ViewElement... row) {
+        for (int i = 0; i < row.length; i++) {
+            if (row[i] == null) {
+                row[i] = new EmptyElement();
+            }
+        }
+        data.add(row);
+        for (int i = 0; i < row.length; i++) {
+            colWidth.merge(i, row[i].toPlainText().length(), Math::max);
+        }
     }
 
     private String leftPad(String s, int fieldSize) {
@@ -125,28 +138,20 @@ class TableElement implements MultiRowViewElement {
 
     @Override
     public String toPlainText() {
-        final String COL_PADDING = "  ";
         StringBuilder sb = new StringBuilder();
         for (int col = 0; col < colNames.length; col++) {
-            sb.append(justify(justification[col], ReadoutMarkup.applyFormatting(colNames[col], ViewFormatting.NONE),
-                  colWidth.get(col)));
-            if (col < colNames.length - 1) {
-                sb.append(COL_PADDING);
-            }
+            sb.append(justify(justification[col], colNames[col], colWidth.get(col)));
+            sb.append(PLAIN_COL_PADDING);
         }
         sb.append("\n");
         if (colNames.length > 0) {
-            int w = sb.length() - 1;
-            sb.append("-".repeat(Math.max(0, w)));
-            sb.append("\n");
+            int w = sb.length() - 1 - PLAIN_COL_PADDING.length();
+            sb.append("-".repeat(Math.max(0, w))).append("\n");
         }
-        for (String[] row : data) {
+        for (ViewElement[] row : data) {
             for (int col = 0; col < row.length; col++) {
-                sb.append(justify(justification[col], ReadoutMarkup.applyFormatting(row[col], ViewFormatting.NONE),
-                      colWidth.get(col)));
-                if (col < row.length - 1) {
-                    sb.append(COL_PADDING);
-                }
+                sb.append(justify(justification[col], row[col].toPlainText(), colWidth.get(col)));
+                sb.append(PLAIN_COL_PADDING);
             }
             sb.append("\n");
         }
@@ -155,87 +160,56 @@ class TableElement implements MultiRowViewElement {
 
     @Override
     public String toHTML() {
-        StringBuilder sb = new StringBuilder("<table cellspacing=\"0\" cellpadding=\"2\" border=\"0\">");
-        String headerTag = "TH";
-        String dataTag = "TD";
+
+        StringBuilder tableRows = new StringBuilder();
         if (colNames.length > 0) {
-            sb.append("<tr>");
+            StringBuilder rowBuilder = new StringBuilder();
             for (int col = 0; col < colNames.length; col++) {
-                sb.append("<").append(headerTag);
-                if (justification[col] == JUSTIFIED_RIGHT) {
-                    sb.append(" align=\"right\">");
-                } else if (justification[col] == JUSTIFIED_CENTER) {
-                    sb.append(" align=\"center\">");
-                } else {
-                    sb.append(" align=\"left\">");
-                }
-                if (justification[col] != JUSTIFIED_LEFT) {
-                    sb.append("&nbsp;&nbsp;");
-                }
-                sb.append(ReadoutMarkup.applyFormatting(colNames[col], ViewFormatting.HTML));
-                if (justification[col] != JUSTIFIED_RIGHT) {
-                    sb.append("&nbsp;&nbsp;");
-                }
-                sb.append("</%s>".formatted(headerTag));
+                rowBuilder.append(HTML_HEADER_CELL.formatted(htmlJustifyCell(col), colNames[col]));
+                rowBuilder.append(HTML_HEADER_CELL.formatted("", HTML_NBSP.repeat(4)));
             }
-            sb.append("</tr>\n");
+            tableRows.append(HTML_ROW.formatted(rowBuilder.toString()));
         }
-        for (int r = 0; r < data.size(); r++) {
-            if (colors.containsKey(r)) {
-                sb.append("<tr color=\"").append(colors.get(r)).append("\">");
-            } else {
-                sb.append("<tr>");
-            }
-            final String[] row = data.get(r);
+        for (ViewElement[] row : data) {
+            StringBuilder rowBuilder = new StringBuilder();
             for (int col = 0; col < row.length; col++) {
-                sb.append("<").append(dataTag);
-                if (justification[col] == JUSTIFIED_RIGHT) {
-                    sb.append(" align=\"right\">");
-                } else if (justification[col] == JUSTIFIED_CENTER) {
-                    sb.append(" align=\"center\">");
-                } else {
-                    sb.append(" align=\"left\">");
-                }
-                if (justification[col] != JUSTIFIED_LEFT) {
-                    sb.append("&nbsp;&nbsp;");
-                }
-                sb.append(ReadoutMarkup.applyFormatting(row[col], ViewFormatting.HTML));
-                if (justification[col] != JUSTIFIED_RIGHT) {
-                    sb.append("&nbsp;&nbsp;");
-                }
-                sb.append("</%s>".formatted(dataTag));
+                rowBuilder.append(HTML_DATA_CELL.formatted(htmlJustifyCell(col), row[col].toHTML()));
+                rowBuilder.append(HTML_DATA_CELL.formatted("", HTML_NBSP.repeat(4)));
             }
-            sb.append("</tr>\n");
+            tableRows.append(HTML_ROW.formatted(rowBuilder.toString()));
         }
-        sb.append("</table>\n");
-        return sb.toString();
+        return HTML_TABLE.formatted(tableRows.toString());
+    }
+
+    private String htmlJustifyCell(int col) {
+        return " align=" + switch (justification[col]) {
+            case JUSTIFIED_RIGHT -> "right";
+            case JUSTIFIED_CENTER -> "center";
+            default -> "left";
+        };
     }
 
     @Override
     public String toDiscord() {
-        final String COL_PADDING = "  ";
         StringBuilder sb = new StringBuilder();
         sb.append(DiscordFormat.UNDERLINE).append(DiscordFormat.ROW_SHADING);
         for (int col = 0; col < colNames.length; col++) {
-            sb.append(justify(justification[col], ReadoutMarkup.applyFormatting(colNames[col],
-                        ViewFormatting.DISCORD),
-                  colWidth.get(col)));
+            sb.append(justify(justification[col], colNames[col], colWidth.get(col)));
             if (col < colNames.length - 1) {
-                sb.append(COL_PADDING);
+                sb.append(PLAIN_COL_PADDING);
             }
         }
-        sb.append(DiscordFormat.RESET);
-        sb.append("\n");
+        sb.append(DiscordFormat.RESET) .append("\n");
         for (int r = 0; r < data.size(); r++) {
-            final String[] row = data.get(r);
+            final ViewElement[] row = data.get(r);
             if (r % 2 == 1) {
                 sb.append(DiscordFormat.ROW_SHADING);
             }
             for (int col = 0; col < row.length; col++) {
                 sb.append(DiscordFormat.highlightNumbersForDiscord(justify(justification[col],
-                      ReadoutMarkup.applyFormatting(row[col], ViewFormatting.DISCORD), colWidth.get(col))));
+                      row[col].toPlainText(), colWidth.get(col))));
                 if (col < row.length - 1) {
-                    sb.append(COL_PADDING);
+                    sb.append(PLAIN_COL_PADDING);
                 }
             }
             sb.append(DiscordFormat.RESET).append("\n");

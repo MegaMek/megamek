@@ -33,39 +33,44 @@
 package megamek.client.ui.unitreadout;
 
 import megamek.client.ui.util.DiscordFormat;
-import megamek.client.ui.util.ViewFormatting;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
- * An element with a label, a colon, and a value. In html and discord the label is bold.
+ * This Element is a specific for fluff text. It emphasizes the label and cleans HTML tags from the text for output in
+ * formats other than HTML (in other words, allows HTML tags in the text).
  */
-class LabeledElement implements ViewElement {
+class FluffTextLine implements ViewElement {
 
-    protected final String label;
-    protected ViewElement value;
+    private static final String PLAIN_FORMAT = "%s: %s\n";
+    private static final String HTML_FORMAT = "<B>%s</B>: %s<BR>\n";
 
+    private final String label;
+    private final String value;
 
-    LabeledElement(String label, ViewElement value) {
+    FluffTextLine(String label, String value) {
         this.label = label;
         this.value = value;
     }
 
     @Override
     public String toPlainText() {
-        return label + ": " + value.toPlainText();
+        return PLAIN_FORMAT.formatted(label, htmlCleanedText());
     }
 
     @Override
     public String toHTML() {
-        return "%s: <B>%s</B>".formatted(label, value.toHTML());
+        return HTML_FORMAT.formatted(label, value);
     }
 
     @Override
     public String toDiscord() {
-        return label + ": " + DiscordFormat.BOLD + value.toDiscord() + DiscordFormat.RESET;
+        return DiscordFormat.BOLD + label + DiscordFormat.RESET + ": "
+              + DiscordFormat.highlightNumbersForDiscord(htmlCleanedText()) + '\n';
+    }
+
+    private String htmlCleanedText() {
+        return value.replaceAll("<[Bb][Rr]> *", "\n")
+              .replaceAll("<[Pp]> *", "\n\n")
+              .replaceAll("</[Pp]> *", "\n")
+              .replaceAll("<[^>]*>", "");
     }
 }

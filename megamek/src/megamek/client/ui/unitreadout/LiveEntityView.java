@@ -1,0 +1,108 @@
+/*
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. <Package Name> was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.client.ui.unitreadout;
+
+import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
+import megamek.client.ui.dialogs.unitSelectorDialogs.AbstractTabbedPane;
+import megamek.client.ui.dialogs.unitSelectorDialogs.AvailabilityPanel;
+import megamek.client.ui.dialogs.unitSelectorDialogs.EntityReadoutPanel;
+import megamek.client.ui.panels.alphaStrike.ConfigurableASCardPanel;
+import megamek.client.ui.util.ViewFormatting;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.templates.TROView;
+
+import javax.swing.*;
+
+/**
+ * The EntityViewPane displays the entity summary, TRO and AS card panels within a TabbedPane.
+ */
+public class LiveEntityView extends AbstractTabbedPane {
+
+    private final LiveEntityReadoutPanel readoutPanel;
+    private final EntityReadoutPanel troPanel = new EntityReadoutPanel();
+    private final ConfigurableASCardPanel alphaStrikeCardPanel = new ConfigurableASCardPanel(getFrame());
+    private final AvailabilityPanel factionPanel = new AvailabilityPanel(getFrame());
+
+    private final int entityId;
+    private final Game game;
+
+    public LiveEntityView(JFrame frame, Game game, int entityId) {
+        super(frame, "EntityViewPane");
+        this.entityId = entityId;
+        this.game = game;
+        readoutPanel = new LiveEntityReadoutPanel(game, entityId);
+    }
+
+    /**
+     * This purposefully does not set preferences, as it may be used on differing panes for differing uses and thus you
+     * don't want to remember the selected tab between the different locations.
+     */
+    @Override
+    protected void initialize() {
+        readoutPanel.setName("entityPanel");
+        readoutPanel.initialize();
+
+        troPanel.setName("troPanel");
+
+        addTab(resources.getString("Summary.title"), readoutPanel);
+        addTab(resources.getString("TRO.title"), troPanel);
+        addTab(resources.getString("ASCard.title"), alphaStrikeCardPanel);
+        addTab(resources.getString("FactionAvailability.title"), factionPanel.getPanel());
+
+        updateDisplayedEntity();
+    }
+
+    /**
+     * Updates the pane's currently displayed entity in all tabs. Performs Alpha Strike conversion if possible.
+     */
+    private void updateDisplayedEntity() {
+        Entity entity = game.getEntityFromAllSources(entityId);
+        if (entity == null) {
+            troPanel.reset();
+            factionPanel.reset();
+            alphaStrikeCardPanel.setASElement(null);
+        } else {
+            troPanel.showEntity(entity, TROView.createView(entity, ViewFormatting.HTML));
+            factionPanel.setUnit(entity.getModel(), entity.getChassis());
+            if (ASConverter.canConvert(entity)) {
+                alphaStrikeCardPanel.setASElement(ASConverter.convert(entity, new FlexibleCalculationReport()));
+            }
+        }
+    }
+
+    public void dispose() {
+        readoutPanel.dispose();
+    }
+}

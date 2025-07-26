@@ -32,37 +32,26 @@
  */
 package megamek.client.ui.unitreadout;
 
-import megamek.client.ui.util.DiscordFormat;
+class DateRangeElement implements ViewElement {
 
-import java.util.Objects;
+    private final String text;
 
-/**
- * Displays a hyperlink. Does not add a line break after itself.
- */
-class HyperLinkElement extends LabeledElement {
-
-    private final String address;
-
-    HyperLinkElement(String label, String address, String displayText) {
-        super(Objects.requireNonNullElse(label, ""), displayText);
-        this.address = address;
+    public DateRangeElement(String text) {
+        this.text = text;
     }
 
     @Override
     public String toPlainText() {
-        String result = label.isBlank() ? "" : label + ": ";
-        return result + value + "\n";
+        return text;
     }
 
     @Override
     public String toHTML() {
-        String result = label.isBlank() ? "" : "<B>" + label + "</B>: ";
-        return result + "<A HREF=" + address + ">" + value + "</A><BR>";
+        return text.replace(", ", "<br>");
     }
 
     @Override
     public String toDiscord() {
-        String result = label.isBlank() ? "" : DiscordFormat.BOLD + label + ": " + DiscordFormat.RESET;
-        return result + value + "\n";
+        return text;
     }
 }

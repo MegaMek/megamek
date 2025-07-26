@@ -150,8 +150,8 @@ public class ConfigurableMekViewPanel extends JPanel {
 
     private void copyToClipboard(ViewFormatting formatting) {
         if (entity != null) {
-            EntityReadout readout = EntityReadout.createReadout(entity, detail(), alternateCost(), formatting);
-            StringSelection stringSelection = new StringSelection(readout.getReadout(null, formatting));
+            EntityReadout readout = EntityReadout.createReadout(entity, detail(), alternateCost());
+            StringSelection stringSelection = new StringSelection(readout.getReadout(formatting));
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);
         }
@@ -160,7 +160,7 @@ public class ConfigurableMekViewPanel extends JPanel {
     private void updateReadout() {
         if (entity != null) {
             entityReadoutPanel.showEntity(entity, detail(), alternateCost(), !pilotBV(entity),
-                  ViewFormatting.HTML, GUIPreferences.getInstance().getSummaryFont());
+                  GUIPreferences.getInstance().getSummaryFont());
         } else {
             entityReadoutPanel.reset();
         }

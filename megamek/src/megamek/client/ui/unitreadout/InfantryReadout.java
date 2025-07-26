@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.util.ViewFormatting;
 import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.IOption;
@@ -55,9 +54,9 @@ class InfantryReadout extends GeneralEntityReadout {
     protected final Infantry infantry;
 
     protected InfantryReadout(Infantry infantry, boolean showDetail, boolean useAlternateCost,
-                              boolean ignorePilotBV, ViewFormatting formatting) {
+                              boolean ignorePilotBV) {
 
-        super(infantry, showDetail, useAlternateCost, ignorePilotBV, formatting);
+        super(infantry, showDetail, useAlternateCost, ignorePilotBV);
         this.infantry = infantry;
     }
 
@@ -91,7 +90,7 @@ class InfantryReadout extends GeneralEntityReadout {
             movement.add("%d (U)".formatted(umuMP));
         }
         result.add(new PlainLine());
-        result.add(new LabeledElement(megamek.client.ui.Messages.getString("MekView.Movement"),
+        result.add(new LabeledLine(megamek.client.ui.Messages.getString("MekView.Movement"),
               movement.toString()));
 
         return result;
@@ -114,22 +113,22 @@ class InfantryReadout extends GeneralEntityReadout {
             } else if (mount.getMovementMode().isVTOL()) {
                 mountFeatures.add(megamek.client.ui.Messages.getString("MekView.VTOL"));
             }
-            result.add(new LabeledElement(
+            result.add(new LabeledLine(
                   megamek.client.ui.Messages.getString("MekView.Mount"),
                   "%s%s".formatted(mount.getName(), mountFeatures)));
 
             if ((mount.getBurstDamageDice() > 0) || (mount.getVehicleDamage() > 0)) {
-                result.add(new LabeledElement(
+                result.add(new LabeledLine(
                       megamek.client.ui.Messages.getString("MekView.MountBonusDamage"),
                       "+%dD6 (%d)".formatted(mount.getBurstDamageDice(), mount.getVehicleDamage())));
             }
             if ((mount.getMaxWaterDepth() > 0) && (mount.getMaxWaterDepth() < Integer.MAX_VALUE)) {
-                result.add(new LabeledElement(
+                result.add(new LabeledLine(
                       megamek.client.ui.Messages.getString("MekView.MountWaterDepth"),
                       mount.getMaxWaterDepth() + ""));
             }
             if (mount.getMovementMode().isSubmarine() && (mount.getUWEndurance() < Integer.MAX_VALUE)) {
-                result.add(new LabeledElement(
+                result.add(new LabeledLine(
                       megamek.client.ui.Messages.getString("MekView.MountWaterEndurance"),
                       Messages.getString("MekView.MountWaterEnduranceValue")
                             .formatted(mount.getUWEndurance())));
@@ -179,36 +178,40 @@ class InfantryReadout extends GeneralEntityReadout {
     @Override
     protected List<ViewElement> getWeapons(boolean showDetail) {
         List<ViewElement> result = new ArrayList<>();
-        result.add(new LabeledElement(Messages.getString("MekView.PrimaryWeapon"),
+        result.add(new LabeledLine(Messages.getString("MekView.PrimaryWeapon"),
               (null != infantry.getPrimaryWeapon()) ? infantry.getPrimaryWeapon().getDesc() : MESSAGE_NONE));
-        result.add(new LabeledElement(Messages.getString("MekView.SecondWeapon"),
+        result.add(new LabeledLine(Messages.getString("MekView.SecondWeapon"),
               secondaryCIWeaponDescriptor()));
-        result.add(new LabeledElement(Messages.getString("MekView.DmgPerTrooper"),
+        result.add(new LabeledLine(Messages.getString("MekView.DmgPerTrooper"),
               "%3.3f".formatted(infantry.getDamagePerTrooper())));
 
         if (infantry.hasFieldWeapon()) {
             result.add(new PlainLine());
-            List<Mounted<?>> fieldGuns = infantry.originalFieldWeapons();
-            EquipmentType fieldGunType = fieldGuns.get(0).getType();
+            List<Mounted<?>> allFieldGuns = infantry.originalFieldWeapons();
             List<Mounted<?>> activeFieldGuns = infantry.activeFieldWeapons();
+            EquipmentType fieldGunType = allFieldGuns.get(0).getType();
             String typeName = TestInfantry.isFieldArtilleryType(fieldGunType)
                   ? Messages.getString("MekView.FieldArty")
                   : Messages.getString("MekView.FieldGun");
-            String fieldGunText;
-            String gunCount = TestInfantry.isFieldArtilleryType(fieldGunType) ?
-                  "" :
-                  " (%s)".formatted(activeFieldGuns.size());
-            if (activeFieldGuns.isEmpty()) {
-                fieldGunText = ReadoutMarkup.markupDestroyed("%s (destroyed)".formatted(fieldGunType.getName()));
-            } else if (activeFieldGuns.size() < fieldGuns.size()) {
-                fieldGunText = ReadoutMarkup.markupDamaged("%s%s"
-                      .formatted(fieldGunType.getName(), gunCount));
-            } else {
-                fieldGunText = "%s%s".formatted(fieldGunType.getName(), gunCount);
-            }
-            result.add(new LabeledElement(typeName, fieldGunText));
+            ViewElement fieldGunText = createFieldGunText(fieldGunType, activeFieldGuns, allFieldGuns);
+            result.add(new LabeledLine(typeName, fieldGunText));
         }
         return result;
+    }
+
+    private static ViewElement createFieldGunText(EquipmentType fieldGunType, List<Mounted<?>> activeFieldGuns,
+          List<Mounted<?>> fieldGuns) {
+
+        String gunCount = TestInfantry.isFieldArtilleryType(fieldGunType) ?
+              "" :
+              " (%s)".formatted(activeFieldGuns.size());
+        if (activeFieldGuns.isEmpty()) {
+            return new DestroyedElement("%s (destroyed)".formatted(fieldGunType.getName()));
+        } else if (activeFieldGuns.size() < fieldGuns.size()) {
+            return new DamagedElement("%s%s".formatted(fieldGunType.getName(), gunCount));
+        } else {
+            return new PlainElement("%s%s".formatted(fieldGunType.getName(), gunCount));
+        }
     }
 
     private String secondaryCIWeaponDescriptor() {
@@ -222,24 +225,24 @@ class InfantryReadout extends GeneralEntityReadout {
     @Override
     protected List<ViewElement> createArmorElements() {
         List<ViewElement> result = new ArrayList<>();
-        
-        String troopers = infantry.getShootingStrength() + "";
+
+        ViewElement troopers = new PlainElement(infantry.getShootingStrength());
         if (infantry.getShootingStrength() == 0) {
-            troopers = ReadoutMarkup.markupDestroyed("0");
+            troopers = new DestroyedElement(0);
         } else if (infantry.getShootingStrength() < infantry.getOriginalTrooperCount()) {
-            troopers = ReadoutMarkup.markupDamaged(troopers);
+            troopers = new DamagedElement(infantry.getShootingStrength());
         }
-        result.add(new LabeledElement(Messages.getString("MekView.Men"), troopers));
+        result.add(new LabeledLine(Messages.getString("MekView.Men"), troopers));
 
         String squadCompositionFormat =
               (infantry.getMount() != null) && (infantry.getMount().getSize() != InfantryMount.BeastSize.LARGE)
                     ? Messages.getString("MekView.CreaturesComposition")
                     : Messages.getString("MekView.SquadComposition");
         String squadComposition = squadCompositionFormat.formatted(infantry.getSquadCount());
-        result.add(new LabeledElement(Messages.getString("MekView.Composition"), squadComposition));
+        result.add(new LabeledLine(Messages.getString("MekView.Composition"), squadComposition));
         
-        result.add(new LabeledElement(Messages.getString("MekView.Armor"), getInfantryArmor()));
-        result.add(new LabeledElement(Messages.getString("MekView.DamageDivisor"), getDamageDivisor()));
+        result.add(new LabeledLine(Messages.getString("MekView.Armor"), getInfantryArmor()));
+        result.add(new LabeledLine(Messages.getString("MekView.DamageDivisor"), getDamageDivisor()));
         return result;
     }
 
@@ -296,12 +299,15 @@ class InfantryReadout extends GeneralEntityReadout {
                 continue;
             }
 
-            String[] row = { mounted.getName(), String.valueOf(mounted.getBaseShotsLeft()) };
+            ViewElement[] row = new ViewElement[2];
+            row[0] = new PlainElement(mounted.getName());
 
             if (mounted.isDestroyed() || (mounted.getUsableShotsLeft() < 1)) {
-                row[1] = ReadoutMarkup.markupDestroyed(row[1]);
+                row[1] = new DestroyedElement(mounted.getBaseShotsLeft());
             } else if (mounted.getUsableShotsLeft() < mounted.getType().getShots()) {
-                row[1] = ReadoutMarkup.markupDamaged(row[1]);
+                row[1] = new DamagedElement(mounted.getBaseShotsLeft());
+            } else {
+                row[1] = new PlainElement(mounted.getBaseShotsLeft());
             }
             ammoTable.addRow(row);
         }

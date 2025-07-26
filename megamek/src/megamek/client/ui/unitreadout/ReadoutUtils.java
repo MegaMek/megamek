@@ -33,20 +33,13 @@
 package megamek.client.ui.unitreadout;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.util.ViewFormatting;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.ITechnology;
-import megamek.common.Mek;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
-import megamek.common.WeaponTypeFlag;
+import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
+import javax.swing.text.View;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -78,7 +71,7 @@ final class ReadoutUtils {
         }
     }
 
-    static List<ViewElement> getWeapons(Entity entity, boolean showDetail, ViewFormatting formatting) {
+    static List<ViewElement> getWeapons(Entity entity, boolean showDetail) {
         List<ViewElement> result = new ArrayList<>();
 
         if (entity.getWeaponList().isEmpty()) {
@@ -92,24 +85,23 @@ final class ReadoutUtils {
             if (mounted.getType().hasFlag(WeaponTypeFlag.INTERNAL_REPRESENTATION)) {
                 continue;
             }
-            String[] row = createWeaponTableRow(mounted, entity, true);
+
+            ViewElement[] row = createWeaponTableRow(mounted, entity, true);
 
             WeaponType wtype = mounted.getType();
             if (wtype instanceof BayWeapon) {
                 BayInfo bayInfo = getBayInfo(mounted);
-                row[2] = String.valueOf(bayInfo.totalHeat());
-                if (bayInfo.damagedWeapons() > 0 && !showDetail) {
-                    row[3] = ViewElement.warningStart(formatting) + Messages.getString("MekView.WeaponDamage")
-                          + ")" + ViewElement.warningEnd(formatting);
+                row[2] = new PlainElement(bayInfo.totalHeat());
+                if ((bayInfo.damagedWeapons() > 0) && !showDetail) {
+                    row[3] = new DestroyedElement(Messages.getString("MekView.WeaponDamage") + ")");
                 }
             } else {
-                row[2] = String.valueOf(wtype.getHeat());
+                row[2] = new PlainElement(wtype.getHeat());
                 if (entity.isOmni()) {
-                    row[3] = Messages.getString(mounted.isOmniPodMounted() ? "MekView.Pod" : "MekView.Fixed");
+                    row[3] = new PlainElement(mounted.isOmniPodMounted() ? "MekView.Pod" : "MekView.Fixed");
                 }
             }
-
-            addColoredWeaponRow(wpnTable, mounted, row);
+            wpnTable.addRow(row);
 
             if ((wtype instanceof BayWeapon) && showDetail) {
                 addBayWeaponList(mounted, wpnTable, entity, true);
@@ -120,7 +112,7 @@ final class ReadoutUtils {
         return result;
     }
 
-    static List<ViewElement> getWeaponsNoHeat(Entity entity, boolean showDetail, ViewFormatting formatting) {
+    static List<ViewElement> getWeaponsNoHeat(Entity entity, boolean showDetail) {
         List<ViewElement> result = new ArrayList<>();
 
         if (entity.getWeaponList().isEmpty()) {
@@ -134,20 +126,20 @@ final class ReadoutUtils {
             if (mounted.getType().hasFlag(WeaponTypeFlag.INTERNAL_REPRESENTATION)) {
                 continue;
             }
-            String[] row = createWeaponTableRow(mounted, entity, false);
+
+            ViewElement[] row = createWeaponTableRow(mounted, entity, false);
 
             WeaponType wtype = mounted.getType();
             if (wtype instanceof BayWeapon) {
                 BayInfo bayInfo = getBayInfo(mounted);
                 if (bayInfo.damagedWeapons() > 0 && !showDetail) {
-                    row[2] = ViewElement.warningStart(formatting) + Messages.getString("MekView.WeaponDamage")
-                          + ")" + ViewElement.warningEnd(formatting);
+                    row[2] = new DamagedElement(Messages.getString("MekView.WeaponDamage") + ")");
                 }
             } else if (entity.isOmni()) {
-                row[2] = Messages.getString(mounted.isOmniPodMounted() ? "MekView.Pod" : "MekView.Fixed");
+                row[2] = new PlainElement(mounted.isOmniPodMounted() ? "MekView.Pod" : "MekView.Fixed");
             }
 
-            addColoredWeaponRow(wpnTable, mounted, row);
+            wpnTable.addRow(row);
 
             if ((wtype instanceof BayWeapon) && showDetail) {
                 addBayWeaponList(mounted, wpnTable, entity, false);
@@ -180,7 +172,7 @@ final class ReadoutUtils {
         return new BayInfo(bWeapDamaged, heat);
     }
 
-    private static String[] createWeaponTableRow(Mounted<?> mounted, Entity entity, boolean withHeatColumn) {
+    private static ViewElement[] createWeaponTableRow(Mounted<?> mounted, Entity entity, boolean withHeatColumn) {
         String name = mounted.getDesc() + GeneralEntityReadout.quirkMarker(mounted);
         if (entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
             name += Messages.getString("MekView.IS");
@@ -188,39 +180,43 @@ final class ReadoutUtils {
         if (!entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
             name += Messages.getString("MekView.Clan");
         }
-        String location = entity.joinLocationAbbr(mounted.allLocations(), 3);
-        String[] row = new String[] { name, location, "" };
+        ViewElement nameElement = new PlainElement(name);
+        if (mounted.isDestroyed() && mounted.isRepairable()) {
+            nameElement = new DamagedElement(name);
+        } else if (mounted.isDestroyed()) {
+            nameElement = new DestroyedElement(name);
+        }
+        ViewElement location = new PlainElement(entity.joinLocationAbbr(mounted.allLocations(), 3));
         if (withHeatColumn) {
-            row = new String[] { name, location, "", "" };
+            return new ViewElement[] { nameElement, location, new EmptyElement(), new EmptyElement() };
+        } else {
+            return new ViewElement[] { nameElement, location, new EmptyElement() };
         }
-        return row;
-    }
-
-    static void addColoredWeaponRow(TableElement wpnTable, WeaponMounted m, String[] row) {
-        if (m.isDestroyed() && m.isRepairable()) {
-            row[0] = ReadoutMarkup.markupDamaged(row[0]);
-        } else if (m.isDestroyed()) {
-            row[0] = ReadoutMarkup.markupDestroyed(row[0]);
-        }
-        wpnTable.addRow(row);
     }
 
     private static void addBayWeaponList(WeaponMounted mounted, TableElement wpnTable, Entity entity,
           boolean withHeatColumn) {
         for (WeaponMounted m : mounted.getBayWeapons()) {
 
-            String[] row = new String[] { "- " + m.getDesc(), "", "" };
+            String name = "- " + m.getDesc();
+            if (entity.isClan() && (m.getType().getTechBase() == ITechnology.TechBase.IS)) {
+                name += Messages.getString("MekView.IS");
+            }
+            if (!entity.isClan() && (m.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
+                name += Messages.getString("MekView.Clan");
+            }
+            ViewElement nameElement = new PlainElement(name);
+            if (mounted.isDestroyed() && mounted.isRepairable()) {
+                nameElement = new DamagedElement(name);
+            } else if (mounted.isDestroyed()) {
+                nameElement = new DestroyedElement(name);
+            }
+            ViewElement location = new PlainElement(entity.joinLocationAbbr(mounted.allLocations(), 3));
+            ViewElement[] row = new ViewElement[] { nameElement, location, new EmptyElement() };
             if (withHeatColumn) {
-                row = new String[] { "- " + m.getDesc(), "", "", "" };
+                row = new ViewElement[] { nameElement, location, new EmptyElement(), new EmptyElement() };
             }
-
-            if (entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
-                row[0] += Messages.getString("MekView.IS");
-            }
-            if (!entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
-                row[0] += Messages.getString("MekView.Clan");
-            }
-            addColoredWeaponRow(wpnTable, mounted, row);
+            wpnTable.addRow(row);
         }
     }
 
@@ -231,11 +227,14 @@ final class ReadoutUtils {
                 continue;
             }
             if (mounted.getLocation() != Entity.LOC_NONE) {
-                String[] row = new String[] { "- " + m.getName(), String.valueOf(m.getBaseShotsLeft()), "", "" };
+                var row = new ViewElement[] { new PlainElement("- " + m.getName()),
+                                              new PlainElement(m.getBaseShotsLeft()),
+                                              new EmptyElement(),
+                                              new EmptyElement() };
                 if (m.isDestroyed()) {
-                    row[0] = ReadoutMarkup.markupDestroyed(row[0]);
+                    row[0] = new DestroyedElement("- " + m.getName());
                 } else if (m.getUsableShotsLeft() < 1) {
-                    row[0] = ReadoutMarkup.markupDamaged(row[0]);
+                    row[0] = new DamagedElement("- " + m.getName());
                 }
                 wpnTable.addRow(row);
             }
@@ -256,19 +255,46 @@ final class ReadoutUtils {
               || mounted.getType().hasFlag(MiscType.F_ARMOR_KIT);
     }
 
-    static String renderArmor(int currentArmor, int fullArmor) {
+    static ViewElement renderArmorAsViewElement(int currentArmor, int fullArmor) {
         double percentRemaining = ((double) currentArmor) / ((double) fullArmor);
         String armor = Integer.toString(currentArmor);
 
         if (percentRemaining < 0) {
-            return ReadoutMarkup.markupDestroyed("X");
+            return new DestroyedElement("X");
         } else if (percentRemaining <= .25) {
-            return ReadoutMarkup.markupDestroyed(armor);
+            return new DestroyedElement(armor);
         } else if (percentRemaining < 1.00) {
-            return ReadoutMarkup.markupDamaged(armor);
+            return new DamagedElement(armor);
         } else {
-            return armor;
+            return new PlainElement(armor);
         }
+    }
+
+
+    /**
+     * @return An itemlist of the given entity's transports.
+     */
+    static ItemList createTransporterList(Entity entity) {
+        var transportsList = new ItemList(Messages.getString("MekView.CarryingCapacity"));
+        for (Transporter transporter : entity.getTransports()) {
+            if ((transporter instanceof Bay bay) && bay.isQuarters()) {
+                continue;
+            }
+            if ((transporter instanceof DockingCollar dockingCollar) && dockingCollar.isDamaged()) {
+                continue;
+            }
+            String transporterStatus = transporter.getUnusedString();
+            if (entity.isOmni() && ((transporter instanceof InfantryCompartment) || (transporter instanceof Bay))) {
+                transporterStatus += entity.isPodMountedTransport(transporter) ? " (Pod)" : " (Fixed)";
+            }
+            ViewElement transporterElement = new PlainElement(transporterStatus);
+            if ((transporter instanceof Bay bay) && (bay.getBayDamage() > 0)) {
+                transporterElement = new DamagedElement(transporterStatus);
+            }
+            transportsList.addItem(transporterElement);
+        }
+
+        return transportsList;
     }
 
     private ReadoutUtils() { }

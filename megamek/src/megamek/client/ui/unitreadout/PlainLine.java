@@ -32,8 +32,6 @@
  */
 package megamek.client.ui.unitreadout;
 
-import megamek.client.ui.util.ViewFormatting;
-
 /**
  * Displays a single line of text. The default constructor is used to insert a new line.
  */
@@ -51,12 +49,12 @@ class PlainLine implements ViewElement {
 
     @Override
     public String toPlainText() {
-        return applyFormatting(value, ViewFormatting.NONE) + "\n";
+        return value + "\n";
     }
 
     @Override
     public String toHTML() {
-        return applyFormatting(value, ViewFormatting.HTML) + "<BR>\n";
+        return value + "<BR>\n";
     }
 
     @Override

@@ -33,7 +33,6 @@
 package megamek.client.ui.unitreadout;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.util.ViewFormatting;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
@@ -59,9 +58,9 @@ class BattleArmorReadout extends GeneralEntityReadout {
     BattleArmor battleArmor;
 
     protected BattleArmorReadout(BattleArmor battleArmor, boolean showDetail, boolean useAlternateCost,
-          boolean ignorePilotBV, ViewFormatting formatting) {
+          boolean ignorePilotBV) {
 
-        super(battleArmor, showDetail, useAlternateCost, ignorePilotBV, formatting);
+        super(battleArmor, showDetail, useAlternateCost, ignorePilotBV);
         this.battleArmor = battleArmor;
     }
 
@@ -69,7 +68,7 @@ class BattleArmorReadout extends GeneralEntityReadout {
     protected ViewElement createTotalArmorElement() {
         String armor = battleArmor.getTotalArmor() + " "
               + EquipmentType.getArmorTypeName(battleArmor.getArmorType(1)).trim();
-        return new LabeledElement(Messages.getString("MekView.Armor"), armor);
+        return new LabeledLine(Messages.getString("MekView.Armor"), armor);
     }
 
     @Override
@@ -104,8 +103,7 @@ class BattleArmorReadout extends GeneralEntityReadout {
                 if (mounted.getType().hasFlag(WeaponTypeFlag.INTERNAL_REPRESENTATION)) {
                     continue;
                 }
-                String[] row = createEquipmentTableRow(mounted);
-                ReadoutUtils.addColoredWeaponRow(wpnTable, mounted, row);
+                wpnTable.addRow(createEquipmentTableRow(mounted));
             }
             result.add(wpnTable);
         }
@@ -121,12 +119,12 @@ class BattleArmorReadout extends GeneralEntityReadout {
             if (!result.isEmpty()) {
                 result.add(new PlainLine());
             }
-            result.add(new LabeledElement("Other Attacks", otherAttacks.toString()));
+            result.add(new LabeledLine("Other Attacks", otherAttacks.toString()));
         }
         return result;
     }
 
-    private String[] createEquipmentTableRow(Mounted<?> mounted) {
+    private ViewElement[] createEquipmentTableRow(Mounted<?> mounted) {
         String location = BattleArmor.getBaMountLocAbbr(mounted.getBaMountLoc());
         if (mounted.isDWPMounted()) {
             location = "DWP";
@@ -149,8 +147,13 @@ class BattleArmorReadout extends GeneralEntityReadout {
         if (!battleArmor.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
             name += Messages.getString("MekView.Clan");
         }
-
-        return new String[] { name, location };
+        ViewElement nameElement = new PlainElement(name);
+        if (mounted.isDestroyed() && mounted.isRepairable()) {
+            nameElement = new DamagedElement(name);
+        } else if (mounted.isDestroyed()) {
+            nameElement = new DestroyedElement(name);
+        }
+        return new ViewElement[] { nameElement, new PlainElement(location) };
     }
 
     private String sanitizeMountedDesc(Mounted<?> mounted) {
@@ -191,13 +194,15 @@ class BattleArmorReadout extends GeneralEntityReadout {
             if (hideAmmo(mounted)) {
                 continue;
             }
-
-            String[] row = { mounted.getName(), String.valueOf(mounted.getBaseShotsLeft()) };
+            ViewElement[] row = new ViewElement[2];
+            row[0] = new PlainElement(mounted.getName());
 
             if (mounted.isDestroyed() || (mounted.getUsableShotsLeft() < 1)) {
-                row[1] = ReadoutMarkup.markupDestroyed(row[1]);
+                row[1] = new DestroyedElement(mounted.getBaseShotsLeft());
             } else if (mounted.getUsableShotsLeft() < mounted.getOriginalShots()) {
-                row[1] = ReadoutMarkup.markupDamaged(row[1]);
+                row[1] = new DamagedElement(mounted.getBaseShotsLeft());
+            } else {
+                row[1] = new PlainElement(mounted.getBaseShotsLeft());
             }
             ammoTable.addRow(row);
 
@@ -222,12 +227,7 @@ class BattleArmorReadout extends GeneralEntityReadout {
                 continue;
             }
 
-            String[] row = createEquipmentTableRow(mounted);
-
-            if (mounted.isDestroyed()) {
-                row[0] = ReadoutMarkup.markupDestroyed(row[0]);
-            }
-            miscTable.addRow(row);
+            miscTable.addRow(createEquipmentTableRow(mounted));
         }
 
         return miscTable;
@@ -239,7 +239,7 @@ class BattleArmorReadout extends GeneralEntityReadout {
     }
 
     @Override
-    protected String createMovementString() {
+    protected ViewElement createMovementString() {
         int walkMP = battleArmor.getWalkMP();
         int runMP = battleArmor.getRunMP();
         int jumpMP = battleArmor.getJumpMP();
@@ -258,6 +258,6 @@ class BattleArmorReadout extends GeneralEntityReadout {
             movement.add("%d (U)".formatted(umuMP));
         }
 
-        return movement.toString();
+        return new PlainElement(movement.toString());
     }
 }

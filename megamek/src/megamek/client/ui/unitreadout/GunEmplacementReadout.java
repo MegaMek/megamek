@@ -32,7 +32,6 @@
  */
 package megamek.client.ui.unitreadout;
 
-import megamek.client.ui.util.ViewFormatting;
 import megamek.common.GunEmplacement;
 
 import java.util.Collections;
@@ -41,9 +40,9 @@ import java.util.List;
 class GunEmplacementReadout extends TankReadout {
 
     protected GunEmplacementReadout(GunEmplacement gunEmplacement, boolean showDetail, boolean useAlternateCost,
-          boolean ignorePilotBV, ViewFormatting formatting) {
+          boolean ignorePilotBV) {
 
-        super(gunEmplacement, showDetail, useAlternateCost, ignorePilotBV, formatting);
+        super(gunEmplacement, showDetail, useAlternateCost, ignorePilotBV);
     }
 
     @Override

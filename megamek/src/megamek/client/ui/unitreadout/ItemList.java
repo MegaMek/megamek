@@ -46,4 +46,8 @@ class ItemList extends TableElement {
     void addItem(String item) {
         addRow(item);
     }
+
+    void addItem(ViewElement item) {
+        addRow(item);
+    }
 }

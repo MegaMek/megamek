@@ -33,39 +33,40 @@
 package megamek.client.ui.unitreadout;
 
 import megamek.client.ui.util.DiscordFormat;
-import megamek.client.ui.util.ViewFormatting;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
- * An element with a label, a colon, and a value. In html and discord the label is bold.
+ * Basic one-line entry consisting of a label, a colon, and a value.
  */
-class LabeledElement implements ViewElement {
+class LabeledLine implements ViewElement {
+
+    private static final String PLAIN_FORMAT = "%s: %s\n";
+    private static final String HTML_FORMAT = "%s: <B>%s</B><BR>\n";
 
     protected final String label;
-    protected ViewElement value;
+    protected final ViewElement value;
 
+    LabeledLine(String label, String value) {
+        this.label = label;
+        this.value = new PlainElement(value);
+    }
 
-    LabeledElement(String label, ViewElement value) {
+    LabeledLine(String label, ViewElement value) {
         this.label = label;
         this.value = value;
     }
 
     @Override
     public String toPlainText() {
-        return label + ": " + value.toPlainText();
+        return PLAIN_FORMAT.formatted(label, value.toPlainText());
     }
 
     @Override
     public String toHTML() {
-        return "%s: <B>%s</B>".formatted(label, value.toHTML());
+        return HTML_FORMAT.formatted(label, value.toHTML());
     }
 
     @Override
     public String toDiscord() {
-        return label + ": " + DiscordFormat.BOLD + value.toDiscord() + DiscordFormat.RESET;
+        return label + ": " + DiscordFormat.highlightNumbersForDiscord(value.toDiscord()) + '\n';
     }
 }

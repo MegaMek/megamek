@@ -32,40 +32,36 @@
  */
 package megamek.client.ui.unitreadout;
 
-import megamek.client.ui.util.DiscordFormat;
-import megamek.client.ui.util.ViewFormatting;
+import megamek.client.ui.dialogs.abstractDialogs.AbstractDialog;
+import megamek.common.Game;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import javax.swing.*;
+import java.awt.*;
 
 /**
- * An element with a label, a colon, and a value. In html and discord the label is bold.
+ * A dialog showing the unit readout for a given unit. This dialog only shows the Entity Readout, but keeps it
+ * updated until the window is closed. This dialog is always non-modal.
  */
-class LabeledElement implements ViewElement {
+public class LiveReadoutDialog extends AbstractDialog {
 
-    protected final String label;
-    protected ViewElement value;
+    private final LiveEntityView entityView;
 
-
-    LabeledElement(String label, ViewElement value) {
-        this.label = label;
-        this.value = value;
+    /** Constructs a non-modal dialog showing and updating the EntityReadout of the given entity. */
+    public LiveReadoutDialog(JFrame frame, Game game, int entityId) {
+        super(frame, false, "EntityReadoutDialog", "EntityReadoutDialog.title");
+        entityView = new LiveEntityView(frame, game, entityId);
+        initialize();
     }
 
     @Override
-    public String toPlainText() {
-        return label + ": " + value.toPlainText();
+    protected Container createCenterPane() {
+        entityView.initialize();
+        return entityView;
     }
 
     @Override
-    public String toHTML() {
-        return "%s: <B>%s</B>".formatted(label, value.toHTML());
-    }
-
-    @Override
-    public String toDiscord() {
-        return label + ": " + DiscordFormat.BOLD + value.toDiscord() + DiscordFormat.RESET;
+    protected void cancelAction() {
+        entityView.dispose();
+        dispose();
     }
 }

@@ -73,7 +73,7 @@ public interface EntityReadout {
      * @param showDetail If true, shows individual weapons that make up weapon bays.
      */
     static EntityReadout createReadout(Entity entity, boolean showDetail) {
-        return createReadout(entity, showDetail, false, ViewFormatting.HTML);
+        return createReadout(entity, showDetail, false);
     }
 
 
@@ -87,21 +87,7 @@ public interface EntityReadout {
      *                         for conventional infantry for MekHQ.
      */
     static EntityReadout createReadout(Entity entity, boolean showDetail, boolean useAlternateCost) {
-        return createReadout(entity, showDetail, useAlternateCost, ViewFormatting.HTML);
-    }
-
-    /**
-     * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
-     *
-     * @param entity           The entity to summarize
-     * @param showDetail       If true, shows individual weapons that make up weapon bays.
-     * @param useAlternateCost If true, uses alternate cost calculation. This primarily provides an equipment-only cost
-     *                         for conventional infantry for MekHQ.
-     * @param formatting       Which formatting style to use: HTML, Discord, or None (plaintext)
-     */
-    static EntityReadout createReadout(Entity entity, boolean showDetail, boolean useAlternateCost,
-          ViewFormatting formatting) {
-        return createReadout(entity, showDetail, useAlternateCost, (entity.getCrew() == null), formatting);
+        return createReadout(entity, showDetail, useAlternateCost, entity.getCrew() != null);
     }
 
     /**
@@ -112,29 +98,29 @@ public interface EntityReadout {
      * @param useAlternateCost If true, uses alternate cost calculation. This primarily provides an equipment-only cost
      *                         for conventional infantry for MekHQ.
      * @param ignorePilotBV    If true then the BV calculation is done without including the pilot BV modifiers
-     * @param formatting       Which formatting style to use: HTML, Discord, or None (plaintext)
      */
     static EntityReadout createReadout(Entity entity, boolean showDetail, boolean useAlternateCost,
-          boolean ignorePilotBV, ViewFormatting formatting) {
+          boolean ignorePilotBV) {
 
         if (entity instanceof BattleArmor battleArmor) {
-            return new BattleArmorReadout(battleArmor, showDetail, useAlternateCost, ignorePilotBV, formatting);
+            return new BattleArmorReadout(battleArmor, showDetail, useAlternateCost, ignorePilotBV);
         } else if (entity instanceof Infantry infantry) {
-            return new InfantryReadout(infantry, showDetail, useAlternateCost, ignorePilotBV, formatting);
+            return new InfantryReadout(infantry, showDetail, useAlternateCost, ignorePilotBV);
         } else if (entity instanceof ProtoMek protoMek) {
-            return new ProtoMekReadout(protoMek, showDetail, useAlternateCost, ignorePilotBV, formatting);
+            return new ProtoMekReadout(protoMek, showDetail, useAlternateCost, ignorePilotBV);
         } else if (entity instanceof GunEmplacement gunEmplacement) {
-            return new GunEmplacementReadout(gunEmplacement, showDetail, useAlternateCost, ignorePilotBV, formatting);
+            return new GunEmplacementReadout(gunEmplacement, showDetail, useAlternateCost, ignorePilotBV);
         } else if (entity instanceof FighterSquadron squadron) {
-            return new FighterSquadronReadout(squadron, showDetail, useAlternateCost, ignorePilotBV, formatting);
+            return new FighterSquadronReadout(squadron, showDetail, useAlternateCost, ignorePilotBV);
         } else if (entity instanceof Mek mek) {
-            return new MekReadout(mek, showDetail, useAlternateCost, ignorePilotBV, formatting);
+            return new MekReadout(mek, showDetail, useAlternateCost, ignorePilotBV);
         } else if (entity instanceof Aero aero) {
-            return new AeroReadout(aero, showDetail, useAlternateCost, ignorePilotBV, formatting);
+            return new AeroReadout(aero, showDetail, useAlternateCost, ignorePilotBV);
         } else if (entity instanceof Tank tank) {
-            return new TankReadout(tank, showDetail, useAlternateCost, ignorePilotBV, formatting);
+            return new TankReadout(tank, showDetail, useAlternateCost, ignorePilotBV);
         } else {
-            return new GeneralEntityReadout(entity, showDetail, useAlternateCost, ignorePilotBV, formatting);
+            // the selection above should be exhaustive, but to be safe:
+            return new GeneralEntityReadout(entity, showDetail, useAlternateCost, ignorePilotBV);
         }
     }
 
@@ -143,42 +129,50 @@ public interface EntityReadout {
      *
      * @return The data from the head section.
      */
-    String getHeadSection();
+    String getHeadSection(ViewFormatting formatting);
 
     /**
      * The basic section includes general details such as movement, system equipment (cockpit, gyro, etc.) and armor.
      *
      * @return The data from the basic section
      */
-    String getBasicSection();
+    String getBasicSection(ViewFormatting formatting);
 
     /**
      * The invalid section includes reasons why the unit is invalid
      *
      * @return The data from the invalid section
      */
-    String getInvalidSection();
+    String getInvalidSection(ViewFormatting formatting);
 
     /**
      * The loadout includes weapons, ammo, and other equipment broken down by location.
      *
      * @return The data from the loadout section.
      */
-    String getLoadoutSection();
+    String getLoadoutSection(ViewFormatting formatting);
 
     /**
      * The fluff section includes fluff details like unit history and deployment patterns as well as quirks.
      *
      * @return The data from the fluff section.
      */
-    String getFluffSection();
+    String getFluffSection(ViewFormatting formatting);
 
     /**
      * @return The formatted readout with all sections (including fluff texts, if present), using HTML output
-     * formatting.
+     *       formatting.
      */
     default String getReadout() {
-        return getReadout(null);
+        return getReadout(null, ViewFormatting.HTML);
+    }
+
+    /**
+     * @return The formatted readout with all sections (including fluff texts, if present), using the given output
+     *       formatting
+     */
+    default String getReadout(ViewFormatting formatting) {
+        return getReadout(null, formatting);
     }
 
     /**

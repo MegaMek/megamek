@@ -33,7 +33,6 @@
 package megamek.client.ui.unitreadout;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.util.ViewFormatting;
 import megamek.common.Aero;
 import megamek.common.ConvFighter;
 import megamek.common.EquipmentType;
@@ -49,9 +48,8 @@ class AeroReadout extends GeneralEntityReadout {
 
     private final Aero aero;
 
-    protected AeroReadout(Aero aero, boolean showDetail, boolean useAlternateCost, boolean ignorePilotBV,
-          ViewFormatting formatting) {
-        super(aero, showDetail, useAlternateCost, ignorePilotBV, formatting);
+    protected AeroReadout(Aero aero, boolean showDetail, boolean useAlternateCost, boolean ignorePilotBV) {
+        super(aero, showDetail, useAlternateCost, ignorePilotBV);
         this.aero = aero;
     }
 
@@ -59,20 +57,20 @@ class AeroReadout extends GeneralEntityReadout {
     protected List<ViewElement> createArmorElements() {
         List<ViewElement> result = new ArrayList<>();
 
-        result.add(new LabeledElement(Messages.getString("MekView.SI"),
-              ReadoutUtils.renderArmor(aero.getSI(), aero.getOSI())));
+        result.add(new LabeledLine(Messages.getString("MekView.SI"),
+              ReadoutUtils.renderArmorAsViewElement(aero.getSI(), aero.getOSI())));
 
         // if it is a jumpship get sail and KF integrity
         if (aero instanceof Jumpship jumpship) {
 
             // TODO: indicate damage.
             if (jumpship.hasSail()) {
-                result.add(new LabeledElement(Messages.getString("MekView.SailIntegrity"),
+                result.add(new LabeledLine(Messages.getString("MekView.SailIntegrity"),
                       String.valueOf(jumpship.getSailIntegrity())));
             }
 
             if (jumpship.getDriveCoreType() != Jumpship.DRIVE_CORE_NONE) {
-                result.add(new LabeledElement(Messages.getString("MekView.KFIntegrity"),
+                result.add(new LabeledLine(Messages.getString("MekView.KFIntegrity"),
                       String.valueOf(jumpship.getKFIntegrity())));
             }
         }
@@ -84,7 +82,7 @@ class AeroReadout extends GeneralEntityReadout {
         if (!aero.hasPatchworkArmor()) {
             armor += " " + ArmorType.forEntity(aero).getName();
         }
-        result.add(new LabeledElement(Messages.getString("MekView.Armor"),
+        result.add(new LabeledLine(Messages.getString("MekView.Armor"),
               armor));
 
         // Walk through the entity's locations.
@@ -110,15 +108,17 @@ class AeroReadout extends GeneralEntityReadout {
                 if (!aero.isLargeCraft() && (loc >= Aero.LOC_WINGS)) {
                     continue;
                 }
-                String[] row = { aero.getLocationName(loc), "", "" };
+                var armorType = new JoinedViewElement();
+                ViewElement[] row = { new PlainElement(aero.getLocationName(loc)), new EmptyElement(), armorType };
                 if (IArmorState.ARMOR_NA != aero.getArmor(loc)) {
-                    row[1] = ReadoutUtils.renderArmor(aero.getArmor(loc), aero.getOArmor(loc));
+                    row[1] = ReadoutUtils.renderArmorAsViewElement(aero.getArmor(loc), aero.getOArmor(loc));
                 }
                 if (aero.hasPatchworkArmor()) {
-                    row[2] = Messages.getString("MekView."
-                          + EquipmentType.getArmorTypeName(aero.getArmorType(loc)).trim());
+                    armorType.add(new PlainElement(Messages.getString("MekView."
+                          + EquipmentType.getArmorTypeName(aero.getArmorType(loc)).trim())));
                     if (aero.hasBARArmor(loc)) {
-                        row[2] += Messages.getString("MekView.BARRating") + aero.getBARRating(loc);
+                        armorType.add(new PlainElement(Messages.getString("MekView.BARRating")
+                              + aero.getBARRating(loc)));
                     }
                 }
                 locTable.addRow(row);
@@ -137,12 +137,12 @@ class AeroReadout extends GeneralEntityReadout {
         if (aero.getCurrentFuel() < aero.getFuel()) {
             fuel += "/" + aero.getFuel();
         }
-        result.add(new LabeledElement(Messages.getString("MekView.FuelPoints"),
+        result.add(new LabeledLine(Messages.getString("MekView.FuelPoints"),
               String.format(Messages.getString("MekView.Fuel.format"), fuel, aero.getFuelTonnage())));
 
         // Display Strategic Fuel Use for Small Craft and up
         if (aero instanceof SmallCraft || aero instanceof Jumpship) {
-            result.add(new LabeledElement(Messages.getString("MekView.TonsPerBurnDay"),
+            result.add(new LabeledLine(Messages.getString("MekView.TonsPerBurnDay"),
                   String.format("%2.2f", aero.getStrategicFuelUse())));
         }
         return result;
@@ -162,21 +162,19 @@ class AeroReadout extends GeneralEntityReadout {
                 hsString.append(" [")
                       .append(aero.formatHeat()).append("]");
             }
+            var heatSinks = new JoinedViewElement(new PlainElement(hsString.toString()));
             if (aero.getHeatSinkHits() > 0) {
-                hsString.append(ViewElement.warningStart(formatting)).append(" (").append(aero.getHeatSinkHits())
-                      .append(" damaged)").append(ViewElement.warningEnd(formatting));
+                heatSinks.add(new DamagedElement(" (%d damaged)".formatted(aero.getHeatSinkHits())));
             }
-            result.add(new LabeledElement(Messages.getString("MekView.HeatSinks"), hsString.toString()));
+            result.add(new LabeledLine(Messages.getString("MekView.HeatSinks"), heatSinks));
 
-            result.add(new LabeledElement(Messages.getString("MekView.Cockpit"),
+            result.add(new LabeledLine(Messages.getString("MekView.Cockpit"),
                   aero.getCockpitTypeString()));
         }
 
         if (!aero.getCritDamageString().isEmpty()) {
-            result.add(new LabeledElement(Messages.getString("MekView.SystemDamage"),
-                  ViewElement.warningStart(formatting)
-                        + aero.getCritDamageString()
-                        + ViewElement.warningEnd(formatting)));
+            result.add(new LabeledLine(Messages.getString("MekView.SystemDamage"),
+                  new DamagedElement(aero.getCritDamageString())));
         }
         return result;
     }
@@ -194,9 +192,9 @@ class AeroReadout extends GeneralEntityReadout {
     protected List<ViewElement> createMiscMovementElements() {
         List<ViewElement> result = new ArrayList<>();
         if (aero instanceof ConvFighter && aero.isVSTOL()) {
-            result.add(new LabeledElement(Messages.getString("MekView.TOL"), Messages.getString("MekView.VSTOL")));
+            result.add(new LabeledLine(Messages.getString("MekView.TOL"), Messages.getString("MekView.VSTOL")));
         } else if (aero instanceof ConvFighter && aero.isSTOL()) {
-            result.add(new LabeledElement(Messages.getString("MekView.TOL"), Messages.getString("MekView.STOL")));
+            result.add(new LabeledLine(Messages.getString("MekView.TOL"), Messages.getString("MekView.STOL")));
         }
         return result;
     }
@@ -235,9 +233,9 @@ class AeroReadout extends GeneralEntityReadout {
     }
 
     @Override
-    protected String createMovementString() {
+    protected ViewElement createMovementString() {
         if ((aero instanceof Jumpship jumpship) && !aero.isWarShip() && jumpship.getStationKeepingThrust() > 0) {
-            return "%1.1f (Station-keeping)".formatted(jumpship.getStationKeepingThrust());
+            return new PlainElement("%1.1f (Station-keeping)".formatted(jumpship.getStationKeepingThrust()));
         } else {
             return super.createMovementString();
         }

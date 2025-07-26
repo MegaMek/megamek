@@ -32,40 +32,38 @@
  */
 package megamek.client.ui.unitreadout;
 
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.DiscordFormat;
-import megamek.client.ui.util.ViewFormatting;
+import megamek.client.ui.util.UIUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+class DamagedElement implements ViewElement {
 
-/**
- * An element with a label, a colon, and a value. In html and discord the label is bold.
- */
-class LabeledElement implements ViewElement {
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    private static final String HTML_FORMAT = "<FONT %s>%s</FONT>";
 
-    protected final String label;
-    protected ViewElement value;
+    private final String text;
 
+    public DamagedElement(String text) {
+        this.text = text;
+    }
 
-    LabeledElement(String label, ViewElement value) {
-        this.label = label;
-        this.value = value;
+    public DamagedElement(int number) {
+        text = String.valueOf(number);
     }
 
     @Override
     public String toPlainText() {
-        return label + ": " + value.toPlainText();
+        return text;
     }
 
     @Override
     public String toHTML() {
-        return "%s: <B>%s</B>".formatted(label, value.toHTML());
+        String colorString = UIUtil.colorString(GUIP.getCautionColor());
+        return HTML_FORMAT.formatted(colorString, text);
     }
 
     @Override
     public String toDiscord() {
-        return label + ": " + DiscordFormat.BOLD + value.toDiscord() + DiscordFormat.RESET;
+        return DiscordFormat.YELLOW + text + DiscordFormat.RESET;
     }
 }

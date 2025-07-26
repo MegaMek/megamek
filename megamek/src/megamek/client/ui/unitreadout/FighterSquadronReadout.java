@@ -33,7 +33,6 @@
 package megamek.client.ui.unitreadout;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.util.ViewFormatting;
 import megamek.common.FighterSquadron;
 
 import java.util.ArrayList;
@@ -44,9 +43,9 @@ class FighterSquadronReadout extends AeroReadout {
     FighterSquadron squadron;
 
     protected FighterSquadronReadout(FighterSquadron squadron, boolean showDetail, boolean useAlternateCost,
-          boolean ignorePilotBV, ViewFormatting formatting) {
+          boolean ignorePilotBV) {
 
-        super(squadron, showDetail, useAlternateCost, ignorePilotBV, formatting);
+        super(squadron, showDetail, useAlternateCost, ignorePilotBV);
         this.squadron = squadron;
     }
 
@@ -54,10 +53,10 @@ class FighterSquadronReadout extends AeroReadout {
     protected List<ViewElement> createArmorElements() {
         List<ViewElement> result = new ArrayList<>();
 
-        result.add(new LabeledElement(Messages.getString("MekView.Armor"),
+        result.add(new LabeledLine(Messages.getString("MekView.Armor"),
               String.valueOf(squadron.getTotalArmor())));
 
-        result.add(new LabeledElement(Messages.getString("MekView.ActiveFighters"),
+        result.add(new LabeledLine(Messages.getString("MekView.ActiveFighters"),
               String.valueOf(squadron.getActiveSubEntities().size())));
 
         return result;

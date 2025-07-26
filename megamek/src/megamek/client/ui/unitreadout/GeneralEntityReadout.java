@@ -88,7 +88,6 @@ class GeneralEntityReadout implements EntityReadout {
     protected final boolean showDetail;
     protected final boolean useAlternateCost;
     protected final boolean ignorePilotBV;
-    protected final ViewFormatting formatting;
 
     private final DecimalFormat dFormatter;
     private final List<ViewElement> sHead = new ArrayList<>();
@@ -106,13 +105,11 @@ class GeneralEntityReadout implements EntityReadout {
      * @param useAlternateCost If true, uses alternate cost calculation. This primarily provides an equipment-only cost
      *                         for conventional infantry for MekHQ.
      * @param ignorePilotBV    If true then the BV calculation is done without including the pilot BV modifiers
-     * @param formatting       Which formatting style to use: HTML, Discord, or None (plaintext)
      */
     protected GeneralEntityReadout(Entity entity, boolean showDetail, boolean useAlternateCost,
-                                   boolean ignorePilotBV, ViewFormatting formatting) {
+                                   boolean ignorePilotBV) {
 
         this.entity = entity;
-        this.formatting = formatting;
         this.showDetail = showDetail;
         this.useAlternateCost = useAlternateCost;
         this.ignorePilotBV = ignorePilotBV;
@@ -131,7 +128,7 @@ class GeneralEntityReadout implements EntityReadout {
         result.add(new PlainLine());
         result.add(createTechLevelElement());
         result.add(createDesignInvalidElement());
-        result.addAll(createTechTable(entity, formatting));
+        result.addAll(createTechTable(entity));
 
         result.add(new PlainLine());
         result.add(createWeightElement());
@@ -216,19 +213,19 @@ class GeneralEntityReadout implements EntityReadout {
         List<ViewElement> result = new ArrayList<>();
         if (!entity.getFluff().getOverview().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new FluffTextElement("Overview", entity.getFluff().getOverview()));
+            result.add(new FluffTextLine("Overview", entity.getFluff().getOverview()));
         }
         if (!entity.getFluff().getCapabilities().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new FluffTextElement("Capabilities", entity.getFluff().getCapabilities()));
+            result.add(new FluffTextLine("Capabilities", entity.getFluff().getCapabilities()));
         }
         if (!entity.getFluff().getDeployment().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new FluffTextElement("Deployment", entity.getFluff().getDeployment()));
+            result.add(new FluffTextLine("Deployment", entity.getFluff().getDeployment()));
         }
         if (!entity.getFluff().getHistory().isEmpty()) {
             result.add(new PlainLine());
-            result.add(new FluffTextElement("History", entity.getFluff().getHistory()));
+            result.add(new FluffTextLine("History", entity.getFluff().getHistory()));
         }
         return result;
     }
@@ -268,22 +265,22 @@ class GeneralEntityReadout implements EntityReadout {
         } else {
             techLevel += Messages.getString(entity.isClan() ? "MekView.Clan" : "MekView.IS");
         }
-        return new LabeledElement(Messages.getString("MekView.BaseTechLevel"), techLevel);
+        return new LabeledLine(Messages.getString("MekView.BaseTechLevel"), techLevel);
     }
 
     protected ViewElement createRoleElement() {
-        return entity.hasRole() ? new LabeledElement("Role", entity.getRole().toString()) : new EmptyElement();
+        return entity.hasRole() ? new LabeledLine("Role", entity.getRole().toString()) : new EmptyElement();
     }
 
     protected ViewElement createCostElement() {
         double cost = (useAlternateCost && entity.getAlternateCost() > 0)
               ? entity.getAlternateCost()
               : entity.getCost(false);
-        return new LabeledElement(Messages.getString("MekView.Cost"), dFormatter.format(cost) + " C-bills");
+        return new LabeledLine(Messages.getString("MekView.Cost"), dFormatter.format(cost) + " C-bills");
     }
 
     protected ViewElement createBVElement() {
-        return new LabeledElement(
+        return new LabeledLine(
               Messages.getString("MekView.BV"),
               dFormatter.format(entity.calculateBattleValue(false, ignorePilotBV)));
     }
@@ -293,16 +290,16 @@ class GeneralEntityReadout implements EntityReadout {
         String sourceLabel = Messages.getString("MekView.Source");
 
         if (source.isBlank()) {
-            return new LabeledElement(sourceLabel, Messages.getString("MekView.Unknown"));
+            return new LabeledLine(sourceLabel, Messages.getString("MekView.Unknown"));
         } else if (source.contains(MMConstants.SOURCE_TEXT_SHRAPNEL)) {
-            return new HyperLinkElement(sourceLabel, MMConstants.BT_URL_SHRAPNEL, source);
+            return new HyperLinkLine(sourceLabel, MMConstants.BT_URL_SHRAPNEL, source);
         } else {
-            return new LabeledElement(sourceLabel, source);
+            return new LabeledLine(sourceLabel, source);
         }
     }
 
     protected ViewElement createWeightElement() {
-        return new LabeledElement(Messages.getString("MekView.Weight"),
+        return new LabeledLine(Messages.getString("MekView.Weight"),
               Math.round(entity.getWeight()) + Messages.getString("MekView.tons"));
     }
 
@@ -313,7 +310,7 @@ class GeneralEntityReadout implements EntityReadout {
         entity.setConversionMode(0);
 
         result.add(new PlainLine());
-        result.add(new LabeledElement(Messages.getString("MekView.Movement"), createMovementString()));
+        result.add(new LabeledLine(Messages.getString("MekView.Movement"), createMovementString()));
         result.addAll(createMiscMovementElements());
         result.addAll(createConversionModeMovementElements());
 
@@ -321,47 +318,38 @@ class GeneralEntityReadout implements EntityReadout {
         return result;
     }
 
-    protected String createMovementString() {
-        StringBuilder moveString = new StringBuilder();
-        moveString.append(entity.getWalkMP())
-              .append("/")
-              .append(entity.getRunMPasString());
-
+    protected ViewElement createMovementString() {
+        JoinedViewElement result = new JoinedViewElement();
+        result.add(entity.getWalkMP() + "/" + entity.getRunMPasString());
         if (entity.getJumpMP() > 0) {
-            moveString.append("/").append(entity.getJumpMP());
+            result.add("/" + entity.getJumpMP());
             if (entity.damagedJumpJets() > 0) {
-                moveString.append(ViewElement.warningStart(formatting))
-                      .append("(")
-                      .append(entity.damagedJumpJets())
-                      .append(" damaged jump jets)")
-                      .append(ViewElement.warningEnd(formatting));
+                result.add(new DamagedElement(" (%d damaged jump jets)".formatted(entity.damagedJumpJets())));
             }
         }
         if (entity instanceof Mek mek) {
             int mekMechanicalJumpMP = mek.getMechanicalJumpBoosterMP();
             if (mekMechanicalJumpMP > 0) {
                 if (entity.getJumpMP() == 0) {
-                    moveString.append("/").append(mekMechanicalJumpMP);
+                    result.add("/" + mekMechanicalJumpMP);
                 } else {
-                    moveString.append(" (%d)".formatted(mekMechanicalJumpMP));
+                    result.add(" (%d)".formatted(mekMechanicalJumpMP));
                 }
             }
         }
+
         if (entity.getAllUMUCount() > 0) {
             // Add in Jump MP if it wasn't already printed
             if (entity.getJumpMP() == 0) {
-                moveString.append("/0");
+                result.add("/0");
             }
-            moveString.append("/")
-                  .append(entity.getActiveUMUCount());
+            result.add("/" + entity.getActiveUMUCount());
             if ((entity.getAllUMUCount() - entity.getActiveUMUCount()) != 0) {
-                moveString.append(ViewElement.warningStart(formatting)).append("(")
-                      .append(entity.getAllUMUCount() - entity.getActiveUMUCount())
-                      .append(" damaged UMUs)")
-                      .append(ViewElement.warningEnd(formatting));
+                result.add(new DamagedElement(
+                      " (%d damaged UMUs)".formatted(entity.getAllUMUCount() - entity.getActiveUMUCount())));
             }
         }
-        return moveString.toString();
+        return result;
     }
 
     protected List<ViewElement> createConversionModeMovementElements() {
@@ -386,15 +374,16 @@ class GeneralEntityReadout implements EntityReadout {
     }
 
     protected ViewElement createEngineElement() {
-        String engine = entity.hasEngine() ? entity.getEngine().getShortEngineName() : "(none)";
-        if (entity.getEngineHits() > 0) {
-            engine += " " + ViewElement.warningStart(formatting) + "(" + entity.getEngineHits()
-                  + " hits)" + ViewElement.warningEnd(formatting);
-        }
+        String engineText = entity.hasEngine() ? entity.getEngine().getShortEngineName() : "(none)";
         if (entity.hasArmoredEngine()) {
-            engine += " (armored)";
+            engineText += " (armored)";
         }
-        return new LabeledElement(Messages.getString("MekView.Engine"), engine);
+        ViewElement engine = new PlainElement(engineText);
+        if (entity.getEngineHits() > 0) {
+            engineText += " (%d hits)".formatted(entity.getEngineHits());
+            engine = new DamagedElement(engineText);
+        }
+        return new LabeledLine(Messages.getString("MekView.Engine"), engine);
     }
 
     protected List<ViewElement> createSystemsElements() {
@@ -405,42 +394,45 @@ class GeneralEntityReadout implements EntityReadout {
         return Collections.emptyList();
     }
 
-    protected List<ViewElement> createTechTable(Entity entity, ViewFormatting formatting) {
+    protected List<ViewElement> createTechTable(Entity entity) {
         List<ViewElement> result = new ArrayList<>();
-        result.add(new LabeledElement(ViewElement.textWithTooltip(
-              Messages.getString("MekView.TechRating"), Messages.getString("MekView.TechRating.tooltip"), formatting),
+        result.add(new TooltippedLabelledLine(
+              Messages.getString("MekView.TechRating"),
+              Messages.getString("MekView.TechRating.tooltip"),
               entity.getFullRatingName()));
 
-        result.add(new LabeledElement(ViewElement.textWithTooltip(
+        result.add(new TooltippedLabelledLine(
               Messages.getString("MekView.EarliestTechDate"),
               Messages.getString("MekView.EarliestTechDate.tooltip"),
-              formatting),
               entity.getEarliestTechDateAndEra()));
 
-        TableElement tpTable = new TableElement(3);
+        TableElement tpTable = new TableElement(2);
 
-        String tableSpacer = ViewFormatting.HTML.equals(formatting) ? "&nbsp;&nbsp;&nbsp;&nbsp;" : "    ";
-        tpTable.setColNames(Messages.getString("MekView.Availability"), tableSpacer,
-                Messages.getString("MekView.Era"));
-        tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
+        tpTable.setColNames(
+              Messages.getString("MekView.Availability"),
+              Messages.getString("MekView.Era"));
+        tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
 
-        tpTable.addRow(ViewElement.textWithTooltip(Messages.getString("MekView.Prototype"),
-              Messages.getString("MekView.Prototype.tooltip"), formatting), tableSpacer,
-              ViewElement.splitDateRange(entity.getPrototypeRangeDate(), formatting));
-        tpTable.addRow(ViewElement.textWithTooltip(Messages.getString("MekView.Production"),
-              Messages.getString("MekView.Production.tooltip"), formatting), tableSpacer,
-              ViewElement.splitDateRange(entity.getProductionDateRange(), formatting));
-        tpTable.addRow(ViewElement.textWithTooltip(Messages.getString("MekView.Common"),
-              Messages.getString("MekView.Common.tooltip"), formatting), tableSpacer,
-              ViewElement.splitDateRange(entity.getCommonDateRange(), formatting));
-        String extinctRange = ViewElement.splitDateRange(entity.getExtinctionRange(), formatting);
-        if (extinctRange.length() > 1) {
-            tpTable.addRow(
-                  ViewElement.textWithTooltip(
+        tpTable.addRow(new TooltippedElement(
+                    Messages.getString("MekView.Prototype"),
+                    Messages.getString("MekView.Prototype.tooltip")),
+              new DateRangeElement(entity.getPrototypeRangeDate()));
+
+        tpTable.addRow(new TooltippedElement(
+                    Messages.getString("MekView.Production"),
+                    Messages.getString("MekView.Production.tooltip")),
+              new DateRangeElement(entity.getProductionDateRange()));
+
+        tpTable.addRow(new TooltippedElement(
+                    Messages.getString("MekView.Common"),
+                    Messages.getString("MekView.Common.tooltip")),
+              new DateRangeElement(entity.getCommonDateRange()));
+
+        if (entity.getExtinctionRange().length() > 1) {
+            tpTable.addRow(new TooltippedElement(
                         Messages.getString("MekView.Extinct"),
-                        Messages.getString("MekView.Extinct.tooltip"), formatting),
-                  tableSpacer,
-                  extinctRange);
+                        Messages.getString("MekView.Extinct.tooltip")),
+                  new DateRangeElement(entity.getExtinctionRange()));
         }
         result.add(new PlainLine());
         result.add(tpTable);
@@ -476,14 +468,14 @@ class GeneralEntityReadout implements EntityReadout {
             docStart = "```ansi\n";
             docEnd = "```";
         }
-        return docStart + getHeadSection()
-                + getBasicSection() + getLoadoutSection()
-                + getFluffSection() + getInvalidSection() + docEnd;
+        return docStart + getHeadSection(formatting)
+                + getBasicSection(formatting) + getLoadoutSection(formatting)
+                + getFluffSection(formatting) + getInvalidSection(formatting) + docEnd;
     }
 
     protected ViewElement createTotalInternalElement() {
         String internal = String.valueOf(entity.getTotalInternal());
-        return new LabeledElement(Messages.getString("MekView.Internal"), internal);
+        return new LabeledLine(Messages.getString("MekView.Internal"), internal);
     }
 
     protected ViewElement createTotalArmorElement() {
@@ -491,7 +483,7 @@ class GeneralEntityReadout implements EntityReadout {
         if (!entity.hasPatchworkArmor()) {
             armor += " (" + ArmorType.forEntity(entity).getName() + ")";
         }
-        return new LabeledElement(Messages.getString("MekView.Armor"), armor);
+        return new LabeledLine(Messages.getString("MekView.Armor"), armor);
     }
 
     protected boolean skipArmorLocation(int location) {
@@ -509,28 +501,30 @@ class GeneralEntityReadout implements EntityReadout {
                 continue;
             }
 
-            String[] row = { entity.getLocationName(loc),
-                             ReadoutUtils.renderArmor(entity.getInternalForReal(loc), entity.getOInternal(loc)),
-                             "", "", "" };
+            ViewElement[] row = new ViewElement[5];
+            row[0] = new PlainElement(entity.getLocationName(loc));
+            row[1] = ReadoutUtils.renderArmorAsViewElement(entity.getInternalForReal(loc), entity.getOInternal(loc));
 
             if (IArmorState.ARMOR_NA != entity.getArmorForReal(loc)) {
-                row[2] = ReadoutUtils.renderArmor(entity.getArmorForReal(loc), entity.getOArmor(loc));
+                row[2] = ReadoutUtils.renderArmorAsViewElement(entity.getArmorForReal(loc), entity.getOArmor(loc));
             }
             if (entity.hasPatchworkArmor()) {
-                row[3] = ArmorType.forEntity(entity, loc).getName();
+                row[3] = new PlainElement(ArmorType.forEntity(entity, loc).getName());
             }
-            if (!entity.getLocationDamage(loc).isEmpty()) {
-                row[4] = ViewElement.warningStart(formatting)
-                      + entity.getLocationDamage(loc)
-                      + ViewElement.warningEnd(formatting);
+            String locationDamage = entity.getLocationDamage(loc);
+            if (!locationDamage.isBlank()) {
+                row[4] = new DamagedElement(locationDamage);
             }
             locTable.addRow(row);
+
             if (entity.hasRearArmor(loc)) {
-                String rearArmor = ReadoutUtils.renderArmor(
+                ViewElement rearArmor = ReadoutUtils.renderArmorAsViewElement(
                       entity.getArmorForReal(loc, true),
                       entity.getOArmor(loc, true)
                 );
-                row = new String[] { entity.getLocationName(loc) + " (rear)", "", rearArmor, "", "" };
+                row = new ViewElement[5];
+                row[0] = new PlainElement(entity.getLocationName(loc) + " (rear)");
+                row[2] = rearArmor;
                 locTable.addRow(row);
             }
         }
@@ -547,7 +541,7 @@ class GeneralEntityReadout implements EntityReadout {
     }
 
     protected List<ViewElement> getWeapons(boolean showDetail) {
-        return ReadoutUtils.getWeapons(entity, showDetail, formatting);
+        return ReadoutUtils.getWeapons(entity, showDetail);
     }
 
     static String quirkMarker(Mounted<?> mounted) {
@@ -569,16 +563,20 @@ class GeneralEntityReadout implements EntityReadout {
                 continue;
             }
 
-            String[] row = { mounted.getName(), entity.getLocationAbbr(mounted.getLocation()),
-                    String.valueOf(mounted.getBaseShotsLeft()), "" };
+            ViewElement[] row = { new PlainElement(mounted.getName()),
+                                  new PlainElement(entity.getLocationAbbr(mounted.getLocation())),
+                                  new PlainElement(mounted.getBaseShotsLeft()),
+                                  new EmptyElement() };
             if (entity.isOmni()) {
-                row[3] = Messages.getString(mounted.isOmniPodMounted() ? "MekView.Pod" : "MekView.Fixed");
+                row[3] = new PlainElement(Messages.getString(mounted.isOmniPodMounted() ?
+                      "MekView.Pod" :
+                      "MekView.Fixed"));
             }
 
             if (mounted.isDestroyed() || (mounted.getUsableShotsLeft() < 1)) {
-                row[2] = ReadoutMarkup.markupDestroyed(row[2]);
+                row[2] = new DestroyedElement(mounted.getBaseShotsLeft());
             } else if (mounted.getUsableShotsLeft() < mounted.getType().getShots()) {
-                row[2] = ReadoutMarkup.markupDamaged(row[2]);
+                row[2] = new DamagedElement(mounted.getBaseShotsLeft());
             }
             ammoTable.addRow(row);
         }
@@ -615,26 +613,30 @@ class GeneralEntityReadout implements EntityReadout {
                 continue;
             }
 
-            String[] row = { mounted.getDesc(), entity.joinLocationAbbr(mounted.allLocations(), 3), "" };
-            if (entity.isConventionalInfantry()) {
-                // don't display the location on CI
-                row[1] = "";
-            }
-
+            String name = mounted.getDesc();
             if (entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
-                row[0] += Messages.getString("MekView.IS");
+                name += Messages.getString("MekView.IS");
             }
 
             if (!entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
-                row[0] += Messages.getString("MekView.Clan");
+                name += Messages.getString("MekView.Clan");
+            }
+            ViewElement[] row = { new PlainElement(name),
+                             new PlainElement(entity.joinLocationAbbr(mounted.allLocations(), 3)),
+                             new EmptyElement() };
+            if (entity.isConventionalInfantry()) {
+                // don't display the location on CI
+                row[1] = new EmptyElement();
             }
 
             if (entity.isOmni()) {
-                row[2] = Messages.getString(mounted.isOmniPodMounted() ? "MekView.Pod" : "MekView.Fixed");
+                row[2] = new PlainElement(Messages.getString(mounted.isOmniPodMounted() ?
+                      "MekView.Pod" :
+                      "MekView.Fixed"));
             }
 
             if (mounted.isDestroyed()) {
-                row[0] = ReadoutMarkup.markupDestroyed(row[0]);
+                row[0] = new DestroyedElement(name);
             }
             miscTable.addRow(row);
         }
@@ -655,12 +657,8 @@ class GeneralEntityReadout implements EntityReadout {
             result.addAll(specialElements);
         }
 
-        String transportersString = entity.getUnusedString(formatting);
-        if (!transportersString.isBlank()) {
-            var transportsList = new ItemList(Messages.getString("MekView.CarryingCapacity"));
-            String separator = formatting == ViewFormatting.HTML ? "<br>" : "\n";
-            Arrays.stream(transportersString.split(separator)).forEach(transportsList::addItem);
-
+        ItemList transportsList = ReadoutUtils.createTransporterList(entity);
+        if (!transportsList.isEmpty()) {
             result.add(new PlainLine());
             result.add(transportsList);
         }
@@ -685,32 +683,32 @@ class GeneralEntityReadout implements EntityReadout {
     }
 
     @Override
-    public String getHeadSection() {
-        return formatSection(sHead);
+    public String getHeadSection(ViewFormatting formatting) {
+        return formatSection(sHead, formatting);
     }
 
     @Override
-    public String getBasicSection() {
-        return formatSection(sBasic);
+    public String getBasicSection(ViewFormatting formatting) {
+        return formatSection(sBasic, formatting);
     }
 
     @Override
-    public String getInvalidSection() {
-        return formatSection(sInvalid);
+    public String getInvalidSection(ViewFormatting formatting) {
+        return formatSection(sInvalid, formatting);
     }
 
     @Override
-    public String getLoadoutSection() {
-        return formatSection(sLoadout);
+    public String getLoadoutSection(ViewFormatting formatting) {
+        return formatSection(sLoadout, formatting);
     }
 
     @Override
-    public String getFluffSection() {
+    public String getFluffSection(ViewFormatting formatting) {
         if (formatting == ViewFormatting.DISCORD) {
             // The rest of the fluff often doesn't fit in a Discord message
-            return formatSection(sQuirks);
+            return formatSection(sQuirks, formatting);
         }
-        return formatSection(sFluff);
+        return formatSection(sFluff, formatting);
     }
 
     /**
@@ -720,7 +718,7 @@ class GeneralEntityReadout implements EntityReadout {
      *
      * @return The formatted data.
      */
-    private String formatSection(List<ViewElement> section) {
+    private String formatSection(List<ViewElement> section, ViewFormatting formatting) {
         Function<ViewElement, String> mapper = switch (formatting) {
             case HTML -> ViewElement::toHTML;
             case NONE -> ViewElement::toPlainText;

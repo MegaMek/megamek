@@ -47,7 +47,6 @@ import javax.swing.text.html.HTMLDocument;
 import megamek.client.ui.util.FluffImageHelper;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedXPanel;
-import megamek.client.ui.util.ViewFormatting;
 import megamek.common.Entity;
 import megamek.client.ui.unitreadout.EntityReadout;
 import megamek.common.Report;
@@ -115,9 +114,7 @@ public class EntityReadoutPanel extends JPanel {
 
                         if (attrsAttribute instanceof AttributeSet attributeSet) {
                             String title = (String) attributeSet.getAttribute(HTML.getAttributeKey("title"));
-                            if (title != null) {
-                                readoutTextComponent.setToolTipText(title);
-                            }
+                            readoutTextComponent.setToolTipText(title);
                         }
                     }
                 }
@@ -178,16 +175,16 @@ public class EntityReadoutPanel extends JPanel {
         EntityReadout mekView = EntityReadout.createReadout(entity,
               false,
               false,
-              entity.getCrew() == null,
-              ViewFormatting.HTML);
+              entity.getCrew() == null
+        );
         showEntity(entity, mekView, fontName);
     }
 
     public void showEntity(Entity entity, boolean showDetail, boolean useAlternateCost,
-          boolean ignorePilotBV, ViewFormatting formatting, String fontName) {
+          boolean ignorePilotBV, String fontName) {
 
         EntityReadout mekView = EntityReadout.createReadout(entity, showDetail, useAlternateCost,
-              ignorePilotBV, formatting);
+              ignorePilotBV);
         showEntity(entity, mekView, fontName);
     }
 

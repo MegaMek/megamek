@@ -32,40 +32,59 @@
  */
 package megamek.client.ui.unitreadout;
 
-import megamek.client.ui.util.DiscordFormat;
-import megamek.client.ui.util.ViewFormatting;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * An element with a label, a colon, and a value. In html and discord the label is bold.
+ * This ViewElement allows assembling multiple ViewElements into a single one to use, e.g., as an element in a table.
+ * For output, the contained elements are chained without any additional elements.
  */
-class LabeledElement implements ViewElement {
+class JoinedViewElement implements ViewElement {
 
-    protected final String label;
-    protected ViewElement value;
+    protected List<ViewElement> values = new ArrayList<>();
 
+    JoinedViewElement(ViewElement... values) {
+        if (values != null) {
+            this.values.addAll(Arrays.stream(values).toList());
+        }
+    }
 
-    LabeledElement(String label, ViewElement value) {
-        this.label = label;
-        this.value = value;
+    JoinedViewElement(String... values) {
+        if (values != null) {
+            for (String value : values) {
+                add(value);
+            }
+        }
+    }
+
+    JoinedViewElement() {
+        // Nothing to do
+    }
+
+    public JoinedViewElement add(ViewElement value) {
+        values.add(value);
+        return this;
+    }
+
+    public JoinedViewElement add(String value) {
+        values.add(new PlainElement(value));
+        return this;
     }
 
     @Override
     public String toPlainText() {
-        return label + ": " + value.toPlainText();
+        return values.stream().map(ViewElement::toPlainText).collect(Collectors.joining());
     }
 
     @Override
     public String toHTML() {
-        return "%s: <B>%s</B>".formatted(label, value.toHTML());
+        return values.stream().map(ViewElement::toHTML).collect(Collectors.joining());
     }
 
     @Override
     public String toDiscord() {
-        return label + ": " + DiscordFormat.BOLD + value.toDiscord() + DiscordFormat.RESET;
+        return values.stream().map(ViewElement::toDiscord).collect(Collectors.joining());
     }
 }

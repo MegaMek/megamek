@@ -33,7 +33,6 @@
 package megamek.client.ui.unitreadout;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.util.ViewFormatting;
 import megamek.common.EntityWeightClass;
 import megamek.common.Mounted;
 import megamek.common.Tank;
@@ -45,31 +44,23 @@ class TankReadout extends GeneralEntityReadout {
 
     private final Tank tank;
 
-    protected TankReadout(Tank tank, boolean showDetail, boolean useAlternateCost, boolean ignorePilotBV,
-          ViewFormatting formatting) {
+    protected TankReadout(Tank tank, boolean showDetail, boolean useAlternateCost, boolean ignorePilotBV) {
 
-        super(tank, showDetail, useAlternateCost, ignorePilotBV, formatting);
+        super(tank, showDetail, useAlternateCost, ignorePilotBV);
         this.tank = tank;
     }
 
     @Override
-    protected String createMovementString() {
-        StringBuilder moveString = new StringBuilder();
-
-        moveString.append(" (")
-              .append(Messages.getString("MovementType." + tank.getMovementModeAsString()))
-              .append(")");
-
+    protected ViewElement createMovementString() {
+        var result = new JoinedViewElement();
+        result.add(" (%s)".formatted(Messages.getString("MovementType." + tank.getMovementModeAsString())));
         if ((tank.getMotiveDamage() > 0) || (tank.getMotivePenalty() > 0)) {
             String penalty = "(motive damage: -%dMP/-%d piloting)"
                   .formatted(tank.getMotiveDamage(), tank.getMotivePenalty());
 
-            moveString.append(" ")
-                  .append(ViewElement.warningStart(formatting))
-                  .append(penalty)
-                  .append(ViewElement.warningEnd(formatting));
+            result.add(new DamagedElement(" %s".formatted(penalty)));
         }
-        return super.createMovementString() + moveString;
+        return new JoinedViewElement(super.createMovementString(), result);
     }
 
     @Override
@@ -93,14 +84,15 @@ class TankReadout extends GeneralEntityReadout {
         TableElement ammoTable = super.getAmmo();
         if (tank.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             for (Mounted<?> mounted : tank.getWeaponList()) {
-                String[] row = { mounted.getName(),
-                                 tank.getLocationAbbr(mounted.getLocation()),
-                                 String.valueOf((int) mounted.getSize()
-                                       * ((InfantryWeapon) mounted.getType()).getShots()),
-                                 "" };
+                String remainingShots = String.valueOf((int) mounted.getSize()
+                      * ((InfantryWeapon) mounted.getType()).getShots());
+                ViewElement[] row = { new PlainElement(mounted.getName()),
+                                      new PlainElement(tank.getLocationAbbr(mounted.getLocation())),
+                                      new PlainElement(remainingShots),
+                                      new EmptyElement() };
                 if (tank.isOmni()) {
-                    row[3] = mounted.isOmniPodMounted() ? Messages.getString("MekView.Pod")
-                          : Messages.getString("MekView.Fixed");
+                    row[3] = new PlainElement(mounted.isOmniPodMounted() ? Messages.getString("MekView.Pod")
+                          : Messages.getString("MekView.Fixed"));
                 }
                 int shotsLeft = 0;
                 for (Mounted<?> current = mounted.getLinked(); current != null; current = current.getLinked()) {
@@ -108,9 +100,9 @@ class TankReadout extends GeneralEntityReadout {
                 }
 
                 if (mounted.isDestroyed()) {
-                    row[2] = ReadoutMarkup.markupDestroyed(row[2]);
+                    row[2] = new DestroyedElement(remainingShots);
                 } else if (shotsLeft < 1) {
-                    row[2] = ReadoutMarkup.markupDamaged(row[2]);
+                    row[2] = new DamagedElement(remainingShots);
                 }
                 ammoTable.addRow(row);
             }
@@ -125,6 +117,6 @@ class TankReadout extends GeneralEntityReadout {
 
     @Override
     protected List<ViewElement> getWeapons(boolean showDetail) {
-        return ReadoutUtils.getWeaponsNoHeat(tank, showDetail, formatting);
+        return ReadoutUtils.getWeaponsNoHeat(tank, showDetail);
     }
 }

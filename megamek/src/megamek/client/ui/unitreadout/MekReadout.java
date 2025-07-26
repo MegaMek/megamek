@@ -33,7 +33,6 @@
 package megamek.client.ui.unitreadout;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.util.ViewFormatting;
 import megamek.common.EquipmentType;
 import megamek.common.LandAirMek;
 import megamek.common.Mek;
@@ -46,10 +45,9 @@ class MekReadout extends GeneralEntityReadout {
 
     private final Mek mek;
 
-    protected MekReadout(Mek mek, boolean showDetail, boolean useAlternateCost, boolean ignorePilotBV,
-          ViewFormatting formatting) {
+    protected MekReadout(Mek mek, boolean showDetail, boolean useAlternateCost, boolean ignorePilotBV) {
 
-        super(mek, showDetail, useAlternateCost, ignorePilotBV, formatting);
+        super(mek, showDetail, useAlternateCost, ignorePilotBV);
         this.mek = mek;
     }
 
@@ -57,39 +55,39 @@ class MekReadout extends GeneralEntityReadout {
     protected ViewElement createTotalInternalElement() {
         String internal = mek.getTotalInternal()
               + Messages.getString("MekView." + EquipmentType.getStructureTypeName(mek.getStructureType()));
-        return new LabeledElement(Messages.getString("MekView.Internal"), internal);
+        return new LabeledLine(Messages.getString("MekView.Internal"), internal);
     }
 
     @Override
     protected List<ViewElement> createSystemsElements() {
         List<ViewElement> result = new ArrayList<>();
-        StringBuilder hsString = new StringBuilder();
-        hsString.append(mek.heatSinks());
+
+        var joined = new JoinedViewElement();
+        joined.add(new PlainElement(mek.heatSinks()));
         if (!mek.formatHeat().equals(Integer.toString(mek.heatSinks()))) {
-            hsString.append(" [").append(mek.formatHeat()).append("]");
+            joined.add(new PlainElement(" [%s]".formatted(mek.formatHeat())));
         }
         if (mek.hasRiscHeatSinkOverrideKit()) {
-            hsString.append(" w/ RISC Heat Sink Override Kit");
+            joined.add(new PlainElement(" w/ RISC Heat Sink Override Kit"));
         }
         if (mek.damagedHeatSinks() > 0) {
-            hsString.append(" ").append(ViewElement.warningStart(formatting)).append("(")
-                  .append(mek.damagedHeatSinks())
-                  .append(" damaged)").append(ViewElement.warningEnd(formatting));
+            joined.add(new DamagedElement(" (%d damaged)".formatted(mek.damagedHeatSinks())));
         }
-        result.add(new LabeledElement(mek.getHeatSinkTypeName() + "s", hsString.toString()));
-        result.add(new LabeledElement(Messages.getString("MekView.Cockpit"),
+        result.add(new LabeledLine(mek.getHeatSinkTypeName() + "s", joined));
+
+        result.add(new LabeledLine(Messages.getString("MekView.Cockpit"),
               mek.getCockpitTypeString()
                     + (mek.hasArmoredCockpit() ? " (armored)" : "")));
 
-        String gyroString = mek.getGyroTypeString();
+        JoinedViewElement gyro = new JoinedViewElement(mek.getGyroTypeString());
+        result.add(new LabeledLine(Messages.getString("MekView.Gyro"), gyro));
         if (mek.getGyroHits() > 0) {
-            gyroString += " " + ViewElement.warningStart(formatting) + "(" + mek.getGyroHits()
-                  + " hits)" + ViewElement.warningEnd(formatting);
+            gyro.add(new DamagedElement(" (%d hits)".formatted(mek.getGyroHits())));
         }
         if (mek.hasArmoredGyro()) {
-            gyroString += " (armored)";
+            gyro.add(new PlainElement(" (armored)"));
         }
-        result.add(new LabeledElement(Messages.getString("MekView.Gyro"), gyroString));
+
         return result;
     }
 
@@ -99,12 +97,12 @@ class MekReadout extends GeneralEntityReadout {
 
         if (mek instanceof QuadVee) {
             mek.setConversionMode(QuadVee.CONV_MODE_VEHICLE);
-            result.add(new LabeledElement(Messages.getString("MovementType." + mek.getMovementModeAsString()),
+            result.add(new LabeledLine(Messages.getString("MovementType." + mek.getMovementModeAsString()),
                   mek.getWalkMP() + "/" + mek.getRunMPasString()));
 
         } else if (mek instanceof LandAirMek lam) {
             if (lam.getLAMType() == LandAirMek.LAM_STANDARD) {
-                result.add(new LabeledElement(Messages.getString("MovementType.AirMek"),
+                result.add(new LabeledLine(Messages.getString("MovementType.AirMek"),
                       lam.getAirMekWalkMP() + "/"
                             + lam.getAirMekRunMP() + "/"
                             + lam.getAirMekCruiseMP() + "/"
@@ -112,7 +110,7 @@ class MekReadout extends GeneralEntityReadout {
             }
 
             mek.setConversionMode(LandAirMek.CONV_MODE_FIGHTER);
-            result.add(new LabeledElement(Messages.getString("MovementType.Fighter"),
+            result.add(new LabeledLine(Messages.getString("MovementType.Fighter"),
                   mek.getWalkMP() + "/" + mek.getRunMP()));
         }
         return result;

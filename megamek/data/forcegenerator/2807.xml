@@ -477,7 +477,7 @@
 			</model>
 		</chassis>
 		<chassis name='Atlas' unitType='Mek'>
-			<availability>IS:2,FS:4,LA:3,DC:4,PP:5+,CLAN:4,CCC:3,CGS:3,CIH:2,CMG:3,CDS:3,CSV:3,CS:4-,NIOPS:4-,TC:1,MOC:1,OA:1,Periphery.Deep:0</availability>
+			<availability>IS:2,FS:4,LA:3,DC:4,CS:4-,PP:5+,CLAN:4,CCC:3,CGS:3,CIH:2,CMG:3,CDS:3,CSV:3,TC:1,MOC:1,OA:1,NIOPS:4-,Periphery.Deep:0</availability>
 			<model name='AS7-D'>
                 <roles>command</roles>
 				<availability>IS:8,PP:8,CLAN:8,Periphery:8</availability>
@@ -549,7 +549,7 @@
 			</model>
 		</chassis>
 		<chassis name='BattleMaster' unitType='Mek'>
-			<availability>IS:7,LA:8,FWL:8,CS:8-,PP:4,CLAN:6,CB:5,CCO:5,CGB:5,CIH:5,CSJ:4,CSA:5,CWI:5,NIOPS:8-,TC:6,MOC:5,PIR:6</availability>
+			<availability>IS:7,LA:8,FWL:8,CS:8-,PP:4,CLAN:6,CB:5,CCO:5,CGB:5,CIH:5,CSJ:4,CSA:5,CWI:5,TC:6,MOC:5,NIOPS:8-,PIR:6</availability>
 			<model name='BLR-1G'>
                 <roles>command</roles>
 				<availability>IS:8,PP:5,Periphery:8,Periphery.Deep:8,PIR:8</availability>
@@ -568,7 +568,7 @@
 			</model>
 			<model name='BLR-1Gc'>
                 <roles>command</roles>
-				<availability>FS:2+,LA:3+,DC:2+,FWL:3+,CC:3+,PP:2+,CLAN!Front Line:1,CFM:0,CIH:0,CSJ:0</availability>
+				<availability>FS:2+,LA:3+,DC:2+,FWL:3+,CC:3+,PP:2+,CLAN!Front Line:1,CFM:0,CIH:0,CSJ:0,CSA!Front Line:1!Second Line:1</availability>
 			</model>
 			<model name='BLR-1Gd'>
                 <roles>command</roles>
@@ -1578,10 +1578,10 @@
             </model>
         </chassis>
 		<chassis name='Emperor' unitType='Mek'>
-			<availability>FS:6,CC:6,FWL:7,MERC:6,CS:7,PP:2+,CLAN:3+,NIOPS:7,TC:5,MOC:5,OA:5</availability>
+			<availability>FS:6,FWL:7,CC:6,MERC:6,CS:7,PP:2+,CLAN:3+,TC:5,MOC:5,OA:5,NIOPS:7</availability>
 			<model name='EMP-5A'>
                 <roles>command</roles>
-				<availability>IS:8,PP:8,Periphery:8</availability>
+				<availability>IS:8,PP:8,Periphery:8,NIOPS:3-</availability>
 			</model>
 			<model name='EMP-6A'>
                 <roles>command</roles>
@@ -2886,7 +2886,7 @@
 			</model>
 			<model name='LGB-7Q'>
 				<roles>fire_support</roles>
-				<availability>IS:6,TC:6,MOC:6,OA:6,PP:8,CDS:8,CSR:8,CWOV:8</availability>
+				<availability>IS:6,PP:8,CDS:8,CSR:8,CWOV:8,TC:6,MOC:6,OA:6</availability>
 			</model>
 			<model name='LGB-8C'>
                 <roles>fire_support</roles>
@@ -4251,7 +4251,7 @@
 			</model>
 		</chassis>
 		<chassis name='Stalker' unitType='Mek'>
-			<availability>IS:8,FS:7,DC:7,CC:7,FWL:9,CS:6,PP:6,CLAN:5,CBS:6,CGB:6,CHH:6,CIH:4,CMG:4,CNC:6,CW:6,Periphery:9,NIOPS:6,Periphery.Deep:9</availability>
+			<availability>IS:8,FS:7,DC:7,FWL:9,CC:7,CS:6,PP:6,CLAN:5,CBS:6,CGB:6,CHH:6,CIH:4,CMG:4,CNC:6,CW:6,Periphery:9,NIOPS:6,Periphery.Deep:9</availability>
 			<model name='STK-3F'>
 				<availability>IS:8,PP:6,Periphery:8,Periphery.Deep:8</availability>
 			</model>

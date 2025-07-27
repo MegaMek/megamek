@@ -44,10 +44,8 @@ import megamek.Version;
  * @param label                Descriptive label for the milestone. Should correspond to the tail of the release's
  *                             GitHub Url.
  * @param version              Version associated with the milestone.
- * @param useFallbackHyperlink {@code true} if {@code MilestoneData#getMegaMekUrl()},
- *                                        {@code MilestoneData#getMegaMekLabUrl()} & {@code MilestoneData#getMekHQUrl()}
- *                                        should all return their project releases page, instead of a page specific
- *                                        to that Milestone.
+ * @param useFallbackHyperlink {@code true} if the url fetchers should all return their project releases page,
+ *                                         instead of a page specific to that Milestone.
  *
  * @author Illiani
  * @since 0.50.07

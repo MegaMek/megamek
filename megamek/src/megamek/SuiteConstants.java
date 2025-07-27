@@ -24,8 +24,17 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MekHQ was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek;
+
+import java.util.List;
+
+import megamek.utilities.MilestoneData;
 
 /**
  * These are constants that hold across the entire MegaMek Suite of MegaMek, MegaMekLab, and MekHQ.
@@ -38,7 +47,27 @@ public abstract class SuiteConstants {
     // region General Constants
     public static final String PROJECT_NAME = "MegaMek Suite";
     public static final Version VERSION = new Version();
+    /**
+     * The most recent stable milestone release.
+     *
+     * <p>This should be updated as new Milestones are confirmed.</p>
+     */
     public static final Version LAST_MILESTONE = new Version("0.50.06");
+    /**
+     * A list of all milestone releases. This list is used by MekHQ to verify that a campaign is compatible with the
+     * current release.
+     *
+     * <p>This should be updated as new Milestones are confirmed.</p>
+     *
+     * <p><b>Notes:</b> Milestones should be listed oldest -> newest.</p>
+     */
+    public static final List<MilestoneData> ALL_MILESTONE_RELEASES = List.of(
+          new MilestoneData("v0.48.0", new Version("0.48.0"), false),
+          new MilestoneData("v0.49.7", new Version("0.49.7"), false),
+          new MilestoneData("v0.49.19.1", new Version("0.49.19-01"), false),
+          new MilestoneData("v0.50.06", new Version("0.50.06"), false)
+    );
+
     public static final int MAXIMUM_D6_VALUE = 6;
 
     // This is used in creating the name of save files, e.g. the MekHQ campaign file

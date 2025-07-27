@@ -81,8 +81,8 @@ public record MilestoneData(String label, Version version, boolean useFallbackHy
     /**
      * Returns the full URL for the MegaMekLab release associated with this milestone.
      *
-     * <p>The URL is constructed using predefined URL segments and the MegaMekLab project name, along with the stored
-     * MegaMekLab URL.</p>
+     * <p>The URL is constructed dynamically using predefined URL segments, the MegaMekLab project name, and the
+     * {@code label} parameter.</p>
      *
      * @return a complete URL string for the MegaMekLab release page.
      *

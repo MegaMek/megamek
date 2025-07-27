@@ -114,11 +114,11 @@ class AeroReadout extends GeneralEntityReadout {
                     row[1] = ReadoutUtils.renderArmorAsViewElement(aero.getArmor(loc), aero.getOArmor(loc));
                 }
                 if (aero.hasPatchworkArmor()) {
-                    armorType.add(new PlainElement(Messages.getString("MekView."
-                          + EquipmentType.getArmorTypeName(aero.getArmorType(loc)).trim())));
+                    armorType.add(Messages.getString("MekView."
+                          + EquipmentType.getArmorTypeName(aero.getArmorType(loc)).trim()));
                     if (aero.hasBARArmor(loc)) {
-                        armorType.add(new PlainElement(Messages.getString("MekView.BARRating")
-                              + aero.getBARRating(loc)));
+                        armorType.add(Messages.getString("MekView.BARRating")
+                              + aero.getBARRating(loc));
                     }
                 }
                 locTable.addRow(row);
@@ -162,7 +162,7 @@ class AeroReadout extends GeneralEntityReadout {
                 hsString.append(" [")
                       .append(aero.formatHeat()).append("]");
             }
-            var heatSinks = new JoinedViewElement(new PlainElement(hsString.toString()));
+            var heatSinks = new JoinedViewElement(hsString.toString());
             if (aero.getHeatSinkHits() > 0) {
                 heatSinks.add(new DamagedElement(" (%d damaged)".formatted(aero.getHeatSinkHits())));
             }

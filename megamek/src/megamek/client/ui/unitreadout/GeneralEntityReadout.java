@@ -36,6 +36,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -89,13 +90,19 @@ class GeneralEntityReadout implements EntityReadout {
     protected final boolean useAlternateCost;
     protected final boolean ignorePilotBV;
 
+    private boolean initialized = false;
+
     private final DecimalFormat dFormatter;
-    private final List<ViewElement> sHead = new ArrayList<>();
-    private final List<ViewElement> sBasic = new ArrayList<>();
-    private final List<ViewElement> sLoadout = new ArrayList<>();
-    private final List<ViewElement> sFluff = new ArrayList<>();
-    private final List<ViewElement> sQuirks = new ArrayList<>();
-    private final List<ViewElement> sInvalid = new ArrayList<>();
+    private final List<ViewElement> headerSection = new ArrayList<>();
+    private final List<ViewElement> techLevel = new ArrayList<>();
+    private final List<ViewElement> techSection = new ArrayList<>();
+    private final List<ViewElement> sourceSection = new ArrayList<>();
+    private final List<ViewElement> baseSection = new ArrayList<>();
+    private final List<ViewElement> systemsSection = new ArrayList<>();
+    private final List<ViewElement> loadoutSection = new ArrayList<>();
+    private final List<ViewElement> quirksSection = new ArrayList<>();
+    private final List<ViewElement> fluffSection = new ArrayList<>();
+    private final List<ViewElement> invalidSection = new ArrayList<>();
 
     /**
      * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
@@ -120,22 +127,41 @@ class GeneralEntityReadout implements EntityReadout {
         dFormatter = new DecimalFormat("#,###", unusualSymbols);
     }
 
-    protected List<ViewElement> createHeaderBlock() {
+    protected List<ViewElement> createHeaderSection() {
         List<ViewElement> result = new ArrayList<>();
         result.add(new UnitName(entity.getShortNameRaw()));
         result.add(new PlainLine(EntityReadoutUnitType.unitTypeAsString(entity)));
+        return result;
+    }
 
+    private List<ViewElement> createTechLevel() {
+        List<ViewElement> result = new ArrayList<>();
         result.add(new PlainLine());
         result.add(createTechLevelElement());
+        return result;
+    }
+
+    private List<ViewElement> createTechSection() {
+        List<ViewElement> result = new ArrayList<>();
         result.add(createDesignInvalidElement());
         result.addAll(createTechTable(entity));
+        return result;
+    }
 
+    protected List<ViewElement> createBaseSection() {
+        List<ViewElement> result = new ArrayList<>();
         result.add(new PlainLine());
         result.add(createWeightElement());
         result.add(createBVElement());
+        result.add(createRoleElement());
+        return result;
+    }
+
+    protected List<ViewElement> createSourceSection() {
+        List<ViewElement> result = new ArrayList<>();
+        result.add(new PlainLine());
         result.add(createCostElement());
         result.add(createSourceElement());
-        result.add(createRoleElement());
         return result;
     }
 
@@ -360,7 +386,7 @@ class GeneralEntityReadout implements EntityReadout {
         return Collections.emptyList();
     }
 
-    protected List<ViewElement> createBasicBlock() {
+    protected List<ViewElement> createSystemsSection() {
         List<ViewElement> result = new ArrayList<>(createMovementElements());
         result.add(createEngineElement());
         result.addAll(createSystemsElements());
@@ -411,7 +437,7 @@ class GeneralEntityReadout implements EntityReadout {
         tpTable.setColNames(
               Messages.getString("MekView.Availability"),
               Messages.getString("MekView.Era"));
-        tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
+        tpTable.setJustification(JUSTIFIED_LEFT, JUSTIFIED_LEFT);
 
         tpTable.addRow(new TooltippedElement(
                     Messages.getString("MekView.Prototype"),
@@ -445,18 +471,9 @@ class GeneralEntityReadout implements EntityReadout {
         return (!entity.usesWeaponBays() || !showDetail) && !entity.getAmmo().stream().allMatch(this::hideAmmo);
     }
 
-    /**
-     * @return A summary including all four sections.
-     */
-    public String getReadout(@Nullable String fontName, ViewFormatting formatting) {
-        sHead.addAll(createHeaderBlock());
-        sBasic.addAll(createBasicBlock());
-        sLoadout.addAll(createLoadoutBlock());
-        sQuirks.addAll(createQuirksBlock());
-        // legacy -- I dont know why these were not kept separate
-        sFluff.addAll(sQuirks);
-        sFluff.addAll(createFluffBlock());
-        sInvalid.addAll(createInvalidBlock());
+    @Override
+    public String getReadout(String fontName, ViewFormatting formatting, Collection<ReadoutSections> sectionsToShow) {
+        initialize();
 
         String docStart = "";
         String docEnd = "";
@@ -468,9 +485,37 @@ class GeneralEntityReadout implements EntityReadout {
             docStart = "```ansi\n";
             docEnd = "```";
         }
-        return docStart + getHeadSection(formatting)
-                + getBasicSection(formatting) + getLoadoutSection(formatting)
-                + getFluffSection(formatting) + getInvalidSection(formatting) + docEnd;
+
+        String formattedSections = Arrays.stream(ReadoutSections.values())
+              .filter(sectionsToShow::contains)
+              .map(this::sectionFor)
+              .map(section -> formatSection(section, formatting))
+              .collect(Collectors.joining());
+
+        return docStart + formattedSections + docEnd;
+    }
+
+    public String getReadout(String fontName, ViewFormatting formatting, ReadoutSections... sectionsToShow) {
+        return getReadout(fontName, formatting, Arrays.asList(sectionsToShow));
+    }
+
+    private List<ViewElement> sectionFor(ReadoutSections section) {
+        return switch (section) {
+            case HEADLINE -> headerSection;
+            case TECH_LEVEL -> techLevel;
+            case AVAILABILITY -> techSection;
+            case COST_SOURCE -> sourceSection;
+            case BASE_DATA -> baseSection;
+            case SYSTEMS -> systemsSection;
+            case LOADOUT -> loadoutSection;
+            case QUIRKS -> quirksSection;
+            case FLUFF -> fluffSection;
+        };
+    }
+
+    @Override
+    public String getFullReadout(@Nullable String fontName, ViewFormatting formatting) {
+        return getReadout(fontName, formatting, ReadoutSections.values());
     }
 
     protected ViewElement createTotalInternalElement() {
@@ -575,7 +620,7 @@ class GeneralEntityReadout implements EntityReadout {
 
             if (mounted.isDestroyed() || (mounted.getUsableShotsLeft() < 1)) {
                 row[2] = new DestroyedElement(mounted.getBaseShotsLeft());
-            } else if (mounted.getUsableShotsLeft() < mounted.getType().getShots()) {
+            } else if (mounted.getUsableShotsLeft() < mounted.getOriginalShots()) {
                 row[2] = new DamagedElement(mounted.getBaseShotsLeft());
             }
             ammoTable.addRow(row);
@@ -684,31 +729,38 @@ class GeneralEntityReadout implements EntityReadout {
 
     @Override
     public String getHeadSection(ViewFormatting formatting) {
-        return formatSection(sHead, formatting);
+        initialize();
+        return formatSection(headerSection, formatting)
+              + formatSection(techSection, formatting)
+              + formatSection(baseSection, formatting);
     }
 
     @Override
     public String getBasicSection(ViewFormatting formatting) {
-        return formatSection(sBasic, formatting);
+        initialize();
+        return formatSection(systemsSection, formatting);
     }
 
     @Override
     public String getInvalidSection(ViewFormatting formatting) {
-        return formatSection(sInvalid, formatting);
+        initialize();
+        return formatSection(invalidSection, formatting);
     }
 
     @Override
     public String getLoadoutSection(ViewFormatting formatting) {
-        return formatSection(sLoadout, formatting);
+        initialize();
+        return formatSection(loadoutSection, formatting);
     }
 
     @Override
     public String getFluffSection(ViewFormatting formatting) {
+        initialize();
         if (formatting == ViewFormatting.DISCORD) {
             // The rest of the fluff often doesn't fit in a Discord message
-            return formatSection(sQuirks, formatting);
+            return formatSection(quirksSection, formatting);
         }
-        return formatSection(sFluff, formatting);
+        return formatSection(fluffSection, formatting);
     }
 
     /**
@@ -725,5 +777,26 @@ class GeneralEntityReadout implements EntityReadout {
             case DISCORD -> ViewElement::toDiscord;
         };
         return section.stream().map(mapper).collect(Collectors.joining());
+    }
+
+    /**
+     * Constructs the contents of this readout, if they have not been constructed yet. Otherwise, does nothing.
+     */
+    private void initialize() {
+        if (!initialized) {
+            initialized = true;
+            headerSection.addAll(createHeaderSection());
+            techLevel.addAll(createTechLevel());
+            techSection.addAll(createTechSection());
+            sourceSection.addAll(createSourceSection());
+            baseSection.addAll(createBaseSection());
+            systemsSection.addAll(createSystemsSection());
+            loadoutSection.addAll(createLoadoutBlock());
+            quirksSection.addAll(createQuirksBlock());
+            // legacy -- I dont know why these were not kept separate
+//            fluffSection.addAll(quirksSection);
+            fluffSection.addAll(createFluffBlock());
+            invalidSection.addAll(createInvalidBlock());
+        }
     }
 }

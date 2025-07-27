@@ -63,12 +63,12 @@ class MekReadout extends GeneralEntityReadout {
         List<ViewElement> result = new ArrayList<>();
 
         var joined = new JoinedViewElement();
-        joined.add(new PlainElement(mek.heatSinks()));
+        joined.add(mek.heatSinks());
         if (!mek.formatHeat().equals(Integer.toString(mek.heatSinks()))) {
-            joined.add(new PlainElement(" [%s]".formatted(mek.formatHeat())));
+            joined.add(" [%s]".formatted(mek.formatHeat()));
         }
         if (mek.hasRiscHeatSinkOverrideKit()) {
-            joined.add(new PlainElement(" w/ RISC Heat Sink Override Kit"));
+            joined.add(" w/ RISC Heat Sink Override Kit");
         }
         if (mek.damagedHeatSinks() > 0) {
             joined.add(new DamagedElement(" (%d damaged)".formatted(mek.damagedHeatSinks())));
@@ -85,7 +85,7 @@ class MekReadout extends GeneralEntityReadout {
             gyro.add(new DamagedElement(" (%d hits)".formatted(mek.getGyroHits())));
         }
         if (mek.hasArmoredGyro()) {
-            gyro.add(new PlainElement(" (armored)"));
+            gyro.add(" (armored)");
         }
 
         return result;

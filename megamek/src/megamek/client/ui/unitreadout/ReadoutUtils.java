@@ -39,7 +39,6 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
-import javax.swing.text.View;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

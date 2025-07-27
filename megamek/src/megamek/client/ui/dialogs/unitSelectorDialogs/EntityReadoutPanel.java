@@ -29,6 +29,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.Serial;
+import java.util.Collection;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -44,9 +45,11 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 
+import megamek.client.ui.unitreadout.ReadoutSections;
 import megamek.client.ui.util.FluffImageHelper;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedXPanel;
+import megamek.client.ui.util.ViewFormatting;
 import megamek.common.Entity;
 import megamek.client.ui.unitreadout.EntityReadout;
 import megamek.common.Report;
@@ -149,15 +152,25 @@ public class EntityReadoutPanel extends JPanel {
     }
 
     public void showEntity(Entity entity, EntityReadout mekView) {
-        readoutTextComponent.setText(mekView.getReadout());
+        readoutTextComponent.setText(mekView.getFullReadout());
         readoutTextComponent.setCaretPosition(0);
         setFluffImage(entity);
     }
 
     public void showEntity(Entity entity, EntityReadout mekView, String fontName) {
-        readoutTextComponent.setText(mekView.getReadout(fontName));
+        readoutTextComponent.setText(mekView.getFullReadout(fontName, ViewFormatting.HTML));
         readoutTextComponent.setCaretPosition(0);
         setFluffImage(entity);
+    }
+
+    public void showEntity(Entity entity, EntityReadout mekView, String fontName, Collection<ReadoutSections> sections) {
+        showReadout(mekView, fontName, sections);
+        setFluffImage(entity);
+    }
+
+    private void showReadout(EntityReadout readout, String fontName, Collection<ReadoutSections> sections) {
+        readoutTextComponent.setText(readout.getReadout(fontName, ViewFormatting.HTML, sections));
+        readoutTextComponent.setCaretPosition(0);
     }
 
     public void showEntity(Entity entity, TROView troView) {
@@ -181,11 +194,11 @@ public class EntityReadoutPanel extends JPanel {
     }
 
     public void showEntity(Entity entity, boolean showDetail, boolean useAlternateCost,
-          boolean ignorePilotBV, String fontName) {
+          boolean ignorePilotBV, String fontName, Collection<ReadoutSections> sections) {
 
         EntityReadout mekView = EntityReadout.createReadout(entity, showDetail, useAlternateCost,
               ignorePilotBV);
-        showEntity(entity, mekView, fontName);
+        showEntity(entity, mekView, fontName, sections);
     }
 
     private void setFluffImage(Entity entity) {

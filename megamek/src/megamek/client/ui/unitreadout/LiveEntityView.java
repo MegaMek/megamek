@@ -48,7 +48,7 @@ import javax.swing.*;
 /**
  * The EntityViewPane displays the entity summary, TRO and AS card panels within a TabbedPane.
  */
-public class LiveEntityView extends AbstractTabbedPane {
+class LiveEntityView extends AbstractTabbedPane {
 
     private final LiveEntityReadoutPanel readoutPanel;
     private final EntityReadoutPanel troPanel = new EntityReadoutPanel();

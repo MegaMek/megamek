@@ -39,18 +39,29 @@ import java.util.stream.Collectors;
 
 /**
  * This ViewElement allows assembling multiple ViewElements into a single one to use, e.g., as an element in a table.
- * For output, the contained elements are chained without any additional elements.
+ * For output, the contained elements are chained without anything else added.
  */
 class JoinedViewElement implements ViewElement {
 
-    protected List<ViewElement> values = new ArrayList<>();
+    private final List<ViewElement> values = new ArrayList<>();
 
+    /**
+     * Constructs a new joined element with the given elements as content.
+     *
+     * @param values The view elements to chain
+     */
     JoinedViewElement(ViewElement... values) {
         if (values != null) {
             this.values.addAll(Arrays.stream(values).toList());
         }
     }
 
+    /**
+     * Constructs a new joined element with the given strings as content. Internally the strings are converted to
+     * PlainElements.
+     *
+     * @param values The view elements to chain
+     */
     JoinedViewElement(String... values) {
         if (values != null) {
             for (String value : values) {
@@ -59,16 +70,45 @@ class JoinedViewElement implements ViewElement {
         }
     }
 
+    /**
+     * Constructs a new empty joined element.
+     */
     JoinedViewElement() {
         // Nothing to do
     }
 
+    /**
+     * Appends the given element to the end of this joined element. Calls can be chained.
+     *
+     * @param value The view element to append.
+     *
+     * @return this joined element
+     */
     public JoinedViewElement add(ViewElement value) {
         values.add(value);
         return this;
     }
 
+    /**
+     * Appends the given string as a PlainElement to the end of this joined element. Calls can be chained.
+     *
+     * @param value The String to append
+     *
+     * @return this joined element
+     */
     public JoinedViewElement add(String value) {
+        values.add(new PlainElement(value));
+        return this;
+    }
+
+    /**
+     * Appends the given int as a PlainElement to the end of this joined element. Calls can be chained.
+     *
+     * @param value The int number to append (uses String.valueof)
+     *
+     * @return this joined element
+     */
+    public JoinedViewElement add(int value) {
         values.add(new PlainElement(value));
         return this;
     }

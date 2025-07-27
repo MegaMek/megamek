@@ -37,6 +37,8 @@ import megamek.client.ui.util.ViewFormatting;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 
+import java.util.Collection;
+
 /**
  * The Entity information shown in the unit selector and many other places in MM, MML and MHQ.
  * <p>The information is encoded in a series of classes that implement a common {@link ViewElement} interface, which
@@ -125,37 +127,28 @@ public interface EntityReadout {
     }
 
     /**
-     * The head section includes the title (unit name), tech level and availability, tonnage, bv, and cost.
-     *
-     * @return The data from the head section.
+     * @return The formatted head section, including the title (unit name), tech level and availability, tonnage, bv,
+     *       and cost.
      */
     String getHeadSection(ViewFormatting formatting);
 
     /**
-     * The basic section includes general details such as movement, system equipment (cockpit, gyro, etc.) and armor.
-     *
-     * @return The data from the basic section
+     * @return The formatted basic values section, including movement, system equipment (cockpit, gyro, etc.) and armor.
      */
     String getBasicSection(ViewFormatting formatting);
 
     /**
-     * The invalid section includes reasons why the unit is invalid
-     *
-     * @return The data from the invalid section
+     * @return The formatted invalid section, showing reasons why the unit is invalid if it is (otherwise empty)
      */
     String getInvalidSection(ViewFormatting formatting);
 
     /**
-     * The loadout includes weapons, ammo, and other equipment broken down by location.
-     *
-     * @return The data from the loadout section.
+     * @return The formatted loadout section, including weapons, ammo, and other equipment.
      */
     String getLoadoutSection(ViewFormatting formatting);
 
     /**
-     * The fluff section includes fluff details like unit history and deployment patterns as well as quirks.
-     *
-     * @return The data from the fluff section.
+     * @return The formatted fluff section, including unit history and deployment patterns as well as quirks.
      */
     String getFluffSection(ViewFormatting formatting);
 
@@ -163,29 +156,23 @@ public interface EntityReadout {
      * @return The formatted readout with all sections (including fluff texts, if present), using HTML output
      *       formatting.
      */
-    default String getReadout() {
-        return getReadout(null, ViewFormatting.HTML);
+    default String getFullReadout() {
+        return getFullReadout(null, ViewFormatting.HTML);
     }
 
     /**
      * @return The formatted readout with all sections (including fluff texts, if present), using the given output
      *       formatting
      */
-    default String getReadout(ViewFormatting formatting) {
-        return getReadout(null, formatting);
-    }
-
-    /**
-     * @return The formatted readout with all sections (including fluff texts, if present), using the given font if
-     *       applicable.
-     */
-    default String getReadout(@Nullable String fontName) {
-        return getReadout(fontName, ViewFormatting.HTML);
+    default String getFullReadout(ViewFormatting formatting) {
+        return getFullReadout(null, formatting);
     }
 
     /**
      * @return The formatted readout with all sections (including fluff texts, if present), using the given font if
      *       applicable and using the given output formatting.
      */
-    String getReadout(@Nullable String fontName, ViewFormatting formatting);
+    String getFullReadout(@Nullable String fontName, ViewFormatting formatting);
+
+    String getReadout(String fontName, ViewFormatting formatting, Collection<ReadoutSections> sectionsToShow);
 }

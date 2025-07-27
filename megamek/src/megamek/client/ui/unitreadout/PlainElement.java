@@ -19,7 +19,7 @@
 
 package megamek.client.ui.unitreadout;
 
-public class PlainElement implements ViewElement {
+class PlainElement implements ViewElement {
 
     private final String text;
 

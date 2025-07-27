@@ -22,6 +22,8 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
@@ -35,12 +37,15 @@ import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.WrapLayout;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.unitreadout.ReadoutSections;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Entity;
 import megamek.client.ui.unitreadout.EntityReadout;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.annotations.Nullable;
+
+import static megamek.client.ui.unitreadout.ReadoutSections.*;
 
 /**
  * This class wraps the MekView / MekViewPanel and gives it a toolbar to choose font, open the MUL
@@ -55,8 +60,21 @@ public class ConfigurableMekViewPanel extends JPanel {
     private final JButton copyDiscordButton = new JButton(Messages.getString("CMVPanel.copyDiscord"));
     private final JButton mulButton = new JButton(Messages.getString("CMVPanel.MUL"));
     private final EntityReadoutPanel entityReadoutPanel = new EntityReadoutPanel();
+    private final JComboBox<SectionFormat> sectionsChooser = new JComboBox<>();
     private int mulId;
     private Entity entity;
+
+    enum SectionFormat {
+        FULL(ReadoutSections.values()),
+        INGAME(HEADLINE, BASE_DATA, SYSTEMS, LOADOUT, QUIRKS),
+        NOFLUFF(HEADLINE, TECH_LEVEL, AVAILABILITY, COST_SOURCE, BASE_DATA, SYSTEMS, LOADOUT, QUIRKS);
+
+        final ReadoutSections[] sections;
+
+        SectionFormat(ReadoutSections... sections) {
+            this.sections = sections;
+        }
+    }
 
     /**
      * Constructs a panel with the given unit to display.
@@ -79,6 +97,9 @@ public class ConfigurableMekViewPanel extends JPanel {
         mulButton.addActionListener(ev -> UIUtil.showMUL(mulId, this));
         mulButton.setToolTipText("Show the Master Unit List entry for this unit. Opens a browser window.");
 
+        Arrays.stream(SectionFormat.values()).forEach(sectionsChooser::addItem);
+        sectionsChooser.addActionListener(ev -> updateReadout());
+
         var chooserLine = new UIUtil.FixedYPanel(new WrapLayout(FlowLayout.LEFT, 15, 10));
         JPanel fontChooserPanel = new JPanel();
         fontChooserPanel.add(new JLabel(Messages.getString("CMVPanel.font")));
@@ -89,6 +110,7 @@ public class ConfigurableMekViewPanel extends JPanel {
         chooserLine.add(copyTextButton);
         chooserLine.add(copyDiscordButton);
         chooserLine.add(mulButton);
+        chooserLine.add(sectionsChooser);
 
         add(chooserLine);
         add(entityReadoutPanel);
@@ -135,13 +157,11 @@ public class ConfigurableMekViewPanel extends JPanel {
     }
 
     private boolean alternateCost() {
-        // for now
-        return false;
+        return false; // for now
     }
 
     private boolean pilotBV(Entity entity) {
-        // for now
-        return entity.getCrew() != null;
+        return entity.getCrew() != null; // for now
     }
 
     public void reset() {
@@ -151,7 +171,7 @@ public class ConfigurableMekViewPanel extends JPanel {
     private void copyToClipboard(ViewFormatting formatting) {
         if (entity != null) {
             EntityReadout readout = EntityReadout.createReadout(entity, detail(), alternateCost());
-            StringSelection stringSelection = new StringSelection(readout.getReadout(formatting));
+            StringSelection stringSelection = new StringSelection(readout.getFullReadout(formatting));
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);
         }
@@ -160,9 +180,17 @@ public class ConfigurableMekViewPanel extends JPanel {
     private void updateReadout() {
         if (entity != null) {
             entityReadoutPanel.showEntity(entity, detail(), alternateCost(), !pilotBV(entity),
-                  GUIPreferences.getInstance().getSummaryFont());
+                  GUIPreferences.getInstance().getSummaryFont(), getSelectedSections());
         } else {
             entityReadoutPanel.reset();
         }
+    }
+
+    private List<ReadoutSections> getSelectedSections() {
+        SectionFormat format = (SectionFormat) sectionsChooser.getSelectedItem();
+        if (format == null) {
+            format = SectionFormat.FULL;
+        }
+        return Arrays.asList(format.sections);
     }
 }

@@ -98,8 +98,8 @@ public record MilestoneData(String label, Version version, boolean useFallbackHy
     /**
      * Returns the full URL for the MekHQ release associated with this milestone.
      *
-     * <p>The URL is constructed using predefined URL segments and the MekHQ project name, along with the stored
-     * MekHQ URL.</p>
+     * <p>The URL is dynamically constructed using predefined URL segments, the MekHQ project name, and the
+     * {@code label} parameter.</p>
      *
      * @return a complete URL string for the MekHQ release page.
      *

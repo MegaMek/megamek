@@ -529,7 +529,7 @@
                 <availability>CGB!Keshik:5</availability>
             </model>
 			<model name='ANH-1X'>
-                <availability>CB:8,CCO:8,CGB:8,CS:8,CWI:8</availability>
+                <availability>CB:8,CCO:8,CGB:8,CSA:8,CWI:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Aquarius Escort' unitType='Small Craft'>
@@ -1551,7 +1551,7 @@
 			</model>
 		</chassis>
 		<chassis name='Crockett' unitType='Mek'>
-			<availability>FS:7,LA:7,DC:7,FWL:7,CC:7,CS:8,PP:6,CLAN:4-,CBS:5-,CCO:5-,CFM:5-,CGB:5-,CHH:5-,CW:5-,NIOPS:8</availability>
+			<availability>FS:7,LA:7,DC:7,FWL:7,CC:7,CS:8,PP:6,CLAN:4-,CBS:5-,CCO:5-,CGB:5-,CHH:5-,CW:5-,NIOPS:8</availability>
 			<model name='CRK-5003-1'>
 				<availability>IS:7+,CS:8,PP:6,CLAN:8,CBS:4-,CB:4-,CCO:4-,CGB:4-,CHH:4-,CW:4-,NIOPS:8</availability>
 			</model>
@@ -1632,7 +1632,7 @@
 			</model>
 			<model name='CP-10-Z'>
                 <roles>command</roles>
-				<availability>OA:8,IS:8,FS:8,MERC:8,DC:8,TC:8</availability>
+				<availability>IS:8,FS:8,DC:8,MERC:8,CLAN:8,TC:8,OA:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Cyrano Gunship' unitType='VTOL'>
@@ -4771,7 +4771,7 @@
 		<chassis name='Thug' unitType='Mek'>
 			<availability>IS:6+,FS:6+,FWL:6+,CS:7,PP:3+,CLAN:5,CIH:4,TC:4+,NIOPS:7</availability>
 			<model name='THG-11E'>
-				<availability>IS:8+,FS:8+,DC:8+,FWL:8+,CS:8,PP:8,CLAN:4-,TC:8,NIOPS:8</availability>
+				<availability>IS:8+,CS:8,PP:8,CLAN:4-,TC:8,NIOPS:8</availability>
 			</model>
 			<model name='THG-11Eb'>
 				<availability>PP:1+,CLAN:6</availability>

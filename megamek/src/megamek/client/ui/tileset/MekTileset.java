@@ -430,5 +430,10 @@ public class MekTileset {
                 LOGGER.warn("Received null image from ImageUtil.loadImageFromFile! File: {}", fin);
             }
         }
+
+        public String getImageFile() {
+            return imageFile;
+        }
+
     }
 }

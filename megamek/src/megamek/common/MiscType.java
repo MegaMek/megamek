@@ -3790,6 +3790,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 120000;
         misc.flags = misc.flags.or(F_CLUB).or(F_MEK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.subType |= S_CHAIN_WHIP;
+        misc.toHitModifier = -2;
         misc.bv = 5.175;
         misc.rulesRefs = "289, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -3818,6 +3819,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_HAND_WEAPON).or(F_MEK_EQUIPMENT);
         misc.subType |= S_CLAW;
         misc.bv = BV_VARIABLE;
+        misc.toHitModifier = +1;
         misc.rulesRefs = "289, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
@@ -3871,6 +3873,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_CLUB).or(F_MEK_EQUIPMENT);
         misc.subType |= S_HATCHET;
+        misc.toHitModifier = -1;
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "220, TM";
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -3895,6 +3898,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_CLUB).or(F_MEK_EQUIPMENT);
         misc.subType |= S_LANCE;
+        misc.toHitModifier = +1;
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "290, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -3922,6 +3926,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 130000;
         misc.flags = misc.flags.or(F_CLUB).or(F_MEK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.subType |= S_MACE;
+        misc.toHitModifier = +1;
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "290, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -3948,6 +3953,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_CLUB).or(F_MEK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.subType |= S_RETRACTABLE_BLADE;
+        misc.toHitModifier = -2;
         misc.bv = BV_VARIABLE;
         misc.setInstantModeSwitch(true);
         String[] modes = { "retracted", "extended" };
@@ -4098,6 +4104,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_CLUB).or(F_MEK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.subType |= S_SWORD;
+        misc.toHitModifier = -2;
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "237, TM";
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -4148,6 +4155,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 150000;
         misc.flags = misc.flags.or(F_CLUB).or(F_MEK_EQUIPMENT);
         misc.subType |= S_VIBRO_SMALL;
+        misc.toHitModifier = -2;
         misc.bv = 12;
         misc.setInstantModeSwitch(true);
         String[] modes = { "Inactive", "Active" };
@@ -4178,6 +4186,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 400000;
         misc.flags = misc.flags.or(F_CLUB).or(F_MEK_EQUIPMENT);
         misc.subType |= S_VIBRO_MEDIUM;
+        misc.toHitModifier = -2;
         misc.bv = 17;
         misc.setInstantModeSwitch(true);
         String[] modes = { "Inactive", "Active" };
@@ -4208,6 +4217,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 750000;
         misc.flags = misc.flags.or(F_CLUB).or(F_MEK_EQUIPMENT);
         misc.subType |= S_VIBRO_LARGE;
+        misc.toHitModifier = -2;
         misc.bv = 24;
         misc.setInstantModeSwitch(true);
         String[] modes = { "Inactive", "Active" };

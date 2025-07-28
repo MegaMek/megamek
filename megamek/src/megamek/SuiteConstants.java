@@ -34,7 +34,8 @@ package megamek;
 
 import java.util.List;
 
-import megamek.utilities.MilestoneData;
+import megamek.common.util.milestoneReleaseInformation.MilestoneData;
+import megamek.common.util.milestoneReleaseInformation.MilestoneReleaseLoader;
 
 /**
  * These are constants that hold across the entire MegaMek Suite of MegaMek, MegaMekLab, and MekHQ.
@@ -46,27 +47,25 @@ public abstract class SuiteConstants {
 
     // region General Constants
     public static final String PROJECT_NAME = "MegaMek Suite";
+
     public static final Version VERSION = new Version();
     /**
-     * The most recent stable milestone release.
+     * A list containing all milestone release data objects, as loaded from the YAML configuration file at startup.
      *
-     * <p>This should be updated as new Milestones are confirmed.</p>
+     * <p>This list is initialized by the {@link MilestoneReleaseLoader} upon class loading, and provides read-only
+     * access to all known milestone releases available to the suite. Each {@link MilestoneData} represents details
+     * such as version number, release notes, and release date for a single milestone.</p>
      */
-    public static final Version LAST_MILESTONE = new Version("0.50.06");
+    public static final List<MilestoneData> ALL_MILESTONE_RELEASES = new MilestoneReleaseLoader().getMilestoneReleases();
     /**
-     * A list of all milestone releases. This list is used by MekHQ to verify that a campaign is compatible with the
-     * current release.
+     * The {@link Version} object representing the latest (highest) milestone release found in
+     * {@link #ALL_MILESTONE_RELEASES}.
      *
-     * <p>This should be updated as new Milestones are confirmed.</p>
-     *
-     * <p><b>Notes:</b> Milestones should be listed oldest -> newest.</p>
+     * <p>This constant is calculated by determining the highest version among all loaded milestones during class
+     * initialization. It provides a convenient way for code and UI to easily access/display the most recent
+     * milestone version. </p>
      */
-    public static final List<MilestoneData> ALL_MILESTONE_RELEASES = List.of(
-          new MilestoneData("v0.48.0", new Version("0.48.0"), false),
-          new MilestoneData("v0.49.7", new Version("0.49.7"), false),
-          new MilestoneData("v0.49.19.1", new Version("0.49.19-01"), false),
-          new MilestoneData("v0.50.06", new Version("0.50.06"), false)
-    );
+    public static final Version LAST_MILESTONE = MilestoneReleaseLoader.getLatestMilestoneReleaseVersion();
 
     public static final int MAXIMUM_D6_VALUE = 6;
 

@@ -24,8 +24,18 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MekHQ was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek;
+
+import java.util.List;
+
+import megamek.common.util.milestoneReleaseInformation.MilestoneData;
+import megamek.common.util.milestoneReleaseInformation.MilestoneReleaseLoader;
 
 /**
  * These are constants that hold across the entire MegaMek Suite of MegaMek, MegaMekLab, and MekHQ.
@@ -37,8 +47,26 @@ public abstract class SuiteConstants {
 
     // region General Constants
     public static final String PROJECT_NAME = "MegaMek Suite";
+
     public static final Version VERSION = new Version();
-    public static final Version LAST_MILESTONE = new Version("0.50.06");
+    /**
+     * A list containing all milestone release data objects, as loaded from the YAML configuration file at startup.
+     *
+     * <p>This list is initialized by the {@link MilestoneReleaseLoader} upon class loading, and provides read-only
+     * access to all known milestone releases available to the suite. Each {@link MilestoneData} represents details
+     * such as version number, release notes, and release date for a single milestone.</p>
+     */
+    public static final List<MilestoneData> ALL_MILESTONE_RELEASES = new MilestoneReleaseLoader().getMilestoneReleases();
+    /**
+     * The {@link Version} object representing the latest (highest) milestone release found in
+     * {@link #ALL_MILESTONE_RELEASES}.
+     *
+     * <p>This constant is calculated by determining the highest version among all loaded milestones during class
+     * initialization. It provides a convenient way for code and UI to easily access/display the most recent
+     * milestone version. </p>
+     */
+    public static final Version LAST_MILESTONE = MilestoneReleaseLoader.getLatestMilestoneReleaseVersion();
+
     public static final int MAXIMUM_D6_VALUE = 6;
 
     // This is used in creating the name of save files, e.g. the MekHQ campaign file

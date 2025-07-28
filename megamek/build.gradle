@@ -38,6 +38,7 @@ sourceSets {
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.19.0'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.19.0'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.0'
 
     implementation 'com.formdev:flatlaf:3.6'
     implementation 'com.formdev:flatlaf-extras:3.6'

@@ -1,0 +1,15 @@
+# This file should NOT be edited by non-developers.
+# It WILL brick your game, and it won't be immediately obvious until it's too late.
+milestone_releases:
+  - label: "v0.48.0" # This is the user-facing label, it also corresponds to the tail-end of the GitHub download page
+    version: "0.48.0" # This is used to construct the version information used in MekHQ to verify compatibility.
+    useFallbackHyperlink: false # Set to 'true' in the event that a Web Page is unavailable for this release
+  - label: "v0.49.7"
+    version: "0.49.7"
+    useFallbackHyperlink: false
+  - label: "v0.49.19.1"
+    version: "0.49.19-01"
+    useFallbackHyperlink: false
+  - label: "v0.50.06"
+    version: "0.50.06"
+    useFallbackHyperlink: false

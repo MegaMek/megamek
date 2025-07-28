@@ -2755,7 +2755,7 @@
 			</model>
 		</chassis>
 		<chassis name='Highlander' unitType='Mek'>
-			<availability>IS:4,MERC:4,CS:9,CLAN:4+,CCC:3+,CIH:3+,CSV:3+,NIOPS:9</availability>
+			<availability>IS:4,MERC:4,CS:9,CLAN:4+,CCC:3+,CIH:3+,CSV:3+,NIOPS:9+</availability>
 			<model name='HGN-732'>
                 <roles>command</roles>
 				<availability>IS:8,FWL:7+,CS:8,CLAN:4-,NIOPS:8</availability>

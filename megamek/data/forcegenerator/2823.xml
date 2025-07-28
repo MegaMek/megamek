@@ -1833,6 +1833,12 @@
 				<availability>FS:6+,CBS:6,CDS:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Devastator' unitType='Mek'>
+            <availability>CSJ!Keshik:3</availability>
+            <model name='DVS-2-EC'>
+                <availability>CSJ:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Dictator' unitType='Dropship'>
 			<availability>IS:4</availability>
 			<model name=''>

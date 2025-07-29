@@ -2235,6 +2235,7 @@
 				<availability>FS:2+,LA:2+,FWL:2+,CC:2+,CS:8,CLAN:8,CSA:4-,NIOPS:8</availability>
 			</model>
 			<model name='EMP-6A-EC'>
+                <roles>command</roles>
 				<availability>CSA:1+</availability>
 			</model>
 		</chassis>
@@ -3765,7 +3766,7 @@
 			</model>
 		</chassis>
 		<chassis name='Longbow' unitType='Mek'>
-			<availability>IS:7,FS:8,DC:5,FWL:9,CC:6,CS:4,CDS:3,CSR:3,Periphery:7,NIOPS:4,Periphery.Deep:7,BAN:0</availability>
+			<availability>IS:7,FS:8,DC:5,FWL:9,CC:6,CS:4,CDS:3,CSR:3,Periphery:7,NIOPS:4,Periphery.Deep:7</availability>
 			<model name='LGB-0W'>
 				<roles>fire_support</roles>
 				<availability>IS:8,Periphery:8</availability>
@@ -3776,7 +3777,7 @@
 			</model>
 			<model name='LGB-7Q'>
 				<roles>fire_support</roles>
-				<availability>IS:6,CDS:3,CSR:8,TC:6,MOC:6,OA:6</availability>
+				<availability>IS:6,CDS:8,CSR:8,TC:6,MOC:6,OA:6</availability>
 			</model>
 			<model name='LGB-8C'>
                 <roles>fire_support</roles>
@@ -5685,6 +5686,12 @@
 				<availability>LA:8,DC:8,CS:8,CB:8,NIOPS:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Thunder Stallion' unitType='Mek'>
+            <availability>CHH!Keshik:3</availability>
+            <model name=''>
+                <availability>CHH:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Thunderbird' unitType='AeroSpaceFighter'>
 			<availability>CLAN:4,IS:5,Periphery.Deep:5,FS:6,TC:6,Periphery:5,CS:5-,LA:8,NIOPS:5-</availability>
 			<model name='TRB-D36'>

@@ -1947,6 +1947,7 @@
 				<availability>FS:4+,LA:4+,FWL:4+,CC:4+,CS:8,CLAN:8,CSA:4-,NIOPS:8</availability>
 			</model>
 			<model name='EMP-6A-EC'>
+                <roles>command</roles>
 				<availability>CSA:1+</availability>
 			</model>
 		</chassis>

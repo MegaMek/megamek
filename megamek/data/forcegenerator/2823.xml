@@ -1937,6 +1937,7 @@
 				<availability>FS:4+,LA:4+,FWL:4+,CC:4+,CS:8,CLAN:8,NIOPS:8</availability>
 			</model>
 			<model name='EMP-6A-EC'>
+                <roles>command</roles>
 				<availability>CSA!Keshik:3</availability>
 			</model>
 		</chassis>

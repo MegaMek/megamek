@@ -3121,7 +3121,7 @@
 			<availability>CBS:1+:2859,CCC!Keshik:2,CCO!Keshik:3,CDS!Keshik:2</availability>
 			<model name=''>
 			    <roles>command</roles>
-				<availability>CLAN:8</availability>
+				<availability>CBS:8,CCC:8,CCO:8,CDS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Highlander' unitType='Mek'>
@@ -5278,7 +5278,7 @@
 		<chassis name='Shogun' unitType='Mek'>
 			<availability>FWL:2+,CBS:2,CB!Front Line:3!Second Line:2!Solahma:1,CCC!Front Line:3!Second Line:1,CCO!Front Line:3!Second Line:2!Solahma:1,CSA!Front Line:2!Second Line:1</availability>
 			<model name='C'>
-				<availability>CBS:1+,CB!Front Line:8,CCC:8,CSA:8</availability>
+				<availability>CBS:1+,CB!Front Line:8,CCC:8,CCO:8,CSA:8</availability>
 			</model>
 			<model name='SHG-2H'>
 				<availability>FWL:8,CBS:4-,CB:3-</availability>
@@ -5532,9 +5532,9 @@
 			</model>
 		</chassis>
 		<chassis name='Striker' unitType='Mek'>
-			<availability>MOC:6,CC:8,CS:4,OA:6,LA:8,PIR:3,NIOPS:4,MERC:6,FS:6,TC:6,DC:6</availability>
+			<availability>FS:6,LA:8,DC:6,CC:8,MERC:6,CS:4,TC:6,MOC:6,OA:6,NIOPS:4,PIR:3</availability>
 			<model name='STC-2C'>
-				<availability>CC:8,General:8</availability>
+				<availability>IS:8,Periphery:8,PIR:8</availability>
 			</model>
 			<model name='STC-2S'>
 				<availability>LA:5</availability>
@@ -5683,7 +5683,7 @@
 			</model>
 		</chassis>
 		<chassis name='Thunder Hawk' unitType='Mek'>
-			<availability>LA:2+,DC:2+,CS:2,CB!Front Line:1,NIOPS:2</availability>
+			<availability>LA:2+,DC:2+,CS:2,CB!Front Line:1,NIOPS:2+</availability>
 			<model name='TDK-7X'>
                 <roles>command</roles>
 				<availability>LA:8,DC:8,CS:8,CB:8,NIOPS:8</availability>
@@ -5966,10 +5966,10 @@
                 <availability>CBS:8,CB:8,CCO!Second Line:8,CGB:8,CJF:8,CNC:8,CSJ:8,CW:8</availability>
             </model>
             <model name='VTR-9A'>
-				<availability>CC:2,CS:2,IS:1,FS:2</availability>
+				<availability>IS:1,FS:2,CC:2,CS:2</availability>
 			</model>
 			<model name='VTR-9A1'>
-				<availability>CC:2,CS:2,IS:1,FS:2</availability>
+				<availability>IS:1,FS:2,CC:2,CS:2</availability>
 			</model>
 			<model name='VTR-9B'>
 				<availability>IS:8,CCO:1-,Periphery:8,Periphery.Deep:8</availability>

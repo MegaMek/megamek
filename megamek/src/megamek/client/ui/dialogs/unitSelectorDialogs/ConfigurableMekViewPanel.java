@@ -64,7 +64,8 @@ public class ConfigurableMekViewPanel extends JPanel {
     enum SectionFormat {
         FULL(ReadoutSections.values()),
         INGAME(HEADLINE, BASE_DATA, SYSTEMS, LOADOUT, QUIRKS),
-        NOFLUFF(HEADLINE, TECH_LEVEL, AVAILABILITY, COST_SOURCE, BASE_DATA, SYSTEMS, LOADOUT, QUIRKS);
+        NOFLUFF(HEADLINE, TECH_LEVEL, AVAILABILITY, COST_SOURCE, BASE_DATA, SYSTEMS, LOADOUT, QUIRKS),
+        NONCOMBAT(HEADLINE, TECH_LEVEL, AVAILABILITY, COST_SOURCE, FLUFF, INVALID);
 
         final ReadoutSections[] sections;
 

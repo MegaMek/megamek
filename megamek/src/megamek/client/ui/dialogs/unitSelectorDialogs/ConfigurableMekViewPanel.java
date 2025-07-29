@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.dialogs.unitSelectorDialogs;
 
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -26,12 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JToggleButton;
+import javax.swing.*;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
@@ -48,8 +44,8 @@ import megamek.common.annotations.Nullable;
 import static megamek.client.ui.unitreadout.ReadoutSections.*;
 
 /**
- * This class wraps the MekView / MekViewPanel and gives it a toolbar to choose font, open the MUL
- * and copy the contents.
+ * This class wraps the MekView / MekViewPanel and gives it a toolbar to choose font, open the MUL and copy the
+ * contents.
  */
 public class ConfigurableMekViewPanel extends JPanel {
 
@@ -63,6 +59,7 @@ public class ConfigurableMekViewPanel extends JPanel {
     private final JComboBox<SectionFormat> sectionsChooser = new JComboBox<>();
     private int mulId;
     private Entity entity;
+    private final JComponent menuPanel;
 
     enum SectionFormat {
         FULL(ReadoutSections.values()),
@@ -99,20 +96,31 @@ public class ConfigurableMekViewPanel extends JPanel {
 
         Arrays.stream(SectionFormat.values()).forEach(sectionsChooser::addItem);
         sectionsChooser.addActionListener(ev -> updateReadout());
+        sectionsChooser.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+                  boolean cellHasFocus) {
+                return super.getListCellRendererComponent(list,
+                      Messages.getString("CMVPanel." + value),
+                      index,
+                      isSelected,
+                      cellHasFocus);
+            }
+        });
 
-        var chooserLine = new UIUtil.FixedYPanel(new WrapLayout(FlowLayout.LEFT, 15, 10));
+        menuPanel = new UIUtil.FixedYPanel(new WrapLayout(FlowLayout.LEFT, 15, 10));
         JPanel fontChooserPanel = new JPanel();
         fontChooserPanel.add(new JLabel(Messages.getString("CMVPanel.font")));
         fontChooserPanel.add(fontChooser);
-        chooserLine.add(fontChooserPanel);
-        chooserLine.add(detailButton);
-        chooserLine.add(copyHtmlButton);
-        chooserLine.add(copyTextButton);
-        chooserLine.add(copyDiscordButton);
-        chooserLine.add(mulButton);
-        chooserLine.add(sectionsChooser);
+        menuPanel.add(fontChooserPanel);
+        menuPanel.add(detailButton);
+        menuPanel.add(copyHtmlButton);
+        menuPanel.add(copyTextButton);
+        menuPanel.add(copyDiscordButton);
+        menuPanel.add(mulButton);
+        menuPanel.add(sectionsChooser);
 
-        add(chooserLine);
+        add(menuPanel);
         add(entityReadoutPanel);
         setEntity(entity);
     }
@@ -192,5 +200,9 @@ public class ConfigurableMekViewPanel extends JPanel {
             format = SectionFormat.FULL;
         }
         return Arrays.asList(format.sections);
+    }
+
+    public void toggleMenu(boolean menuVisible) {
+        menuPanel.setVisible(menuVisible);
     }
 }

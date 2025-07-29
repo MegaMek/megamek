@@ -34,5 +34,5 @@ package megamek.client.ui.unitreadout;
 
 public enum ReadoutSections {
     // Note that the order here is the order in which sections appear in the readout
-    HEADLINE, TECH_LEVEL, AVAILABILITY, COST_SOURCE, BASE_DATA, SYSTEMS, LOADOUT, QUIRKS, FLUFF
+    HEADLINE, TECH_LEVEL, AVAILABILITY, COST_SOURCE, BASE_DATA, SYSTEMS, LOADOUT, QUIRKS, FLUFF, INVALID
 }

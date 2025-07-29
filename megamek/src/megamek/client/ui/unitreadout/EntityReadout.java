@@ -47,7 +47,7 @@ import java.util.Collection;
  * <p>
  * Goals for the Entity Readout:
  * <UL>
- * <LI> Should be adaptable to various output formats, currently HTML, plain text and discord, ideally on-the-fly
+ * <LI> Should be adaptable to various output formats, currently HTML, plain text and discord, on-the-fly
  * rather than fixed at construction</LI>
  * <LI> Should show information sufficient to recreate the unit in MML (while undamaged)</LI>
  * <LI> Should highlight damaged and destroyed items and critical hits as well as current values (movement)</LI>
@@ -56,7 +56,7 @@ import java.util.Collection;
  * or the slot number of an item on a mek</LI>
  * <LI> Should show derived stats when they are difficult or tedious to get (total armor, cost, BV etc.)</LI>
  * <LI> Need not show original values for damaged items unless those are relevant for gameplay</LI>
- * <LI> Should be organized into blocks that can be retrieved individually if necessary</LI>
+ * <LI> Should be organized into blocks that can be retrieved individually</LI>
  * </UL>
  * To-Dos:
  * <UL>
@@ -127,30 +127,14 @@ public interface EntityReadout {
     }
 
     /**
-     * @return The formatted head section, including the title (unit name), tech level and availability, tonnage, bv,
-     *       and cost.
-     */
-    String getHeadSection(ViewFormatting formatting);
-
-    /**
      * @return The formatted basic values section, including movement, system equipment (cockpit, gyro, etc.) and armor.
      */
     String getBasicSection(ViewFormatting formatting);
 
     /**
-     * @return The formatted invalid section, showing reasons why the unit is invalid if it is (otherwise empty)
-     */
-    String getInvalidSection(ViewFormatting formatting);
-
-    /**
      * @return The formatted loadout section, including weapons, ammo, and other equipment.
      */
     String getLoadoutSection(ViewFormatting formatting);
-
-    /**
-     * @return The formatted fluff section, including unit history and deployment patterns as well as quirks.
-     */
-    String getFluffSection(ViewFormatting formatting);
 
     /**
      * @return The formatted readout with all sections (including fluff texts, if present), using HTML output
@@ -174,5 +158,9 @@ public interface EntityReadout {
      */
     String getFullReadout(@Nullable String fontName, ViewFormatting formatting);
 
+    /**
+     * @return The formatted readout including only the given sections, using the given font if applicable and using the
+     *       given output formatting.
+     */
     String getReadout(String fontName, ViewFormatting formatting, Collection<ReadoutSections> sectionsToShow);
 }

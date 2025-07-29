@@ -510,6 +510,7 @@ class GeneralEntityReadout implements EntityReadout {
             case LOADOUT -> loadoutSection;
             case QUIRKS -> quirksSection;
             case FLUFF -> fluffSection;
+            case INVALID -> invalidSection;
         };
     }
 
@@ -728,39 +729,15 @@ class GeneralEntityReadout implements EntityReadout {
     }
 
     @Override
-    public String getHeadSection(ViewFormatting formatting) {
-        initialize();
-        return formatSection(headerSection, formatting)
-              + formatSection(techSection, formatting)
-              + formatSection(baseSection, formatting);
-    }
-
-    @Override
     public String getBasicSection(ViewFormatting formatting) {
         initialize();
         return formatSection(systemsSection, formatting);
     }
 
     @Override
-    public String getInvalidSection(ViewFormatting formatting) {
-        initialize();
-        return formatSection(invalidSection, formatting);
-    }
-
-    @Override
     public String getLoadoutSection(ViewFormatting formatting) {
         initialize();
         return formatSection(loadoutSection, formatting);
-    }
-
-    @Override
-    public String getFluffSection(ViewFormatting formatting) {
-        initialize();
-        if (formatting == ViewFormatting.DISCORD) {
-            // The rest of the fluff often doesn't fit in a Discord message
-            return formatSection(quirksSection, formatting);
-        }
-        return formatSection(fluffSection, formatting);
     }
 
     /**

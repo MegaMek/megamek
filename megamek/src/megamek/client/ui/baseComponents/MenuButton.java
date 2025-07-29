@@ -30,38 +30,44 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.unitreadout;
+package megamek.client.ui.baseComponents;
 
-import megamek.client.ui.dialogs.abstractDialogs.AbstractDialog;
-import megamek.common.Game;
+import com.formdev.flatlaf.icons.FlatAbstractIcon;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.UIManager;
+import java.awt.Component;
+import java.awt.Graphics2D;
 
 /**
- * A dialog showing the unit readout, TRO, AS Card and Faction info for a given unit. The Readout is kept
- * updated until the window is closed. This dialog is always non-modal.
+ * This is an icon button with a three-stacked-lines icon that indicates a menu of some kind. Usable e.g. as an action
+ * button in an EnhancedTabbedPane.
+ *
+ * @see megamek.common.EnhancedTabbedPane
  */
-public class LiveReadoutDialog extends AbstractDialog {
+public class MenuButton extends JButton {
 
-    private final LiveEntityViewPane entityView;
-
-    /** Constructs a non-modal dialog showing and updating the EntityReadout of the given entity. */
-    public LiveReadoutDialog(JFrame frame, Game game, int entityId) {
-        super(frame, false, "EntityReadoutDialog", "EntityReadoutDialog.title");
-        entityView = new LiveEntityViewPane(frame, game, entityId);
-        initialize();
+    public MenuButton() {
+        super(new MenuIcon());
+        setFocusable(false);
+        setBorderPainted(false);
+        setContentAreaFilled(false);
     }
 
-    @Override
-    protected Container createCenterPane() {
-        entityView.initialize();
-        return entityView;
-    }
+    /**
+     * This is an icon showing three stacked horizontal lines icon that usually indicates a general menu of some kind.
+     */
+    public static class MenuIcon extends FlatAbstractIcon {
 
-    @Override
-    protected void cancelAction() {
-        entityView.dispose();
-        dispose();
+        public MenuIcon() {
+            super(16, 16, UIManager.getColor("Actions.Grey"));
+        }
+
+        @Override
+        protected void paintIcon(Component c, Graphics2D g) {
+            g.fillRoundRect(2, 3, 12, 2, 1, 1);
+            g.fillRoundRect(2, 7, 12, 2, 1, 1);
+            g.fillRoundRect(2, 11, 12, 2, 1, 1);
+        }
     }
 }

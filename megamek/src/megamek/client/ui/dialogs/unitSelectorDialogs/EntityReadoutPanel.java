@@ -63,8 +63,6 @@ import static megamek.MMConstants.MUL_URL_PREFIX;
  * @since November 2, 2009
  */
 public class EntityReadoutPanel extends JPanel {
-    @Serial
-    private static final long serialVersionUID = 2438490306644271135L;
 
     private final JTextPane readoutTextComponent = new JTextPane();
     private final JLabel fluffImageComponent = new JLabel();

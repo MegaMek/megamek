@@ -32,12 +32,14 @@
  */
 package megamek.client.ui.unitreadout;
 
+import megamek.client.ui.Messages;
+import megamek.client.ui.baseComponents.MenuButton;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
-import megamek.client.ui.dialogs.unitSelectorDialogs.AbstractTabbedPane;
 import megamek.client.ui.dialogs.unitSelectorDialogs.AvailabilityPanel;
 import megamek.client.ui.dialogs.unitSelectorDialogs.EntityReadoutPanel;
 import megamek.client.ui.panels.alphaStrike.ConfigurableASCardPanel;
 import megamek.client.ui.util.ViewFormatting;
+import megamek.common.EnhancedTabbedPane;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.alphaStrike.conversion.ASConverter;
@@ -48,18 +50,20 @@ import javax.swing.*;
 /**
  * The EntityViewPane displays the entity summary, TRO and AS card panels within a TabbedPane.
  */
-class LiveEntityView extends AbstractTabbedPane {
+class LiveEntityViewPane extends EnhancedTabbedPane {
 
     private final LiveEntityReadoutPanel readoutPanel;
     private final EntityReadoutPanel troPanel = new EntityReadoutPanel();
-    private final ConfigurableASCardPanel alphaStrikeCardPanel = new ConfigurableASCardPanel(getFrame());
-    private final AvailabilityPanel factionPanel = new AvailabilityPanel(getFrame());
+    private final ConfigurableASCardPanel alphaStrikeCardPanel;
+    private final AvailabilityPanel factionPanel = new AvailabilityPanel();
+    private boolean menuVisible = true;
 
     private final int entityId;
     private final Game game;
 
-    public LiveEntityView(JFrame frame, Game game, int entityId) {
-        super(frame, "EntityViewPane");
+    public LiveEntityViewPane(JFrame frame, Game game, int entityId) {
+        super(false, true);
+        alphaStrikeCardPanel = new ConfigurableASCardPanel(frame);
         this.entityId = entityId;
         this.game = game;
         readoutPanel = new LiveEntityReadoutPanel(game, entityId);
@@ -69,17 +73,21 @@ class LiveEntityView extends AbstractTabbedPane {
      * This purposefully does not set preferences, as it may be used on differing panes for differing uses and thus you
      * don't want to remember the selected tab between the different locations.
      */
-    @Override
     protected void initialize() {
+        JButton menuButton = new MenuButton();
+        menuButton.setToolTipText("Show/hide menus");
+        menuButton.addActionListener(ev -> toggleMenus());
+        addActionButton(menuButton);
+
         readoutPanel.setName("entityPanel");
         readoutPanel.initialize();
 
         troPanel.setName("troPanel");
 
-        addTab(resources.getString("Summary.title"), readoutPanel);
-        addTab(resources.getString("TRO.title"), troPanel);
-        addTab(resources.getString("ASCard.title"), alphaStrikeCardPanel);
-        addTab(resources.getString("FactionAvailability.title"), factionPanel.getPanel());
+        addTab(Messages.getString("Summary.title"), readoutPanel);
+        addTab(Messages.getString("TRO.title"), troPanel);
+        addTab(Messages.getString("ASCard.title"), alphaStrikeCardPanel);
+        addTab(Messages.getString("FactionAvailability.title"), factionPanel.getPanel());
 
         updateDisplayedEntity();
     }
@@ -100,6 +108,12 @@ class LiveEntityView extends AbstractTabbedPane {
                 alphaStrikeCardPanel.setASElement(ASConverter.convert(entity, new FlexibleCalculationReport()));
             }
         }
+    }
+
+    private void toggleMenus() {
+        menuVisible = !menuVisible;
+        readoutPanel.toggleMenu(menuVisible);
+        alphaStrikeCardPanel.toggleMenu(menuVisible);
     }
 
     public void dispose() {

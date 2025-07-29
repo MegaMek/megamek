@@ -27,7 +27,7 @@ import megamek.common.Entity;
 import megamek.common.MekFileParser;
 import megamek.common.MekSummary;
 import megamek.common.MekSummaryCache;
-import megamek.client.ui.unitreadout.EntityReadout;
+import megamek.client.ui.entityreadout.EntityReadout;
 import megamek.common.TechConstants;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;

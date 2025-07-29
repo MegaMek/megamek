@@ -28,7 +28,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.io.Serial;
 import java.util.Collection;
 
 import javax.swing.Box;
@@ -45,13 +44,13 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 
-import megamek.client.ui.unitreadout.ReadoutSections;
+import megamek.client.ui.entityreadout.ReadoutSections;
 import megamek.client.ui.util.FluffImageHelper;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedXPanel;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.Entity;
-import megamek.client.ui.unitreadout.EntityReadout;
+import megamek.client.ui.entityreadout.EntityReadout;
 import megamek.common.Report;
 import megamek.common.templates.TROView;
 

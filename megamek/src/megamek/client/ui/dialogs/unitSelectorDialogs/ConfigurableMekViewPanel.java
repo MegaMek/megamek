@@ -33,15 +33,15 @@ import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.WrapLayout;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.unitreadout.ReadoutSections;
+import megamek.client.ui.entityreadout.ReadoutSections;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Entity;
-import megamek.client.ui.unitreadout.EntityReadout;
+import megamek.client.ui.entityreadout.EntityReadout;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.annotations.Nullable;
 
-import static megamek.client.ui.unitreadout.ReadoutSections.*;
+import static megamek.client.ui.entityreadout.ReadoutSections.*;
 
 /**
  * This class wraps the MekView / MekViewPanel and gives it a toolbar to choose font, open the MUL and copy the

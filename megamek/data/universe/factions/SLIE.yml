@@ -1,11 +1,16 @@
 key: SLIE
-name: Star League-in-Exile
-capital: Strana Mechty
+name: Exodus Fleet
+nameChanges:
+  2786: Star League-in-Exile
+capital: New Samarkand
+capitalChanges:
+  2786: Strana Mechty
 yearsActive:
-  - start: 2786
+  - start: 2784
     end: 2801
 tags:
   - IS
+  - PLAYABLE
 color:
   red: 176
   green: 196

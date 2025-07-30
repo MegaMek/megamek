@@ -1,44 +1,46 @@
+generator:MegaMek Suite 0.50.07 on 2025-07-07
 chassis:Gunsmith
 model:CH11-NG
 mul id:6332
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3131
-Source:TRO: 3145 Federated Suns
-Rules Level:4
+techbase:Inner Sphere
+era:3131
+source:TRO: 3145 Federated Suns
+rules level:4
 role:Striker
 
-Mass:25
-Engine:250 XXL Engine(IS)
-Structure:IS Endo Steel
-Myomer:Standard
-Cockpit:Standard Cockpit
-Gyro:XL Gyro
-Ejection:Full Head Ejection System
 
-Heat Sinks:10 Double
-Walk MP:10
-Jump MP:0
+mass:25
+engine:250 XXL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:XL Gyro
+ejection:Full Head Ejection System
 
-Armor:Reflective(Inner Sphere)
-LA Armor:8
-RA Armor:8
-LT Armor:10
-RT Armor:10
-CT Armor:12
-HD Armor:9
-LL Armor:12
-RL Armor:12
-RTL Armor:2
-RTR Armor:2
-RTC Armor:3
+heat sinks:10 IS Double
+walk mp:10
+jump mp:0
+
+armor:Reflective(Inner Sphere)
+LA armor:8
+RA armor:8
+LT armor:10
+RT armor:10
+CT armor:12
+HD armor:9
+LL armor:12
+RL armor:12
+RTL armor:2
+RTR armor:2
+RTC armor:3
 
 Weapons:4
 Medium X-Pulse Laser, Left Arm
-Medium X-Pulse Laser, Right Arm
-Medium X-Pulse Laser, Right Arm
 Medium X-Pulse Laser, Left Arm
+Medium X-Pulse Laser, Right Arm
+Medium X-Pulse Laser, Right Arm
 
 Left Arm:
 Shoulder
@@ -154,3 +156,4 @@ IS Endo Steel
 
 manufacturer:Jalastar Aerospace
 primaryfactory:Panpour
+

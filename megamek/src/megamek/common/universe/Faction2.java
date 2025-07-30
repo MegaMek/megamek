@@ -159,12 +159,78 @@ public class Faction2 {
         return nameGenerator;
     }
 
-    public HonorRating getPreInvasionHonorRating() {
+    /**
+     * Returns the pre-invasion honor rating assigned to this faction, if any.
+     *
+     * <p>This method provides direct access to the stored {@link HonorRating} value representing the faction's honor
+     * rating before the invasion period. No default or fallback value is applied.</p>
+     *
+     * <p><b>Usage:</b> this method is for directly retrieving the value stored in {@code preInvasionHonorRating},
+     * generally you'll want to use {@link #getPreInvasionHonorRating()} instead, as that includes essential fallback
+     * values.</p>
+     *
+     * @return the pre-invasion {@link HonorRating}, or {@code null} if not set
+     */
+    public HonorRating getPreInvasionHonorRatingDirect() {
         return preInvasionHonorRating;
     }
 
-    public HonorRating getPostInvasionHonorRating() {
+    /**
+     * Calculates and returns the effective pre-invasion honor rating for this faction.
+     *
+     * <p>For Clan factions, returns the stored honor rating if it is set and not {@link HonorRating#NONE};
+     * otherwise, returns {@link HonorRating#STRICT} as the default. For non-Clan factions, this simply returns the
+     * stored honor rating, which will likely be {@link HonorRating#NONE}.</p>
+     *
+     * <p><b>Usage:</b> this method is the primary way to retrieve a faction's pre-invasion honor rating. However,
+     * as it includes fallback values, if you want to directly access the value stored in {@code preInvasionHonorRating}
+     * you will want to call {@link #getPreInvasionHonorRatingDirect()}, instead.</p>
+     *
+     * @return the effective pre-invasion {@link HonorRating} for the faction
+     */
+    public HonorRating getPreInvasionHonorRating() {
+        if (isClan()) {
+            return (preInvasionHonorRating != HonorRating.NONE) ? preInvasionHonorRating : HonorRating.STRICT;
+        } else {
+            return preInvasionHonorRating;
+        }
+    }
+
+    /**
+     * Returns the post-invasion honor rating assigned to this faction, if any.
+     *
+     * <p>This method provides direct access to the stored {@link HonorRating} value representing the faction's honor
+     * rating after the invasion period. No default or fallback value is applied.</p>
+     *
+     * <p><b>Usage:</b> this method is for directly retrieving the value stored in {@code postInvasionHonorRating},
+     * generally you'll want to use {@link #getPostInvasionHonorRating()} instead, as that includes essential fallback
+     * values.</p>
+     *
+     * @return the pre-invasion {@link HonorRating}, or {@code null} if not set
+     */
+    public HonorRating getPostInvasionHonorRatingDirect() {
         return postInvasionHonorRating;
+    }
+
+    /**
+     * Calculates and returns the effective post-invasion honor rating for this faction.
+     *
+     * <p>For Clan factions, returns the stored honor rating if it is set and not {@link HonorRating#NONE};
+     * otherwise, returns {@link HonorRating#OPPORTUNISTIC} as the default. For non-Clan factions, this simply returns
+     * the stored honor rating, which will likely be {@link HonorRating#NONE}.</p>
+     *
+     * <p><b>Usage:</b> this method is the primary way to retrieve a faction's post-invasion honor rating. However,
+     * as it includes fallback values, if you want to directly access the value stored in
+     * {@code postInvasionHonorRating} you will want to call {@link #getPostInvasionHonorRatingDirect()}, instead.</p>
+     *
+     * @return the effective post-invasion {@link HonorRating} for the faction
+     */
+    public HonorRating getPostInvasionHonorRating() {
+        if (isClan()) {
+            return (postInvasionHonorRating != HonorRating.NONE) ? postInvasionHonorRating : HonorRating.OPPORTUNISTIC;
+        } else {
+            return postInvasionHonorRating;
+        }
     }
 
     public String getCamosFolder(int year) {

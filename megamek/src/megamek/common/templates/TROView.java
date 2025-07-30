@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateMethodModelEx;
+import megamek.client.ui.util.ViewFormatting;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.IOption;

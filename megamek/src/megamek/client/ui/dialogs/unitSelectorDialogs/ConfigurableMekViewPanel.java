@@ -18,42 +18,61 @@
  */
 package megamek.client.ui.dialogs.unitSelectorDialogs;
 
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.WrapLayout;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.entityreadout.ReadoutSections;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Entity;
-import megamek.common.MekView;
-import megamek.common.ViewFormatting;
+import megamek.client.ui.entityreadout.EntityReadout;
+import megamek.client.ui.util.ViewFormatting;
 import megamek.common.annotations.Nullable;
 
+import static megamek.client.ui.entityreadout.ReadoutSections.*;
+
 /**
- * This class wraps the MekView / MekViewPanel and gives it a toolbar to choose font, open the MUL
- * and copy the contents.
+ * This class wraps the MekView / MekViewPanel and gives it a toolbar to choose font, open the MUL and copy the
+ * contents.
  */
 public class ConfigurableMekViewPanel extends JPanel {
 
     private final JComboBox<String> fontChooser;
+    private final JToggleButton detailButton = new JToggleButton(Messages.getString("CMVPanel.detail"));
     private final JButton copyHtmlButton = new JButton(Messages.getString("CMVPanel.copyHTML"));
     private final JButton copyTextButton = new JButton(Messages.getString("CMVPanel.copyText"));
+    private final JButton copyDiscordButton = new JButton(Messages.getString("CMVPanel.copyDiscord"));
     private final JButton mulButton = new JButton(Messages.getString("CMVPanel.MUL"));
-    private final MekViewPanel mekViewPanel = new MekViewPanel();
+    private final EntityReadoutPanel entityReadoutPanel = new EntityReadoutPanel();
+    private final JComboBox<SectionFormat> sectionsChooser = new JComboBox<>();
     private int mulId;
     private Entity entity;
+    private final JComponent menuPanel;
+
+    enum SectionFormat {
+        FULL(ReadoutSections.values()),
+        INGAME(HEADLINE, BASE_DATA, SYSTEMS, LOADOUT, QUIRKS),
+        NOFLUFF(HEADLINE, TECH_LEVEL, AVAILABILITY, COST_SOURCE, BASE_DATA, SYSTEMS, LOADOUT, QUIRKS),
+        NONCOMBAT(HEADLINE, TECH_LEVEL, AVAILABILITY, COST_SOURCE, FLUFF, INVALID);
+
+        final ReadoutSections[] sections;
+
+        SectionFormat(ReadoutSections... sections) {
+            this.sections = sections;
+        }
+    }
 
     /**
      * Constructs a panel with the given unit to display.
@@ -70,23 +89,40 @@ public class ConfigurableMekViewPanel extends JPanel {
 
         copyHtmlButton.addActionListener(ev -> copyToClipboard(ViewFormatting.HTML));
         copyTextButton.addActionListener(ev -> copyToClipboard(ViewFormatting.NONE));
-        // todo: create a copyDiscordButton
-        // The implementer of the Discord export cared only about the MML UI.
+        copyDiscordButton.addActionListener(ev -> copyToClipboard(ViewFormatting.DISCORD));
+        detailButton.addActionListener(ev -> updateReadout());
 
         mulButton.addActionListener(ev -> UIUtil.showMUL(mulId, this));
         mulButton.setToolTipText("Show the Master Unit List entry for this unit. Opens a browser window.");
 
-        var chooserLine = new UIUtil.FixedYPanel(new WrapLayout(FlowLayout.LEFT, 15, 10));
+        Arrays.stream(SectionFormat.values()).forEach(sectionsChooser::addItem);
+        sectionsChooser.addActionListener(ev -> updateReadout());
+        sectionsChooser.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+                  boolean cellHasFocus) {
+                return super.getListCellRendererComponent(list,
+                      Messages.getString("CMVPanel." + value),
+                      index,
+                      isSelected,
+                      cellHasFocus);
+            }
+        });
+
+        menuPanel = new UIUtil.FixedYPanel(new WrapLayout(FlowLayout.LEFT, 15, 10));
         JPanel fontChooserPanel = new JPanel();
         fontChooserPanel.add(new JLabel(Messages.getString("CMVPanel.font")));
         fontChooserPanel.add(fontChooser);
-        chooserLine.add(fontChooserPanel);
-        chooserLine.add(copyHtmlButton);
-        chooserLine.add(copyTextButton);
-        chooserLine.add(mulButton);
+        menuPanel.add(fontChooserPanel);
+        menuPanel.add(detailButton);
+        menuPanel.add(copyHtmlButton);
+        menuPanel.add(copyTextButton);
+        menuPanel.add(copyDiscordButton);
+        menuPanel.add(mulButton);
+        menuPanel.add(sectionsChooser);
 
-        add(chooserLine);
-        add(mekViewPanel);
+        add(menuPanel);
+        add(entityReadoutPanel);
         setEntity(entity);
     }
 
@@ -106,11 +142,9 @@ public class ConfigurableMekViewPanel extends JPanel {
         mulButton.setEnabled(mulId > 0);
         copyTextButton.setEnabled(entity != null);
         copyHtmlButton.setEnabled(entity != null);
-        if (entity != null) {
-            mekViewPanel.setMek(entity, GUIPreferences.getInstance().getSummaryFont());
-        } else {
-            mekViewPanel.reset();
-        }
+        copyDiscordButton.setEnabled(entity != null);
+        detailButton.setEnabled((entity != null) && entity.usesWeaponBays());
+        updateReadout();
     }
 
     /** Set the card to use a newly selected font. */
@@ -118,25 +152,60 @@ public class ConfigurableMekViewPanel extends JPanel {
         if (entity != null) {
             String selectedItem = (String) fontChooser.getSelectedItem();
             if ((selectedItem == null) || selectedItem.isBlank()) {
-                mekViewPanel.setMek(entity, MMConstants.FONT_SANS_SERIF);
+                entityReadoutPanel.showEntity(entity, MMConstants.FONT_SANS_SERIF);
                 GUIPreferences.getInstance().setSummaryFont("");
             } else {
-                mekViewPanel.setMek(entity, selectedItem);
+                entityReadoutPanel.showEntity(entity, selectedItem);
                 GUIPreferences.getInstance().setSummaryFont(selectedItem);
             }
         }
     }
 
+    private boolean detail() {
+        return detailButton.isSelected();
+    }
+
+    private boolean alternateCost() {
+        return false; // for now
+    }
+
+    private boolean pilotBV(Entity entity) {
+        return entity.getCrew() != null; // for now
+    }
+
     public void reset() {
-        mekViewPanel.reset();
+        entityReadoutPanel.reset();
     }
 
     private void copyToClipboard(ViewFormatting formatting) {
         if (entity != null) {
-            MekView mekView = new MekView(entity, false, false, formatting);
-            StringSelection stringSelection = new StringSelection(mekView.getMekReadout());
+            EntityReadout readout = EntityReadout.createReadout(entity, detail(), alternateCost());
+            StringSelection stringSelection = new StringSelection(readout.getReadout(null,
+                  formatting,
+                  getSelectedSections()));
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);
         }
+    }
+
+    private void updateReadout() {
+        if (entity != null) {
+            entityReadoutPanel.showEntity(entity, detail(), alternateCost(), !pilotBV(entity),
+                  GUIPreferences.getInstance().getSummaryFont(), getSelectedSections());
+        } else {
+            entityReadoutPanel.reset();
+        }
+    }
+
+    private List<ReadoutSections> getSelectedSections() {
+        SectionFormat format = (SectionFormat) sectionsChooser.getSelectedItem();
+        if (format == null) {
+            format = SectionFormat.FULL;
+        }
+        return Arrays.asList(format.sections);
+    }
+
+    public void toggleMenu(boolean menuVisible) {
+        menuPanel.setVisible(menuVisible);
     }
 }

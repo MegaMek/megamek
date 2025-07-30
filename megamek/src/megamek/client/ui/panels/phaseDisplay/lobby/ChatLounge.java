@@ -2762,7 +2762,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                 lobbyActions.delete(new ArrayList<>(), entities, true);
             } else if (code == KeyEvent.VK_SPACE) {
                 evt.consume();
-                LobbyUtility.mekReadoutAction(entities, canSeeAll(entities), false, getClientgui().getFrame());
+                List<Integer> entityIds = entities.stream().map(Entity::getId).toList();
+                LobbyUtility.liveEntityReadoutAction(entityIds, canSeeAll(entities), getClientgui().getFrame(), game());
+
             } else if (code == KeyEvent.VK_ENTER) {
                 evt.consume();
                 if (entities.size() == 1) {
@@ -2906,7 +2908,8 @@ public class ChatLounge extends AbstractPhaseDisplay
 
             if (code == KeyEvent.VK_SPACE) {
                 e.consume();
-                mekReadoutAction(selEntities, canSeeAll(selEntities), false, getClientgui().getFrame());
+                List<Integer> entityIds = selEntities.stream().map(Entity::getId).toList();
+                LobbyUtility.liveEntityReadoutAction(entityIds, canSeeAll(selEntities), getClientgui().getFrame(), game());
 
             } else if (code == KeyEvent.VK_ENTER && onlyOneEntity) {
                 e.consume();

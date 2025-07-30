@@ -47,12 +47,12 @@ import megamek.client.ui.dialogs.UnitEditorDialog;
 import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.client.ui.dialogs.NoteDialog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
-import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
 import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.client.ui.panels.phaseDisplay.PhysicalDisplay;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
+import megamek.client.ui.entityreadout.LiveReadoutDialog;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.BAVibroClawAttackAction;
@@ -293,7 +293,9 @@ public class MapMenu extends JPopupMenu {
         item.addActionListener(evt -> {
             try {
                 selectedEntity = game.getEntity(Integer.parseInt(evt.getActionCommand()));
-                LobbyUtility.mekReadout(selectedEntity, 0, false, gui.getFrame());
+                if (selectedEntity != null) {
+                    new LiveReadoutDialog(gui.getFrame(), game, selectedEntity.getId()).setVisible(true);
+                }
             } catch (Exception ex) {
                 logger.error(ex, "");
             }

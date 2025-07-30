@@ -524,14 +524,12 @@ public class AvailabilityPanel {
     private final static RATGenerator RAT_GENERATOR = RATGenerator.getInstance();
     private static volatile Integer[] RG_ERAS;
 
-    private final JFrame parent;
     private final Box mainPanel = Box.createVerticalBox();
     private final JScrollPane scrollPane = new JScrollPane(mainPanel);
     private ModelRecord record;
     private final FixedColumnGrid grid;
 
-    public AvailabilityPanel(JFrame parent) {
-        this.parent = parent;
+    public AvailabilityPanel() {
         grid = new FixedColumnGrid();
         mainPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
         mainPanel.add(grid);

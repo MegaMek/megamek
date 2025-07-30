@@ -20,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -297,7 +298,9 @@ public class LobbyMekPopupActions implements ActionListener {
                 break;
 
             case LMP_VIEW:
-                LobbyUtility.mekReadoutAction(entities, lobby.canSeeAll(entities), false, lobby.getClientgui().getFrame());
+                List<Integer> entityIds = entities.stream().map(Entity::getId).toList();
+                LobbyUtility.liveEntityReadoutAction(entityIds, lobby.canSeeAll(entities),
+                      lobby.getClientgui().getFrame(), lobby.game());
                 break;
 
             case LMP_BV:

@@ -32,12 +32,16 @@
  */
 package megamek.client.ui.dialogs.unitSelectorDialogs;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 
+import megamek.client.ui.Messages;
+import megamek.client.ui.baseComponents.MenuButton;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.panels.alphaStrike.ConfigurableASCardPanel;
+import megamek.common.EnhancedTabbedPane;
 import megamek.common.Entity;
-import megamek.common.ViewFormatting;
+import megamek.client.ui.util.ViewFormatting;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
@@ -47,14 +51,17 @@ import megamek.common.templates.TROView;
 /**
  * The EntityViewPane displays the entity summary, TRO and AS card panels within a TabbedPane.
  */
-public class EntityViewPane extends AbstractTabbedPane {
+public class EntityViewPane extends EnhancedTabbedPane {
+
     private final ConfigurableMekViewPanel summaryPanel = new ConfigurableMekViewPanel();
-    private final MekViewPanel troPanel = new MekViewPanel();
-    private final ConfigurableASCardPanel cardPanel = new ConfigurableASCardPanel(getFrame());
-    private final AvailabilityPanel factionPanel = new AvailabilityPanel(getFrame());
+    private final EntityReadoutPanel troPanel = new EntityReadoutPanel();
+    private final ConfigurableASCardPanel cardPanel;
+    private final AvailabilityPanel factionPanel = new AvailabilityPanel();
+    private boolean menuVisible = true;
 
     public EntityViewPane(final JFrame frame, final @Nullable Entity entity) {
-        super(frame, "EntityViewPane");
+        super(false, true);
+        cardPanel = new ConfigurableASCardPanel(frame);
         initialize();
         updateDisplayedEntity(entity);
     }
@@ -63,15 +70,19 @@ public class EntityViewPane extends AbstractTabbedPane {
      * This purposefully does not set preferences, as it may be used on differing panes for differing uses and thus you
      * don't want to remember the selected tab between the different locations.
      */
-    @Override
     protected void initialize() {
+        JButton menuButton = new MenuButton();
+        menuButton.setToolTipText("Show/hide menus");
+        menuButton.addActionListener(ev -> toggleMenus());
+        addActionButton(menuButton);
+
         summaryPanel.setName("entityPanel");
         troPanel.setName("troPanel");
 
-        addTab(resources.getString("Summary.title"), summaryPanel);
-        addTab(resources.getString("TRO.title"), troPanel);
-        addTab(resources.getString("ASCard.title"), cardPanel);
-        addTab(resources.getString("FactionAvailability.title"), factionPanel.getPanel());
+        addTab(Messages.getString("Summary.title"), summaryPanel);
+        addTab(Messages.getString("TRO.title"), troPanel);
+        addTab(Messages.getString("ASCard.title"), cardPanel);
+        addTab(Messages.getString("FactionAvailability.title"), factionPanel.getPanel());
     }
 
     /**
@@ -79,7 +90,7 @@ public class EntityViewPane extends AbstractTabbedPane {
      *
      * @param entity the entity to update to, or null if the panels are to be emptied.
      */
-    public void updateDisplayedEntity(final @Nullable Entity entity) {
+    public void updateDisplayedEntity(@Nullable Entity entity) {
         AlphaStrikeElement asUnit = null;
         if (ASConverter.canConvert(entity)) {
             asUnit = ASConverter.convert(entity, new FlexibleCalculationReport());
@@ -95,16 +106,22 @@ public class EntityViewPane extends AbstractTabbedPane {
      * @param entity the entity to update to, or null if the panels are to be emptied.
      * @param asUnit the Alpha Strike unit corresponding to entity (may be a MekSummary)
      */
-    public void updateDisplayedEntity(final @Nullable Entity entity, @Nullable ASCardDisplayable asUnit) {
+    public void updateDisplayedEntity(@Nullable Entity entity, @Nullable ASCardDisplayable asUnit) {
         if (entity == null) {
             troPanel.reset();
             factionPanel.reset();
         } else {
-            troPanel.setMek(entity, TROView.createView(entity, ViewFormatting.HTML));
+            troPanel.showEntity(entity, TROView.createView(entity, ViewFormatting.HTML));
             factionPanel.setUnit(entity.getModel(), entity.getChassis());
         }
 
         summaryPanel.setEntity(entity);
         cardPanel.setASElement(ASConverter.canConvert(entity) ? asUnit : null);
+    }
+
+    private void toggleMenus() {
+        menuVisible = !menuVisible;
+        summaryPanel.toggleMenu(menuVisible);
+        cardPanel.toggleMenu(menuVisible);
     }
 }

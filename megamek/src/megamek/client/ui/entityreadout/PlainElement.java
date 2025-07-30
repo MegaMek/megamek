@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -17,14 +17,32 @@
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package megamek.common;
+package megamek.client.ui.entityreadout;
 
-/**
- * Enum of valid formatting styles, to use with MekView objects
- * HTML: contains HTML markup
- * Discord: Contains Discord markup and formatting
- * None: plain text
- */
-public enum ViewFormatting {
-    HTML, NONE, DISCORD
+class PlainElement implements ViewElement {
+
+    private final String text;
+
+    public PlainElement(String text) {
+        this.text = text;
+    }
+
+    public PlainElement(int number) {
+        text = String.valueOf(number);
+    }
+
+    @Override
+    public String toPlainText() {
+        return text;
+    }
+
+    @Override
+    public String toHTML() {
+        return text;
+    }
+
+    @Override
+    public String toDiscord() {
+        return text;
+    }
 }

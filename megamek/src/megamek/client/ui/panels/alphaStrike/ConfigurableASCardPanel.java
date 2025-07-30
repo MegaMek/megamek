@@ -55,6 +55,7 @@ public class ConfigurableASCardPanel extends JPanel {
     private ASCardDisplayable element;
     private int mulId;
     private final JFrame parent;
+    private final JPanel menuPanel;
 
     /**
      * Constructs a panel with the given AlphaStrike element to display.
@@ -89,25 +90,25 @@ public class ConfigurableASCardPanel extends JPanel {
 
         conversionButton.addActionListener(e -> showConversionReport());
 
-        var chooserLine = new UIUtil.FixedYPanel(new WrapLayout(FlowLayout.LEFT, 15, 10));
+        menuPanel = new UIUtil.FixedYPanel(new WrapLayout(FlowLayout.LEFT, 15, 10));
         JPanel fontChooserPanel = new JPanel();
         fontChooserPanel.add(new JLabel(Messages.getString("CASCardPanel.font")));
         fontChooserPanel.add(fontChooser);
         JPanel sizeChooserPanel = new JPanel();
         sizeChooserPanel.add(new JLabel(Messages.getString("CASCardPanel.cardSize")));
         sizeChooserPanel.add(sizeChooser);
-        chooserLine.add(fontChooserPanel);
-        chooserLine.add(sizeChooserPanel);
-        chooserLine.add(copyButton);
-        chooserLine.add(copyStatsButton);
-        chooserLine.add(printButton);
-        chooserLine.add(mulButton);
-        chooserLine.add(conversionButton);
+        menuPanel.add(fontChooserPanel);
+        menuPanel.add(sizeChooserPanel);
+        menuPanel.add(copyButton);
+        menuPanel.add(copyStatsButton);
+        menuPanel.add(printButton);
+        menuPanel.add(mulButton);
+        menuPanel.add(conversionButton);
 
         var cardLine = new JScrollPane(cardPanel);
         cardLine.getVerticalScrollBar().setUnitIncrement(16);
 
-        add(chooserLine);
+        add(menuPanel);
         add(cardLine);
         updateSize();
         setASElement(element);
@@ -203,5 +204,9 @@ public class ConfigurableASCardPanel extends JPanel {
             }
             return image;
         }
+    }
+
+    public void toggleMenu(boolean menuVisible) {
+        menuPanel.setVisible(menuVisible);
     }
 }

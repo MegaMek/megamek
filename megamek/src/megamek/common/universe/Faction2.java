@@ -411,12 +411,12 @@ public class Faction2 {
 
     @JsonGetter("preInvasionHonorRating")
     private HonorRating preInvasionHonorRatingSerializer() {
-        return preInvasionHonorRating != HonorRating.NONE ? preInvasionHonorRating : null;
+        return preInvasionHonorRating;
     }
 
     @JsonGetter("postInvasionHonorRating")
     private HonorRating getPostInvasionHonorRatingSerializer() {
-        return postInvasionHonorRating != HonorRating.NONE ? postInvasionHonorRating : null;
+        return postInvasionHonorRating;
     }
 
     @JsonGetter("formationGrouping")

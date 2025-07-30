@@ -3107,15 +3107,15 @@
 			</model>
 			<model name='HGN-733'>
                 <roles>command</roles>
-				<availability>CC:6-,LA:6-</availability>
+				<availability>LA:6-,CC:6-</availability>
 			</model>
 			<model name='HGN-733C'>
                 <roles>command</roles>
-				<availability>CC:3,LA:3</availability>
+				<availability>LA:3,CC:3</availability>
 			</model>
 			<model name='HGN-733P'>
                 <roles>command</roles>
-				<availability>CC:3-,LA:3-</availability>
+				<availability>LA:3-,CC:3-</availability>
 			</model>
 		</chassis>
 		<chassis name='Hoplite' unitType='Mek'>
@@ -5396,7 +5396,7 @@
 			</model>
 		</chassis>
 		<chassis name='Spartan' unitType='Mek'>
-			<availability>CS:5,CCO!Front Line:1,CFM!Front Line:2!Second Line:1,CHH!Second Line:1,CIH:4+,BAN:4+    </availability>
+			<availability>CS:5,CCO!Front Line:1,CFM!Front Line:2!Second Line:1,CHH!Second Line:1,CIH:4+,BAN:4+</availability>
 			<model name='C'>
                 <roles>cavalry</roles>
 				<availability>CCO:8,CFM:8,CHH:8</availability>

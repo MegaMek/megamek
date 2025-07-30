@@ -249,6 +249,21 @@ public class MathUtility {
     }
 
     /**
+     * Parses the provided string into a double. If parsing fails, a default value of 0.0 is returned. This method
+     * delegates to {@link #parseDouble(String, double)} with a default value.
+     *
+     * @param value the string to parse. Can be a numeric string or {@code null}.
+     *
+     * @return the parsed double value, or 0.0 if parsing fails.
+     *
+     * @author Illiani
+     * @since 0.50.07
+     */
+    public static double parseDouble(final String value) {
+        return parseDouble(value, 0.0);
+    }
+
+    /**
      * Utility function to handle parsing strings into floats and to handle the possible NumberFormatException with
      * logging and to return defaultValue.
      *

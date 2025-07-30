@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.entityreadout;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.util.DiscordFormat;
 
 import java.util.*;
@@ -81,6 +82,7 @@ class TableElement implements MultiRowViewElement {
               Math.min(justification.length, this.justification.length));
     }
 
+    @Override
     public void addRow(String... row) {
         ViewElement[] convertedRow = new ViewElement[row.length];
         for (int i = 0; i < row.length; i++) {

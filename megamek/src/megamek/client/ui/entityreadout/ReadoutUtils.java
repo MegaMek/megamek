@@ -97,7 +97,9 @@ final class ReadoutUtils {
             } else {
                 row[2] = new PlainElement(wtype.getHeat());
                 if (entity.isOmni()) {
-                    row[3] = new PlainElement(mounted.isOmniPodMounted() ? "MekView.Pod" : "MekView.Fixed");
+                    row[3] = new PlainElement(Messages.getString(mounted.isOmniPodMounted() ?
+                          "MekView.Pod" :
+                          "MekView.Fixed"));
                 }
             }
             wpnTable.addRow(row);
@@ -135,7 +137,9 @@ final class ReadoutUtils {
                     row[2] = new DamagedElement(Messages.getString("MekView.WeaponDamage") + ")");
                 }
             } else if (entity.isOmni()) {
-                row[2] = new PlainElement(mounted.isOmniPodMounted() ? "MekView.Pod" : "MekView.Fixed");
+                row[2] = new PlainElement(Messages.getString(mounted.isOmniPodMounted() ?
+                      "MekView.Pod" :
+                      "MekView.Fixed"));
             }
 
             wpnTable.addRow(row);

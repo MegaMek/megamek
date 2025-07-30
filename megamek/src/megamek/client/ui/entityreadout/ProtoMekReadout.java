@@ -52,6 +52,7 @@ class ProtoMekReadout extends GeneralEntityReadout {
         return new EmptyElement();
     }
 
+    @Override
     protected ViewElement createTotalArmorElement() {
         String armor = String.valueOf(protoMek.getTotalArmor());
         return new LabeledLine(Messages.getString("MekView.Armor"), armor);

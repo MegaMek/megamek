@@ -32,6 +32,8 @@
  */
 package megamek.client.ui.util;
 
+import megamek.client.ui.Messages;
+
 import java.util.regex.Pattern;
 
 public enum DiscordFormat {
@@ -52,6 +54,7 @@ public enum DiscordFormat {
         this.code = code;
     }
 
+    @Override
     public String toString() {
         if (this == RESET) {
             return "\u001b[" + code + 'm' + WHITE;

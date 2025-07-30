@@ -116,6 +116,7 @@ class LiveEntityViewPane extends EnhancedTabbedPane {
         alphaStrikeCardPanel.toggleMenu(menuVisible);
     }
 
+    @Override
     public void dispose() {
         readoutPanel.dispose();
     }

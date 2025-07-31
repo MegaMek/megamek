@@ -25,3 +25,22 @@ ratingLevels:
 fallBackFactions:
   - CSR
   - CLAN.IS
+factionLeaders:
+  - title: "Khan"
+    firstName: "Alberto"
+    surname: "Crow"
+    gender: "MALE"
+    startYear: 3080
+    endYear: 3120 #Unofficial: no canon endYear
+  - title: "Khan"
+    firstName: "Deidra"
+    surname: "McKenna"
+    gender: "FEMALE"
+    startYear: 3105
+    endYear: 3131 #Unofficial: no canon endYear
+  - title: "Khan"
+    firstName: "Sterling"
+    surname: "McKenna"
+    gender: "FEMALE"
+    startYear: 3131
+

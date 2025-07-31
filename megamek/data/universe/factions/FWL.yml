@@ -38,3 +38,483 @@ ratingLevels:
 fallBackFactions:
   - IS
 rankSystem: FWLM
+factionLeaders:
+  - title: "Captain-General"
+    firstName: "Juliano"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2294
+    endYear: 2294
+  - title: "Captain-General"
+    firstName: "Juliano"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2297
+    endYear: 2297
+  - title: "Captain-General"
+    firstName: "Danak"
+    surname: "Selaj"
+    gender: "MALE"
+    startYear: 2306
+    endYear: 2307
+  - title: "Captain-General"
+    firstName: "Juliano"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2314
+    endYear: 2318
+  - title: "Captain-General"
+    firstName: "Christopher"
+    surname: "Marik"
+    honorific: "II"
+    gender: "MALE"
+    startYear: 2319
+    endYear: 2319
+  - title: "Captain-General"
+    firstName: "Terrence"
+    surname: "Marik"
+    honorific: "II"
+    gender: "MALE"
+    startYear: 2326
+    endYear: 2327
+  - title: "Captain-General"
+    firstName: "Terrence"
+    surname: "Marik"
+    honorific: "II"
+    gender: "MALE"
+    startYear: 2330
+    endYear: 2330
+  - title: "Captain-General"
+    firstName: "Philip"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2336
+    endYear: 2336
+  - title: "Captain-General"
+    firstName: "Philip"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2341
+    endYear: 2341
+  - title: "Captain-General"
+    firstName: "Geraldine"
+    surname: "Marik"
+    gender: "FEMALE"
+    startYear: 2349
+    endYear: 2349
+  - title: "Captain-General"
+    firstName: "Geraldine"
+    surname: "Marik"
+    gender: "FEMALE"
+    startYear: 2356
+    endYear: 2356
+  - title: "Captain-General"
+    firstName: "Geraldine"
+    surname: "Marik"
+    gender: "FEMALE"
+    startYear: 2364
+    endYear: 2364
+  - title: "Captain-General"
+    firstName: "Mikhail"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2364
+    endYear: 2367
+  - title: "Captain-General"
+    firstName: "Allan"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2377
+    endYear: 2377
+  - title: "Captain-General"
+    firstName: "Allan"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2384
+    endYear: 2384
+  - title: "Captain-General"
+    firstName: "Allan"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2391
+    endYear: 2392
+  - title: "Captain-General"
+    firstName: "Peter"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2392
+    endYear: 2393
+  - title: "Captain-General"
+    firstName: "Peter"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2396
+    endYear: 2414
+  - title: "Captain-General"
+    firstName: "Peter"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2416
+    endYear: 2416
+  - title: "Captain-General"
+    firstName: "Joseph"
+    surname: "Stewart"
+    gender: "MALE"
+    startYear: 2420
+    endYear: 2420
+  - title: "Captain-General"
+    firstName: "Terrence"
+    surname: "Marik"
+    honorific: "III"
+    gender: "MALE"
+    startYear: 2427
+    endYear: 2427
+  - title: "Captain-General"
+    firstName: "Terrence"
+    surname: "Marik"
+    honorific: "III"
+    gender: "MALE"
+    startYear: 2432
+    endYear: 2432
+  - title: "Captain-General"
+    firstName: "Peter"
+    surname: "Marik"
+    honorific: "II"
+    gender: "MALE"
+    startYear: 2441
+    endYear: 2441
+  - title: "Captain-General"
+    firstName: "Peter"
+    surname: "Marik"
+    honorific: "II"
+    gender: "MALE"
+    startYear: 2446
+    endYear: 2446
+  - title: "Captain-General"
+    firstName: "Peter"
+    surname: "Marik"
+    honorific: "II"
+    gender: "MALE"
+    startYear: 2448
+    endYear: 2449
+  - title: "Captain-General"
+    firstName: "Geralk"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2452
+    endYear: 2452
+  - title: "Captain-General"
+    firstName: "Geralk"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2455
+    endYear: 2459
+  - title: "Captain-General"
+    firstName: "Simone"
+    surname: "Marik"
+    gender: "FEMALE"
+    startYear: 2459
+    endYear: 2475
+  - title: "Captain-General"
+    firstName: "Carlos"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2475
+    endYear: 2477
+  - title: "Captain-General"
+    firstName: "Brion"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2477
+    endYear: 2477
+  - title: "Captain-General"
+    firstName: "Brion"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2481
+    endYear: 2482
+  - title: "Captain-General"
+    firstName: "Brion"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2493
+    endYear: 2493
+  - title: "Captain-General"
+    firstName: "Brion"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2496
+    endYear: 2498
+  - title: "Captain-General"
+    firstName: "Brion"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2502
+    endYear: 2506
+  - title: "Captain-General"
+    firstName: "Brion"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2508
+    endYear: 2511
+  - title: "Captain-General"
+    firstName: "Albert"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2511
+    endYear: 2511
+  - title: "Captain-General"
+    firstName: "Albert"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2512
+    endYear: 2512
+  - title: "Captain-General"
+    firstName: "Albert"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2516
+    endYear: 2519
+  - title: "Captain-General"
+    firstName: "Albert"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2528
+    endYear: 2531
+  - title: "Captain-General"
+    firstName: "Albert"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2544
+    endYear: 2544
+  - title: "Captain-General"
+    firstName: "Albert"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2551
+    endYear: 2552
+  - title: "Captain-General"
+    firstName: "Albert"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2571
+    endYear: 2573
+  - title: "Captain-General"
+    firstName: "Marion"
+    surname: "Marik"
+    gender: "FEMALE"
+    startYear: 2573
+    endYear: 2598
+  - title: "Captain-General"
+    firstName: "Brion"
+    surname: "Marik"
+    honorific: "II"
+    gender: "MALE"
+    startYear: 2573
+    endYear: 2598
+  - title: "Captain-General"
+    firstName: "Rhean"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2614
+    endYear: 2616
+  - title: "Captain-General"
+    firstName: "Tomas"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2616
+    endYear: 2618
+  - title: "Captain-General"
+    firstName: "David"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2618
+    endYear: 2621
+  - title: "Captain-General"
+    firstName: "Tomas"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2621
+    endYear: 2635
+  - title: "Captain-General"
+    firstName: "Ward"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2635
+    endYear: 2655
+  - title: "Captain-General"
+    firstName: "Kernath"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2655
+    endYear: 2671
+  - title: "Captain-General"
+    firstName: "Liam"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2671
+    endYear: 2673
+  - title: "Captain-General"
+    firstName: "Terrence"
+    surname: "Marik"
+    honorific: "IV"
+    gender: "MALE"
+    startYear: 2674
+    endYear: 2678
+  - title: "Captain-General"
+    firstName: "Gerald"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2678
+    endYear: 2703
+  - title: "Captain-General"
+    firstName: "Elise"
+    surname: "Marik"
+    gender: "FEMALE"
+    startYear: 2703
+    endYear: 2731
+  - title: "Captain-General"
+    firstName: "Boris"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2731
+    endYear: 2734
+  - title: "Captain-General"
+    firstName: "Elise"
+    surname: "Marik"
+    gender: "FEMALE"
+    startYear: 2734
+    endYear: 2740
+  - title: "Captain-General"
+    firstName: "Bertram"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2740
+    endYear: 2746
+  - title: "Captain-General"
+    firstName: "Ewan"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2746
+    endYear: 2763
+  - title: "Captain-General"
+    firstName: "Kenyon"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2763
+    endYear: 2804
+  - title: "Captain-General"
+    firstName: "Thaddeus"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2804
+    endYear: 2821
+  - title: "Captain-General"
+    firstName: "Charles"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2821
+    endYear: 2854
+  - title: "Captain-General"
+    firstName: "Gerald"
+    surname: "Marik"
+    honorific: "II"
+    gender: "MALE"
+    startYear: 2854
+    endYear: 2861
+  - title: "Captain-General"
+    firstName: "Philippa"
+    surname: "Marik"
+    gender: "FEMALE"
+    startYear: 2861
+    endYear: 2873
+  - title: "Captain-General"
+    firstName: "Marie"
+    surname: "Marik"
+    gender: "FEMALE"
+    startYear: 2873
+    endYear: 2880
+  - title: "Captain-General"
+    firstName: "James"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2880
+    endYear: 2882
+  - title: "Captain-General"
+    firstName: "Elisabeth"
+    surname: "Marik"
+    gender: "FEMALE"
+    startYear: 2882
+    endYear: 2917
+  - title: "Captain-General"
+    firstName: "Samuel"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2917
+    endYear: 2944
+  - title: "Captain-General"
+    firstName: "Paul"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2944
+    endYear: 2947
+  - title: "Captain-General"
+    firstName: "Iris"
+    surname: "Marik"
+    gender: "FEMALE"
+    startYear: 2947
+    endYear: 2947
+  - title: "Captain-General"
+    firstName: "Brock"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2947
+    endYear: 2948
+  - title: "Captain-General"
+    firstName: "Thaddeus"
+    surname: "Marik"
+    honorific: "II"
+    gender: "MALE"
+    startYear: 2948
+    endYear: 2963
+  - title: "Captain-General"
+    firstName: "Stephan"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2963
+    endYear: 2991
+  - title: "Captain-General"
+    firstName: "Janos"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2991
+    endYear: 3035
+  - title: "Captain-General"
+    firstName: "Duncan"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 3035
+    endYear: 3036
+  - title: "Captain-General"
+    firstName: "Thomas"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 3036
+    endYear: 3069
+  - title: "Captain-General"
+    firstName: "Corinne"
+    surname: "Marik"
+    gender: "FEMALE"
+    startYear: 3069
+    endYear: 3078
+  - title: "Captain-General"
+    firstName: "Jessica"
+    surname: "Marik"
+    gender: "FEMALE"
+    startYear: 3139
+    endYear: 3148
+  - title: "Captain-General"
+    firstName: "Nikol"
+    surname: "Marik"
+    gender: "FEMALE"
+    startYear: 3148

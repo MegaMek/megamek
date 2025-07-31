@@ -6,6 +6,7 @@ capitalChanges:
 yearsActive:
   - start: 2807
     end: 3060
+  - start: 3151
 tags:
   - PLAYABLE
   - MINOR
@@ -27,3 +28,57 @@ ratingLevels:
   - Keshik
 fallBackFactions:
   - CLAN.IS
+factionLeaders:
+  - title: "Khan"
+    firstName: "Franklin"
+    surname: "Osis"
+    gender: "MALE"
+    startYear: 2807
+    endYear: 2847 #Unofficial: no canon endYear
+  - title: "Khan"
+    firstName: "Theodore"
+    surname: "Osis"
+    gender: "MALE"
+    startYear: 2847 #Unofficial: no canon startYear
+    endYear: 2887 #Unofficial: no canon endYear
+  - title: "Khan"
+    firstName: "Ian"
+    surname: "Moon"
+    gender: "MALE"
+    startYear: 2927 #Unofficial: no canon startYear
+    endYear: 2967 #Unofficial: no canon endYear
+  - title: "Khan"
+    firstName: "Kincaid"
+    surname: "Furey"
+    gender: "MALE"
+    startYear: 3026
+    endYear: 3029
+  - title: "Khan"
+    firstName: "Leo"
+    surname: "Showers"
+    gender: "MALE"
+    startYear: 3029
+    endYear: 3048
+  - title: "Khan"
+    firstName: "Lincoln"
+    surname: "Osis"
+    gender: "MALE"
+    startYear: 3048
+    endYear: 3052
+  - title: "Khan"
+    firstName: "Brandon"
+    surname: "Howell"
+    gender: "MALE"
+    startYear: 3052
+    endYear: 3052
+  - title: "Khan"
+    firstName: "Lincoln"
+    surname: "Osis"
+    gender: "MALE"
+    startYear: 3052
+    endYear: 3060
+  - title: "Khan"
+    firstName: "Prohaska"
+    surname: "Moon"
+    gender: "FEMALE"
+    startYear: 3151

@@ -40,3 +40,22 @@ ratingLevels:
 fallBackFactions:
   - IS
 rankSystem: KA
+factionLeaders:
+  - title: "Elected Prince"
+    firstName: "Haakon"
+    surname: "Magnusson"
+    gender: "MALE"
+    startYear: 3034
+    endYear: 3061
+  - title: "Elected Prince Regent"
+    firstName: "Christian"
+    surname: "Månsdottir"
+    gender: "MALE"
+    startYear: 3061
+    endYear: 3070
+  - title: "Elected Prince"
+    firstName: "Ragnar"
+    surname: "Magnusson"
+    gender: "MALE"
+    startYear: 3070
+    endYear: 3103

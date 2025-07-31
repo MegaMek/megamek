@@ -3831,7 +3831,7 @@
 		<chassis name='Marauder IIC' unitType='Mek'>
 			<availability>CLAN!Keshik:4!Front Line:2!Second Line:1,CBS:2+,CB!Keshik:4!Front Line:1,CCO:3+,CGB:3+,CHH!Keshik:5!Front Line:3!Second Line:1,CIH!Keshik:5!Front Line:2!Second Line:1,CJF:3+,CNC:3+,CSJ:3+,CSA:2+,CSV:3+,CW!Keshik:5!Front Line:3,BAN!Keshik:1!Front Line:1</availability>
 			<model name=''>
-				<availability>CLAN:8,CJF:4,CW:4</availability>
+				<availability>CLAN:8,CJF:4,CW:4,BAN:8</availability>
 			</model>
 			<model name='9'>
 				<availability>CJF:8,CW:8</availability>

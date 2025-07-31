@@ -2053,7 +2053,7 @@
 			</model>
 		</chassis>
 		<chassis name='Crockett' unitType='Mek'>
-			<availability>FS:1,LA:1,FWL:1,DC:1,CC:1,CS:8,CLAN:3-,CBS:5-,CGS:4-,NIOPS:8,BAN:4-</availability>
+			<availability>FS:1,LA:1,DC:1,FWL:1,CC:1,CS:8,CLAN:3-,CBS:5-,CGS:4-,NIOPS:8,BAN:4-</availability>
 			<model name='CRK-5003-0'>
 				<availability>IS:8,NIOPS:0</availability>
 			</model>
@@ -4177,7 +4177,7 @@
 		<chassis name='Marauder IIC' unitType='Mek'>
 			<availability>CLAN!Keshik:4!Front Line:2!Second Line:1,CBS!Keshik:3!Front Line:1,CB!Keshik:4!Front Line:1,CCO:3+,CGB:3+,CGS!Keshik:5!Front Line:3!Second Line:1,CHH!Keshik:5!Front Line:3!Second Line:2,CIH!Keshik:5!Front Line:2!Second Line:1,CJF:3+,CNC:3+,CSJ!Keshik:5!Front Line:3!Second Line:1,CSR!Keshik:4!Front Line:3!Second Line:1,CSA:2+,CSV:3+,CW!Keshik:5!Front Line:3,BAN!Keshik:1!Front Line:1</availability>
 			<model name=''>
-				<availability>CLAN:8,CJF:4,CW:4</availability>
+				<availability>CLAN:8,CJF:4,CW:4,BAN:8</availability>
 			</model>
 			<model name='9'>
 				<availability>CJF:8,CW:8</availability>

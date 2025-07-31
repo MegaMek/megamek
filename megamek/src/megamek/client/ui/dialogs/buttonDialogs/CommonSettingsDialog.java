@@ -20,6 +20,35 @@
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
+import static java.util.stream.Collectors.toList;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Stream;
+import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MouseInputAdapter;
+
 import com.formdev.flatlaf.icons.FlatHelpButtonIcon;
 import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
@@ -58,35 +87,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
-
-import javax.swing.*;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MouseInputAdapter;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * The Client Settings Dialog offering GUI options concerning tooltips, map display, keybinds etc.
@@ -469,7 +469,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private JCheckBox displayFireDisplayDuringFirePhases;
 
     // Report
+    private final JCheckBox chkReportShowPlayers = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.showReportPlayerList"));
+    private final JCheckBox chkReportShowUnits = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.showReportUnitList"));
+    private final JCheckBox chkReportShowKeywords = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.showReportKeywordsList"));
     private JTextPane reportKeywordsTextPane;
+    private JTextPane reportFilterKeywordsTextPane;
+    private final JCheckBox chkReportShowFilter = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.showReportFilterList"));
     private ColourSelectorButton csbReportLinkColor;
     private ColourSelectorButton csbReportSuccessColor;
     private ColourSelectorButton csbReportMissColor;
@@ -1579,11 +1588,46 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         addLineSpacer(comps);
 
+        row = new ArrayList<>();
+        row.add(chkReportShowPlayers);
+        chkReportShowPlayers.setToolTipText(Messages.getString(
+              "CommonSettingsDialog.showReportPlayerList.tooltip"));
+        chkReportShowPlayers.setSelected(GUIP.getMiniReportShowPlayers());
+        comps.add(row);
+
+        row = new ArrayList<>();
+        row.add(chkReportShowUnits);
+        chkReportShowUnits.setToolTipText(Messages.getString(
+              "CommonSettingsDialog.showReportUnitList.tooltip"));
+        chkReportShowUnits.setSelected(GUIP.getMiniReportShowUnits());
+        comps.add(row);
+
+        row = new ArrayList<>();
+        row.add(chkReportShowKeywords);
+        chkReportShowKeywords.setToolTipText(Messages.getString(
+              "CommonSettingsDialog.showReportKeywordsList.tooltip"));
+        chkReportShowKeywords.setSelected(GUIP.getMiniReportShowKeywords());
+        comps.add(row);
         JLabel reportKeywordsLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportKeywords") + ": ");
         reportKeywordsTextPane = new JTextPane();
         row = new ArrayList<>();
         row.add(reportKeywordsLabel);
         row.add(reportKeywordsTextPane);
+        comps.add(row);
+
+        row = new ArrayList<>();
+        row.add(chkReportShowFilter);
+        chkReportShowFilter.setToolTipText(Messages.getString(
+              "CommonSettingsDialog.showReportKeywordsList.tooltip"));
+        chkReportShowFilter.setSelected(GUIP.getMiniReportShowFilter());
+        comps.add(row);
+        JLabel reportFilterKeywordsLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportFilterKeywords") +
+              ":"
+              + " ");
+        reportFilterKeywordsTextPane = new JTextPane();
+        row = new ArrayList<>();
+        row.add(reportFilterKeywordsLabel);
+        row.add(reportFilterKeywordsTextPane);
         comps.add(row);
 
         return createSettingsPanel(comps);
@@ -2240,6 +2284,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             stampFormat.setEnabled(stampFilenames.isSelected());
             stampFormat.setText(CLIENT_PREFERENCES.getStampFormat());
             reportKeywordsTextPane.setText(CLIENT_PREFERENCES.getReportKeywords());
+            reportFilterKeywordsTextPane.setText(CLIENT_PREFERENCES.getReportFilterKeywords());
             showIPAddressesInChat.setSelected(CLIENT_PREFERENCES.getShowIPAddressesInChat());
             startSearchlightsOn.setSelected(CLIENT_PREFERENCES.getStartSearchlightsOn());
 
@@ -2753,6 +2798,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         CLIENT_PREFERENCES.setStampFilenames(stampFilenames.isSelected());
         CLIENT_PREFERENCES.setStampFormat(stampFormat.getText());
         CLIENT_PREFERENCES.setReportKeywords(reportKeywordsTextPane.getText());
+        CLIENT_PREFERENCES.setReportFilterKeywords(reportFilterKeywordsTextPane.getText());
         CLIENT_PREFERENCES.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
         CLIENT_PREFERENCES.setStartSearchlightsOn(startSearchlightsOn.isSelected());
         CLIENT_PREFERENCES.setEnableExperimentalBotFeatures(enableExperimentalBotFeatures.isSelected());
@@ -3110,6 +3156,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setReportrInfoColo(csbReportInfoColor.getColour());
         GUIP.setReportFontType(fontTypeChooserReportFont.getSelectedItem().toString());
         GUIP.setMiniReportShowSprites(showReportSprites.isSelected());
+        GUIP.setMiniReportShowPlayers(chkReportShowPlayers.isSelected());
+        GUIP.setMiniReportShowUnits(chkReportShowUnits.isSelected());
+        GUIP.setMiniReportShowKeywords(chkReportShowKeywords.isSelected());
+        GUIP.setMiniReportShowFilter(chkReportShowFilter.isSelected());
+        if ((clientgui != null) && (clientgui.getMiniReportDisplay() != null)) {
+            clientgui.getMiniReportDisplay().refreshSearchPanel();
+        }
 
         GUIP.setUnitOverviewTextShadowColor(csbUnitOverviewTextShadowColor.getColour());
         GUIP.setUnitOverviewConditionShadowColor(csbUnitOverviewConditionShadowColor.getColour());

@@ -17,3 +17,16 @@ color:
   blue: 222
 fallBackFactions:
   - SL
+factionLeaders:
+  - title: "General"
+    firstName: "Aleksandr"
+    surname: "Kerensky"
+    gender: "MALE"
+    startYear: 2784
+    endYear: 2786
+  - title: "Protector"
+    firstName: "Aleksandr"
+    surname: "Kerensky"
+    gender: "MALE"
+    startYear: 2786
+    endYear: 2801

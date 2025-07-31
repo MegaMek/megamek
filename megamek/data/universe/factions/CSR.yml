@@ -29,3 +29,69 @@ ratingLevels:
 fallBackFactions:
   - CLAN.IS
 preInvasionHonorRating: OPPORTUNISTIC
+factionLeaders:
+  - title: "Khan"
+    firstName: "Stephen"
+    surname: "McKenna"
+    gender: "MALE"
+    startYear: 2807
+    endYear: 2824
+  - title: "Khan"
+    firstName: "Ewan"
+    surname: "McCorkell"
+    gender: "MALE"
+    startYear: 2979
+    endYear: 2982
+  - title: "Khan"
+    firstName: "Liam"
+    surname: "Howell"
+    gender: "MALE"
+    startYear: 2982
+    endYear: 2982
+  - title: "Khan"
+    firstName: "Niamh"
+    surname: "Sukhanov"
+    gender: "FEMALE"
+    startYear: 2982
+    endYear: 2899
+  - title: "Khan"
+    firstName: "Ada"
+    surname: "Siegel"
+    gender: "FEMALE"
+    startYear: 2899
+    endYear: 2899
+  - title: "Khan"
+    firstName: "Bennett"
+    surname: "Cooper"
+    gender: "MALE"
+    startYear: 2899
+    endYear: 2939 #Unofficial: no canon endYear
+  - title: "Khan"
+    firstName: "Weston"
+    surname: "Cooper"
+    gender: "MALE"
+    startYear: 3030 #Unofficial: no canon startYear
+    endYear: 3045
+  - title: "Khan"
+    firstName: "Lynn"
+    surname: "McKenna"
+    gender: "FEMALE"
+    startYear: 3045
+    endYear: 3080
+  - title: "Khan"
+    firstName: "Alberto"
+    surname: "Crow"
+    gender: "MALE"
+    startYear: 3080
+    endYear: 3120 #Unofficial: no canon endYear
+  - title: "Khan"
+    firstName: "Deidra"
+    surname: "McKenna"
+    gender: "FEMALE"
+    startYear: 3105
+    endYear: 3131 #Unofficial: no canon endYear
+  - title: "Khan"
+    firstName: "Sterling"
+    surname: "McKenna"
+    gender: "FEMALE"
+    startYear: 3131

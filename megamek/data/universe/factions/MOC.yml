@@ -36,3 +36,142 @@ ratingLevels:
 fallBackFactions:
   - Periphery.CM
 rankSystem: MAF
+factionLeaders:
+  - title: "Magestrix"
+    firstName: "Kossandra"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2530
+    endYear: 2548
+  - title: "Magestrix"
+    firstName: "Floral"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2548 #Unofficial: no canon startYear
+    endYear: 2550 #Unofficial: no canon endYear
+  - title: "Magestrix"
+    firstName: "Coranna"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2550
+    endYear: 2569
+  - title: "Magestrix"
+    firstName: "Crystalla"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2569
+    endYear: 2584
+  - title: "Magestrix-Dowager"
+    firstName: "Crystalla"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2584
+    endYear: 2584
+  - title: "Governor"
+    firstName: "Ian"
+    surname: "Marik"
+    gender: "MALE"
+    startYear: 2584
+    endYear: 2588
+  - title: "Governor"
+    firstName: "Melissa"
+    surname: "Humphreys"
+    gender: "FEMALE"
+    startYear: 2588
+    endYear: 2604
+  - title: "Magestrix"
+    firstName: "Rinalla"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2604
+    endYear: 2612
+  - title: "Magestrix"
+    firstName: "Carla"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2612
+    endYear: 2654
+  - title: "Magestrix"
+    firstName: "Celine"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2654
+    endYear: 2656
+  - title: "Magestrix"
+    firstName: "Gorraine"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2656
+    endYear: 2680
+  - title: "Acting-Magestrix"
+    firstName: "Kim"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2680
+    endYear: 2683
+  - title: "Magestrix"
+    firstName: "Kim"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2683
+    endYear: 2712
+  - title: "Magestrix"
+    firstName: "Jehan"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2712
+    endYear: 2738
+  - title: "Magestrix"
+    firstName: "Vanura"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2738
+    endYear: 2760
+  - title: "Magestrix"
+    firstName: "Janina"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2760
+    endYear: 2802
+  - title: "Magestrix"
+    firstName: "Rwannah"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2802
+    endYear: 2840 #Unofficial: no canon endYear
+  - title: "Magestrix"
+    firstName: "Michaela"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2840
+    endYear: 2880 #Unofficial: no canon endYear
+  - title: "Magestrix"
+    firstName: "Tamara"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 2972 #Unofficial: no canon startYear
+    endYear: 3012
+  - title: "Magestrix"
+    firstName: "Kyalla"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 3012
+    endYear: 3040
+  - title: "Magestrix"
+    firstName: "Emma"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 3040
+    endYear: 3071
+  - title: "Magestrix"
+    firstName: "Naomi"
+    surname: "Centrella"
+    gender: "FEMALE"
+    startYear: 3071
+    endYear: 3085
+  - title: "Magestrix"
+    firstName: "Ilsa"
+    surname: "Centrella-Liao"
+    gender: "FEMALE"
+    startYear: 3137
+    endYear: 3152

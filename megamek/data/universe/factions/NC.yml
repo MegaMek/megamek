@@ -34,3 +34,10 @@ ratingLevels:
   - A
 fallBackFactions:
   - Periphery.Deep
+factionLeaders:
+  - title: "King"
+    firstName: "Joseph"
+    surname: "Noye"
+    gender: "MALE"
+    startYear: 3076
+    endYear: 3085

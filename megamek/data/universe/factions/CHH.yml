@@ -27,3 +27,75 @@ ratingLevels:
 fallBackFactions:
   - CLAN.IS
 preInvasionHonorRating: OPPORTUNISTIC
+factionLeaders:
+  - title: "Khan"
+    firstName: "John"
+    surname: "Fletcher"
+    gender: "MALE"
+    startYear: 2807
+    endYear: 2847 #Unofficial: no canon endYear
+  - title: "Khan"
+    firstName: "Eric"
+    surname: "Amirault"
+    gender: "MALE"
+    startYear: 2868
+    endYear: 2872
+  - title: "Khan"
+    firstName: "Elina"
+    surname: "Houan"
+    gender: "FEMALE"
+    startYear: 2872 #Unofficial: no canon startYear
+    endYear: 2899 #Unofficial: no canon endYear
+  - title: "Khan"
+    firstName: "Aaron"
+    surname: "Cobb"
+    gender: "MALE"
+    startYear: 2899
+    endYear: 2921
+  - title: "Khan"
+    firstName: "Darwin"
+    surname: "Lassenerra"
+    gender: "MALE"
+    startYear: 2921
+    endYear: 2932
+  - title: "Khan"
+    firstName: "Lair"
+    surname: "Seidman"
+    gender: "MALE"
+    startYear: 3006 #Unofficial: no canon startYear
+    endYear: 3046
+  - title: "Khan"
+    firstName: "Malavai"
+    surname: "Fletcher"
+    gender: "MALE"
+    startYear: 3046
+    endYear: 3065
+  - title: "Khan"
+    firstName: "James"
+    surname: "Cobb"
+    gender: "MALE"
+    startYear: 3065
+    endYear: 3086
+  - title: "Khan"
+    firstName: "Jake"
+    surname: "Kabrinski"
+    gender: "MALE"
+    startYear: 3086
+    endYear: 3106 #Unofficial: no canon endYear
+  - title: "Khan"
+    firstName: "Teresia"
+    surname: "Cooper"
+    gender: "FEMALE"
+    startYear: 3106 #Unofficial: no canon startYear
+    endYear: 3126
+  - title: "Khan"
+    firstName: "Gottfried"
+    surname: "Amirault"
+    gender: "MALE"
+    startYear: 3126
+    endYear: 3152
+  - title: "Khan"
+    firstName: "Fulk"
+    surname: "Lassenerra"
+    gender: "MALE"
+    startYear: 3152

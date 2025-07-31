@@ -35,3 +35,10 @@ ratingLevels:
 fallBackFactions:
   - CC
   - IS
+factionLeaders:
+  - title: "Duchess"
+    firstName: "Candace"
+    surname: "Liao"
+    gender: "FEMALE"
+    startYear: 3029
+    endYear: 3063

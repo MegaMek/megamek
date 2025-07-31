@@ -28,3 +28,27 @@ ratingLevels:
 fallBackFactions:
   - CLAN.IS
   - CGB
+factionLeaders:
+  - title: "Prince"
+    firstName: "Ragnar"
+    surname: "Magnusson"
+    gender: "MALE"
+    startYear: 3103
+    endYear: 3109 #Unofficial: no canon endYear
+  - title: "Prince"
+    firstName: "Anders"
+    surname: "Miraborg"
+    gender: "MALE"
+    startYear: 3109 #Unofficial: no canon startYear
+    endYear: 3119 #Unofficial: no canon endYear
+  - title: "Prince"
+    firstName: "Jens"
+    surname: "Negaard"
+    gender: "MALE"
+    startYear: 3109 #Unofficial: no canon startYear
+    endYear: 3129
+  - title: "Prince"
+    firstName: "Hjalmer"
+    surname: "Miraborg"
+    gender: "MALE"
+    startYear: 3129

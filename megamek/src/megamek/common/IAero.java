@@ -1,18 +1,35 @@
 /*
-* MegaMek -
-* Copyright (C) 2017 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
-
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
 package megamek.common;
 
 import java.util.HashSet;
@@ -295,12 +312,33 @@ public interface IAero {
         return roll;
     }
 
+    /**
+     * Checks if the specified thrust value exceeds the current structural integrity (SI) of the entity and computes any
+     * necessary modifiers or notes for the resulting piloting roll.
+     *
+     * <p>If the entity has the "G Tolerance" ability, a bonus modifier is applied.</p>
+     * <ul>
+     *   <li>If the thrust used is greater than the entity's SI, a modifier indicating "Thrust spent this turn
+     *   exceeds current SI" is appended to the result.</li>
+     *   <li>Otherwise, an indicator is added to show the SI was not exceeded.</li>
+     * </ul>
+     *
+     * @param thrust          the thrust value used this turn
+     * @param overallMoveType the overall movement type for this piloting check
+     *
+     * @return a {@link PilotingRollData} object with all appropriate modifiers and notes
+     */
     default PilotingRollData checkThrustSITotal(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = ((Entity) this).getBasePilotingRoll(overallMoveType);
 
         if (thrust > getSI()) {
             // append the reason modifier
             roll.append(new PilotingRollData(((Entity) this).getId(), 0, "Thrust spent this turn exceeds current SI"));
+
+            boolean hasGTolerance = ((Entity) this).hasAbility(OptionsConstants.PILOT_ATOW_G_TOLERANCE);
+            if (hasGTolerance) {
+                roll.addModifier(-1, "G-Tolerance");
+            }
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding SI");
         }

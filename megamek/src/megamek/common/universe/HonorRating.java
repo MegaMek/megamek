@@ -47,8 +47,7 @@ public enum HonorRating {
     /**
      * Constructor for HonorRating enum to initialize its properties.
      *
-     * @param bvMultiplier       Battle Value multiplier associated with the honor level - used by
-     *                          Clan Bidding
+     * @param bvMultiplier         Battle Value multiplier associated with the honor level - used by Clan Bidding
      * @param bondsmanTargetNumber Target number for determining bondsmen with this style
      */
     HonorRating(double bvMultiplier, int bondsmanTargetNumber) {

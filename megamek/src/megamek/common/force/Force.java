@@ -1,28 +1,37 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.common.force;
 
-import megamek.common.ForceAssignable;
-import megamek.common.Game;
-import megamek.common.Player;
-import megamek.common.annotations.Nullable;
-import megamek.common.icons.Camouflage;
+package megamek.common.force;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,9 +40,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import megamek.common.ForceAssignable;
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.annotations.Nullable;
+import megamek.common.icons.Camouflage;
+
 /**
- * A representation of a force or part of a force. Very similar to MHQ's Force.
- * A Force in MM belongs to a player. It can hold units of the owner's team.
+ * A representation of a force or part of a force. Very similar to MHQ's Force. A Force in MM belongs to a player. It
+ * can hold units of the owner's team.
+ *
  * @author Simon
  */
 public final class Force implements Serializable {
@@ -67,11 +83,10 @@ public final class Force implements Serializable {
         setParent(parent.getId());
         setOwnerId(parent.getOwnerId());
     }
-    
+
     /**
-     * Creates a force with name n and id nId. Without either a parent or owner
-     * this force is a stub and should not be added to a Forces object. Used to
-     * parse the forceString, e.g. when loading a MUL. 
+     * Creates a force with name n and id nId. Without either a parent or owner this force is a stub and should not be
+     * added to a Forces object. Used to parse the forceString, e.g. when loading a MUL.
      */
     public Force(final String name, final int id, final Camouflage camouflage) {
         setName(Objects.requireNonNull(name));
@@ -80,16 +95,16 @@ public final class Force implements Serializable {
     }
 
     /**
-     * Creates a force object that is not integrated into any forces. Used
-     * to send a new force to the server. In other cases, use Forces.add.
+     * Creates a force object that is not integrated into any forces. Used to send a new force to the server. In other
+     * cases, use Forces.add.
      */
     public static Force createSubforce(String name, Force fParent) {
         return new Force(name, -1, new Camouflage(), fParent);
     }
 
     /**
-     * Creates a force object that is not integrated into any forces. Used
-     * to send a new force to the server. In other cases, use Forces.add.
+     * Creates a force object that is not integrated into any forces. Used to send a new force to the server. In other
+     * cases, use Forces.add.
      */
     public static Force createToplevelForce(String name, Player owner) {
         return new Force(name, -1, new Camouflage(), owner);
@@ -102,7 +117,7 @@ public final class Force implements Serializable {
     public void setName(String n) {
         name = n;
     }
-    
+
     public int getId() {
         return id;
     }
@@ -118,8 +133,8 @@ public final class Force implements Serializable {
 
     public Camouflage getCamouflageOrElse(final Game game, final Camouflage camouflage) {
         return getCamouflage().hasDefaultCategory()
-                ? ((getParentId() == NO_FORCE) ? camouflage : getParent(game).getCamouflageOrElse(game, camouflage))
-                : getCamouflage();
+              ? ((getParentId() == NO_FORCE) ? camouflage : getParent(game).getCamouflageOrElse(game, camouflage))
+              : getCamouflage();
     }
 
     public void setCamouflage(final Camouflage camouflage) {
@@ -130,11 +145,11 @@ public final class Force implements Serializable {
     public int getOwnerId() {
         return ownerId;
     }
-    
+
     void setOwnerId(int newOwner) {
         ownerId = newOwner;
     }
-    
+
     /** Returns the Force ID of this force's parent force; -1 if top-level. */
     public int getParentId() {
         return parent;
@@ -143,123 +158,121 @@ public final class Force implements Serializable {
     public @Nullable Force getParent(final Game game) {
         return game.getForces().getForce(getParentId());
     }
-    
+
     void setParent(int newParentId) {
         parent = newParentId;
     }
-    
+
     public boolean isTopLevel() {
         return parent == NO_FORCE;
     }
-    
+
     public int subForceCount() {
         return subForces.size();
     }
-    
+
     public int entityCount() {
         return entities.size();
     }
-    
-    /** 
-     * Returns the number of direct children of this force, i.e. the
-     * number of direct members + the number of direct subforces. 
+
+    /**
+     * Returns the number of direct children of this force, i.e. the number of direct members + the number of direct
+     * subforces.
      */
     public int getChildCount() {
         return entities.size() + subForces.size();
     }
-    
+
     /** Returns true if the force contains neither units nor subforces. */
     public boolean isEmpty() {
         return getChildCount() == 0;
     }
-    
-    /** 
-     * Returns the id of the entity at the provided index from the list of
-     * direct members of this force (not subforces). Indices outside of
-     * 0 ... entityCount() - 1 will result in an exception.
+
+    /**
+     * Returns the id of the entity at the provided index from the list of direct members of this force (not subforces).
+     * Indices outside of 0 ... entityCount() - 1 will result in an exception.
      */
     public int getEntityId(int index) {
         return entities.get(index);
     }
-    
-    /** 
-     * Returns the id of the force at the provided index from the list of
-     * subforces of this force. Indices outside of 0 ... subForceCount() - 1 
-     * will result in an exception.
+
+    /**
+     * Returns the id of the force at the provided index from the list of subforces of this force. Indices outside of 0
+     * ... subForceCount() - 1 will result in an exception.
      */
     public int getSubForceId(int index) {
         return subForces.get(index);
     }
-    
-    /** 
-     * Returns true if the provided unit is among the force's direct members.
-     * Does NOT check if the unit is part of any subforce.
+
+    /**
+     * Returns true if the provided unit is among the force's direct members. Does NOT check if the unit is part of any
+     * subforce.
      */
     public boolean containsEntity(ForceAssignable unit) {
         return containsEntity(unit.getId());
     }
-    
-    /** 
-     * Returns true if the provided entity is among the force's direct members. 
-     * Does NOT check if the entity is part of any subforce. 
+
+    /**
+     * Returns true if the provided entity is among the force's direct members. Does NOT check if the entity is part of
+     * any subforce.
      */
     public boolean containsEntity(int id) {
         return entities.contains(id);
     }
-    
-    /** 
-     * Returns the index of the provided unit in the list of direct members of this force.
-     * Returns -1 if the unit is no direct member of this force.
+
+    /**
+     * Returns the index of the provided unit in the list of direct members of this force. Returns -1 if the unit is no
+     * direct member of this force.
      */
     public int entityIndex(ForceAssignable unit) {
         return entities.indexOf(unit.getId());
     }
-    
-    /** 
-     * Returns true if the provided force is among this force's direct subforces. 
+
+    /**
+     * Returns true if the provided force is among this force's direct subforces.
      */
     public boolean containsSubForce(Force force) {
         return subForces.contains(force.getId());
     }
-    
-    /** 
-     * Returns the index of the provided force in the list of direct subforces of this force.
-     * Returns -1 if the force is no direct subforce of this force.  
+
+    /**
+     * Returns the index of the provided force in the list of direct subforces of this force. Returns -1 if the force is
+     * no direct subforce of this force.
      */
     public int subForceIndex(Force force) {
         return subForces.indexOf(force.getId());
     }
-    
+
     void addSubForce(Force subForce) {
         subForces.add(subForce.getId());
     }
-    
+
     public List<Integer> getEntities() {
         return Collections.unmodifiableList(entities);
     }
-    
+
     public List<Integer> getSubForces() {
         return Collections.unmodifiableList(subForces);
     }
-    
+
     void addEntity(ForceAssignable unit) {
         entities.add(unit.getId());
     }
-    
+
     void removeEntity(ForceAssignable unit) {
         entities.remove((Integer) unit.getId());
     }
-    
+
     /** Removes the given id from the list of subordinated entities. */
     void removeEntity(int id) {
         entities.remove((Integer) id);
     }
-    
+
     /** Removes the given id from the list of (direct) subforces. */
     void removeSubForce(int id) {
         subForces.remove((Integer) id);
     }
-    
+
     @Override
     protected Force clone() {
         Force clone = new Force(name, id, camouflage.clone());
@@ -269,16 +282,16 @@ public final class Force implements Serializable {
         clone.entities = new ArrayList<>(entities);
         return clone;
     }
-    
+
     @Override
     public String toString() {
         List<String> en = entities.stream().map(e -> Integer.toString(e)).collect(Collectors.toList());
         List<String> sf = subForces.stream().map(e -> Integer.toString(e)).collect(Collectors.toList());
-        return name + ": [" + id + "]; Parent: " + parent + "; Entities: " 
-                + String.join(",", en) + "; Subforces: " + String.join(",", sf)
-                + "; Owner: " + ownerId;
+        return name + ": [" + id + "]; Parent: " + parent + "; Entities: "
+              + String.join(",", en) + "; Subforces: " + String.join(",", sf)
+              + "; Owner: " + ownerId;
     }
-    
+
     /** Moves up the given entityId by one position if possible. Returns true when an actual change occurred. */
     boolean moveUp(int unitId) {
         if (!containsEntity(unitId)) {
@@ -291,7 +304,7 @@ public final class Force implements Serializable {
         }
         return false;
     }
-    
+
     /** Moves down the given unitId by one position if possible. Returns true when an actual change occurred. */
     boolean moveDown(int unitId) {
         if (!containsEntity(unitId)) {
@@ -304,7 +317,7 @@ public final class Force implements Serializable {
         }
         return false;
     }
-    
+
     /** Moves up the given subforce by one position if possible. Returns true when an actual change occurred. */
     boolean moveUp(Force subforce) {
         if (!containsSubForce(subforce)) {
@@ -317,7 +330,7 @@ public final class Force implements Serializable {
         }
         return false;
     }
-    
+
     /** Moves down the given subforce by one position if possible. Returns true when an actual change occurred. */
     boolean moveDown(Force subforce) {
         if (!containsSubForce(subforce)) {

@@ -1,22 +1,37 @@
 /*
  * Copyright (c) 2000-2003 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.util.ArrayList;
@@ -46,14 +61,15 @@ public class LargeSupportTank extends SupportTank {
     private double fuelTonnage = 0;
 
     private static final String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
-            "RRRS", "RRLS", "RR", "TU", "TU2" };
+                                                     "RRRS", "RRLS", "RR", "TU", "TU2" };
 
     private static final String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
-            "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
+                                                     "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
 
     private static final String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
-            "Front Left", "Rear Right", "Rear Left", "Rear", "Rear Turret",
-            "Front Turret" };
+                                                                 "Front Left", "Rear Right", "Rear Left", "Rear",
+                                                                 "Rear Turret",
+                                                                 "Front Turret" };
 
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25, 25 };
@@ -84,7 +100,7 @@ public class LargeSupportTank extends SupportTank {
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-            int cover) {
+          int cover) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRearSide = false;
@@ -118,7 +134,7 @@ public class LargeSupportTank extends SupportTank {
 
             if ((5 < roll) && (roll < 9)) {
                 rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
-                        true);
+                      true);
                 bHitAimed = true;
             }
         }
@@ -130,15 +146,15 @@ public class LargeSupportTank extends SupportTank {
                 case 3:
                     if (bSide) {
                         rv = new HitData(LOC_FRONT, false,
-                                HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                              HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else if (bRear) {
                         rv = new HitData(LOC_REARLEFT, false,
-                                HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                              HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else if (bRearSide) {
                         rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else {
                         rv = new HitData(LOC_FRONTRIGHT, false,
-                                HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                              HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     }
                     rv.setMotiveMod(motiveMod);
                     break;
@@ -157,14 +173,14 @@ public class LargeSupportTank extends SupportTank {
                     break;
                 case 8:
                     if ((bSide || bRearSide)
-                            && !game.getOptions().booleanOption(
-                                    OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
+                          && !game.getOptions().booleanOption(
+                          OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
                     }
                     break;
                 case 9:
                     if (!game.getOptions().booleanOption(
-                            OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
+                          OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
                         rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         rv.setMotiveMod(motiveMod);
                     }
@@ -213,10 +229,10 @@ public class LargeSupportTank extends SupportTank {
             Hex curHex = board.getHex(getPosition());
             if ((srcHex != null) && (curHex != null)) {
                 LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src,
-                        getPosition(), getBoardId(), 1, getElevation(), srcHex.floor(),
-                        curHex.floor());
+                      getPosition(), getBoardId(), 1, getElevation(), srcHex.floor(),
+                      curHex.floor());
                 ArrayList<Coords> in = Coords.intervening(ai.attackPos,
-                        ai.targetPos, true);
+                      ai.targetPos, true);
                 leftBetter = LosEffects.dividedLeftBetter(in, game, ai, isInBuilding(), new LosEffects());
             }
         }
@@ -277,7 +293,7 @@ public class LargeSupportTank extends SupportTank {
 
         // B-Pods need to be special-cased, the have 360 firing arc
         if ((mounted.getType() instanceof WeaponType)
-                && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
+              && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
         }
         // VGLs base arc on their facing
@@ -400,12 +416,12 @@ public class LargeSupportTank extends SupportTank {
         if (isHidden()) {
             // Can't deploy in paved hexes
             if (hex.containsTerrain(Terrains.PAVEMENT)
-                    || hex.containsTerrain(Terrains.ROAD)) {
+                  || hex.containsTerrain(Terrains.ROAD)) {
                 return true;
             }
             // Can't deploy on a bridge
             if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
-                    && hex.containsTerrain(Terrains.BRIDGE)) {
+                  && hex.containsTerrain(Terrains.BRIDGE)) {
                 return true;
             }
             // Can't deploy on the surface of water

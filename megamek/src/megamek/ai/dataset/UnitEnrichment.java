@@ -32,29 +32,23 @@
  */
 package megamek.ai.dataset;
 
+import java.util.List;
+
 import megamek.ai.utility.EntityFeatureUtils;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IAero;
-import megamek.common.UnitRole;
-import megamek.logging.MMLogger;
-
-import java.util.List;
-
-import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 /**
  * Flexible container for unit state data using a map-based approach with enum keys.
+ *
  * @author Luana Coppio
  */
 public class UnitEnrichment extends EntityDataMap<UnitEnrichment.Field> {
 
     /**
-     * Enum defining all available unit state fields.
-     * "chassis", "model", "bv", "armor", "internal", "ecm",
-     *           "max_range", "total_damage", "role", "armor_front", "armor_right", "armor_left", "armor_back", "arc_0",
-     *           "arc_1", "arc_2", "arc_3", "arc_4", "arc_5"
+     * Enum defining all available unit state fields. "chassis", "model", "bv", "armor", "internal", "ecm", "max_range",
+     * "total_damage", "role", "armor_front", "armor_right", "armor_left", "armor_back", "arc_0", "arc_1", "arc_2",
+     * "arc_3", "arc_4", "arc_5"
      */
     public enum Field {
         CHASSIS,
@@ -89,7 +83,9 @@ public class UnitEnrichment extends EntityDataMap<UnitEnrichment.Field> {
 
     /**
      * Creates a UnitStateMap from an Entity.
+     *
      * @param entity The entity to extract state from
+     *
      * @return A populated UnitStateMap
      */
     public static UnitEnrichment fromEntity(Entity entity) {

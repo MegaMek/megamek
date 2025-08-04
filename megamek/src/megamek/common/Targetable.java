@@ -1,21 +1,41 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Optional;
 
 import megamek.common.annotations.Nullable;
 
@@ -46,8 +66,8 @@ public interface Targetable extends InGameObject, Serializable {
     Coords getPosition();
 
     /**
-     * @return The board ID of the board this targetable is on. This defaults to 0 so that any code that doesn't
-     * support multiple boards yet safely points to the first (and only) board; should eventually default to -1
+     * @return The board ID of the board this targetable is on. This defaults to 0 so that any code that doesn't support
+     *       multiple boards yet safely points to the first (and only) board; should eventually default to -1
      */
     default int getBoardId() {
         return 0;
@@ -67,23 +87,21 @@ public interface Targetable extends InGameObject, Serializable {
     Map<Integer, Coords> getSecondaryPositions();
 
     /**
-     * @return elevation of the top (e.g. torso) of the target relative to
-     *         surface
+     * @return elevation of the top (e.g. torso) of the target relative to surface
      */
     int relHeight();
 
     /**
-     * Returns the height of the target, that is, how many levels above its
-     * elevation it is for LOS purposes.
+     * Returns the height of the target, that is, how many levels above its elevation it is for LOS purposes.
      *
-     * @return height of the target in elevation levels */
+     * @return height of the target in elevation levels
+     */
     int getHeight();
 
     /**
-     * Returns the elevation of this target, relative to the position Hex's
-     * surface
-     * @return elevation of the bottom (e.g. legs) of the target relative to
-     *         surface
+     * Returns the elevation of this target, relative to the position Hex's surface
+     *
+     * @return elevation of the bottom (e.g. legs) of the target relative to surface
      */
     int getElevation();
 
@@ -115,14 +133,14 @@ public interface Targetable extends InGameObject, Serializable {
     }
 
     /**
-     * @return Is the entity airborne in the fashion of an aerospace unit?
-     * Does not include VTOL movement (see {@link Targetable#isAirborneVTOLorWIGE()}
+     * @return Is the entity airborne in the fashion of an aerospace unit? Does not include VTOL movement (see
+     *       {@link Targetable#isAirborneVTOLorWIGE()}
      */
     boolean isAirborne();
 
     /**
-     * @return is the entity airborne in the fashion of a VTOL
-     * Not used for aerospace units, see {@link Targetable#isAirborne()}
+     * @return is the entity airborne in the fashion of a VTOL Not used for aerospace units, see
+     *       {@link Targetable#isAirborne()}
      */
     boolean isAirborneVTOLorWIGE();
 
@@ -136,13 +154,14 @@ public interface Targetable extends InGameObject, Serializable {
      * determine if something is valid to be shot at.
      *
      * @param other
+     *
      * @return
      */
     boolean isEnemyOf(Entity other);
 
     default boolean isHexBeingBombed() {
         return getTargetType() == TYPE_HEX_AERO_BOMB ||
-                getTargetType() == TYPE_HEX_BOMB;
+              getTargetType() == TYPE_HEX_BOMB;
     }
 
     /**
@@ -162,12 +181,12 @@ public interface Targetable extends InGameObject, Serializable {
     int hashCode();
 
     /**
-     * Utility function used to safely tell whether two Targetables are in the same hex.
-     * Does not throw exceptions in case of nulls.
+     * Utility function used to safely tell whether two Targetables are in the same hex. Does not throw exceptions in
+     * case of nulls.
      */
     static boolean areAtSamePosition(@Nullable Targetable first, @Nullable Targetable second) {
         if ((first == null) || (second == null) ||
-                (first.getPosition() == null) || (second.getPosition() == null)) {
+              (first.getPosition() == null) || (second.getPosition() == null)) {
             return false;
         }
 

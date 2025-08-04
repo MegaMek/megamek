@@ -1,22 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.io.Serial;
@@ -24,24 +39,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.ComputeECM;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Mek;
-import megamek.common.Minefield;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.Report;
-import megamek.common.Tank;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
@@ -72,10 +70,10 @@ public class ATMHandler extends MissileWeaponHandler {
         }
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(
-                    wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                  wtype.getInfantryDamageClass(),
+                  ((Infantry) target).isMechanized(),
+                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             toReturn = applyGlancingBlowModifier(toReturn, true);
         }
 
@@ -154,7 +152,7 @@ public class ATMHandler extends MissileWeaponHandler {
                 Report r = new Report(3325);
                 r.subject = subjectId;
                 r.add(wtype.getRackSize()
-                        * ((BattleArmor) ae).getShootingStrength());
+                      * ((BattleArmor) ae).getShootingStrength());
                 r.add(sSalvoType);
                 r.add(toHit.getTableDesc());
                 vPhaseReport.add(r);
@@ -169,7 +167,7 @@ public class ATMHandler extends MissileWeaponHandler {
             return 1;
         }
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                : null;
+              : null;
         int missilesHit;
 
         boolean bMekTankStealthActive = false;
@@ -180,7 +178,7 @@ public class ATMHandler extends MissileWeaponHandler {
         AmmoType atype = (AmmoType) ammo.getType();
 
         int nMissilesModifier = getClusterModifiers(
-                atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE));
+              atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE));
 
         // is any hex in the flight path of the missile ECM affected?
         boolean bECMAffected = ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
@@ -188,10 +186,10 @@ public class ATMHandler extends MissileWeaponHandler {
         // then act as if affected.
 
         if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
-                && !mLinker.isDestroyed() && !mLinker.isMissing()
-                && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                        MiscType.F_ARTEMIS))
-                && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
+              && !mLinker.isDestroyed() && !mLinker.isMissing()
+              && !mLinker.isBreached() && mLinker.getType().hasFlag(
+              MiscType.F_ARTEMIS))
+              && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
             if (bECMAffected) {
                 // ECM prevents bonus
                 Report r = new Report(3330);
@@ -224,21 +222,21 @@ public class ATMHandler extends MissileWeaponHandler {
                 nMissilesModifier += 2;
             }
         } else if ((entityTarget != null)
-                && (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || entityTarget
-                        .isINarcedBy(ae.getOwner().getTeam()))) {
+              && (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || entityTarget
+              .isINarcedBy(ae.getOwner().getTeam()))) {
             // only apply Narc bonus if we're not suffering ECM effect
             // and we are using narc ammo, and we're not firing indirectly.
             // narc capable missiles are only affected if the narc pod, which
             // sits on the target, is ECM affected
             boolean bTargetECMAffected = false;
             bTargetECMAffected = ComputeECM.isAffectedByECM(ae,
-                    target.getPosition(), target.getPosition());
+                  target.getPosition(), target.getPosition());
             if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) || (atype
-                    .getAmmoType() == AmmoType.AmmoTypeEnum.SRM))
-                    || ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
-                            && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE)) && ((weapon
-                                    .curMode() == null) || !weapon.curMode().equals(
-                                            "Indirect")))) {
+                  .getAmmoType() == AmmoType.AmmoTypeEnum.SRM))
+                  || ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
+                  && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE)) && ((weapon
+                  .curMode() == null) || !weapon.curMode().equals(
+                  "Indirect")))) {
                 if (bTargetECMAffected) {
                     // ECM prevents bonus
                     Report r = new Report(3330);
@@ -255,7 +253,7 @@ public class ATMHandler extends MissileWeaponHandler {
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
-                && entityTarget != null && entityTarget.isLargeCraft()) {
+              && entityTarget != null && entityTarget.isLargeCraft()) {
             nMissilesModifier -= getAeroSanityAMSHitsMod();
         }
 
@@ -263,18 +261,18 @@ public class ATMHandler extends MissileWeaponHandler {
             // We want buildings and large craft to be able to affect this number with AMS
             // treat as a Streak launcher (cluster roll 11) to make this happen
             missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                    nMissilesModifier, weapon.isHotLoaded(), true,
-                    isAdvancedAMS());
+                  nMissilesModifier, weapon.isHotLoaded(), true,
+                  isAdvancedAMS());
         } else {
             if (ae instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
-                        * ((BattleArmor) ae).getShootingStrength(),
-                        nMissilesModifier, weapon.isHotLoaded(), false,
-                        isAdvancedAMS());
+                            * ((BattleArmor) ae).getShootingStrength(),
+                      nMissilesModifier, weapon.isHotLoaded(), false,
+                      isAdvancedAMS());
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                        nMissilesModifier, weapon.isHotLoaded(), false,
-                        isAdvancedAMS());
+                      nMissilesModifier, weapon.isHotLoaded(), false,
+                      isAdvancedAMS());
             }
         }
 
@@ -308,7 +306,7 @@ public class ATMHandler extends MissileWeaponHandler {
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
         if (!bMissed
-                && (target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR)) {
+              && (target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR)) {
             Report r = new Report(3255);
             r.indent(1);
             r.subject = subjectId;
@@ -320,7 +318,7 @@ public class ATMHandler extends MissileWeaponHandler {
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
                 if (gameManager.clearMinefield(mf, ae,
-                        Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
+                      Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
             }

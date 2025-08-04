@@ -267,10 +267,10 @@ public class MovePath implements Cloneable, Serializable {
         // Do we care about gravity when adding steps?
         gravity = game.getPlanetaryConditions().getGravity();
         gravityConcern = ((gravity > 1.0F && cachedEntityState.getJumpMPNoGravity() > 0 ||
-                                 (gravity < 1.0F &&
-                                        cachedEntityState.getRunMP() > cachedEntityState.getRunMPNoGravity())) &&
-                                game.getBoard(entity.getBoardId()).isGround() &&
-                                !entity.isAirborne());
+              (gravity < 1.0F &&
+                    cachedEntityState.getRunMP() > cachedEntityState.getRunMPNoGravity())) &&
+              game.getBoard(entity.getBoardId()).isGround() &&
+              !entity.isAirborne());
     }
 
     /**
@@ -389,24 +389,24 @@ public class MovePath implements Cloneable, Serializable {
 
     public boolean canShift() {
         return ((getEntity() instanceof QuadMek
-                       // QuadVee cannot shift in vee mode
-                       &&
-                       !(getEntity() instanceof QuadVee &&
-                               (entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE ||
-                                      getEntity().isConvertingNow())))
-                      // Maneuvering Ace allows Bipeds and VTOLs moving at cruise
-                      // speed to perform a lateral shift
-                      ||
-                      (getEntity().isUsingManAce() &&
-                             ((getEntity() instanceof BipedMek) ||
-                                    ((getEntity() instanceof VTOL) &&
-                                           (getMpUsed() <= getCachedEntityState().getWalkMP())))) ||
-                      (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS) &&
-                             getEntity() instanceof Tank &&
-                             (getEntity().getMovementMode() == EntityMovementMode.VTOL ||
-                                    getEntity().getMovementMode() == EntityMovementMode.HOVER)) ||
-                      ((getEntity() instanceof TripodMek) && (((Mek) getEntity()).countBadLegs() == 0))) &&
-                     !isJumping();
+              // QuadVee cannot shift in vee mode
+              &&
+              !(getEntity() instanceof QuadVee &&
+                    (entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE ||
+                          getEntity().isConvertingNow())))
+              // Maneuvering Ace allows Bipeds and VTOLs moving at cruise
+              // speed to perform a lateral shift
+              ||
+              (getEntity().isUsingManAce() &&
+                    ((getEntity() instanceof BipedMek) ||
+                          ((getEntity() instanceof VTOL) &&
+                                (getMpUsed() <= getCachedEntityState().getWalkMP())))) ||
+              (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS) &&
+                    getEntity() instanceof Tank &&
+                    (getEntity().getMovementMode() == EntityMovementMode.VTOL ||
+                          getEntity().getMovementMode() == EntityMovementMode.HOVER)) ||
+              ((getEntity() instanceof TripodMek) && (((Mek) getEntity()).countBadLegs() == 0))) &&
+              !isJumping();
     }
 
     /**
@@ -416,9 +416,9 @@ public class MovePath implements Cloneable, Serializable {
      */
     public boolean containsLateralShift() {
         return this.contains(MoveStepType.LATERAL_LEFT) ||
-                     this.contains(MoveStepType.LATERAL_RIGHT) ||
-                     this.contains(MoveStepType.LATERAL_LEFT_BACKWARDS) ||
-                     this.contains(MoveStepType.LATERAL_RIGHT_BACKWARDS);
+              this.contains(MoveStepType.LATERAL_RIGHT) ||
+              this.contains(MoveStepType.LATERAL_LEFT_BACKWARDS) ||
+              this.contains(MoveStepType.LATERAL_RIGHT_BACKWARDS);
     }
 
     public boolean containsVTOLBomb() {
@@ -548,16 +548,16 @@ public class MovePath implements Cloneable, Serializable {
                     break;
                 }
                 s.setDanger(s.isDanger() ||
-                                  Compute.isPilotingSkillNeeded(game,
-                                        entity.getId(),
-                                        prevStep.getPosition(),
-                                        s.getPosition(),
-                                        lastStep.getMovementType(true),
-                                        prevStep.isTurning(),
-                                        prevStep.isPavementStep(),
-                                        prevStep.getElevation(),
-                                        s.getElevation(),
-                                        s));
+                      Compute.isPilotingSkillNeeded(game,
+                            entity.getId(),
+                            prevStep.getPosition(),
+                            s.getPosition(),
+                            lastStep.getMovementType(true),
+                            prevStep.isTurning(),
+                            prevStep.isPavementStep(),
+                            prevStep.getElevation(),
+                            s.getElevation(),
+                            s));
                 s.setPastDanger(s.isPastDanger() || s.isDanger());
                 prevStep = s;
             }
@@ -620,7 +620,7 @@ public class MovePath implements Cloneable, Serializable {
             // if we're jumping without a mechanical jump booster (?)
             // or we're acting like a spheroid DropShip in the atmosphere
             if ((isJumping() && !contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER)) ||
-                      (Compute.useSpheroidAtmosphere(game, getEntity()) && (step.getType() != MoveStepType.HOVER))) {
+                  (Compute.useSpheroidAtmosphere(game, getEntity()) && (step.getType() != MoveStepType.HOVER))) {
                 int distance = start.distance(land);
 
                 if (step.isThisStepBackwards() || (step.getDistance() > distance)) {
@@ -638,7 +638,7 @@ public class MovePath implements Cloneable, Serializable {
 
         // If JumpShips turn, they can't do anything else
         if (entity.isJumpShip() && !step.isFirstStep() &&
-                  (contains(MoveStepType.TURN_LEFT) || contains(MoveStepType.TURN_RIGHT))) {
+              (contains(MoveStepType.TURN_LEFT) || contains(MoveStepType.TURN_RIGHT))) {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             return;
         }
@@ -683,9 +683,11 @@ public class MovePath implements Cloneable, Serializable {
             // and we are not exceeding the maximum five hexes.
             if (last.isStrafingStep()) {
                 if (step.getFacing() != last.getFacing() ||
-                          (step.getElevation() + getGame().getBoard(step.getBoardId()).getHex(step.getPosition()).floor() !=
-                                 last.getElevation() + getGame().getBoard(step.getBoardId()).getHex(last.getPosition()).floor()) ||
-                          steps.stream().filter(MoveStep::isStrafingStep).count() > 5) {
+                      (step.getElevation() + getGame().getBoard(step.getBoardId()).getHex(step.getPosition()).floor() !=
+                            last.getElevation() + getGame().getBoard(step.getBoardId())
+                                  .getHex(last.getPosition())
+                                  .floor()) ||
+                      steps.stream().filter(MoveStep::isStrafingStep).count() > 5) {
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                     return;
                 }
@@ -705,10 +707,10 @@ public class MovePath implements Cloneable, Serializable {
         // VTOLs using maneuvering ace to make lateral shifts can't flank
         // unless using controlled sideslip
         if (containsLateralShift() &&
-                  getEntity().isUsingManAce() &&
-                  (getEntity() instanceof VTOL) &&
-                  getMpUsed() > getCachedEntityState().getWalkMP() &&
-                  !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+              getEntity().isUsingManAce() &&
+              (getEntity() instanceof VTOL) &&
+              getMpUsed() > getCachedEntityState().getWalkMP() &&
+              !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             return;
         }
@@ -731,17 +733,17 @@ public class MovePath implements Cloneable, Serializable {
         // If using TacOps reverse gear option, cannot mix forward and backward movement
         // in the same round except VTOLs.
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_REVERSE_GEAR) &&
-                  ((entity instanceof Tank && !(entity instanceof VTOL)) ||
-                         (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
+              ((entity instanceof Tank && !(entity instanceof VTOL)) ||
+                    (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
             boolean fwd = false;
             boolean rev = false;
             for (MoveStep s : steps) {
                 fwd |= s.getType() == MoveStepType.FORWARDS ||
-                             s.getType() == MoveStepType.LATERAL_LEFT ||
-                             s.getType() == MoveStepType.LATERAL_RIGHT;
+                      s.getType() == MoveStepType.LATERAL_LEFT ||
+                      s.getType() == MoveStepType.LATERAL_RIGHT;
                 rev |= s.getType() == MoveStepType.BACKWARDS ||
-                             s.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS ||
-                             s.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS;
+                      s.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS ||
+                      s.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS;
             }
 
             if (fwd && rev) {
@@ -807,7 +809,7 @@ public class MovePath implements Cloneable, Serializable {
             for (MoveStep step : steps) {
                 if (!left) {
                     if (!step.getPosition().equals(getEntity().getPosition()) ||
-                              !(step.getElevation() == getEntity().getElevation())) {
+                          !(step.getElevation() == getEntity().getElevation())) {
                         // we left the location
                         left = true;
                         continue;
@@ -816,7 +818,7 @@ public class MovePath implements Cloneable, Serializable {
                 }
                 if (!returned) {
                     if (step.getPosition().equals(getEntity().getPosition()) &&
-                              (step.getElevation() == getEntity().getElevation())) {
+                          (step.getElevation() == getEntity().getElevation())) {
                         // we returned to the location
                         returned = true;
                         continue;
@@ -825,10 +827,10 @@ public class MovePath implements Cloneable, Serializable {
                 }
                 // We've returned, only following 5 types are legal
                 if ((step.getType() != MovePath.MoveStepType.TURN_LEFT) &&
-                          (step.getType() != MovePath.MoveStepType.TURN_RIGHT) &&
-                          (step.getType() != MovePath.MoveStepType.UNLOAD) &&
-                          (step.getType() != MovePath.MoveStepType.DISCONNECT) &&
-                          (step.getType() != MovePath.MoveStepType.GO_PRONE)) {
+                      (step.getType() != MovePath.MoveStepType.TURN_RIGHT) &&
+                      (step.getType() != MovePath.MoveStepType.UNLOAD) &&
+                      (step.getType() != MovePath.MoveStepType.DISCONNECT) &&
+                      (step.getType() != MovePath.MoveStepType.GO_PRONE)) {
                     // we only need to identify the first illegal move
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                     break;
@@ -915,7 +917,7 @@ public class MovePath implements Cloneable, Serializable {
         // situation: can't brace off of jumps; can't brace if you're not a mek with
         // arms/protomek
         if (isJumping() || contains(MoveStepType.GO_PRONE) || !getEntity().canBrace()
-                  || !game.hasBoardLocation(coords, boardId)) {
+              || !game.hasBoardLocation(coords, boardId)) {
             return false;
         }
 
@@ -936,11 +938,11 @@ public class MovePath implements Cloneable, Serializable {
             Hex currentHex = board.getHex(coords);
 
             int curHexLevel = currentHex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV) ?
-                                    currentHex.ceiling() :
-                                    currentHex.floor();
+                  currentHex.ceiling() :
+                  currentHex.floor();
             int nextHexLevel = nextHex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV) ?
-                                     nextHex.ceiling() :
-                                     nextHex.floor();
+                  nextHex.ceiling() :
+                  nextHex.floor();
 
             return nextHexLevel == curHexLevel + 1;
         }
@@ -1032,8 +1034,7 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * @return the board ID of the final position of this move path or the unit's own board ID if the path
-     * has no steps.
+     * @return the board ID of the final position of this move path or the unit's own board ID if the path has no steps.
      */
     public int getFinalBoardId() {
         if (getGame().useVectorMove()) {
@@ -1284,8 +1285,8 @@ public class MovePath implements Cloneable, Serializable {
         final MoveStep step3 = getStep(index + 2);
 
         if (step1.oppositeTurn(step3) &&
-                  ((step2.getType() == MovePath.MoveStepType.BACKWARDS) ||
-                         (step2.getType() == MovePath.MoveStepType.FORWARDS))) {
+              ((step2.getType() == MovePath.MoveStepType.BACKWARDS) ||
+                    (step2.getType() == MovePath.MoveStepType.FORWARDS))) {
             final MoveStepType stepType = step1.getType();
             final MoveStepType direction = step2.getType();
             // remove all old steps
@@ -1503,11 +1504,11 @@ public class MovePath implements Cloneable, Serializable {
             this.steps = finPath.steps;
         } else {
             logger.error("Unable to find a path to the destination hex! \tMoving " +
-                               getEntity() +
-                               "from " +
-                               getFinalCoords() +
-                               " to " +
-                               dest);
+                  getEntity() +
+                  "from " +
+                  getFinalCoords() +
+                  " to " +
+                  dest);
         }
     }
 
@@ -1526,9 +1527,9 @@ public class MovePath implements Cloneable, Serializable {
                 }
             } else {
                 if ((getLastStep().getVelocityLeft() > 0) &&
-                          !getGame().useVectorMove() &&
-                          !(getLastStep().getType() == MovePath.MoveStepType.FLEE ||
-                                  getLastStep().getType() == MovePath.MoveStepType.EJECT)) {
+                      !getGame().useVectorMove() &&
+                      !(getLastStep().getType() == MovePath.MoveStepType.FLEE ||
+                            getLastStep().getType() == MovePath.MoveStepType.EJECT)) {
                     return false;
                 }
             }
@@ -1600,7 +1601,7 @@ public class MovePath implements Cloneable, Serializable {
                 final MovePath expandedPath = adjacent.next();
 
                 if (expandedPath.getLastStep()
-                          .isMovementPossible(getGame(), startingPos, startingElev, getCachedEntityState())) {
+                      .isMovementPossible(getGame(), startingPos, startingElev, getCachedEntityState())) {
 
                     if (discovered.containsKey(expandedPath.getKey())) {
                         continue;
@@ -1620,7 +1621,7 @@ public class MovePath implements Cloneable, Serializable {
                 MovePath expandedPath = candidatePath.clone();
                 expandedPath.addStep(type);
                 if (expandedPath.getLastStep()
-                          .isMovementPossible(getGame(), startingPos, startingElev, getCachedEntityState())) {
+                      .isMovementPossible(getGame(), startingPos, startingElev, getCachedEntityState())) {
 
                     if (discovered.containsKey(expandedPath.getKey())) {
                         continue;
@@ -1745,13 +1746,13 @@ public class MovePath implements Cloneable, Serializable {
                 result.add(clone().addStep(MovePath.MoveStepType.LATERAL_LEFT));
             }
             if (backward &&
-                      (!forward ||
-                             ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS)))) {
+                  (!forward ||
+                        ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS)))) {
                 result.add(clone().addStep(MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS));
             }
             if (backward &&
-                      (!forward ||
-                             ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS)))) {
+                  (!forward ||
+                        ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS)))) {
                 result.add(clone().addStep(MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS));
             }
         }
@@ -1807,8 +1808,8 @@ public class MovePath implements Cloneable, Serializable {
      */
     public boolean shouldMechanicalJumpCauseFallDamage() {
         return isJumping() &&
-                     contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER) &&
-                     (getJumpMaxElevationChange() > getEntity().getMechanicalJumpBoosterMP());
+              contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER) &&
+              (getJumpMaxElevationChange() > getEntity().getMechanicalJumpBoosterMP());
     }
 
     /**
@@ -1865,8 +1866,8 @@ public class MovePath implements Cloneable, Serializable {
         // A LAM converting from AirMek to Mek mode automatically lands at the end of
         // movement.
         if ((getEntity() instanceof LandAirMek) &&
-                  (((LandAirMek) getEntity()).getConversionModeFor(getFinalConversionMode()) ==
-                         LandAirMek.CONV_MODE_MEK)) {
+              (((LandAirMek) getEntity()).getConversionModeFor(getFinalConversionMode()) ==
+                    LandAirMek.CONV_MODE_MEK)) {
             if (getLastStep() != null) {
                 return getLastStep().getClearance() > 0;
             } else {
@@ -1892,9 +1893,9 @@ public class MovePath implements Cloneable, Serializable {
             return false;
         }
         if (getEntity().wigeLiftoffHover() ||
-                  steps.stream()
-                        .map(MoveStep::getType)
-                        .anyMatch(st -> st == MoveStepType.UP || st == MoveStepType.HOVER)) {
+              steps.stream()
+                    .map(MoveStep::getType)
+                    .anyMatch(st -> st == MoveStepType.UP || st == MoveStepType.HOVER)) {
             return false;
         }
         if (getLastStep() != null) {
@@ -1914,7 +1915,8 @@ public class MovePath implements Cloneable, Serializable {
                 return false;
             }
         }
-        return game.getBoard(entity.getBoardId()).getHex(entity.getPosition()).containsTerrain(Terrains.WATER) && entity.relHeight() < 0;
+        return game.getBoard(entity.getBoardId()).getHex(entity.getPosition()).containsTerrain(Terrains.WATER)
+              && entity.relHeight() < 0;
     }
 
     protected static class MovePathComparator implements Comparator<MovePath> {
@@ -1929,11 +1931,11 @@ public class MovePath implements Cloneable, Serializable {
         @Override
         public int compare(final MovePath first, final MovePath second) {
             final int firstDist = first.getMpUsed() +
-                                        first.getFinalCoords().distance(destination) +
-                                        getFacingDiff(first);
+                  first.getFinalCoords().distance(destination) +
+                  getFacingDiff(first);
             final int secondDist = second.getMpUsed() +
-                                         second.getFinalCoords().distance(destination) +
-                                         getFacingDiff(second);
+                  second.getFinalCoords().distance(destination) +
+                  getFacingDiff(second);
             return firstDist - secondDist;
         }
 
@@ -1945,7 +1947,7 @@ public class MovePath implements Cloneable, Serializable {
                 return 0;
             }
             int firstFacing = Math.abs(((first.getFinalCoords().direction(destination) + (backward ? 3 : 0)) % 6) -
-                                             first.getFinalFacing());
+                  first.getFinalFacing());
             if (firstFacing > 3) {
                 firstFacing = 6 - firstFacing;
             }
@@ -1994,9 +1996,9 @@ public class MovePath implements Cloneable, Serializable {
         int mp = 0;
         for (MoveStep step : steps) {
             if (jumping &&
-                      (step.getType() != MoveStepType.TURN_LEFT) &&
-                      (step.getType() != MoveStepType.TURN_RIGHT) &&
-                      (step.getType() != MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER)) {
+                  (step.getType() != MoveStepType.TURN_LEFT) &&
+                  (step.getType() != MoveStepType.TURN_RIGHT) &&
+                  (step.getType() != MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER)) {
                 mp += step.getMp();
             } else if (!jumping) {
                 mp += step.getMp();
@@ -2189,23 +2191,23 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         return new EqualsBuilder().append(entity, movePath.entity)
-                     .append(careful, movePath.careful)
-                     .append(gravityConcern, movePath.gravityConcern)
-                     .append(gravity, movePath.gravity)
-                     .append(steps, movePath.steps)
-                     .append(containedStepTypes, movePath.containedStepTypes)
-                     .isEquals();
+              .append(careful, movePath.careful)
+              .append(gravityConcern, movePath.gravityConcern)
+              .append(gravity, movePath.gravity)
+              .append(steps, movePath.steps)
+              .append(containedStepTypes, movePath.containedStepTypes)
+              .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(entity)
-                     .append(steps)
-                     .append(containedStepTypes)
-                     .append(careful)
-                     .append(gravityConcern)
-                     .append(gravity)
-                     .toHashCode();
+              .append(steps)
+              .append(containedStepTypes)
+              .append(careful)
+              .append(gravityConcern)
+              .append(gravity)
+              .toHashCode();
     }
 
     public void setFlightPathHex(BoardLocation flightPathHex) {

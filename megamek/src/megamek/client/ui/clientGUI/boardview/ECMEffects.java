@@ -1,35 +1,55 @@
 /*
- * MegaMek -
- * Copyright © 2015 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview;
+
+import java.awt.Color;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.ECMInfo;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 
-import java.awt.*;
-import java.util.*;
-import java.util.List;
-
 /**
- * This class contains a collection of <code>ECMInfo</code> instances that all
- * effect a particular location.
- *
- * This is used by BoardView1 to keep track of what kindof E(C)CM is affecting
- * a particular Coords, and determine how to color a Hex based on that
- * information.
+ * This class contains a collection of <code>ECMInfo</code> instances that all effect a particular location.
+ * <p>
+ * This is used by BoardView1 to keep track of what kindof E(C)CM is affecting a particular Coords, and determine how to
+ * color a Hex based on that information.
  *
  * @author arlith
  */
@@ -40,8 +60,8 @@ public class ECMEffects {
     protected LinkedList<ECMInfo> ecmEffects;
 
     /**
-     * Flag that determines if the dominant effect for the location is ECCM.
-     * This is set by the <code>getHexColor()</code> method.
+     * Flag that determines if the dominant effect for the location is ECCM. This is set by the
+     * <code>getHexColor()</code> method.
      */
     protected boolean isECCM = false;
 
@@ -53,6 +73,7 @@ public class ECMEffects {
 
     /**
      * Added another ECMInfo to the effects for a location.
+     *
      * @param info
      */
     public void addECM(ECMInfo info) {
@@ -60,14 +81,12 @@ public class ECMEffects {
     }
 
     /**
-     * Once all of the ECMInfo has been collected for this location, we need to
-     * determine how to color the Hex.  Each player that has an E(C)CM presense
-     * in this hex must have their color represented somehow.  Opposing ECM and
-     * ECCM effects should also be considered.  This method should also update
-     * the isECCM state variable, so we can determine whether ECM or ECCM
-     * shading should be used.
+     * Once all of the ECMInfo has been collected for this location, we need to determine how to color the Hex.  Each
+     * player that has an E(C)CM presense in this hex must have their color represented somehow.  Opposing ECM and ECCM
+     * effects should also be considered.  This method should also update the isECCM state variable, so we can determine
+     * whether ECM or ECCM shading should be used.
      *
-     * @return  The color to use to represent the ECM effects in this hex
+     * @return The color to use to represent the ECM effects in this hex
      */
     public @Nullable Color getHexColor() {
         Color c = null;
@@ -124,10 +143,11 @@ public class ECMEffects {
     }
 
     /**
-     * Given a collection of colors, which represents all of ECM colors for
-     * different players, create an average color to be used.
+     * Given a collection of colors, which represents all of ECM colors for different players, create an average color
+     * to be used.
      *
      * @param colors
+     *
      * @return
      */
     public static Color getColorAverage(List<Color> colors) {
@@ -148,10 +168,10 @@ public class ECMEffects {
     }
 
     /**
-     * Used to determine the color that should be used to indicate ECM effects
-     * for a given player
+     * Used to determine the color that should be used to indicate ECM effects for a given player
      *
      * @param player
+     *
      * @return
      */
     public static Color getECMColor(Player player) {

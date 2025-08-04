@@ -1,22 +1,44 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.jacksonadapters;
+
+import static megamek.common.jacksonadapters.MMUReader.requireFields;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -25,13 +47,6 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import megamek.common.enums.GamePhase;
 import megamek.common.hexarea.HexArea;
 import megamek.server.trigger.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static megamek.common.jacksonadapters.MMUReader.requireFields;
 
 public class TriggerDeserializer extends StdDeserializer<Trigger> {
 
@@ -266,18 +281,19 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
     }
 
     /**
-     * Returns all Strings of a node as a List. The node may be either of the form "node: singleString", in
-     * which case the List will only contain "singleString", or it may be an array node of the form
-     * "node: [ firstString, secondString ]" (or the multi-line form using dashes) in which case the list
-     * contains all the given Strings.
-     * When no allowedStrings are given, no check is performed on the resulting Strings. If at least one
-     * allowedString is given, all found Strings must match the allowedStrings or an exception is thrown.
+     * Returns all Strings of a node as a List. The node may be either of the form "node: singleString", in which case
+     * the List will only contain "singleString", or it may be an array node of the form "node: [ firstString,
+     * secondString ]" (or the multi-line form using dashes) in which case the list contains all the given Strings. When
+     * no allowedStrings are given, no check is performed on the resulting Strings. If at least one allowedString is
+     * given, all found Strings must match the allowedStrings or an exception is thrown.
      *
-     * @throws IllegalArgumentException if allowed Strings are given and any of the Strings is not part
-     * of the allowed Strings
-     * @param node The node to parse
+     * @param node           The node to parse
      * @param allowedStrings All Strings that are allowed as values of the node
+     *
      * @return A list of the given String values of the node
+     *
+     * @throws IllegalArgumentException if allowed Strings are given and any of the Strings is not part of the allowed
+     *                                  Strings
      */
     public static List<String> parseArrayOrSingleNode(JsonNode node, String... allowedStrings) {
         List<String> result = new ArrayList<>();

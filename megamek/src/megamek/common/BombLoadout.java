@@ -35,6 +35,7 @@ package megamek.common;
 import java.util.HashMap;
 
 import megamek.common.BombType.BombTypeEnum;
+
 /**
  * Represents a collection of bombs with their quantities.
  */
@@ -43,13 +44,13 @@ public class BombLoadout extends HashMap<BombTypeEnum, Integer> {
     public BombLoadout() {
         super();
     }
-        
+
     public BombLoadout(BombLoadout bombs) {
         super();
         if (bombs != null) {
             bombs.entrySet().stream()
-                .filter(entry -> entry.getKey() != BombTypeEnum.NONE && entry.getValue() > 0)
-                .forEach(entry -> this.put(entry.getKey(), entry.getValue()));
+                  .filter(entry -> entry.getKey() != BombTypeEnum.NONE && entry.getValue() > 0)
+                  .forEach(entry -> this.put(entry.getKey(), entry.getValue()));
         }
     }
 
@@ -66,9 +67,10 @@ public class BombLoadout extends HashMap<BombTypeEnum, Integer> {
     }
 
     /**
-     * Returns the count of bombs of a given type in this loadout.
-     * If the bomb type does not exist, returns 0.
+     * Returns the count of bombs of a given type in this loadout. If the bomb type does not exist, returns 0.
+     *
      * @param bombType the type of bomb to check
+     *
      * @return the count of bombs of the specified type
      */
     public int getCount(BombTypeEnum bombType) {
@@ -76,11 +78,12 @@ public class BombLoadout extends HashMap<BombTypeEnum, Integer> {
     }
 
     /**
-     * Adds a specified number of bombs of a given type to this loadout.
-     * If the bomb type does not exist, it will be added with the specified count.
-     * If the count is zero or negative, the bomb type will be removed from the loadout.
+     * Adds a specified number of bombs of a given type to this loadout. If the bomb type does not exist, it will be
+     * added with the specified count. If the count is zero or negative, the bomb type will be removed from the
+     * loadout.
+     *
      * @param bombType the type of bomb to add
-     * @param count the number of bombs to add
+     * @param count    the number of bombs to add
      */
     public void addBombs(BombTypeEnum bombType, int count) {
         put(bombType, getCount(bombType) + count);
@@ -88,6 +91,7 @@ public class BombLoadout extends HashMap<BombTypeEnum, Integer> {
 
     /**
      * Returns the total number of bombs in this loadout.
+     *
      * @return total number of bombs
      */
     public int getTotalBombs() {
@@ -96,16 +100,18 @@ public class BombLoadout extends HashMap<BombTypeEnum, Integer> {
 
     /**
      * Returns the total cost of all bombs in this loadout.
+     *
      * @return total cost of bombs
      */
     public int getTotalBombCost() {
         return entrySet().stream()
-            .mapToInt(entry -> entry.getKey().getCost() * entry.getValue())
-            .sum();
+              .mapToInt(entry -> entry.getKey().getCost() * entry.getValue())
+              .sum();
     }
 
     /**
      * Checks if this loadout contains any guided ordnance that requires TAG
+     *
      * @return true if loadout contains ordnance that requires TAG
      */
     public boolean hasGuidedOrdnance() {
@@ -114,6 +120,7 @@ public class BombLoadout extends HashMap<BombTypeEnum, Integer> {
 
     /**
      * Checks if this loadout contains bombs capable of ground attack
+     *
      * @return true if loadout contains any ground-capable bombs
      */
     public boolean canGroundBomb() {
@@ -122,6 +129,7 @@ public class BombLoadout extends HashMap<BombTypeEnum, Integer> {
 
     /**
      * Checks if this loadout contains bombs capable of space attack
+     *
      * @return true if loadout contains any space-capable bombs
      */
     public boolean canSpaceBomb() {

@@ -76,12 +76,12 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
+import megamek.client.ui.buttons.MMToggleButton;
+import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.comboBoxes.MMComboBox;
 import megamek.client.ui.dialogs.helpDialogs.PrincessHelpDialog;
 import megamek.client.ui.enums.DialogResult;
-import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.buttons.MMToggleButton;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.*;
@@ -131,7 +131,8 @@ public class BotConfigDialog extends AbstractButtonDialog
 
     private final JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
     private final MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
-    private final MMToggleButton autoFleeCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.autoFleeCheck"));
+    private final MMToggleButton autoFleeCheck = new TipMMToggleButton(Messages.getString(
+          "BotConfigDialog.autoFleeCheck"));
     private final JLabel fleeEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.homeEdgeLabel"));
     private final MMComboBox<CardinalEdge> fleeEdgeCombo = new TipCombo<>("EdgeToFlee", CardinalEdge.values());
 
@@ -288,15 +289,15 @@ public class BotConfigDialog extends AbstractButtonDialog
         if (client != null) {
             int counter = 0;
             Set<String> playerNames = client.getGame()
-                                            .getPlayersList()
-                                            .stream()
-                                            .map(Player::getName)
-                                            .collect(Collectors.toSet());
+                  .getPlayersList()
+                  .stream()
+                  .map(Player::getName)
+                  .collect(Collectors.toSet());
             while (playerNames.contains(name) && counter < 1000) {
                 counter++;
                 name = "Princess-" +
-                             I18n.normalizeTextToASCII(RandomCallsignGenerator.getInstance().generate(), true)
-                                   .replace(" ", "-");
+                      I18n.normalizeTextToASCII(RandomCallsignGenerator.getInstance().generate(), true)
+                            .replace(" ", "-");
 
             }
         }
@@ -587,20 +588,22 @@ public class BotConfigDialog extends AbstractButtonDialog
      */
     private boolean isChangedPreset() {
         return (chosenPreset != null) &&
-                     (chosenPreset.getSelfPreservationIndex() != selfPreservationSlidebar.getValue() ||
-                            chosenPreset.getHyperAggressionIndex() != aggressionSlidebar.getValue() ||
-                            chosenPreset.getFallShameIndex() != fallShameSlidebar.getValue() ||
-                            chosenPreset.getHerdMentalityIndex() != herdingSlidebar.getValue() ||
-                            chosenPreset.getBraveryIndex() != braverySlidebar.getValue() ||
-                            chosenPreset.getAntiCrowding() != antiCrowdingSlidebar.getValue() ||
-                            chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue() ||
-                            chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected() ||
-                            chosenPreset.isExclusiveHerding() != exclusiveHerdingCheck.isSelected() ||
-                            chosenPreset.getNumberOfEnemiesToConsiderFacing() != numberOfEnemiesToConsiderFacingSlidebar.getValue() ||
-                            chosenPreset.getAllowFacingTolerance() != allowFacingToleranceSlidebar.getValue() ||
-                            chosenPreset.isIgnoreDamageOutput() != ignoreDamageOutputCheck.isSelected() ||
-                            chosenPreset.isExperimental() != experimentalCheck.isSelected());
+              (chosenPreset.getSelfPreservationIndex() != selfPreservationSlidebar.getValue() ||
+                    chosenPreset.getHyperAggressionIndex() != aggressionSlidebar.getValue() ||
+                    chosenPreset.getFallShameIndex() != fallShameSlidebar.getValue() ||
+                    chosenPreset.getHerdMentalityIndex() != herdingSlidebar.getValue() ||
+                    chosenPreset.getBraveryIndex() != braverySlidebar.getValue() ||
+                    chosenPreset.getAntiCrowding() != antiCrowdingSlidebar.getValue() ||
+                    chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue() ||
+                    chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected() ||
+                    chosenPreset.isExclusiveHerding() != exclusiveHerdingCheck.isSelected() ||
+                    chosenPreset.getNumberOfEnemiesToConsiderFacing()
+                          != numberOfEnemiesToConsiderFacingSlidebar.getValue() ||
+                    chosenPreset.getAllowFacingTolerance() != allowFacingToleranceSlidebar.getValue() ||
+                    chosenPreset.isIgnoreDamageOutput() != ignoreDamageOutputCheck.isSelected() ||
+                    chosenPreset.isExperimental() != experimentalCheck.isSelected());
     }
+
     /**
      * Setup the slider panel with a dynamic title that changes when the slider is moved.
      */
@@ -667,10 +670,10 @@ public class BotConfigDialog extends AbstractButtonDialog
         // the connection between the client.bots stored name and the server-given name
         // gets lost. It doesn't hurt to check against all players though.
         boolean playerNameTaken = (client != null) &&
-                                        client.getGame()
-                                              .getPlayersList()
-                                              .stream()
-                                              .anyMatch(p -> p.getName().equals(nameField.getText()));
+              client.getGame()
+                    .getPlayersList()
+                    .stream()
+                    .anyMatch(p -> p.getName().equals(nameField.getText()));
         if (isNewBot && playerNameTaken) {
             JOptionPane.showMessageDialog(getFrame(), Messages.getString("ChatLounge.AlertExistsBot.message"));
         } else {
@@ -1020,8 +1023,8 @@ public class BotConfigDialog extends AbstractButtonDialog
             } else {
                 int unitID = (int) value;
                 Optional<Entity> optEntity = Optional.ofNullable(client)
-                                                   .map(Client::getGame)
-                                                   .map(game -> game.getEntity(unitID));
+                      .map(Client::getGame)
+                      .map(game -> game.getEntity(unitID));
                 if (optEntity.isPresent()) {
                     Entity entity = optEntity.get();
                     content = Messages.getString("BotConfigDialog.unitListEntry", unitID, entity.getShortNameRaw());
@@ -1038,8 +1041,10 @@ public class BotConfigDialog extends AbstractButtonDialog
 
     /**
      * Returns a string with the building information if present.
+     *
      * @param coords Position on the board for possible building
-     * @param board The board to check for building information
+     * @param board  The board to check for building information
+     *
      * @return String with building information if there is any building there
      */
     static String buildingInfoIfPresent(Coords coords, Board board) {

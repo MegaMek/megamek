@@ -1,26 +1,36 @@
 /*
- * Copyright (c) 2020-2024 - The MegaMek Team. All Rights Reserved
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.generator;
-
-import megamek.MMConstants;
-import megamek.common.util.weightedMaps.WeightedIntMap;
-import megamek.logging.MMLogger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,11 +40,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import megamek.MMConstants;
+import megamek.common.util.weightedMaps.WeightedIntMap;
+import megamek.logging.MMLogger;
+
 /**
- * Save File Formatting:
- * callsign, weight
- * Callsign is a String that does not include a ','
- * Weight is an integer weight that is used during generation
+ * Save File Formatting: callsign, weight Callsign is a String that does not include a ',' Weight is an integer weight
+ * that is used during generation
  */
 public class RandomCallsignGenerator {
     private final static RandomCallsignGenerator INSTANCE = new RandomCallsignGenerator();
@@ -75,7 +87,7 @@ public class RandomCallsignGenerator {
         int lineNumber = 0;
 
         try (InputStream is = new FileInputStream(file);
-                Scanner input = new Scanner(is, StandardCharsets.UTF_8)) {
+              Scanner input = new Scanner(is, StandardCharsets.UTF_8)) {
             // skip the first line, as that's the header
             lineNumber++;
             input.nextLine();
@@ -85,11 +97,11 @@ public class RandomCallsignGenerator {
                 String line = input.nextLine();
                 int lastCommaIndex = line.lastIndexOf(",");
                 if (lastCommaIndex == -1 || line.length() == lastCommaIndex + 1) {
-                    logger.debug("Not enough fields in {} on {}",file, lineNumber);
+                    logger.debug("Not enough fields in {} on {}", file, lineNumber);
                     continue;
                 }
 
-                String[] values = {line.substring(0, lastCommaIndex), line.substring(lastCommaIndex + 1)};
+                String[] values = { line.substring(0, lastCommaIndex), line.substring(lastCommaIndex + 1) };
 
                 try {
                     callsigns.put(values[0], Integer.parseInt(values[1].trim()));

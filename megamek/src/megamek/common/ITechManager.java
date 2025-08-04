@@ -1,99 +1,113 @@
 /*
- * MegaMekLab - Copyright (C) 2017 - The MegaMek Team
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import megamek.common.ITechnology.AvailabilityValue;
 import megamek.common.ITechnology.Faction;
-import megamek.common.ITechnology.TechRating;
 
 /**
- * Determines whether a piece of technology (a part, construction option, or entire unit) meets
- * certain constraints such as intro year, tech base, or tech level. Provides methods to define
- * the constraints and options.
- * 
- * @author Neoancient
+ * Determines whether a piece of technology (a part, construction option, or entire unit) meets certain constraints such
+ * as intro year, tech base, or tech level. Provides methods to define the constraints and options.
  *
+ * @author Neoancient
  */
 public interface ITechManager {
-    
+
     /**
-     * @return The maximum intro date for the tech; any tech that appears after this date
-     *         will be excluded.
+     * @return The maximum intro date for the tech; any tech that appears after this date will be excluded.
      */
     int getTechIntroYear();
-    
+
     /**
-     * @return The date to use in determining the current tech level if {@link #useVariableTechLevel()}
-     *         is true.
+     * @return The date to use in determining the current tech level if {@link #useVariableTechLevel()} is true.
      */
     int getGameYear();
-    
+
     /**
-     * Indicates which faction should be used in determining intro and tech level dates. Not all
-     * tech has faction-specific dates. Special consideration is given to F_COMSTAR, which ignores
-     * extinction dates of Inner Sphere tech that is later reintroduced. Clan factions treat
-     * Star-League Era tech that later goes extinct for the Clans as Clan tech up to the extinction
-     * date, providing a transitional stage from the formation of the Clans until early in the Golden
-     * Century.
-     * 
-     * @return One of the F_* faction constants defined in {@link ITechnology}. If &lt; 0, faction
-     *         variations will be ignored.
+     * Indicates which faction should be used in determining intro and tech level dates. Not all tech has
+     * faction-specific dates. Special consideration is given to F_COMSTAR, which ignores extinction dates of Inner
+     * Sphere tech that is later reintroduced. Clan factions treat Star-League Era tech that later goes extinct for the
+     * Clans as Clan tech up to the extinction date, providing a transitional stage from the formation of the Clans
+     * until early in the Golden Century.
+     *
+     * @return One of the F_* faction constants defined in {@link ITechnology}. If &lt; 0, faction variations will be
+     *       ignored.
      */
     Faction getTechFaction();
-    
+
     /**
      * @return True if the tech should have a Clan tech base, or false for Inner Sphere/Periphery
      */
     boolean useClanTechBase();
-    
+
     /**
      * @return True if both Inner Sphere and Clan tech bases are acceptable.
      */
     boolean useMixedTech();
-    
+
     /**
      * @return The maximum allowable tech level.
      */
     SimpleTechLevel getTechLevel();
-    
+
     /**
      * @return If true and {@link #getTechLevel()} is <code>UNOFFICIAL</code>, intro dates are ignored.
      */
     boolean unofficialNoYear();
-    
+
     /**
-     * @return If true, the rules level of a piece of tech will vary as it moves through production
-     *         stages per the rules in IO, pp. 33-4.
+     * @return If true, the rules level of a piece of tech will vary as it moves through production stages per the rules
+     *       in IO, pp. 33-4.
      */
     boolean useVariableTechLevel();
-    
+
     /**
      * @return Whether tech that is no longer in production should be included.
      */
     boolean showExtinct();
-    
+
     default boolean isLegal(ITechnology tech) {
         // Unofficial tech has the option to ignore year availability
         if ((getTechLevel() == SimpleTechLevel.UNOFFICIAL)
-                && unofficialNoYear()) {
+              && unofficialNoYear()) {
             return useMixedTech() || (tech.getTechBase() == ITechnology.TechBase.ALL)
-                    || (useClanTechBase() == tech.isClan());
+                  || (useClanTechBase() == tech.isClan());
         }
 
         Faction faction = getTechFaction();
         boolean clanTech = useClanTechBase();
-        
+
         int isIntroDate = tech.getIntroductionDate(false);
         int clanIntroDate = tech.getIntroductionDate(true);
         boolean introducedIS = (isIntroDate != ITechnology.DATE_NONE) && (isIntroDate <= getTechIntroYear());
@@ -102,17 +116,18 @@ public interface ITechManager {
         boolean extinctClan = tech.isExtinct(getTechIntroYear(), true);
         // A little bit of hard-coded universe detail
         if ((faction == Faction.CS)
-                && extinctIS && (isIntroDate != ITechnology.DATE_NONE)
-                && (tech.getBaseAvailability(ITechnology.getTechEra(getTechIntroYear())).getIndex() < AvailabilityValue.X.getIndex())
-                && isIntroDate <= getTechIntroYear()) {
+              && extinctIS && (isIntroDate != ITechnology.DATE_NONE)
+              && (tech.getBaseAvailability(ITechnology.getTechEra(getTechIntroYear())).getIndex()
+              < AvailabilityValue.X.getIndex())
+              && isIntroDate <= getTechIntroYear()) {
             // ComStar has access to Star League tech that is otherwise extinct in the Inner Sphere as if TH,
             // unless it has an availability of X (which is SLDF Royal equipment).
             extinctIS = false;
             faction = Faction.TH;
         } else if (useClanTechBase() && !introducedClan
-                && tech.isAvailableIn(2787, false, Faction.TH)
-                && !extinctClan && (tech.getExtinctionDate(false) > getGameYear())
-                && (tech.getExtinctionDate(false) != ITechnology.DATE_NONE)) {
+              && tech.isAvailableIn(2787, false, Faction.TH)
+              && !extinctClan && (tech.getExtinctionDate(false) > getGameYear())
+              && (tech.getExtinctionDate(false) != ITechnology.DATE_NONE)) {
             // Transitional period: Clans can treat IS tech as Clan if it was available to TH and
             // has an extinction date that it hasn't reached yet (using specific Clan date if given).
             faction = Faction.TH;
@@ -120,17 +135,17 @@ public interface ITechManager {
         }
         if (useMixedTech()) {
             if ((!introducedIS && !introducedClan)
-                    || (!showExtinct()
-                            && (tech.isExtinct(getTechIntroYear())))) {
+                  || (!showExtinct()
+                  && (tech.isExtinct(getTechIntroYear())))) {
                 return false;
             } else if (useVariableTechLevel()) {
                 // If using tech progression with mixed tech, we pass if either IS or Clan meets the required level
                 return tech.getSimpleLevel(getGameYear(), true, faction).compareTo(getTechLevel()) <= 0
-                        || tech.getSimpleLevel(getGameYear(), false, faction).compareTo(getTechLevel()) <= 0;
+                      || tech.getSimpleLevel(getGameYear(), false, faction).compareTo(getTechLevel()) <= 0;
             }
         } else {
             if (tech.getTechBase() != ITechnology.TechBase.ALL
-                    && clanTech != tech.isClan()) {
+                  && clanTech != tech.isClan()) {
                 return false;
             } else if (clanTech && (!introducedClan || (!showExtinct() && extinctClan))) {
                 return false;

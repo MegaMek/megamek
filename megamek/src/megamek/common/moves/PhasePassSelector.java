@@ -35,6 +35,7 @@ package megamek.common.moves;
 /**
  * PhasePassSelector is a selector/factory which will return a static reference to the correct phase pass based on the
  * move step type.
+ *
  * @author Luana Coppio
  * @since 0.50.07
  */
@@ -77,7 +78,9 @@ class PhasePassSelector {
 
     /**
      * Returns the correct phase pass for  {@link MoveStep} compilation based on the move step type.
+     *
      * @param moveStepType the {@link megamek.common.moves.MovePath.MoveStepType}
+     *
      * @return the phase pass {@link PhasePass} for that specific {@link megamek.common.moves.MovePath.MoveStepType}
      */
     static PhasePass getPhasePass(MovePath.MoveStepType moveStepType) {

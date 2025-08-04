@@ -1,32 +1,52 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.*;
+import megamek.common.Engine;
+import megamek.common.EntityWeightClass;
+import megamek.common.FixedWingSupport;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.WeaponType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.verifier.SupportVeeStructure;
 
 public class FixedWingSupportCostCalculator {
 
     public static double calculateCost(FixedWingSupport fixedWingSupport, CalculationReport costReport,
-            boolean ignoreAmmo) {
+          boolean ignoreAmmo) {
         double[] costs = new double[13 + fixedWingSupport.locations()];
         int i = 0;
         // Chassis cost for Support Vehicles
@@ -59,7 +79,7 @@ public class FixedWingSupportCostCalculator {
         double engineCost = 0.0;
         if (fixedWingSupport.hasEngine()) {
             engineCost = 5000 * fixedWingSupport.getEngine().getWeightEngine(fixedWingSupport)
-                    * Engine.getSVCostMultiplier(fixedWingSupport.getEngine().getEngineType());
+                  * Engine.getSVCostMultiplier(fixedWingSupport.getEngine().getEngineType());
         }
         costs[i++] = engineCost;
 
@@ -67,7 +87,7 @@ public class FixedWingSupportCostCalculator {
         if (fixedWingSupport.hasPatchworkArmor()) {
             for (int loc = 0; loc < fixedWingSupport.locations(); loc++) {
                 costs[i++] = fixedWingSupport.getArmorWeight(loc)
-                        * ArmorType.forEntity(fixedWingSupport, loc).getCost();
+                      * ArmorType.forEntity(fixedWingSupport, loc).getCost();
             }
         } else {
             ArmorType armor = ArmorType.forEntity(fixedWingSupport);
@@ -87,8 +107,8 @@ public class FixedWingSupportCostCalculator {
         costs[structCostIdx] *= techRatingMultiplier;
 
         double freeHeatSinks = (fixedWingSupport.hasEngine()
-                ? fixedWingSupport.getEngine().getWeightFreeEngineHeatSinks()
-                : 0);
+              ? fixedWingSupport.getEngine().getWeightFreeEngineHeatSinks()
+              : 0);
         int sinks = 0;
         double paWeight = 0;
         for (Mounted<?> m : fixedWingSupport.getWeaponList()) {
@@ -100,8 +120,8 @@ public class FixedWingSupportCostCalculator {
         }
         paWeight = Math.ceil(paWeight * 2) / 2;
         if ((fixedWingSupport.hasEngine() && (fixedWingSupport.getEngine().isFusion()
-                || fixedWingSupport.getEngine().getEngineType() == Engine.FISSION))
-                || fixedWingSupport.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+              || fixedWingSupport.getEngine().getEngineType() == Engine.FISSION))
+              || fixedWingSupport.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             paWeight = 0;
         }
         costs[i++] = 20000 * paWeight;
@@ -124,7 +144,7 @@ public class FixedWingSupportCostCalculator {
         costs[i] = -fixedWingSupport.getPriceMultiplier();
 
         String[] systemNames = { "Chassis", "Engine", "Armor", "Final Structural Cost", "Power Amplifiers",
-                "Heat Sinks", "Equipment", "Omni Multiplier", "Tonnage Multiplier" };
+                                 "Heat Sinks", "Equipment", "Omni Multiplier", "Tonnage Multiplier" };
         CostCalculator.fillInReport(costReport, fixedWingSupport, ignoreAmmo, systemNames, 6, cost, costs);
         return Math.round(cost);
     }

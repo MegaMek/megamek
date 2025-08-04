@@ -1,15 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay;
 
@@ -22,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JOptionPane;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -41,8 +62,6 @@ import megamek.common.containers.PlayerIDAndList;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
-
-import javax.swing.JOptionPane;
 
 public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     @Serial
@@ -92,7 +111,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     }
 
     private final ClientGUI clientgui;
-    private Map<PhaseCommand,MegaMekButton> buttons;
+    private Map<PhaseCommand, MegaMekButton> buttons;
 
     private Player player;
     private final Map<BoardLocation, SpecialHexDisplay> plannedAutoHits = new HashMap<>();
@@ -251,7 +270,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     @Override
     public void hexMoused(BoardViewEvent event) {
         if (isIgnoringEvents() || !isMyTurn() || (event.getType() != BoardViewEvent.BOARD_HEX_CLICKED) ||
-                  (event.getButton() != MouseEvent.BUTTON1)) {
+              (event.getButton() != MouseEvent.BUTTON1)) {
             return;
         }
 
@@ -293,12 +312,12 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     }
 
     @Override
-    public void actionPerformed(ActionEvent ev) { }
+    public void actionPerformed(ActionEvent ev) {}
 
     @Override
     public void clear() {
         plannedAutoHits.forEach((location, shd) ->
-                  game().getBoard(location).removeSpecialHexDisplay(location.coords(), shd, true));
+              game().getBoard(location).removeSpecialHexDisplay(location.coords(), shd, true));
         plannedAutoHits.clear();
         player.removeArtyAutoHitHexes();
         setArtyEnabled(allowedNumberOfHexes);
@@ -317,8 +336,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     private void setArtyEnabled(int remainingHexes) {
         buttons.get(ArtyAutoHitCommand.SET_HIT_HEX).setText(
-                Messages.getString("SelectArtyAutoHitHexDisplay." + ArtyAutoHitCommand.SET_HIT_HEX.getCmd(),
-                      remainingHexes));
+              Messages.getString("SelectArtyAutoHitHexDisplay." + ArtyAutoHitCommand.SET_HIT_HEX.getCmd(),
+                    remainingHexes));
         buttons.get(ArtyAutoHitCommand.SET_HIT_HEX).setEnabled(remainingHexes > 0);
     }
 

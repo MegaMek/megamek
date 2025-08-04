@@ -40,6 +40,7 @@ import megamek.common.Hex;
 
 /**
  * Flexible container for board data using a map-based approach with enum keys.
+ *
  * @author Luana Coppio
  */
 public class BoardData extends EntityDataMap<BoardData.Field> {
@@ -78,7 +79,9 @@ public class BoardData extends EntityDataMap<BoardData.Field> {
 
     /**
      * Creates a BoardData from a Board.
+     *
      * @param board The board to extract data from
+     *
      * @return A populated BoardData
      */
     public static BoardData fromBoard(Board board) {
@@ -106,6 +109,7 @@ public class BoardData extends EntityDataMap<BoardData.Field> {
 
     /**
      * Gets the board's hex rows.
+     *
      * @return List of HexRow objects containing the board's hexes
      */
     @SuppressWarnings("unchecked")

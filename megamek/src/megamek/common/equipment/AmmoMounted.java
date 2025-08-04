@@ -1,30 +1,50 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
-package megamek.common.equipment;
 
-import megamek.common.*;
-import megamek.common.BombType.BombTypeEnum;
+package megamek.common.equipment;
 
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
+
+import megamek.common.AmmoType;
+import megamek.common.BombType;
+import megamek.common.BombType.BombTypeEnum;
+import megamek.common.Entity;
+import megamek.common.HandheldWeapon;
+import megamek.common.Mounted;
+import megamek.common.WeaponType;
 
 public class AmmoMounted extends Mounted<AmmoType> {
 
@@ -37,6 +57,7 @@ public class AmmoMounted extends Mounted<AmmoType> {
 
     /**
      * Change the type of ammo in this bin
+     *
      * @param at The new ammo type
      */
     public void changeAmmoType(AmmoType at) {
@@ -56,7 +77,7 @@ public class AmmoMounted extends Mounted<AmmoType> {
         int damagePerShot = getType().getDamagePerShot();
         // Anti-ship EW bomb does no damage but deals a 5-point explosion if LAM bomb bay is hit
         if ((getType() instanceof BombType)
-                && (((BombType) getType()).getBombType() == BombTypeEnum.ASEW)) {
+              && (((BombType) getType()).getBombType() == BombTypeEnum.ASEW)) {
             damagePerShot = 5;
         }
 
@@ -76,7 +97,7 @@ public class AmmoMounted extends Mounted<AmmoType> {
         // shot when critted
         // Dead-Fire LRM's do 2 points of damage per shot when critted.
         if ((mType.contains(AmmoType.Munitions.M_DEAD_FIRE))
-                || (mType.contains(AmmoType.Munitions.M_TANDEM_CHARGE))) {
+              || (mType.contains(AmmoType.Munitions.M_TANDEM_CHARGE))) {
             damagePerShot++;
         } else if (getType().getAmmoType() == AmmoType.AmmoTypeEnum.TASER) {
             damagePerShot = 6;
@@ -84,8 +105,8 @@ public class AmmoMounted extends Mounted<AmmoType> {
 
         if (getType().getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR) {
             if ((mType.contains(AmmoType.Munitions.M_AIRBURST))
-                    || (mType.contains(AmmoType.Munitions.M_FLARE))
-                    || (mType.contains(AmmoType.Munitions.M_SMOKE_WARHEAD))) {
+                  || (mType.contains(AmmoType.Munitions.M_FLARE))
+                  || (mType.contains(AmmoType.Munitions.M_SMOKE_WARHEAD))) {
                 damagePerShot = 1;
             } else {
                 damagePerShot = 2;
@@ -97,6 +118,7 @@ public class AmmoMounted extends Mounted<AmmoType> {
 
     /**
      * Sets the capacity of the ammo bin. Used for units that allocate by shot rather than by ton.
+     *
      * @param capacity The capacity of the ammo bin in tons.
      */
     public void setAmmoCapacity(double capacity) {

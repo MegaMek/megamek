@@ -1,14 +1,37 @@
 /*
- * MegaAero - Copyright (C) 2010 Jason Tighe This program is free software; you
- * can redistribute it and/or modify it under the terms of the GNU General
- * Public License as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * Copyright (C) 2010 Jason Tighe
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
@@ -121,19 +144,17 @@ public class FixedWingSupport extends ConvFighter {
     }
 
     /**
-     * The mass of each point of fuel in kg, based on weight class and engine tech
-     * rating.
+     * The mass of each point of fuel in kg, based on weight class and engine tech rating.
      */
     private static final int[][] KG_PER_FUEL_POINT = {
-            { 50, 30, 23, 15, 13, 10 }, // small
-            { 63, 38, 25, 20, 18, 15 }, // medium
-            { 83, 50, 35, 28, 23, 20 } // large
+          { 50, 30, 23, 15, 13, 10 }, // small
+          { 63, 38, 25, 20, 18, 15 }, // medium
+          { 83, 50, 35, 28, 23, 20 } // large
     };
 
     /**
-     * While most aerospace units measure fuel weight in points per ton, support
-     * vehicles measure
-     * in kg per point. Vehicles that do not require fuel return 0.
+     * While most aerospace units measure fuel weight in points per ton, support vehicles measure in kg per point.
+     * Vehicles that do not require fuel return 0.
      *
      * @return The mass of each point of fuel in kg.
      */
@@ -141,7 +162,8 @@ public class FixedWingSupport extends ConvFighter {
         if (!requiresFuel()) {
             return 0;
         }
-        int kg = KG_PER_FUEL_POINT[getWeightClass() - EntityWeightClass.WEIGHT_SMALL_SUPPORT][getEngineTechRating().getIndex()];
+        int kg = KG_PER_FUEL_POINT[getWeightClass()
+              - EntityWeightClass.WEIGHT_SMALL_SUPPORT][getEngineTechRating().getIndex()];
         if (hasPropChassisMod() || getMovementMode().equals(EntityMovementMode.AIRSHIP)) {
             kg = (int) Math.ceil(kg * 0.75);
         }
@@ -162,44 +184,52 @@ public class FixedWingSupport extends ConvFighter {
     @Override
     public boolean requiresFuel() {
         return !((hasPropChassisMod() || getMovementMode().isAirship())
-                && hasEngine()
-                && (getEngine().isFusion() || getEngine().isFission() || getEngine().isSolar()));
+              && hasEngine()
+              && (getEngine().isFusion() || getEngine().isFission() || getEngine().isSolar()));
     }
 
     private static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(TechRating.B).setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+          .setTechRating(TechRating.B)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_FIXED_WING_SUPPORT_LARGE = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(TechRating.B).setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+          .setTechRating(TechRating.B)
+          .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_AIRSHIP_SUPPORT_SMALL = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(TechRating.A).setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+          .setTechRating(TechRating.A)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_AIRSHIP_SUPPORT_MEDIUM = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(TechRating.B).setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+          .setTechRating(TechRating.B)
+          .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // Availability missing from TO. Using medium
     private static final TechAdvancement TA_AIRSHIP_SUPPORT_LARGE = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(TechRating.C).setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+          .setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     // Also using early spaceflight for intro dates based on common sense.
     private static final TechAdvancement TA_SATELLITE_SMALL = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-            .setTechRating(TechRating.C).setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+          .setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     private static final TechAdvancement TA_SATELLITE_MEDIUM = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-            .setTechRating(TechRating.C).setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+          .setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     private static final TechAdvancement TA_SATELLITE_LARGE = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-            .setTechRating(TechRating.C).setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+          .setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -243,9 +273,9 @@ public class FixedWingSupport extends ConvFighter {
 
         // fixed-wing support craft may also use internal transport bays as bomb bays with Internal Bomb Bay quirk
         maxIntBombPoints = getTransportBays().stream()
-                                 .filter(tb -> tb instanceof CargoBay)
-                                 .mapToInt(tb -> (int) Math.floor(tb.getUnused()))
-                                 .sum();
+              .filter(tb -> tb instanceof CargoBay)
+              .mapToInt(tb -> (int) Math.floor(tb.getUnused()))
+              .sum();
     }
 
     @Override

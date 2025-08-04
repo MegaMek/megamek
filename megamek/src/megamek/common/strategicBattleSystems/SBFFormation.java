@@ -1,29 +1,61 @@
 /*
- * Copyright (c) 2022, 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.strategicBattleSystems;
+
+import static megamek.common.alphaStrike.BattleForceSUA.ARTAC;
+import static megamek.common.alphaStrike.BattleForceSUA.ARTAIS;
+import static megamek.common.alphaStrike.BattleForceSUA.CAP;
+import static megamek.common.alphaStrike.BattleForceSUA.FLK;
+import static megamek.common.alphaStrike.BattleForceSUA.MSL;
+import static megamek.common.alphaStrike.BattleForceSUA.SCAP;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
-import megamek.common.*;
+import megamek.common.BoardLocation;
+import megamek.common.Deployable;
+import megamek.common.Entity;
+import megamek.common.ForceAssignable;
+import megamek.common.Player;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASSpecialAbilityCollection;
 import megamek.common.alphaStrike.ASSpecialAbilityCollector;
@@ -33,14 +65,6 @@ import megamek.common.force.Force;
 import megamek.common.jacksonadapters.SBFFormationDeserializer;
 import megamek.common.jacksonadapters.SBFFormationSerializer;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static megamek.common.alphaStrike.BattleForceSUA.*;
-
 /**
  * Represents a Strategic Battle Force Formation composed of one or more SBF Units.
  */
@@ -48,7 +72,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
 @JsonSerialize(using = SBFFormationSerializer.class)
 @JsonDeserialize(using = SBFFormationDeserializer.class)
 public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFormatter, ForceAssignable,
-        Deployable, Serializable {
+                                     Deployable, Serializable {
 
     private List<SBFUnit> units = new ArrayList<>();
     private String name;
@@ -227,8 +251,8 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     }
 
     /**
-     * Returns the Artillery Special's SBF damage (standard, not homing missile damage).
-     * Returns 0 when the given SPA is not an Artillery SPA.
+     * Returns the Artillery Special's SBF damage (standard, not homing missile damage). Returns 0 when the given SPA is
+     * not an Artillery SPA.
      */
     public static int getSbfArtilleryDamage(BattleForceSUA spa) {
         switch (spa) {
@@ -259,8 +283,8 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     }
 
     /**
-     * Returns the Artillery Special's SBF damage for homing missiles.
-     * Returns 0 when the given SPA is not ARTAIS or ARTAC.
+     * Returns the Artillery Special's SBF damage for homing missiles. Returns 0 when the given SPA is not ARTAIS or
+     * ARTAC.
      */
     public static int getSbfArtilleryHomingDamage(BattleForceSUA spa) {
         return spa.isAnyOf(ARTAIS, ARTAC) ? 2 : 0;
@@ -324,11 +348,12 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     }
 
     /**
-     * Creates the formatted SPA string for the given spa. For turrets this includes everything in that
-     * turret. The given collection can be the specials of the AlphaStrikeElement itself, a turret or
-     * an arc of a large aerospace unit.
+     * Creates the formatted SPA string for the given spa. For turrets this includes everything in that turret. The
+     * given collection can be the specials of the AlphaStrikeElement itself, a turret or an arc of a large aerospace
+     * unit.
      *
      * @param sua The Special Unit Ability to process
+     *
      * @return The complete formatted Special Unit Ability string such as "LRM1/1/-" or "CK15D2".
      */
     private String formatAbility(BattleForceSUA sua) {
@@ -347,7 +372,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
             String result = sua + suaObject.toString();
             BattleForceSUA door = sua.getDoor();
             if (isType(SBFElementType.LA)
-                    && specialAbilities.hasSUA(door) && ((int) specialAbilities.getSUA(door) > 0)) {
+                  && specialAbilities.hasSUA(door) && ((int) specialAbilities.getSUA(door) > 0)) {
                 result += door.toString() + specialAbilities.getSUA(door);
             }
             return result;
@@ -403,11 +428,34 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
 
     @Override
     public String toString() {
-        return "[SBFFormation] " + name + ": " + type + "; SZ" + size + "; TMM" + tmm + "; MV" + movement + movementMode.code
-                + (jumpMove > 0 ? "/" + jumpMove + "j" : "")
-                + (trspMovement != movement || trspMovementMode != movementMode ? "; TRSP" + trspMovement + trspMovementMode.code : "")
-                + "; T" + tactics + "; M" + morale + "; " + pointValue + "@" + skill + "; " + units.size() + " units"
-                + "; " + specialAbilities.getSpecialsDisplayString(this);
+        return "[SBFFormation] "
+              + name
+              + ": "
+              + type
+              + "; SZ"
+              + size
+              + "; TMM"
+              + tmm
+              + "; MV"
+              + movement
+              + movementMode.code
+              + (jumpMove > 0 ? "/" + jumpMove + "j" : "")
+              + (trspMovement != movement || trspMovementMode != movementMode ?
+              "; TRSP" + trspMovement + trspMovementMode.code :
+              "")
+              + "; T"
+              + tactics
+              + "; M"
+              + morale
+              + "; "
+              + pointValue
+              + "@"
+              + skill
+              + "; "
+              + units.size()
+              + " units"
+              + "; "
+              + specialAbilities.getSpecialsDisplayString(this);
     }
 
     @Override
@@ -421,8 +469,8 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     }
 
     /**
-     * Returns the game round that this formation is to be deployed in. Note that deployment technically
-     * counts as happening at the end of that round.
+     * Returns the game round that this formation is to be deployed in. Note that deployment technically counts as
+     * happening at the end of that round.
      *
      * @param deployRound The round this formation deploys in
      */

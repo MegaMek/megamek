@@ -45,6 +45,7 @@ import megamek.common.enums.AimingMode;
 
 /**
  * Flexible container for unit attack data using a map-based approach with enum keys.
+ *
  * @author Luana Coppio
  */
 public class UnitAttack extends EntityDataMap<UnitAttack.Field> {
@@ -90,8 +91,10 @@ public class UnitAttack extends EntityDataMap<UnitAttack.Field> {
 
     /**
      * Creates a UnitAttackMap from an AbstractAttackAction.
+     *
      * @param attackAction The attack action to extract data from
-     * @param game The game reference
+     * @param game         The game reference
+     *
      * @return A populated UnitAttackMap
      */
     public static UnitAttack fromAttackAction(AbstractAttackAction attackAction, Game game) {

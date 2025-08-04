@@ -32,21 +32,22 @@
  */
 package megamek.client.bot;
 
-import megamek.client.bot.princess.RankedPath;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.UnitRole;
-import megamek.logging.MMLogger;
-
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import megamek.client.bot.princess.RankedPath;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.UnitRole;
+import megamek.logging.MMLogger;
+
 /**
- * The GameDatasetLogger class is used to log game data to a file in the log directory
- * with TSV format. It contains every action taken by  every unit in the game and the result of the game state after those actions.
+ * The GameDatasetLogger class is used to log game data to a file in the log directory with TSV format. It contains
+ * every action taken by  every unit in the game and the result of the game state after those actions.
+ *
  * @author Luana Coppio
  */
 
@@ -57,18 +58,37 @@ public class BotLogger {
     /**
      * Appends a game state to the log file.
      *
-     * @param game the game state to append, which contains all the unit informations
+     * @param game       the game state to append, which contains all the unit informations
      * @param withHeader if true, includes a header line with column names in the log file
      */
     public void append(Game game, boolean withHeader) {
         try {
             if (withHeader) {
                 append(
-                    String.join(
-                        "\t",
-                        "ROUND", "PHASE", "PLAYER_ID", "ENTITY_ID", "CHASSIS", "MODEL" ,"TYPE", "ROLE", "X", "Y", "FACING", "MP",
-                        "HEAT", "PRONE", "AIRBORNE", "OFF_BOARD", "CRIPPLED", "DESTROYED", "ARMOR_P", "INTERNAL_P", "DONE"
-                    )
+                      String.join(
+                            "\t",
+                            "ROUND",
+                            "PHASE",
+                            "PLAYER_ID",
+                            "ENTITY_ID",
+                            "CHASSIS",
+                            "MODEL",
+                            "TYPE",
+                            "ROLE",
+                            "X",
+                            "Y",
+                            "FACING",
+                            "MP",
+                            "HEAT",
+                            "PRONE",
+                            "AIRBORNE",
+                            "OFF_BOARD",
+                            "CRIPPLED",
+                            "DESTROYED",
+                            "ARMOR_P",
+                            "INTERNAL_P",
+                            "DONE"
+                      )
                 );
             }
             var currentRound = game.getCurrentRound() + "";
@@ -81,11 +101,17 @@ public class BotLogger {
                 var chassis = entity.getChassis();
                 var model = entity.getModel();
                 var entityId = entity.getId() + "";
-                var coords = entity.getPosition() != null ? entity.getPosition().getX() + "\t" + entity.getPosition().getY() : "-1\t-1";
+                var coords = entity.getPosition() != null ?
+                      entity.getPosition().getX() + "\t" + entity.getPosition().getY() :
+                      "-1\t-1";
                 var facing = entity.getFacing() + "";
-                var mp = entity.getRunMP() > 0 ? LOG_DECIMAL.format(Math.min(1.0, entity.getMpUsedLastRound()/ (double) entity.getRunMP())) : "0.00";
+                var mp = entity.getRunMP() > 0 ?
+                      LOG_DECIMAL.format(Math.min(1.0, entity.getMpUsedLastRound() / (double) entity.getRunMP())) :
+                      "0.00";
                 var isProne = entity.isProne() ? "1" : "0";
-                var heatP = entity.getHeatCapacity() > 0 ? LOG_DECIMAL.format(entity.getHeat() / (double) entity.getHeatCapacity()) : "0.00";
+                var heatP = entity.getHeatCapacity() > 0 ?
+                      LOG_DECIMAL.format(entity.getHeat() / (double) entity.getHeatCapacity()) :
+                      "0.00";
                 var isAirborne = entity.isAirborne() ? "1" : "0";
                 var isOffBoard = entity.isOffBoard() ? "1" : "0";
                 var isDone = entity.isDone() ? "1" : "0";
@@ -97,11 +123,29 @@ public class BotLogger {
                 var role = entity.getRole() == null ? UnitRole.NONE.name() : entity.getRole().name();
 
                 append(
-                    String.join(
-                        "\t",
-                        currentRound, gamePhase, ownerID, entityId, chassis, model, type, role, coords, facing, mp, heatP, isProne,
-                        isAirborne, isOffBoard, isCrippled, isDestroyed, armorP, internalP, isDone
-                    )
+                      String.join(
+                            "\t",
+                            currentRound,
+                            gamePhase,
+                            ownerID,
+                            entityId,
+                            chassis,
+                            model,
+                            type,
+                            role,
+                            coords,
+                            facing,
+                            mp,
+                            heatP,
+                            isProne,
+                            isAirborne,
+                            isOffBoard,
+                            isCrippled,
+                            isDestroyed,
+                            armorP,
+                            internalP,
+                            isDone
+                      )
                 );
             }
 
@@ -116,7 +160,12 @@ public class BotLogger {
                     if (minefield == null) {
                         continue;
                     }
-                    append(String.join("\t", currentRound, gamePhase, "MINEFIELD", minefield.getX() + "", minefield.getY() + ""));
+                    append(String.join("\t",
+                          currentRound,
+                          gamePhase,
+                          "MINEFIELD",
+                          minefield.getX() + "",
+                          minefield.getY() + ""));
                 }
             }
         } catch (Exception ex) {
@@ -126,8 +175,9 @@ public class BotLogger {
 
     /**
      * Appends a move path to the log file
+     *
      * @param rankedPath the RankedPath to append, which contains the path, rank, scores, and entity information
-     * @param index if 0 it will print header, otherwise it wil just add the index here.
+     * @param index      if 0 it will print header, otherwise it wil just add the index here.
      */
     public void append(RankedPath rankedPath, int index) {
         try {
@@ -138,14 +188,22 @@ public class BotLogger {
             var chassis = movePath.getEntity().getChassis();
             var model = movePath.getEntity().getModel();
             var entityId = movePath.getEntity().getId() + "";
-            var from = movePath.getStartCoords() == null ? "-1\t-1" : movePath.getStartCoords().getX() + "\t" + movePath.getStartCoords().getY();
-            var to = movePath.getFinalCoords() == null ? "-1\t-1" : movePath.getFinalCoords().getX() + "\t" + movePath.getFinalCoords().getY();
+            var from = movePath.getStartCoords() == null ?
+                  "-1\t-1" :
+                  movePath.getStartCoords().getX() + "\t" + movePath.getStartCoords().getY();
+            var to = movePath.getFinalCoords() == null ?
+                  "-1\t-1" :
+                  movePath.getFinalCoords().getX() + "\t" + movePath.getFinalCoords().getY();
             var hexesMoved = movePath.getHexesMoved() + "";
             var facing = movePath.getFinalFacing() + "";
             var mpUsed = movePath.getMpUsed() + "";
             var maxMp = movePath.getMaxMP() + "";
-            var usedPercentMp = movePath.getMaxMP() > 0 ? LOG_DECIMAL.format(movePath.getMpUsed() / (double) movePath.getMaxMP()) : "0.00";
-            var heatP = movePath.getEntity().getHeatCapacity() > 0 ? LOG_DECIMAL.format(movePath.getEntity().getHeat() / (double) movePath.getEntity().getHeatCapacity()) : "0.00";
+            var usedPercentMp = movePath.getMaxMP() > 0 ?
+                  LOG_DECIMAL.format(movePath.getMpUsed() / (double) movePath.getMaxMP()) :
+                  "0.00";
+            var heatP = movePath.getEntity().getHeatCapacity() > 0 ?
+                  LOG_DECIMAL.format(movePath.getEntity().getHeat() / (double) movePath.getEntity().getHeatCapacity()) :
+                  "0.00";
             var distanceTravelled = movePath.getDistanceTravelled() + "";
             var isJumping = movePath.isJumping() ? "1" : "0";
             var isProne = movePath.getFinalProne() ? "1" : "0";
@@ -164,16 +222,34 @@ public class BotLogger {
 
             if (index == 0) {
                 append(
-                    String.join(
-                        "\t",
-                        header
-                    )
+                      String.join(
+                            "\t",
+                            header
+                      )
                 );
             }
 
-            var values = new ArrayList<>(List.of(index + "", ownerID, entityId, rank, chassis, model, facing, from, to,
-                  hexesMoved, distanceTravelled,
-                mpUsed, maxMp, usedPercentMp, heatP, armor, internal, isJumping, isProne, isMoveLegal, steps.toString()));
+            var values = new ArrayList<>(List.of(index + "",
+                  ownerID,
+                  entityId,
+                  rank,
+                  chassis,
+                  model,
+                  facing,
+                  from,
+                  to,
+                  hexesMoved,
+                  distanceTravelled,
+                  mpUsed,
+                  maxMp,
+                  usedPercentMp,
+                  heatP,
+                  armor,
+                  internal,
+                  isJumping,
+                  isProne,
+                  isMoveLegal,
+                  steps.toString()));
             for (var key : header) {
                 if (key.endsWith("_SCORE")) {
                     var k = key.substring(0, key.length() - 6);
@@ -181,7 +257,7 @@ public class BotLogger {
                 }
             }
             append(
-                String.join("\t", values)
+                  String.join("\t", values)
             );
         } catch (Exception ex) {
             LOGGER.error(ex, "Error logging entity action {}", ex.getMessage());

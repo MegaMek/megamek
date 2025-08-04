@@ -1,27 +1,47 @@
 /*
- * MegaMek -
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.verifier;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * @author Reinhard Vicinus
@@ -30,7 +50,7 @@ public class TestXMLOption implements TestEntityOption {
 
     @XmlElement(name = "ceilWeight")
     private WeightCeiling weightCeiling = new WeightCeiling();
-    
+
     @XmlElement
     private double maxOverweight = 0.25;
 
@@ -58,10 +78,10 @@ public class TestXMLOption implements TestEntityOption {
 
     @XmlElement
     private boolean showFailedEquip = true;
-    
+
     @XmlElement(name = "showIncorrectIntroYear")
     private boolean showIncorrectIntroYear = true;
-    
+
     @XmlElement(name = "introYearMargin")
     private int introYearMargin = 5;
 
@@ -118,7 +138,7 @@ public class TestXMLOption implements TestEntityOption {
     public TestEntity.Ceil getWeightCeilingLifting() {
         return weightCeiling.lifting;
     }
-    
+
     @Override
     public TestEntity.Ceil getWeightCeilingPowerAmp() {
         return weightCeiling.powerAmp;
@@ -173,12 +193,12 @@ public class TestXMLOption implements TestEntityOption {
     public boolean showFailedEquip() {
         return showFailedEquip;
     }
-    
+
     @Override
     public boolean showIncorrectIntroYear() {
         return showIncorrectIntroYear;
     }
-    
+
     @Override
     public int getIntroYearMargin() {
         return introYearMargin;
@@ -205,39 +225,39 @@ public class TestXMLOption implements TestEntityOption {
 
     public String printOptions() {
         return "Skip: " + skip() + "\n" + "Show Overweighted Entity: "
-                + showOverweightedEntity() + "\n" + "Max Overweight: "
-                + getMaxOverweight() + "\n"
-                + "Show Underweighted Entity: " + showUnderweightedEntity()
-                + "\n" + "Min Underweight: "
-                + getMinUnderweight() + "\n"
-                + "Show bad Armor Placement: " + showCorrectArmor() + "\n"
-                + "Show bad Critical Allocation: " + showCorrectCritical()
-                + "\n" + "Show Failed to Load Equipment: " + showFailedEquip()
-                + "\n" + "Show Incorrect Intro Year: " + showIncorrectIntroYear()
-                + "\n" + "Margin of error for Intro Year: " + getIntroYearMargin()
-                + "\n" + "Weight Ceiling Engine: "
-                + 1 / getWeightCeilingEngine().mult + "\n"
-                + "Weight Ceiling Structure: "
-                + 1 / getWeightCeilingStructure().mult + "\n"
-                + "Weight Ceiling Armor: "
-                + 1 / getWeightCeilingArmor().mult + "\n"
-                + "Weight Ceiling Controls: "
-                + 1 / getWeightCeilingControls().mult + "\n"
-                + "Weight Ceiling Weapons: "
-                + 1 / getWeightCeilingWeapons().mult + "\n"
-                + "Weight Ceiling TargComp: "
-                + 1 / getWeightCeilingTargComp().mult + "\n"
-                + "Weight Ceiling Gyro: "
-                + 1 / getWeightCeilingGyro().mult + "\n"
-                + "Weight Ceiling Turret: "
-                + 1 / getWeightCeilingTurret().mult + "\n"
-                + "Weight Ceiling Lifting:"
-                + 1 / getWeightCeilingLifting().mult + "\n"
-                + "Weight Ceiling PowerAmp: "
-                + 1 / getWeightCeilingPowerAmp().mult + "\n"
-                + "Ignore Failed Equipment: \n" + printIgnoredFailedEquip();
+              + showOverweightedEntity() + "\n" + "Max Overweight: "
+              + getMaxOverweight() + "\n"
+              + "Show Underweighted Entity: " + showUnderweightedEntity()
+              + "\n" + "Min Underweight: "
+              + getMinUnderweight() + "\n"
+              + "Show bad Armor Placement: " + showCorrectArmor() + "\n"
+              + "Show bad Critical Allocation: " + showCorrectCritical()
+              + "\n" + "Show Failed to Load Equipment: " + showFailedEquip()
+              + "\n" + "Show Incorrect Intro Year: " + showIncorrectIntroYear()
+              + "\n" + "Margin of error for Intro Year: " + getIntroYearMargin()
+              + "\n" + "Weight Ceiling Engine: "
+              + 1 / getWeightCeilingEngine().mult + "\n"
+              + "Weight Ceiling Structure: "
+              + 1 / getWeightCeilingStructure().mult + "\n"
+              + "Weight Ceiling Armor: "
+              + 1 / getWeightCeilingArmor().mult + "\n"
+              + "Weight Ceiling Controls: "
+              + 1 / getWeightCeilingControls().mult + "\n"
+              + "Weight Ceiling Weapons: "
+              + 1 / getWeightCeilingWeapons().mult + "\n"
+              + "Weight Ceiling TargComp: "
+              + 1 / getWeightCeilingTargComp().mult + "\n"
+              + "Weight Ceiling Gyro: "
+              + 1 / getWeightCeilingGyro().mult + "\n"
+              + "Weight Ceiling Turret: "
+              + 1 / getWeightCeilingTurret().mult + "\n"
+              + "Weight Ceiling Lifting:"
+              + 1 / getWeightCeilingLifting().mult + "\n"
+              + "Weight Ceiling PowerAmp: "
+              + 1 / getWeightCeilingPowerAmp().mult + "\n"
+              + "Ignore Failed Equipment: \n" + printIgnoredFailedEquip();
     }
-    
+
     /**
      * JAXB helper class for the ceilWeight tag.
      */
@@ -276,7 +296,7 @@ public class TestXMLOption implements TestEntityOption {
         WeightCeiling() {
         }
     }
-    
+
     /**
      * An adapter that unmarshals a comma-separated string of values into a list of values.
      */
@@ -291,13 +311,13 @@ public class TestXMLOption implements TestEntityOption {
         public List<String> unmarshal(final String v) throws Exception {
             List<String> list = new ArrayList<>();
             StringTokenizer st = new StringTokenizer(v, ",");
-            
+
             while (st.hasMoreTokens()) {
                 list.add(st.nextToken().trim());
             }
-            
+
             return list;
         }
-        
+
     }
 }

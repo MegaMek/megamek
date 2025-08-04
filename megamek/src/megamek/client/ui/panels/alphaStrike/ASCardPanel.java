@@ -1,34 +1,50 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.alphaStrike;
+
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import javax.swing.JComponent;
 
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.cardDrawer.ASCard;
 import megamek.common.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
- * This is a JComponent that displays only an AlphaStrike unit card. It supports setting a font and scale
- * for the card to use. The AlphaStrike element to display can be changed after construction and it may be
- * null.
+ * This is a JComponent that displays only an AlphaStrike unit card. It supports setting a font and scale for the card
+ * to use. The AlphaStrike element to display can be changed after construction and it may be null.
  */
 public final class ASCardPanel extends JComponent {
 
@@ -39,10 +55,10 @@ public final class ASCardPanel extends JComponent {
     private ASCardDisplayable element;
 
     /**
-     * Construct a card panel without an AlphaStrike element to display. The created card will show
-     * that there is no element to display but will still be a normal card.
+     * Construct a card panel without an AlphaStrike element to display. The created card will show that there is no
+     * element to display but will still be a normal card.
      */
-    public ASCardPanel() { }
+    public ASCardPanel() {}
 
     /**
      * Construct a card panel with the given AlphaStrike element to display.
@@ -74,9 +90,9 @@ public final class ASCardPanel extends JComponent {
     }
 
     /**
-     * Set the card to be scaled with the given scale. Values smaller than 1 result in a smaller card
-     * while values larger than 1 in a greater than normal card. At scale = 1, the card will be the
-     * standard size of 1050 x 750 (1050 x 1500 for Large Aerospace in portrait arrangement).
+     * Set the card to be scaled with the given scale. Values smaller than 1 result in a smaller card while values
+     * larger than 1 in a greater than normal card. At scale = 1, the card will be the standard size of 1050 x 750 (1050
+     * x 1500 for Large Aerospace in portrait arrangement).
      *
      * @param scale The scale to use for drawing the card
      */
@@ -86,8 +102,7 @@ public final class ASCardPanel extends JComponent {
     }
 
     /**
-     * Returns the image of the card. If a scale other than 1 has been set before, the image will
-     * be sized accordingly.
+     * Returns the image of the card. If a scale other than 1 has been set before, the image will be sized accordingly.
      *
      * @return The (scaled) card image.
      */

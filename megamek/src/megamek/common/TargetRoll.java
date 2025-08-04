@@ -1,36 +1,49 @@
 /*
  * Copyright (c) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 /**
- * Keeps track of a target for a roll. Allows adding modifiers with
- * descriptions, including appending the modifiers in another TargetRoll.
- * Intended for rolls like a to-hit roll or a piloting skill check.
+ * Keeps track of a target for a roll. Allows adding modifiers with descriptions, including appending the modifiers in
+ * another TargetRoll. Intended for rolls like a to-hit roll or a piloting skill check.
  *
  * @author Ben
  */
@@ -42,8 +55,10 @@ public class TargetRoll implements Serializable {
     public static final int AUTOMATIC_FAIL = Integer.MAX_VALUE - 1;
     public static final int AUTOMATIC_SUCCESS = Integer.MIN_VALUE;
 
-    /** The CHECK_FALSE value is returned when a function that normally would return a target roll number
-     determines that the roll wasn't needed after all. */
+    /**
+     * The CHECK_FALSE value is returned when a function that normally would return a target roll number determines that
+     * the roll wasn't needed after all.
+     */
     public static final int CHECK_FALSE = Integer.MIN_VALUE + 1;
 
     private static final Set<Integer> FINALIZERS = Set.of(IMPOSSIBLE, AUTOMATIC_FAIL, AUTOMATIC_SUCCESS, CHECK_FALSE);
@@ -51,8 +66,8 @@ public class TargetRoll implements Serializable {
     private static final Set<Integer> AUTOS_AND_IMPOSSIBLE = Set.of(IMPOSSIBLE, AUTOMATIC_FAIL, AUTOMATIC_SUCCESS);
 
     /**
-     * This list of roll modifiers. Always call recalculate() after modifying it. This is clearly an unsafe
-     * way to implement it. It *may be* done like that for performance reasons for Princess.
+     * This list of roll modifiers. Always call recalculate() after modifying it. This is clearly an unsafe way to
+     * implement it. It *may be* done like that for performance reasons for Princess.
      */
     private final List<TargetRollModifier> modifiers = new ArrayList<>();
     private int total;
@@ -60,7 +75,7 @@ public class TargetRoll implements Serializable {
     /**
      * Creates a new, empty TargetRoll. This is by itself not yet useful.
      */
-    public TargetRoll() { }
+    public TargetRoll() {}
 
     /**
      * Creates a new TargetRoll with a base value and desc
@@ -124,7 +139,7 @@ public class TargetRoll implements Serializable {
                 allDesc.append(modifier.getValue());
             } else {
                 allDesc.append((modifier.getValue() < 0 ? " - " : " + "))
-                        .append(Math.abs(modifier.getValue()));
+                      .append(Math.abs(modifier.getValue()));
             }
             allDesc.append(" (").append(modifier.getDesc()).append(")");
         }
@@ -134,7 +149,7 @@ public class TargetRoll implements Serializable {
 
     /**
      * @return False when this TargetRoll has any finalizers (automatic fail or success, impossible or no check
-     * required). True otherwise (even if the modifiers add up to very high or low values).
+     *       required). True otherwise (even if the modifiers add up to very high or low values).
      */
     public boolean needsRoll() {
         return !isFinalizer(total);
@@ -176,7 +191,7 @@ public class TargetRoll implements Serializable {
      * Adds a new cumulative modifier of the given value and description.
      *
      * @param value The modifier value, e.g. +2 or -1
-     * @param desc A short description of the modifier
+     * @param desc  A short description of the modifier
      */
     public void addModifier(int value, String desc) {
         addModifier(new TargetRollModifier(value, desc));
@@ -190,8 +205,8 @@ public class TargetRoll implements Serializable {
     /**
      * Adds a new modifier of the given value and description, which is or is not cumulative.
      *
-     * @param value The modifier value, e.g. +2 or -1
-     * @param desc A short description of the modifier
+     * @param value      The modifier value, e.g. +2 or -1
+     * @param desc       A short description of the modifier
      * @param cumulative True when this modifier is cumulative
      */
     public void addModifier(int value, String desc, boolean cumulative) {
@@ -209,6 +224,7 @@ public class TargetRoll implements Serializable {
 
     /**
      * Base removal method
+     *
      * @param modifier
      */
     public void removeModifier(TargetRollModifier modifier) {
@@ -217,9 +233,10 @@ public class TargetRoll implements Serializable {
     }
 
     /**
-     * Attempts to remove and return (if needed) the first mod that matches
-     * the provided string
+     * Attempts to remove and return (if needed) the first mod that matches the provided string
+     *
      * @param fragment of mod description to match
+     *
      * @return
      */
     public TargetRollModifier removeModifier(String fragment) {
@@ -228,9 +245,10 @@ public class TargetRoll implements Serializable {
     }
 
     /**
-     * Attempts to remove and return (if needed) the first mod that matches
-     * each provided string
+     * Attempts to remove and return (if needed) the first mod that matches each provided string
+     *
      * @param fragments List of strings / regexes to match
+     *
      * @return List of mods that are matched and removed
      */
     public List<TargetRollModifier> removeModifiers(List<String> fragments) {
@@ -239,8 +257,8 @@ public class TargetRoll implements Serializable {
         for (String fragment : fragments) {
             Pattern pattern = Pattern.compile(fragment);
             int index = IntStream.range(0, modifiers.size())
-                .filter(i -> pattern.matcher(modifiers.get(i).getDesc()).find())
-                .findFirst().orElse(-1);
+                  .filter(i -> pattern.matcher(modifiers.get(i).getDesc()).find())
+                  .findFirst().orElse(-1);
             if (index != -1) {
                 mod = modifiers.get(index);
                 matches.add(mod);
@@ -259,10 +277,9 @@ public class TargetRoll implements Serializable {
     }
 
     /**
-     * Append another TargetRoll to the end of this one, possibly discarding non-cumulative modifier
-     * in the other one.
+     * Append another TargetRoll to the end of this one, possibly discarding non-cumulative modifier in the other one.
      *
-     * @param other the TargetRoll to append
+     * @param other               the TargetRoll to append
      * @param appendNonCumulative True to append all modifiers, false to append only cumulative modifiers
      */
     public void append(TargetRoll other, boolean appendNonCumulative) {
@@ -283,8 +300,7 @@ public class TargetRoll implements Serializable {
     }
 
     /**
-     * Remove all automatic failures or successes, and possibly also remove
-     * impossibles.
+     * Remove all automatic failures or successes, and possibly also remove impossibles.
      *
      * @param removeImpossibles When true, IMPOSSIBLEs are also removed
      */
@@ -335,8 +351,8 @@ public class TargetRoll implements Serializable {
 
     /**
      * @return True when this roll cannot succeed regardless of numbers, i.e. is impossible or automatically fails.
-     * Returns false otherwise, i.e. when the roll does not contain these finalizing conditions,
-     * even if the total roll modifier is above 12.
+     *       Returns false otherwise, i.e. when the roll does not contain these finalizing conditions, even if the total
+     *       roll modifier is above 12.
      */
     public boolean cannotSucceed() {
         return (getValue() == IMPOSSIBLE) || (getValue() == AUTOMATIC_FAIL);

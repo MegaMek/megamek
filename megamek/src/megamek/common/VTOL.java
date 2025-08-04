@@ -1,32 +1,49 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
-import megamek.common.BombType.BombTypeEnum;
+import static megamek.common.Terrains.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static megamek.common.Terrains.*;
 
 /**
  * @author Andrew Hunter VTOLs are helicopters (more or less.)
@@ -42,9 +59,9 @@ public class VTOL extends Tank implements IBomber {
     // VTOLs can have at most one (chin) turret, sponsons don't count and dual
     // turrets aren't allowed.
     private final static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
-            "RO", "TU" };
+                                                     "RO", "TU" };
     private static final String[] LOCATION_NAMES = { "Body", "Front", "Right",
-            "Left", "Rear", "Rotor", "Turret" };
+                                                     "Left", "Rear", "Rotor", "Turret" };
 
     // critical hits
     public static final int CRIT_COPILOT = 15;
@@ -91,8 +108,8 @@ public class VTOL extends Tank implements IBomber {
 
     @Override
     public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType,
-                                      MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos,
-                                      boolean isInfantry, int distance) {
+          MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos,
+          boolean isInfantry, int distance) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: VTOLs can't skid");
         return roll;
@@ -162,14 +179,14 @@ public class VTOL extends Tank implements IBomber {
             int loc_is = this.getInternal(loc);
             loc++;
             retval = (loc_is != IArmorState.ARMOR_DOOMED)
-                    && (loc_is != IArmorState.ARMOR_DESTROYED);
+                  && (loc_is != IArmorState.ARMOR_DESTROYED);
         }
         return retval;
     }
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-            int cover) {
+          int cover) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         if (side == ToHitData.SIDE_LEFT) {
@@ -217,7 +234,7 @@ public class VTOL extends Tank implements IBomber {
                     break;
                 case 8:
                     if (bSide
-                            && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
+                          && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
                     }
                     break;
@@ -234,7 +251,7 @@ public class VTOL extends Tank implements IBomber {
                     break;
                 case 12:
                     rv = new HitData(LOC_ROTOR, false, HitData.EFFECT_CRITICAL
-                            | HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                          | HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
             }
         }
         if (table == ToHitData.HIT_SWARM) {
@@ -251,7 +268,7 @@ public class VTOL extends Tank implements IBomber {
     @Override
     public boolean isBomber() {
         return (game != null)
-                && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS);
+              && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS);
     }
 
     @Override
@@ -353,14 +370,13 @@ public class VTOL extends Tank implements IBomber {
     }
 
     /**
-     * get the type of critical caused by a critical roll, taking account of
-     * existing damage
+     * get the type of critical caused by a critical roll, taking account of existing damage
      *
      * @param roll          the final dice roll
      * @param loc           the hit location
-     * @param damagedByFire whether or not the critical was caused by fire,
-     *                      which is distinct from damage for unofficial
+     * @param damagedByFire whether or not the critical was caused by fire, which is distinct from damage for unofficial
      *                      thresholding purposes.
+     *
      * @return a critical type
      */
     @Override
@@ -369,8 +385,8 @@ public class VTOL extends Tank implements IBomber {
             roll = 12;
         }
         if ((roll < 6)
-                || (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
-                        && !getOverThresh() && !damagedByFire)) {
+              || (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
+              && !getOverThresh() && !damagedByFire)) {
             return CRIT_NONE;
         }
         for (int i = 0; i < 2; i++) {
@@ -388,8 +404,8 @@ public class VTOL extends Tank implements IBomber {
                     case 7:
                         for (Mounted<?> m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isJammed() && !m.isHit()
-                                    && !m.jammedThisPhase()) {
+                                  && !m.isJammed() && !m.isHit()
+                                  && !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
@@ -414,7 +430,7 @@ public class VTOL extends Tank implements IBomber {
                     case 11:
                         for (Mounted<?> m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isHit()) {
+                                  && !m.isHit()) {
                                 return CRIT_WEAPON_DESTROYED;
                             }
                         }
@@ -432,8 +448,8 @@ public class VTOL extends Tank implements IBomber {
                     case 7:
                         for (Mounted<?> m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isJammed() && !m.isHit()
-                                    && !m.jammedThisPhase()) {
+                                  && !m.isJammed() && !m.isHit()
+                                  && !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
@@ -448,7 +464,7 @@ public class VTOL extends Tank implements IBomber {
                     case 9:
                         for (Mounted<?> m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isHit()) {
+                                  && !m.isHit()) {
                                 return CRIT_WEAPON_DESTROYED;
                             }
                         }
@@ -497,8 +513,8 @@ public class VTOL extends Tank implements IBomber {
                     case 8:
                         for (Mounted<?> m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isJammed() && !m.isHit()
-                                    && !m.jammedThisPhase()) {
+                                  && !m.isJammed() && !m.isHit()
+                                  && !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
@@ -507,7 +523,7 @@ public class VTOL extends Tank implements IBomber {
                     case 10:
                         for (Mounted<?> m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isHit()) {
+                                  && !m.isHit()) {
                                 return CRIT_WEAPON_DESTROYED;
                             }
                         }
@@ -525,8 +541,8 @@ public class VTOL extends Tank implements IBomber {
                     case 6:
                         for (Mounted<?> m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isJammed() && !m.isHit()
-                                    && !m.jammedThisPhase()) {
+                                  && !m.isJammed() && !m.isHit()
+                                  && !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
@@ -549,7 +565,7 @@ public class VTOL extends Tank implements IBomber {
                         // 4-6: attacker chooses which weapon gets destroyed
                         for (Mounted<?> m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isHit()) {
+                                  && !m.isHit()) {
                                 return CRIT_WEAPON_DESTROYED;
                             }
                         }
@@ -593,7 +609,7 @@ public class VTOL extends Tank implements IBomber {
 
         // VDNI bonus?
         if (hasAbility(OptionsConstants.MD_VDNI)
-                && !hasAbility(OptionsConstants.MD_BVDNI)) {
+              && !hasAbility(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(-1, "VDNI");
         }
 
@@ -661,7 +677,7 @@ public class VTOL extends Tank implements IBomber {
     public MPBoosters getMPBoosters(boolean onlyArmed) {
         for (Mounted<?> m : getEquipment()) {
             if (!m.isInoperable() && (m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_MASC)) {
+                  && m.getType().hasFlag(MiscType.F_MASC)) {
                 return MPBoosters.VTOL_JET_BOOSTER;
             }
         }
@@ -670,11 +686,11 @@ public class VTOL extends Tank implements IBomber {
 
     @Override
     public PilotingRollData checkSideSlip(EntityMovementType moveType,
-            Hex prevHex, EntityMovementType overallMoveType,
-            MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
-            Coords curPos, int distance, boolean speedBooster) {
+          Hex prevHex, EntityMovementType overallMoveType,
+          MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
+          Coords curPos, int distance, boolean speedBooster) {
         PilotingRollData roll = super.checkSideSlip(moveType, prevHex, overallMoveType, prevStep, prevFacing,
-                curFacing, lastPos, curPos, distance, speedBooster);
+              curFacing, lastPos, curPos, distance, speedBooster);
         if (speedBooster) {
             roll.addModifier(3, "used VTOL Jet Booster");
         }
@@ -703,9 +719,11 @@ public class VTOL extends Tank implements IBomber {
 
     public static TechAdvancement getChinTurretTA() {
         return new TechAdvancement(TechBase.ALL)
-                .setAdvancement(DATE_PS, 3079, 3080).setApproximate(false, true, false)
-                .setTechRating(TechRating.B).setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.D)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+              .setAdvancement(DATE_PS, 3079, 3080)
+              .setApproximate(false, true, false)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.D)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     @Override

@@ -1,37 +1,54 @@
 /*
  * Copyright (c) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.loaders;
 
 import megamek.common.Entity;
 
 /**
- * Classes implementing this interface are expected to be able to return a mek
- * with the getMek
- * method or throw an EntityLoadingException. Implementing classes will probably
- * be constructed with
- * a file, or file location as an argument.
+ * Classes implementing this interface are expected to be able to return a mek with the getMek method or throw an
+ * EntityLoadingException. Implementing classes will probably be constructed with a file, or file location as an
+ * argument.
  *
  * @author Ben
  * @since June 21, 2002, 11:03 AM
  */
 public interface IMekLoader {
     /**
-     * @return A valid mek, matching the file to the best of MegaMek's current
-     *         capabilities
-     * @throws Exception when the file type isn't understood or the file can't be
-     *                   parsed.
+     * @return A valid mek, matching the file to the best of MegaMek's current capabilities
+     *
+     * @throws Exception when the file type isn't understood or the file can't be parsed.
      */
     Entity getEntity() throws Exception;
 }

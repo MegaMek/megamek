@@ -1,30 +1,57 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.actions;
 
-import megamek.common.*;
+import java.io.Serializable;
+import java.util.Vector;
+
+import megamek.common.Board;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.EquipmentType;
+import megamek.common.Game;
+import megamek.common.RangeType;
+import megamek.common.Targetable;
+import megamek.common.WeaponType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
-import java.io.Serializable;
-import java.util.Vector;
-
 /**
- * ArtilleryAttackAction Holds the data needed for an artillery attack in
- * flight.
+ * ArtilleryAttackAction Holds the data needed for an artillery attack in flight.
  */
 public class ArtilleryAttackAction extends WeaponAttackAction implements Serializable {
     private static final long serialVersionUID = -3893844894076028005L;
@@ -36,7 +63,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
     private Coords oldTargetCoords;
 
     public ArtilleryAttackAction(int entityId, int targetType, int targetId,
-                                 int weaponId, Game game) {
+          int weaponId, Game game) {
         super(entityId, targetType, targetId, weaponId);
         playerId = game.getEntity(entityId).getOwnerId();
         firingCoords = game.getEntity(entityId).getPosition();
@@ -46,7 +73,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
         WeaponMounted mounted = (WeaponMounted) getEntity(game).getEquipment(weaponId);
         // Remove altitude from Artillery Flak and ADA distance calcs
         if ((target != null) && target.isAirborne() && (mounted.getLinkedAmmo() != null)
-                  && mounted.getLinkedAmmo().getType().countsAsFlak()) {
+              && mounted.getLinkedAmmo().getType().countsAsFlak()) {
             turnsTilHit = 0;
             return;
         }
@@ -75,8 +102,9 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
         // Capital missiles fired at bearings-only ranges will act like artillery and use this aaa.
         // An aaa will only be returned if the weapon is set to the correct mode
         if (mounted.isInBearingsOnlyMode()
-                && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
-            this.launchVelocity = game.getOptions().intOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
+              && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+            this.launchVelocity = game.getOptions()
+                  .intOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
             turnsTilHit = distance / launchVelocity;
             return;
         }
@@ -153,6 +181,6 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
     }
 
     public void decrementTurnsTilHit(int numTurns) {
-        this.turnsTilHit-=numTurns;
+        this.turnsTilHit -= numTurns;
     }
 }

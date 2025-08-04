@@ -1,64 +1,80 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (c) 2021, 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client.ui.util;
 
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.function.Supplier;
 
-import megamek.client.ui.clientGUI.*;
 import megamek.client.ui.boardeditor.BoardEditorPanel;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.IClientGUI;
 
 /**
- * This class implements a KeyEventDispatcher, which handles all generated
- * KeyEvents. If the KeyEvent correspondes to a registerd hotkey, the action for
- * that hotkey will be used to consume the event otherwise the event will be
- * dispatched as normal.
- *
- * The idea is that the system is split into two: keys can be bound to string
- * commands, and string commands can be bound to CommandAction
- * objects, which are a simple class that implements an "actionPerformed"
- * method. The class that implements the CommandAction creates the
- * object and registers it, agnostic to what key is bound to the command. Then,
- * somewhere else (ie; a file) can specify what keys are bound to what string
- * commands. The possible string commands are specified in
- * KeyCommandBind.
- *
- * There are three things that need to be done to create a key binding. First, a
- * command must exist, defined in KeyCommandBind. Then, the command
- * must be bound to a key in the keybind XML file (mmconf/defaultKeyBinds.xml by
- * default). Finally, a CommandAction needs to be registered
- * somewhere.
+ * This class implements a KeyEventDispatcher, which handles all generated KeyEvents. If the KeyEvent correspondes to a
+ * registerd hotkey, the action for that hotkey will be used to consume the event otherwise the event will be dispatched
+ * as normal.
+ * <p>
+ * The idea is that the system is split into two: keys can be bound to string commands, and string commands can be bound
+ * to CommandAction objects, which are a simple class that implements an "actionPerformed" method. The class that
+ * implements the CommandAction creates the object and registers it, agnostic to what key is bound to the command. Then,
+ * somewhere else (ie; a file) can specify what keys are bound to what string commands. The possible string commands are
+ * specified in KeyCommandBind.
+ * <p>
+ * There are three things that need to be done to create a key binding. First, a command must exist, defined in
+ * KeyCommandBind. Then, the command must be bound to a key in the keybind XML file (mmconf/defaultKeyBinds.xml by
+ * default). Finally, a CommandAction needs to be registered somewhere.
  *
  * @author arlith
  */
 public class MegaMekController implements KeyEventDispatcher {
 
     /**
-     * This is an interface for a parameter-less method without a return value. It is used for the methods
-     * that are called as a result of a keybind being pressed or released.
-     *
-     * There is no predefined functional interface for this in the java libraries and using the
-     * equivalent Runnable is discouraged as it is suggestive of concurrency code which this is not about.
+     * This is an interface for a parameter-less method without a return value. It is used for the methods that are
+     * called as a result of a keybind being pressed or released.
+     * <p>
+     * There is no predefined functional interface for this in the java libraries and using the equivalent Runnable is
+     * discouraged as it is suggestive of concurrency code which this is not about.
      */
     @FunctionalInterface
     public interface KeyBindAction {
@@ -77,8 +93,7 @@ public class MegaMekController implements KeyEventDispatcher {
     protected Map<String, ArrayList<CommandAction>> cmdActionMap;
 
     /**
-     * Timer for repeating commands for key presses. This is necessary to
-     * override the default key repeat delay.
+     * Timer for repeating commands for key presses. This is necessary to override the default key repeat delay.
      */
     protected Timer keyRepeatTimer;
 
@@ -100,8 +115,8 @@ public class MegaMekController implements KeyEventDispatcher {
 
         // Don't consider hotkeys when the clientgui has a dialog visible
         if (((clientgui != null) && clientgui.shouldIgnoreHotKeys())
-                || ((boardEditor != null) && boardEditor.shouldIgnoreHotKeys())
-                || ignoreKeyPresses) {
+              || ((boardEditor != null) && boardEditor.shouldIgnoreHotKeys())
+              || ignoreKeyPresses) {
             return false;
         }
 
@@ -160,10 +175,10 @@ public class MegaMekController implements KeyEventDispatcher {
     }
 
     /**
-     * Registers an action to a keybind given as the cmd parameter (e.g. KeyCommandBind.SCROLL_NORTH.cmd).
-     * For every press of the bound key, the action will be called.
+     * Registers an action to a keybind given as the cmd parameter (e.g. KeyCommandBind.SCROLL_NORTH.cmd). For every
+     * press of the bound key, the action will be called.
      *
-     * @param cmd The keycommand string, obtained through KeyCommandBind
+     * @param cmd    The keycommand string, obtained through KeyCommandBind
      * @param action The CommandAction
      */
     public synchronized void registerCommandAction(String cmd, CommandAction action) {
@@ -179,21 +194,21 @@ public class MegaMekController implements KeyEventDispatcher {
 
     /**
      * Registers an action to a keybind, e.g. {@link KeyCommandBind#SCROLL_NORTH}. The necessary CommandAction is
-     * constructed from the given parameters. The given performer is called when the key is
-     * pressed if the given receiver's shouldReceiveKeyCommands() method check returns true.
-     * Note that in this case, the keybind is considered consumed even if this receiver doesn't do
-     * anything with it. For a keybind to be passed on to other receivers, this receiver's
-     * shouldPerformKeyCommands() must return false.
+     * constructed from the given parameters. The given performer is called when the key is pressed if the given
+     * receiver's shouldReceiveKeyCommands() method check returns true. Note that in this case, the keybind is
+     * considered consumed even if this receiver doesn't do anything with it. For a keybind to be passed on to other
+     * receivers, this receiver's shouldPerformKeyCommands() must return false.
      *
      * @param commandBind The KeyCommandBind
-     * @param receiver The {@link KeyBindReceiver} that receives this keypress
-     * @param performer A method that takes action upon the keypress
+     * @param receiver    The {@link KeyBindReceiver} that receives this keypress
+     * @param performer   A method that takes action upon the keypress
+     *
      * @see KeyCommandBind
      * @see KeyBindReceiver
      * @see KeyBindAction
      */
     public void registerCommandAction(KeyCommandBind commandBind,
-                                      KeyBindReceiver receiver, KeyBindAction performer) {
+          KeyBindReceiver receiver, KeyBindAction performer) {
         registerCommandAction(commandBind.cmd, new CommandAction() {
             @Override
             public boolean shouldReceiveAction() {
@@ -208,22 +223,20 @@ public class MegaMekController implements KeyEventDispatcher {
     }
 
     /**
-     * Registers an action to a keybind, e.g. KeyCommandBind.SCROLL_NORTH. The necessary CommandAction is
-     * constructed from the given method references. The given performer will be called when the key is
-     * pressed if the given shouldPerform check returns true.
-     * Note that in this case, the keybind is considered consumed even if this receiver doesn't do
-     * anything with it. For a keybind to be passed on to other receivers, this receiver's
-     * shouldPerform must return false.
-     * Additionally, the given releaseAction is called when the pressed key is released again (also, only
-     * when shouldPerform allows it).
+     * Registers an action to a keybind, e.g. KeyCommandBind.SCROLL_NORTH. The necessary CommandAction is constructed
+     * from the given method references. The given performer will be called when the key is pressed if the given
+     * shouldPerform check returns true. Note that in this case, the keybind is considered consumed even if this
+     * receiver doesn't do anything with it. For a keybind to be passed on to other receivers, this receiver's
+     * shouldPerform must return false. Additionally, the given releaseAction is called when the pressed key is released
+     * again (also, only when shouldPerform allows it).
      *
-     * @param commandBind The KeyCommandBind
+     * @param commandBind   The KeyCommandBind
      * @param shouldPerform A method that should return true when the performer is allowed to take action
-     * @param performer A method that takes action upon the keypress
+     * @param performer     A method that takes action upon the keypress
      * @param releaseAction A method that takes action when the key is released again
      */
     public void registerCommandAction(KeyCommandBind commandBind, Supplier<Boolean> shouldPerform,
-                                      KeyBindAction performer, KeyBindAction releaseAction) {
+          KeyBindAction performer, KeyBindAction releaseAction) {
         registerCommandAction(commandBind.cmd, new CommandAction() {
             @Override
             public boolean shouldReceiveAction() {
@@ -249,9 +262,9 @@ public class MegaMekController implements KeyEventDispatcher {
     }
 
     /**
-     * Start a new repeating timer task for the given KeyCommandBind. If the given 
-     * KeyCommandBind already has a repeating task, a new one is not added. Also, 
-     * if there is no mapped CommandAction for the given KeyCommandBind no task is scheduled.
+     * Start a new repeating timer task for the given KeyCommandBind. If the given KeyCommandBind already has a
+     * repeating task, a new one is not added. Also, if there is no mapped CommandAction for the given KeyCommandBind no
+     * task is scheduled.
      */
     protected void startRepeating(KeyCommandBind kcb, final CommandAction action) {
 

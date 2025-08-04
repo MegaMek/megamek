@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 
 package megamek.common;
 
@@ -46,32 +67,32 @@ public class EntityWeightClass {
     public static final int SIZE = 15;
 
     private static String[] classAppends = { "0", "1", "2", "3", "4", "5", "SC", "DS.7", "DS.8", "DS.9", "JS.10",
-            "JS.11", "SV.12", "SV.13", "SV.14" };
+                                             "JS.11", "SV.12", "SV.13", "SV.14" };
 
     private static final double LESS_THAN_5 = Math.nextAfter(5.0, Double.NEGATIVE_INFINITY);
     private static double[] BAWeightLimits = { 0.4, 0.75, 1, 1.5, 2 };
     private static double[] mekWeightLimits = { 15, 35, 55, 75, 100, 135 };
     private static double[] vehicleWeightLimits = { 0, 39, 59, 79, 100, 300 }; // One padding 0
     private static double[] wheeledSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 80,
-            160 }; // Twelve padding 0s
+                                                                  160 }; // Twelve padding 0s
     private static double[] trackedSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 100,
-            200 }; // Twelve padding 0s
+                                                                  200 }; // Twelve padding 0s
     private static double[] hoverSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 50,
-            100 }; // Twelve padding 0s
+                                                                100 }; // Twelve padding 0s
     private static double[] vtolSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 30,
-            60 }; // Twelve padding 0s
+                                                               60 }; // Twelve padding 0s
     private static double[] wigeSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 80,
-            160 }; // Twelve padding 0s
+                                                               160 }; // Twelve padding 0s
     private static double[] airshipSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300,
-            1000 }; // Twelve padding 0s
+                                                                  1000 }; // Twelve padding 0s
     private static double[] fixedwingSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5,
-            100, 200 }; // Twelve padding 0s
+                                                                    100, 200 }; // Twelve padding 0s
     private static double[] navalSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300,
-            100000 }; // Twelve padding 0s
+                                                                100000 }; // Twelve padding 0s
     private static double[] railSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300,
-            600 }; // Twelve padding 0s
+                                                               600 }; // Twelve padding 0s
     private static double[] satelliteSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5,
-            100, 300 }; // Twelve padding 0s
+                                                                    100, 300 }; // Twelve padding 0s
     // private static double[] mobilestructuresSupportVehicleWeightLimits = { 0, 0,
     // 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 80, 160 }; // Twelve padding 0s
     private static double[] ASFWeightLimits = { 0, 45, 70, 100 }; // One padding 0
@@ -94,13 +115,13 @@ public class EntityWeightClass {
         } else if (type.equals(UnitType.getTypeName(UnitType.GUN_EMPLACEMENT))) {
             return GEWeightLimits;
         } else if (type.equals(UnitType.getTypeName(UnitType.JUMPSHIP))
-                || type.equals(UnitType.getTypeName(UnitType.WARSHIP))
-                || type.equals(UnitType.getTypeName(UnitType.SPACE_STATION))) {
+              || type.equals(UnitType.getTypeName(UnitType.WARSHIP))
+              || type.equals(UnitType.getTypeName(UnitType.SPACE_STATION))) {
             return jumpshipWeightLimits;
         } else if (type.equals(UnitType.getTypeName(UnitType.PROTOMEK))) {
             return protoWeightLimits;
         } else if (type.equals(UnitType.getTypeName(UnitType.TANK)) || type.equals(UnitType.getTypeName(UnitType.NAVAL))
-                || type.equals(UnitType.getTypeName(UnitType.VTOL))) {
+              || type.equals(UnitType.getTypeName(UnitType.VTOL))) {
             return vehicleWeightLimits;
         } else {
             // Sad... and means we've not implemented yet!
@@ -114,6 +135,7 @@ public class EntityWeightClass {
      *
      * @param tonnage The entity weight
      * @param type    The type string
+     *
      * @return The weight class
      */
     public static int getWeightClass(double tonnage, String type) {
@@ -128,17 +150,17 @@ public class EntityWeightClass {
         } else if (type.equals(UnitType.getTypeName(UnitType.INFANTRY))) {
             return WEIGHT_LIGHT;
         } else if (type.equals(UnitType.getTypeName(UnitType.VTOL))
-                || type.equals(UnitType.getTypeName(UnitType.NAVAL))
-                || type.equals(UnitType.getTypeName(UnitType.TANK))) {
+              || type.equals(UnitType.getTypeName(UnitType.NAVAL))
+              || type.equals(UnitType.getTypeName(UnitType.TANK))) {
             for (i = WEIGHT_LIGHT; i < (vehicleWeightLimits.length - 1); i++) { // Started at late to bypass padding &
-                                                                                // save a loop execution
+                // save a loop execution
                 if (tonnage <= vehicleWeightLimits[i]) {
                     break;
                 }
             }
         } else if (type.equals(UnitType.getTypeName(UnitType.GUN_EMPLACEMENT))) {
             for (i = WEIGHT_LIGHT; i < (GEWeightLimits.length - 1); i++) { // Started at late to bypass padding & save a
-                                                                           // loop execution
+                // loop execution
                 if (tonnage <= GEWeightLimits[i]) {
                     break;
                 }
@@ -151,23 +173,23 @@ public class EntityWeightClass {
             }
         } else if (type.equals(UnitType.getTypeName(UnitType.PROTOMEK))) {
             for (i = WEIGHT_LIGHT; i < (protoWeightLimits.length - 1); i++) { // Started late to bypass padding & save a
-                                                                              // loop execution
+                // loop execution
                 if (tonnage <= protoWeightLimits[i]) {
                     break;
                 }
             }
         } else if (type.equals(UnitType.getTypeName(UnitType.SPACE_STATION))
-                || type.equals(UnitType.getTypeName(UnitType.WARSHIP))
-                || type.equals(UnitType.getTypeName(UnitType.JUMPSHIP))) {
+              || type.equals(UnitType.getTypeName(UnitType.WARSHIP))
+              || type.equals(UnitType.getTypeName(UnitType.JUMPSHIP))) {
             for (i = WEIGHT_SMALL_WAR; i < (jumpshipWeightLimits.length - 1); i++) { // Started late to bypass padding &
-                                                                                     // save a loop execution
+                // save a loop execution
                 if (tonnage <= jumpshipWeightLimits[i]) {
                     break;
                 }
             }
         } else if (type.equals(UnitType.getTypeName(UnitType.DROPSHIP))) {
             for (i = WEIGHT_SMALL_DROP; i < (dropshipWeightLimits.length - 1); i++) { // Started late to bypass padding
-                                                                                      // & save a loop execution
+                // & save a loop execution
                 if (tonnage <= dropshipWeightLimits[i]) {
                     break;
                 }
@@ -176,7 +198,7 @@ public class EntityWeightClass {
             return WEIGHT_SMALL_CRAFT;
         } else if (type.equals("AeroSpaceFighter") || type.equals("Aero") || type.equals("Conventional Fighter")) {
             for (i = WEIGHT_LIGHT; i < (ASFWeightLimits.length - 1); i++) { // Started late to bypass padding & save a
-                                                                            // loop execution
+                // loop execution
                 if (tonnage <= ASFWeightLimits[i]) {
                     break;
                 }
@@ -193,11 +215,11 @@ public class EntityWeightClass {
     }
 
     /**
-     * Retrieves the weight class for support vehicles based on the subtype string
-     * from the unit file
+     * Retrieves the weight class for support vehicles based on the subtype string from the unit file
      *
      * @param tonnage The entity weight
      * @param type    The subtype string
+     *
      * @return The weight class
      */
     public static int getSupportWeightClass(double tonnage, String type) {
@@ -261,22 +283,22 @@ public class EntityWeightClass {
             }
         } else if (en instanceof Jumpship) { // Also handles Warships & Space Stations
             for (i = WEIGHT_SMALL_WAR; i < (jumpshipWeightLimits.length - 1); i++) { // Started late to bypass padding &
-                                                                                     // save a loop execution
+                // save a loop execution
                 if (tonnage <= jumpshipWeightLimits[i]) {
                     break;
                 }
             }
         } else if (en instanceof Dropship) {
             for (i = WEIGHT_SMALL_DROP; i < (dropshipWeightLimits.length - 1); i++) { // Started late to bypass padding
-                                                                                      // & save a loop execution
+                // & save a loop execution
                 if (tonnage <= dropshipWeightLimits[i]) {
                     break;
                 }
             }
         } else if (en instanceof FixedWingSupport) {
             for (i = WEIGHT_LIGHT; i < (fixedwingSupportVehicleWeightLimits.length - 1); i++) { // Started late to
-                                                                                                // bypass padding & save
-                                                                                                // a loop execution
+                // bypass padding & save
+                // a loop execution
                 if (tonnage <= fixedwingSupportVehicleWeightLimits[i]) {
                     break;
                 }
@@ -285,7 +307,7 @@ public class EntityWeightClass {
             return WEIGHT_SMALL_CRAFT;
         } else if (en instanceof Aero) {
             for (i = WEIGHT_LIGHT; i < (ASFWeightLimits.length - 1); i++) { // Started late to bypass padding & save a
-                                                                            // loop execution
+                // loop execution
                 if (tonnage <= ASFWeightLimits[i]) {
                     break;
                 }
@@ -300,7 +322,7 @@ public class EntityWeightClass {
             return WEIGHT_LIGHT;
         } else if (en instanceof GunEmplacement) {
             for (i = WEIGHT_LIGHT; i < (GEWeightLimits.length - 1); i++) { // Started late to bypass padding & save a
-                                                                           // loop execution
+                // loop execution
                 if (tonnage <= GEWeightLimits[i]) {
                     break;
                 }
@@ -377,7 +399,7 @@ public class EntityWeightClass {
             }
         } else if (en instanceof Tank) {
             for (i = WEIGHT_LIGHT; i < (vehicleWeightLimits.length - 1); i++) { // Started late to bypass padding & save
-                                                                                // a loop execution
+                // a loop execution
                 if (tonnage <= vehicleWeightLimits[i]) {
                     break;
                 }
@@ -448,12 +470,12 @@ public class EntityWeightClass {
     }
 
     /**
-     * Get the weight class name given a weight class define and a unitType.
-     * The unitType is a string that matches the unit type returned from a
-     * MekSummary.
+     * Get the weight class name given a weight class define and a unitType. The unitType is a string that matches the
+     * unit type returned from a MekSummary.
      *
      * @param wClass
      * @param unitType
+     *
      * @return
      */
     public static String getClassName(int wClass, String unitType, boolean isSupport) {

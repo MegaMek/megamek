@@ -1,36 +1,62 @@
 /*
- * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.commands;
-
-import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.*;
-import megamek.common.actions.*;
-import megamek.common.enums.AimingMode;
-import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.Weapon;
 
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.Vector;
+
+import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.common.AmmoType;
+import megamek.common.Compute;
+import megamek.common.ComputeArc;
+import megamek.common.Entity;
+import megamek.common.Mounted;
+import megamek.common.TargetRoll;
+import megamek.common.Targetable;
+import megamek.common.ToHitData;
+import megamek.common.WeaponType;
+import megamek.common.actions.AbstractEntityAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.SearchlightAttackAction;
+import megamek.common.actions.TorsoTwistAction;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.AimingMode;
+import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.Weapon;
 
 /**
  * @author dirk
@@ -67,17 +93,17 @@ public class FireCommand extends ClientCommand {
                 }
             } else if (args[1].equalsIgnoreCase("HELP")) {
                 return "Available commands:\n"
-                       + "#fire ABORT = aborts planed firing and deselect unit.\n"
-                       + "#fire SELECT unitID = Selects the unit named unit ID for firing. This is a prerequisite " +
-                       "for all commands listed after this.\n"
-                       + "#fire COMMIT = executes the current firing plan.\n"
-                       + "#fire LIST unitID = List targeting information for all weapons at the specified target. " +
-                       "This is currently the only way to get weapon IDs.\n"
-                       + "#fire TWIST heading = used for torso twisting, the heading being to which direction (N, " +
-                       "NE, SE, etc) to try and turn.\n"
-                       + "#fire TARGET unitID weaponID1 weaponID2 ... = fires all specified weapons at the specified" +
-                       " target. Any number of weapons may be specified.\n"
-                       + "#fire TARGET unitID ALL = fires all remaining weapons at the specified target.\n";
+                      + "#fire ABORT = aborts planed firing and deselect unit.\n"
+                      + "#fire SELECT unitID = Selects the unit named unit ID for firing. This is a prerequisite " +
+                      "for all commands listed after this.\n"
+                      + "#fire COMMIT = executes the current firing plan.\n"
+                      + "#fire LIST unitID = List targeting information for all weapons at the specified target. " +
+                      "This is currently the only way to get weapon IDs.\n"
+                      + "#fire TWIST heading = used for torso twisting, the heading being to which direction (N, " +
+                      "NE, SE, etc) to try and turn.\n"
+                      + "#fire TARGET unitID weaponID1 weaponID2 ... = fires all specified weapons at the specified" +
+                      " target. Any number of weapons may be specified.\n"
+                      + "#fire TARGET unitID ALL = fires all remaining weapons at the specified target.\n";
             } else if (ce() != null) {
                 if (args[1].equalsIgnoreCase("COMMIT")) {
                     commit();
@@ -98,7 +124,7 @@ public class FireCommand extends ClientCommand {
                                 for (int i = 3; i < args.length; i++) {
                                     fire(Integer.parseInt(args[i]), target);
                                     str += "Firing weapon " + args[i] + " at "
-                                           + target.toString() + "\n";
+                                          + target.toString() + "\n";
                                 }
                             }
                         } catch (Exception ignored) {
@@ -114,11 +140,11 @@ public class FireCommand extends ClientCommand {
 
                                 for (Mounted<?> weapon : ce().getWeaponList()) {
                                     str += "("
-                                           + ce().getEquipmentNum(weapon)
-                                           + ") "
-                                           + weapon.getName()
-                                           + " = "
-                                           + calculateToHit(ce().getEquipmentNum(weapon), target) + "\n";
+                                          + ce().getEquipmentNum(weapon)
+                                          + ") "
+                                          + weapon.getName()
+                                          + " = "
+                                          + calculateToHit(ce().getEquipmentNum(weapon), target) + "\n";
                                 }
 
                                 return str;
@@ -196,7 +222,7 @@ public class FireCommand extends ClientCommand {
 
         // validate
         if (ce() == null || target == null || mounted == null
-            || !(mounted.getType() instanceof WeaponType)) {
+              || !(mounted.getType() instanceof WeaponType)) {
             throw new IllegalArgumentException("current fire parameters are invalid");
         }
 
@@ -206,7 +232,7 @@ public class FireCommand extends ClientCommand {
         }
 
         WeaponAttackAction waa = new WeaponAttackAction(cen, target
-                .getTargetType(), target.getId(), weaponNum);
+              .getTargetType(), target.getId(), weaponNum);
 
         if (mounted.getLinked() != null && ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.AmmoTypeEnum.NA) {
             Mounted<?> ammoMount = mounted.getLinked();
@@ -216,10 +242,10 @@ public class FireCommand extends ClientCommand {
             waa.setAmmoMunitionType(ammoMunitionType);
             waa.setAmmoCarrier(ammoMount.getEntity().getId());
             if (((ammoMunitionType.contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB))
-                    && (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM
-                    || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML
-                    || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP))
-                    || ammoType.getMunitionType().contains(AmmoType.Munitions.M_VIBRABOMB_IV)) {
+                  && (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM
+                  || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML
+                  || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP))
+                  || ammoType.getMunitionType().contains(AmmoType.Munitions.M_VIBRABOMB_IV)) {
 
                 waa.setOtherAttackInfo(50); // /hardcode VibroBomb setting for now.
             }
@@ -262,29 +288,29 @@ public class FireCommand extends ClientCommand {
         if (target != null && weaponId != -1 && ce() != null) {
             str = "";
             toHit = WeaponAttackAction.toHit(getClient().getGame(), cen, target, weaponId,
-                    Entity.LOC_NONE, AimingMode.NONE, false);
+                  Entity.LOC_NONE, AimingMode.NONE, false);
 
             str += " Range: " + ce().getPosition().distance(target.getPosition());
 
             Mounted<?> m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
                 str += " Can't shoot: "
-                       + Messages.getString("FiringDisplay.alreadyFired");
+                      + Messages.getString("FiringDisplay.alreadyFired");
             } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))
-                    || (m.hasModes() && m.curMode().equals("Point Defense"))) {
+                  || (m.hasModes() && m.curMode().equals("Point Defense"))) {
                 str += " Can't shoot: "
-                       + Messages.getString("FiringDisplay.autoFiringWeapon");
+                      + Messages.getString("FiringDisplay.autoFiringWeapon");
             } else if (getClient().getGame().getPhase().isFiring() && m.isInBearingsOnlyMode()) {
                 str += " Can't shoot: "
-                        + Messages.getString("FiringDisplay.bearingsOnlyWrongPhase");
+                      + Messages.getString("FiringDisplay.bearingsOnlyWrongPhase");
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                 str += " Automatic Failure: " + toHit.getValueAsString();
             } else if (toHit.getValue() > 12) {
                 str += " Can't hit: " + toHit.getValueAsString();
             } else {
                 str += " To hit: " + toHit.getValueAsString() + " ("
-                       + Compute.oddsAbove(toHit.getValue(),
-                                           ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY)) + "%)";
+                      + Compute.oddsAbove(toHit.getValue(),
+                      ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY)) + "%)";
             }
             str += " To Hit modifiers: " + toHit.getDesc();
         }
@@ -292,8 +318,7 @@ public class FireCommand extends ClientCommand {
     }
 
     /**
-     * Called when the current ce() is done firing. Send out our attack queue to
-     * the server.
+     * Called when the current ce() is done firing. Send out our attack queue to the server.
      */
     private void commit() {
         // For bug 1002223
@@ -306,11 +331,11 @@ public class FireCommand extends ClientCommand {
                 Entity attacker = waa.getEntity(getClient().getGame());
                 Targetable target = waa.getTarget(getClient().getGame());
                 boolean curInFrontArc = ComputeArc.isInArc(attacker.getPosition(),
-                                                        attacker.getSecondaryFacing(), target,
-                                                        attacker.getForwardArc());
+                      attacker.getSecondaryFacing(), target,
+                      attacker.getForwardArc());
                 if (curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(),
-                            waa.getTargetType(), waa.getTargetId(), waa.getWeaponId());
+                          waa.getTargetType(), waa.getTargetId(), waa.getWeaponId());
                     waa2.setAimedLocation(waa.getAimedLocation());
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
@@ -327,12 +352,12 @@ public class FireCommand extends ClientCommand {
                 Entity attacker = waa.getEntity(getClient().getGame());
                 Targetable target = waa.getTarget(getClient().getGame());
                 boolean curInFrontArc = ComputeArc.isInArc(attacker.getPosition(),
-                                                        attacker.getSecondaryFacing(), target,
-                                                        attacker.getForwardArc());
+                      attacker.getSecondaryFacing(), target,
+                      attacker.getForwardArc());
                 if (!curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa
-                                                                             .getEntityId(), waa.getTargetType(), waa
-                                                                             .getTargetId(), waa.getWeaponId());
+                          .getEntityId(), waa.getTargetType(), waa
+                          .getTargetId(), waa.getWeaponId());
                     waa2.setAimedLocation(waa.getAimedLocation());
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());

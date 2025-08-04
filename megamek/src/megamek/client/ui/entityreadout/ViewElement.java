@@ -33,21 +33,21 @@
 package megamek.client.ui.entityreadout;
 
 /**
- * A common interface for the various elements of the unit readout. ways to present data that can be formatted either
- * as HTML or as plain text.
+ * A common interface for the various elements of the unit readout. ways to present data that can be formatted either as
+ * HTML or as plain text.
  */
 interface ViewElement {
 
     /**
      * @return The contents of this view element, rendered to plain text. The text contains no tags or other control
-     * characters other than '\n' line breaks.
+     *       characters other than '\n' line breaks.
      */
     String toPlainText();
 
     /**
-     * @return The contents of this view element, rendered as HTML. The text does not include the HTML or BODY
-     * beginning or end tags but may contain other control tags such as TABLE or FONT. Line breaks use the BR tag
-     * (angle brackets omitted as they are tedious in Javadoc).
+     * @return The contents of this view element, rendered as HTML. The text does not include the HTML or BODY beginning
+     *       or end tags but may contain other control tags such as TABLE or FONT. Line breaks use the BR tag (angle
+     *       brackets omitted as they are tedious in Javadoc).
      */
     String toHTML();
 

@@ -1,22 +1,45 @@
 /*
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
+
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossArea01;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossArea012;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossArea0123;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossArea01234;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossLine01;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossLine012;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossLine0123;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossLine01234;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -24,7 +47,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.ImageObserver;
-import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.*;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
@@ -33,7 +55,7 @@ import megamek.common.Coords;
 
 /**
  * This sprite is used to paint the visual and sensor range
- * 
+ *
  * <BR><BR>Extends {@link FieldofFireSprite}
  */
 public class SensorRangeSprite extends FieldofFireSprite {
@@ -52,9 +74,9 @@ public class SensorRangeSprite extends FieldofFireSprite {
     // arrangement and color and repainted only when
     // the board is zoomed
     private static Image[][] images = new Image[64][COLORS_MAX];
-    
+
     public SensorRangeSprite(BoardView boardView1, int sensorType, Coords l,
-                             int borders) {
+          int borders) {
         // the color of the super doesn't matter
         super(boardView1, sensorType, l, borders);
         Color c = getColor(sensorType);
@@ -73,7 +95,7 @@ public class SensorRangeSprite extends FieldofFireSprite {
             case VISUAL_DARK:
                 return GUIP.getVisualRangeColor();
             default:
-                return new Color(0,0,0);
+                return new Color(0, 0, 0);
         }
     }
 
@@ -104,8 +126,8 @@ public class SensorRangeSprite extends FieldofFireSprite {
 
         graph.setStroke(getLineStroke());
 
-        int [] bTypes = getBTypes();
-        int [] bDir = getBDir();
+        int[] bTypes = getBTypes();
+        int[] bDir = getBDir();
 
         // this will take the right way to paint the borders
         // from the static arrays; depends on the exact
@@ -113,40 +135,40 @@ public class SensorRangeSprite extends FieldofFireSprite {
         switch (bTypes[borders]) {
             case 1: // 2 adjacent borders
                 drawBorderXC(graph, getHexCrossArea01(bDir[borders], getBorderW()),
-                        getHexCrossLine01(bDir[borders], getBorderW()));
+                      getHexCrossLine01(bDir[borders], getBorderW()));
                 break;
             case 2: // 3 adjacent borders
                 drawBorderXC(graph, getHexCrossArea012(bDir[borders], getBorderW()),
-                        getHexCrossLine012(bDir[borders], getBorderW()));
+                      getHexCrossLine012(bDir[borders], getBorderW()));
                 break;
             case 3: // 4 adjacent borders
                 drawBorderXC(graph, getHexCrossArea0123(bDir[borders], getBorderW()),
-                        getHexCrossLine0123(bDir[borders], getBorderW()));
+                      getHexCrossLine0123(bDir[borders], getBorderW()));
                 break;
             case 4: // twice two adjacent borders
                 drawBorderXC(graph, getHexCrossArea01(bDir[borders], getBorderW()),
-                        getHexCrossLine01(bDir[borders], getBorderW()));
-                drawBorderXC(graph, getHexCrossArea01(bDir[borders]+3, getBorderW()),
-                        getHexCrossLine01(bDir[borders]+3, getBorderW()));
+                      getHexCrossLine01(bDir[borders], getBorderW()));
+                drawBorderXC(graph, getHexCrossArea01(bDir[borders] + 3, getBorderW()),
+                      getHexCrossLine01(bDir[borders] + 3, getBorderW()));
                 break;
             case 5: // three adjacent borders and one lone
                 drawBorderXC(graph, getHexCrossArea012(bDir[borders], getBorderW()),
-                        getHexCrossLine012(bDir[borders], getBorderW()));
+                      getHexCrossLine012(bDir[borders], getBorderW()));
                 drawLoneBorder(graph, bDir[borders] + 4);
                 break;
             case 6: // two adjacent borders and one lone
                 drawBorderXC(graph, getHexCrossArea01(bDir[borders], getBorderW()),
-                        getHexCrossLine01(bDir[borders], getBorderW()));
+                      getHexCrossLine01(bDir[borders], getBorderW()));
                 drawLoneBorder(graph, bDir[borders] + 3);
                 break;
             case 7: // two adjacent borders and one lone (other hexface)
                 drawBorderXC(graph, getHexCrossArea01(bDir[borders], getBorderW()),
-                        getHexCrossLine01(bDir[borders], getBorderW()));
+                      getHexCrossLine01(bDir[borders], getBorderW()));
                 drawLoneBorder(graph, bDir[borders] + 4);
                 break;
             case 8:
                 drawBorderXC(graph, getHexCrossArea01234(bDir[borders], getBorderW()),
-                        getHexCrossLine01234(bDir[borders], getBorderW()));
+                      getHexCrossLine01234(bDir[borders], getBorderW()));
                 break;
             default:
                 drawNormalBorders(graph);

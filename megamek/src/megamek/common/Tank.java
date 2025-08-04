@@ -1,17 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+  Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import static megamek.common.Terrains.BLDG_ELEV;
@@ -130,8 +150,8 @@ public class Tank extends Entity {
     public int getUnitType() {
         EntityMovementMode mm = getMovementMode();
         return (mm == EntityMovementMode.NAVAL) ||
-                     (mm == EntityMovementMode.HYDROFOIL) ||
-                     (mm == EntityMovementMode.SUBMARINE) ? UnitType.NAVAL : UnitType.TANK;
+              (mm == EntityMovementMode.HYDROFOIL) ||
+              (mm == EntityMovementMode.SUBMARINE) ? UnitType.NAVAL : UnitType.TANK;
     }
 
     @Override
@@ -273,13 +293,13 @@ public class Tank extends Entity {
     private static final TechAdvancement TA_COMBAT_VEHICLE = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE,
                 2470,
                 2490)
-                                                                   .setProductionFactions(Faction.TH)
-                                                                   .setTechRating(TechRating.D)
-                                                                   .setAvailability(AvailabilityValue.C,
-                                                                         AvailabilityValue.C,
-                                                                         AvailabilityValue.C,
-                                                                         AvailabilityValue.B)
-                                                                   .setStaticTechLevel(SimpleTechLevel.INTRO);
+          .setProductionFactions(Faction.TH)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.C,
+                AvailabilityValue.C,
+                AvailabilityValue.C,
+                AvailabilityValue.B)
+          .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -289,10 +309,10 @@ public class Tank extends Entity {
     // Advanced turrets
     public static TechAdvancement getDualTurretTA() {
         return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_NONE, 3080)
-                     .setApproximate(false, false, true)
-                     .setTechRating(TechRating.B)
-                     .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
-                     .setStaticTechLevel(SimpleTechLevel.STANDARD);
+              .setApproximate(false, false, true)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     @Override
@@ -339,8 +359,8 @@ public class Tank extends Entity {
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND) &&
-                      conditions.getWeather().isClear() &&
-                      conditions.getWind().isTornadoF1ToF3()) {
+                  conditions.getWeather().isClear() &&
+                  conditions.getWind().isTornadoF1ToF3()) {
                 mp += 1;
             }
         }
@@ -385,8 +405,8 @@ public class Tank extends Entity {
     @Override
     public boolean isEligibleForPavementOrRoadBonus() {
         return movementMode == EntityMovementMode.TRACKED ||
-                     movementMode == EntityMovementMode.WHEELED ||
-                     movementMode == EntityMovementMode.HOVER;
+              movementMode == EntityMovementMode.WHEELED ||
+              movementMode == EntityMovementMode.HOVER;
     }
 
     public boolean isTurretLocked(int turret) {
@@ -613,8 +633,8 @@ public class Tank extends Entity {
         // null check
         if (isTrailer() && (getTractor() != Entity.NONE)) {
             return (game.getEntity(getTractor()) != null ?
-                          game.getEntity(getTractor()).isImmobile(checkCrew) :
-                          super.isImmobile(checkCrew) || m_bImmobile);
+                  game.getEntity(getTractor()).isImmobile(checkCrew) :
+                  super.isImmobile(checkCrew) || m_bImmobile);
         }
         return m_bImmobile || super.isImmobile(checkCrew);
     }
@@ -646,7 +666,7 @@ public class Tank extends Entity {
         }
         if (isSupportVehicle()) {
             return getWeightClass() >= EntityWeightClass.WEIGHT_LARGE_SUPPORT &&
-                         hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL);
+                  hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL);
         } else {
             return getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY;
         }
@@ -674,7 +694,7 @@ public class Tank extends Entity {
         if (isHidden()) {
             // Can't deploy in paved hexes
             if ((hex.containsTerrain(Terrains.PAVEMENT) || hex.containsTerrain(Terrains.ROAD)) &&
-                      (!hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.RUBBLE))) {
+                  (!hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.RUBBLE))) {
                 return true;
             }
             // Can't deploy on a bridge
@@ -691,7 +711,7 @@ public class Tank extends Entity {
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
         boolean hexHasRoad = hex.containsTerrain(Terrains.ROAD);
         boolean scoutBikeIntoLightWoods = (hex.terrainLevel(Terrains.WOODS) == 1) &&
-                                                hasQuirk(OptionsConstants.QUIRK_POS_SCOUT_BIKE);
+              hasQuirk(OptionsConstants.QUIRK_POS_SCOUT_BIKE);
         boolean isCrossCountry = hasAbility(OptionsConstants.PILOT_CROSS_COUNTRY);
 
         if (hex.containsTerrain(BUILDING) && (currElevation <= hex.terrainLevel(BLDG_ELEV)) && (currElevation > 0)) {
@@ -703,64 +723,64 @@ public class Tank extends Entity {
             case TRACKED:
                 if (isCrossCountry && !isSuperHeavy()) {
                     return ((hex.terrainLevel(Terrains.WATER) > 0) &&
-                                  !hex.containsTerrain(Terrains.ICE) &&
-                                  !hasFlotationHull &&
-                                  !isAmphibious) || (hex.terrainLevel(Terrains.MAGMA) > 1);
+                          !hex.containsTerrain(Terrains.ICE) &&
+                          !hasFlotationHull &&
+                          !isAmphibious) || (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
 
                 if (!isSuperHeavy()) {
                     return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad) ||
-                                 ((hex.terrainLevel(Terrains.WATER) > 0) &&
-                                        !hex.containsTerrain(Terrains.ICE) &&
-                                        !hasFlotationHull &&
-                                        !isAmphibious) ||
-                                 (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
-                                 (hex.terrainLevel(Terrains.MAGMA) > 1) ||
-                                 (hex.terrainLevel(Terrains.ROUGH) > 1) ||
-                                 ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad);
+                          ((hex.terrainLevel(Terrains.WATER) > 0) &&
+                                !hex.containsTerrain(Terrains.ICE) &&
+                                !hasFlotationHull &&
+                                !isAmphibious) ||
+                          (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
+                          (hex.terrainLevel(Terrains.MAGMA) > 1) ||
+                          (hex.terrainLevel(Terrains.ROUGH) > 1) ||
+                          ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad);
                 } else {
                     return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad) ||
-                                 ((hex.terrainLevel(Terrains.WATER) > 0) &&
-                                        !hex.containsTerrain(Terrains.ICE) &&
-                                        !hasFlotationHull &&
-                                        !isAmphibious) ||
-                                 (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
-                                 (hex.terrainLevel(Terrains.MAGMA) > 1);
+                          ((hex.terrainLevel(Terrains.WATER) > 0) &&
+                                !hex.containsTerrain(Terrains.ICE) &&
+                                !hasFlotationHull &&
+                                !isAmphibious) ||
+                          (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
+                          (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
             case WHEELED:
                 if (isCrossCountry && !isSuperHeavy()) {
                     return ((hex.terrainLevel(Terrains.WATER) > 0) &&
-                                  !hex.containsTerrain(Terrains.ICE) &&
-                                  !hasFlotationHull &&
-                                  !isAmphibious) ||
-                                 hex.containsTerrain(Terrains.MAGMA) ||
-                                 ((hex.terrainLevel(Terrains.SNOW) > 1) && !hexHasRoad) ||
-                                 (hex.terrainLevel(Terrains.GEYSER) == 2);
+                          !hex.containsTerrain(Terrains.ICE) &&
+                          !hasFlotationHull &&
+                          !isAmphibious) ||
+                          hex.containsTerrain(Terrains.MAGMA) ||
+                          ((hex.terrainLevel(Terrains.SNOW) > 1) && !hexHasRoad) ||
+                          (hex.terrainLevel(Terrains.GEYSER) == 2);
                 }
 
                 if (!isSuperHeavy()) {
                     return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad && !scoutBikeIntoLightWoods) ||
-                                 (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad) ||
-                                 ((hex.terrainLevel(Terrains.WATER) > 0) &&
-                                        !hex.containsTerrain(Terrains.ICE) &&
-                                        !hasFlotationHull &&
-                                        !isAmphibious) ||
-                                 (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad) ||
-                                 hex.containsTerrain(Terrains.MAGMA) ||
-                                 (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
-                                 ((hex.terrainLevel(Terrains.SNOW) > 1) && !hexHasRoad) ||
-                                 (hex.terrainLevel(Terrains.GEYSER) == 2);
+                          (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad) ||
+                          ((hex.terrainLevel(Terrains.WATER) > 0) &&
+                                !hex.containsTerrain(Terrains.ICE) &&
+                                !hasFlotationHull &&
+                                !isAmphibious) ||
+                          (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad) ||
+                          hex.containsTerrain(Terrains.MAGMA) ||
+                          (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
+                          ((hex.terrainLevel(Terrains.SNOW) > 1) && !hexHasRoad) ||
+                          (hex.terrainLevel(Terrains.GEYSER) == 2);
                 } else {
                     return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad) ||
-                                 (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad) ||
-                                 ((hex.terrainLevel(Terrains.WATER) > 0) &&
-                                        !hex.containsTerrain(Terrains.ICE) &&
-                                        !hasFlotationHull &&
-                                        !isAmphibious) ||
-                                 (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad) ||
-                                 hex.containsTerrain(Terrains.MAGMA) ||
-                                 (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
-                                 (hex.terrainLevel(Terrains.GEYSER) == 2);
+                          (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad) ||
+                          ((hex.terrainLevel(Terrains.WATER) > 0) &&
+                                !hex.containsTerrain(Terrains.ICE) &&
+                                !hasFlotationHull &&
+                                !isAmphibious) ||
+                          (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad) ||
+                          hex.containsTerrain(Terrains.MAGMA) ||
+                          (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
+                          (hex.terrainLevel(Terrains.GEYSER) == 2);
                 }
             case HOVER:
                 if (isCrossCountry && !isSuperHeavy()) {
@@ -769,28 +789,28 @@ public class Tank extends Entity {
 
                 if (!isSuperHeavy()) {
                     return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad && !scoutBikeIntoLightWoods) ||
-                                 (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
-                                 (hex.terrainLevel(Terrains.MAGMA) > 1) ||
-                                 ((hex.terrainLevel(Terrains.ROUGH) > 1) && !hexHasRoad) ||
-                                 ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad);
+                          (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
+                          (hex.terrainLevel(Terrains.MAGMA) > 1) ||
+                          ((hex.terrainLevel(Terrains.ROUGH) > 1) && !hexHasRoad) ||
+                          ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad);
                 } else {
                     return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad) ||
-                                 (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
-                                 (hex.terrainLevel(Terrains.MAGMA) > 1);
+                          (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
+                          (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
 
             case NAVAL:
             case HYDROFOIL:
                 // Can only deploy under a bridge if there is sufficient clearance.
                 if (hex.containsTerrain(Terrains.BRIDGE) &&
-                          (getHeight() >= hex.terrainLevel(Terrains.BRIDGE_ELEV) - hex.getLevel())) {
+                      (getHeight() >= hex.terrainLevel(Terrains.BRIDGE_ELEV) - hex.getLevel())) {
                     return true;
                 }
                 return (hex.terrainLevel(Terrains.WATER) <= 0) || hex.containsTerrain(Terrains.ICE);
             case SUBMARINE:
                 // Submarines get extra clearance equal to the depth of water.
                 if (hex.containsTerrain(Terrains.BRIDGE) &&
-                          (getHeight() >= hex.terrainLevel(Terrains.BRIDGE_ELEV) - hex.floor())) {
+                      (getHeight() >= hex.terrainLevel(Terrains.BRIDGE_ELEV) - hex.floor())) {
                     return true;
                 }
                 return (hex.terrainLevel(Terrains.WATER) <= 0);
@@ -895,8 +915,8 @@ public class Tank extends Entity {
         // Towed trailers need to use the values of the tractor, or they return Immobile
         // due to 0 MP...
         if (isTrailer() &&
-                  (getTractor() != Entity.NONE) &&
-                  game.getEntity(getTractor()).hasETypeFlag(Entity.ETYPE_TANK)) {
+              (getTractor() != Entity.NONE) &&
+              game.getEntity(getTractor()).hasETypeFlag(Entity.ETYPE_TANK)) {
             Tank Tractor = (Tank) game.getEntity(getTractor());
             m_bImmobile = Tractor.m_bImmobile;
             m_bImmobileHit = Tractor.m_bImmobileHit;
@@ -1204,7 +1224,7 @@ public class Tank extends Entity {
                     break;
                 case 8:
                     if (bSide &&
-                              !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
+                          !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
                         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                             setPotCrit(HitData.EFFECT_CRITICAL);
                         } else {
@@ -1361,8 +1381,8 @@ public class Tank extends Entity {
         // are we wheeled and in light snow?
         Hex hex = game.getHex(getPosition(), getBoardId());
         if ((null != hex) &&
-                  (getMovementMode() == EntityMovementMode.WHEELED) &&
-                  (hex.terrainLevel(Terrains.SNOW) == 1)) {
+              (getMovementMode() == EntityMovementMode.WHEELED) &&
+              (hex.terrainLevel(Terrains.SNOW) == 1)) {
             prd.addModifier(1, "thin snow");
         }
 
@@ -1518,10 +1538,10 @@ public class Tank extends Entity {
     public boolean canCharge() {
         // Tanks can charge, except Hovers when the option is set, and WIGEs
         return super.canCharge() &&
-                     !(game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_HOVER_CHARGE) &&
-                             (EntityMovementMode.HOVER == getMovementMode())) &&
-                     !(EntityMovementMode.WIGE == getMovementMode()) &&
-                     !(getStunnedTurns() > 0);
+              !(game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_HOVER_CHARGE) &&
+                    (EntityMovementMode.HOVER == getMovementMode())) &&
+              !(EntityMovementMode.WIGE == getMovementMode()) &&
+              !(getStunnedTurns() > 0);
     }
 
     @Override
@@ -1653,9 +1673,9 @@ public class Tank extends Entity {
             priceMultiplier *= 1.25;
         }
         if (isSupportVehicle() &&
-                  (movementMode.equals(EntityMovementMode.NAVAL) ||
-                         movementMode.equals(EntityMovementMode.HYDROFOIL) ||
-                         movementMode.equals(EntityMovementMode.SUBMARINE))) {
+              (movementMode.equals(EntityMovementMode.NAVAL) ||
+                    movementMode.equals(EntityMovementMode.HYDROFOIL) ||
+                    movementMode.equals(EntityMovementMode.SUBMARINE))) {
             priceMultiplier *= 1 + (weight / 100000.0);
         } else {
             switch (movementMode) {
@@ -1689,8 +1709,8 @@ public class Tank extends Entity {
         }
         if (!isSupportVehicle()) {
             if (hasWorkingMisc(MiscType.F_FLOTATION_HULL) ||
-                      hasWorkingMisc(MiscType.F_VACUUM_PROTECTION) ||
-                      hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
+                  hasWorkingMisc(MiscType.F_VACUUM_PROTECTION) ||
+                  hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
                 priceMultiplier *= 1.25;
 
             }
@@ -1724,9 +1744,9 @@ public class Tank extends Entity {
     @Override
     public boolean doomedInVacuum() {
         if (hasEngine() &&
-                  (getEngine().isFusion() ||
-                         getEngine().getEngineType() == Engine.FISSION ||
-                         getEngine().getEngineType() == Engine.FUEL_CELL)) {
+              (getEngine().isFusion() ||
+                    getEngine().getEngineType() == Engine.FISSION ||
+                    getEngine().getEngineType() == Engine.FUEL_CELL)) {
             return !hasEnvironmentalSealing();
         }
         return true;
@@ -1753,7 +1773,7 @@ public class Tank extends Entity {
         }
         Hex occupiedHex = game.getHex(getBoardLocation());
         return occupiedHex.containsTerrain(Terrains.FORTIFIED) &&
-                     game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
+              game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
     }
 
     public void setOnFire(boolean inferno) {
@@ -1873,9 +1893,9 @@ public class Tank extends Entity {
             roll = 12;
         }
         if ((roll < 6) ||
-                  (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD) &&
-                         !getOverThresh() &&
-                         !damagedByFire)) {
+              (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD) &&
+                    !getOverThresh() &&
+                    !damagedByFire)) {
             return CRIT_NONE;
         }
         for (int i = 0; i < 2; i++) {
@@ -1897,10 +1917,10 @@ public class Tank extends Entity {
                     case 7:
                         for (Mounted<?> m : getWeaponList()) {
                             if ((m.getLocation() == loc) &&
-                                      !m.isDestroyed() &&
-                                      !m.isJammed() &&
-                                      !m.isHit() &&
-                                      !m.jammedThisPhase()) {
+                                  !m.isDestroyed() &&
+                                  !m.isJammed() &&
+                                  !m.isHit() &&
+                                  !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
@@ -1942,10 +1962,10 @@ public class Tank extends Entity {
                     case 6:
                         for (Mounted<?> m : getWeaponList()) {
                             if ((m.getLocation() == loc) &&
-                                      !m.isDestroyed() &&
-                                      !m.isJammed() &&
-                                      !m.isHit() &&
-                                      !m.jammedThisPhase()) {
+                                  !m.isDestroyed() &&
+                                  !m.isJammed() &&
+                                  !m.isHit() &&
+                                  !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
@@ -2005,10 +2025,10 @@ public class Tank extends Entity {
                     case 8:
                         for (Mounted<?> m : getWeaponList()) {
                             if ((m.getLocation() == loc) &&
-                                      !m.isDestroyed() &&
-                                      !m.isJammed() &&
-                                      !m.isHit() &&
-                                      !m.jammedThisPhase()) {
+                                  !m.isDestroyed() &&
+                                  !m.isJammed() &&
+                                  !m.isHit() &&
+                                  !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
@@ -2040,10 +2060,10 @@ public class Tank extends Entity {
                     case 7:
                         for (Mounted<?> m : getWeaponList()) {
                             if ((m.getLocation() == loc) &&
-                                      !m.isDestroyed() &&
-                                      !m.isJammed() &&
-                                      !m.isHit() &&
-                                      !m.jammedThisPhase()) {
+                                  !m.isDestroyed() &&
+                                  !m.isJammed() &&
+                                  !m.isHit() &&
+                                  !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
@@ -2235,11 +2255,11 @@ public class Tank extends Entity {
         for (Mounted<?> m : getWeaponList()) {
             WeaponType wtype = (WeaponType) m.getType();
             if (wtype.hasFlag(WeaponType.F_ENERGY)
-                      // Chemical lasers still work even after an engine hit.
-                      && !(wtype instanceof CLChemicalLaserWeapon)
-                      // And presumably vehicle flamers should, too; we can always
-                      // remove this again if ruled otherwise.
-                      && !(wtype instanceof VehicleFlamerWeapon)) {
+                  // Chemical lasers still work even after an engine hit.
+                  && !(wtype instanceof CLChemicalLaserWeapon)
+                  // And presumably vehicle flamers should, too; we can always
+                  // remove this again if ruled otherwise.
+                  && !(wtype instanceof VehicleFlamerWeapon)) {
                 m.setBreached(true); // not destroyed, just unpowered
             }
         }
@@ -2404,7 +2424,7 @@ public class Tank extends Entity {
                 continue;
             }
             if ((mount.getType() instanceof MiscType) &&
-                      (mount.getType().hasFlag(MiscType.F_JUMP_JET) || mount.getType().hasFlag(MiscType.F_FUEL))) {
+                  (mount.getType().hasFlag(MiscType.F_JUMP_JET) || mount.getType().hasFlag(MiscType.F_FUEL))) {
                 // Only one slot each for all jump jets or fuel tanks, added later.
                 continue;
             }
@@ -2563,10 +2583,10 @@ public class Tank extends Entity {
     public boolean hasArmedMASC() {
         for (Mounted<?> m : getEquipment()) {
             if (!m.isDestroyed() &&
-                      !m.isBreached() &&
-                      (m.getType() instanceof MiscType) &&
-                      m.getType().hasFlag(MiscType.F_MASC) &&
-                      (m.curMode().equals("Armed") || m.getType().hasSubType(MiscType.S_JETBOOSTER))) {
+                  !m.isBreached() &&
+                  (m.getType() instanceof MiscType) &&
+                  m.getType().hasFlag(MiscType.F_MASC) &&
+                  (m.curMode().equals("Armed") || m.getType().hasSubType(MiscType.S_JETBOOSTER))) {
                 return true;
             }
         }
@@ -2585,13 +2605,13 @@ public class Tank extends Entity {
                 MPBoosters armed = getArmedMPBoosters();
 
                 str += (mpBoosters.hasMASC() ?
-                              " MASC:" + getMASCTurns() + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") :
-                              "") +
-                             (mpBoosters.hasSupercharger() ?
-                                    " Supercharger:" +
-                                          getSuperchargerTurns() +
-                                          (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") :
-                                    "");
+                      " MASC:" + getMASCTurns() + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") :
+                      "") +
+                      (mpBoosters.hasSupercharger() ?
+                            " Supercharger:" +
+                                  getSuperchargerTurns() +
+                                  (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") :
+                            "");
             }
             return str;
         }
@@ -2747,13 +2767,13 @@ public class Tank extends Entity {
         // such as weather/gravity
         if (((double) getMotiveDamage() / getOriginalWalkMP()) >= 0.5) {
             logger.debug(getDisplayName() +
-                               " Lightly Damaged: Walk MP less than or equal to half the original Walk MP");
+                  " Lightly Damaged: Walk MP less than or equal to half the original Walk MP");
             return true;
         } else if ((getArmorRemainingPercent() <= 0.33) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
             logger.debug(getDisplayName() +
-                               " Heavily Damaged: Armour Remaining percent of " +
-                               getArmorRemainingPercent() +
-                               " is less than or equal to 0.33.");
+                  " Heavily Damaged: Armour Remaining percent of " +
+                  getArmorRemainingPercent() +
+                  " is less than or equal to 0.33.");
             return true;
         }
 
@@ -2777,9 +2797,9 @@ public class Tank extends Entity {
     public boolean isDmgModerate() {
         if ((getArmorRemainingPercent() <= 0.67) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
             logger.debug(getDisplayName() +
-                               " Moderately Damaged: Armour Remaining percent of " +
-                               getArmorRemainingPercent() +
-                               " is less than or equal to 0.67.");
+                  " Moderately Damaged: Armour Remaining percent of " +
+                  getArmorRemainingPercent() +
+                  " is less than or equal to 0.67.");
             return true;
         }
 
@@ -2809,9 +2829,9 @@ public class Tank extends Entity {
             return true;
         } else if ((getArmorRemainingPercent() <= 0.8) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
             logger.debug(getDisplayName() +
-                               " Lightly Damaged: Armour Remaining percent of " +
-                               getArmorRemainingPercent() +
-                               " is less than or equal to 0.8.");
+                  " Lightly Damaged: Armour Remaining percent of " +
+                  getArmorRemainingPercent() +
+                  " is less than or equal to 0.8.");
             return true;
         }
 
@@ -2948,9 +2968,9 @@ public class Tank extends Entity {
     @Override
     public boolean isEjectionPossible() {
         return game != null &&
-                     game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT) &&
-                     getCrew().isActive() &&
-                     !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
+              game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT) &&
+              getCrew().isActive() &&
+              !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }
 
     /**
@@ -3059,7 +3079,7 @@ public class Tank extends Entity {
     @Override
     public boolean isTractor() {
         if (getMovementMode().equals(EntityMovementMode.TRACKED) ||
-                  getMovementMode().equals(EntityMovementMode.WHEELED)) {
+              getMovementMode().equals(EntityMovementMode.WHEELED)) {
             // Any tracked or wheeled combat vehicle can be used as a tractor
             // if it is capable of independent operations or it is equipped with
             // a hitch (making it a trailer that is part of a train).

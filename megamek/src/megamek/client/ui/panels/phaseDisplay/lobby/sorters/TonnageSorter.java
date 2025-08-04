@@ -43,6 +43,7 @@ public class TonnageSorter extends MekTableSorter {
 
     /**
      * A Lobby Mek Table sorter that sorts by tonnage.
+     *
      * @param sorting The sorting direction (ascending or descending).
      */
     public TonnageSorter(Sorting sorting) {

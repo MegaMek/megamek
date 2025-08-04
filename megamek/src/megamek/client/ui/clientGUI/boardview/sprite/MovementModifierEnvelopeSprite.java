@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
@@ -29,13 +43,16 @@ import java.awt.geom.Point2D;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Compute;
+import megamek.common.CrewType;
+import megamek.common.EntityMovementType;
+import megamek.common.Facing;
+import megamek.common.VTOL;
 import megamek.common.moves.MovePath;
 
 /**
- * Sprite for displaying information about movement modifier that can be
- * achieved by provided MovePath. Multiple MovementModifierEnvelopeSprite can be
- * drawn on a single hex, one for each final facing.
+ * Sprite for displaying information about movement modifier that can be achieved by provided MovePath. Multiple
+ * MovementModifierEnvelopeSprite can be drawn on a single hex, one for each final facing.
  *
  * @author Saginatio
  */
@@ -53,7 +70,7 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
 
     /**
      * @param boardView The BoardView
-     * @param mp The movepath to the present hex
+     * @param mp        The movepath to the present hex
      */
     public MovementModifierEnvelopeSprite(BoardView boardView, MovePath mp) {
         super(boardView, mp.getFinalCoords());
@@ -61,16 +78,16 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         facing = Facing.valueOfInt(mp.getFinalFacing());
 
         int modi = Compute.getTargetMovementModifier(mp.getHexesMoved(),
-                mp.isJumping(),
-                mp.getEntity() instanceof VTOL
+              mp.isJumping(),
+              mp.getEntity() instanceof VTOL
                     || (mp.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_WALK)
                     || (mp.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_RUN)
                     || (mp.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT),
-                boardView.game).getValue();
+              boardView.game).getValue();
         //Add evasion bonus for 'Mek with dual cockpit
         if (mp.getEntity().getCrew().getCrewType().equals(CrewType.DUAL)
-                && mp.getEntity().getCrew().hasDedicatedPilot()
-                && !mp.isJumping() && mp.getHexesMoved() > 0) {
+              && mp.getEntity().getCrew().hasDedicatedPilot()
+              && !mp.isJumping() && mp.getHexesMoved() > 0) {
             modi++;
         }
         float hue = 0.7f - 0.15f * modi;

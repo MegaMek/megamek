@@ -42,13 +42,13 @@ import megamek.client.ui.SharedUtility;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IAero;
+import megamek.common.UnitRole;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
-import megamek.common.UnitRole;
-import megamek.logging.MMLogger;
 
 /**
  * Flexible container for unit action data using a map-based approach with enum keys.
+ *
  * @author Luana Coppio
  */
 public class UnitAction extends EntityDataMap<UnitAction.Field> {
@@ -104,7 +104,9 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
 
     /**
      * Creates a UnitActionMap from a MovePath.
+     *
      * @param movePath The MovePath to extract data from
+     *
      * @return A populated UnitActionMap
      */
     public static UnitAction fromMovePath(MovePath movePath) {

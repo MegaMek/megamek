@@ -77,8 +77,8 @@ class ComputeEnvironmentalToHitMods {
         boolean isEnergy = (wtype != null) && wtype.hasFlag(WeaponType.F_ENERGY);
         boolean isMissile = (wtype != null) && wtype.hasFlag(WeaponType.F_MISSILE);
         boolean isDirectFireBallistic = (wtype != null) &&
-                                              wtype.hasFlag(WeaponType.F_BALLISTIC) &&
-                                              wtype.hasFlag(WeaponType.F_DIRECT_FIRE);
+              wtype.hasFlag(WeaponType.F_BALLISTIC) &&
+              wtype.hasFlag(WeaponType.F_DIRECT_FIRE);
 
         if (!attacker.isSpaceborne()) {
             // weather mods
@@ -147,5 +147,5 @@ class ComputeEnvironmentalToHitMods {
         return toHit;
     }
 
-    private ComputeEnvironmentalToHitMods() { }
+    private ComputeEnvironmentalToHitMods() {}
 }

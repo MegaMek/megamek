@@ -1,15 +1,37 @@
 /*
- * MegaAero - Copyright (C) 2007 Jay Lawson
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * Copyright (C) 2007 Jay Lawson
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import static megamek.common.Compute.*;
@@ -34,7 +56,8 @@ public class Warship extends Jumpship {
 
     private static final String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL", "LBS", "RBS" };
     private static final String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
-            "Aft", "Aft Left Side", "Aft Right Side", "Hull", "Left Broadsides", "Right Broadsides" };
+                                                     "Aft", "Aft Left Side", "Aft Right Side", "Hull",
+                                                     "Left Broadsides", "Right Broadsides" };
 
     public Warship() {
         super();
@@ -56,12 +79,12 @@ public class Warship extends Jumpship {
     }
 
     private static final TechAdvancement TA_WARSHIP = new TechAdvancement(TechBase.ALL)
-            .setISAdvancement(2295, 2305, DATE_NONE, 2950, 3050)
-            .setClanAdvancement(2295, 2305).setApproximate(true, false, false, false, false)
-            .setPrototypeFactions(Faction.TA).setProductionFactions(Faction.TH)
-            .setReintroductionFactions(Faction.FS, Faction.LC, Faction.DC).setTechRating(TechRating.E)
-            .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setISAdvancement(2295, 2305, DATE_NONE, 2950, 3050)
+          .setClanAdvancement(2295, 2305).setApproximate(true, false, false, false, false)
+          .setPrototypeFactions(Faction.TA).setProductionFactions(Faction.TH)
+          .setReintroductionFactions(Faction.FS, Faction.LC, Faction.DC).setTechRating(TechRating.E)
+          .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -160,7 +183,7 @@ public class Warship extends Jumpship {
         int rotate = dir - getFacing();
         if (canChangeSecondaryFacing()) {
             return (rotate == 0) || (rotate == 1) || (rotate == -1)
-                    || (rotate == -5) || (rotate == 5);
+                  || (rotate == -5) || (rotate == 5);
         }
         return rotate == 0;
     }

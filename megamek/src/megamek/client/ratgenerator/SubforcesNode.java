@@ -1,15 +1,34 @@
 /*
- * MegaMek - Copyright (C) 2016 The MegaMek Team
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ratgenerator;
 
@@ -19,11 +38,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Node while contains rules for generating subforces -- either lower eschelons or the actual
- * units if this is a bottom-level eschelon.
- * 
- * @author Neoancient
+ * Node while contains rules for generating subforces -- either lower eschelons or the actual units if this is a
+ * bottom-level eschelon.
  *
+ * @author Neoancient
  */
 public class SubforcesNode extends RulesetNode {
     String altFaction;
@@ -43,7 +61,7 @@ public class SubforcesNode extends RulesetNode {
     }
 
     public ArrayList<ForceDescriptor> generateSubforces(ForceDescriptor fd,
-            boolean isAttached) {
+          boolean isAttached) {
         ArrayList<ForceDescriptor> retVal = new ArrayList<>();
         for (ValueNode n : subforces) {
             if (n.matches(fd)) {
@@ -53,7 +71,7 @@ public class SubforcesNode extends RulesetNode {
                      * roughly the same.
                      */
                     if (!isAttached && fd.getSizeMod() == ForceDescriptor.UNDERSTRENGTH
-                            && i == n.getNum() / 2) {
+                          && i == n.getNum() / 2) {
                         continue;
                     }
                     ForceDescriptor sub = fd.createChild(i);
@@ -83,7 +101,7 @@ public class SubforcesNode extends RulesetNode {
                     ArrayList<ForceDescriptor> subs = new ArrayList<>();
                     for (int i = 0; i < vn.getNum(); i++) {
                         if (fd.getSizeMod() == ForceDescriptor.UNDERSTRENGTH
-                                && i == vn.getNum() / 2) {
+                              && i == vn.getNum() / 2) {
                             continue;
                         }
                         ForceDescriptor sub = fd.createChild(i);
@@ -124,9 +142,10 @@ public class SubforcesNode extends RulesetNode {
 
     /**
      * Used to check the element hierarchy looking for a node with a "generate" assertion set.
-     * 
+     *
      * @param nodes A series of ruleset nodes, sorted from the innermost to the outermost.
-     * @return The value of the innermost "generate" property that is set, or null if none are set. 
+     *
+     * @return The value of the innermost "generate" property that is set, or null if none are set.
      */
     private String findGenerateProperty(RulesetNode... nodes) {
         for (RulesetNode n : nodes) {

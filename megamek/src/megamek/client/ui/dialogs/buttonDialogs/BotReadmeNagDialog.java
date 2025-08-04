@@ -32,16 +32,16 @@
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
+import javax.swing.JFrame;
+
 import megamek.MMConstants;
 import megamek.MegaMek;
-
-import javax.swing.*;
 
 public class BotReadmeNagDialog extends AbstractNagDialog {
     //region Constructors
     public BotReadmeNagDialog(final JFrame frame) {
         super(frame, "BotReadmeNagDialog", "BotReadmeNagDialog.title",
-                "BotReadmeNagDialog.text", MMConstants.NAG_BOT_README);
+              "BotReadmeNagDialog.text", MMConstants.NAG_BOT_README);
     }
     //endregion Constructors
 

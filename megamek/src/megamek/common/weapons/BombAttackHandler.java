@@ -1,17 +1,42 @@
 /*
- * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.BombType.BombTypeEnum;
@@ -20,10 +45,6 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
 
 /**
  * @author Jay Lawson
@@ -38,14 +59,13 @@ public class BombAttackHandler extends WeaponHandler {
      * @param g
      */
     public BombAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
-            TWGameManager m) {
+          TWGameManager m) {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_NONE;
     }
 
     /**
-     * Does this attack use the cluster hit table? necessary to determine how
-     * Aero damage should be applied
+     * Does this attack use the cluster hit table? necessary to determine how Aero damage should be applied
      */
     @Override
     protected boolean usesClusterTable() {
@@ -65,8 +85,8 @@ public class BombAttackHandler extends WeaponHandler {
                 // find the first mounted bomb of this type and drop it
                 for (Mounted<?> bomb : ae.getBombs()) {
                     if (!bomb.isDestroyed()
-                            && (bomb.getUsableShotsLeft() > 0)
-                            && (((BombType) bomb.getType()).getBombType() == bombType)) {
+                          && (bomb.getUsableShotsLeft() > 0)
+                          && (((BombType) bomb.getType()).getBombType() == bombType)) {
                         bomb.setShotsLeft(0);
                         if (bomb.isInternalBomb()) {
                             ((IBomber) ae).increaseUsedInternalBombs(1);
@@ -97,8 +117,8 @@ public class BombAttackHandler extends WeaponHandler {
         for (Map.Entry<BombTypeEnum, Integer> entry : payload.entrySet()) {
             BombTypeEnum type = entry.getKey();
             int bombCount = entry.getValue();
-            
-            if (bombCount <= 0) continue;
+
+            if (bombCount <= 0) {continue;}
             // to hit, adjusted for bomb-type specific rules
             ToHitData typeModifiedToHit = new ToHitData();
             typeModifiedToHit.append(toHit);
@@ -116,10 +136,10 @@ public class BombAttackHandler extends WeaponHandler {
                         continue;
                     }
                     if (target.getId() == ti.target.getId()
-                            || ((ti.targetType != Targetable.TYPE_HEX_TAG)
-                                    && target.getPosition().equals(ti.target.getPosition()))) {
+                          || ((ti.targetType != Targetable.TYPE_HEX_TAG)
+                          && target.getPosition().equals(ti.target.getPosition()))) {
                         typeModifiedToHit.addModifier(-2,
-                                "laser-guided bomb against tagged target");
+                              "laser-guided bomb against tagged target");
                         laserGuided = true;
                         break;
                     }
@@ -212,10 +232,10 @@ public class BombAttackHandler extends WeaponHandler {
                     vPhaseReport.add(r);
 
                     bombMsg = "Bomb hit here on round " + game.getRoundCount()
-                            + ", dropped by " + ((player != null) ? player.getName() : "somebody");
+                          + ", dropped by " + ((player != null) ? player.getName() : "somebody");
                     game.getBoard(target).addSpecialHexDisplay(coords,
-                            new SpecialHexDisplay(Type.BOMB_HIT, game.getRoundCount(),
-                                    player, bombMsg));
+                          new SpecialHexDisplay(Type.BOMB_HIT, game.getRoundCount(),
+                                player, bombMsg));
                 } else {
                     int moF = -typeModifiedToHit.getMoS();
                     if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
@@ -251,11 +271,11 @@ public class BombAttackHandler extends WeaponHandler {
                         r.add(drop.getBoardNum());
                         vPhaseReport.addElement(r);
                         bombMsg = "Bomb missed!  Round " + game.getRoundCount()
-                                + ", by " + ((player != null) ? player.getName() : "somebody") + ", drifted to "
-                                + drop.getBoardNum();
+                              + ", by " + ((player != null) ? player.getName() : "somebody") + ", drifted to "
+                              + drop.getBoardNum();
                         game.getBoard(target).addSpecialHexDisplay(coords,
-                                new SpecialHexDisplay(Type.BOMB_MISS, game.getRoundCount(),
-                                        player, bombMsg));
+                              new SpecialHexDisplay(Type.BOMB_MISS, game.getRoundCount(),
+                                    player, bombMsg));
                     } else {
                         // misses and scatters off-board
                         r = new Report(6699);
@@ -265,11 +285,11 @@ public class BombAttackHandler extends WeaponHandler {
                         r.add(type.getDisplayName());
                         vPhaseReport.addElement(r);
                         bombMsg = "Bomb missed!  Round " + game.getRoundCount()
-                                + ", by " + ((player != null) ? player.getName() : "somebody")
-                                + ", drifted off the board";
+                              + ", by " + ((player != null) ? player.getName() : "somebody")
+                              + ", drifted off the board";
                         game.getBoard(target).addSpecialHexDisplay(coords,
-                                new SpecialHexDisplay(Type.BOMB_MISS, game.getRoundCount(),
-                                        player, bombMsg));
+                              new SpecialHexDisplay(Type.BOMB_MISS, game.getRoundCount(),
+                                    player, bombMsg));
                         continue;
                     }
                 }
@@ -295,14 +315,14 @@ public class BombAttackHandler extends WeaponHandler {
                 if (bMissed) {
                     if (hitIds == null || hitIds.isEmpty()) {
                         game.getBoard(target).addSpecialHexDisplay(drop,
-                                new SpecialHexDisplay(Type.BOMB_DRIFT, game.getRoundCount(),
-                                        player, Messages.getString("BombMessage.drifted")
-                                                + " " + coords.getBoardNum()));
+                              new SpecialHexDisplay(Type.BOMB_DRIFT, game.getRoundCount(),
+                                    player, Messages.getString("BombMessage.drifted")
+                                    + " " + coords.getBoardNum()));
                     } else {
                         game.getBoard(target).addSpecialHexDisplay(drop,
-                                new SpecialHexDisplay(Type.BOMB_HIT, game.getRoundCount(),
-                                        player, Messages.getString("BombMessage.drifted")
-                                                + " " + coords.getBoardNum()));
+                              new SpecialHexDisplay(Type.BOMB_HIT, game.getRoundCount(),
+                                    player, Messages.getString("BombMessage.drifted")
+                                    + " " + coords.getBoardNum()));
                     }
                 }
 

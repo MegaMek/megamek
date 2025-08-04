@@ -1,28 +1,40 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * MegaMek - Copyright (C) 2020 - The MegaMek Team
+ * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs;
 
-import megamek.client.Client;
-import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.IGame;
-import megamek.common.Player;
-import megamek.common.Team;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -30,6 +42,19 @@ import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.List;
+import javax.swing.Box;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JList;
+
+import megamek.client.Client;
+import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.common.IGame;
+import megamek.common.Player;
+import megamek.common.Team;
 
 public class PlayerListDialog extends JDialog implements ActionListener {
 
@@ -61,7 +86,7 @@ public class PlayerListDialog extends JDialog implements ActionListener {
             @Override
             public void windowClosing(WindowEvent e) {
                 actionPerformed(new ActionEvent(butOkay,
-                        ActionEvent.ACTION_PERFORMED, butOkay.getText()));
+                      ActionEvent.ACTION_PERFORMED, butOkay.getText()));
             }
         });
 
@@ -73,7 +98,7 @@ public class PlayerListDialog extends JDialog implements ActionListener {
         if (modal) {
             setModal(true);
             setLocation(parent.getLocation().x + (parent.getSize().width / 2) - (getSize().width / 2),
-                    parent.getLocation().y + (parent.getSize().height / 2) - (getSize().height / 2));
+                  parent.getLocation().y + (parent.getSize().height / 2) - (getSize().height / 2));
         } else {
             setModal(false);
             setLocation(GUIP.getPlayerListPosX(), GUIP.getPlayerListPosY());
@@ -81,7 +106,7 @@ public class PlayerListDialog extends JDialog implements ActionListener {
     }
 
     public void refreshPlayerList(JList<String> playerList,
-            Client client) {
+          Client client) {
         refreshPlayerList(playerList, client, false);
     }
 
@@ -93,11 +118,10 @@ public class PlayerListDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Refreshes the player list component with information from the game
-     * object.
+     * Refreshes the player list component with information from the game object.
      */
     public void refreshPlayerList(JList<String> playerList,
-            Client client, boolean displayTeam) {
+          Client client, boolean displayTeam) {
         ((DefaultListModel<String>) playerList.getModel()).removeAllElements();
 
         for (Player player : sortedPlayerList(client.getGame())) {
@@ -110,7 +134,8 @@ public class PlayerListDialog extends JDialog implements ActionListener {
                     if (team.getId() == Player.TEAM_NONE) {
                         playerDisplay.append(Messages.getString("PlayerListDialog.NoTeam"));
                     } else {
-                        playerDisplay.append(MessageFormat.format(Messages.getString("PlayerListDialog.Team"), team.getId()));
+                        playerDisplay.append(MessageFormat.format(Messages.getString("PlayerListDialog.Team"),
+                              team.getId()));
                     }
                 } else {
                     playerDisplay.append(Messages.getString("PlayerListDialog.TeamLess"));

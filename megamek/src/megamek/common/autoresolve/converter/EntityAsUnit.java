@@ -32,6 +32,10 @@
  */
 package megamek.common.autoresolve.converter;
 
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+
+import java.util.ArrayList;
+
 import megamek.common.Entity;
 import megamek.common.ForceAssignable;
 import megamek.common.UnitRole;
@@ -50,10 +54,6 @@ import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.strategicBattleSystems.SBFUnitConverter;
 import megamek.common.util.Counter;
 import megamek.logging.MMLogger;
-
-import java.util.ArrayList;
-
-import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 public class EntityAsUnit extends BaseFormationConverter<Formation> {
     private static final MMLogger logger = MMLogger.create(EntityAsUnit.class);
@@ -124,12 +124,12 @@ public class EntityAsUnit extends BaseFormationConverter<Formation> {
             s += damage.getDamage(ASRange.SHORT).damage;
         }
         return new ASDamageVector(
-            new ASDamage(Math.ceil((double) s / size)),
-            new ASDamage(Math.ceil((double) m / size)),
-            new ASDamage(Math.ceil((double) l / size)),
-            null,
-            size,
-            true);
+              new ASDamage(Math.ceil((double) s / size)),
+              new ASDamage(Math.ceil((double) m / size)),
+              new ASDamage(Math.ceil((double) l / size)),
+              null,
+              size,
+              true);
     }
 
 }

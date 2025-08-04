@@ -24,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.customMek;
 
@@ -118,11 +123,11 @@ public class InfantryArmorPanel extends JPanel {
 
         for (EquipmentType et : MiscType.allTypes()) {
             if (et.hasFlag(MiscType.F_ARMOR_KIT) &&
-                      et.isLegal(year,
-                            gameTechLevel,
-                            entity.isClan(),
-                            entity.isMixedTech(),
-                            entity.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
+                  et.isLegal(year,
+                        gameTechLevel,
+                        entity.isClan(),
+                        entity.isMixedTech(),
+                        entity.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
                 armorKits.add(et);
             }
         }

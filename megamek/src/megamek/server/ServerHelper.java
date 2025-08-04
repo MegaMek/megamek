@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server;
 
 import java.util.ArrayList;
@@ -29,8 +44,8 @@ import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
- * This class contains computations carried out by the Server class.
- * Methods put in here should be static and self-contained.
+ * This class contains computations carried out by the Server class. Methods put in here should be static and
+ * self-contained.
  *
  * @author NickAragua
  */
@@ -39,36 +54,34 @@ public class ServerHelper {
     }
 
     /**
-     * Determines if the given entity is an infantry unit in the given hex is "in
-     * the open"
-     * (and thus subject to double damage from attacks)
+     * Determines if the given entity is an infantry unit in the given hex is "in the open" (and thus subject to double
+     * damage from attacks)
      *
      * @param te                         Target entity.
      * @param te_hex                     Hex where target entity is located.
      * @param game                       The current {@link Game}
      * @param isPlatoon                  Whether the target unit is a platoon.
-     * @param ammoExplosion              Whether we're considering a "big boom" ammo
-     *                                   explosion from TacOps.
-     * @param ignoreInfantryDoubleDamage Whether we should ignore double damage to
-     *                                   infantry.
+     * @param ammoExplosion              Whether we're considering a "big boom" ammo explosion from TacOps.
+     * @param ignoreInfantryDoubleDamage Whether we should ignore double damage to infantry.
+     *
      * @return Whether the infantry unit can be considered to be "in the open"
      */
     public static boolean infantryInOpen(Entity te, Hex te_hex, Game game,
-            boolean isPlatoon, boolean ammoExplosion, boolean ignoreInfantryDoubleDamage) {
+          boolean isPlatoon, boolean ammoExplosion, boolean ignoreInfantryDoubleDamage) {
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !ignoreInfantryDoubleDamage
-                && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)) {
+              && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)) {
 
             if (te_hex == null) {
                 te_hex = game.getBoard().getHex(te.getPosition());
             }
 
             if ((te_hex != null) && !te_hex.containsTerrain(Terrains.WOODS) && !te_hex.containsTerrain(Terrains.JUNGLE)
-                    && !te_hex.containsTerrain(Terrains.ROUGH) && !te_hex.containsTerrain(Terrains.RUBBLE)
-                    && !te_hex.containsTerrain(Terrains.SWAMP) && !te_hex.containsTerrain(Terrains.BUILDING)
-                    && !te_hex.containsTerrain(Terrains.FUEL_TANK) && !te_hex.containsTerrain(Terrains.FORTIFIED)
-                    && (!te.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA))
-                    && (!te_hex.containsTerrain(Terrains.PAVEMENT) || !te_hex.containsTerrain(Terrains.ROAD))
-                    && !ammoExplosion) {
+                  && !te_hex.containsTerrain(Terrains.ROUGH) && !te_hex.containsTerrain(Terrains.RUBBLE)
+                  && !te_hex.containsTerrain(Terrains.SWAMP) && !te_hex.containsTerrain(Terrains.BUILDING)
+                  && !te_hex.containsTerrain(Terrains.FUEL_TANK) && !te_hex.containsTerrain(Terrains.FORTIFIED)
+                  && (!te.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA))
+                  && (!te_hex.containsTerrain(Terrains.PAVEMENT) || !te_hex.containsTerrain(Terrains.ROAD))
+                  && !ammoExplosion) {
                 return true;
             }
         }
@@ -77,8 +90,7 @@ public class ServerHelper {
     }
 
     /**
-     * Helper function that causes an entity to sink to the bottom of the water
-     * hex it's currently in.
+     * Helper function that causes an entity to sink to the bottom of the water hex it's currently in.
      */
     public static void sinkToBottom(Entity entity) {
         if ((entity == null) || !entity.getGame().getBoard().contains(entity.getPosition())) {
@@ -103,9 +115,9 @@ public class ServerHelper {
     }
 
     public static void checkAndApplyMagmaCrust(Hex hex, int elevation, Entity entity, Coords curPos,
-            boolean jumpLanding, Vector<Report> vPhaseReport, TWGameManager gameManager) {
+          boolean jumpLanding, Vector<Report> vPhaseReport, TWGameManager gameManager) {
         if ((hex.terrainLevel(Terrains.MAGMA) == 1) && (elevation == 0)
-                && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
+              && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
             int reportID = jumpLanding ? 2396 : 2395;
 
             Roll diceRoll = Compute.rollD6(1);
@@ -136,7 +148,7 @@ public class ServerHelper {
     public static void checkEnteringMagma(Hex hex, int elevation, Entity entity, TWGameManager gameManager) {
 
         if ((hex.terrainLevel(Terrains.MAGMA) == 2) && (elevation == 0)
-                && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
+              && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
             gameManager.doMagmaDamage(entity, false);
         }
     }
@@ -146,10 +158,10 @@ public class ServerHelper {
      */
     public static void checkEnteringHazardousLiquid(Hex hex, int elevation, Entity entity, TWGameManager gameManager) {
 
-            if (hex.containsTerrain(Terrains.HAZARDOUS_LIQUID) && (elevation <= 0)) {
-                int depth = hex.containsTerrain(Terrains.WATER) ? hex.terrainLevel(Terrains.WATER) : 0;
-                gameManager.doHazardousLiquidDamage(entity, false, depth);
-            }
+        if (hex.containsTerrain(Terrains.HAZARDOUS_LIQUID) && (elevation <= 0)) {
+            int depth = hex.containsTerrain(Terrains.WATER) ? hex.terrainLevel(Terrains.WATER) : 0;
+            gameManager.doHazardousLiquidDamage(entity, false, depth);
+        }
     }
 
     public static void checkEnteringUltraSublevel(Hex hex, int elevation, Entity entity, TWGameManager gameManager) {
@@ -162,7 +174,7 @@ public class ServerHelper {
      * Check for black ice when moving into pavement hex.
      */
     public static boolean checkEnteringBlackIce(TWGameManager gameManager, Coords curPos, Hex curHex,
-            boolean useBlackIce, boolean goodTemp, boolean isIceStorm) {
+          boolean useBlackIce, boolean goodTemp, boolean isIceStorm) {
         boolean isPavement = curHex.hasPavement();
         if (isPavement && ((useBlackIce && goodTemp) || isIceStorm)) {
             if (!curHex.containsTerrain(Terrains.BLACK_ICE)) {
@@ -194,7 +206,7 @@ public class ServerHelper {
         // so we just need to do the unmoved entities
         for (Entity entity : game.getEntitiesVector()) {
             if (!entity.isOffBoard() && entity.isDeployed() &&
-                    ((entity.delta_distance == 0) || !tacOpsBap)) {
+                  ((entity.delta_distance == 0) || !tacOpsBap)) {
                 detectMinefields(game, entity, entity.getPosition(), vPhaseReport, gameManager);
             }
         }
@@ -206,7 +218,7 @@ public class ServerHelper {
      * @return True if any minefields have been detected.
      */
     public static boolean detectMinefields(Game game, Entity entity, Coords coords,
-            Vector<Report> vPhaseReport, TWGameManager gameManager) {
+          Vector<Report> vPhaseReport, TWGameManager gameManager) {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             return false;
         }
@@ -265,7 +277,7 @@ public class ServerHelper {
      * Checks to see if any units can detected hidden units.
      */
     public static boolean detectHiddenUnits(Game game, Entity detector, Coords detectorCoords,
-            Vector<Report> vPhaseReport, TWGameManager gameManager) {
+          Vector<Report> vPhaseReport, TWGameManager gameManager) {
         // If hidden units aren't on, nothing to do
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             return false;
@@ -343,7 +355,7 @@ public class ServerHelper {
             }
 
             LosEffects los = LosEffects.calculateLOS(game, detector, detected, detectorCoords, detected.getPosition(),
-                    false);
+                  false);
             if (los.canSee() || !beyondPointBlankRange) {
                 detected.setHidden(false);
                 gameManager.entityUpdate(detected.getId());
@@ -361,7 +373,7 @@ public class ServerHelper {
         }
 
         if (!vPhaseReport.isEmpty() && game.getPhase().isMovement()
-                && ((game.getTurnIndex() + 1) < game.getTurnsList().size())) {
+              && ((game.getTurnIndex() + 1) < game.getTurnsList().size())) {
             for (Integer playerId : reportPlayers) {
                 gameManager.send(playerId, gameManager.createSpecialReportPacket());
             }
@@ -371,8 +383,8 @@ public class ServerHelper {
     }
 
     /**
-     * Loop through the game and clear 'blood stalker' flag for
-     * any entities that have the given unit as the blood stalker target.
+     * Loop through the game and clear 'blood stalker' flag for any entities that have the given unit as the blood
+     * stalker target.
      */
     public static void clearBloodStalkers(Game game, int stalkeeID, TWGameManager gameManager) {
         for (Entity entity : game.getEntitiesVector()) {
@@ -384,13 +396,12 @@ public class ServerHelper {
     }
 
     /**
-     * Returns the target number to avoid Radical Heat Sink Failure for the given
-     * number of rounds
-     * of consecutive use, IO p.89. The first round of use means consecutiveRounds =
-     * 1; this is
-     * the minimum as 0 rounds of use would not trigger a roll.
+     * Returns the target number to avoid Radical Heat Sink Failure for the given number of rounds of consecutive use,
+     * IO p.89. The first round of use means consecutiveRounds = 1; this is the minimum as 0 rounds of use would not
+     * trigger a roll.
      *
      * @param consecutiveRounds The rounds the RHS has been used
+     *
      * @return The roll target number to avoid failure
      */
     public static int radicalHeatSinkSuccessTarget(int consecutiveRounds) {

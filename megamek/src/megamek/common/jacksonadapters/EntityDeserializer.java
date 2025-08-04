@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.jacksonadapters;
 
 import static megamek.common.jacksonadapters.ASElementSerializer.FULL_NAME;
@@ -30,7 +45,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-
 import megamek.common.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.scenario.Scenario;
@@ -189,7 +203,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
                         String rearLocationAbbr = entity.getLocationAbbr(location) + "R";
                         if (armorNode.has(rearLocationAbbr)) {
                             int newArmor = Math.min(armorNode.get(rearLocationAbbr).intValue(),
-                                    entity.getArmor(location, true));
+                                  entity.getArmor(location, true));
                             entity.setArmor(newArmor, location, true);
                         }
                     }
@@ -201,7 +215,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
                     String locationAbbr = entity.getLocationAbbr(location);
                     if (internalNode.has(locationAbbr)) {
                         int newIS = Math.min(internalNode.get(locationAbbr).intValue(),
-                                entity.getInternal(location));
+                              entity.getInternal(location));
                         entity.setInternal(newIS, location);
                     }
                 }
@@ -328,7 +342,12 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
                 // Also make sure we dont exceed the max allowed
                 ammo.setShotsLeft(Math.min(shots, ammo.getBaseShotsLeft()));
             } else {
-                throw new IllegalArgumentException("Invalid ammo slot " + location + ":" + (slot + 1) + " on " + entity);
+                throw new IllegalArgumentException("Invalid ammo slot "
+                      + location
+                      + ":"
+                      + (slot + 1)
+                      + " on "
+                      + entity);
             }
         }
     }
@@ -376,12 +395,12 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     }
 
     /**
-     * Returns all Integers of a node as a List. The node may be either of the form "node: singleNumber", in
-     * which case the List will only contain singleNumber, or it may be an array node of the form
-     * "node: [ firstNumber, secondNumber ]" (or the multi-line form using dashes) in which case the list
-     * contains all the given numbers.
+     * Returns all Integers of a node as a List. The node may be either of the form "node: singleNumber", in which case
+     * the List will only contain singleNumber, or it may be an array node of the form "node: [ firstNumber,
+     * secondNumber ]" (or the multi-line form using dashes) in which case the list contains all the given numbers.
      *
      * @param node The node to parse
+     *
      * @return A list of the given numbers of the node
      */
     public static List<Integer> parseArrayOrSingleNode(JsonNode node) {

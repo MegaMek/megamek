@@ -1,42 +1,67 @@
 /*
-* Copyright (c) 2014-2022 - The MegaMek Team. All Rights Reserved.
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
-package megamek.common.pathfinder;
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
 
-import megamek.common.*;
-import megamek.common.moves.MovePath;
-import megamek.common.moves.MovePath.MoveStepType;
-import megamek.common.annotations.Nullable;
-import megamek.common.moves.MoveStep;
-import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
+package megamek.common.pathfinder;
 
 import java.util.*;
 
+import megamek.common.Board;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.EntityMovementType;
+import megamek.common.Facing;
+import megamek.common.Game;
+import megamek.common.Tank;
+import megamek.common.annotations.Nullable;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.moves.MoveStep;
+import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
+
 /**
- * Generic implementation of AbstractPathFinder when we restrict graph nodes to
- * (coordinates x facing) and edges to MovePaths. Provides useful
- * implementations of functional interfaces defined in AbstractPathFinder.
+ * Generic implementation of AbstractPathFinder when we restrict graph nodes to (coordinates x facing) and edges to
+ * MovePaths. Provides useful implementations of functional interfaces defined in AbstractPathFinder.
  */
 public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, MovePath> {
     /**
-     * This constant defines the maximum number of times it makes sense
-     * for a unit to turn in a row - if you're turning right four times, you might as well
-     * turn left twice instead.
+     * This constant defines the maximum number of times it makes sense for a unit to turn in a row - if you're turning
+     * right four times, you might as well turn left twice instead.
      */
     private static final int MAX_TURN_COUNT = 3;
-    
+
     /**
      * Node defined by coordinates and unit facing.
+     *
      * @author Saginatio
      */
     public static class CoordsWithFacing {
@@ -175,13 +200,12 @@ public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, M
                 previousPosition = entity.getPosition();
             }
             return edge.getLastStep().isMovementPossible(
-                    game, previousPosition, previousElevation, edge.getCachedEntityState());
+                  game, previousPosition, previousElevation, edge.getCachedEntityState());
         }
     }
 
     /**
-     * This filter removes MovePaths that need more movement points than
-     * specified in constructor invocation.
+     * This filter removes MovePaths that need more movement points than specified in constructor invocation.
      */
     public static class MovePathLengthFilter extends Filter<MovePath> {
         private final int maxMP;
@@ -199,7 +223,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, M
 
     /**
      * A MovePath comparator that compares movement points spent.
-     *
+     * <p>
      * Order paths with fewer used MP first.
      */
     public static class MovePathMPCostComparator implements Comparator<MovePath> {
@@ -212,15 +236,14 @@ public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, M
     }
 
     /**
-     * A MovePath comparator that compares number of steps. Generally used for
-     * spheroids, which don't have the same velocity expenditure restrictions as
-     * Aerodynes, however they can't compare based on MP like ground units.
+     * A MovePath comparator that compares number of steps. Generally used for spheroids, which don't have the same
+     * velocity expenditure restrictions as Aerodynes, however they can't compare based on MP like ground units.
      * Spheroids should be able to safely compare based upon path length.
-     *
+     * <p>
      * Order paths with fewer steps first.
      */
     public static class MovePathLengthComparator implements
-            Comparator<MovePath> {
+                                                 Comparator<MovePath> {
         @Override
         public int compare(final MovePath first, final MovePath second) {
             final int firstSteps = first.getStepVector().size();
@@ -245,14 +268,13 @@ public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, M
         }
 
         /**
-         * Produces set of MovePaths by extending MovePath mp with MoveSteps.
-         * The set of extending steps include {F, L, R, UP, ShL, ShR} if
-         * applicable. If stepType is equal to MoveStepType.BACKWARDS then
-         * extending steps include also {B, ShBL, ShBR}. If stepType is equal to
-         * MoveStep.DFA or MoveStep.CHARGE then it is added to the resulting
-         * set.
+         * Produces set of MovePaths by extending MovePath mp with MoveSteps. The set of extending steps include {F, L,
+         * R, UP, ShL, ShR} if applicable. If stepType is equal to MoveStepType.BACKWARDS then extending steps include
+         * also {B, ShBL, ShBR}. If stepType is equal to MoveStep.DFA or MoveStep.CHARGE then it is added to the
+         * resulting set.
          *
          * @param mp the MovePath to be extended
+         *
          * @see AdjacencyMap
          */
         @Override
@@ -268,11 +290,11 @@ public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, M
             // b) spinning around endlessly
             // especially during movement where turning costs 0 MP
             if (lType != MoveStepType.TURN_LEFT &&
-                    (mp.getEndStepCount(MoveStepType.TURN_RIGHT) < MAX_TURN_COUNT)) {
+                  (mp.getEndStepCount(MoveStepType.TURN_RIGHT) < MAX_TURN_COUNT)) {
                 result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
             }
             if (lType != MoveStepType.TURN_RIGHT &&
-                    (mp.getEndStepCount(MoveStepType.TURN_LEFT) < MAX_TURN_COUNT)) {
+                  (mp.getEndStepCount(MoveStepType.TURN_LEFT) < MAX_TURN_COUNT)) {
                 result.add(mp.clone().addStep(MoveStepType.TURN_LEFT));
             }
 
@@ -302,7 +324,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, M
 
             Board board = mp.getGame().getBoard(mp.getFinalBoardId());
             if (backwardsStep &&
-                      board.contains(mp.getFinalCoords().translated((mp.getFinalFacing() + 3) % 6))) {
+                  board.contains(mp.getFinalCoords().translated((mp.getFinalFacing() + 3) % 6))) {
                 MovePath newPath = mp.clone();
                 PathDecorator.AdjustElevationForForwardMovement(newPath);
                 result.add(newPath.addStep(MoveStepType.BACKWARDS));
@@ -315,17 +337,16 @@ public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, M
             return result;
         }
     }
-    
+
     /**
-     * Creates a new instance of MovePathFinder. Sets DestinationMap to
-     * {@link MovePathDestinationMap} and adds {@link MovePathLegalityFilter}.
-     * Rest of the methods needed by AbstractPathFinder have to be passed as a
+     * Creates a new instance of MovePathFinder. Sets DestinationMap to {@link MovePathDestinationMap} and adds
+     * {@link MovePathLegalityFilter}. Rest of the methods needed by AbstractPathFinder have to be passed as a
      * parameter.
      */
     public MovePathFinder(EdgeRelaxer<C, MovePath> edgeRelaxer,
-                          AdjacencyMap<MovePath> edgeAdjacencyMap,
-                          Comparator<MovePath> comparator,
-                          Game game) {
+          AdjacencyMap<MovePath> edgeAdjacencyMap,
+          Comparator<MovePath> comparator,
+          Game game) {
         super(new MovePathDestinationMap(),
               edgeRelaxer,
               edgeAdjacencyMap,
@@ -350,12 +371,12 @@ public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, M
     }
 
     /**
-     * Returns computed cost to reach the hex at c coordinates. If multiple path
-     * are present with different final facings, the one minimal one is chosen.
-     * If none paths are present then {@code null} is returned.
+     * Returns computed cost to reach the hex at c coordinates. If multiple path are present with different final
+     * facings, the one minimal one is chosen. If none paths are present then {@code null} is returned.
      *
      * @param coords
-     * @param comp comparator used if multiple paths are present
+     * @param comp   comparator used if multiple paths are present
+     *
      * @return shortest path to the hex at c coordinates or {@code null}
      */
     protected @Nullable C getCost(Coords coords, Comparator<C> comp) {

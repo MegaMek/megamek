@@ -1,24 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
-
-import megamek.client.ui.clientGUI.boardview.BoardView;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics;
@@ -28,11 +40,12 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
 
+import megamek.client.ui.clientGUI.boardview.BoardView;
+
 /**
- * Everything in the main map view is either the board or it's a sprite
- * displayed on top of the board. Most sprites store a transparent image
- * which they draw onto the screen when told to. Sprites keep a bounds
- * rectangle, so it's easy to tell when they return onscreen.
+ * Everything in the main map view is either the board or it's a sprite displayed on top of the board. Most sprites
+ * store a transparent image which they draw onto the screen when told to. Sprites keep a bounds rectangle, so it's easy
+ * to tell when they return onscreen.
  */
 abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
 
@@ -47,14 +60,14 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
     }
 
     /**
-     * Do any necessary preparation. This is called after creation, but
-     * before drawing, when a device context is ready to draw with.
+     * Do any necessary preparation. This is called after creation, but before drawing, when a device context is ready
+     * to draw with.
      */
     public abstract void prepare();
 
     /**
-     * When we draw our buffered images, it's necessary to implement the
-     * ImageObserver interface. This provides the necessary functionality.
+     * When we draw our buffered images, it's necessary to implement the ImageObserver interface. This provides the
+     * necessary functionality.
      */
     @Override
     public boolean imageUpdate(Image image, int infoflags, int x, int y, int width, int height) {
@@ -67,17 +80,15 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
     }
 
     /**
-     * Returns our bounding rectangle. The coordinates here are stored with
-     * the top left corner of the _board_ being 0, 0, so these do not always
-     * correspond to screen coordinates.
+     * Returns our bounding rectangle. The coordinates here are stored with the top left corner of the _board_ being 0,
+     * 0, so these do not always correspond to screen coordinates.
      */
     public Rectangle getBounds() {
         return bounds;
     }
 
     /**
-     * Are we ready to draw? By default, checks to see that our buffered
-     * image has been created.
+     * Are we ready to draw? By default, checks to see that our buffered image has been created.
      */
     public boolean isReady() {
         return image != null;
@@ -91,12 +102,12 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
     }
 
     public void drawOnto(Graphics g, int x, int y, ImageObserver observer,
-            boolean makeTranslucent) {
+          boolean makeTranslucent) {
         if (isReady()) {
             if (makeTranslucent) {
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 0.5f));
+                      AlphaComposite.SRC_OVER, 0.5f));
                 g2.drawImage(image, x, y, observer);
                 g2.setComposite(AlphaComposite.SrcOver);
             } else {
@@ -109,34 +120,31 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
     }
 
     /**
-     * Returns true if the point is inside this sprite. Uses board
-     * coordinates, not screen coordinates. By default, just checks our
-     * bounding rectangle, though some sprites override this for a smaller
-     * sensitive area.
+     * Returns true if the point is inside this sprite. Uses board coordinates, not screen coordinates. By default, just
+     * checks our bounding rectangle, though some sprites override this for a smaller sensitive area.
      */
     public boolean isInside(Point point) {
         return bounds.contains(point);
     }
 
     /**
-     * Since most sprites being drawn correspond to something in the game,
-     * this returns a little info for a tooltip.
+     * Since most sprites being drawn correspond to something in the game, this returns a little info for a tooltip.
      */
     public StringBuffer getTooltip() {
         return null;
     }
-    
+
     public boolean isHidden() {
         return hidden;
     }
-    
+
     public void setHidden(boolean h) {
         hidden = h;
     }
 
     /**
-     * Determines the sprite's draw priority: sprites with a higher priority get
-     * drawn last, ensuring that they are "on top" of other sprites.
+     * Determines the sprite's draw priority: sprites with a higher priority get drawn last, ensuring that they are "on
+     * top" of other sprites.
      *
      * @return this Sprite's draw priority, higher values drawing later
      */
@@ -166,6 +174,8 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
 
     @Override
     public String toString() {
-        return "[" + getClass().getSimpleName() + "] Prio: " + getSpritePriority() + ((image == null) ? "; no image" : "");
+        return "[" + getClass().getSimpleName() + "] Prio: " + getSpritePriority() + ((image == null) ?
+              "; no image" :
+              "");
     }
 }

@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay;
 
@@ -25,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -48,8 +61,7 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.logging.MMLogger;
 
 /**
- * PrephaseDisplay for revealing hidden units. This occurs before Move and
- * Firing
+ * PrephaseDisplay for revealing hidden units. This occurs before Move and Firing
  */
 public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelectionListener {
     private static final MMLogger logger = MMLogger.create(PrephaseDisplay.class);
@@ -57,10 +69,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
     private static final long serialVersionUID = 3441669419807288865L;
 
     /**
-     * This enumeration lists all of the possible ActionCommands that can be
-     * carried out during the Prephase. Each command has a string
-     * for the command plus a flag that determines what unit type it is
-     * appropriate for.
+     * This enumeration lists all of the possible ActionCommands that can be carried out during the Prephase. Each
+     * command has a string for the command plus a flag that determines what unit type it is appropriate for.
      */
     public enum PrephaseCommand implements PhaseCommand {
         PREPHASE_NEXT("prephaseNext"),
@@ -163,24 +173,21 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
     protected void registerKeyCommands() {
         MegaMekController controller = clientgui.controller;
         controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this,
-                () -> selectEntity(clientgui.getClient().getNextEntityNum(cen)));
+              () -> selectEntity(clientgui.getClient().getNextEntityNum(cen)));
         controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this,
-                () -> selectEntity(clientgui.getClient().getPrevEntityNum(cen)));
+              () -> selectEntity(clientgui.getClient().getPrevEntityNum(cen)));
     }
 
     /**
      * Have the panel register itself as a listener wherever it's needed.
      * <p>
-     * According to
-     * http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a
-     * major bad no-no to perform these registrations before the constructor
-     * finishes, so this function has to be called after the panel is created.
-     * Please note, this restriction only applies to listeners for objects that
-     * aren't on the panel itself.
+     * According to http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a major bad no-no to perform
+     * these registrations before the constructor finishes, so this function has to be called after the panel is
+     * created. Please note, this restriction only applies to listeners for objects that aren't on the panel itself.
      */
     public void initializeListeners() {
         game().addGameListener(this);
-//        clientgui.getBoardView().addBoardViewListener(this);
+        //        clientgui.getBoardView().addBoardViewListener(this);
         clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
     }
 
@@ -255,7 +262,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
         }
 
         setStatusBarText(
-                Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString(), ce.getDisplayName()));
+              Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString(), ce.getDisplayName()));
 
         boolean isRevealing = !ce.getHiddenActivationPhase().isUnknown();
         setRevealEnabled(!isRevealing);
@@ -363,13 +370,13 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn()
-                || ((b.getButton() != MouseEvent.BUTTON1))) {
+              || ((b.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
         if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
-                || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
+              || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
 
@@ -393,8 +400,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
         // generated
         // Except on the first turn
         if (game().getPhase().isSimultaneous(game())
-                && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
-                && (game().getTurnIndex() != 0)) {
+              && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
+              && (game().getTurnIndex() != 0)) {
             return;
         }
 
@@ -412,8 +419,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
                 endMyTurn();
                 if (e.getPlayer() != null) {
                     setStatusBarText(Messages.getFormattedString(
-                            "PrephaseDisplay.its_others_turn",
-                            phase.toString(), e.getPlayer().getName()));
+                          "PrephaseDisplay.its_others_turn",
+                          phase.toString(), e.getPlayer().getName()));
                 }
 
             }
@@ -435,7 +442,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
 
         if (game().getPhase() == phase) {
             setStatusBarText(Messages
-                    .getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
+                  .getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
         }
     }
 
@@ -538,7 +545,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
     }
 
     @Override
-    public void valueChanged(ListSelectionEvent event) { }
+    public void valueChanged(ListSelectionEvent event) {}
 
     private Game game() {
         return clientgui.getClient().getGame();

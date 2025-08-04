@@ -1,41 +1,73 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.utilities;
 
 import static java.util.stream.Collectors.toSet;
 import static megamek.common.Terrains.*;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.HexFormat;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import megamek.common.*;
+import megamek.common.Board;
+import megamek.common.Building;
+import megamek.common.Configuration;
+import megamek.common.Hex;
+import megamek.common.Terrains;
 import megamek.common.enums.BuildingType;
 import megamek.logging.MMLogger;
 
 /**
- * Scans all boards and applies automated tags to them.
- * Examples: Woods (Auto), DenseUrban (Auto). Deletes its own tags (and only
- * those) before applying them (again), so if the rules for applying tags are
- * changed, they may be removed accordingly and will also not be applied twice.
+ * Scans all boards and applies automated tags to them. Examples: Woods (Auto), DenseUrban (Auto). Deletes its own tags
+ * (and only those) before applying them (again), so if the rules for applying tags are changed, they may be removed
+ * accordingly and will also not be applied twice.
  *
  * @author Simon (Juliez)
  */
@@ -46,11 +78,9 @@ public class BoardsTagger {
     private static final boolean DEBUG = false;
 
     /**
-     * A suffix added to tags to distinguish them from manually added tags. The
-     * suffix is also used to identify them for deleting tags that no longer apply
-     * to a board or that got renamed. If the suffix is changed, this tool will not
-     * remove tags with the old suffix before applying new ones, so those must be
-     * handled manually.
+     * A suffix added to tags to distinguish them from manually added tags. The suffix is also used to identify them for
+     * deleting tags that no longer apply to a board or that got renamed. If the suffix is changed, this tool will not
+     * remove tags with the old suffix before applying new ones, so those must be handled manually.
      */
     private static final String AUTO_SUFFIX = " (Auto)";
 
@@ -219,9 +249,9 @@ public class BoardsTagger {
                 weighedLevels += Math.abs(hex.getLevel());
                 water += hex.containsTerrain(WATER) ? 1 : 0;
                 if (hex.containsTerrain(BUILDING)
-                          && (!hex.containsTerrain(BLDG_CLASS) || hex.terrainLevel(BLDG_CLASS) == Building.STANDARD)
-                          && ((hex.terrainLevel(BUILDING) == BuildingType.LIGHT.getTypeValue())
-                                    || (hex.terrainLevel(BUILDING) == BuildingType.MEDIUM.getTypeValue()))) {
+                      && (!hex.containsTerrain(BLDG_CLASS) || hex.terrainLevel(BLDG_CLASS) == Building.STANDARD)
+                      && ((hex.terrainLevel(BUILDING) == BuildingType.LIGHT.getTypeValue())
+                      || (hex.terrainLevel(BUILDING) == BuildingType.MEDIUM.getTypeValue()))) {
                     stdBuildings++;
                     int height = hex.terrainLevel(BLDG_ELEV);
                     lowBuildings += (height <= 2) ? 1 : 0;
@@ -233,13 +263,15 @@ public class BoardsTagger {
                     gunEnplacement += hex.terrainLevel(BLDG_CLASS) == Building.GUN_EMPLACEMENT ? 1 : 0;
                     heavyBuilding += hex.terrainLevel(BUILDING) == BuildingType.HEAVY.getTypeValue() ? 1 : 0;
                     hardenedBuilding += hex.terrainLevel(BUILDING) == BuildingType.HARDENED.getTypeValue() ? 1 : 0;
-                    armoredBuilding += hex.containsTerrain(BLDG_ARMOR) && hex.terrainLevel(Terrains.BLDG_ARMOR) > 0 ? 1 : 0;
+                    armoredBuilding += hex.containsTerrain(BLDG_ARMOR) && hex.terrainLevel(Terrains.BLDG_ARMOR) > 0 ?
+                          1 :
+                          0;
                 }
                 impassable += hex.containsTerrain(IMPASSABLE) ? 1 : 0;
                 elevator += hex.containsTerrain(ELEVATOR) ? 1 : 0;
                 if (hex.containsTerrain(WATER)
-                          && hex.containsTerrain(BRIDGE)
-                          && (hex.terrainLevel(BRIDGE_ELEV) < hex.terrainLevel(WATER))) {
+                      && hex.containsTerrain(BRIDGE)
+                      && (hex.terrainLevel(BRIDGE_ELEV) < hex.terrainLevel(WATER))) {
                     underWaterBridge++;
                 }
                 metalContent += hex.containsTerrain(METAL_CONTENT) ? 1 : 0;
@@ -281,18 +313,18 @@ public class BoardsTagger {
         matchingTags.put(Tags.TAG_VOLCANIC, volcanic > area / 2);
         matchingTags.put(Tags.TAG_SNOWTHEME, snowTheme > area / 2);
         matchingTags.put(Tags.TAG_OCEAN, nEdgeWater > (board.getWidth() * 9 / 10)
-                                               || sEdgeWater > (board.getWidth() * 9 / 10)
-                                               || eEdgeWater > (board.getHeight() * 9 / 10)
-                                               || wEdgeWater > (board.getHeight() * 9 / 10));
+              || sEdgeWater > (board.getWidth() * 9 / 10)
+              || eEdgeWater > (board.getHeight() * 9 / 10)
+              || wEdgeWater > (board.getHeight() * 9 / 10));
         matchingTags.put(Tags.TAG_HILLS, (levelExtent >= 2) && (levelExtent < 5) && (weighedLevels > normSide * 15));
         matchingTags.put(Tags.TAG_HIGHHILLS, (levelExtent >= 5) && (weighedLevels > normSide * 15));
         matchingTags.put(Tags.TAG_WATER, water > normSide / 3);
         matchingTags.put(Tags.TAG_ICE, ice > normSide / 3);
         boolean lightUrban = (lowBuildings > normSide) && (highBuildings < normSide / 3)
-                                   && (lowBuildings < normSide * 2) && (roads > normSide / 3);
+              && (lowBuildings < normSide * 2) && (roads > normSide / 3);
         matchingTags.put(Tags.TAG_LIGHTURBAN, lightUrban);
         matchingTags.put(Tags.TAG_MEDURBAN, !lightUrban && (stdBuildings >= normSide)
-                                                  && (roads > normSide / 3) && (stdBuildings < normSide * 4));
+              && (roads > normSide / 3) && (stdBuildings < normSide * 4));
         matchingTags.put(Tags.TAG_HEAVYURBAN, (stdBuildings >= normSide * 4) && (roads > normSide / 3));
         matchingTags.put(Tags.TAG_SNOWTERRAIN, (snowTerrain > normSide * 2));
         matchingTags.put(Tags.TAG_FLAT, (levelExtent <= 2) && (weighedLevels < normSide * 5));
@@ -346,8 +378,7 @@ public class BoardsTagger {
     }
 
     /**
-     * Recursively scans the supplied file/directory for any boards and auto-tags
-     * them.
+     * Recursively scans the supplied file/directory for any boards and auto-tags them.
      */
     private static void scanForBoards(File file, Map<String, List<String>> boardCheckSum) throws IOException {
         if (file.isDirectory()) {
@@ -368,8 +399,8 @@ public class BoardsTagger {
     }
 
     /**
-     * Scans the board for the types and number of terrains present, deletes old
-     * automatic tags and applies new automatic tags as appropriate.
+     * Scans the board for the types and number of terrains present, deletes old automatic tags and applies new
+     * automatic tags as appropriate.
      */
     private static void tagBoard(File boardFile) {
         // If this isn't a board, ignore it
@@ -427,7 +458,7 @@ public class BoardsTagger {
         }
     }
 
-    private static void checkSum(Map<String, List<String>> boardCheckSum,  File boardFile) {
+    private static void checkSum(Map<String, List<String>> boardCheckSum, File boardFile) {
         MessageDigest md;
 
         try {

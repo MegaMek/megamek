@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2022-2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
- * This file is part of Megaentity.
+ * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with Megaentity. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.battlevalue;
 
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
@@ -123,9 +138,9 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                 if (entity.isClan()) {
                     // Clan-specific rules for locations
                     if (((loc != Mek.LOC_CT) && (loc != Mek.LOC_RLEG) && (loc != Mek.LOC_LLEG)) &&
-                              !(((loc == Mek.LOC_RT) || (loc == Mek.LOC_LT)) &&
-                                      entity.hasEngine() &&
-                                      (entity.getEngine().getSideTorsoCriticalSlots().length > 2))) {
+                          !(((loc == Mek.LOC_RT) || (loc == Mek.LOC_LT)) &&
+                                entity.hasEngine() &&
+                                (entity.getEngine().getSideTorsoCriticalSlots().length > 2))) {
                         continue;
                     }
                 } else {
@@ -134,10 +149,10 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                         if (((loc == Mek.LOC_RT) || (loc == Mek.LOC_LT)) && entity.locationHasCase(loc)) {
                             continue;
                         } else if ((loc == Mek.LOC_LARM) &&
-                                         (entity.locationHasCase(loc) || entity.locationHasCase(Mek.LOC_LT))) {
+                              (entity.locationHasCase(loc) || entity.locationHasCase(Mek.LOC_LT))) {
                             continue;
                         } else if ((loc == Mek.LOC_RARM) &&
-                                         (entity.locationHasCase(loc) || entity.locationHasCase(Mek.LOC_RT))) {
+                              (entity.locationHasCase(loc) || entity.locationHasCase(Mek.LOC_RT))) {
                             continue;
                         }
                     }
@@ -183,15 +198,15 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
 
             // Logic for Weapons with Reduced Penalty
             if ((etype instanceof GaussWeapon) ||
-                      (etype instanceof HVACWeapon) ||
-                      (etype instanceof CLImprovedHeavyLaserLarge) ||
-                      (etype instanceof CLImprovedHeavyLaserMedium) ||
-                      (etype instanceof CLImprovedHeavyLaserSmall) ||
-                      (etype instanceof ISRISCHyperLaser) ||
-                      (etype instanceof TSEMPWeapon) ||
-                      (etype instanceof ISMekTaser) ||
-                      (etype instanceof WeaponType &&
-                             (etype.hasFlag(WeaponType.F_B_POD) || etype.hasFlag(WeaponType.F_M_POD)))) {
+                  (etype instanceof HVACWeapon) ||
+                  (etype instanceof CLImprovedHeavyLaserLarge) ||
+                  (etype instanceof CLImprovedHeavyLaserMedium) ||
+                  (etype instanceof CLImprovedHeavyLaserSmall) ||
+                  (etype instanceof ISRISCHyperLaser) ||
+                  (etype instanceof TSEMPWeapon) ||
+                  (etype instanceof ISMekTaser) ||
+                  (etype instanceof WeaponType &&
+                        (etype.hasFlag(WeaponType.F_B_POD) || etype.hasFlag(WeaponType.F_M_POD)))) {
                 toSubtract = 1;
             }
 
@@ -202,15 +217,16 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
 
             // Misc Equipment with Reduced Penalty
             if ((etype instanceof MiscType) &&
-                      (etype.hasFlag(MiscType.F_PPC_CAPACITOR) ||
-                             etype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE) ||
-                             etype.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM) ||
-                             etype.hasFlag(MiscType.F_JUMP_JET))) {
+                  (etype.hasFlag(MiscType.F_PPC_CAPACITOR) ||
+                        etype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE) ||
+                        etype.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM) ||
+                        etype.hasFlag(MiscType.F_JUMP_JET))) {
                 toSubtract = 1;
             }
 
             // Coolant Pods (AmmoType with specific penality)
-            if (etype instanceof AmmoType && ((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) {
+            if (etype instanceof AmmoType
+                  && ((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) {
                 toSubtract = 1;
             }
 
@@ -299,10 +315,10 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
         }
 
         long coolantPods = entity.getAmmo()
-                                 .stream()
-                                 .map(a -> ((AmmoType) a.getType()).getAmmoType())
-                                 .filter(t -> t == AmmoType.AmmoTypeEnum.COOLANT_POD)
-                                 .count();
+              .stream()
+              .map(a -> ((AmmoType) a.getType()).getAmmoType())
+              .filter(t -> t == AmmoType.AmmoTypeEnum.COOLANT_POD)
+              .count();
         if (coolantPods > 0) {
             int coolantPodBonus = (int) Math.ceil((mek.getNumberOfSinks() * coolantPods) / 5d);
             mekHeatEfficiency += coolantPodBonus;
@@ -319,8 +335,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
         if ((mek instanceof LandAirMek) && (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_STANDARD)) {
             moveHeat = (int) Math.round(((LandAirMek) mek).getAirMekFlankMP(MPCalculationSetting.BV_CALCULATION) / 3d);
         } else if ((mek.getJumpMP(MPCalculationSetting.BV_CALCULATION) > 0) &&
-                         (entity.getJumpHeat(mek.getJumpMP(MPCalculationSetting.BV_CALCULATION)) >
-                                entity.getRunHeat())) {
+              (entity.getJumpHeat(mek.getJumpMP(MPCalculationSetting.BV_CALCULATION)) >
+                    entity.getRunHeat())) {
             moveHeat = entity.getJumpHeat(mek.getJumpMP(MPCalculationSetting.BV_CALCULATION));
             moveHeatType = " (Jump)";
         } else {
@@ -351,8 +367,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             calculation += " - 10 (Void Sig.)";
         }
         if (mek.hasEngine() &&
-                  (mek.getEngineHits() > 0) &&
-                  (mek.getEngine().isFusion() || mek.getEngine().isFission())) {
+              (mek.getEngineHits() > 0) &&
+              (mek.getEngine().isFusion() || mek.getEngine().isFission())) {
             mekHeatEfficiency -= mek.getEngineHits() * 5;
             calculation += " - " + mek.getEngineHits() * 5 + " (Engine Hits)";
         }
@@ -363,24 +379,24 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     @Override
     protected Predicate<Mounted<?>> frontWeaponFilter() {
         return weapon -> countAsOffensiveWeapon(weapon) &&
-                               !mek.isArm(weapon.getLocation()) &&
-                               !weapon.isMekTurretMounted() &&
-                               (!weapon.isRearMounted() || isFrontFacingVGL(weapon));
+              !mek.isArm(weapon.getLocation()) &&
+              !weapon.isMekTurretMounted() &&
+              (!weapon.isRearMounted() || isFrontFacingVGL(weapon));
     }
 
     @Override
     protected Predicate<Mounted<?>> rearWeaponFilter() {
         return weapon -> countAsOffensiveWeapon(weapon) &&
-                               !mek.isArm(weapon.getLocation()) &&
-                               !weapon.isMekTurretMounted() &&
-                               (weapon.isRearMounted() || isRearFacingVGL(weapon));
+              !mek.isArm(weapon.getLocation()) &&
+              !weapon.isMekTurretMounted() &&
+              (weapon.isRearMounted() || isRearFacingVGL(weapon));
     }
 
     @Override
     protected boolean isNominalRear(Mounted<?> weapon) {
         return (switchRearAndFront ^ rearWeaponFilter().test(weapon)) &&
-                     !mek.isArm(weapon.getLocation()) &&
-                     !weapon.isMekTurretMounted();
+              !mek.isArm(weapon.getLocation()) &&
+              !weapon.isMekTurretMounted();
     }
 
     @Override
@@ -435,8 +451,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
         double riscKitMod = 1;
         String modifier = "";
         if ((mek.getCockpitType() == Mek.COCKPIT_SMALL) ||
-                  (mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) ||
-                  (mek.getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE)) {
+              (mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) ||
+              (mek.getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE)) {
             cockpitMod = 0.95;
             modifier = " (" + mek.getCockpitTypeString() + ")";
         } else if (entity.hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
@@ -545,8 +561,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     protected int offensiveSpeedFactorMP() {
         if ((mek instanceof LandAirMek) && (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_STANDARD)) {
             return runMP +
-                         (int) (Math.round(((LandAirMek) mek).getAirMekFlankMP(MPCalculationSetting.BV_CALCULATION) /
-                                                 2.0));
+                  (int) (Math.round(((LandAirMek) mek).getAirMekFlankMP(MPCalculationSetting.BV_CALCULATION) /
+                        2.0));
         } else {
             return runMP + (int) (Math.round(Math.max(jumpMP, umuMP) / 2.0));
         }

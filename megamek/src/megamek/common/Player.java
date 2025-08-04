@@ -1,22 +1,37 @@
 /*
  * Copyright (c) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024-2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.util.ArrayList;
@@ -147,11 +162,11 @@ public final class Player extends TurnOrdered {
 
     public boolean hasMinefields() {
         return (numMfCmd > 0) ||
-                     (numMfConv > 0) ||
-                     (numMfVibra > 0) ||
-                     (numMfActive > 0) ||
-                     (numMfInferno > 0) ||
-                     getGroundObjectsToPlace().size() > 0;
+              (numMfConv > 0) ||
+              (numMfVibra > 0) ||
+              (numMfActive > 0) ||
+              (numMfInferno > 0) ||
+              getGroundObjectsToPlace().size() > 0;
     }
 
     public void setNbrMFConventional(int nbrMF) {
@@ -556,11 +571,11 @@ public final class Player extends TurnOrdered {
      */
     public int getBV() {
         return List.copyOf(game.getInGameObjects())
-                     .stream()
-                     .filter(this::isMyUnit)
-                     .filter(InGameObject::countForStrengthSum)
-                     .mapToInt(InGameObject::getStrength)
-                     .sum();
+              .stream()
+              .filter(this::isMyUnit)
+              .filter(InGameObject::countForStrengthSum)
+              .mapToInt(InGameObject::getStrength)
+              .sum();
     }
 
     /**
@@ -636,12 +651,12 @@ public final class Player extends TurnOrdered {
         boolean useCommandInit = game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT);
         // entities are owned by this player, active, and not individual pilots
         ArrayList<Entity> entities = game.getInGameObjects()
-                                           .stream()
-                                           .filter(Entity.class::isInstance)
-                                           .map(Entity.class::cast)
-                                           .filter(entity -> (null != entity.getOwner()) &&
-                                                                   entity.getOwner().equals(this))
-                                           .collect(Collectors.toCollection(ArrayList::new));
+              .stream()
+              .filter(Entity.class::isInstance)
+              .map(Entity.class::cast)
+              .filter(entity -> (null != entity.getOwner()) &&
+                    entity.getOwner().equals(this))
+              .collect(Collectors.toCollection(ArrayList::new));
         int commandb = 0;
         for (Entity entity : entities) {
             int bonus = getIndividualCommandBonus(entity, useCommandInit);
@@ -665,11 +680,11 @@ public final class Player extends TurnOrdered {
         int bonus = 0;
         // Only consider this during normal rounds when unit is deployed on board, or about to deploy this round.
         if (!entity.isDestroyed() &&
-                  entity.getCrew().isActive() &&
-                  !entity.isCaptured() &&
-                  !(entity instanceof MekWarrior) &&
-                  (entity.isDeployed() && !entity.isOffBoard()) ||
-                  (entity.getDeployRound() == (game.getCurrentRound() + 1))) {
+              entity.getCrew().isActive() &&
+              !entity.isCaptured() &&
+              !(entity instanceof MekWarrior) &&
+              (entity.isDeployed() && !entity.isOffBoard()) ||
+              (entity.getDeployRound() == (game.getCurrentRound() + 1))) {
             if (useCommandInit) {
                 bonus = entity.getCrew().getCommandBonus();
             }
@@ -692,12 +707,12 @@ public final class Player extends TurnOrdered {
             team = 0;
         }
         return "<B><font color='" +
-                     getColour().getHexString(0x00F0F0F0) +
-                     "'>" +
-                     getName() +
-                     " (" +
-                     TEAM_NAMES[team] +
-                     ")</font></B>";
+              getColour().getHexString(0x00F0F0F0) +
+              "'>" +
+              getName() +
+              " (" +
+              TEAM_NAMES[team] +
+              ")</font></B>";
     }
 
     /**

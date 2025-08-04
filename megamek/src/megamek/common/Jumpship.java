@@ -1,15 +1,37 @@
 /*
- * Copyright (C) 2025 - The MegaMek Team. All Rights Reserved.
- * MegaAero - Copyright (C) 2007 Jay Lawson This program is free software; you
- * can redistribute it and/or modify it under the terms of the GNU General
- * Public License as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * Copyright (C) 2007 Jay Lawson
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import static megamek.common.Compute.*;
@@ -180,24 +202,24 @@ public class Jumpship extends Aero {
 
     protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE,
                 2300)
-                                                               .setISApproximate(false, true)
-                                                               .setProductionFactions(Faction.TA)
-                                                               .setTechRating(TechRating.D)
-                                                               .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.F)
-                                                               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setISApproximate(false, true)
+          .setProductionFactions(Faction.TA)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.F)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     protected static final TechAdvancement TA_JUMPSHIP_PRIMITIVE = new TechAdvancement(TechBase.IS).setISAdvancement(
                 2100,
                 2200,
                 DATE_NONE,
                 2500)
-                                                                         .setISApproximate(true, true, false, false)
-                                                                         .setProductionFactions(Faction.TA)
-                                                                         .setTechRating(TechRating.D)
-                                                                         .setAvailability(AvailabilityValue.D,
-                                                                               AvailabilityValue.X,
-                                                                               AvailabilityValue.X,
-                                                                               AvailabilityValue.X)
-                                                                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setISApproximate(true, true, false, false)
+          .setProductionFactions(Faction.TA)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.D,
+                AvailabilityValue.X,
+                AvailabilityValue.X,
+                AvailabilityValue.X)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -209,14 +231,14 @@ public class Jumpship extends Aero {
      */
     public static TechAdvancement getLFBatteryTA() {
         return new TechAdvancement(TechBase.ALL).setISAdvancement(2520, 2529, DATE_NONE, 2819, 3043)
-                     .setISApproximate(true, false, false, false, false)
-                     .setPrototypeFactions(Faction.TH)
-                     .setProductionFactions(Faction.TH)
-                     .setReintroductionFactions(Faction.FS)
-                     .setClanAdvancement(2520, 2529)
-                     .setTechRating(TechRating.E)
-                     .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
-                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+              .setISApproximate(true, false, false, false, false)
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.FS)
+              .setClanAdvancement(2520, 2529)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     /**
@@ -224,11 +246,11 @@ public class Jumpship extends Aero {
      */
     public static TechAdvancement getJumpSailTA() {
         return new TechAdvancement(TechBase.ALL).setAdvancement(2200, 2300, 2325)
-                     .setPrototypeFactions(Faction.TA)
-                     .setProductionFactions(Faction.TA)
-                     .setTechRating(TechRating.D)
-                     .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
-                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+              .setPrototypeFactions(Faction.TA)
+              .setProductionFactions(Faction.TA)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     /**
@@ -415,9 +437,9 @@ public class Jumpship extends Aero {
      */
     public int getGravDeckLarge() {
         return (int) gravDecks.stream()
-                           .filter(deck -> deck >= GRAV_DECK_STANDARD_MAX)
-                           .filter(deck -> deck <= GRAV_DECK_LARGE_MAX)
-                           .count();
+              .filter(deck -> deck >= GRAV_DECK_STANDARD_MAX)
+              .filter(deck -> deck <= GRAV_DECK_LARGE_MAX)
+              .count();
     }
 
     /**
@@ -649,11 +671,11 @@ public class Jumpship extends Aero {
     // Is any part of the KF Drive damaged? Used by MHQ for repairs.
     public boolean isKFDriveDamaged() {
         return (getKFHeliumTankHit() ||
-                      getKFDriveCoilHit() ||
-                      getKFDriveControllerHit() ||
-                      getLFBatteryHit() ||
-                      getKFChargingSystemHit() ||
-                      getKFFieldInitiatorHit());
+              getKFDriveCoilHit() ||
+              getKFDriveControllerHit() ||
+              getLFBatteryHit() ||
+              getKFChargingSystemHit() ||
+              getKFFieldInitiatorHit());
     }
 
     public void setKFHeliumTankIntegrity(int ht) {
@@ -1058,9 +1080,9 @@ public class Jumpship extends Aero {
         }
 
         if (mountedAmmo.isAmmoUsable() &&
-                  !wtype.hasFlag(WeaponType.F_ONESHOT) &&
-                  (atype.getAmmoType() == wtype.getAmmoType()) &&
-                  (atype.getRackSize() == wtype.getRackSize())) {
+              !wtype.hasFlag(WeaponType.F_ONESHOT) &&
+              (atype.getAmmoType() == wtype.getAmmoType()) &&
+              (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             return true;
         }

@@ -1,22 +1,45 @@
 /*
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay.lobby;
+
+import static megamek.client.ui.panels.phaseDisplay.lobby.MekTableModel.DOT_SPACER;
+import static megamek.client.ui.util.UIUtil.ECM_SIGN;
+import static megamek.client.ui.util.UIUtil.uiC3Color;
+import static megamek.client.ui.util.UIUtil.uiGray;
+import static megamek.client.ui.util.UIUtil.uiLightGreen;
+import static megamek.common.alphaStrike.BattleForceSUA.AECM;
+import static megamek.common.alphaStrike.BattleForceSUA.ECM;
+import static megamek.common.alphaStrike.BattleForceSUA.LECM;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
@@ -28,16 +51,11 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 
-import static megamek.client.ui.panels.phaseDisplay.lobby.MekTableModel.DOT_SPACER;
-import static megamek.client.ui.util.UIUtil.*;
-import static megamek.common.alphaStrike.BattleForceSUA.*;
-
 public class MekTableASUnitEntry {
 
     /**
-     * Creates and returns the display content of the Unit column for the given AlphaStrikeElement and
-     * for the non-compact display mode.
-     * When blindDrop is true, the unit details are not given.
+     * Creates and returns the display content of the Unit column for the given AlphaStrikeElement and for the
+     * non-compact display mode. When blindDrop is true, the unit details are not given.
      */
     static String fullEntry(AlphaStrikeElement element, ChatLounge lobby, boolean forceView, boolean compactView) {
         StringBuilder result = new StringBuilder("<HTML><NOBR>");
@@ -48,7 +66,7 @@ public class MekTableASUnitEntry {
         Player localPlayer = client.getLocalPlayer();
         Player owner = game.getPlayer(element.getOwnerId());
         boolean hideEntity = owner.isEnemyOf(localPlayer)
-                && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
+              && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
 
         if (hideEntity) {
             result.append(DOT_SPACER);
@@ -81,7 +99,7 @@ public class MekTableASUnitEntry {
             result.append(" [ID: ").append(element.getId()).append("]</FONT>");
         }
         if (!forceView && !compactView) {
-            result.append( "<BR>");
+            result.append("<BR>");
         } else {
             result.append(DOT_SPACER);
         }
@@ -151,5 +169,5 @@ public class MekTableASUnitEntry {
         return result.toString();
     }
 
-    private MekTableASUnitEntry() { }
+    private MekTableASUnitEntry() {}
 }

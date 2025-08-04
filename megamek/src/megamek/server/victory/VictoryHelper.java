@@ -1,22 +1,37 @@
 /*
  * Copyright (c) 2007-2008 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server.victory;
 
 import java.io.Serializable;
@@ -25,16 +40,15 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.Game;
-import megamek.common.IGame;
 import megamek.common.options.OptionsConstants;
 import megamek.server.scriptedevent.TriggeredEvent;
 import megamek.server.scriptedevent.VictoryTriggeredEvent;
 import megamek.server.trigger.TriggerSituation;
 
 /**
- * This class manages the victory conditions of a game. As victory conditions could potentially have some state they need to save in
- * savegames, this class is actually part of the Game rather than just a GameManager helper. TODO: This should be resolved by storing
- * victory conditions in Game but manage them from GameManager.
+ * This class manages the victory conditions of a game. As victory conditions could potentially have some state they
+ * need to save in savegames, this class is actually part of the Game rather than just a GameManager helper. TODO: This
+ * should be resolved by storing victory conditions in Game but manage them from GameManager.
  */
 public class VictoryHelper implements Serializable {
 
@@ -45,8 +59,8 @@ public class VictoryHelper implements Serializable {
     private final List<VictoryCondition> victoryConditions = new ArrayList<>();
 
     /**
-     * Constructs the VictoryHelper. Note that this should be called after the lobby phase so that the final victory game settings for this
-     * game are used.
+     * Constructs the VictoryHelper. Note that this should be called after the lobby phase so that the final victory
+     * game settings for this game are used.
      *
      * @param game The game
      */
@@ -59,12 +73,15 @@ public class VictoryHelper implements Serializable {
     }
 
     /**
-     * Checks the various victory conditions if any lead to a game-ending result. Player-agreed /victory is always checked, other victory
-     * conditions only if victory checking is at all enabled. Scripted victory and game-ending events are also always tested.
+     * Checks the various victory conditions if any lead to a game-ending result. Player-agreed /victory is always
+     * checked, other victory conditions only if victory checking is at all enabled. Scripted victory and game-ending
+     * events are also always tested.
      *
      * @param game    The Game
      * @param context The victory context - to my knowledge, this is currently not used at all
+     *
      * @return A combined victory result giving the current victory status
+     *
      * @see VictoryResult#noResult()
      * @see VictoryResult#drawResult()
      */
@@ -106,13 +123,13 @@ public class VictoryHelper implements Serializable {
     }
 
     /**
-     * @return True when the game ends right now (at the end of round victory check) through a scripted event, either a game-end
-     * event or a victory event that is set to be game-ending.
+     * @return True when the game ends right now (at the end of round victory check) through a scripted event, either a
+     *       game-end event or a victory event that is set to be game-ending.
      */
     private boolean gameEndsByScriptedEvent(Game game) {
         return game.scriptedEvents().stream()
-            .filter(TriggeredEvent::isGameEnding)
-            .anyMatch(event -> event.trigger().isTriggered(game, TriggerSituation.ROUND_END));
+              .filter(TriggeredEvent::isGameEnding)
+              .anyMatch(event -> event.trigger().isTriggered(game, TriggerSituation.ROUND_END));
     }
 
     private VictoryResult checkOptionalVictoryConditions(Game game, Map<String, Object> context) {
@@ -152,8 +169,9 @@ public class VictoryHelper implements Serializable {
     }
 
     /**
-     * Returns a list of victory conditions that are checked if victory conditions are checked at all as per this game's options. The
-     * conditions include those set in the game options as well as those added by code (e.g. through a scenario).
+     * Returns a list of victory conditions that are checked if victory conditions are checked at all as per this game's
+     * options. The conditions include those set in the game options as well as those added by code (e.g. through a
+     * scenario).
      */
     private void buildVClist(Game game) {
 

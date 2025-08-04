@@ -32,11 +32,11 @@
  */
 package megamek.common.battlevalue;
 
+import java.util.function.Predicate;
+
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.Mounted;
-
-import java.util.function.Predicate;
 
 public class DropShipBVCalculator extends LargeAeroBVCalculator {
 

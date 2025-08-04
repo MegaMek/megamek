@@ -1,21 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot.princess;
 
@@ -29,8 +43,7 @@ import megamek.common.moves.MovePath;
 import megamek.logging.MMLogger;
 
 /**
- * This contains useful classes and functions for geometric questions
- * the bot algorithm might have
+ * This contains useful classes and functions for geometric questions the bot algorithm might have
  */
 public class BotGeometry {
     private final static MMLogger logger = MMLogger.create(BotGeometry.class);
@@ -103,11 +116,9 @@ public class BotGeometry {
     }
 
     /**
-     * This describes a line in one of the 6 directions in board space
-     * ---copied from Coords---
-     * Coords stores x and y values. Since these are hexes, coordinates with odd x
-     * values are a half-hex down. Directions work clockwise around the hex,
-     * starting with zero at the top.
+     * This describes a line in one of the 6 directions in board space ---copied from Coords--- Coords stores x and y
+     * values. Since these are hexes, coordinates with odd x values are a half-hex down. Directions work clockwise
+     * around the hex, starting with zero at the top.
      * <pre>
      *       -y
      *        0
@@ -121,8 +132,8 @@ public class BotGeometry {
      * </pre>
      * ------------------------------
      * <BR>Direction is stored as above, but the meaning of 'intercept' depends
-     * on the direction. For directions 0, 3, intercept means the y=0 intercept
-     * for directions 1, 2, 4, 5 intercept is the x=0 intercept
+     * on the direction. For directions 0, 3, intercept means the y=0 intercept for directions 1, 2, 4, 5 intercept is
+     * the x=0 intercept
      */
     public static class HexLine {
         private int intercept;
@@ -143,11 +154,9 @@ public class BotGeometry {
         }
 
         /**
-         * returns -1 if the point is to the left of the line
-         * +1 if the point is to the right of the line
-         * and 0 if the point is on the line
-         * Note that this evaluation depends on the "view" direction of this line. The
-         * result is reversed for HexLines of opposite directions, e.g. directions 0 and 3.
+         * returns -1 if the point is to the left of the line +1 if the point is to the right of the line and 0 if the
+         * point is on the line Note that this evaluation depends on the "view" direction of this line. The result is
+         * reversed for HexLines of opposite directions, e.g. directions 0 and 3.
          */
         public int judgePoint(Coords c) {
             HexLine comparor = new HexLine(c, getDirection());
@@ -161,11 +170,9 @@ public class BotGeometry {
         }
 
         /**
-         * @return -1 if the point is to the left of the line,
-         * +1 if the point is to the right of the line
-         * and 0 if the point is on the line
-         * Note that this evaluation is independent of the "view" direction of this line. The
-         * result is the same for HexLines of opposite directions, e.g. directions 0 and 3.
+         * @return -1 if the point is to the left of the line, +1 if the point is to the right of the line and 0 if the
+         *       point is on the line Note that this evaluation is independent of the "view" direction of this line. The
+         *       result is the same for HexLines of opposite directions, e.g. directions 0 and 3.
          */
         public int isAbsoluteLeftOrRight(Coords c) {
             HexLine comparor = new HexLine(c, getDirection());
@@ -179,9 +186,8 @@ public class BotGeometry {
         }
 
         /**
-         * returns -1 if the area is entirely to the left of the line
-         * returns +1 if the area is entirely to the right of the line
-         * returns 0 if the area is divided by the line
+         * returns -1 if the area is entirely to the left of the line returns +1 if the area is entirely to the right of
+         * the line returns 0 if the area is divided by the line
          */
         public int judgeArea(ConvexBoardArea a) {
             boolean flip = getDirection() > 2;
@@ -208,8 +214,8 @@ public class BotGeometry {
         }
 
         /**
-         * This function only makes sense for directions 1, 2, 4, 5
-         * Note that the function getXfromY would be multvalued
+         * This function only makes sense for directions 1, 2, 4, 5 Note that the function getXfromY would be
+         * multvalued
          */
         public int getYfromX(int x) {
             if ((getDirection() == 0) || (getDirection() == 3)) {
@@ -223,8 +229,8 @@ public class BotGeometry {
         }
 
         /**
-         * Returns the intersection point with another line
-         * if lines are parallel (even if they are coincident) returns null
+         * Returns the intersection point with another line if lines are parallel (even if they are coincident) returns
+         * null
          */
         public Coords getIntersection(HexLine h) {
             if ((h.getDirection() % 3) == (getDirection() % 3)) {
@@ -244,8 +250,7 @@ public class BotGeometry {
         }
 
         /**
-         * Returns the (euclidian distance) closest point on this
-         * line to another point
+         * Returns the (euclidian distance) closest point on this line to another point
          */
         public Coords getClosestPoint(Coords c) {
             if ((getDirection() == 0) || (getDirection() == 3)) { // technically two points are equidistant,
@@ -311,8 +316,7 @@ public class BotGeometry {
     }
 
     /**
-     * This is a convex area on the board made up of 6 lines lying along one of the
-     * 3 primary directions of a hex map
+     * This is a convex area on the board made up of 6 lines lying along one of the 3 primary directions of a hex map
      */
     public static class ConvexBoardArea {
         // left/right indicates whether it's the small x or large x line
@@ -376,8 +380,7 @@ public class BotGeometry {
         }
 
         /**
-         * returns true if a point is inside the area
-         * false if it is not
+         * returns true if a point is inside the area false if it is not
          */
         public boolean contains(Coords c) {
             HexLine[] edges = getEdges();
@@ -507,8 +510,8 @@ public class BotGeometry {
             passed = true;
             for (int i = 0; i < 6; i++) {
                 if ((lines[i].judgePoint(center.translated(i)) != 0) || (lines[i].judgePoint(center.translated((i +
-                        3) %
-                        6)) != 0)) {
+                      3) %
+                      6)) != 0)) {
                     passed = false;
                 }
             }

@@ -51,6 +51,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * A simple Inform dialog.
+ *
  * @author Luana Coppio
  */
 public class InformDialog extends JDialog {
@@ -71,15 +72,16 @@ public class InformDialog extends JDialog {
     private JComponent firstFocusable;
 
     /**
-     * Creates a new dialog window that informs the user of something and has an Ok button, with the
-     * Ok button pre-focused, with an optional checkbox to specify future behaviour,
-     * @param frame parent frame
-     * @param title a title for the dialog window
-     * @param message the text of the dialog
+     * Creates a new dialog window that informs the user of something and has an Ok button, with the Ok button
+     * pre-focused, with an optional checkbox to specify future behaviour,
+     *
+     * @param frame           parent frame
+     * @param title           a title for the dialog window
+     * @param message         the text of the dialog
      * @param includeCheckbox whether the dialog includes a "bother me" checkbox for the user to tick
      */
     public InformDialog(JFrame frame, String title, String message,
-                        boolean includeCheckbox) {
+          boolean includeCheckbox) {
         super(frame, title, true);
 
         super.setResizable(false);
@@ -210,33 +212,31 @@ public class InformDialog extends JDialog {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
+        if (this == o) {return true;}
 
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (o == null || getClass() != o.getClass()) {return false;}
 
         InformDialog that = (InformDialog) o;
 
         return new EqualsBuilder().append(useCheckbox, that.useCheckbox)
-                     .append(gridBagLayout, that.gridBagLayout)
-                     .append(gridBagConstraints, that.gridBagConstraints)
-                     .append(botherCheckbox, that.botherCheckbox)
-                     .append(panButtons, that.panButtons)
-                     .append(butOk, that.butOk)
-                     .append(firstFocusable, that.firstFocusable)
-                     .isEquals();
+              .append(gridBagLayout, that.gridBagLayout)
+              .append(gridBagConstraints, that.gridBagConstraints)
+              .append(botherCheckbox, that.botherCheckbox)
+              .append(panButtons, that.panButtons)
+              .append(butOk, that.butOk)
+              .append(firstFocusable, that.firstFocusable)
+              .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(gridBagLayout)
-                     .append(gridBagConstraints)
-                     .append(useCheckbox)
-                     .append(botherCheckbox)
-                     .append(panButtons)
-                     .append(butOk)
-                     .append(firstFocusable)
-                     .toHashCode();
+              .append(gridBagConstraints)
+              .append(useCheckbox)
+              .append(botherCheckbox)
+              .append(panButtons)
+              .append(butOk)
+              .append(firstFocusable)
+              .toHashCode();
     }
 }

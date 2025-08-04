@@ -1,26 +1,47 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- *           Copyright (C) 2005 Mike Gratton <mike@vee.net>
+   Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005 Mike Gratton <mike@vee.net>
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
+
+import java.io.Serial;
+import java.util.Optional;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.logging.MMLogger;
-
-import java.io.Serial;
-import java.util.Optional;
 
 /**
  * A building with weapons fitted and, optionally, a turret. Taharqa: I am completely re-writing this entity to bring it
@@ -42,14 +63,16 @@ public class GunEmplacement extends Tank {
     private static final String[] LOCATION_NAMES = { "GUNS" };
 
     private static final TechAdvancement TA_GUN_EMPLACEMENT = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(TechRating.B).setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
-            .setStaticTechLevel(SimpleTechLevel.INTRO);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+          .setTechRating(TechRating.B)
+          .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+          .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     public static final TechAdvancement TA_LIGHT_BUILDING = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(TechRating.A).setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
-            .setStaticTechLevel(SimpleTechLevel.INTRO);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+          .setTechRating(TechRating.A)
+          .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+          .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     private int initialBuildingCF;
     private int initialBuildingArmor;
@@ -121,25 +144,25 @@ public class GunEmplacement extends Tank {
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         return 0; // Overridden for performance and to keep it from being made non-zero by any
-                  // rule
+        // rule
     }
 
     @Override
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
         return 0; // Overridden for performance and to keep it from being made non-zero by any
-                  // rule
+        // rule
     }
 
     @Override
     public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
         return 0; // Overridden for performance and to keep it from being made non-zero by any
-                  // rule
+        // rule
     }
 
     @Override
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
         return 0; // Overridden for performance and to keep it from being made non-zero by any
-                  // rule
+        // rule
     }
 
     @Override
@@ -174,7 +197,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-            int cover) {
+          int cover) {
         return rollHitLocation(table, side);
     }
 
@@ -251,7 +274,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted)
-            throws LocationFullException {
+          throws LocationFullException {
         super.addEquipment(mounted, loc, rearMounted);
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(mounted));
@@ -325,8 +348,7 @@ public class GunEmplacement extends Tank {
     }
 
     /**
-     * Sets the deployed flag.
-     * Has the side effect of initializing building CF if deployed
+     * Sets the deployed flag. Has the side effect of initializing building CF if deployed
      */
     @Override
     public void setDeployed(boolean deployed) {
@@ -338,7 +360,7 @@ public class GunEmplacement extends Tank {
 
     /**
      * @return The Building this Gun Emplacement is deployed onto, if any. Safe to call under any circumstances (game
-     * may be null, may be undeployed etc).
+     *       may be null, may be undeployed etc).
      */
     private Optional<Building> occupiedBuilding() {
         if (game != null) {
@@ -359,13 +381,13 @@ public class GunEmplacement extends Tank {
             return 1;
         } else {
             return (building.getCurrentCF(getPosition()) + building.getArmor(getPosition()))
-                         / ((double) (initialBuildingCF + initialBuildingArmor));
+                  / ((double) (initialBuildingCF + initialBuildingArmor));
         }
     }
 
     /**
-     * Gun emplacements don't have critical slots per se, so we
-     * simply return 1 if the piece of equipment has been hit and 0 otherwise.
+     * Gun emplacements don't have critical slots per se, so we simply return 1 if the piece of equipment has been hit
+     * and 0 otherwise.
      */
     @Override
     public int getDamagedCriticals(int type, int index, int loc) {

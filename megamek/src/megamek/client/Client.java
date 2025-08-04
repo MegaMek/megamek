@@ -1,20 +1,63 @@
 /*
- * MegaMek -
  * Copyright (c) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client;
+
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 
 import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -22,14 +65,26 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
+import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.*;
-import megamek.common.actions.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.ClubAttackAction;
+import megamek.common.actions.DodgeAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.FlipArmsAction;
+import megamek.common.actions.TorsoTwistAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.*;
+import megamek.common.event.GameBoardChangeEvent;
+import megamek.common.event.GameCFREvent;
+import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.event.GameReportEvent;
+import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.GameVictoryEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.moves.MovePath;
@@ -46,19 +101,9 @@ import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.List;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
-
 /**
- * This class is instantiated for each client and for each bot running on that
- * client. non-local clients are not also instantiated on the local server.
+ * This class is instantiated for each client and for each bot running on that client. non-local clients are not also
+ * instantiated on the local server.
  */
 public class Client extends AbstractClient {
     private final static MMLogger logger = MMLogger.create(Client.class);
@@ -95,8 +140,7 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Returns an Enumeration of the entities that match the
-     * selection criteria.
+     * Returns an Enumeration of the entities that match the selection criteria.
      */
     public Iterator<Entity> getSelectedEntities(EntitySelector selector) {
         return game.getSelectedEntities(selector);
@@ -145,11 +189,13 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Returns the board with the given boardId or null if the game does not have a board of that boardId. Shortcut
-     * to game.getBoard(int).
+     * Returns the board with the given boardId or null if the game does not have a board of that boardId. Shortcut to
+     * game.getBoard(int).
      *
      * @param boardId The board's ID
+     *
      * @return The board with the given ID
+     *
      * @see IGame#getBoard(int)
      */
     @Nullable
@@ -220,7 +266,7 @@ public class Client extends AbstractClient {
      */
     public boolean canUnloadStranded() {
         return (game.getTurn() instanceof UnloadStrandedTurn)
-                && game.getTurn().isValid(localPlayerNumber, game);
+              && game.getTurn().isValid(localPlayerNumber, game);
     }
 
     /**
@@ -234,7 +280,7 @@ public class Client extends AbstractClient {
      * @param assaultDrop true if deployment is an assault drop
      */
     public void deploy(int id, Coords c, int boardId, int nFacing, int elevation, List<Entity> loadedUnits,
-                       boolean assaultDrop) {
+          boolean assaultDrop) {
         int packetCount = 7 + loadedUnits.size();
         int index = 0;
         Object[] data = new Object[packetCount];
@@ -255,10 +301,8 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * For ground to air attacks, the ground unit targets the closest hex in the
-     * air units flight path. In the case of several equidistant hexes, the
-     * attacker gets to choose. This method updates the server with the users
-     * choice.
+     * For ground to air attacks, the ground unit targets the closest hex in the air units flight path. In the case of
+     * several equidistant hexes, the attacker gets to choose. This method updates the server with the users choice.
      *
      * @param targetId   The target ID
      * @param attackerId The attacker Entity ID
@@ -329,22 +373,21 @@ public class Client extends AbstractClient {
     public void sendEntityWeaponOrderUpdate(Entity entity) {
         if (entity.getWeaponSortOrder().isCustom()) {
             send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE, entity.getId(),
-                    entity.getWeaponSortOrder(), entity.getCustomWeaponOrder()));
+                  entity.getWeaponSortOrder(), entity.getCustomWeaponOrder()));
         } else {
             send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE, entity.getId(),
-                    entity.getWeaponSortOrder()));
+                  entity.getWeaponSortOrder()));
         }
         entity.setWeapOrderChanged(false);
     }
 
     /**
-     * Sends an "add entity" packet that contains a collection of Entity
-     * objects.
+     * Sends an "add entity" packet that contains a collection of Entity objects.
+     *
+     * @param entities The collection of Entity objects to add. This should ideally be an {@link ArrayList<Entity>}, but
+     *                 other kinds of {@link List} will be converted to an {@link ArrayList}.
      *
      * @see megamek.server.totalwarfare.TWGameManager#receiveEntityAdd(Packet, int)
-     *
-     * @param entities The collection of Entity objects to add.
-     *                 This should ideally be an {@link ArrayList<Entity>}, but other kinds of {@link List} will be converted to an {@link ArrayList}.
      */
     public void sendAddEntity(List<Entity> entities) {
         // Trying to pass a non-ArrayList jams the receiving client and prevents it from ever receiving more packets.
@@ -394,16 +437,14 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Sends a packet containing multiple entity updates. Should only be used
-     * in the lobby phase.
+     * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
     public void sendUpdateEntity(Collection<Entity> entities) {
         send(new Packet(PacketCommand.ENTITY_MULTIUPDATE, entities));
     }
 
     /**
-     * Sends a packet containing multiple entity updates. Should only be used
-     * in the lobby phase.
+     * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
     public void sendChangeOwner(Collection<Entity> entities, int newOwnerId) {
         send(new Packet(PacketCommand.ENTITY_ASSIGN, entities, newOwnerId));
@@ -475,15 +516,14 @@ public class Client extends AbstractClient {
         }
 
         if (GUIPreferences.getInstance().getMiniReportShowSprites() &&
-                game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
-                iconCache != null && !iconCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
+              iconCache != null && !iconCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
             ImageUtil.createDoubleBlindHiddenImage(iconCache);
         }
     }
 
     /**
-     * Receives a force-related update containing affected forces and affected
-     * entities
+     * Receives a force-related update containing affected forces and affected entities
      */
     @SuppressWarnings("unchecked")
     protected void receiveForceUpdate(Packet c) {
@@ -499,8 +539,7 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Receives a server packet commanding deletion of forces. Only valid in the
-     * lobby phase.
+     * Receives a server packet commanding deletion of forces. Only valid in the lobby phase.
      */
     protected void receiveForcesDelete(Packet c) {
         @SuppressWarnings("unchecked")
@@ -513,9 +552,9 @@ public class Client extends AbstractClient {
         forceIds.stream().map(forces::getForce).forEach(delForces::add);
         for (Force delForce : delForces) {
             forces.getFullEntities(delForce).stream()
-                    .filter(e -> e instanceof Entity)
-                    .map(e -> (Entity) e)
-                    .forEach(delEntities::add);
+                  .filter(e -> e instanceof Entity)
+                  .map(e -> (Entity) e)
+                  .forEach(delEntities::add);
         }
 
         forces.deleteForces(delForces);
@@ -746,15 +785,15 @@ public class Client extends AbstractClient {
                         float imgSize = UIUtil.scaleForGUI(PilotToolTip.PORTRAIT_BASESIZE);
                         imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
                         Image portrait = crew.getPortrait(crewID).getBaseImage().getScaledInstance(-1, (int) imgSize,
-                                Image.SCALE_SMOOTH);
+                              Image.SCALE_SMOOTH);
                         // convert image to base64, add to the <img> tag and store in cache
                         BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null),
-                                portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                              portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
                         bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
                         String base64Text = ImageUtil.base64TextEncodeImage(bufferedImage);
                         String img = "<img src='data:image/png;base64," + base64Text + "'>";
                         updatedReport = updatedReport.replace("<span crew='" + entityID + ":" + crewID + "'></span>",
-                                img);
+                              img);
                     }
                 }
             }
@@ -768,7 +807,7 @@ public class Client extends AbstractClient {
      */
     private String getCachedImgTag(int id) {
         if (!GUIPreferences.getInstance().getMiniReportShowSprites()
-                || (iconCache == null) || !iconCache.containsKey(id)) {
+              || (iconCache == null) || !iconCache.containsKey(id)) {
             return null;
         }
         return iconCache.get(id);
@@ -941,7 +980,7 @@ public class Client extends AbstractClient {
                 break;
             case SENDING_REPORTS_SPECIAL:
                 game.processGameEvent(new GameReportEvent(this,
-                        receiveReport((List<Report>) packet.getObject(0))));
+                      receiveReport((List<Report>) packet.getObject(0))));
                 break;
             case SENDING_REPORTS_ALL:
                 var allReports = (List<List<Report>>) packet.getObject(0);
@@ -1021,7 +1060,7 @@ public class Client extends AbstractClient {
                 }
 
                 try (OutputStream os = new FileOutputStream(localFile);
-                        BufferedOutputStream bos = new BufferedOutputStream(os)) {
+                      BufferedOutputStream bos = new BufferedOutputStream(os)) {
                     List<Integer> data = (List<Integer>) packet.getObject(1);
                     for (Integer d : data) {
                         bos.write(d);
@@ -1174,8 +1213,7 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Sends a packet containing multiple entity updates. Should only be used
-     * in the lobby phase.
+     * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
     public void sendChangeTeam(Collection<Player> players, int newTeamId) {
         send(new Packet(PacketCommand.PLAYER_TEAM_CHANGE, players, newTeamId));
@@ -1196,20 +1234,16 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Sends a packet instructing the server to add the given entities to the given
-     * force.
-     * The server will handle this; the client does not have to implement the
-     * change.
+     * Sends a packet instructing the server to add the given entities to the given force. The server will handle this;
+     * the client does not have to implement the change.
      */
     public void sendAddEntitiesToForce(Collection<Entity> entities, int forceId) {
         send(new Packet(PacketCommand.FORCE_ADD_ENTITY, entities, forceId));
     }
 
     /**
-     * Sends a packet instructing the server to add the given entities to the given
-     * force.
-     * The server will handle this; the client does not have to implement the
-     * change.
+     * Sends a packet instructing the server to add the given entities to the given force. The server will handle this;
+     * the client does not have to implement the change.
      */
     public void sendAssignForceFull(Collection<Force> forceList, int newOwnerId) {
         send(new Packet(PacketCommand.FORCE_ASSIGN_FULL, forceList, newOwnerId));
@@ -1220,9 +1254,9 @@ public class Client extends AbstractClient {
      */
     public void sendDeleteForces(List<Force> toDelete) {
         send(new Packet(PacketCommand.FORCE_DELETE, toDelete.stream()
-                .mapToInt(Force::getId)
-                .boxed()
-                .collect(Collectors.toList())));
+              .mapToInt(Force::getId)
+              .boxed()
+              .collect(Collectors.toList())));
     }
 
     /**

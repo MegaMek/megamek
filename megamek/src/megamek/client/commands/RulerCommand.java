@@ -1,21 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.commands;
 
@@ -26,25 +40,23 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 
 /**
- * @author dirk
- *         This is the ruler for LOS stuff implemented in command line.
- *         There should be a more intuitive ruler.
+ * @author dirk This is the ruler for LOS stuff implemented in command line. There should be a more intuitive ruler.
  */
 public class RulerCommand extends ClientCommand {
 
     public RulerCommand(ClientGUI clientGUI) {
         super(
-                clientGUI,
-                "ruler",
-                "Show Line of Sight (LOS) information between two points of the map. " +
-                        "Usage: #ruler x1 y1 x2 y2 [elev1 [elev2]]. " +
-                        "Where x1, y1 and x2, y2 are the coordinates of the tiles, and the optional elev " +
-                        "numbers are the elevations of the targets over the terrain. " +
-                        "If elev is not given 1 is assumed which is for standing Meks. " +
-                        "Prone Meks and most other units are at elevation 0. " +
-                        "cur hex can be given as the start hex, which will use the client's current hex. " +
-                        "eg; #ruler cur hex x2 y2, or as a short form #ruler x2 y2, " +
-                        "in which case elevation can't be used.");
+              clientGUI,
+              "ruler",
+              "Show Line of Sight (LOS) information between two points of the map. " +
+                    "Usage: #ruler x1 y1 x2 y2 [elev1 [elev2]]. " +
+                    "Where x1, y1 and x2, y2 are the coordinates of the tiles, and the optional elev " +
+                    "numbers are the elevations of the targets over the terrain. " +
+                    "If elev is not given 1 is assumed which is for standing Meks. " +
+                    "Prone Meks and most other units are at elevation 0. " +
+                    "cur hex can be given as the start hex, which will use the client's current hex. " +
+                    "eg; #ruler cur hex x2 y2, or as a short form #ruler x2 y2, " +
+                    "in which case elevation can't be used.");
     }
 
     @Override
@@ -82,9 +94,9 @@ public class RulerCommand extends ClientCommand {
             }
 
             thd = LosEffects.calculateLos(getClient().getGame(),
-                    LosEffects.buildAttackInfo(start, end, 0, elev1, elev2,
-                            getClient().getBoard().getHex(start).floor(),
-                            getClient().getBoard().getHex(end).floor())
+                  LosEffects.buildAttackInfo(start, end, 0, elev1, elev2,
+                        getClient().getBoard().getHex(start).floor(),
+                        getClient().getBoard().getHex(end).floor())
             ).losModifiers(getClient().getGame());
 
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
@@ -93,9 +105,9 @@ public class RulerCommand extends ClientCommand {
             toHit1 += thd.getDesc();
 
             thd = LosEffects.calculateLos(getClient().getGame(),
-                    LosEffects.buildAttackInfo(end, start, 0, elev2, elev1,
-                            getClient().getBoard().getHex(end).floor(),
-                            getClient().getBoard().getHex(start).floor())
+                  LosEffects.buildAttackInfo(end, start, 0, elev2, elev1,
+                        getClient().getBoard().getHex(end).floor(),
+                        getClient().getBoard().getHex(start).floor())
             ).losModifiers(getClient().getGame());
 
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
@@ -104,11 +116,11 @@ public class RulerCommand extends ClientCommand {
             toHit2 += thd.getDesc();
 
             return "The ToHit from hex (" + (start.getX() + 1) + ", "
-                   + (start.getY() + 1) + ") at elevation " + elev1 + " to ("
-                   + (end.getX() + 1) + ", " + (end.getY() + 1) + ") at elevation "
-                   + elev2 + " has a range of " + start.distance(end)
-                   + " and a modifier of " + toHit1
-                   + " and return fire has a modifier of " + toHit2 + ".";
+                  + (start.getY() + 1) + ") at elevation " + elev1 + " to ("
+                  + (end.getX() + 1) + ", " + (end.getY() + 1) + ") at elevation "
+                  + elev2 + " has a range of " + start.distance(end)
+                  + " and a modifier of " + toHit1
+                  + " and return fire has a modifier of " + toHit2 + ".";
         } catch (Exception ignored) {
 
         }

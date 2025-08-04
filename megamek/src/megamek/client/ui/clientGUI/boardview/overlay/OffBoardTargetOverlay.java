@@ -1,17 +1,47 @@
 /*
-* MegaMek - Copyright (C) 2020 - The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
 package megamek.client.ui.clientGUI.boardview.overlay;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
@@ -26,12 +56,6 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.bayweapons.BayWeapon;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This class handles the display and logic for the off board targeting overlay.
@@ -59,8 +83,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
     }
 
     /**
-     * Sets a reference to a TargetingPhaseDisplay. Used to communicate a generated
-     * attack to it.
+     * Sets a reference to a TargetingPhaseDisplay. Used to communicate a generated attack to it.
      */
     public void setTargetingPhaseDisplay(TargetingPhaseDisplay tpd) {
         targetingPhaseDisplay = tpd;
@@ -70,7 +93,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         this.clientgui = clientgui;
 
         offBoardTargetImage = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_OFFBOARD_TARGET_IMAGE).toString());
+              new MegaMekFile(Configuration.miscImagesDir(), FILENAME_OFFBOARD_TARGET_IMAGE).toString());
 
         // Maybe TODO: display dimmed version of off-board icon during movement phase OR
         // targeting phase when weapon is ineligible to fire
@@ -126,10 +149,10 @@ public class OffBoardTargetOverlay implements IDisplayable {
     private boolean showDirectionalElement(OffBoardDirection direction, Mounted<?> selectedArtilleryWeapon) {
         for (Entity entity : game().getAllOffboardEnemyEntities(getCurrentPlayer())) {
             if (entity.isOffBoardObserved(getCurrentPlayer().getTeam()) &&
-                    (entity.getOffBoardDirection() == direction) &&
-                    (targetingPhaseDisplay.ce() != null &&
-                            targetingPhaseDisplay.ce().isOffBoard() ||
-                            weaponFacingInDirection(selectedArtilleryWeapon, direction))) {
+                  (entity.getOffBoardDirection() == direction) &&
+                  (targetingPhaseDisplay.ce() != null &&
+                        targetingPhaseDisplay.ce().isOffBoard() ||
+                        weaponFacingInDirection(selectedArtilleryWeapon, direction))) {
                 return true;
             }
         }
@@ -138,8 +161,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
     }
 
     /**
-     * Worker function that determines if the given weapon is facing in the correct
-     * off-board direction.
+     * Worker function that determines if the given weapon is facing in the correct off-board direction.
      */
     private boolean weaponFacingInDirection(Mounted<?> artilleryWeapon, OffBoardDirection direction) {
         Coords checkCoords = artilleryWeapon.getEntity().getPosition();
@@ -155,7 +177,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
                 break;
             case SOUTH:
                 checkCoords = checkCoords.translated(3,
-                        game().getBoard().getHeight() - checkCoords.getY() + 10);
+                      game().getBoard().getHeight() - checkCoords.getY() + 10);
                 break;
             case EAST:
                 translationDistance = ((game().getBoard().getWidth() - checkCoords.getX()) / 2) + 5;
@@ -172,7 +194,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         Targetable checkTarget = new HexTarget(checkCoords, Targetable.TYPE_HEX_ARTILLERY);
 
         return ComputeArc.isInArc(game(), artilleryWeapon.getEntity().getId(),
-                artilleryWeapon.getEntity().getEquipmentNum(artilleryWeapon), checkTarget);
+              artilleryWeapon.getEntity().getEquipmentNum(artilleryWeapon), checkTarget);
     }
 
     @Override
@@ -187,7 +209,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         for (OffBoardDirection direction : OffBoardDirection.values()) {
             if (direction != OffBoardDirection.NONE) {
                 if (buttons.containsKey(direction) &&
-                        buttons.get(direction).contains(point)) {
+                      buttons.get(direction).contains(point)) {
                     isHit = true;
                     handleButtonClick(direction);
                     return true;
@@ -235,7 +257,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
             button = generateRectangle(OffBoardDirection.NORTH, rect);
             buttons.put(OffBoardDirection.NORTH, button);
             graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height,
-                    clientgui.getBoardView().getPanel());
+                  clientgui.getBoardView().getPanel());
         }
 
         // draw left icon, if necessary
@@ -243,7 +265,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
             button = generateRectangle(OffBoardDirection.WEST, rect);
             buttons.put(OffBoardDirection.WEST, button);
             graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height,
-                    clientgui.getBoardView().getPanel());
+                  clientgui.getBoardView().getPanel());
         }
 
         // draw bottom icon, if necessary
@@ -251,7 +273,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
             button = generateRectangle(OffBoardDirection.SOUTH, rect);
             buttons.put(OffBoardDirection.SOUTH, button);
             graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height,
-                    clientgui.getBoardView().getPanel());
+                  clientgui.getBoardView().getPanel());
         }
 
         // draw right icon, if necessary. This one is hairy because of the unit overview
@@ -260,7 +282,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
             button = generateRectangle(OffBoardDirection.EAST, rect);
             buttons.put(OffBoardDirection.EAST, button);
             graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height,
-                    clientgui.getBoardView().getPanel());
+                  clientgui.getBoardView().getPanel());
         }
 
         // be nice, leave the color as we found it
@@ -268,8 +290,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
     }
 
     /**
-     * Worker function that generates a rectangle that can be drawn on screen
-     * or evaluated for hit detection.
+     * Worker function that generates a rectangle that can be drawn on screen or evaluated for hit detection.
      */
     private Rectangle generateRectangle(OffBoardDirection direction, Rectangle boundingRectangle) {
         int xPosition;
@@ -286,8 +307,8 @@ public class OffBoardTargetOverlay implements IDisplayable {
                 xPosition = boundingRectangle.x + EDGE_OFFSET;
                 yPosition = boundingRectangle.y + (int) (boundingRectangle.height / 2) - (int) (WIDE_EDGE_SIZE / 2);
                 return new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE); // used to be
-                                                                                              // NARROW_EDGE_SIZE,
-                                                                                              // WIDE_EDGE_SIZE);
+            // NARROW_EDGE_SIZE,
+            // WIDE_EDGE_SIZE);
             // south rectangle is wider than narrower, and at the bottom of the board view
             case SOUTH:
                 xPosition = boundingRectangle.x + (int) (boundingRectangle.width / 2) - (int) (WIDE_EDGE_SIZE / 2);
@@ -299,17 +320,20 @@ public class OffBoardTargetOverlay implements IDisplayable {
                 int extraXOffset = GUIP.getShowUnitOverview() ? UnitOverviewOverlay.getUIWidth() : 0;
                 xPosition = boundingRectangle.x + boundingRectangle.width - WIDE_EDGE_SIZE - EDGE_OFFSET - extraXOffset;
                 yPosition = boundingRectangle.y + (int) (boundingRectangle.height / 2) - (int) (NARROW_EDGE_SIZE / 2);
-                Rectangle myRectangle = new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE);  // used to be
-                                                                                                                // NARROW_EDGE_SIZE,
-                                                                                                                // WIDE_EDGE_SIZE);
+                Rectangle myRectangle = new Rectangle(xPosition,
+                      yPosition,
+                      WIDE_EDGE_SIZE,
+                      NARROW_EDGE_SIZE);  // used to be
+                // NARROW_EDGE_SIZE,
+                // WIDE_EDGE_SIZE);
 
                 // Account for possible floating Unit Display blocking arrow icon
                 if (GUIP.getUnitDisplayEnabled() && GUIP.getUnitDisplayLocaton() == 0) {
                     // Move arrow inward if either side overlaps with the Unit Display
                     Rectangle udRectangle = clientgui.getUnitDisplayDialog().getBounds();
-                    if ((myRectangle.x + myRectangle.width + 5 > udRectangle.x && myRectangle.x <= udRectangle.x + udRectangle.width) ||
-                        (myRectangle.x <= udRectangle.x + udRectangle.width && myRectangle.x + 5 >= udRectangle.x))
-                    {
+                    if ((myRectangle.x + myRectangle.width + 5 > udRectangle.x
+                          && myRectangle.x <= udRectangle.x + udRectangle.width) ||
+                          (myRectangle.x <= udRectangle.x + udRectangle.width && myRectangle.x + 5 >= udRectangle.x)) {
                         myRectangle.translate(-GUIP.getUnitDisplaySizeWidth(), 0);
                     }
                 }
@@ -320,18 +344,15 @@ public class OffBoardTargetOverlay implements IDisplayable {
     }
 
     /**
-     * Worker function that handles a click on a 'counterbattery fire' overlay
-     * button.
-     * Possibly shows a target selection popup
-     * Generates an artillery attack action that is fed back to the targeting
-     * display.
+     * Worker function that handles a click on a 'counterbattery fire' overlay button. Possibly shows a target selection
+     * popup Generates an artillery attack action that is fed back to the targeting display.
      */
     private void handleButtonClick(OffBoardDirection direction) {
         List<Targetable> eligibleTargets = new ArrayList<>();
 
         for (Entity ent : this.game().getAllOffboardEnemyEntities(getCurrentPlayer())) {
             if (ent.getOffBoardDirection() == direction &&
-                    ent.isOffBoardObserved(getCurrentPlayer().getTeam())) {
+                  ent.isOffBoardObserved(getCurrentPlayer().getTeam())) {
                 eligibleTargets.add(ent);
             }
         }
@@ -341,9 +362,9 @@ public class OffBoardTargetOverlay implements IDisplayable {
         if (eligibleTargets.size() > 1) {
             // If we have multiple choices, display a selection dialog.
             choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
-                    "FiringDisplay.ChooseTargetDialog.title",
-                    Messages.getString("FiringDisplay.ChooseCounterbatteryTargetDialog.message"),
-                    eligibleTargets, clientgui, null);
+                  "FiringDisplay.ChooseTargetDialog.title",
+                  Messages.getString("FiringDisplay.ChooseCounterbatteryTargetDialog.message"),
+                  eligibleTargets, clientgui, null);
         } else if ((eligibleTargets.size() == 1) && (eligibleTargets.get(0) != null)) {
             choice = eligibleTargets.get(0);
         } else {
@@ -355,10 +376,11 @@ public class OffBoardTargetOverlay implements IDisplayable {
             // direction
             // upon selection, generate an ArtilleryAttackAction vs selected entity as per
             // TargetingPhaseDisplay, like so:
-            WeaponAttackAction waa = new ArtilleryAttackAction(targetingPhaseDisplay.ce().getId(), choice.getTargetType(),
-                choice.getId(),
-                targetingPhaseDisplay.ce().getEquipmentNum(clientgui.getBoardView().getSelectedArtilleryWeapon()),
-                clientgui.getClient().getGame());
+            WeaponAttackAction waa = new ArtilleryAttackAction(targetingPhaseDisplay.ce().getId(),
+                  choice.getTargetType(),
+                  choice.getId(),
+                  targetingPhaseDisplay.ce().getEquipmentNum(clientgui.getBoardView().getSelectedArtilleryWeapon()),
+                  clientgui.getClient().getGame());
 
             // Only add if chance of success.
             // TODO: properly display any toHit "IMPOSSIBLE" reasons

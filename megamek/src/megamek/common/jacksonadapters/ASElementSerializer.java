@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.jacksonadapters;
 
 import static megamek.common.jacksonadapters.MMUReader.*;
@@ -25,7 +40,6 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-
 import megamek.common.Entity;
 import megamek.common.ForceAssignable;
 import megamek.common.MekSummary;
@@ -38,17 +52,15 @@ import megamek.common.alphaStrike.AlphaStrikeHelper;
 
 /**
  * This Jackson serializer writes AlphaStrikeElements to YAML output.
- *
- * When the unit is canon (found in the MekSummaryCache and marked as canon), then the full name
- * (chassis+model) is written in addition to the unit type (ASElement); for deserialization, the unit is
- * re-converted from the TW Entity.
- *
- * For a non-canon unit, the chassis, model and AS values are written as far as needed to reconstruct the unit
- * without the cache (this does not include TMM, Threshold and PV which can be calculated from the other
- * AS values).
- *
+ * <p>
+ * When the unit is canon (found in the MekSummaryCache and marked as canon), then the full name (chassis+model) is
+ * written in addition to the unit type (ASElement); for deserialization, the unit is re-converted from the TW Entity.
+ * <p>
+ * For a non-canon unit, the chassis, model and AS values are written as far as needed to reconstruct the unit without
+ * the cache (this does not include TMM, Threshold and PV which can be calculated from the other AS values).
+ * <p>
  * The pilot skill is written unless it is 4. When the skill is missing, deserialization assumes 4.
- *
+ * <p>
  * In addition, any transients like damage are written if present (2024: only partially implemented).
  */
 public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
@@ -73,7 +85,7 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
 
     @Override
     public void serialize(ASCardDisplayable element, JsonGenerator jgen, SerializerProvider provider)
-            throws IOException {
+          throws IOException {
 
         String fullName = (element.getFullChassis() + " " + element.getModel()).trim();
         MekSummary unit = MekSummaryCache.getInstance().getMek(fullName);
@@ -93,7 +105,7 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
                 jgen.writeStringField(MODEL, element.getModel());
             }
         }
-        if (element instanceof ForceAssignable && ((ForceAssignable)element).partOfForce()) {
+        if (element instanceof ForceAssignable && ((ForceAssignable) element).partOfForce()) {
             jgen.writeStringField(FORCE, ((ForceAssignable) element).getForceString());
         }
         if (element.getSkill() != 4) {
@@ -145,7 +157,7 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
     }
 
     private void writeArc(ASArcSummary arc, JsonGenerator jgen, ASCardDisplayable element, String specName)
-            throws IOException {
+          throws IOException {
         if (!arc.getSpecialsShortExportString(", ", element).isBlank()) {
             jgen.writeObjectField(specName, arc.getSpecialsShortExportString(", ", element));
         }

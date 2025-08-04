@@ -32,6 +32,8 @@
  */
 package megamek.common.autoresolve.converter;
 
+import java.util.ArrayList;
+
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -47,8 +49,6 @@ import megamek.common.strategicBattleSystems.BaseFormationConverter;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.strategicBattleSystems.SBFUnitConverter;
 import megamek.logging.MMLogger;
-
-import java.util.ArrayList;
 
 public class EntityAsFormation extends BaseFormationConverter<Formation> {
     private static final MMLogger logger = MMLogger.create(EntityAsFormation.class);
@@ -74,7 +74,9 @@ public class EntityAsFormation extends BaseFormationConverter<Formation> {
             return null;
         }
 
-        SBFUnit convertedUnit = new SBFUnitConverter(thisUnit, entity.getDisplayName() + " ID:" + entity.getId(), report).createSbfUnit();
+        SBFUnit convertedUnit = new SBFUnitConverter(thisUnit,
+              entity.getDisplayName() + " ID:" + entity.getId(),
+              report).createSbfUnit();
         formation.addUnit(convertedUnit);
         formation.setEntity(entity);
         formation.setRole(Role.getRole(entity.getRole()));
@@ -111,12 +113,12 @@ public class EntityAsFormation extends BaseFormationConverter<Formation> {
             s += damage.getDamage(ASRange.SHORT).damage;
         }
         return new ASDamageVector(
-            new ASDamage(Math.ceil((double) s / size)),
-            new ASDamage(Math.ceil((double) m / size)),
-            new ASDamage(Math.ceil((double) l / size)),
-            null,
-            size,
-            true);
+              new ASDamage(Math.ceil((double) s / size)),
+              new ASDamage(Math.ceil((double) m / size)),
+              new ASDamage(Math.ceil((double) l / size)),
+              null,
+              size,
+              true);
     }
 
 }

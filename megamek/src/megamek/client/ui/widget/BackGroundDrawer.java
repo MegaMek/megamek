@@ -1,27 +1,45 @@
 /*
-* MegaMek -
-* Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 package megamek.client.ui.widget;
 
 import java.awt.Graphics;
 import java.awt.Image;
 
 /**
- * Background drawer is a class which keeps reference to a single Image and
- * draws it according specified rules. For example, we can order to draw image
- * by fully tiling it over all area, or tile it in a single row or column with
+ * Background drawer is a class which keeps reference to a single Image and draws it according specified rules. For
+ * example, we can order to draw image by fully tiling it over all area, or tile it in a single row or column with
  * desired alignment, or draw it just once. Alignment of drawing can be
  * <ol>
  * <li>logical (top, bottom, center for vertical alignment and left, right,
@@ -59,8 +77,7 @@ public class BackGroundDrawer {
      */
     public static final int VALIGN_BOTTOM = 64;
     /**
-     * Shift down from top border of area by exact number of pixels. (default 0
-     * pixels)
+     * Shift down from top border of area by exact number of pixels. (default 0 pixels)
      */
     public static final int VALIGN_EXACT = 128;
     /**
@@ -76,8 +93,7 @@ public class BackGroundDrawer {
      */
     public static final int HALIGN_RIGHT = 1024;
     /**
-     * Shift right from left border of area by exact number of pixels. (default
-     * 0 pixels)
+     * Shift right from left border of area by exact number of pixels. (default 0 pixels)
      */
     public static final int HALIGN_EXACT = 2048;
 
@@ -96,9 +112,9 @@ public class BackGroundDrawer {
 
     /**
      * @param mainImage image to draw by BackGroundDrawer.
-     * @param behavior Integer value specifying way of tiling and alignment. For
-     *            exapmple:
-     *            <code> BackGroundDrawer(myImage, BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT);
+     * @param behavior  Integer value specifying way of tiling and alignment. For exapmple:
+     *                  <code> BackGroundDrawer(myImage, BackGroundDrawer.TILING_VERTICAL |
+     *                  BackGroundDrawer.HALIGN_RIGHT);
      *                  </code>
      */
 
@@ -135,8 +151,7 @@ public class BackGroundDrawer {
     /**
      * Sets type of tiling.
      *
-     * @param type Possible values: NO_TILING, TILING_BOTH, TILING_VERTICAL,
-     *            TILING_HORIZONTAL.
+     * @param type Possible values: NO_TILING, TILING_BOTH, TILING_VERTICAL, TILING_HORIZONTAL.
      */
     public void setTilingType(int type) {
         type &= TILING_TYPE_SELECT_MASK;
@@ -196,8 +211,8 @@ public class BackGroundDrawer {
     /**
      * Draws image into Graphics with custom tiling type and alignment.
      *
-     * @param g Graphics to which draw to.
-     * @param width Width of the drawing area.
+     * @param g      Graphics to which draw to.
+     * @param width  Width of the drawing area.
      * @param height Height of the drawing area.
      */
 

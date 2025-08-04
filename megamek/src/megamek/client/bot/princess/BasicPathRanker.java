@@ -1,21 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot.princess;
 
@@ -126,7 +140,7 @@ public class BasicPathRanker extends PathRanker {
 
     boolean isInMyLoS(Entity unit, HexLine leftBounds, HexLine rightBounds) {
         return (leftBounds.judgeArea(pathEnumerator.getUnitMovableAreas().get(unit.getId())) > 0) &&
-                     (rightBounds.judgeArea(pathEnumerator.getUnitMovableAreas().get(unit.getId())) < 0);
+              (rightBounds.judgeArea(pathEnumerator.getUnitMovableAreas().get(unit.getId())) < 0);
     }
 
     /**
@@ -170,14 +184,14 @@ public class BasicPathRanker extends PathRanker {
         }
 
         return enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, myFacing)) ||
-                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, (myFacing + 1) % 6)) ||
-                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, (myFacing + 5) % 6)) ||
-                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, myFacing)) ||
-                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, (myFacing + 4) % 6)) ||
-                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, (myFacing + 5) % 6)) ||
-                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, myFacing)) ||
-                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, (myFacing + 1) % 6)) ||
-                     enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, (myFacing + 2) % 6));
+              enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, (myFacing + 1) % 6)) ||
+              enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, (myFacing + 5) % 6)) ||
+              enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, myFacing)) ||
+              enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, (myFacing + 4) % 6)) ||
+              enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, (myFacing + 5) % 6)) ||
+              enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, myFacing)) ||
+              enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, (myFacing + 1) % 6)) ||
+              enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, (myFacing + 2) % 6));
     }
 
     /**
@@ -234,7 +248,7 @@ public class BasicPathRanker extends PathRanker {
 
         // in general, if an enemy can end its position in range, it can hit me
         returnResponse.addToEstimatedEnemyDamage(getMaxDamageAtRange(enemy, range, useExtremeRange, useLOSRange) *
-                                                       damageDiscount);
+              damageDiscount);
 
         // It is especially embarrassing if the enemy can move behind or flank me and then kick me
         if (canFlankAndKick(enemy, behind, leftFlank, rightFlank, myFacing)) {
@@ -352,7 +366,8 @@ public class BasicPathRanker extends PathRanker {
         // If I don't have a range, I can't do damage.
         // exception: I might, if I'm an aero on a ground map attacking a ground unit
         // because aero unit ranges are a "special case"
-        boolean aeroAttackingGroundUnitOnGroundMap = me.isAirborne() && !enemy.isAero() && game.getBoard(enemy).isGround();
+        boolean aeroAttackingGroundUnitOnGroundMap = me.isAirborne() && !enemy.isAero() && game.getBoard(enemy)
+              .isGround();
 
         int maxRange = getOwner().getMaxWeaponRange(me, enemy.isAirborne());
         if (distance > maxRange && !aeroAttackingGroundUnitOnGroundMap) {
@@ -645,8 +660,8 @@ public class BasicPathRanker extends PathRanker {
 
     protected void checkBlackIce(Game game) {
         blackIce = ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE) &&
-                           game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP) ||
-                          game.getPlanetaryConditions().getWeather().isIceStorm()) ? 1 : 0;
+              game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP) ||
+              game.getPlanetaryConditions().getWeather().isIceStorm()) ? 1 : 0;
     }
 
 
@@ -762,13 +777,14 @@ public class BasicPathRanker extends PathRanker {
             }
 
             // Skip units not on the board.
-            if (enemy.isOffBoard() || (enemy.getPosition() == null) || !game.getBoard(enemy).contains(enemy.getPosition())) {
+            if (enemy.isOffBoard() || (enemy.getPosition() == null) || !game.getBoard(enemy)
+                  .contains(enemy.getPosition())) {
                 continue;
             }
 
             // Skip broken enemies
             if (getOwner().getHonorUtil()
-                      .isEnemyBroken(enemy.getId(), enemy.getOwnerId(), getOwner().getForcedWithdrawal())) {
+                  .isEnemyBroken(enemy.getId(), enemy.getOwnerId(), getOwner().getForcedWithdrawal())) {
                 continue;
             }
 
@@ -818,7 +834,7 @@ public class BasicPathRanker extends PathRanker {
         // If I cannot kick because I am a clan unit and "No physical attacks for the clans"
         // is enabled, set maximum physical damage for this path to zero.
         if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) &&
-                  path.getEntity().getCrew().isClanPilot()) {
+              path.getEntity().getCrew().isClanPilot()) {
             damageEstimate.physicalDamage = 0;
         }
 
@@ -1211,8 +1227,8 @@ public class BasicPathRanker extends PathRanker {
             Targetable target = fireControlState.getAdditionalTargets().get(i);
 
             if (target.isOffBoard() ||
-                      (target.getPosition() == null) ||
-                      !game.getBoard(target).contains(target.getPosition())) {
+                  (target.getPosition() == null) ||
+                  !game.getBoard(target).contains(target.getPosition())) {
                 continue; // Skip targets not actually on the board.
             }
 
@@ -1269,13 +1285,13 @@ public class BasicPathRanker extends PathRanker {
 
         // If we're flying or swimming, we don't care about ground hazards.
         if (EntityMovementType.MOVE_FLYING.equals(path.getLastStepMovementType()) ||
-                  EntityMovementType.MOVE_OVER_THRUST.equals(path.getLastStepMovementType()) ||
-                  EntityMovementType.MOVE_SAFE_THRUST.equals(path.getLastStepMovementType()) ||
-                  EntityMovementType.MOVE_VTOL_WALK.equals(path.getLastStepMovementType()) ||
-                  EntityMovementType.MOVE_VTOL_RUN.equals(path.getLastStepMovementType()) ||
-                  EntityMovementType.MOVE_VTOL_SPRINT.equals(path.getLastStepMovementType()) ||
-                  EntityMovementType.MOVE_SUBMARINE_WALK.equals(path.getLastStepMovementType()) ||
-                  EntityMovementType.MOVE_SUBMARINE_RUN.equals(path.getLastStepMovementType())) {
+              EntityMovementType.MOVE_OVER_THRUST.equals(path.getLastStepMovementType()) ||
+              EntityMovementType.MOVE_SAFE_THRUST.equals(path.getLastStepMovementType()) ||
+              EntityMovementType.MOVE_VTOL_WALK.equals(path.getLastStepMovementType()) ||
+              EntityMovementType.MOVE_VTOL_RUN.equals(path.getLastStepMovementType()) ||
+              EntityMovementType.MOVE_VTOL_SPRINT.equals(path.getLastStepMovementType()) ||
+              EntityMovementType.MOVE_SUBMARINE_WALK.equals(path.getLastStepMovementType()) ||
+              EntityMovementType.MOVE_SUBMARINE_RUN.equals(path.getLastStepMovementType())) {
 
             logger.trace("Move Type ({}) ignores ground hazards.", path.getLastStepMovementType());
             return 0;
@@ -1286,7 +1302,13 @@ public class BasicPathRanker extends PathRanker {
             logger.trace("Jumping, only checking landing hex.");
             Coords endCoords = path.getFinalCoords();
             Hex endHex = game.getBoard(path.getFinalBoardId()).getHex(endCoords);
-            return checkHexForHazards(endHex, movingUnit, true, path.getLastStep(), true, path, game.getBoard(path.getFinalBoardId()));
+            return checkHexForHazards(endHex,
+                  movingUnit,
+                  true,
+                  path.getLastStep(),
+                  true,
+                  path,
+                  game.getBoard(path.getFinalBoardId()));
         }
 
         double totalHazard = 0;
@@ -1395,9 +1417,9 @@ public class BasicPathRanker extends PathRanker {
         logger.trace("Checking Building ({}) for hazards.", step.getPosition());
         // Protos, BA and Infantry move through buildings freely.
         if (movingUnit.isProtoMek() ||
-                  movingUnit.isInfantry() ||
-                  movingUnit.isConventionalInfantry() ||
-                  movingUnit.isBattleArmor()) {
+              movingUnit.isInfantry() ||
+              movingUnit.isConventionalInfantry() ||
+              movingUnit.isBattleArmor()) {
             logger.trace("Safe for infantry and protos (0).");
             return 0;
         }
@@ -1425,7 +1447,7 @@ public class BasicPathRanker extends PathRanker {
         // Otherwise, bridge collapse checks have already been handled in validatePaths
         int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
         if ((bridgeElevation > step.getElevation()) &&
-                  (bridgeElevation <= (step.getElevation() + movingUnit.getHeight()))) {
+              (bridgeElevation <= (step.getElevation() + movingUnit.getHeight()))) {
             return calcBuildingHazard(step, movingUnit, jumpLanding, board);
         }
 
@@ -1436,16 +1458,16 @@ public class BasicPathRanker extends PathRanker {
         logger.trace("Checking Ice ({}) for hazards.", hex.getCoords());
         // Hover units are above the surface.
         if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+              EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             logger.trace("Hovering above ice (0).");
             return 0;
         }
 
         // Infantry don't break ice.
         if (EntityMovementMode.INF_LEG == movingUnit.getMovementMode() ||
-                  EntityMovementMode.INF_MOTORIZED == movingUnit.getMovementMode() ||
-                  EntityMovementMode.INF_JUMP == movingUnit.getMovementMode() ||
-                  EntityMovementMode.INF_UMU == movingUnit.getMovementMode()) {
+              EntityMovementMode.INF_MOTORIZED == movingUnit.getMovementMode() ||
+              EntityMovementMode.INF_JUMP == movingUnit.getMovementMode() ||
+              EntityMovementMode.INF_UMU == movingUnit.getMovementMode()) {
             logger.trace("Infantry on Ice (0).");
             return 0;
         }
@@ -1456,7 +1478,7 @@ public class BasicPathRanker extends PathRanker {
             // Most falling and skidding damage is weight-based...
             double arbitraryHazard = movingUnit.getWeight();
             hazard += Math.round(arbitraryHazard *
-                                       (1 - (Compute.oddsAbove(movingUnit.getCrew().getPiloting()) / 100.0)));
+                  (1 - (Compute.oddsAbove(movingUnit.getCrew().getPiloting()) / 100.0)));
             if (movingUnit.isReckless()) {
                 // Double the hazard for Reckless
                 hazard *= 2;
@@ -1489,15 +1511,15 @@ public class BasicPathRanker extends PathRanker {
 
         // Hover units are above the surface.
         if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                  EntityMovementMode.WIGE == movingUnit.getMovementMode() ||
-                  EntityMovementMode.NAVAL == movingUnit.getMovementMode()) {
+              EntityMovementMode.WIGE == movingUnit.getMovementMode() ||
+              EntityMovementMode.NAVAL == movingUnit.getMovementMode()) {
             logger.trace("Hovering or swimming above water (0).");
             return 0;
         }
 
         // Amphibious units are safe (kind of the point).
         if (movingUnit.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
-                  movingUnit.hasWorkingMisc(MiscType.F_AMPHIBIOUS)) {
+              movingUnit.hasWorkingMisc(MiscType.F_AMPHIBIOUS)) {
             logger.trace("Amphibious units are safe (0).");
             return 0;
         }
@@ -1522,9 +1544,9 @@ public class BasicPathRanker extends PathRanker {
         // Most other units are automatically destroyed. UMU-equipped units _may_ not drown immediately, but all
         // other hazards (e.g., breaches, crush depth) still apply.
         if (!(movingUnit instanceof Mek ||
-                    movingUnit instanceof ProtoMek ||
-                    movingUnit instanceof BattleArmor ||
-                    movingUnit.hasUMU())) {
+              movingUnit instanceof ProtoMek ||
+              movingUnit instanceof BattleArmor ||
+              movingUnit.hasUMU())) {
             logger.trace("Drowning (1000).");
             return UNIT_DESTRUCTION_FACTOR;
         }
@@ -1532,11 +1554,11 @@ public class BasicPathRanker extends PathRanker {
         MoveStep lastStep = movePath.getLastStep();
         // Unsealed unit will drown.
         if (movingUnit instanceof Mek &&
-                  ((Mek) movingUnit).isIndustrial() &&
-                  !movingUnit.hasEnvironmentalSealing() &&
-                  (movingUnit.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) &&
-                  hex.depth() >= 1 &&
-                  step.equals(lastStep)) {
+              ((Mek) movingUnit).isIndustrial() &&
+              !movingUnit.hasEnvironmentalSealing() &&
+              (movingUnit.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) &&
+              hex.depth() >= 1 &&
+              step.equals(lastStep)) {
             double destructionFactor = hex.depth() >= 2 ? UNIT_DESTRUCTION_FACTOR : UNIT_DESTRUCTION_FACTOR * 0.5d;
             logger.trace("Industrial Meks drown too ({}).", destructionFactor);
             return destructionFactor;
@@ -1579,10 +1601,10 @@ public class BasicPathRanker extends PathRanker {
             // For other units, any breach is deadly.
             // noinspection ConstantConditions
             if ((Mek.LOC_HEAD == loc) ||
-                      (Mek.LOC_CT == loc) ||
-                      (ProtoMek.LOC_HEAD == loc) ||
-                      (ProtoMek.LOC_TORSO == loc) ||
-                      (!movingUnit.isMek() && !movingUnit.isProtoMek())) {
+                  (Mek.LOC_CT == loc) ||
+                  (ProtoMek.LOC_HEAD == loc) ||
+                  (ProtoMek.LOC_TORSO == loc) ||
+                  (!movingUnit.isMek() && !movingUnit.isProtoMek())) {
                 logger.trace("Location {} breached and critical (1000).", loc);
                 return UNIT_DESTRUCTION_FACTOR;
             }
@@ -1636,7 +1658,7 @@ public class BasicPathRanker extends PathRanker {
         logger.trace("Calculating magma hazard.");
         // Hovers / WiGE are normally unaffected.
         if ((EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                   EntityMovementMode.WIGE == movingUnit.getMovementMode()) && !endHex) {
+              EntityMovementMode.WIGE == movingUnit.getMovementMode()) && !endHex) {
             logger.trace("Hovering above magma (0).");
             return 0;
         }
@@ -1674,7 +1696,7 @@ public class BasicPathRanker extends PathRanker {
         // Hovers/VTOLs are unaffected _unless_ they end on the hex and are in danger of
         // losing mobility.
         if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+              EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             if (!endHex) {
                 logger.trace("Hovering/VTOL while traversing lava (0).");
                 return 0;
@@ -1733,8 +1755,8 @@ public class BasicPathRanker extends PathRanker {
             logger.trace("Tripod Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
         } else {
             exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_LARM, Mek.LOC_RARM)
-                                 .mapToInt(movingUnit::getArmor)
-                                 .sum();
+                  .mapToInt(movingUnit::getArmor)
+                  .sum();
             dmg = 28;
             logger.trace("Quad Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
         }
@@ -1753,7 +1775,7 @@ public class BasicPathRanker extends PathRanker {
         // Hovers/VTOLs are unaffected _unless_ they end on the hex and are in danger of
         // losing mobility.
         if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+              EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             if (!endHex) {
                 logger.trace("Hovering/VTOL while traversing hazardous liquids (0).");
                 return 0;
@@ -1767,8 +1789,8 @@ public class BasicPathRanker extends PathRanker {
         }
 
         dmg = (HazardousLiquidPoolUtil.AVERAGE_DAMAGE_HAZARDOUS_LIQUID_POOL *
-                     HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageMultiplierForUnsealed(movingUnit)) /
-                    (HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageDivisorForInfantry(movingUnit));
+              HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageMultiplierForUnsealed(movingUnit)) /
+              (HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageDivisorForInfantry(movingUnit));
 
         // After all that math, let's make sure we do at least 1 damage
         // (.6 repeating when normalized for the HLP doing no damage 1/3 of the time)
@@ -1790,8 +1812,8 @@ public class BasicPathRanker extends PathRanker {
             logger.trace("Tripod Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
         } else if (movingUnit instanceof QuadMek) {
             exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_LARM, Mek.LOC_RARM)
-                                 .mapToInt(movingUnit::getArmor)
-                                 .sum();
+                  .mapToInt(movingUnit::getArmor)
+                  .sum();
             logger.trace("Quad Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
         } else {
             exposedArmor = movingUnit.getTotalArmor();
@@ -1811,12 +1833,12 @@ public class BasicPathRanker extends PathRanker {
         // Hovers/VTOLs are unaffected _unless_ they end on the hex and are in danger of
         // losing mobility.
         if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+              EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             if (!endHex) {
                 logger.trace("Hovering/VTOL while traversing ultra sublevel (0).");
                 return 0;
             } else if (movingUnit.getElevation() >
-                             0) {  //elevation of 0 is on the ground (not airborne), which would be destroyed
+                  0) {  //elevation of 0 is on the ground (not airborne), which would be destroyed
                 // Estimate chance of being disabled or immobilized over ultra sublevel; this is
                 // fatal!
                 // Calc expected damage as ((current damage level [0 ~ 4]) / 4) *
@@ -1866,8 +1888,8 @@ public class BasicPathRanker extends PathRanker {
         // (Reuse PSR odds to avoid infinite trapped time on turns when jumping into
         // terrain causes 100% bog-down)
         double expectedTurns = ((1 - oddsPSR) < 1.0) ?
-                                     Math.log10(0.10) / Math.log10(1 - oddsPSR) :
-                                     UNIT_DESTRUCTION_FACTOR;
+              Math.log10(0.10) / Math.log10(1 - oddsPSR) :
+              UNIT_DESTRUCTION_FACTOR;
 
         if (bogPossible) {
             logger.trace("Chance to bog down = {}, expected turns = {}", oddsBogged, expectedTurns);
@@ -1881,7 +1903,7 @@ public class BasicPathRanker extends PathRanker {
         logger.trace("Checking Snow ({}) for hazards.", hex.getCoords());
         // Hover units are above the surface.
         if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+              EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             logger.trace("Hovering above snow (0).");
             return 0;
         }
@@ -1909,7 +1931,7 @@ public class BasicPathRanker extends PathRanker {
         logger.trace("Checking Swamp ({}) for hazards.", hex.getCoords());
         // Hover units are above the surface.
         if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+              EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             logger.trace("Hovering above swamp (0).");
             return 0;
         }
@@ -1945,7 +1967,7 @@ public class BasicPathRanker extends PathRanker {
         logger.trace("Checking Mud for hazards.");
         // Hover units are above the surface.
         if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+              EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             logger.trace("Hovering above Mud (0).");
             return 0;
         }
@@ -1974,7 +1996,7 @@ public class BasicPathRanker extends PathRanker {
         logger.trace("Checking Tundra for hazards.");
         // Hover units are above the surface.
         if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+              EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             logger.trace("Hovering above Tundra (0).");
             return 0;
         }
@@ -1996,7 +2018,7 @@ public class BasicPathRanker extends PathRanker {
         logger.trace("Checking Rubble ({}) for hazards.", hex.getCoords());
         // Hover units are above the surface.
         if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                  EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+              EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
             logger.trace("Hovering above Rubble (0).");
             return 0;
         }
@@ -2004,9 +2026,9 @@ public class BasicPathRanker extends PathRanker {
         double hazard = 0;
 
         boolean caresAboutRubble = ((!jumpLanding || endHex) &&
-                                          (hex.terrainLevel(Terrains.RUBBLE) > 0) &&
-                                          (hex.terrainLevel(Terrains.PAVEMENT) == Terrain.LEVEL_NONE) &&
-                                          movingUnit.canFall());
+              (hex.terrainLevel(Terrains.RUBBLE) > 0) &&
+              (hex.terrainLevel(Terrains.PAVEMENT) == Terrain.LEVEL_NONE) &&
+              movingUnit.canFall());
 
         if (caresAboutRubble) {
             // PSR checks are at +0 for Rubble levels up to 6, Ultra, which is +1

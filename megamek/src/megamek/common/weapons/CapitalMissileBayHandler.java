@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -40,7 +61,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
      * @param m
      */
     public CapitalMissileBayHandler(ToHitData t, WeaponAttackAction w, Game g,
-            TWGameManager m) {
+          TWGameManager m) {
         super(t, w, g, m);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     }
@@ -60,7 +81,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         int numAttacks = 1;
 
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                : null;
+              : null;
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
@@ -78,8 +99,8 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             r.add(wtype.getName() + number);
             if (entityTarget != null) {
                 if ((wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
-                        && (weapon.getLinked() != null)
-                        && (weapon.getLinked().getType() instanceof AmmoType)) {
+                      && (weapon.getLinked() != null)
+                      && (weapon.getLinked().getType() instanceof AmmoType)) {
                     AmmoType atype = (AmmoType) weapon.getLinked().getType();
                     if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
                         r.messageId = 3116;
@@ -101,7 +122,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             // Set Margin of Success/Failure and check for Direct Blows
             toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
             bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
-                    && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
+                  && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
             // This has to be up here so that we don't screw up glancing/direct blow reports
             attackValue = calcAttackValue();
@@ -253,7 +274,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             }
             if (!bMissed && (entityTarget != null)) {
                 handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                        nCluster, bldgAbsorbs);
+                      nCluster, bldgAbsorbs);
                 gameManager.creditKill(entityTarget, ae);
             } else if (!bMissed) { // Hex is targeted, need to report a hit
                 r = new Report(3390);
@@ -283,25 +304,25 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 bayWAmmo = bayW.getLinkedAmmo();
             }
             if (!bayW.isBreached()
-                    && !bayW.isDestroyed()
-                    && !bayW.isJammed()
-                    && bayWAmmo != null
-                    && ae.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
+                  && !bayW.isDestroyed()
+                  && !bayW.isJammed()
+                  && bayWAmmo != null
+                  && ae.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
                 WeaponType bayWType = ((WeaponType) bayW.getType());
                 // need to cycle through weapons and add av
                 double current_av = 0;
 
                 AmmoType atype = (AmmoType) bayWAmmo.getType();
                 if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
-                        && (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
-                                || atype.hasFlag(AmmoType.F_PEACEMAKER))) {
+                      && (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
+                      || atype.hasFlag(AmmoType.F_PEACEMAKER))) {
                     weaponarmor = 40;
                 } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
-                        && (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
-                                || atype.hasFlag(AmmoType.F_SANTA_ANNA))) {
+                      && (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
+                      || atype.hasFlag(AmmoType.F_SANTA_ANNA))) {
                     weaponarmor = 30;
                 } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
-                        && atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                      && atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
                     weaponarmor = 20;
                 } else {
                     weaponarmor = bayWType.getMissileArmor();
@@ -321,7 +342,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 }
 
                 current_av = updateAVforAmmo(current_av, atype, bayWType,
-                        range, bayW.getEquipmentNum());
+                      range, bayW.getEquipmentNum());
                 av = av + current_av;
                 armor = armor + weaponarmor;
                 // now use the ammo that we had loaded
@@ -329,7 +350,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                     int shots = bayW.getCurrentShots();
                     for (int i = 0; i < shots; i++) {
                         if (null == bayWAmmo
-                                || bayWAmmo.getUsableShotsLeft() < 1) {
+                              || bayWAmmo.getUsableShotsLeft() < 1) {
                             // try loading something else
                             ae.loadWeaponWithSameAmmo(bayW);
                             bayWAmmo = bayW.getLinkedAmmo();
@@ -366,9 +387,8 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     }
 
     /**
-     * Calculate the starting armor value of a flight of Capital Missiles
-     * Used for Aero Sanity. This is done in calcAttackValue() otherwise
-     *
+     * Calculate the starting armor value of a flight of Capital Missiles Used for Aero Sanity. This is done in
+     * calcAttackValue() otherwise
      */
     @Override
     protected int initializeCapMissileArmor() {
@@ -380,15 +400,15 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             AmmoType atype = bayWAmmo.getType();
             WeaponType bayWType = bayW.getType();
             if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
-                    && (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
-                            || atype.hasFlag(AmmoType.F_PEACEMAKER))) {
+                  && (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
+                  || atype.hasFlag(AmmoType.F_PEACEMAKER))) {
                 curr_armor = 40;
             } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
-                    && (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
-                            || atype.hasFlag(AmmoType.F_SANTA_ANNA))) {
+                  && (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
+                  || atype.hasFlag(AmmoType.F_SANTA_ANNA))) {
                 curr_armor = 30;
             } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
-                    && atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                  && atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
                 curr_armor = 20;
             } else {
                 curr_armor = bayWType.getMissileArmor();
@@ -421,21 +441,21 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             return 0;
         }
         if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.WHITE_SHARK
-                || atype.getAmmoType() == AmmoType.AmmoTypeEnum.WHITE_SHARK_T
-                || atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
-                // Santa Anna, per IO rules
-                || atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+              || atype.getAmmoType() == AmmoType.AmmoTypeEnum.WHITE_SHARK_T
+              || atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
+              // Santa Anna, per IO rules
+              || atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
             return 9;
         } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.KRAKEN_T
-                || atype.getAmmoType() == AmmoType.AmmoTypeEnum.KRAKENM
-                // Peacemaker, per IO rules
-                || atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+              || atype.getAmmoType() == AmmoType.AmmoTypeEnum.KRAKENM
+              // Peacemaker, per IO rules
+              || atype.hasFlag(AmmoType.F_PEACEMAKER)) {
             return 8;
         } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.KILLER_WHALE
-                || atype.getAmmoType() == AmmoType.AmmoTypeEnum.KILLER_WHALE_T
-                || atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
-                || atype.getAmmoType() == AmmoType.AmmoTypeEnum.MANTA_RAY
-                || atype.getAmmoType() == AmmoType.AmmoTypeEnum.ALAMO) {
+              || atype.getAmmoType() == AmmoType.AmmoTypeEnum.KILLER_WHALE_T
+              || atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
+              || atype.getAmmoType() == AmmoType.AmmoTypeEnum.MANTA_RAY
+              || atype.getAmmoType() == AmmoType.AmmoTypeEnum.ALAMO) {
             return 10;
         } else if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.STINGRAY) {
             return 12;
@@ -446,7 +466,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
 
     @Override
     protected double updateAVforAmmo(double current_av, AmmoType atype,
-            WeaponType bayWType, int range, int wId) {
+          WeaponType bayWType, int range, int wId) {
         // AR10 munitions
         if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AR10) {
             if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
@@ -484,13 +504,13 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         for (int wId : insertedAttacks) {
             Mounted<?> bayW = ae.getEquipment(wId);
             WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
-                    waa.getTargetId(), wId);
+                  waa.getTargetId(), wId);
             Weapon w = (Weapon) bayW.getType();
             // increase ammo by one, we'll use one that we shouldn't use
             // in the next line
             Vector<Report> newReports = new Vector<>();
             bayW.getLinked().setShotsLeft(
-                    bayW.getLinked().getBaseShotsLeft() + 1);
+                  bayW.getLinked().getBaseShotsLeft() + 1);
             (w.fire(newWaa, game, gameManager)).handle(phase, newReports);
             for (Report r : newReports) {
                 r.indent();
@@ -500,9 +520,8 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     }
 
     /**
-     * Checks to see if this point defense/AMS bay can engage a capital missile
-     * This should return true. Only when handling capital missile attacks can this
-     * be false.
+     * Checks to see if this point defense/AMS bay can engage a capital missile This should return true. Only when
+     * handling capital missile attacks can this be false.
      */
     @Override
     protected boolean canEngageCapitalMissile(WeaponMounted counter) {
@@ -510,8 +529,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     }
 
     /**
-     * Sets the appropriate AMS Bay reporting flag depending on what type of missile
-     * this is
+     * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
      */
     @Override
     protected void setAMSBayReportingFlag() {
@@ -519,8 +537,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     }
 
     /**
-     * Sets the appropriate PD Bay reporting flag depending on what type of missile
-     * this is
+     * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
      */
     @Override
     protected void setPDBayReportingFlag() {
@@ -534,12 +551,12 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         }
 
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                : null;
+              : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
-                entityTarget);
+              entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
-                && !(target instanceof Infantry)
-                && ae.getPosition().distance(target.getPosition()) <= 1;
+              && !(target instanceof Infantry)
+              && ae.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
@@ -555,8 +572,8 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         r.add(wtype.getName());
         if (entityTarget != null) {
             if ((wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
-                    && (weapon.getLinked() != null)
-                    && (weapon.getLinked().getType() instanceof AmmoType)) {
+                  && (weapon.getLinked() != null)
+                  && (weapon.getLinked().getType() instanceof AmmoType)) {
                 AmmoType atype = (AmmoType) weapon.getLinked().getType();
                 if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
                     r.messageId = 3116;
@@ -576,7 +593,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         // Set Margin of Success/Failure and check for Direct Blows
         toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
-                && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
+              && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
         // Point Defense fire vs Capital Missiles
         CounterAV = calcCounterAV();
@@ -720,9 +737,9 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 if (bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();
                     WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(),
-                            waa.getTargetId(), m.getEquipmentNum());
+                          waa.getTargetId(), m.getEquipmentNum());
                     AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game,
-                            gameManager);
+                          gameManager);
                     bayWHandler.setAnnouncedEntityFiring(false);
                     // This should always be true. Maybe there's a better way to write this?
                     if (bayWHandler instanceof WeaponHandler) {
@@ -730,7 +747,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                         wHandler.setParentBayHandler(this);
                     } else {
                         logger.error("bayWHandler " + bayWHandler.getClass()
-                                + " is not a weapon handler! Cannot set parent bay handler.");
+                              + " is not a weapon handler! Cannot set parent bay handler.");
                         continue;
                     }
                     bayWHandler.handle(phase, vPhaseReport);

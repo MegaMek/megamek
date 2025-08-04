@@ -41,9 +41,11 @@ public class NameSorter extends MekTableSorter {
 
     /** A Lobby Mek Table sorter that sorts by unit name. */
     public NameSorter(Sorting sorting) {
-        super(I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "NameSorter.DisplayName"), MekTableModel.COL_UNIT, sorting);
+        super(I18n.getTextAt(MekTableSorter.RESOURCE_BUNDLE, "NameSorter.DisplayName"),
+              MekTableModel.COL_UNIT,
+              sorting);
     }
-    
+
     @Override
     public int compare(final Entity a, final Entity b) {
         String aVal = a.getDisplayName();

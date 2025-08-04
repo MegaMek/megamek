@@ -1,22 +1,47 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.jacksonadapters;
+
+import static megamek.common.jacksonadapters.MMUReader.*;
+import static megamek.common.jacksonadapters.SBFUnitSerializer.ELEMENTS;
+import static megamek.common.jacksonadapters.SBFUnitSerializer.PV;
+import static megamek.common.jacksonadapters.SBFUnitSerializer.SBF_TYPE;
+import static megamek.common.jacksonadapters.SBFUnitSerializer.TMM;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -31,21 +56,10 @@ import megamek.common.strategicBattleSystems.SBFMovementMode;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.strategicBattleSystems.SBFUnitConverter;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static megamek.common.jacksonadapters.MMUReader.*;
-import static megamek.common.jacksonadapters.SBFUnitSerializer.*;
-
 /**
- * This Jackson deserializer reads an SBF Unit (part of a formation) from an MMU
- * file. When the MMU file
- * lists the elements, these will be taken and converted to the SBFUnit (and any
- * transients like damage
- * applied). When the MMU file doesnt list the elements, it must have the stats;
- * then the SBFUnit will
- * be constructed without the elements.
+ * This Jackson deserializer reads an SBF Unit (part of a formation) from an MMU file. When the MMU file lists the
+ * elements, these will be taken and converted to the SBFUnit (and any transients like damage applied). When the MMU
+ * file doesnt list the elements, it must have the stats; then the SBFUnit will be constructed without the elements.
  */
 public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
 
@@ -88,11 +102,13 @@ public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
                 }
                 List<AlphaStrikeElement> elements = new ArrayList<>();
                 elementsO.stream()
-                        .map(o -> (AlphaStrikeElement) o)
-                        .forEach(elements::add);
+                      .map(o -> (AlphaStrikeElement) o)
+                      .forEach(elements::add);
 
                 // TODO: elements without skill?
-                unit = new SBFUnitConverter(elements, node.get(GENERAL_NAME).textValue(), new DummyCalculationReport()).createSbfUnit();
+                unit = new SBFUnitConverter(elements,
+                      node.get(GENERAL_NAME).textValue(),
+                      new DummyCalculationReport()).createSbfUnit();
             } else {
                 // When no elements are given, read the unit's values
                 // They will be ignored when elements are present!

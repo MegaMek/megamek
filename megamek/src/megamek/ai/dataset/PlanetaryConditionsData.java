@@ -36,6 +36,7 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 
 /**
  * Flexible container for planetary conditions data using a map-based approach with enum keys.
+ *
  * @author Luana Coppio
  */
 public class PlanetaryConditionsData extends EntityDataMap<PlanetaryConditionsData.Field> {
@@ -62,7 +63,9 @@ public class PlanetaryConditionsData extends EntityDataMap<PlanetaryConditionsDa
 
     /**
      * Creates a PlanetaryConditionsData from PlanetaryConditions.
+     *
      * @param conditions The planetary conditions to extract data from
+     *
      * @return A populated PlanetaryConditionsData
      */
     public static PlanetaryConditionsData fromPlanetaryConditions(PlanetaryConditions conditions) {

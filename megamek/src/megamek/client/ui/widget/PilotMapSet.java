@@ -1,17 +1,38 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client.ui.widget;
 
 import java.awt.Color;
@@ -21,7 +42,6 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Enumeration;
 import java.util.Vector;
-
 import javax.swing.JComponent;
 
 import megamek.MMConstants;
@@ -53,9 +73,9 @@ public class PilotMapSet implements DisplayMapSet {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMekLargeFontSize());
+          GUIP.getUnitDisplayMekLargeFontSize());
     private static final Font FONT_TITLE = new Font(MMConstants.FONT_SANS_SERIF, Font.ITALIC,
-            GUIP.getUnitDisplayMekLargeFontSize());
+          GUIP.getUnitDisplayMekLargeFontSize());
     private int yCoord = 1;
 
     /**
@@ -112,7 +132,7 @@ public class PilotMapSet implements DisplayMapSet {
         content.addArea(gunneryR);
 
         commandBL = createLabel(Messages.getString("PilotMapSet.commandBL"), fm, pilotL.getSize().width + 50,
-                getYCoord());
+              getYCoord());
         content.addArea(commandBL);
         commandBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 25, getYCoord());
         content.addArea(commandBR);
@@ -132,7 +152,10 @@ public class PilotMapSet implements DisplayMapSet {
         toughBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 25, getYCoord());
         content.addArea(toughBR);
 
-        fatigueBL = createLabel(Messages.getString("PilotMapSet.fatigueBL"), fm, pilotL.getSize().width + 50, getNewYCoord());
+        fatigueBL = createLabel(Messages.getString("PilotMapSet.fatigueBL"),
+              fm,
+              pilotL.getSize().width + 50,
+              getNewYCoord());
         content.addArea(fatigueBL);
         fatigueBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 25, getYCoord());
         content.addArea(fatigueBR);
@@ -217,8 +240,8 @@ public class PilotMapSet implements DisplayMapSet {
         }
 
         if ((en.getGame() != null)
-                && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)
-                && !en.getCrew().isMissing(slot)) {
+              && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)
+              && !en.getCrew().isMissing(slot)) {
             toughBR.setString(Integer.toString(en.getCrew().getToughness(slot)));
         } else {
             toughBL.setVisible(false);
@@ -226,8 +249,8 @@ public class PilotMapSet implements DisplayMapSet {
         }
 
         if ((en.getGame() != null)
-                && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
-                && !en.getCrew().isMissing(slot)) {
+              && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
+              && !en.getCrew().isMissing(slot)) {
             fatigueBR.setString(Integer.toString(en.getCrew().getCrewFatigue(slot)));
         } else {
             fatigueBL.setVisible(false);
@@ -235,15 +258,15 @@ public class PilotMapSet implements DisplayMapSet {
         }
 
         if ((en.getGame() != null)
-                && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)
-                && !en.getCrew().isMissing(slot)) {
+              && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)
+              && !en.getCrew().isMissing(slot)) {
             initBR.setString(Integer.toString(en.getCrew().getInitBonus()));
         } else {
             initBL.setVisible(false);
             initBR.setVisible(false);
         }
         if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)
-                && !en.getCrew().isMissing(slot)) {
+              && !en.getCrew().isMissing(slot)) {
             commandBR.setString(Integer.toString(en.getCrew().getCommandBonus()));
         } else {
             commandBL.setVisible(false);
@@ -259,7 +282,7 @@ public class PilotMapSet implements DisplayMapSet {
         }
         int i = 0;
         for (Enumeration<IOptionGroup> advGroups = en.getCrew().getOptions().getGroups(); advGroups
-                .hasMoreElements();) {
+              .hasMoreElements(); ) {
             if (i >= advantagesR.length - 1) {
                 advantagesR[advantagesR.length - 1].setString(Messages.getString("PilotMapSet.more"));
                 break;
@@ -267,7 +290,7 @@ public class PilotMapSet implements DisplayMapSet {
             IOptionGroup advGroup = advGroups.nextElement();
             if (en.getCrew().countOptions(advGroup.getKey()) > 0) {
                 advantagesR[i++].setString(advGroup.getDisplayableName());
-                for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
+                for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements(); ) {
                     if (i >= advantagesR.length - 1) {
                         advantagesR[advantagesR.length - 1].setString("  " + Messages.getString("PilotMapSet.more"));
                         return;
@@ -295,7 +318,7 @@ public class PilotMapSet implements DisplayMapSet {
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
         Image tile = comp.getToolkit()
-                .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
+              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
@@ -306,7 +329,8 @@ public class PilotMapSet implements DisplayMapSet {
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
+        tile = comp.getToolkit()
+              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
@@ -316,29 +340,32 @@ public class PilotMapSet implements DisplayMapSet {
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
+        tile = comp.getToolkit()
+              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP | BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
+        tile = comp.getToolkit()
+              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit()
-                .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
+              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
+        tile = comp.getToolkit()
+              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit()
-                .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
+              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }

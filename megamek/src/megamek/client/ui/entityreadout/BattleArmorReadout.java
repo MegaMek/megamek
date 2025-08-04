@@ -32,6 +32,13 @@
  */
 package megamek.client.ui.entityreadout;
 
+import static megamek.client.ui.entityreadout.TableElement.JUSTIFIED_CENTER;
+import static megamek.client.ui.entityreadout.TableElement.JUSTIFIED_LEFT;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringJoiner;
+
 import megamek.client.ui.Messages;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
@@ -45,13 +52,6 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.LegAttack;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.SwarmAttack;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringJoiner;
-
-import static megamek.client.ui.entityreadout.TableElement.JUSTIFIED_CENTER;
-import static megamek.client.ui.entityreadout.TableElement.JUSTIFIED_LEFT;
 
 class BattleArmorReadout extends GeneralEntityReadout {
 

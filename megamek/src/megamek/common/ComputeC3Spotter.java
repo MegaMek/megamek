@@ -187,7 +187,7 @@ public class ComputeC3Spotter {
         return false;
     }
 
-    private record SpotterInfo(Entity spotter, int rangeToTarget) { }
+    private record SpotterInfo(Entity spotter, int rangeToTarget) {}
 
-    private ComputeC3Spotter() { }
+    private ComputeC3Spotter() {}
 }

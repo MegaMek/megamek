@@ -1,19 +1,51 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.client.ui.dialogs.BotCommands;
+
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.function.Consumer;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 import megamek.client.AbstractClient;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
@@ -33,20 +65,11 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.function.Consumer;
-
 /**
- * The Bot Commands Panel contains a small set of buttons which allow the player to change the configuration of any bot they have
- * control over during game play. It also allows for some orders to be given to the bots, like telling them to ignore a target, change
- * priority over another.
+ * The Bot Commands Panel contains a small set of buttons which allow the player to change the configuration of any bot
+ * they have control over during game play. It also allows for some orders to be given to the bots, like telling them to
+ * ignore a target, change priority over another.
+ *
  * @author Luana Coppio
  */
 public class BotCommandsPanel extends JPanel {
@@ -58,13 +81,15 @@ public class BotCommandsPanel extends JPanel {
     private boolean pauseLatch = false;
     private JButton pauseContinue;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     /**
      * Bot Commands Panel constructor.
      *
      * @param client       reference to the client instance
      * @param audioService reference to the instance of the AudioService
      */
-    public BotCommandsPanel(AbstractClient client, @Nullable AudioService audioService, @Nullable MegaMekController controller) {
+    public BotCommandsPanel(AbstractClient client, @Nullable AudioService audioService,
+          @Nullable MegaMekController controller) {
         this.client = client;
         this.audioService = audioService;
         this.controller = controller;
@@ -150,14 +175,15 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * Allows for a customizable button, with a title, tooltip, and action listener.
-     * It can do whatever you need it to do, so you can have it in different GUIs and environments.
+     * Allows for a customizable button, with a title, tooltip, and action listener. It can do whatever you need it to
+     * do, so you can have it in different GUIs and environments.
      *
      * @param miscButtonText           localized text of the button
      * @param miscButtonTooltip        localized tooltip text of the button
      * @param miscButtonActionListener action listener for the button
      */
-    public void setMiscButton(String miscButtonText, String miscButtonTooltip, ActionListener miscButtonActionListener) {
+    public void setMiscButton(String miscButtonText, String miscButtonTooltip,
+          ActionListener miscButtonActionListener) {
         this.clearMiscButton();
         this.miscButton.setText(miscButtonText);
         this.miscButton.setToolTipText(miscButtonTooltip);
@@ -170,11 +196,11 @@ public class BotCommandsPanel extends JPanel {
      */
     public void setMiscButtonAsRequestVictory() {
         setMiscButton(
-            Messages.getString("BotCommandPanel.Victory.title"),
-            Messages.getString("BotCommandPanel.Victory.tooltip"),
-            evt -> {
-                client.sendChat("/victory");
-            });
+              Messages.getString("BotCommandPanel.Victory.title"),
+              Messages.getString("BotCommandPanel.Victory.tooltip"),
+              evt -> {
+                  client.sendChat("/victory");
+              });
     }
 
     /**
@@ -194,7 +220,11 @@ public class BotCommandsPanel extends JPanel {
         if (client.getLocalPlayer().isGameMaster()) {
             return client.getGame().getPlayersList().stream().filter(Player::isBot).toList();
         }
-        return client.getGame().getPlayersList().stream().filter(p -> p.isBot() && !p.isEnemyOf(client.getLocalPlayer())).toList();
+        return client.getGame()
+              .getPlayersList()
+              .stream()
+              .filter(p -> p.isBot() && !p.isEnemyOf(client.getLocalPlayer()))
+              .toList();
     }
 
     private JButton createButton(String messageKey) {
@@ -250,8 +280,8 @@ public class BotCommandsPanel extends JPanel {
         menu.setToolTipText(Messages.getString("BotCommandPanel." + commandName + ".tooltip"));
         // Set a sub menu where you select which bot will receive the order
         getBotPlayersUnderYourCommand().stream()
-            .map(botPlayer -> new ActionPlayerMenu(action, botPlayer, menu))
-            .forEach(this::createMenuItemForBot);
+              .map(botPlayer -> new ActionPlayerMenu(action, botPlayer, menu))
+              .forEach(this::createMenuItemForBot);
         popup.add(menu);
     }
 
@@ -259,8 +289,8 @@ public class BotCommandsPanel extends JPanel {
         JMenu menu = new JMenu(cardinalEdge.toString());
         // Set a sub menu where you select which bot will receive the order
         getBotPlayersUnderYourCommand().stream()
-            .map(botPlayer -> new ActionPlayerMenu(action, botPlayer, menu))
-            .forEach(this::createMenuItemForBot);
+              .map(botPlayer -> new ActionPlayerMenu(action, botPlayer, menu))
+              .forEach(this::createMenuItemForBot);
         popup.add(menu);
     }
 
@@ -268,8 +298,10 @@ public class BotCommandsPanel extends JPanel {
         JMenu menu = new JMenu(behaviorName);
         // Set a sub menu where you select which bot will receive the order
         getBotPlayersUnderYourCommand().stream()
-            .map(botPlayer -> new ActionPlayerMenu(player -> setBehavior(new PlayerBehavior(player, behaviorName)), botPlayer, menu))
-            .forEach(this::createMenuItemForBot);
+              .map(botPlayer -> new ActionPlayerMenu(player -> setBehavior(new PlayerBehavior(player, behaviorName)),
+                    botPlayer,
+                    menu))
+              .forEach(this::createMenuItemForBot);
         popup.add(menu);
     }
 
@@ -429,11 +461,19 @@ public class BotCommandsPanel extends JPanel {
     }
 
     private void setIgnoreTarget(PlayerInGameObject playerInGameObject) {
-        client.sendChat(playerInGameObject.player().getName() + ": " + ChatCommands.IGNORE_TARGET.getAbbreviation() + " : " + playerInGameObject.inGameObject().getId());
+        client.sendChat(playerInGameObject.player().getName()
+              + ": "
+              + ChatCommands.IGNORE_TARGET.getAbbreviation()
+              + " : "
+              + playerInGameObject.inGameObject().getId());
     }
 
     private void setPriorityTarget(PlayerInGameObject playerInGameObject) {
-        client.sendChat(playerInGameObject.player().getName() + ": " + ChatCommands.PRIORITIZE.getAbbreviation() + " : " + playerInGameObject.inGameObject().getId());
+        client.sendChat(playerInGameObject.player().getName()
+              + ": "
+              + ChatCommands.PRIORITIZE.getAbbreviation()
+              + " : "
+              + playerInGameObject.inGameObject().getId());
     }
 
     private void retreatNorth(Player botPlayer) {
@@ -484,7 +524,7 @@ public class BotCommandsPanel extends JPanel {
         var game = client.getGame();
         List<Player> nonBots = game.getPlayersList().stream().filter(p -> !p.isBot()).toList();
         boolean liveUnitsRemaining = nonBots.stream().anyMatch(p -> game.getEntitiesOwnedBy(p) > 0);
-        return  !liveUnitsRemaining;
+        return !liveUnitsRemaining;
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -497,6 +537,8 @@ public class BotCommandsPanel extends JPanel {
     }
 
     private void sendChatCommand(Player botPlayer, ChatCommands chatCommand, String value) {
-        client.sendChat(botPlayer.getName() + ": " + chatCommand.getAbbreviation() + ((value != null) ? " : " + value : ""));
+        client.sendChat(botPlayer.getName() + ": " + chatCommand.getAbbreviation() + ((value != null) ?
+              " : " + value :
+              ""));
     }
 }

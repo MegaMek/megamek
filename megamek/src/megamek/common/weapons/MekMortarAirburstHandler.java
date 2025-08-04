@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -162,10 +183,10 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                 Player tOwner = target.getOwner();
                 String colorcode = tOwner.getColour().getHexString(0x00F0F0F0);
                 newReports = gameManager.damageBuilding(bldg, numRounds, " shields "
-                        + target.getShortName() + " (<B><font color='"
-                        + colorcode + "'>" + tOwner.getName()
-                        + "</font></B>)"
-                        + " from the airburst mortar, receiving ", targetPos);
+                      + target.getShortName() + " (<B><font color='"
+                      + colorcode + "'>" + tOwner.getName()
+                      + "</font></B>)"
+                      + " from the airburst mortar, receiving ", targetPos);
                 adjustReports(newReports);
                 vPhaseReport.addAll(newReports);
             } else {
@@ -178,8 +199,8 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                         damage += (int) Math.ceil(Compute.d6() / 2.0);
                     }
                     hit = target.rollHitLocation(toHit.getHitTable(),
-                            toHit.getSideTable(), waa.getAimedLocation(),
-                            waa.getAimingMode(), toHit.getCover());
+                          toHit.getSideTable(), waa.getAimedLocation(),
+                          waa.getAimingMode(), toHit.getCover());
                     hit.setGeneralDamageType(generalDamageType);
                     hit.setCapital(wtype.isCapital());
                     hit.setBoxCars(roll.getIntValue() == 12);
@@ -207,8 +228,8 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                 // Each round deals 1 damage
                 for (int i = 0; i < numRounds; i++) {
                     hit = target.rollHitLocation(toHit.getHitTable(),
-                            toHit.getSideTable(), waa.getAimedLocation(),
-                            waa.getAimingMode(), toHit.getCover());
+                          toHit.getSideTable(), waa.getAimedLocation(),
+                          waa.getAimingMode(), toHit.getCover());
                     hit.setGeneralDamageType(generalDamageType);
                     hit.setCapital(wtype.isCapital());
                     hit.setBoxCars(roll.getIntValue() == 12);
@@ -226,8 +247,8 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
     }
 
     /**
-     * Indents all reports in the collection, and adds a new line to the last
-     * one. This is used to make nested reports line-up and look nicer.
+     * Indents all reports in the collection, and adds a new line to the last one. This is used to make nested reports
+     * line-up and look nicer.
      *
      * @param reports
      */

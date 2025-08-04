@@ -1,16 +1,36 @@
 /*
- * MegaMek - Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
- * Copyright © 2015 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.skinEditor;
 
@@ -25,7 +45,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -73,11 +92,11 @@ public class SkinEditorMainGUIPanel extends JPanel implements WindowListener {
             w = GUIPreferences.getInstance().getWindowSizeWidth();
             h = GUIPreferences.getInstance().getWindowSizeHeight();
             if ((x < virtualBounds.getMinX())
-                    || ((x + w) > virtualBounds.getMaxX())) {
+                  || ((x + w) > virtualBounds.getMaxX())) {
                 x = 0;
             }
             if ((y < virtualBounds.getMinY())
-                    || ((y + h) > virtualBounds.getMaxY())) {
+                  || ((y + h) > virtualBounds.getMaxY())) {
                 y = 0;
             }
             if (w > virtualBounds.getWidth()) {
@@ -97,27 +116,26 @@ public class SkinEditorMainGUIPanel extends JPanel implements WindowListener {
         frame.setForeground(SystemColor.menuText);
         List<Image> iconList = new ArrayList<>();
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16)
-                        .toString()));
+              new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16)
+                    .toString()));
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_32X32)
-                        .toString()));
+              new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_32X32)
+                    .toString()));
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_48X48)
-                        .toString()));
+              new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_48X48)
+                    .toString()));
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256)
-                        .toString()));
+              new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256)
+                    .toString()));
         frame.setIconImages(iconList);
     }
 
     /**
-     * Lays out the frame by setting this Client object to take up the full
-     * frame display area.
+     * Lays out the frame by setting this Client object to take up the full frame display area.
      */
     private void layoutFrame() {
         frame.setTitle(Messages.getString("MegaMek.SkinEditor.label")
-                + Messages.getString("ClientGUI.clientTitleSuffix"));
+              + Messages.getString("ClientGUI.clientTitleSuffix"));
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(this, BorderLayout.CENTER);
         frame.validate();
@@ -130,11 +148,9 @@ public class SkinEditorMainGUIPanel extends JPanel implements WindowListener {
     /**
      * Have the client register itself as a listener wherever it's needed.
      * <p>
-     * According to
-     * http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a
-     * major bad no-no to perform these registrations before the constructor
-     * finishes, so this function has to be called after the <code>Client</code>
-     * is created.
+     * According to http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a major bad no-no to perform
+     * these registrations before the constructor finishes, so this function has to be called after the
+     * <code>Client</code> is created.
      */
     public void initialize() {
 
@@ -153,7 +169,7 @@ public class SkinEditorMainGUIPanel extends JPanel implements WindowListener {
         skinSpecEditorPanel = new SkinSpecEditorPanel(this);
 
         skinSpecEditorD = new JDialog(frame,
-                Messages.getString("SkinEditor.SkinEditorDialog.Title"), false);
+              Messages.getString("SkinEditor.SkinEditorDialog.Title"), false);
         skinSpecEditorD.setSize(640, 480);
         skinSpecEditorD.setResizable(true);
 

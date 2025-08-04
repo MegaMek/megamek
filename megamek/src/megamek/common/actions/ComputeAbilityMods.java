@@ -32,16 +32,30 @@
  */
 package megamek.common.actions;
 
+import static megamek.common.Terrains.BUILDING;
+import static megamek.common.Terrains.MUD;
+import static megamek.common.Terrains.PAVEMENT;
+import static megamek.common.Terrains.ROAD;
+import static megamek.common.Terrains.ROUGH;
+import static megamek.common.Terrains.RUBBLE;
+import static megamek.common.Terrains.SWAMP;
+
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.Crew;
+import megamek.common.Entity;
+import megamek.common.EntityMovementType;
+import megamek.common.Game;
+import megamek.common.Hex;
+import megamek.common.Mounted;
+import megamek.common.Targetable;
+import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.weapons.bayweapons.BayWeapon;
-
-import static megamek.common.Terrains.*;
 
 class ComputeAbilityMods {
 
@@ -71,7 +85,7 @@ class ComputeAbilityMods {
             }
             // Stable Weapon - Reduces running/flanking penalty by 1
             if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON) &&
-                      (attacker.moved == EntityMovementType.MOVE_RUN)) {
+                  (attacker.moved == EntityMovementType.MOVE_RUN)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.StableWeapon"));
             }
             // +1 for a Misrepaired Weapon - See StratOps Partial Repairs
@@ -108,7 +122,8 @@ class ComputeAbilityMods {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunLSkill"));
             }
 
-            if (attacker.hasAbility(OptionsConstants.UNOFF_GUNNERY_BALLISTIC) && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+            if (attacker.hasAbility(OptionsConstants.UNOFF_GUNNERY_BALLISTIC)
+                  && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunBSkill"));
             }
 
@@ -153,22 +168,22 @@ class ComputeAbilityMods {
 
                 // Fog Specialist
                 if (attacker.getCrew()
-                          .getOptions()
-                          .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                          .equals(Crew.ENVSPC_FOG)
-                          && wtype.hasFlag(WeaponType.F_ENERGY)
-                          && !targetEntity.isSpaceborne()
-                          && conditions.getFog().isFogHeavy()) {
+                      .getOptions()
+                      .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                      .equals(Crew.ENVSPC_FOG)
+                      && wtype.hasFlag(WeaponType.F_ENERGY)
+                      && !targetEntity.isSpaceborne()
+                      && conditions.getFog().isFogHeavy()) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.FogSpec"));
                 }
 
                 // Light Specialist
                 if (attacker.getCrew()
-                          .getOptions()
-                          .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                          .equals(Crew.ENVSPC_LIGHT)) {
+                      .getOptions()
+                      .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                      .equals(Crew.ENVSPC_LIGHT)) {
                     if (!targetEntity.isIlluminated() &&
-                              conditions.getLight().isDuskOrFullMoonOrGlareOrMoonlessOrSolarFlareOrPitchBack()) {
+                          conditions.getLight().isDuskOrFullMoonOrGlareOrMoonlessOrSolarFlareOrPitchBack()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.LightSpec"));
                     } else if (targetEntity.isIlluminated() && conditions.getLight().isPitchBack()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.LightSpec"));
@@ -177,9 +192,9 @@ class ComputeAbilityMods {
 
                 // Rain Specialist
                 if (attacker.getCrew()
-                          .getOptions()
-                          .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                          .equals(Crew.ENVSPC_RAIN)) {
+                      .getOptions()
+                      .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                      .equals(Crew.ENVSPC_RAIN)) {
                     if (conditions.getWeather().isLightRain() && attacker.isConventionalInfantry()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
                     }
@@ -191,9 +206,9 @@ class ComputeAbilityMods {
 
                 // Snow Specialist
                 if (attacker.getCrew()
-                          .getOptions()
-                          .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                          .equals(Crew.ENVSPC_SNOW)) {
+                      .getOptions()
+                      .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                      .equals(Crew.ENVSPC_SNOW)) {
                     if (conditions.getWeather().isLightSnow() && attacker.isConventionalInfantry()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
@@ -209,15 +224,15 @@ class ComputeAbilityMods {
 
                 // Wind Specialist
                 if (attacker.getCrew()
-                          .getOptions()
-                          .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                          .equals(Crew.ENVSPC_WIND)) {
+                      .getOptions()
+                      .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                      .equals(Crew.ENVSPC_WIND)) {
                     if (conditions.getWind().isModerateGale() && wtype.hasFlag(WeaponType.F_MISSILE)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
                     if (wtype.hasFlag(WeaponType.F_MISSILE) && wtype.hasFlag(WeaponType.F_BALLISTIC)
-                              && conditions.getWind().isStrongGaleOrStorm()) {
+                          && conditions.getWind().isStrongGaleOrStorm()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
                     }
 
@@ -234,9 +249,9 @@ class ComputeAbilityMods {
             throw new IllegalArgumentException("Only call for BayWeapons!");
         }
         return weapon.getBayWeapons()
-                     .stream()
-                     .allMatch(w ->
-                                     attacker.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, w.getName()));
+              .stream()
+              .allMatch(w ->
+                    attacker.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, w.getName()));
     }
 
     static void processDefenderSPAs(ToHitData toHit, Entity attacker, Entity target, Game game) {
@@ -247,9 +262,9 @@ class ComputeAbilityMods {
 
         // Shaky Stick - Target gets a +1 bonus against Ground-to-Air attacks
         if (target.hasAbility(OptionsConstants.PILOT_SHAKY_STICK)
-                  && (target.isAirborne() || target.isAirborneVTOLorWIGE())
-                  && !attacker.isAirborne()
-                  && !attacker.isAirborneVTOLorWIGE()) {
+              && (target.isAirborne() || target.isAirborneVTOLorWIGE())
+              && !attacker.isAirborne()
+              && !attacker.isAirborneVTOLorWIGE()) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.ShakyStick"));
         }
         // Terrain Abilities - Offboard units don't have a hex, so if an offboard unit has one of these
@@ -259,24 +274,24 @@ class ComputeAbilityMods {
             // Urban Guerrilla - Target gets a +1 bonus in any sort of urban terrain
             Hex targetHex = game.getHexOf(target);
             if (target.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA)
-                      && targetHex.containsAnyTerrainOf(PAVEMENT, ROAD, RUBBLE, BUILDING, ROUGH)) {
+                  && targetHex.containsAnyTerrainOf(PAVEMENT, ROAD, RUBBLE, BUILDING, ROUGH)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.UrbanGuerilla"));
             }
 
             // Forest Ranger - Target gets a +1 bonus in wooded terrain when moving at walking speed or greater
             if (target.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)
-                      && targetHex.hasVegetation() && (target.moved == EntityMovementType.MOVE_WALK)) {
+                  && targetHex.hasVegetation() && (target.moved == EntityMovementType.MOVE_WALK)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.ForestRanger"));
             }
 
             // Swamp Beast - Target gets a +1 bonus in mud/swamp terrain when running/flanking
             if (target.hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST)
-                      && targetHex.containsAnyTerrainOf(MUD, SWAMP)
-                      && (target.moved == EntityMovementType.MOVE_RUN)) {
+                  && targetHex.containsAnyTerrainOf(MUD, SWAMP)
+                  && (target.moved == EntityMovementType.MOVE_RUN)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SwampBeast"));
             }
         }
     }
 
-    private ComputeAbilityMods() { }
+    private ComputeAbilityMods() {}
 }

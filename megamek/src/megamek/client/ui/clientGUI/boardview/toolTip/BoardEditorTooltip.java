@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024, 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,23 +32,31 @@
  */
 package megamek.client.ui.clientGUI.boardview.toolTip;
 
+import static megamek.client.ui.util.UIUtil.DOT_SPACER;
+
+import java.awt.Color;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
-
-import java.util.*;
-import java.awt.*;
-import java.util.List;
-
-import static megamek.client.ui.util.UIUtil.*;
+import megamek.common.Board;
+import megamek.common.Coords;
+import megamek.common.Hex;
+import megamek.common.Terrain;
+import megamek.common.Terrains;
 
 /**
- * This class is a {@link BoardViewTooltipProvider} that is tailored
- * to the Board Editor and lists detailed terrain info about the hovered hex.
+ * This class is a {@link BoardViewTooltipProvider} that is tailored to the Board Editor and lists detailed terrain info
+ * about the hovered hex.
  */
 public class BoardEditorTooltip implements BoardViewTooltipProvider {
 
@@ -58,14 +66,14 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
     private static final int BASE_PADDING = 8;
 
     private static final String GRAYED_DOT_SPACER = "<FONT "
-            + UIUtil.colorString(GUIP.getToolTipLightFGColor()) + ">" + DOT_SPACER + "</FONT>";
+          + UIUtil.colorString(GUIP.getToolTipLightFGColor()) + ">" + DOT_SPACER + "</FONT>";
 
     /** Auxiliary terrains are listed with an indentation. */
     private static final List<Integer> AUXILIARY_TERRAINS = List.of(Terrains.BLDG_CF, Terrains.BLDG_ELEV,
-            Terrains.BLDG_BASEMENT_TYPE, Terrains.BLDG_ARMOR, Terrains.BLDG_CLASS, Terrains.BLDG_BASE_COLLAPSED,
-            Terrains.BRIDGE_CF, Terrains.BRIDGE_ELEV, Terrains.FUEL_TANK_CF, Terrains.FUEL_TANK_ELEV,
-            Terrains.FUEL_TANK_MAGN, Terrains.BLDG_FLUFF, Terrains.ROAD_FLUFF, Terrains.WATER_FLUFF,
-            Terrains.FOLIAGE_ELEV);
+          Terrains.BLDG_BASEMENT_TYPE, Terrains.BLDG_ARMOR, Terrains.BLDG_CLASS, Terrains.BLDG_BASE_COLLAPSED,
+          Terrains.BRIDGE_CF, Terrains.BRIDGE_ELEV, Terrains.FUEL_TANK_CF, Terrains.FUEL_TANK_ELEV,
+          Terrains.FUEL_TANK_MAGN, Terrains.BLDG_FLUFF, Terrains.ROAD_FLUFF, Terrains.WATER_FLUFF,
+          Terrains.FOLIAGE_ELEV);
 
     private final BoardView bv;
 
@@ -90,24 +98,24 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
 
         // Coordinates and level
         result.append(colorHTML("Hex: ", GUIP.getToolTipLightFGColor()))
-                .append(hex.getCoords())
-                .append(GRAYED_DOT_SPACER)
-                .append(colorHTML("Level: ", GUIP.getToolTipLightFGColor()))
-                .append(hex.getLevel());
+              .append(hex.getCoords())
+              .append(GRAYED_DOT_SPACER)
+              .append(colorHTML("Level: ", GUIP.getToolTipLightFGColor()))
+              .append(hex.getLevel());
 
         // Theme
         if (!StringUtility.isNullOrBlank(hex.getTheme())) {
             result.append(paragraphHTMLOpen(padding))
-                    .append(colorHTML("Theme: ", GUIP.getToolTipLightFGColor()))
-                    .append(colorHTML(hex.getTheme(), GUIP.getUnitToolTipHighlightColor()))
-                    .append("</p>");
+                  .append(colorHTML("Theme: ", GUIP.getToolTipLightFGColor()))
+                  .append(colorHTML(hex.getTheme(), GUIP.getUnitToolTipHighlightColor()))
+                  .append("</p>");
         }
 
         // The terrain and auto terrain lines
         List<String> terrainLines = new ArrayList<>();
         List<String> autoTerrainLines = new ArrayList<>();
         List<Integer> terrains = Arrays.stream(hex.getTerrainTypes()).boxed().sorted(terrainSorter).toList();
-        for (int type: terrains) {
+        for (int type : terrains) {
             String line = String.join(GRAYED_DOT_SPACER, createLine(hex, type));
             (Terrains.AUTOMATIC.contains(type) ? autoTerrainLines : terrainLines).add(line);
         }
@@ -122,26 +130,29 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
 
         if (!autoTerrainLines.isEmpty()) {
             result.append(paragraphHTMLOpen(padding))
-                    .append(colorHTMLOpen(GUIP.getToolTipLightFGColor()))
-                    .append("Automated Terrains:<BR>")
-                    .append(String.join("<BR>", autoTerrainLines))
-                    .append("</FONT>")
-                    .append("</p>");
+                  .append(colorHTMLOpen(GUIP.getToolTipLightFGColor()))
+                  .append("Automated Terrains:<BR>")
+                  .append(String.join("<BR>", autoTerrainLines))
+                  .append("</FONT>")
+                  .append("</p>");
         }
 
         // Invalid hex notification
         List<String> errors = new ArrayList<>();
         if (!hex.isValid(errors)) {
             result.append(paragraphHTMLOpen(padding))
-                    .append(UIUtil.fontHTML(GUIP.getWarningColor())).append(UIUtil.WARNING_SIGN).append("</FONT>")
-                    .append(Messages.getString("BoardView1.invalidHex")).append("<BR>")
-                    .append(String.join("<BR>", errors))
-                    .append("</p>");
+                  .append(UIUtil.fontHTML(GUIP.getWarningColor())).append(UIUtil.WARNING_SIGN).append("</FONT>")
+                  .append(Messages.getString("BoardView1.invalidHex")).append("<BR>")
+                  .append(String.join("<BR>", errors))
+                  .append("</p>");
         }
 
         result.append("</FONT></FONT>");
-        return "<HTML><BODY style=padding:8; BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipTerrainBGColor()) + ">"
-                + result + "</BODY></HTML>";
+        return "<HTML><BODY style=padding:8; BGCOLOR="
+              + GUIPreferences.hexColor(GUIP.getUnitToolTipTerrainBGColor())
+              + ">"
+              + result
+              + "</BODY></HTML>";
     }
 
     /** @return The information pieces of a tooltip line (terrain name, TF etc.) as a list. */
@@ -250,8 +261,8 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
     }
 
     /**
-     * Sorts building and road fluff directly under building and road, resp.
-     * Sorts jungle and woods together and foliage elevation directly under woods/jungle
+     * Sorts building and road fluff directly under building and road, resp. Sorts jungle and woods together and foliage
+     * elevation directly under woods/jungle
      */
     private final Comparator<Integer> terrainSorter = (o1, o2) -> {
         if (o1 == Terrains.FOLIAGE_ELEV) {

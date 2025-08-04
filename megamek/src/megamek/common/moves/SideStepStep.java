@@ -33,16 +33,12 @@
 package megamek.common.moves;
 
 import megamek.common.Entity;
-import megamek.common.Game;
 import megamek.common.QuadMek;
-import megamek.common.pathfinder.CachedEntityState;
-
-import java.util.EnumSet;
-import java.util.Set;
 
 /**
- * This class handles code common to the lateral and lateral backward steps of a unit.
- * It is used in the MoveStep compilation to calculate the movement of a unit.
+ * This class handles code common to the lateral and lateral backward steps of a unit. It is used in the MoveStep
+ * compilation to calculate the movement of a unit.
+ *
  * @author Luana Coppio
  * @since 0.50.07
  */

@@ -1,21 +1,35 @@
 /*
  * Copyright (C) 2000-2006 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay;
 
@@ -36,14 +50,14 @@ import javax.swing.ToolTipManager;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.client.ui.clientGUI.boardview.IBoardView;
-import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.client.ui.dialogs.ConfirmDialog;
+import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
+import megamek.client.ui.clientGUI.boardview.IBoardView;
+import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DeployElevationChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.EntityChoiceDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.CommandAction;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
@@ -305,9 +319,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void endMyTurn() {
         Entity next = game.getNextEntity(game.getTurnIndex());
         if (game.getPhase().isDeployment() &&
-                  (null != next) &&
-                  (null != ce()) &&
-                  (next.getOwnerId() != ce().getOwnerId())) {
+              (null != next) &&
+              (null != ce()) &&
+              (next.getOwnerId() != ce().getOwnerId())) {
             clientgui.maybeShowUnitDisplay();
         }
         cen = Entity.NONE;
@@ -337,8 +351,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Notify the player that the planned deployment is not possible if vertain circumstances are met. Returns true
-     * in that case (cancel deployment), false if deployment can proceed.
+     * Notify the player that the planned deployment is not possible if vertain circumstances are met. Returns true in
+     * that case (cancel deployment), false if deployment can proceed.
      *
      * @return True to cancel deployment, false to proceed.
      */
@@ -352,7 +366,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             allPositions.add(entity.getPosition());
             allPositions.addAll(entity.getPosition().allAdjacent());
             boolean crushesBuildingHex = allPositions.stream()
-                   .anyMatch(c -> game.getBoard(entity.getBoardId()).getBuildingAt(c) != null);
+                  .anyMatch(c -> game.getBoard(entity.getBoardId()).getBuildingAt(c) != null);
             if (crushesBuildingHex) {
                 String title = Messages.getString("DeploymentDisplay.alertDialog.title");
                 String body = Messages.getString("DeploymentDisplay.dropshipBuildingDeploy");
@@ -392,7 +406,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         int elevationOrAltitude = entity.isAero() ? entity.getAltitude() : entity.getElevation();
         clientgui.getClient().deploy(entity.getId(), entity.getPosition(), entity.getBoardId(), entity.getFacing(),
-                elevationOrAltitude, entity.getLoadedUnits(), assaultDropPreference);
+              elevationOrAltitude, entity.getLoadedUnits(), assaultDropPreference);
         entity.setDeployed(true);
 
         if (entity.isWeapOrderChanged()) {
@@ -437,8 +451,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         // We want to ignore turns from other players and only listen to events we generated
         // Except on the first turn
         if (game.getPhase().isSimultaneous(game) &&
-                  (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber()) &&
-                  (game.getTurnIndex() != 0)) {
+              (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber()) &&
+              (game.getTurnIndex() != 0)) {
             return;
         }
 
@@ -500,13 +514,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         Coords coords = b.getCoords();
         Entity entity = ce();
         if (isIgnoringEvents() ||
-                  !game.hasBoardLocation(coords, b.getBoardId()) ||
-                  (entity == null) ||
-                  !clientgui.getClient().isMyTurn() ||
-                  (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) ||
-                  (b.getButton() != MouseEvent.BUTTON1) ||
-                  ((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0) ||
-                  ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
+              !game.hasBoardLocation(coords, b.getBoardId()) ||
+              (entity == null) ||
+              !clientgui.getClient().isMyTurn() ||
+              (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) ||
+              (b.getButton() != MouseEvent.BUTTON1) ||
+              ((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0) ||
+              ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
 
@@ -532,7 +546,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             if (!board.isSpace()) {
                 int finalElevation;
                 var deploymentHelper = new AllowedDeploymentHelper(entity, coords, board,
-                        board.getHex(coords), game);
+                      board.getHex(coords), game);
                 List<ElevationOption> elevationOptions = deploymentHelper.findAllowedElevations();
 
                 if (elevationOptions.isEmpty()) {
@@ -593,8 +607,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             if (dlg.getFirstChoice().type() == DeploymentElevationType.ELEVATIONS_ABOVE) {
                 int elevation = showHighElevationChoiceDialog();
                 return (elevation == -1) ?
-                             null :
-                             new ElevationOption(elevation, DeploymentElevationType.ELEVATIONS_ABOVE);
+                      null :
+                      new ElevationOption(elevation, DeploymentElevationType.ELEVATIONS_ABOVE);
             } else {
                 return dlg.getFirstChoice();
             }
@@ -620,17 +634,17 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      */
     private boolean useLastDeployElevation(List<ElevationOption> currentOptions) {
         return ((lastDeploymentOption != null) &&
-                      (lastDeploymentOption.type() == DeploymentElevationType.ELEVATIONS_ABOVE) &&
-                      isHighElevationAvailable(currentOptions, lastDeploymentOption.elevation())) ||
-                     ((currentOptions.size() <= lastHexDeploymentOptions.size()) &&
-                            lastHexDeploymentOptions.containsAll(currentOptions) &&
-                            currentOptions.contains(lastDeploymentOption));
+              (lastDeploymentOption.type() == DeploymentElevationType.ELEVATIONS_ABOVE) &&
+              isHighElevationAvailable(currentOptions, lastDeploymentOption.elevation())) ||
+              ((currentOptions.size() <= lastHexDeploymentOptions.size()) &&
+                    lastHexDeploymentOptions.containsAll(currentOptions) &&
+                    currentOptions.contains(lastDeploymentOption));
     }
 
     private boolean isHighElevationAvailable(List<ElevationOption> currentOptions, int elevation) {
         return currentOptions.stream()
-                     .filter(o -> o.type() == DeploymentElevationType.ELEVATIONS_ABOVE)
-                     .anyMatch(o -> o.elevation() <= elevation);
+              .filter(o -> o.type() == DeploymentElevationType.ELEVATIONS_ABOVE)
+              .anyMatch(o -> o.elevation() <= elevation);
     }
 
     private void showWrongBoardTypeMessage(Board board) {
@@ -728,9 +742,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         int i = 0;
                         for (Integer bn : bayChoices) {
                             retVal[i++] = bn.toString() +
-                                                " (Free Slots: " +
-                                                (int) ce().getBayById(bn).getUnused() +
-                                                ")";
+                                  " (Free Slots: " +
+                                  (int) ce().getBayById(bn).getUnused() +
+                                  ")";
                         }
                         String title = Messages.getString("DeploymentDisplay.loadUnitBayNumberDialog.title");
                         String msg = Messages.getString("DeploymentDisplay.loadUnitBayNumberDialog.message",
@@ -765,8 +779,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                             int i = 0;
                             for (Integer bn : bayChoices) {
                                 retVal[i++] = bn > 0 ?
-                                                    Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
-                                                    Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
+                                      Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
+                                      Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
                             }
                             String bayString = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                                   Messages.getString("MovementDisplay.loadProtoClampMountDialog.message",
@@ -979,14 +993,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         List<Entity> entities = game.getEntitiesVector();
         for (Entity other : entities) {
             if (other.isSelectableThisTurn() && ce().canLoad(other, false)
-                      // We can't depend on the transport id to be set because we sent a server update
-                      // before loading on the client side, and the loaded unit may have been reset
-                      // by the resulting update from the server.
-                      && !ce().getLoadedUnits().contains(other)
-                      // If you want to load a trailer into a DropShip or large support vehicle, do it
-                      // in the lobby
-                      // The 'load' button should not allow trailers - that's what 'tow' is for.
-                      && !other.isTrailer()) {
+                  // We can't depend on the transport id to be set because we sent a server update
+                  // before loading on the client side, and the loaded unit may have been reset
+                  // by the resulting update from the server.
+                  && !ce().getLoadedUnits().contains(other)
+                  // If you want to load a trailer into a DropShip or large support vehicle, do it
+                  // in the lobby
+                  // The 'load' button should not allow trailers - that's what 'tow' is for.
+                  && !other.isTrailer()) {
                 choices.add(other);
             }
         }

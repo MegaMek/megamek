@@ -48,9 +48,9 @@ final class EntityReadoutUnitType {
      * @return A unit type description specifically for the Entity Readout. It is more detailed than the plain high
      *       level type of the unit and contains some info that is not easy to see from the other data of the Entity
      *       Readout, such as "civilian", "tripod", "aerodyne" and "rail".
-     *
-     * This class and method should stay with the Entity Readout alone so it can be freely adapted to whatever needs
-     * to be shown.
+     *       <p>
+     *       This class and method should stay with the Entity Readout alone so it can be freely adapted to whatever
+     *       needs to be shown.
      */
     static String unitTypeAsString(Entity entity) {
         String result = "";

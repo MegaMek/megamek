@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
@@ -38,14 +52,14 @@ import javax.swing.table.AbstractTableModel;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.dialogs.abstractDialogs.BVDisplayDialog;
 import megamek.client.ui.dialogs.abstractDialogs.CostDisplayDialog;
-import megamek.client.ui.dialogs.unitSelectorDialogs.EntityReadoutDialog;
 import megamek.client.ui.dialogs.randomArmy.ForceGeneratorViewUi;
-import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.dialogs.randomArmy.RandomArmyDialog;
-import megamek.client.ui.models.UnitTableModel;
+import megamek.client.ui.dialogs.unitSelectorDialogs.EntityReadoutDialog;
 import megamek.client.ui.entityreadout.LiveReadoutDialog;
+import megamek.client.ui.models.UnitTableModel;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.*;
 import megamek.common.force.Force;
@@ -89,8 +103,8 @@ public class LobbyUtility {
             List<Player> players = game.getPlayersList();
 
             if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0) &&
-                      !player.isBot() &&
-                      player.getId() != 0) {
+                  !player.isBot() &&
+                  player.getId() != 0) {
                 return true;
             }
 
@@ -100,12 +114,12 @@ public class LobbyUtility {
 
             if (isTeamsShareVision(game)) {
                 return players.stream()
-                             .filter(p -> p.isEnemyOf(player))
-                             .noneMatch(p -> startPosOverlap(pos, p.getStartingPos()));
+                      .filter(p -> p.isEnemyOf(player))
+                      .noneMatch(p -> startPosOverlap(pos, p.getStartingPos()));
             } else {
                 return players.stream()
-                             .filter(p -> !p.equals(player))
-                             .noneMatch(p -> startPosOverlap(pos, p.getStartingPos()));
+                      .filter(p -> !p.equals(player))
+                      .noneMatch(p -> startPosOverlap(pos, p.getStartingPos()));
             }
         }
     }
@@ -117,7 +131,7 @@ public class LobbyUtility {
     static boolean isExclusiveDeployment(Game game) {
         final var gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
-                     gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT);
+              gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT);
     }
 
     /**
@@ -163,8 +177,8 @@ public class LobbyUtility {
     @SuppressWarnings("deprecation")
     static boolean isBoardFile(String board) {
         return !board.startsWith(MapSettings.BOARD_GENERATED) &&
-                     !board.startsWith(MapSettings.BOARD_RANDOM) &&
-                     !board.startsWith(MapSettings.BOARD_SURPRISE);
+              !board.startsWith(MapSettings.BOARD_RANDOM) &&
+              !board.startsWith(MapSettings.BOARD_SURPRISE);
     }
 
     /**
@@ -172,8 +186,8 @@ public class LobbyUtility {
      */
     static String invalidBoardTip() {
         return UIUtil.fontHTML(GUIPreferences.getInstance().getWarningColor()) +
-                     Messages.getString("ChatLounge.map.invalidTip") +
-                     "</FONT>";
+              Messages.getString("ChatLounge.map.invalidTip") +
+              "</FONT>";
     }
 
     /**
@@ -290,7 +304,9 @@ public class LobbyUtility {
     /**
      * Returns true if a and b share at least one non-hierarchic C3 system (C3i, Naval C3, Nova CEWS). Symmetrical (the
      * order of a and b does not matter).
-     * @deprecated Use {@link megamek.common.util.C3Util#sameNhC3System(Entity, Entity)} instead as it provides the same functionality.
+     *
+     * @deprecated Use {@link megamek.common.util.C3Util#sameNhC3System(Entity, Entity)} instead as it provides the same
+     *       functionality.
      */
     @Deprecated(since = "0.50.06", forRemoval = true)
     public static boolean sameNhC3System(Entity a, Entity b) {
@@ -300,20 +316,20 @@ public class LobbyUtility {
     /** Returns the string with some content shortened like Battle Armor -> BA */
     static String abbreviateUnitName(String unitName) {
         return unitName.replace("(Standard)", "")
-                     .replace("Battle Armor", "BA")
-                     .replace("Standard", "Std.")
-                     .replace("Vehicle", "Veh.")
-                     .replace("Medium", "Med.")
-                     .replace("Support", "Spt.")
-                     .replace("Heavy", "Hvy.")
-                     .replace("Light", "Lgt.");
+              .replace("Battle Armor", "BA")
+              .replace("Standard", "Std.")
+              .replace("Vehicle", "Veh.")
+              .replace("Medium", "Med.")
+              .replace("Support", "Spt.")
+              .replace("Heavy", "Hvy.")
+              .replace("Light", "Lgt.");
     }
 
     static boolean hasYellowWarning(Entity entity) {
         return (entity instanceof FighterSquadron && entity.getLoadedUnits().isEmpty()) ||
-                     ((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5)) ||
-                     (entity.hasNovaCEWS() && (entity.calculateFreeC3Nodes() == 2)) ||
-                     ((entity.getC3Master() == null) && entity.hasC3S());
+              ((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5)) ||
+              (entity.hasNovaCEWS() && (entity.calculateFreeC3Nodes() == 2)) ||
+              ((entity.getC3Master() == null) && entity.hasC3S());
     }
 
     /**
@@ -380,8 +396,8 @@ public class LobbyUtility {
                                 loadWeight += potentialLoad.get(t);
                             }
                             if (!(t instanceof BattleArmorHandlesTank) &&
-                                      t.canLoad(e) &&
-                                      (loadWeight <= t.getUnused())) {
+                                  t.canLoad(e) &&
+                                  (loadWeight <= t.getUnused())) {
                                 hasTroopSpace = true;
                                 potentialLoad.put(t, loadWeight);
                                 break;
@@ -457,7 +473,7 @@ public class LobbyUtility {
             }
         }
         if (loader instanceof FighterSquadron &&
-                  entities.stream().anyMatch(e -> !e.isFighter() || e instanceof FighterSquadron)) {
+              entities.stream().anyMatch(e -> !e.isFighter() || e instanceof FighterSquadron)) {
             errorMessage = "Only aerospace and conventional fighters can join squadrons.";
             hasEnoughCargoCapacity = false;
         }

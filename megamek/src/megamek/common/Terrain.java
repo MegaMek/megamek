@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import static megamek.common.Terrains.*;
@@ -23,9 +44,8 @@ import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 
 /**
- * Represents a single type of terrain or condition in a hex. The type of a
- * terrain is immutable, once created, but the level and exits are changeable.
- * Each type of terrain should only be represented once in a hex.
+ * Represents a single type of terrain or condition in a hex. The type of a terrain is immutable, once created, but the
+ * level and exits are changeable. Each type of terrain should only be represented once in a hex.
  *
  * @author Ben
  */
@@ -34,8 +54,7 @@ public class Terrain implements Serializable {
     private static final long serialVersionUID = -7624691566755134033L;
 
     /**
-     * A terrain level value for use when the terrain isn't present. Must remain negative as many checks rely on
-     * this.
+     * A terrain level value for use when the terrain isn't present. Must remain negative as many checks rely on this.
      */
     public static final int LEVEL_NONE = Integer.MIN_VALUE;
     public static final int WILDCARD = Integer.MAX_VALUE;
@@ -43,9 +62,8 @@ public class Terrain implements Serializable {
 
     private final int type;
     /**
-     * Terrain level, which is used to indicate varying severity of terrain
-     * types (ie, Light Woods vs Heavy woods). Not to be confused with Hex
-     * levels.
+     * Terrain level, which is used to indicate varying severity of terrain types (ie, Light Woods vs Heavy woods). Not
+     * to be confused with Hex levels.
      */
     private int level;
     private boolean exitsSpecified;
@@ -140,7 +158,7 @@ public class Terrain implements Serializable {
     /**
      * Sets the exit in specified direction
      *
-     * @param direction the direction to add/remove the exit
+     * @param direction  the direction to add/remove the exit
      * @param connection true to add, false to remove
      */
     public void setExit(int direction, boolean connection) {
@@ -155,10 +173,10 @@ public class Terrain implements Serializable {
     /**
      * Flips the exits around the vertical axis (North-for-South) and/or the horizontal axis (East-for-West).
      *
-     * @param horiz a <code>boolean</code> value that, if <code>true</code>, indicates that the
-     *              exits are being flipped North-for-South.
-     * @param vert a <code>boolean</code> value that, if <code>true</code>, indicates that the exits
-     *             are being flipped East-for-West.
+     * @param horiz a <code>boolean</code> value that, if <code>true</code>, indicates that the exits are being flipped
+     *              North-for-South.
+     * @param vert  a <code>boolean</code> value that, if <code>true</code>, indicates that the exits are being flipped
+     *              East-for-West.
      */
     public void flipExits(boolean horiz, boolean vert) {
         // Do nothing if no flips are defined.
@@ -261,8 +279,7 @@ public class Terrain implements Serializable {
     }
 
     /**
-     * Terrains are equal if their types and levels are equal. Does not pay
-     * attention to exits.
+     * Terrains are equal if their types and levels are equal. Does not pay attention to exits.
      */
     @Override
     public boolean equals(Object object) {
@@ -284,8 +301,8 @@ public class Terrain implements Serializable {
     }
 
     /**
-     * @param moveMode the movement mode of the pilot
-     * @param roll the piloting roll
+     * @param moveMode       the movement mode of the pilot
+     * @param roll           the piloting roll
      * @param enteringRubble if the entered terrain contains rubble
      */
     public void applyPilotingModifier(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
@@ -396,7 +413,8 @@ public class Terrain implements Serializable {
                 }
                 return 0;
             case RUBBLE:
-                boolean allowRubbleHoverTracked = ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.TRACKED)) && (level == 6);
+                boolean allowRubbleHoverTracked = ((moveMode == EntityMovementMode.HOVER) || (moveMode
+                      == EntityMovementMode.TRACKED)) && (level == 6);
 
                 if (level == 6) {
                     mp = 2;
@@ -419,15 +437,16 @@ public class Terrain implements Serializable {
                 }
 
                 if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
-                        && (moveMode == EntityMovementMode.INF_LEG))) {
+                      && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
                 return Math.max(0, mp);
             case WOODS:
                 mp = level;
                 if (isCrossCountry && e.isGround() && e.isCombatVehicle()) {
-                    if (((level == 1) && ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WHEELED)))
-                            || (level > 1)) {
+                    if (((level == 1) && ((moveMode == EntityMovementMode.HOVER) || (moveMode
+                          == EntityMovementMode.WHEELED)))
+                          || (level > 1)) {
                         mp *= 2;
                     }
                 }
@@ -441,7 +460,7 @@ public class Terrain implements Serializable {
                 }
 
                 if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
-                                && (moveMode == EntityMovementMode.INF_LEG))) {
+                      && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
 
@@ -452,7 +471,7 @@ public class Terrain implements Serializable {
                 }
                 return Math.max(0, mp);
             case JUNGLE:
-                mp = level +1;
+                mp = level + 1;
                 if (isCrossCountry && e.isGround() && e.isCombatVehicle()) {
                     mp *= 2;
                 }
@@ -466,7 +485,7 @@ public class Terrain implements Serializable {
                 }
 
                 if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
-                        && (moveMode == EntityMovementMode.INF_LEG))) {
+                      && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
 
@@ -484,9 +503,9 @@ public class Terrain implements Serializable {
                     return 1;
                 }
                 if ((moveMode == EntityMovementMode.WHEELED) || (e.isConventionalInfantry() &&
-                        ((moveMode == EntityMovementMode.INF_JUMP)
-                          || (moveMode == EntityMovementMode.INF_LEG)
-                          || (moveMode == EntityMovementMode.INF_MOTORIZED)))) {
+                      ((moveMode == EntityMovementMode.INF_JUMP)
+                            || (moveMode == EntityMovementMode.INF_LEG)
+                            || (moveMode == EntityMovementMode.INF_MOTORIZED)))) {
                     return 1;
                 }
                 return 0;
@@ -533,7 +552,8 @@ public class Terrain implements Serializable {
                 }
                 return Math.max(0, mp);
             case ROUGH:
-                boolean allowRoughHoverTracked = ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.TRACKED)) && (level == 2);
+                boolean allowRoughHoverTracked = ((moveMode == EntityMovementMode.HOVER) || (moveMode
+                      == EntityMovementMode.TRACKED)) && (level == 2);
 
                 if (level == 2) {
                     mp = 2;
@@ -542,7 +562,7 @@ public class Terrain implements Serializable {
                 }
 
                 if (isCrossCountry && e.isGround() && e.isCombatVehicle()) {
-                    if ( allowRoughHoverTracked || (moveMode == EntityMovementMode.WHEELED)) {
+                    if (allowRoughHoverTracked || (moveMode == EntityMovementMode.WHEELED)) {
                         mp *= 2;
                     }
                 }
@@ -556,14 +576,14 @@ public class Terrain implements Serializable {
                 }
 
                 if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
-                        && (moveMode == EntityMovementMode.INF_LEG))) {
+                      && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
                 return Math.max(0, mp);
             case SAND:
                 if (((moveMode == EntityMovementMode.WHEELED) && !e.hasWorkingMisc(MiscType.F_DUNE_BUGGY))
-                        || (moveMode == EntityMovementMode.INF_JUMP) || (moveMode == EntityMovementMode.INF_LEG)
-                        || (moveMode == EntityMovementMode.INF_MOTORIZED)) {
+                      || (moveMode == EntityMovementMode.INF_JUMP) || (moveMode == EntityMovementMode.INF_LEG)
+                      || (moveMode == EntityMovementMode.INF_MOTORIZED)) {
                     return 1;
                 } else {
                     return 0;
@@ -619,7 +639,7 @@ public class Terrain implements Serializable {
                     return TargetRoll.AUTOMATIC_SUCCESS;
                     // any kind of infantry just gets a flat roll
                 } else if (moveMode.isLegInfantry() || moveMode.isMotorizedInfantry()
-                        || moveMode.isJumpInfantry() || moveMode.isUMUInfantry()) {
+                      || moveMode.isJumpInfantry() || moveMode.isUMUInfantry()) {
                     return 0;
                 } else {
                     return -1;
@@ -664,36 +684,37 @@ public class Terrain implements Serializable {
     }
 
     /**
-     * Returns true when this terrain is valid, i.e. if its level is an allowed value for its type.
-     * Exits have no limitations and are not checked. If an error is found, a line detailing the
-     * error is added to the given errors list if it not null.
+     * Returns true when this terrain is valid, i.e. if its level is an allowed value for its type. Exits have no
+     * limitations and are not checked. If an error is found, a line detailing the error is added to the given errors
+     * list if it not null.
      *
      * @param errors A list of errors to append new errors to if it is not null
+     *
      * @return True when this terrain is valid, false otherwise
      */
     public boolean isValid(@Nullable List<String> errors) {
         boolean valid = true;
         if (((type == WOODS)
-                || (type == SWAMP)
-                || (type == JUNGLE)
-                || (type == GEYSER)
-                || (type == FOLIAGE_ELEV))
-                && ((level < 1) || (level > 3))) {
+              || (type == SWAMP)
+              || (type == JUNGLE)
+              || (type == GEYSER)
+              || (type == FOLIAGE_ELEV))
+              && ((level < 1) || (level > 3))) {
             valid = false;
         } else if (((type == ROUGH)
-                || (type == RAPIDS)
-                || (type == MAGMA)
-                || (type == MUD)
-                || (type == SNOW))
-                && ((level < 1) || (level > 2))) {
+              || (type == RAPIDS)
+              || (type == MAGMA)
+              || (type == MUD)
+              || (type == SNOW))
+              && ((level < 1) || (level > 2))) {
             valid = false;
         } else if (type == WATER && (level < 0)) {
             valid = false;
         } else if (((type == ICE)
-                || (type == BLACK_ICE)
-                || (type == FORTIFIED)
-                || (type == TUNDRA))
-                && (level != 1)) {
+              || (type == BLACK_ICE)
+              || (type == FORTIFIED)
+              || (type == TUNDRA))
+              && (level != 1)) {
             valid = false;
         } else if (type == RUBBLE && (level < 1 || level > 6)) {
             valid = false;
@@ -702,12 +723,12 @@ public class Terrain implements Serializable {
         } else if (type == SMOKE && (level < 1 || level > 5)) {
             valid = false;
         } else if (((type == PAVEMENT)
-                || (type == BRIDGE)
-                || (type == BLDG_ELEV)
-                || (type == BLDG_CF)
-                || (type == BRIDGE_CF)
-                || (type == FUEL_TANK_CF))
-                && level < 1) {
+              || (type == BRIDGE)
+              || (type == BLDG_ELEV)
+              || (type == BLDG_CF)
+              || (type == BRIDGE_CF)
+              || (type == FUEL_TANK_CF))
+              && level < 1) {
             valid = false;
         } else if ((type == BRIDGE_ELEV) && (level < 0)) {
             valid = false;

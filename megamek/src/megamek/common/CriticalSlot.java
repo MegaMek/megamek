@@ -1,19 +1,38 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.common;
 
-import megamek.common.annotations.Nullable;
+package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,17 +45,15 @@ public class CriticalSlot implements Serializable {
     public static final int TYPE_EQUIPMENT = 1;
 
     /**
-     * Determines what the type of this CriticalSlot is, either system or
-     * equipment. Systems represent core components of a unit that are located
-     * in specific criticals, such as gyros, engines, and cockpits. Equipment
-     * represents everything else, and will have an entry in an EquipmentType
-     * subclass.
+     * Determines what the type of this CriticalSlot is, either system or equipment. Systems represent core components
+     * of a unit that are located in specific criticals, such as gyros, engines, and cockpits. Equipment represents
+     * everything else, and will have an entry in an EquipmentType subclass.
      */
     private int type;
 
     /**
-     * Index is only used for system type critical slots. It is used as an
-     * index into a collection to determine what the system actually is.
+     * Index is only used for system type critical slots. It is used as an index into a collection to determine what the
+     * system actually is.
      */
     private int index = -1;
     private Mounted<?> mount;
@@ -88,11 +105,11 @@ public class CriticalSlot implements Serializable {
     }
 
     /**
-     * set that this CriticalSlot was or was not hit with a crit this phase
-     * Note: stuff that was hit in a phase can still be used in that phase, if
-     * that's not desired, use setDestroyed instead
+     * set that this CriticalSlot was or was not hit with a crit this phase Note: stuff that was hit in a phase can
+     * still be used in that phase, if that's not desired, use setDestroyed instead
      *
      * @param hit
+     *
      * @see #setDestroyed(boolean)
      */
     public void setHit(boolean hit) {
@@ -104,11 +121,11 @@ public class CriticalSlot implements Serializable {
     }
 
     /**
-     * Set this Mounted's destroyed status NOTE: only set this if this Mounted
-     * cannot be used in the current phase anymore. If it still can, use setHit
-     * instead
+     * Set this Mounted's destroyed status NOTE: only set this if this Mounted cannot be used in the current phase
+     * anymore. If it still can, use setHit instead
      *
      * @param destroyed
+     *
      * @see #setHit(boolean)
      */
     public void setDestroyed(boolean destroyed) {
@@ -175,9 +192,9 @@ public class CriticalSlot implements Serializable {
         }
         CriticalSlot other = (CriticalSlot) object;
         return ((other.getType() == type) && (other.getIndex() == index) && (((other
-                .getMount() != null) && (mount != null) && other.getMount()
-                        .equals(mount))
-                || ((mount == null) && (other.getMount() == null))));
+              .getMount() != null) && (mount != null) && other.getMount()
+              .equals(mount))
+              || ((mount == null) && (other.getMount() == null))));
     }
 
     @Override
@@ -233,30 +250,23 @@ public class CriticalSlot implements Serializable {
     public String toString() {
         String typeString = type == 0 ? "System Slot" : "Equipment Slot";
         List<String> state = new ArrayList<>();
-        if (type == 0)
-            state.add("System No: " + index);
-        if (mount != null)
+        if (type == 0) {state.add("System No: " + index);}
+        if (mount != null) {
             state.add("[" + mount.equipmentIndex() + "] " + mount.getType().getInternalName()
-                    + (mount.isWeaponGroup() ? " -Group-" : ""));
-        if (mount2 != null)
+                  + (mount.isWeaponGroup() ? " -Group-" : ""));
+        }
+        if (mount2 != null) {
             state.add("Mount 2: [" + mount2.equipmentIndex() + "] " + mount2.getType().getInternalName()
-                    + (mount2.isWeaponGroup() ? " -Group-" : ""));
-        if (destroyed)
-            state.add("Destroyed");
-        if (hit)
-            state.add("Hit");
-        if (!hittable)
-            state.add("Not hittable");
-        if (breached)
-            state.add("Breached");
-        if (missing)
-            state.add("Missing");
-        if (armored)
-            state.add("Armored");
-        if (repairing)
-            state.add("Repairing");
-        if (!repairable)
-            state.add("Not repairable");
+                  + (mount2.isWeaponGroup() ? " -Group-" : ""));
+        }
+        if (destroyed) {state.add("Destroyed");}
+        if (hit) {state.add("Hit");}
+        if (!hittable) {state.add("Not hittable");}
+        if (breached) {state.add("Breached");}
+        if (missing) {state.add("Missing");}
+        if (armored) {state.add("Armored");}
+        if (repairing) {state.add("Repairing");}
+        if (!repairable) {state.add("Not repairable");}
         return typeString + " { " + String.join(", ", state) + " }";
     }
 
@@ -264,6 +274,7 @@ public class CriticalSlot implements Serializable {
      * @return True if this crit slot is eligible for being an armored component, TO:AUE p.95
      */
     public boolean isArmorable() {
-        return ((getType() == CriticalSlot.TYPE_SYSTEM) || ((getMount() != null) && getMount().getType().isArmorable()));
+        return ((getType() == CriticalSlot.TYPE_SYSTEM) || ((getMount() != null) && getMount().getType()
+              .isArmorable()));
     }
 }

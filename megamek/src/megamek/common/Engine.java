@@ -1,17 +1,38 @@
 /*
- * MegaMek -
+
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.io.Serial;
@@ -21,7 +42,7 @@ import java.util.Map;
 
 /**
  * This class represents an engine, such as those driving 'Meks.
- * 
+ *
  * @author Reinhard Vicinus
  */
 public class Engine implements Serializable, ITechnology {
@@ -29,20 +50,20 @@ public class Engine implements Serializable, ITechnology {
     private static final long serialVersionUID = -246032529363109609L;
 
     public static final double[] ENGINE_RATINGS = { 0.0, 0.25, 0.5, 0.5,
-            0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.5, 1.5, 1.5, 2.0, 2.0,
-            2.0, 2.5, 2.5, 3.0, 3.0, 3.0, 3.5, 3.5, 4.0, 4.0, 4.0,
-            4.5, 4.5, 5.0, 5.0, 5.5, 5.5, 6.0, 6.0, 6.0, 7.0, 7.0,
-            7.5, 7.5, 8.0, 8.5,
+                                                    0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.5, 1.5, 1.5, 2.0, 2.0,
+                                                    2.0, 2.5, 2.5, 3.0, 3.0, 3.0, 3.5, 3.5, 4.0, 4.0, 4.0,
+                                                    4.5, 4.5, 5.0, 5.0, 5.5, 5.5, 6.0, 6.0, 6.0, 7.0, 7.0,
+                                                    7.5, 7.5, 8.0, 8.5,
 
-            8.5, 9.0, 9.5, 10.0, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5,
-            13.0, 13.5, 14.0, 14.5, 15.5, 16.0, 16.5, 17.5, 18.0,
-            19.0, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 27.0,
-            28.5, 29.5, 31.5, 33.0, 34.5, 36.5, 38.5, 41.0, 43.5,
-            46.0, 49.0, 52.5,
+                                                    8.5, 9.0, 9.5, 10.0, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5,
+                                                    13.0, 13.5, 14.0, 14.5, 15.5, 16.0, 16.5, 17.5, 18.0,
+                                                    19.0, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 27.0,
+                                                    28.5, 29.5, 31.5, 33.0, 34.5, 36.5, 38.5, 41.0, 43.5,
+                                                    46.0, 49.0, 52.5,
 
-            56.5, 61.0, 66.5, 72.5, 79.5, 87.5, 97.0, 107.5, 119.5,
-            133.5, 150.0, 168.5, 190.0, 214.5, 243.0, 275.5, 313.0,
-            356.0, 405.5, 462.5 };
+                                                    56.5, 61.0, 66.5, 72.5, 79.5, 87.5, 97.0, 107.5, 119.5,
+                                                    133.5, 150.0, 168.5, 190.0, 214.5, 243.0, 275.5, 313.0,
+                                                    356.0, 405.5, 462.5 };
 
     // flags
     public static final int CLAN_ENGINE = 0x1;
@@ -70,8 +91,8 @@ public class Engine implements Serializable, ITechnology {
 
     /** Keys for retrieving engine name from {@link Messages} */
     private static final String[] TYPE_KEYS = {
-            "ICE", "Fusion", "XL", "XXL", "FuelCell", "Light", "Compact", "Fission", "None",
-            "MagLev", "Steam", "Battery", "Solar", "External"
+          "ICE", "Fusion", "XL", "XXL", "FuelCell", "Light", "Compact", "Fission", "None",
+          "MagLev", "Steam", "Battery", "Solar", "External"
     };
 
     // These are the SUPPORT VEHICLE ENGINE WEIGHT MULTIPLIERS from TM PG 127
@@ -79,6 +100,7 @@ public class Engine implements Serializable, ITechnology {
     // The other engine types are assumed to have a value of 0 in the array
     // if not listed.
     private static final double[][] SV_ENGINE_RATINGS = new double[NUM_ENGINE_TYPES][EquipmentType.TechRating.values().length];
+
     static {
         SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.TechRating.A.getIndex()] = 0.0;
         SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.TechRating.B.getIndex()] = 3.0;
@@ -159,15 +181,13 @@ public class Engine implements Serializable, ITechnology {
     public StringBuffer problem = new StringBuffer("Illegal engine: ");
 
     /**
-     * The constructor takes the rating of the engine, the type of engine and
-     * any flags. Engine ratings are divided by the weight of the mek to get
-     * they walk MP.
+     * The constructor takes the rating of the engine, the type of engine and any flags. Engine ratings are divided by
+     * the weight of the mek to get they walk MP.
      *
      * @param engineRating the rating of the engine
-     * @param engineType   the type of the engine, either combustion or a type of
-     *                     fusion engine.
-     * @param engineFlags  Wether the engine is a tank engine, a clan engine, or
-     *                     large engine, or any combination of those.
+     * @param engineType   the type of the engine, either combustion or a type of fusion engine.
+     * @param engineFlags  Wether the engine is a tank engine, a clan engine, or large engine, or any combination of
+     *                     those.
      */
     public Engine(int engineRating, int engineType, int engineFlags) {
         engineValid = true;
@@ -187,6 +207,7 @@ public class Engine implements Serializable, ITechnology {
      * returns true if the engine has the flag set, false otherwise
      *
      * @param flag the flag to check for.
+     *
      * @return true if the flag is set.
      */
     public boolean hasFlag(int flag) {
@@ -200,23 +221,23 @@ public class Engine implements Serializable, ITechnology {
      */
     private boolean isValidEngine() {
         if (hasFlag(~(CLAN_ENGINE | TANK_ENGINE | LARGE_ENGINE
-                | SUPERHEAVY_ENGINE | SUPPORT_VEE_ENGINE))) {
+              | SUPERHEAVY_ENGINE | SUPPORT_VEE_ENGINE))) {
             problem.append("Flags:").append(engineFlags);
             return false;
         }
 
         if (hasFlag(SUPPORT_VEE_ENGINE) && (engineType != STEAM)
-                && (engineType != COMBUSTION_ENGINE) && (engineType != BATTERY)
-                && (engineType != FUEL_CELL) && (engineType != SOLAR)
-                && (engineType != FISSION) && (engineType != NORMAL_ENGINE)
-                && (engineType != MAGLEV) && (engineType != NONE)
-                && (engineType != EXTERNAL)) {
+              && (engineType != COMBUSTION_ENGINE) && (engineType != BATTERY)
+              && (engineType != FUEL_CELL) && (engineType != SOLAR)
+              && (engineType != FISSION) && (engineType != NORMAL_ENGINE)
+              && (engineType != MAGLEV) && (engineType != NONE)
+              && (engineType != EXTERNAL)) {
             problem.append("Invalid Engine type for support vehicle engines!");
             return false;
         }
 
         if ((((int) Math.ceil(engineRating / 5) > ENGINE_RATINGS.length)
-                || (engineRating < 0)) && !hasFlag(SUPPORT_VEE_ENGINE)) {
+              || (engineRating < 0)) && !hasFlag(SUPPORT_VEE_ENGINE)) {
             problem.append("Rating:").append(engineRating);
             return false;
         }
@@ -240,7 +261,7 @@ public class Engine implements Serializable, ITechnology {
             case COMPACT_ENGINE:
                 if (hasFlag(LARGE_ENGINE)) {
                     problem.append(Messages
-                            .getString("Engine.invalidCompactLarge"));
+                          .getString("Engine.invalidCompactLarge"));
                     return false;
                 }
                 break;
@@ -248,7 +269,7 @@ public class Engine implements Serializable, ITechnology {
             case FISSION:
                 if (hasFlag(CLAN_ENGINE)) {
                     problem.append(Messages
-                            .getString("Engine.invalidSphereOnly"));
+                          .getString("Engine.invalidSphereOnly"));
                     return false;
                 }
                 break;
@@ -264,6 +285,7 @@ public class Engine implements Serializable, ITechnology {
      * Parses a string to find the engine type.
      *
      * @param type the string to parse
+     *
      * @return the type of the engine.
      */
     public static int getEngineTypeByString(String type) {
@@ -303,8 +325,8 @@ public class Engine implements Serializable, ITechnology {
     /** @return True if this engine is a fusion engine. */
     public boolean isFusion() {
         return (engineType != COMBUSTION_ENGINE) && (engineType != FISSION) && (engineType != FUEL_CELL)
-                && (engineType != NONE) && (engineType != BATTERY) && (engineType != SOLAR)
-                && (engineType != STEAM) && (engineType != MAGLEV) && (engineType != EXTERNAL);
+              && (engineType != NONE) && (engineType != BATTERY) && (engineType != SOLAR)
+              && (engineType != STEAM) && (engineType != MAGLEV) && (engineType != EXTERNAL);
     }
 
     /** @return True if this engine is a fission engine. */
@@ -321,8 +343,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * Returns the weight of the engine in tons, rounded to the next highest half
-     * ton.
+     * Returns the weight of the engine in tons, rounded to the next highest half ton.
      *
      * @return the weight of the engine.
      */
@@ -333,14 +354,14 @@ public class Engine implements Serializable, ITechnology {
     /**
      * Returns the weight of the engine, rounded by roundWeight.
      *
-     * @param roundWeight One of the rounding factors given in
-     *                    {@link megamek.common.verifier.TestEntity}.
+     * @param roundWeight One of the rounding factors given in {@link megamek.common.verifier.TestEntity}.
+     *
      * @return the weight of the engine in tons.
      */
     public double getWeightEngine(Entity entity, RoundWeight roundWeight) {
         // Support Vehicles compute engine weight differently
         if ((entity.isSupportVehicle() || hasFlag(SUPPORT_VEE_ENGINE))
-                && isValidEngine()) {
+              && isValidEngine()) {
             int mp = entity.getOriginalWalkMP();
             if (entity.getMovementMode().isTrain()) {
                 mp = Math.max(0, mp - 2);
@@ -348,7 +369,7 @@ public class Engine implements Serializable, ITechnology {
             double movementFactor = 4 + mp * mp;
             double engineWeightMult = SV_ENGINE_RATINGS[engineType][entity.getEngineTechRating().getIndex()];
             double weight = entity.getBaseEngineValue() * movementFactor
-                    * engineWeightMult * entity.getWeight();
+                  * engineWeightMult * entity.getWeight();
             // Fusion engines have a minimum weight of 0.25t at D+ and 0.5t at C. Fission
             // engines have
             // a minimum of 5t at all tech ratings.
@@ -433,8 +454,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * Returns the number of heat sinks which can be built into the engine and
-     * therefore don't require a critical slot.
+     * Returns the number of heat sinks which can be built into the engine and therefore don't require a critical slot.
      *
      * @param compact Whether this engine uses compact heat sinks or not.
      *
@@ -449,8 +469,8 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * Get the name of this engine, this is the localized name used in displays.
-     * The name of an Engine is based on its type.
+     * Get the name of this engine, this is the localized name used in displays. The name of an Engine is based on its
+     * type.
      *
      * @return the engine name.
      */
@@ -495,8 +515,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * This returns a non-localized name of the engine, it's mostly used to
-     * generate files.
+     * This returns a non-localized name of the engine, it's mostly used to generate files.
      */
     // Don't localize the marked strings below since they are used in mek
     // file parsing.
@@ -593,7 +612,7 @@ public class Engine implements Serializable, ITechnology {
      */
     public int[] getSideTorsoCriticalSlots() {
         if ((engineType == LIGHT_ENGINE)
-                || ((engineType == XL_ENGINE) && hasFlag(CLAN_ENGINE))) {
+              || ((engineType == XL_ENGINE) && hasFlag(CLAN_ENGINE))) {
             int[] slots;
             if (hasFlag(SUPERHEAVY_ENGINE)) {
                 slots = new int[] { 0 };
@@ -748,11 +767,11 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * Values used for calculating the cost of a support vehicle engine. The engine
-     * cost in C-bills is
-     * tonnage * 5,000 * type multiplier
+     * Values used for calculating the cost of a support vehicle engine. The engine cost in C-bills is tonnage * 5,000 *
+     * type multiplier
      *
      * @param etype The engine type
+     *
      * @return The type multiplier for cost
      */
     public static double getSVCostMultiplier(int etype) {
@@ -779,165 +798,193 @@ public class Engine implements Serializable, ITechnology {
     }
 
     private static final TechAdvancement STANDARD_FUSION_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_ES, DATE_ES, 2300).setApproximate(false, false, true)
-            .setTechRating(TechRating.D).setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.INTRO);
+          .setAdvancement(DATE_ES, DATE_ES, 2300)
+          .setApproximate(false, false, true)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     private static final TechAdvancement LARGE_FUSION_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(2630, 3085, 3120).setApproximate(false, true, true)
-            .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.LC)
-            .setTechRating(TechRating.D).setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+          .setAdvancement(2630, 3085, 3120)
+          .setApproximate(false, true, true)
+          .setPrototypeFactions(Faction.TH)
+          .setProductionFactions(Faction.LC)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     private static final TechAdvancement STANDARD_ICE_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_ES, DATE_ES, 2300).setApproximate(false, false, true)
-            .setTechRating(TechRating.C).setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
-            .setStaticTechLevel(SimpleTechLevel.INTRO);
+          .setAdvancement(DATE_ES, DATE_ES, 2300)
+          .setApproximate(false, false, true)
+          .setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+          .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     private static final TechAdvancement LARGE_ICE_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_NONE, 2630, 3120, DATE_NONE, DATE_NONE)
-            .setApproximate(false, false, true, false, false)
-            .setPrototypeFactions(Faction.TH)
-            .setProductionFactions(Faction.LC).setTechRating(TechRating.C)
-            .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+          .setAdvancement(DATE_NONE, 2630, 3120, DATE_NONE, DATE_NONE)
+          .setApproximate(false, false, true, false, false)
+          .setPrototypeFactions(Faction.TH)
+          .setProductionFactions(Faction.LC).setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+          .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     private static final TechAdvancement LIGHT_FUSION_TA = new TechAdvancement(TechBase.IS)
-            .setISAdvancement(3055, 3062, 3067).setISApproximate(true, false, false)
-            .setPrototypeFactions(Faction.MERC).setProductionFactions(Faction.LC).setTechRating(TechRating.D)
-            .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setISAdvancement(3055, 3062, 3067).setISApproximate(true, false, false)
+          .setPrototypeFactions(Faction.MERC).setProductionFactions(Faction.LC).setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement LARGE_LIGHT_FUSION_TA = new TechAdvancement(TechBase.IS)
-            .setISAdvancement(3064, 3065).setISApproximate(true)
-            .setPrototypeFactions(Faction.LC).setProductionFactions(Faction.LC)
-            .setTechRating(TechRating.D).setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+          .setISAdvancement(3064, 3065)
+          .setISApproximate(true)
+          .setPrototypeFactions(Faction.LC)
+          .setProductionFactions(Faction.LC)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
+          .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     // Greekfire requested Errata March 2022 for RS Jihad book.
     private static final TechAdvancement COMPACT_FUSION_TA = new TechAdvancement(TechBase.IS)
-            .setISAdvancement(3060, 3066, 3072, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, true, false, false)
-            .setPrototypeFactions(Faction.LC).setProductionFactions(Faction.LC)
-            .setTechRating(TechRating.E)
-            .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setISAdvancement(3060, 3066, 3072, DATE_NONE, DATE_NONE)
+          .setISApproximate(true, false, true, false, false)
+          .setPrototypeFactions(Faction.LC).setProductionFactions(Faction.LC)
+          .setTechRating(TechRating.E)
+          .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement IS_XL_TA = new TechAdvancement(TechBase.IS)
-            .setISAdvancement(2556, 2579, 3045, 2865, 3035)
-            .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH).setReintroductionFactions(Faction.LC)
-            .setTechRating(TechRating.E).setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setISAdvancement(2556, 2579, 3045, 2865, 3035)
+          .setPrototypeFactions(Faction.TH)
+          .setProductionFactions(Faction.TH)
+          .setReintroductionFactions(Faction.LC)
+          .setTechRating(TechRating.E)
+          .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement CLAN_XL_TA = new TechAdvancement(TechBase.CLAN)
-            .setClanAdvancement(2824, 2827, 2829).setClanApproximate(true)
-            .setPrototypeFactions(Faction.CSF).setProductionFactions(Faction.CSF)
-            .setTechRating(TechRating.F).setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setClanAdvancement(2824, 2827, 2829)
+          .setClanApproximate(true)
+          .setPrototypeFactions(Faction.CSF)
+          .setProductionFactions(Faction.CSF)
+          .setTechRating(TechRating.F)
+          .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement LARGE_IS_XL_TA = new TechAdvancement(TechBase.IS)
-            .setISAdvancement(2635, 3085, DATE_NONE, 2822, 3054).setISApproximate(true, true)
-            .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH).setReintroductionFactions(Faction.LC, Faction.FS)
-            .setTechRating(TechRating.E).setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+          .setISAdvancement(2635, 3085, DATE_NONE, 2822, 3054)
+          .setISApproximate(true, true)
+          .setPrototypeFactions(Faction.TH)
+          .setProductionFactions(Faction.TH)
+          .setReintroductionFactions(Faction.LC, Faction.FS)
+          .setTechRating(TechRating.E)
+          .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
+          .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     private static final TechAdvancement LARGE_CLAN_XL_TA = new TechAdvancement(TechBase.CLAN)
-            .setClanAdvancement(2850, 3080).setClanApproximate(true, true)
-            .setPrototypeFactions(Faction.CIH).setProductionFactions(Faction.CHH)
-            .setTechRating(TechRating.F).setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+          .setClanAdvancement(2850, 3080)
+          .setClanApproximate(true, true)
+          .setPrototypeFactions(Faction.CIH)
+          .setProductionFactions(Faction.CHH)
+          .setTechRating(TechRating.F)
+          .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
+          .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     // Greekfire requested Errata March 2022 for RS Jihad book.
     private static final TechAdvancement IS_XXL_TA = new TechAdvancement(TechBase.IS)
-            .setISAdvancement(3055, 3125, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, true, false, false, false)
-            .setPrototypeFactions(Faction.FS, Faction.LC).setProductionFactions(Faction.LC)
-            .setTechRating(TechRating.F).setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setISAdvancement(3055, 3125, DATE_NONE, DATE_NONE, DATE_NONE)
+          .setISApproximate(false, true, false, false, false)
+          .setPrototypeFactions(Faction.FS, Faction.LC)
+          .setProductionFactions(Faction.LC)
+          .setTechRating(TechRating.F)
+          .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     private static final TechAdvancement CLAN_XXL_TA = new TechAdvancement(TechBase.CLAN)
-            .setClanAdvancement(3030, 3125, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, true)
-            .setPrototypeFactions(Faction.CSF).setProductionFactions(Faction.CSF)
-            .setTechRating(TechRating.F).setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setClanAdvancement(3030, 3125, DATE_NONE, DATE_NONE, DATE_NONE)
+          .setClanApproximate(false, true)
+          .setPrototypeFactions(Faction.CSF)
+          .setProductionFactions(Faction.CSF)
+          .setTechRating(TechRating.F)
+          .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     private static final TechAdvancement LARGE_IS_XXL_TA = new TechAdvancement(TechBase.IS)
-            .setISAdvancement(2630, 3130, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, true, false, false, false)
-            .setTechRating(TechRating.F)
-            .setPrototypeFactions(Faction.FS).setProductionFactions(Faction.LC)
-            .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+          .setISAdvancement(2630, 3130, DATE_NONE, DATE_NONE, DATE_NONE)
+          .setISApproximate(false, true, false, false, false)
+          .setTechRating(TechRating.F)
+          .setPrototypeFactions(Faction.FS).setProductionFactions(Faction.LC)
+          .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
+          .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     private static final TechAdvancement LARGE_CLAN_XXL_TA = new TechAdvancement(TechBase.CLAN)
-            .setClanAdvancement(2630, 3130, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, true, false, false, false)
-            .setTechRating(TechRating.F)
-            .setPrototypeFactions(Faction.CSF).setProductionFactions(Faction.CSF)
-            .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+          .setClanAdvancement(2630, 3130, DATE_NONE, DATE_NONE, DATE_NONE)
+          .setClanApproximate(false, true, false, false, false)
+          .setTechRating(TechRating.F)
+          .setPrototypeFactions(Faction.CSF).setProductionFactions(Faction.CSF)
+          .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
+          .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     private static final TechAdvancement FISSION_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(2470, 2882, 3079).setTechRating(TechRating.D)
-            .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TC)
-            .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(2470, 2882, 3079).setTechRating(TechRating.D)
+          .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TC)
+          .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement FUEL_CELL_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(2300, 2470, 3078).setApproximate(true).setTechRating(TechRating.D)
-            .setPrototypeFactions(Faction.TA).setProductionFactions(Faction.TH)
-            .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(2300, 2470, 3078).setApproximate(true).setTechRating(TechRating.D)
+          .setPrototypeFactions(Faction.TA).setProductionFactions(Faction.TH)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement SUPPORT_STEAM_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
-            .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
+          .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement SUPPORT_ICE_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.B)
-            .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.B)
+          .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement SUPPORT_BATTERY_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(TechRating.C)
-            .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+          .setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement SUPPORT_FUEL_CELL_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.C)
-            .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement SUPPORT_SOLAR_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(TechRating.C)
-            .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+          .setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement SUPPORT_FISSION_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
-            .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement SUPPORT_FUSION_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
-            .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement SUPPORT_MAGLEV_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
-            .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement SUPPORT_NONE_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
-            .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
+          .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement SUPPORT_EXTERNAL_TA = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_NONE, DATE_NONE, DATE_PS)
-            .setTechRating(TechRating.B).setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
+          .setAdvancement(DATE_NONE, DATE_NONE, DATE_PS)
+          .setTechRating(TechRating.B)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C);
 
     public TechAdvancement getTechAdvancement() {
         switch (engineType) {
@@ -1028,6 +1075,7 @@ public class Engine implements Serializable, ITechnology {
 
     /**
      * @param year The game year
+     *
      * @return the tech type (tech level + tech base) for the current engine.
      */
     public int getTechType(int year) {
@@ -1224,9 +1272,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * For omnis set the base Chassies HS any variants will only use this and the
-     * reset
-     * will have to be added.
+     * For omnis set the base Chassies HS any variants will only use this and the reset will have to be added.
      *
      * @param amount The number to set as base chassis heat sinks
      */
@@ -1235,8 +1281,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * Return the Base Chassies Engine heat Sinks or integralHeatSinkCapacity which
-     * ever is less.
+     * Return the Base Chassies Engine heat Sinks or integralHeatSinkCapacity which ever is less.
      *
      * @param compact Whether this engine uses compact heat sinks or not.
      *

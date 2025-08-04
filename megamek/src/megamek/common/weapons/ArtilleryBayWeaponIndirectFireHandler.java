@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.ArrayList;
@@ -84,7 +105,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 // so we'll track ammo normally and need to resolve attacks for all bay weapons.
                 for (int i = 0; i < shots; i++) {
                     if (null == bayWAmmo
-                            || bayWAmmo.getUsableShotsLeft() < 1) {
+                          || bayWAmmo.getUsableShotsLeft() < 1) {
                         // try loading something else
                         ae.loadWeaponWithSameAmmo(bayW);
                         bayWAmmo = bayW.getLinkedAmmo();
@@ -124,16 +145,16 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 handledAmmoAndReport = true;
 
                 artyMsg = "Artillery bay fire Incoming, landing on round "
-                        + (game.getRoundCount() + aaa.getTurnsTilHit())
-                        + ", fired by "
-                        + game.getPlayer(aaa.getPlayerId()).getName();
+                      + (game.getRoundCount() + aaa.getTurnsTilHit())
+                      + ", fired by "
+                      + game.getPlayer(aaa.getPlayerId()).getName();
                 game.getBoard(aaa.getTarget(game).getBoardId()).addSpecialHexDisplay(
-                        aaa.getTarget(game).getPosition(),
-                        new SpecialHexDisplay(
-                                SpecialHexDisplay.Type.ARTILLERY_INCOMING, game
-                                        .getRoundCount() + aaa.getTurnsTilHit(),
-                                game.getPlayer(aaa.getPlayerId()), artyMsg,
-                                SpecialHexDisplay.SHD_VISIBLETO_TEAM));
+                      aaa.getTarget(game).getPosition(),
+                      new SpecialHexDisplay(
+                            SpecialHexDisplay.Type.ARTILLERY_INCOMING, game
+                            .getRoundCount() + aaa.getTurnsTilHit(),
+                            game.getPlayer(aaa.getPlayerId()), artyMsg,
+                            SpecialHexDisplay.SHD_VISIBLETO_TEAM));
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
@@ -187,12 +208,12 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 public boolean accept(Entity entity) {
                     Integer id = entity.getId();
                     if ((player == entity.getOwnerId())
-                            && spottersBefore.contains(id)
-                            && !LosEffects.calculateLOS(game, entity, targ, true).isBlocked()
-                            && entity.isActive()
-                    // airborne aeros can't spot for arty
-                            && !(entity.isAero() && entity.isAirborne())
-                            && !entity.isINarcedWith(INarcPod.HAYWIRE)) {
+                          && spottersBefore.contains(id)
+                          && !LosEffects.calculateLOS(game, entity, targ, true).isBlocked()
+                          && entity.isActive()
+                          // airborne aeros can't spot for arty
+                          && !(entity.isAero() && entity.isAirborne())
+                          && !entity.isINarcedWith(INarcPod.HAYWIRE)) {
                         return true;
                     }
                     return false;
@@ -205,13 +226,13 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 if (bestSpotter == null) {
                     bestSpotter = ent;
                 } else if (ent.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)
-                        && !bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
+                      && !bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
                     bestSpotter = ent;
                 } else if (ent.getCrew().getGunnery() < bestSpotter.getCrew().getGunnery()
-                        && !bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
+                      && !bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
                     bestSpotter = ent;
                 } else if (bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)
-                        && ent.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
+                      && ent.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
                     if (ent.getCrew().getGunnery() < bestSpotter.getCrew().getGunnery()) {
                         bestSpotter = ent;
                     }
@@ -337,11 +358,11 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             targetHex = game.getBoard(target.getBoardId()).getHex(targetPos);
             heights.add((targetHex != null) ? game.getBoard(target.getBoardId()).getHex(targetPos).getLevel() : 0);
             artyMsg = "Artillery hit here on round " + game.getRoundCount()
-                    + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
-                    + " (this hex is now an auto-hit)";
+                  + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
+                  + " (this hex is now an auto-hit)";
             game.getBoard(target.getBoardId()).addSpecialHexDisplay(targetPos,
-                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
-                            game.getRoundCount(), game.getPlayer(aaa.getPlayerId()), artyMsg));
+                  new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
+                        game.getRoundCount(), game.getPlayer(aaa.getPlayerId()), artyMsg));
         } else {
             int moF = toHit.getMoS();
             if (ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)) {
@@ -357,11 +378,11 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             // target
             // Any drifted shots will be indicated at their end points
             artyMsg = "Bay Artillery missed here on round "
-                    + game.getRoundCount() + ", by "
-                    + game.getPlayer(aaa.getPlayerId()).getName();
+                  + game.getRoundCount() + ", by "
+                  + game.getPlayer(aaa.getPlayerId()).getName();
             game.getBoard().addSpecialHexDisplay(origPos,
-                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_MISS, game.getRoundCount(),
-                            game.getPlayer(aaa.getPlayerId()), artyMsg));
+                  new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_MISS, game.getRoundCount(),
+                        game.getPlayer(aaa.getPlayerId()), artyMsg));
             while (nweaponsHit > 0) {
                 // We'll generate a new report and scatter for each weapon fired
                 targetPos = Compute.scatterDirectArty(origPos, moF);
@@ -435,8 +456,10 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 // Keep blasting the target hex with each weapon in the bay that fired
                 while (nweaponsHit > 0) {
                     gameManager.getGame().processGameEvent(
-                        new GamePlayerStrategicActionEvent(gameManager,
-                            new NukeDetonatedAction(ae.getId(), ae.getOwnerId(), AmmoType.Munitions.M_DAVY_CROCKETT_M)));
+                          new GamePlayerStrategicActionEvent(gameManager,
+                                new NukeDetonatedAction(ae.getId(),
+                                      ae.getOwnerId(),
+                                      AmmoType.Munitions.M_DAVY_CROCKETT_M)));
                     gameManager.doNuclearExplosion(targetPos, 1, vPhaseReport);
                     nweaponsHit--;
                 }
@@ -444,8 +467,10 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 // Deliver a round to each target hex
                 for (Coords c : targets) {
                     gameManager.getGame().processGameEvent(
-                        new GamePlayerStrategicActionEvent(gameManager,
-                            new NukeDetonatedAction(ae.getId(), ae.getOwnerId(), AmmoType.Munitions.M_DAVY_CROCKETT_M)));
+                          new GamePlayerStrategicActionEvent(gameManager,
+                                new NukeDetonatedAction(ae.getId(),
+                                      ae.getOwnerId(),
+                                      AmmoType.Munitions.M_DAVY_CROCKETT_M)));
                     gameManager.doNuclearExplosion(c, 1, vPhaseReport);
                 }
             }
@@ -455,12 +480,12 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             if (!bMissed) {
                 // If we hit, only one effect will stack in the target hex
                 gameManager.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
-                        atype.getRackSize(), ae.getId());
+                      atype.getRackSize(), ae.getId());
             } else {
                 // Deliver a round to each target hex
                 for (Coords c : targets) {
                     gameManager.deliverFASCAMMinefield(c, ae.getOwner().getId(),
-                            atype.getRackSize(), ae.getId());
+                          atype.getRackSize(), ae.getId());
                 }
             }
             return false;
@@ -474,7 +499,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 for (Coords c : targets) {
 
                     handleArtilleryDriftMarker(origPos, c, aaa,
-                            gameManager.deliverArtilleryInferno(c, ae, subjectId, vPhaseReport));
+                          gameManager.deliverArtilleryInferno(c, ae, subjectId, vPhaseReport));
                 }
             }
             return false;
@@ -483,12 +508,12 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             if (!bMissed) {
                 // If we hit, only one effect will stack in the target hex
                 gameManager.deliverThunderVibraMinefield(targetPos, ae.getOwner().getId(),
-                        atype.getRackSize(), waa.getOtherAttackInfo(), ae.getId());
+                      atype.getRackSize(), waa.getOtherAttackInfo(), ae.getId());
             } else {
                 // Deliver a round to each target hex
                 for (Coords c : targets) {
                     gameManager.deliverThunderVibraMinefield(c, ae.getOwner().getId(),
-                            atype.getRackSize(), waa.getOtherAttackInfo(), ae.getId());
+                          atype.getRackSize(), waa.getOtherAttackInfo(), ae.getId());
                 }
             }
             return false;
@@ -560,15 +585,15 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             // Here we're doing damage for each hit with more standard artillery shells
             while (nweaponsHit > 0) {
                 gameManager.artilleryDamageArea(targetPos, atype,
-                        subjectId, ae, isFlak, heights.get(0), mineClear, vPhaseReport,
-                        asfFlak);
+                      subjectId, ae, isFlak, heights.get(0), mineClear, vPhaseReport,
+                      asfFlak);
                 nweaponsHit--;
             }
         } else {
             // Now if we missed, resolve a strike on each scatter hex
             Coords c;
             int height;
-            for (int index=0;index<targets.size();index++) {
+            for (int index = 0; index < targets.size(); index++) {
                 c = targets.get(index);
                 height = heights.get(index);
                 // Accidental mine clearance...
@@ -586,8 +611,8 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                     }
                 }
                 handleArtilleryDriftMarker(origPos, c, aaa,
-                        gameManager.artilleryDamageArea(c, atype, subjectId, ae, isFlak,
-                                height, mineClear, vPhaseReport, asfFlak));
+                      gameManager.artilleryDamageArea(c, atype, subjectId, ae, isFlak,
+                            height, mineClear, vPhaseReport, asfFlak));
             }
 
         }

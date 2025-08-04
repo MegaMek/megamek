@@ -1,22 +1,47 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
@@ -27,12 +52,8 @@ import megamek.common.options.IGameOptions;
 import megamek.logging.MMLogger;
 import megamek.server.scriptedevent.TriggeredEvent;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 /**
- * Common interface for games with different rule sets, such as Total Warfare,
- * BattleForce, or Alpha Strike.
+ * Common interface for games with different rule sets, such as Total Warfare, BattleForce, or Alpha Strike.
  */
 public interface IGame {
 
@@ -46,26 +67,22 @@ public interface IGame {
     PlayerTurn getTurn();
 
     /**
-     * @return True when there is at least one more player turn waiting to be played
-     *         in the current game
-     *         phase.
-     *         //TODO this code from Game is surprising; the last available turn
-     *         should be at size()-1, but apparently this works
+     * @return True when there is at least one more player turn waiting to be played in the current game phase. //TODO
+     *       this code from Game is surprising; the last available turn should be at size()-1, but apparently this
+     *       works
      */
     default boolean hasMoreTurns() {
         return getTurnsList().size() > getTurnIndex();
     }
 
     /**
-     * Returns the current turn index, i.e. the turn that should next be played by
-     * the corresponding player.
+     * Returns the current turn index, i.e. the turn that should next be played by the corresponding player.
      */
     int getTurnIndex();
 
     /**
-     * @return the current list of turns. If you're not the GameManager, don't even
-     *         think
-     *         about changing any of the turns.
+     * @return the current list of turns. If you're not the GameManager, don't even think about changing any of the
+     *       turns.
      */
     List<? extends PlayerTurn> getTurnsList();
 
@@ -73,24 +90,20 @@ public interface IGame {
     IGameOptions getOptions();
 
     /**
-     * @return The current game round, with 0 typically indicating deployment and 1
-     *         the first
-     *         actual game round.
+     * @return The current game round, with 0 typically indicating deployment and 1 the first actual game round.
      */
     int getCurrentRound();
 
     /**
-     * Sets the current game round to the given round number. See
-     * {@link #getCurrentRound()}. This
-     * method can be used in both GameManager and Client.
+     * Sets the current game round to the given round number. See {@link #getCurrentRound()}. This method can be used in
+     * both GameManager and Client.
      *
      * @param currentRound The new round number
      */
     void setCurrentRound(int currentRound);
 
     /**
-     * Adds 1 to the current round value. This method is intended for server use
-     * only.
+     * Adds 1 to the current round value. This method is intended for server use only.
      */
     void incrementCurrentRound();
 
@@ -102,29 +115,24 @@ public interface IGame {
     GamePhase getPhase();
 
     /**
-     * Sets the current game phase to the given phase. May perform phase-dependent
-     * cleanup.
-     * This method is intended for the GameManager.
+     * Sets the current game phase to the given phase. May perform phase-dependent cleanup. This method is intended for
+     * the GameManager.
      *
      * @param phase The new phase
      */
     void setPhase(GamePhase phase);
 
     /**
-     * Sets the previous game phase to the given phase.
-     * This method is intended for the GameManager.
+     * Sets the previous game phase to the given phase. This method is intended for the GameManager.
      *
      * @param lastPhase The phase to be remembered as the previous phase.
      */
     void setLastPhase(GamePhase lastPhase);
 
     /**
-     * Sets the current game phase to the given phase. May perform phase-dependent
-     * cleanup and fire
-     * game events. This method is intended for the Client. By default, this method
-     * calls
-     * {@link #setPhase(GamePhase)}. When overridden, it'll usually make sense to
-     * call super(phase).
+     * Sets the current game phase to the given phase. May perform phase-dependent cleanup and fire game events. This
+     * method is intended for the Client. By default, this method calls {@link #setPhase(GamePhase)}. When overridden,
+     * it'll usually make sense to call super(phase).
      *
      * @param phase The new phase
      */
@@ -133,26 +141,22 @@ public interface IGame {
     }
 
     /**
-     * Returns true when the current game phase should be played, meaning it is
-     * played in the current type
-     * of game and there are possible actions in it in the present game state.
-     * The result may be different in other rounds.
+     * Returns true when the current game phase should be played, meaning it is played in the current type of game and
+     * there are possible actions in it in the present game state. The result may be different in other rounds.
      *
      * @return True when the current phase should be skipped entirely in this round
+     *
      * @see #shouldSkipCurrentPhase()
      */
     boolean isCurrentPhasePlayable();
 
     /**
-     * Returns true when the current game phase should be skipped, either because it
-     * is not played at
-     * all in the current type of game or because the present game state dictates
-     * that there can be no
-     * actions in it. The result may be different in other rounds. This is the
-     * opposite of
-     * {@link #isCurrentPhasePlayable()}.
+     * Returns true when the current game phase should be skipped, either because it is not played at all in the current
+     * type of game or because the present game state dictates that there can be no actions in it. The result may be
+     * different in other rounds. This is the opposite of {@link #isCurrentPhasePlayable()}.
      *
      * @return True when the current phase should be skipped entirely in this round
+     *
      * @see #isCurrentPhasePlayable()
      */
     default boolean shouldSkipCurrentPhase() {
@@ -162,16 +166,14 @@ public interface IGame {
     // endregion
 
     /**
-     * Fires the given GameEvent, sending the event to all GameListener of this
-     * game.
+     * Fires the given GameEvent, sending the event to all GameListener of this game.
      *
      * @param event the game event.
      */
     void fireGameEvent(GameEvent event);
 
     /**
-     * Adds a GameListener to this game. The GameListener will receive any
-     * subsequently fired GameEvents.
+     * Adds a GameListener to this game. The GameListener will receive any subsequently fired GameEvents.
      *
      * @param listener The GameListener to add
      */
@@ -203,6 +205,7 @@ public interface IGame {
 
     /**
      * @param id a player id
+     *
      * @return the individual player assigned the id parameter.
      */
     @Nullable
@@ -210,6 +213,7 @@ public interface IGame {
 
     /**
      * @param id A player ID
+     *
      * @return True when there is a player for the given ID
      */
     default boolean hasPlayer(int id) {
@@ -217,14 +221,12 @@ public interface IGame {
     }
 
     /**
-     * @return The current players as a list. Implementations should make sure that
-     *         this list can be safely modified.
+     * @return The current players as a list. Implementations should make sure that this list can be safely modified.
      */
     List<Player> getPlayersList();
 
     /**
-     * Adds the given Player to the game with the given game-unique id.
-     * // TODO : Can this be made a default method?
+     * Adds the given Player to the game with the given game-unique id. // TODO : Can this be made a default method?
      *
      * @param id     The game-unique id of this player
      * @param player The Player object
@@ -232,9 +234,8 @@ public interface IGame {
     void addPlayer(int id, Player player);
 
     /**
-     * Sets the given Player to the given game-unique id.
-     * // TODO : Is this method useful? Why not use addPlayer that also sets
-     * single-blind info?
+     * Sets the given Player to the given game-unique id. // TODO : Is this method useful? Why not use addPlayer that
+     * also sets single-blind info?
      *
      * @param id     The game-unique id of this player
      * @param player The Player object
@@ -249,16 +250,14 @@ public interface IGame {
     void removePlayer(int id);
 
     /**
-     * @return The current number of active players in the game. This includes
-     *         observers but not ghosts.
+     * @return The current number of active players in the game. This includes observers but not ghosts.
      */
     int getNoOfPlayers();
 
     // TEAMS //////////////
 
     /**
-     * @return The teams in the game. Implementations should make sure that this
-     *         list can be safely modified.
+     * @return The teams in the game. Implementations should make sure that this list can be safely modified.
      */
     List<Team> getTeams();
 
@@ -285,8 +284,7 @@ public interface IGame {
     int getNextEntityId();
 
     /**
-     * @return the number of units owned by the player, regardless of their
-     *         status, as long as they are in the game.
+     * @return the number of units owned by the player, regardless of their status, as long as they are in the game.
      */
     default int getEntitiesOwnedBy(Player player) {
         return (int) getInGameObjects().stream().filter(o -> o.getOwnerId() == player.getId()).count();
@@ -300,9 +298,8 @@ public interface IGame {
     }
 
     /**
-     * @return The InGameObject from those that are out of game (destroyed, fled,
-     *         never deployed) associated
-     *         with the given id, if there is one.
+     * @return The InGameObject from those that are out of game (destroyed, fled, never deployed) associated with the
+     *       given id, if there is one.
      */
     default Optional<InGameObject> getOutOfGameUnit(int id) {
         return getGraveyard().stream().filter(o -> o.getId() == id).findAny();
@@ -316,34 +313,29 @@ public interface IGame {
     }
 
     /**
-     * @return A list of all InGameObjects of this game. This list is copied and may
-     *         be safely modified.
+     * @return A list of all InGameObjects of this game. This list is copied and may be safely modified.
      */
     List<InGameObject> getInGameObjects();
 
     /**
-     * @return A list of all InGameObjects of this game with the given ids. The
-     *         returned list may be safely modified.
+     * @return A list of all InGameObjects of this game with the given ids. The returned list may be safely modified.
      */
     default List<InGameObject> getInGameObjects(Collection<Integer> idList) {
         return getInGameObjects().stream().filter(o -> idList.contains(o.getId())).collect(Collectors.toList());
     }
 
     /**
-     * This is a Client-side method to replace or add units that are sent from the
-     * server.
-     * Adds the given units to the list of units or objects in the current game.
-     * When a unit's ID is already
-     * present the currently assigned unit will be replaced with the given new one.
+     * This is a Client-side method to replace or add units that are sent from the server. Adds the given units to the
+     * list of units or objects in the current game. When a unit's ID is already present the currently assigned unit
+     * will be replaced with the given new one.
      *
      * @param units The units to add or use as a replacement for current units.
      */
     void replaceUnits(List<InGameObject> units);
 
     /**
-     * @return a list of units that are destroyed or otherwise no longer part of the
-     *         game. These
-     *         should have a reason for their removal set.
+     * @return a list of units that are destroyed or otherwise no longer part of the game. These should have a reason
+     *       for their removal set.
      */
     List<InGameObject> getGraveyard();
 
@@ -386,18 +378,15 @@ public interface IGame {
     }
 
     /**
-     * Returns the complete map of boardIds/boards the game uses. The returned map
-     * is an unmodifiable view
-     * of the game's map, but not a deep copy, so changes to a board will affect the
-     * game.
+     * Returns the complete map of boardIds/boards the game uses. The returned map is an unmodifiable view of the game's
+     * map, but not a deep copy, so changes to a board will affect the game.
      *
      * @return The game's boards and their IDs
      */
     Map<Integer, Board> getBoards();
 
     /**
-     * Returns the game's board. This method internally uses the boardId 0 for every
-     * call, see {@link #getBoard(int)}.
+     * Returns the game's board. This method internally uses the boardId 0 for every call, see {@link #getBoard(int)}.
      * It can eventually be replaced to allow multiple maps for any type of game.
      *
      * @return The game's board (using ID = 0)
@@ -407,11 +396,9 @@ public interface IGame {
     }
 
     /**
-     * Sets the given board as the game's board with the given boardId, possibly
-     * replacing the former board
-     * of the same id. This method is written with the idea that a game might have
-     * more than one board.
-     * This method is meant as a client-side method and may fire game events.
+     * Sets the given board as the game's board with the given boardId, possibly replacing the former board of the same
+     * id. This method is written with the idea that a game might have more than one board. This method is meant as a
+     * client-side method and may fire game events.
      *
      * @param boardId (currently ignored) The boardId to assing to that board
      * @param board   The board to use
@@ -419,10 +406,9 @@ public interface IGame {
     void receiveBoard(int boardId, Board board);
 
     /**
-     * Sets the given boards as the game's boards, replacing all previous boards.
-     * This method is written with the idea that a game might have more than one
-     * board.
-     * This method is meant as a client-side method and may fire game events.
+     * Sets the given boards as the game's boards, replacing all previous boards. This method is written with the idea
+     * that a game might have more than one board. This method is meant as a client-side method and may fire game
+     * events.
      *
      * @param boards The new boards
      */
@@ -439,8 +425,9 @@ public interface IGame {
         }
         Board lowerBoard = getBoard(lowerBoardId);
         Board higherBoard = getBoard(higherBoardId);
-        if ((lowerBoard.isLowAltitude() && !higherBoard.isSpace()) || (lowerBoard.isGround() && !higherBoard.isLowAltitude())
-                  || lowerBoard.isSpace() || higherBoard.isGround()) {
+        if ((lowerBoard.isLowAltitude() && !higherBoard.isSpace()) || (lowerBoard.isGround()
+              && !higherBoard.isLowAltitude())
+              || lowerBoard.isSpace() || higherBoard.isGround()) {
             LOGGER.error("Can only enclose a ground map in an atmo map or an atmo map in a space map.");
             return;
         }
@@ -458,6 +445,7 @@ public interface IGame {
      * map or a space map for an atmospheric map.
      *
      * @param boardId The board's ID
+     *
      * @return True when the board is enclosed within another board
      */
     default boolean hasEnclosingBoard(int boardId) {
@@ -473,8 +461,8 @@ public interface IGame {
     }
 
     /**
-     * @return True when both given units are not null and reside on the same board. Only checks the board IDs, not
-     * the positions (which could be null or invalid).
+     * @return True when both given units are not null and reside on the same board. Only checks the board IDs, not the
+     *       positions (which could be null or invalid).
      */
     default boolean onTheSameBoard(@Nullable Targetable entity1, @Nullable Targetable entity2) {
         return (entity1 != null) && (entity2 != null) && (entity1.getBoardId() == entity2.getBoardId());
@@ -496,8 +484,8 @@ public interface IGame {
             Board board1 = getBoard(entity1);
             Board board2 = getBoard(entity2);
             return (board1.getBoardId() != -1) && (board2.getBoardId() != -1) &&
-                         ((board1.getEnclosingBoardId() == board2.getBoardId()) ||
-                                (board2.getEnclosingBoardId() == board1.getBoardId()));
+                  ((board1.getEnclosingBoardId() == board2.getBoardId()) ||
+                        (board2.getEnclosingBoardId() == board1.getBoardId()));
         } else {
             return false;
         }
@@ -505,6 +493,7 @@ public interface IGame {
 
     /**
      * @param targetable The targetable to check
+     *
      * @return The board ID of the board that the given Targetable is on.
      */
     default Board getBoard(Targetable targetable) {
@@ -512,11 +501,11 @@ public interface IGame {
     }
 
     /**
-     * Returns true if the given targetable is not null and has a position that exists, i.e. its position and
-     * board ID are on an actual board. When this returns true, calling getHex for its location will return a
-     * non-null hex.
+     * Returns true if the given targetable is not null and has a position that exists, i.e. its position and board ID
+     * are on an actual board. When this returns true, calling getHex for its location will return a non-null hex.
      *
      * @param targetable The targetable to check
+     *
      * @return True when its location exists and is on a board
      */
     default boolean hasBoardLocationOf(@Nullable Targetable targetable) {
@@ -524,10 +513,11 @@ public interface IGame {
     }
 
     /**
-     * Returns true if the given boardLocation really exists, i.e. is not null, its board ID is an actual board in
-     * the game and its coords are contained in that board. This means that a hex can be found for this boardLocation.
+     * Returns true if the given boardLocation really exists, i.e. is not null, its board ID is an actual board in the
+     * game and its coords are contained in that board. This means that a hex can be found for this boardLocation.
      *
      * @param boardLocation The location to test
+     *
      * @return True when the location exists and is on a board
      */
     default boolean hasBoardLocation(@Nullable BoardLocation boardLocation) {
@@ -536,12 +526,13 @@ public interface IGame {
     }
 
     /**
-     * Returns true if the given coords and boardID really exist, are not null, the board ID is an actual board in
-     * the game and the coords are contained in that board. This means that a hex can be found for these values and
-     * it will not be null (unless the board data is corrupted).
+     * Returns true if the given coords and boardID really exist, are not null, the board ID is an actual board in the
+     * game and the coords are contained in that board. This means that a hex can be found for these values and it will
+     * not be null (unless the board data is corrupted).
      *
-     * @param coords The coords to test
+     * @param coords  The coords to test
      * @param boardId The board ID to test
+     *
      * @return True when the location exists and is on a board
      */
     default boolean hasBoardLocation(@Nullable Coords coords, int boardId) {
@@ -549,10 +540,11 @@ public interface IGame {
     }
 
     /**
-     * Returns true if the given boardLocation points to an existing board, i.e. its board ID is an actual board in
-     * the game. Does not check the location's coords.
+     * Returns true if the given boardLocation points to an existing board, i.e. its board ID is an actual board in the
+     * game. Does not check the location's coords.
      *
      * @param boardLocation The location to test
+     *
      * @return True when the location is not null and its board exists
      */
     default boolean hasBoard(@Nullable BoardLocation boardLocation) {
@@ -563,6 +555,7 @@ public interface IGame {
      * Returns true if the given bboard ID is an actual board in the game.
      *
      * @param boardId The board ID to test
+     *
      * @return True when the board exists
      */
     default boolean hasBoard(int boardId) {
@@ -603,8 +596,8 @@ public interface IGame {
 
     /**
      * Returns the hex that the given Targetable is at, i.e. the hex at the position and on the board ID of the given
-     * Targetable. Returns null when targetable is null, the board doesn't exist or when there is no hex at its
-     * position or the position is null.
+     * Targetable. Returns null when targetable is null, the board doesn't exist or when there is no hex at its position
+     * or the position is null.
      *
      * @param targetable The unit or object
      *
@@ -618,10 +611,11 @@ public interface IGame {
     }
 
     /**
-     * Returns true when the given location exists in this game (i.e., is part of a board) and the board it is on is
-     * a space board, including high-altitude boards (even atmospheric hexes on such a board).
+     * Returns true when the given location exists in this game (i.e., is part of a board) and the board it is on is a
+     * space board, including high-altitude boards (even atmospheric hexes on such a board).
      *
      * @param boardLocation The location to test
+     *
      * @return True when the location is part of a space board
      */
     default boolean isOnSpaceMap(@Nullable BoardLocation boardLocation) {
@@ -630,6 +624,7 @@ public interface IGame {
 
     /**
      * @param boardLocation The location to check
+     *
      * @return True when the location is not null and a valid ground board location
      */
     default boolean isOnGroundMap(@Nullable BoardLocation boardLocation) {
@@ -638,10 +633,11 @@ public interface IGame {
 
     /**
      * @param targetable The target to check
-     * @return True when the targetable is considered to be on a ground board (not an atmospheric or space board).
-     * This is true for units that are deployed either offboard or on a valid ground board location; for other
-     * targets such as hexes or buildings, this is true when on a valid ground board location. This is safe to call
-     * regardless of what the position or board ID of the targetable might be.
+     *
+     * @return True when the targetable is considered to be on a ground board (not an atmospheric or space board). This
+     *       is true for units that are deployed either offboard or on a valid ground board location; for other targets
+     *       such as hexes or buildings, this is true when on a valid ground board location. This is safe to call
+     *       regardless of what the position or board ID of the targetable might be.
      */
     default boolean isOnGroundMap(Targetable targetable) {
         // offboard artillery, when deployed, can only be "on" a ground map
@@ -665,10 +661,11 @@ public interface IGame {
     }
 
     /**
-     * Returns true when the given targetable is in a hex of an atmospheric board. Returns false if it is null or
-     * has an invalid position (invalid board ID or position not on the board).
+     * Returns true when the given targetable is in a hex of an atmospheric board. Returns false if it is null or has an
+     * invalid position (invalid board ID or position not on the board).
      *
      * @param targetable The object/unit/target to check
+     *
      * @return True when the targetable is on an atmospheric board
      */
     default boolean isOnAtmosphericMap(Targetable targetable) {
@@ -676,14 +673,14 @@ public interface IGame {
     }
 
     /**
-     * Returns true when both given units or objects are on boards that are connected at least through a common
-     * high altitude map. For two connected maps, an aerospace fighter can reach one from the other, traversing
-     * atmospheric and/or high atmospheric maps. Also returns true when both are on the same board.
-     *
-     * When two maps are not connected they're part of different hierarchies of maps and therefore,
-     * nothing happening on one can influence the other. It is possible to set up games of such unrelated
-     * map clusters but it is not advisable. Such games could just as well be played separately from each other
-     * and suffer a lower chance of MM crashing both...
+     * Returns true when both given units or objects are on boards that are connected at least through a common high
+     * altitude map. For two connected maps, an aerospace fighter can reach one from the other, traversing atmospheric
+     * and/or high atmospheric maps. Also returns true when both are on the same board.
+     * <p>
+     * When two maps are not connected they're part of different hierarchies of maps and therefore, nothing happening on
+     * one can influence the other. It is possible to set up games of such unrelated map clusters but it is not
+     * advisable. Such games could just as well be played separately from each other and suffer a lower chance of MM
+     * crashing both...
      *
      * @param entity1 The first unit or object to test
      * @param entity2 The second unit or object to test
@@ -696,7 +693,7 @@ public interface IGame {
 
     /**
      * @return True when this game has at least one space board (including high-altitude) and at least one non-space
-     * board (low altitude or ground).
+     *       board (low altitude or ground).
      */
     default boolean hasSpaceAndAtmosphericBoards() {
         return hasSpaceBoard() && hasNonSpaceBoard();
@@ -724,14 +721,14 @@ public interface IGame {
     }
 
     /**
-     * Returns true when both given boards are connected at least through a common high altitude map.
-     * When two boards are connected, a fighter unit can reach one from the other, traversing
-     * atmospheric and/or high atmospheric maps. Also returns true if the boards are one and the same.
-     *
-     * When two maps are not connected they're part of different hierarchies of maps and therefore,
-     * nothing happening on one can influence the other. It is possible to set up games of such unrelated
-     * map clusters but it is not advisable. Such games could just as well be played separately from each other
-     * and suffer a lower chance of MM crashing both...
+     * Returns true when both given boards are connected at least through a common high altitude map. When two boards
+     * are connected, a fighter unit can reach one from the other, traversing atmospheric and/or high atmospheric maps.
+     * Also returns true if the boards are one and the same.
+     * <p>
+     * When two maps are not connected they're part of different hierarchies of maps and therefore, nothing happening on
+     * one can influence the other. It is possible to set up games of such unrelated map clusters but it is not
+     * advisable. Such games could just as well be played separately from each other and suffer a lower chance of MM
+     * crashing both...
      *
      * @param boardId1 The first board ID
      * @param boardId2 The second board ID
@@ -747,12 +744,13 @@ public interface IGame {
     }
 
     /**
-     * Returns a list of IDs of all enclosing boards of the given board. These are at most two other boards;
-     * for a ground board, the enclosing atmospheric board (if present) and that one's enclosing high-altitude
-     * map (if present). For an atmospheric map, this will be at most the enclosing high-altitude map (if present);
-     * for any space map, the returned List will be empty.
+     * Returns a list of IDs of all enclosing boards of the given board. These are at most two other boards; for a
+     * ground board, the enclosing atmospheric board (if present) and that one's enclosing high-altitude map (if
+     * present). For an atmospheric map, this will be at most the enclosing high-altitude map (if present); for any
+     * space map, the returned List will be empty.
      *
      * @param boardId The board to find enclosed boards for
+     *
      * @return All enclosing boards in the hierarchy of the given board (between zero and two boards)
      */
     default List<Integer> getAllEnclosingBoards(int boardId) {
@@ -774,11 +772,11 @@ public interface IGame {
     }
 
     /**
-     * Returns the common enclosing board of the two given units/targets. For two units on the same board, this board
-     * is returned. When one unit is on a higher board and the other on a connected lower board (ground is lower than
-     * atmospheric is lower than space), the higher of the two is returned. When two units are on ground boards with
-     * an atmospheric board connecting the two, the atmospheric board is returned. For a S2O or O2S attack situation,
-     * the space board is returned. If any of the two units is null, is not deployed or otherwise off board, not on
+     * Returns the common enclosing board of the two given units/targets. For two units on the same board, this board is
+     * returned. When one unit is on a higher board and the other on a connected lower board (ground is lower than
+     * atmospheric is lower than space), the higher of the two is returned. When two units are on ground boards with an
+     * atmospheric board connecting the two, the atmospheric board is returned. For a S2O or O2S attack situation, the
+     * space board is returned. If any of the two units is null, is not deployed or otherwise off board, not on
      * connected boards, the return value is empty.
      *
      * @param object1 The first unit or object
@@ -808,11 +806,11 @@ public interface IGame {
     // endregion
 
     /**
-     * Returns a new ReportEntry with the given report message Id. The ReportEntry
-     * subclass returned
-     * depends on the implementation in the IGame subclass.
+     * Returns a new ReportEntry with the given report message Id. The ReportEntry subclass returned depends on the
+     * implementation in the IGame subclass.
      *
      * @param messageId The message Id from report-messages.properties
+     *
      * @return A new report of an appropriate type and message
      */
     ReportEntry getNewReport(int messageId);
@@ -820,10 +818,8 @@ public interface IGame {
     // region Scripted Events
 
     /**
-     * @return All scripted events present in this game. Note that these will
-     *         typically only be present on
-     *         the Server side and the Clients will only receive the results of
-     *         those events.
+     * @return All scripted events present in this game. Note that these will typically only be present on the Server
+     *       side and the Clients will only receive the results of those events.
      */
     @ServerOnly
     List<TriggeredEvent> scriptedEvents();

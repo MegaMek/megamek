@@ -1,22 +1,37 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -42,7 +57,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
 
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
-                                      Building bldg, int hits, int nCluster, int bldgAbsorbs) {
+          Building bldg, int hits, int nCluster, int bldgAbsorbs) {
         if (entityTarget instanceof Mek) {
             if (!bSalvo) {
                 // hits
@@ -60,12 +75,12 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
             r.subject = subjectId;
             r.indent(2);
             if ((entityTarget.getArmor(hit) > 0)
-                    && ((entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)
-                    || (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))) {
+                  && ((entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)
+                  || (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))) {
                 entityTarget.heatFromExternal += 2;
                 r.add(2);
                 r.choose(true);
-                r.messageId=3406;
+                r.messageId = 3406;
                 r.add(5);
                 r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
             } else {
@@ -92,7 +107,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false,
-                    tn, true, -1, vPhaseReport);
+                  tn, true, -1, vPhaseReport);
         }
     }
 
@@ -117,11 +132,14 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
         // TODO : change this for TacOps - now you roll another 2d6 first and on a 5 or less
         // TODO : you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
+              && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false,
+              new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), target.getBoardId(), nDamage, subjectId);
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(),
+              target.getBoardId(),
+              nDamage,
+              subjectId);
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }

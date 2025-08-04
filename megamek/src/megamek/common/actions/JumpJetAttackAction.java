@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.actions;
 
 import megamek.common.*;
@@ -33,7 +54,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
     }
 
     public JumpJetAttackAction(int entityId, int targetType, int targetId,
-            int leg) {
+          int leg) {
         super(entityId, targetType, targetId);
         this.leg = leg;
     }
@@ -73,7 +94,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         int damage = 0;
         for (Mounted<?> m : entity.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_JUMP_JET) && m.isReady()
-                    && m.getLocation() == legLoc) {
+                  && m.getLocation() == legLoc) {
                 damage += 3;
             }
         }
@@ -83,12 +104,12 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
     public ToHitData toHit(Game game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(),
-                getTargetId()), getLeg());
+              getTargetId()), getLeg());
     }
 
     /**
      * To-hit number for the specified leg to kick
-     * 
+     *
      * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int leg) {
@@ -116,7 +137,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int attackerHeight = attackerElevation + ae.getHeight();
         final int targetElevation = target.getElevation()
-                + targHex.getLevel();
+              + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
 
         int[] kickLegs = new int[2];
@@ -142,12 +163,12 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
         if (leg == BOTH && !ae.isProne()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Only prone meks can attack with both legs");
+                  "Only prone meks can attack with both legs");
         }
 
         // check if legs are present & working
         if ((ae.isLocationBad(kickLegs[0]) && (leg == BOTH || leg == LEFT))
-                || (ae.isLocationBad(kickLegs[1]) && (leg == BOTH || leg == RIGHT))) {
+              || (ae.isLocationBad(kickLegs[1]) && (leg == BOTH || leg == RIGHT))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Leg missing");
         }
 
@@ -156,21 +177,21 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         for (Mounted<?> m : ae.getMisc()) {
             int loc = m.getLocation();
             if (m.getType().hasFlag(MiscType.F_JUMP_JET)
-                    && m.isReady()
-                    && ((loc == kickLegs[0] && (leg == BOTH || leg == LEFT))
-                            || (loc == kickLegs[1] && (leg == BOTH || leg == RIGHT)))) {
+                  && m.isReady()
+                  && ((loc == kickLegs[0] && (leg == BOTH || leg == LEFT))
+                  || (loc == kickLegs[1] && (leg == BOTH || leg == RIGHT)))) {
                 hasJJ = true;
                 break;
             }
         }
         if (!hasJJ) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Jump jets missing or destroyed");
+                  "Jump jets missing or destroyed");
         }
 
         if (ae.moved == EntityMovementType.MOVE_JUMP) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Attacker jumped this turn");
+                  "Attacker jumped this turn");
         }
 
         // check if attacker has fired leg-mounted weapons
@@ -178,9 +199,9 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
             if (mounted.isUsedThisRound()) {
                 int loc = mounted.getLocation();
                 if (((leg == BOTH || leg == LEFT) && loc == kickLegs[0])
-                        || ((leg == BOTH || leg == RIGHT) && loc == kickLegs[1])) {
+                      || ((leg == BOTH || leg == RIGHT) && loc == kickLegs[1])) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE,
-                            "Weapons fired from leg this turn");
+                          "Weapons fired from leg this turn");
                 }
             }
         }
@@ -189,41 +210,41 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         final int range = ae.getPosition().distance(target.getPosition());
         if (1 != range) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Enemy must be at range 1");
+                  "Enemy must be at range 1");
         }
 
         // check elevation
         if (!ae.isProne() && attackerHeight - targetHeight != 1) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target elevation not in range");
+                  "Target elevation not in range");
         }
         if (ae.isProne()
-                && (attackerHeight > targetHeight || attackerHeight < targetElevation)) {
+              && (attackerHeight > targetHeight || attackerHeight < targetElevation)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target elevation not in range");
+                  "Target elevation not in range");
         }
 
         // check facing
         if (!ae.isProne()) {
             if (!target.getPosition().equals(
-                    ae.getPosition().translated(ae.getFacing()))) {
+                  ae.getPosition().translated(ae.getFacing()))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Target not directly ahead of feet");
+                      "Target not directly ahead of feet");
             }
         } else {
             if (!target.getPosition().equals(
-                    ae.getPosition().translated((3 + ae.getFacing()) % 6))) {
+                  ae.getPosition().translated((3 + ae.getFacing()) % 6))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Target not directly behind of feet");
+                      "Target not directly behind of feet");
             }
         }
 
         // Attacks against adjacent buildings automatically hit.
         if (target.getTargetType() == Targetable.TYPE_BUILDING
-                || target.getTargetType() == Targetable.TYPE_FUEL_TANK
-                || target instanceof GunEmplacement) {
+              || target.getTargetType() == Targetable.TYPE_FUEL_TANK
+              || target instanceof GunEmplacement) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                    "Targeting adjacent building.");
+                  "Targeting adjacent building.");
         }
 
         // Set the base BTH

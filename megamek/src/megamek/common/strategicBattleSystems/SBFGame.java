@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.strategicBattleSystems;
 
 import java.util.ArrayList;
@@ -42,11 +57,10 @@ import megamek.logging.MMLogger;
 import megamek.server.sbf.SBFActionHandler;
 
 /**
- * This is an SBF game's game object that holds all game information. As of
- * 2024, this is under construction.
+ * This is an SBF game's game object that holds all game information. As of 2024, this is under construction.
  */
 public final class SBFGame extends AbstractGame implements PlanetaryConditionsUsing,
-        SBFRuleOptionsUser {
+                                                           SBFRuleOptionsUser {
     private static final MMLogger logger = MMLogger.create(SBFGame.class);
 
     private final SBFRuleOptions options = new SBFRuleOptions();
@@ -124,9 +138,9 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     public boolean isCurrentPhasePlayable() {
         return switch (phase) {
             case INITIATIVE, END, TARGETING, PHYSICAL, OFFBOARD, OFFBOARD_REPORT, SBF_DETECTION, SBF_DETECTION_REPORT ->
-                false;
+                  false;
             case DEPLOYMENT, PREMOVEMENT, MOVEMENT, PREFIRING, FIRING, DEPLOY_MINEFIELDS, SET_ARTILLERY_AUTOHIT_HEXES ->
-                hasMoreTurns();
+                  hasMoreTurns();
             default -> true;
         };
     }
@@ -285,8 +299,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     /**
-     * Sets the current list of turns to the given one, replacing any currently
-     * present turns.
+     * Sets the current list of turns to the given one, replacing any currently present turns.
      *
      * @param newTurns The new list of turns to use
      */
@@ -296,9 +309,8 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     /**
-     * Returns the current list of turns. The returned list is unmodifiable but not
-     * a deep copy. If you're
-     * not the SBFGameManager, don't even think about changing any of the turns.
+     * Returns the current list of turns. The returned list is unmodifiable but not a deep copy. If you're not the
+     * SBFGameManager, don't even think about changing any of the turns.
      */
     @Override
     public List<SBFTurn> getTurnsList() {
@@ -362,39 +374,37 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     /**
-     * Returns the list of formations that are in the game's InGameObject list, i.e.
-     * that aren't destroyed
-     * or otherwise removed from play.
+     * Returns the list of formations that are in the game's InGameObject list, i.e. that aren't destroyed or otherwise
+     * removed from play.
      *
      * @return The currently active formations
      */
     public List<SBFFormation> getActiveFormations() {
         return inGameObjects.values().stream()
-                .filter(u -> u instanceof SBFFormation)
-                .map(u -> (SBFFormation) u)
-                .collect(Collectors.toList());
+              .filter(u -> u instanceof SBFFormation)
+              .map(u -> (SBFFormation) u)
+              .collect(Collectors.toList());
     }
 
     /**
-     * Returns the list of formations that are in the game's InGameObject list, i.e.
-     * that aren't destroyed
-     * or otherwise removed from play.
+     * Returns the list of formations that are in the game's InGameObject list, i.e. that aren't destroyed or otherwise
+     * removed from play.
      *
      * @return The currently active formations
      */
     public List<SBFFormation> getActiveFormationsAt(BoardLocation location) {
         return getActiveFormations().stream()
-                .filter(f -> f.getPosition() != null)
-                .filter(f -> f.getPosition().equals(location))
-                .collect(Collectors.toList());
+              .filter(f -> f.getPosition() != null)
+              .filter(f -> f.getPosition().equals(location))
+              .collect(Collectors.toList());
         // TODO: cache when receiving units at the Client
     }
 
     public boolean isHostileActiveFormationAt(BoardLocation location, SBFFormation formation) {
         Player owner = getPlayer(formation.getOwnerId());
         return getActiveFormationsAt(location).stream()
-                .map(f -> getPlayer(f.getOwnerId()))
-                .anyMatch(owner::isEnemyOf);
+              .map(f -> getPlayer(f.getOwnerId()))
+              .anyMatch(owner::isEnemyOf);
     }
 
     public boolean areHostile(SBFFormation formation, Player player) {
@@ -404,68 +414,56 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     // check current turn, phase, formatzion
     private boolean isEligibleForAction(SBFFormation formation) {
         return (getTurn() instanceof SBFFormationTurn)
-                && getTurn().isValidEntity(formation, this);
+              && getTurn().isValidEntity(formation, this);
     }
 
     /**
-     * @return the first formation in the list of formations that is alive and
-     *         eligible for the current game phase.
+     * @return the first formation in the list of formations that is alive and eligible for the current game phase.
      */
     public Optional<SBFFormation> getNextEligibleFormation() {
         return getNextEligibleFormation(BTObject.NONE);
     }
 
     /**
-     * @return the preceding formation in the list of formations that is alive and
-     *         eligible for the current game phase.
+     * @return the preceding formation in the list of formations that is alive and eligible for the current game phase.
      */
     public Optional<SBFFormation> getPreviousEligibleFormation() {
         return getPreviousEligibleFormation(BTObject.NONE);
     }
 
     /**
-     * @return the next in the list of formations that is alive and eligible for the
-     *         current game phase,
-     *         counting from the given current formation id. If no matching
-     *         formation can be found for the given id,
-     *         returns the first eligible formation in the list of formations that
-     *         is alive and eligible.
+     * @return the next in the list of formations that is alive and eligible for the current game phase, counting from
+     *       the given current formation id. If no matching formation can be found for the given id, returns the first
+     *       eligible formation in the list of formations that is alive and eligible.
      */
     public Optional<SBFFormation> getNextEligibleFormation(int currentFormationID) {
         return getEligibleFormationImpl(currentFormationID, phase, SelectDirection.NEXT_UNIT);
     }
 
     /**
-     * @return the previous in the list of formations that is alive and eligible for
-     *         the current game phase,
-     *         counting from the given current formation id. If no matching
-     *         formation can be found for the given id,
-     *         returns the last eligible formation from the list of formations that
-     *         is alive and eligible.
+     * @return the previous in the list of formations that is alive and eligible for the current game phase, counting
+     *       from the given current formation id. If no matching formation can be found for the given id, returns the
+     *       last eligible formation from the list of formations that is alive and eligible.
      */
     public Optional<SBFFormation> getPreviousEligibleFormation(int currentFormationID) {
         return getEligibleFormationImpl(currentFormationID, phase, SelectDirection.PREVIOUS_UNIT);
     }
 
     /**
-     * Based on the given search direction, returns the formation that precedes or
-     * follows the given
-     * formation ID in the list of active formations eligible for action in the
-     * given game phase.
+     * Based on the given search direction, returns the formation that precedes or follows the given formation ID in the
+     * list of active formations eligible for action in the given game phase.
      *
-     * @param currentFormationID the start point of the formation search. Need not
-     *                           match an actual formation
+     * @param currentFormationID the start point of the formation search. Need not match an actual formation
      * @param phase              the phase to check
-     * @param direction          the selection to seek the next or previous
-     *                           formation
-     * @return the formation that precedes or follows the given formation ID, if one
-     *         can be found
+     * @param direction          the selection to seek the next or previous formation
+     *
+     * @return the formation that precedes or follows the given formation ID, if one can be found
      */
     private Optional<SBFFormation> getEligibleFormationImpl(int currentFormationID, GamePhase phase,
-            SelectDirection direction) {
+          SelectDirection direction) {
         List<SBFFormation> eligibleFormations = getActiveFormations().stream()
-                .filter(this::isEligibleForAction)
-                .collect(Collectors.toList());
+              .filter(this::isEligibleForAction)
+              .collect(Collectors.toList());
         if (eligibleFormations.isEmpty()) {
             return Optional.empty();
         } else {
@@ -489,6 +487,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
      * Returns the formation of the given ID, if one can be found.
      *
      * @param formationID the ID to look for
+     *
      * @return The formation or an empty Optional
      */
     public Optional<SBFFormation> getFormation(int formationID) {
@@ -506,10 +505,10 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     /**
-     * Returns the Player that has to act in the given turn. The result should
-     * rarely be empty.
+     * Returns the Player that has to act in the given turn. The result should rarely be empty.
      *
      * @param turn The SBFTurn to check
+     *
      * @return The Player whose turn it is
      */
     public Optional<Player> getPlayerFor(SBFTurn turn) {

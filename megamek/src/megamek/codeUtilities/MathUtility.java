@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.codeUtilities;
 
 import megamek.logging.MMLogger;
@@ -157,8 +172,7 @@ public class MathUtility {
      * @param value the long value to clamp
      *
      * @return The value if it is inside the range given by the limits 0.0-1.0 (inclusive); the min value if value is
-     * below that
-     *       range and the max value if value is above that range.
+     *       below that range and the max value if value is above that range.
      *       <ul>
      *         <li>clamp01(1.3) returns 1.0</li>
      *         <li>clamp01(0.3) returns 0.3</li>
@@ -170,8 +184,8 @@ public class MathUtility {
     }
 
     /**
-     * Clamps a double value between the limits of Math.ulp(1.0) and 1.0.
-     * Math.ulp is the smallest positive double value that is greater than 0.0.
+     * Clamps a double value between the limits of Math.ulp(1.0) and 1.0. Math.ulp is the smallest positive double value
+     * that is greater than 0.0.
      *
      * @param value the double value to clamp between Math.ulp(1.0) and 1.0
      *

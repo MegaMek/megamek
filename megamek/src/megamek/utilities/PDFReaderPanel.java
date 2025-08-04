@@ -32,6 +32,19 @@
  */
 package megamek.utilities;
 
+import static megamek.common.internationalization.I18n.getTextAt;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Window;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.border.Border;
+
 import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.MathUtility;
 import megamek.logging.MMLogger;
@@ -39,19 +52,8 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import static megamek.common.internationalization.I18n.getTextAt;
-
 /**
- * {@code PDFReaderUtilityPanel} is a reusable Swing {@link JPanel} component for viewing and navigating PDF
- * documents.
+ * {@code PDFReaderUtilityPanel} is a reusable Swing {@link JPanel} component for viewing and navigating PDF documents.
  *
  * <p>This utility leverages the Apache PDFBox library to render each page of a PDF document as an image. Users can
  * scroll through pages and use zoom controls (zoom in, zoom out, and reset zoom) to adjust the viewing scale. All
@@ -135,7 +137,7 @@ public class PDFReaderPanel extends JPanel {
      * Thread. The panel can be embedded inside dialogs, frames, or other containers.</p>
      *
      * @param ownerWindow the owner {@link Window} for dialogs (can be null)
-     * @param pdfPath file system path of the PDF document to display
+     * @param pdfPath     file system path of the PDF document to display
      *
      * @author Illiani
      * @since 0.50.07

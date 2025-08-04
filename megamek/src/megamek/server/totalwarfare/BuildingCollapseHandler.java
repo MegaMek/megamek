@@ -1,27 +1,37 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.server.totalwarfare;
 
-import megamek.common.*;
-import megamek.common.net.enums.PacketCommand;
-import megamek.common.net.packets.Packet;
-import megamek.logging.MMLogger;
+package megamek.server.totalwarfare;
 
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -29,6 +39,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+
+import megamek.common.*;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
+import megamek.logging.MMLogger;
 
 public class BuildingCollapseHandler extends AbstractTWRuleHandler {
 
@@ -43,10 +58,10 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      * in the building and update the clients. If the building does not collapse, determine if any entities crash
      * through its floor into its basement. Again, apply appropriate damage.
      *
-     * @param bldg        the Building being checked
-     * @param coords      the Coords of the building hex to be checked
+     * @param bldg                 the Building being checked
+     * @param coords               the Coords of the building hex to be checked
      * @param checkBecauseOfDamage ?
-     * @param vPhaseReport The current phase reports to attach new reports to
+     * @param vPhaseReport         The current phase reports to attach new reports to
      *
      * @return True if the building hex collapsed.
      */
@@ -61,8 +76,8 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      * through its floor into its basement. Again, apply appropriate damage.
      *
      * @param bldg        the Building being checked.
-     * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entitys
-     *                    at that position.
+     * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entitys at
+     *                    that position.
      * @param coords      the Coords of the building hex to be checked
      *
      * @return true if the building collapsed.
@@ -72,7 +87,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
 
         // If the input is meaningless, do nothing and throw no exception.
         if ((bldg == null) || (positionMap == null) || positionMap.isEmpty() || (coords == null)
-                  || !bldg.isIn(coords) || !bldg.hasCFIn(coords)) {
+              || !bldg.isIn(coords) || !bldg.hasCFIn(coords)) {
             LOGGER.error("Illegal/null arguments");
             return false;
         }
@@ -135,7 +150,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                     // WiGEs can collapse the top floor of a building by flying over it.
                     final int entityElev = entity.getElevation();
                     final boolean wigeFlyover = entity.getMovementMode() == EntityMovementMode.WIGE &&
-                                                      entityElev == numFloors + 1;
+                          entityElev == numFloors + 1;
 
                     if (entityElev != bridgeEl && !wigeFlyover) {
                         // Ignore entities not *inside* the building
@@ -150,10 +165,10 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                     }
 
                     if ((entity.getMovementMode() == EntityMovementMode.HYDROFOIL) ||
-                              (entity.getMovementMode() == EntityMovementMode.NAVAL) ||
-                              (entity.getMovementMode() == EntityMovementMode.SUBMARINE) ||
-                              (entity.getMovementMode() == EntityMovementMode.INF_UMU) ||
-                              entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
+                          (entity.getMovementMode() == EntityMovementMode.NAVAL) ||
+                          (entity.getMovementMode() == EntityMovementMode.SUBMARINE) ||
+                          (entity.getMovementMode() == EntityMovementMode.INF_UMU) ||
+                          entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
                         continue; // under the bridge even at same level
                     }
 
@@ -257,8 +272,8 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      * Update all clients.
      *
      * @param bldg        the Building that has collapsed.
-     * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entitys
-     *                    at that position. This value should not be null.
+     * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entitys at
+     *                    that position. This value should not be null.
      * @param coords      The Coords of the building basement hex that has collapsed
      */
     public void collapseBasement(Building bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
@@ -320,7 +335,13 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                         LOGGER.info(entity.getDisplayName() + " is falling 1 floor into " + coords.toString());
                         // Damage is determined by the depth of the basement, so a fall of 0
                         // elevation is correct in this case
-                        vPhaseReport.addAll(gameManager.doEntityFall(entity, coords, 0, Compute.d6(), psr, true, false));
+                        vPhaseReport.addAll(gameManager.doEntityFall(entity,
+                              coords,
+                              0,
+                              Compute.d6(),
+                              psr,
+                              true,
+                              false));
                         runningCFTotal -= cfDamage;
                         break;
                 }
@@ -350,8 +371,8 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      * clients.
      *
      * @param bldg        the Building that has collapsed.
-     * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entitys
-     *                    at that position. This value should not be null.
+     * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entitys at
+     *                    that position. This value should not be null.
      * @param coords      The Coords of the building hex that has collapsed
      * @param collapseAll A boolean indicating whether or not this collapse of a hex should be able to collapse the
      *                    whole building
@@ -417,7 +438,10 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                 // units trapped in a basement under a collapsing building are
                 // destroyed
                 if (floor < 0) {
-                    vPhaseReport.addAll(gameManager.destroyEntity(entity, "Crushed under building rubble", false, false));
+                    vPhaseReport.addAll(gameManager.destroyEntity(entity,
+                          "Crushed under building rubble",
+                          false,
+                          false));
                 }
 
                 // Ignore units above the building / bridge.
@@ -433,7 +457,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
 
                 // Calculate collapse damage for this entity.
                 int damage = (int) Math.floor(bldg.getDamageFromScale() *
-                                                    Math.ceil((phaseCF * (numFloors - floor)) / 10.0));
+                      Math.ceil((phaseCF * (numFloors - floor)) / 10.0));
 
                 // Infantry suffer more damage.
                 if (entity instanceof Infantry) {

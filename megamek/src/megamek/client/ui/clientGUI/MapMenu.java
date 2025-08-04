@@ -1,21 +1,35 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI;
 
@@ -42,17 +56,17 @@ import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.customMek.CustomMekDialog;
-import megamek.client.ui.dialogs.UnitEditorDialog;
 import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.client.ui.dialogs.NoteDialog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
+import megamek.client.ui.dialogs.UnitEditorDialog;
+import megamek.client.ui.dialogs.customMek.CustomMekDialog;
+import megamek.client.ui.entityreadout.LiveReadoutDialog;
 import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.client.ui.panels.phaseDisplay.PhysicalDisplay;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
-import megamek.client.ui.entityreadout.LiveReadoutDialog;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.BAVibroClawAttackAction;
@@ -104,17 +118,17 @@ public class MapMenu extends JPopupMenu {
 
     private boolean canSelectEntities() {
         return client.isMyTurn() &&
-                     ((currentPanel instanceof FiringDisplay) ||
-                            (currentPanel instanceof PhysicalDisplay) ||
-                            (currentPanel instanceof MovementDisplay) ||
-                            (currentPanel instanceof TargetingPhaseDisplay));
+              ((currentPanel instanceof FiringDisplay) ||
+                    (currentPanel instanceof PhysicalDisplay) ||
+                    (currentPanel instanceof MovementDisplay) ||
+                    (currentPanel instanceof TargetingPhaseDisplay));
     }
 
     private boolean canTargetEntities() {
         return client.isMyTurn() &&
-                     ((currentPanel instanceof FiringDisplay) ||
-                            (currentPanel instanceof PhysicalDisplay) ||
-                            (currentPanel instanceof TargetingPhaseDisplay));
+              ((currentPanel instanceof FiringDisplay) ||
+                    (currentPanel instanceof PhysicalDisplay) ||
+                    (currentPanel instanceof TargetingPhaseDisplay));
     }
 
     private boolean createMenu() {
@@ -327,11 +341,11 @@ public class MapMenu extends JPopupMenu {
         JMenu menu = new JMenu("Special Hex Display");
 
         SpecialHexDisplay note = game.getBoard(boardLocation.boardId())
-               .getSpecialHexDisplay(coords)
-               .stream()
-               .filter(shd -> shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE)
-               .filter(shd -> shd.getOwner().equals(client.getLocalPlayer()))
-               .findFirst().orElse(null);
+              .getSpecialHexDisplay(coords)
+              .stream()
+              .filter(shd -> shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE)
+              .filter(shd -> shd.getOwner().equals(client.getLocalPlayer()))
+              .findFirst().orElse(null);
 
         final SpecialHexDisplay finalNote = Objects.requireNonNullElseGet(note,
               () -> new SpecialHexDisplay(SpecialHexDisplay.Type.PLAYER_NOTE,
@@ -353,7 +367,7 @@ public class MapMenu extends JPopupMenu {
         if (note != null) {
             item = new JMenuItem(Messages.getString("NoteDialog.delete"));
             item.addActionListener(e ->
-                                         client.sendSpecialHexDisplayDelete(coords, boardLocation.boardId(), finalNote));
+                  client.sendSpecialHexDisplayDelete(coords, boardLocation.boardId(), finalNote));
         }
         menu.add(item);
 
@@ -543,11 +557,11 @@ public class MapMenu extends JPopupMenu {
         for (Entity entity : client.getGame().getPlayerEntities(bot, false)) {
             JMenuItem waypoint = new JMenuItem(entity.getDisplayName());
             waypoint.addActionListener(evt ->
-                client.sendChat(String.format("%s: aw : %s %s",
-                    bot.getName(),
-                    entity.getId() + "",
-                    coords.hexCode(board)
-                ))
+                  client.sendChat(String.format("%s: aw : %s %s",
+                        bot.getName(),
+                        entity.getId() + "",
+                        coords.hexCode(board)
+                  ))
             );
             setWaypointMenu.add(waypoint);
         }
@@ -556,11 +570,11 @@ public class MapMenu extends JPopupMenu {
         for (Entity entity : client.getGame().getPlayerEntities(bot, false)) {
             JMenuItem waypoint = new JMenuItem(entity.getDisplayName());
             waypoint.addActionListener(evt ->
-                client.sendChat(String.format("%s: sw : %s %s",
-                    bot.getName(),
-                    entity.getId() + "",
-                    coords.hexCode(board)
-                ))
+                  client.sendChat(String.format("%s: sw : %s %s",
+                        bot.getName(),
+                        entity.getId() + "",
+                        coords.hexCode(board)
+                  ))
             );
             addWaypointMenu.add(waypoint);
         }
@@ -925,8 +939,8 @@ public class MapMenu extends JPopupMenu {
             }
 
             if (game.getPlanetaryConditions().isRecklessConditions()
-                    && !board.isSpace()
-                    && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
+                  && !board.isSpace()
+                  && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butReckless"));
                 item.setActionCommand(MoveCommand.MOVE_RECKLESS.getCmd());
                 item.addActionListener(evt -> {
@@ -1015,8 +1029,8 @@ public class MapMenu extends JPopupMenu {
             }
 
             if (game.getPlanetaryConditions().isRecklessConditions()
-                    && !board.isSpace()
-                    && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
+                  && !board.isSpace()
+                  && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
                 item = new JMenuItem(Messages.getString("MovementDisplay.butReckless"));
                 item.setActionCommand(MoveCommand.MOVE_RECKLESS.getCmd());
                 item.addActionListener(evt -> {
@@ -1208,13 +1222,13 @@ public class MapMenu extends JPopupMenu {
             }
 
             if ((myEntity instanceof BipedMek) &&
-                      (!myEntity.isLocationBad(Mek.LOC_LARM) || !myEntity.isLocationBad(Mek.LOC_RARM))) {
+                  (!myEntity.isLocationBad(Mek.LOC_LARM) || !myEntity.isLocationBad(Mek.LOC_RARM))) {
                 menu.add(createPunchJMenuItem());
             }
 
             if ((myEntity instanceof BipedMek) &&
-                      !myEntity.isLocationBad(Mek.LOC_LARM) &&
-                      !myEntity.isLocationBad(Mek.LOC_RARM)) {
+                  !myEntity.isLocationBad(Mek.LOC_LARM) &&
+                  !myEntity.isLocationBad(Mek.LOC_RARM)) {
                 menu.add(createPushJMenuItem());
             }
 
@@ -1261,8 +1275,8 @@ public class MapMenu extends JPopupMenu {
             menu.add(createStandJMenuItem(false));
 
             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND) &&
-                      (myEntity.getWalkMP() > 2) &&
-                      (myEntity.moved == EntityMovementType.MOVE_NONE)) {
+                  (myEntity.getWalkMP() > 2) &&
+                  (myEntity.moved == EntityMovementType.MOVE_NONE)) {
                 menu.add(createStandJMenuItem(true));
             }
 
@@ -1356,21 +1370,21 @@ public class MapMenu extends JPopupMenu {
                   MoveCommand.MOVE_MODE_LEG,
                   currentMode == LandAirMek.CONV_MODE_MEK);
             item.setEnabled(currentMode == LandAirMek.CONV_MODE_MEK ||
-                                  ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_MEK));
+                  ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_MEK));
             menu.add(item);
             if (((LandAirMek) myEntity).getLAMType() == LandAirMek.LAM_STANDARD) {
                 item = createConvertMenuItem("MovementDisplay.moveModeAirMek",
                       MoveCommand.MOVE_MODE_VEE,
                       currentMode == LandAirMek.CONV_MODE_AIRMEK);
                 item.setEnabled(currentMode == LandAirMek.CONV_MODE_AIRMEK ||
-                                      ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_AIRMEK));
+                      ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_AIRMEK));
                 menu.add(item);
             }
             item = createConvertMenuItem("MovementDisplay.moveModeFighter",
                   MoveCommand.MOVE_MODE_AIR,
                   currentMode == LandAirMek.CONV_MODE_FIGHTER);
             item.setEnabled(currentMode == LandAirMek.CONV_MODE_FIGHTER ||
-                                  ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_FIGHTER));
+                  ((LandAirMek) myEntity).canConvertTo(currentMode, LandAirMek.CONV_MODE_FIGHTER));
             menu.add(item);
         }
         return menu;
@@ -1410,8 +1424,8 @@ public class MapMenu extends JPopupMenu {
         final boolean isFiringDisplay = (currentPanel instanceof FiringDisplay);
         final boolean isTargetingDisplay = (currentPanel instanceof TargetingPhaseDisplay);
         final boolean canStartFires = client.getGame()
-                                            .getOptions()
-                                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE);
+              .getOptions()
+              .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE);
 
         Player localPlayer = client.getLocalPlayer();
 
@@ -1429,7 +1443,7 @@ public class MapMenu extends JPopupMenu {
         if (isFiringDisplay && !board.isSpace() && !board.isLowAltitude()) {
             menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_CLEAR)));
             if (canStartFires
-                    && (h.hasVegetation() || h.containsTerrain(Terrains.FIELDS))) {
+                  && (h.hasVegetation() || h.containsTerrain(Terrains.FIELDS))) {
                 menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_IGNITE)));
             }
         }
@@ -1455,14 +1469,14 @@ public class MapMenu extends JPopupMenu {
                 menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_SCREEN)));
             } else {
                 if ((hasAmmoType(AmmoType.AmmoTypeEnum.LRM)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.LRM_IMP)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.MML))
-                        && (hasMunitionType(AmmoType.Munitions.M_FASCAM)
-                                || hasMunitionType(AmmoType.Munitions.M_THUNDER)
-                                || hasMunitionType(AmmoType.Munitions.M_THUNDER_ACTIVE)
-                                || hasMunitionType(AmmoType.Munitions.M_THUNDER_AUGMENTED)
-                                || hasMunitionType(AmmoType.Munitions.M_THUNDER_INFERNO)
-                                || hasMunitionType(AmmoType.Munitions.M_THUNDER_VIBRABOMB))) {
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.LRM_IMP)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.MML))
+                      && (hasMunitionType(AmmoType.Munitions.M_FASCAM)
+                      || hasMunitionType(AmmoType.Munitions.M_THUNDER)
+                      || hasMunitionType(AmmoType.Munitions.M_THUNDER_ACTIVE)
+                      || hasMunitionType(AmmoType.Munitions.M_THUNDER_AUGMENTED)
+                      || hasMunitionType(AmmoType.Munitions.M_THUNDER_INFERNO)
+                      || hasMunitionType(AmmoType.Munitions.M_THUNDER_VIBRABOMB))) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_MINEFIELD_DELIVER)));
                 }
 
@@ -1475,22 +1489,22 @@ public class MapMenu extends JPopupMenu {
                 }
 
                 if (hasWeaponFlag(WeaponType.F_DIVE_BOMB)
-                        || hasWeaponFlag(WeaponType.F_ALT_BOMB)) {
+                      || hasWeaponFlag(WeaponType.F_ALT_BOMB)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_AERO_BOMB)));
                 }
 
                 if (hasAmmoType(AmmoType.AmmoTypeEnum.ARROW_IV)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.SNIPER)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.CRUISE_MISSILE)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.ALAMO)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.KILLER_WHALE)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.LONG_TOM)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.THUMPER)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.BA_TUBE)) {
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.SNIPER)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.CRUISE_MISSILE)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.ALAMO)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.KILLER_WHALE)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.LONG_TOM)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.THUMPER)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.BA_TUBE)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
                 }
                 if (canStartFires && hasFireExtinguisher()
-                        && h.containsTerrain(Terrains.FIRE)) {
+                      && h.containsTerrain(Terrains.FIRE)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_EXTINGUISH)));
                 }
             }
@@ -1503,24 +1517,24 @@ public class MapMenu extends JPopupMenu {
         }
 
         if (isTargetingDisplay
-                && !board.isSpace()
-                && !board.isLowAltitude()
-                && (hasAmmoType(AmmoType.AmmoTypeEnum.ARROW_IV)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.SNIPER)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.CRUISE_MISSILE)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.ALAMO)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.KILLER_WHALE)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.LONG_TOM)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.THUMPER)
-                        || hasAmmoType(AmmoType.AmmoTypeEnum.BA_TUBE))) {
+              && !board.isSpace()
+              && !board.isLowAltitude()
+              && (hasAmmoType(AmmoType.AmmoTypeEnum.ARROW_IV)
+              || hasAmmoType(AmmoType.AmmoTypeEnum.SNIPER)
+              || hasAmmoType(AmmoType.AmmoTypeEnum.CRUISE_MISSILE)
+              || hasAmmoType(AmmoType.AmmoTypeEnum.ALAMO)
+              || hasAmmoType(AmmoType.AmmoTypeEnum.KILLER_WHALE)
+              || hasAmmoType(AmmoType.AmmoTypeEnum.LONG_TOM)
+              || hasAmmoType(AmmoType.AmmoTypeEnum.THUMPER)
+              || hasAmmoType(AmmoType.AmmoTypeEnum.BA_TUBE))) {
             menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
         }
         // Check for adding TAG targeting buildings and hexes
         if (isTargetingDisplay && myEntity.hasTAG() && !board.isSpace()) {
             menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_TAG)));
             if (h.containsTerrain(Terrains.FUEL_TANK)
-                    || h.containsTerrain(Terrains.BUILDING)
-                    || h.containsTerrain(Terrains.BRIDGE)) {
+                  || h.containsTerrain(Terrains.BUILDING)
+                  || h.containsTerrain(Terrains.BRIDGE)) {
                 menu.add(targetMenuItem(new BuildingTarget(coords, board, Targetable.TYPE_BLDG_TAG)));
             }
         }
@@ -1709,8 +1723,8 @@ public class MapMenu extends JPopupMenu {
         if (myEntity instanceof Mek) {
             for (Mounted<?> mount : myEntity.getMisc()) {
                 if (mount.getType().hasFlag(MiscType.F_SHOULDER_TURRET) ||
-                          mount.getType().hasFlag(MiscType.F_HEAD_TURRET) ||
-                          mount.getType().hasFlag(MiscType.F_QUAD_TURRET)) {
+                      mount.getType().hasFlag(MiscType.F_HEAD_TURRET) ||
+                      mount.getType().hasFlag(MiscType.F_QUAD_TURRET)) {
                     menu.add(createRotateTurretJMenuItem((Mek) myEntity, mount));
                 }
             }
@@ -1728,10 +1742,10 @@ public class MapMenu extends JPopupMenu {
             // Only add the unit if it's actually visible
             // With double blind on, the game may have unseen units
             if ((en.isEnemyOf(myEntity) || friendlyFire) &&
-                      !en.equals(myEntity) &&
-                      !en.isSensorReturn(localPlayer) &&
-                      en.hasSeenEntity(localPlayer) &&
-                      !en.isHidden()) {
+                  !en.equals(myEntity) &&
+                  !en.isSensorReturn(localPlayer) &&
+                  en.hasSeenEntity(localPlayer) &&
+                  !en.isHidden()) {
                 list.add(en);
             }
         }

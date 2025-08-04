@@ -1,17 +1,38 @@
 /*
- * MegaMek -
+
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.util.ArrayList;
@@ -31,20 +52,20 @@ import megamek.common.options.OptionsConstants;
 import megamek.server.SmokeCloud;
 
 /**
- * Similar to the Compute class, this class contains various static methods for
- * common computations related to ECM.
+ * Similar to the Compute class, this class contains various static methods for common computations related to ECM.
  *
  * @author arlith
  */
 public class ComputeECM {
 
     /**
-     * This method checks to see if a line from a to b is affected by any ECM
-     * field (including Angel) of the enemy of ae
+     * This method checks to see if a line from a to b is affected by any ECM field (including Angel) of the enemy of
+     * ae
      *
      * @param ae
      * @param a
      * @param b
+     *
      * @return
      */
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b) {
@@ -52,28 +73,29 @@ public class ComputeECM {
     }
 
     /**
-     * This method checks to see if a line from a to b is affected by any ECM
-     * field (including Angel) of the enemy of ae
+     * This method checks to see if a line from a to b is affected by any ECM field (including Angel) of the enemy of
+     * ae
      *
      * @param ae
      * @param a
      * @param b
      * @param allECMInfo A collection of ECMInfo for each Entity in the Game.
+     *
      * @return
      */
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b,
-            List<ECMInfo> allECMInfo) {
+          List<ECMInfo> allECMInfo) {
         ECMInfo ecmInfo = getECMEffects(ae, a, b, true, allECMInfo);
         return (ecmInfo != null) && ecmInfo.isECM();
     }
 
     /**
-     * This method checks to see if a line from a to b is affected by an ECCM
-     * field of the enemy of ae.
+     * This method checks to see if a line from a to b is affected by an ECCM field of the enemy of ae.
      *
      * @param ae
      * @param a
      * @param b
+     *
      * @return
      */
     public static boolean isAffectedByECCM(Entity ae, Coords a, Coords b) {
@@ -82,45 +104,43 @@ public class ComputeECM {
     }
 
     /**
-     * This method checks to see if a line from a to b is affected by an Angel
-     * ECM field of the enemy of ae (ignoring other kinds of ECM).
+     * This method checks to see if a line from a to b is affected by an Angel ECM field of the enemy of ae (ignoring
+     * other kinds of ECM).
      *
      * @param ae
      * @param a
      * @param b
-     * @return count that shows if you are in an friendly ECCM field positive
-     * number means you are in an friendly ECCM field Negative number
-     * means you are in a enemy ECM field 0 means you are not effect by
-     * enemy or friendly fields.
+     *
+     * @return count that shows if you are in an friendly ECCM field positive number means you are in an friendly ECCM
+     *       field Negative number means you are in a enemy ECM field 0 means you are not effect by enemy or friendly
+     *       fields.
      */
     public static boolean isAffectedByAngelECM(Entity ae, Coords a, Coords b) {
         return isAffectedByAngelECM(ae, a, b, null);
     }
 
     /**
-     * This method checks to see if a line from a to b is affected by an Angel
-     * ECM field of the enemy of ae (ignoring other kinds of ECM).
+     * This method checks to see if a line from a to b is affected by an Angel ECM field of the enemy of ae (ignoring
+     * other kinds of ECM).
      *
      * @param ae
      * @param a
      * @param b
      * @param allECMInfo A collection of ECMInfo for each Entity in the Game.
-     * @return count that shows if you are in an friendly ECCM field positive
-     * number means you are in an friendly ECCM field Negative number
-     * means you are in a enemy ECM field 0 means you are not effect by
-     * enemy or friendly fields.
+     *
+     * @return count that shows if you are in an friendly ECCM field positive number means you are in an friendly ECCM
+     *       field Negative number means you are in a enemy ECM field 0 means you are not effect by enemy or friendly
+     *       fields.
      */
     public static boolean isAffectedByAngelECM(Entity ae, Coords a, Coords b,
-            List<ECMInfo> allECMInfo) {
+          List<ECMInfo> allECMInfo) {
         ECMInfo ecmInfo = getECMEffects(ae, a, b, true, allECMInfo);
         return (ecmInfo != null) && ecmInfo.isAngelECM();
     }
 
 
-
     /**
-     * Check for the total number of fighter/small craft ECM bubbles in space
-     * along the path from a to b
+     * Check for the total number of fighter/small craft ECM bubbles in space along the path from a to b
      */
     public static int getSmallCraftECM(Entity ae, Coords a, Coords b) {
         if (!ae.isSpaceborne()) {
@@ -144,12 +164,12 @@ public class ComputeECM {
                 }
             }
             if (ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)
-                && !ent.isLargeCraft()) {
+                  && !ent.isLargeCraft()) {
                 vEnemyECMCoords.addElement(entPos);
                 vEnemyECMRanges.addElement(ent.getECMRange());
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)
-                && !ent.isLargeCraft()) {
+                  && !ent.isLargeCraft()) {
                 vFriendlyECCMCoords.addElement(entPos);
                 vFriendlyECCMRanges.addElement(ent.getECMRange());
             }
@@ -209,7 +229,7 @@ public class ComputeECM {
                     if (nDist <= range) {
                         // still might need to check for right arc if using medium range
                         if ((range < 7)
-                                || ComputeArc.isInArc(friendlyBAPCoords, facing, c, Compute.ARC_NOSE)) {
+                              || ComputeArc.isInArc(friendlyBAPCoords, facing, c, Compute.ARC_NOSE)) {
                             eccmPresent = true;
                             break;
                         }
@@ -226,7 +246,7 @@ public class ComputeECM {
                 // and the prior need to have ECM
                 // becaue the advantage should go to the defender
                 if ((ecmStatus > 0) && !eccmPresent && (prevEcmStatus > 0)
-                    && !prevEccmPresent) {
+                      && !prevEccmPresent) {
                     totalECM++;
                 }
             }
@@ -239,8 +259,7 @@ public class ComputeECM {
     }
 
     /**
-     * Check for the total number of fighter/small craft ECM bubbles in space
-     * along the path from a to b
+     * Check for the total number of fighter/small craft ECM bubbles in space along the path from a to b
      */
     public static int getLargeCraftECM(Entity ae, Coords a, Coords b) {
         if (!ae.isSpaceborne()) {
@@ -264,12 +283,12 @@ public class ComputeECM {
                 }
             }
             if (ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)
-                && ent.isLargeCraft()) {
+                  && ent.isLargeCraft()) {
                 vEnemyECMCoords.addElement(entPos);
                 vEnemyECMRanges.addElement(ent.getECMRange());
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)
-                && !ent.isLargeCraft()) {
+                  && !ent.isLargeCraft()) {
                 vFriendlyECCMCoords.addElement(entPos);
                 vFriendlyECCMRanges.addElement(ent.getECMRange());
             }
@@ -328,8 +347,8 @@ public class ComputeECM {
                 if (nDist <= range) {
                     // still might need to check for right arc if using medium range
                     if ((range < 7)
-                        || ComputeArc.isInArc(friendlyBAPCoords, facing, c,
-                                           Compute.ARC_NOSE)) {
+                          || ComputeArc.isInArc(friendlyBAPCoords, facing, c,
+                          Compute.ARC_NOSE)) {
                         ecmStatus = ecmStatus - 2;
                     }
                 }
@@ -354,14 +373,15 @@ public class ComputeECM {
     }
 
     /**
-     * Go through each entity in the supplied list and calculate the information
-     * for any ECM and ECCM it has and return the collection of ECMInfos.
+     * Go through each entity in the supplied list and calculate the information for any ECM and ECCM it has and return
+     * the collection of ECMInfos.
      *
-     * @param entities  The list of entities to compute information for
-     * @return          An ECMInfo entry for each active ECM and ECCM fielded.
+     * @param entities The list of entities to compute information for
+     *
+     * @return An ECMInfo entry for each active ECM and ECCM fielded.
      */
     public static ArrayList<ECMInfo> computeAllEntitiesECMInfo(
-            List<Entity> entities) {
+          List<Entity> entities) {
         Comparator<ECMInfo> ecmComparator;
         ecmComparator = new ECMInfo.ECCMComparator();
 
@@ -409,7 +429,7 @@ public class ComputeECM {
 
         // If ECCM is on, we may have to remove some ECM that is negated
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)
-                && !allEccmInfo.isEmpty()) {
+              && !allEccmInfo.isEmpty()) {
             Iterator<ECMInfo> ecmIterator = allEcmInfo.iterator();
             Iterator<ECMInfo> eccmIterator;
             while (ecmIterator.hasNext()) {
@@ -435,7 +455,7 @@ public class ComputeECM {
                             // Remove ECM, but ECCM is unaffected
                             ecmIterator.remove();
                             ecmNegated = true;
-                        // Angel vs Angel
+                            // Angel vs Angel
                         } else if (eccmInfo.getAngelECCMStrength() >= ecmInfo.getAngelECMStrength()) {
                             // Remove the ECM and ECCM
                             ecmIterator.remove();
@@ -444,7 +464,7 @@ public class ComputeECM {
                             // Keep track of this eccm to remove it again later
                             eccmToRemove.add(eccmInfo);
                         } else if (!ecmInfo.isAngelECM()
-                                && (eccmInfo.getECCMStrength() >= ecmInfo.getECMStrength())) {
+                              && (eccmInfo.getECCMStrength() >= ecmInfo.getECMStrength())) {
                             // Remove the ECM and ECCM
                             ecmIterator.remove();
                             eccmIterator.remove();
@@ -467,11 +487,12 @@ public class ComputeECM {
      * @param ae
      * @param a
      * @param b
+     *
      * @return
      */
     public static @Nullable ECMInfo getECMEffects(Entity ae, @Nullable Coords a, @Nullable Coords b,
-                                                  boolean compareECM,
-                                                  @Nullable List<ECMInfo> allEcmInfo) {
+          boolean compareECM,
+          @Nullable List<ECMInfo> allEcmInfo) {
         Comparator<ECMInfo> ecmComparator;
         if (compareECM) {
             ecmComparator = new ECMComparator();
@@ -511,8 +532,8 @@ public class ComputeECM {
                 }
             }
             if ((worstECMEffects == null && affectedInfo != null)
-                    || (affectedInfo != null && ecmComparator.compare(
-                            affectedInfo, worstECMEffects) > 0)) {
+                  || (affectedInfo != null && ecmComparator.compare(
+                  affectedInfo, worstECMEffects) > 0)) {
                 worstECMEffects = affectedInfo;
             }
         }
@@ -524,9 +545,10 @@ public class ComputeECM {
      *
      * @param affectedEntity The entity to check.
      * @param allEcmInfo
+     *
      * @return
      */
-    public static @Nullable ECMInfo getFriendlyECMEffects(Entity affectedEntity, @Nullable List<ECMInfo> allEcmInfo){
+    public static @Nullable ECMInfo getFriendlyECMEffects(Entity affectedEntity, @Nullable List<ECMInfo> allEcmInfo) {
         if (allEcmInfo == null) {
             allEcmInfo = computeAllEntitiesECMInfo(affectedEntity.getGame().getEntitiesVector());
         }
@@ -556,7 +578,7 @@ public class ComputeECM {
         }
         Game game = entity.getGame();
         if ((game == null) || !game.hasBoardLocation(entity.getBoardLocation()) || entity.isShutDown()
-                  || entity.isStealthOn() || entity.isTransported()) {
+              || entity.isStealthOn() || entity.isTransported()) {
             return null;
         }
 
@@ -607,8 +629,8 @@ public class ComputeECM {
                 if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
                     range = 0;
                 } else if (m.getType().hasFlag(MiscType.F_EW_EQUIPMENT) ||
-                                 m.getType().hasFlag(MiscType.F_NOVA) ||
-                                 m.getType().hasFlag(MiscType.F_WATCHDOG)) {
+                      m.getType().hasFlag(MiscType.F_NOVA) ||
+                      m.getType().hasFlag(MiscType.F_WATCHDOG)) {
                     range = 3;
                 }
                 newInfo = new ECMInfo(range, 1, entity);
@@ -636,7 +658,7 @@ public class ComputeECM {
         }
         Game game = entity.getGame();
         if ((game == null) || !game.hasBoardLocation(entity.getBoardLocation()) || entity.isShutDown()
-                  || entity.isStealthOn() || entity.isTransported()) {
+              || entity.isStealthOn() || entity.isTransported()) {
             return null;
         }
         // E(C)CM operates differently in space (SO pg 110)
@@ -695,8 +717,8 @@ public class ComputeECM {
                 if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
                     range = 0;
                 } else if (m.getType().hasFlag(MiscType.F_EW_EQUIPMENT) ||
-                                 m.getType().hasFlag(MiscType.F_NOVA) ||
-                                 m.getType().hasFlag(MiscType.F_WATCHDOG)) {
+                      m.getType().hasFlag(MiscType.F_NOVA) ||
+                      m.getType().hasFlag(MiscType.F_WATCHDOG)) {
                     range = 3;
                 }
                 newInfo = new ECMInfo(range, 0, entity);
@@ -712,5 +734,5 @@ public class ComputeECM {
         return bestInfo;
     }
 
-    private ComputeECM() { }
+    private ComputeECM() {}
 }

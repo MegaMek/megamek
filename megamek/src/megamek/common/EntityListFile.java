@@ -140,8 +140,8 @@ public class EntityListFile {
             }
 
             if ((mount.getType() instanceof WeaponType) &&
-                      (mount.getType()).hasFlag(WeaponType.F_ONESHOT) &&
-                      (mount.getLinked() != null)) {
+                  (mount.getType()).hasFlag(WeaponType.F_ONESHOT) &&
+                  (mount.getLinked() != null)) {
                 output.append("\" " + MULParser.ATTR_MUNITION + "=\"");
                 output.append(mount.getLinked().getType().getInternalName());
             }
@@ -188,9 +188,9 @@ public class EntityListFile {
         }
 
         return output.append("\" " + MULParser.ATTR_IS_DESTROYED + "=\"")
-                     .append(isDestroyed)
-                     .append("\"/>\n")
-                     .toString();
+              .append(isDestroyed)
+              .append("\"/>\n")
+              .toString();
     }
 
     /**
@@ -229,9 +229,9 @@ public class EntityListFile {
 
             // Record destroyed locations.
             if (!(entity instanceof Aero) &&
-                      !entity.isConventionalInfantry() &&
-                      (entity.getOInternal(loc) != IArmorState.ARMOR_NA) &&
-                      (entity.getInternalForReal(loc) <= 0)) {
+                  !entity.isConventionalInfantry() &&
+                  (entity.getOInternal(loc) != IArmorState.ARMOR_NA) &&
+                  (entity.getInternalForReal(loc) <= 0)) {
                 isDestroyed = true;
             }
 
@@ -258,33 +258,33 @@ public class EntityListFile {
                 }
                 if (entity.getOArmor(loc) != currentArmor) {
                     thisLoc.append(indentStr(indentLvl + 1) +
-                                         '<' +
-                                         MULParser.ELE_ARMOR +
-                                         ' ' +
-                                         MULParser.ATTR_POINTS +
-                                         "=\"");
+                          '<' +
+                          MULParser.ELE_ARMOR +
+                          ' ' +
+                          MULParser.ATTR_POINTS +
+                          "=\"");
                     thisLoc.append(EntityListFile.formatArmor(entity.getArmorForReal(loc)));
                     thisLoc.append("\"/>\n");
                 }
 
                 if (entity.getOInternal(loc) != entity.getInternalForReal(loc)) {
                     thisLoc.append(indentStr(indentLvl + 1) +
-                                         '<' +
-                                         MULParser.ELE_ARMOR +
-                                         ' ' +
-                                         MULParser.ATTR_POINTS +
-                                         "=\"");
+                          '<' +
+                          MULParser.ELE_ARMOR +
+                          ' ' +
+                          MULParser.ATTR_POINTS +
+                          "=\"");
                     thisLoc.append(EntityListFile.formatArmor(entity.getInternalForReal(loc)));
                     thisLoc.append("\" " + MULParser.ATTR_TYPE + "=\"" + MULParser.VALUE_INTERNAL + "\"/>\n");
                 }
 
                 if (entity.hasRearArmor(loc) && (entity.getOArmor(loc, true) != entity.getArmorForReal(loc, true))) {
                     thisLoc.append(indentStr(indentLvl + 1) +
-                                         '<' +
-                                         MULParser.ELE_ARMOR +
-                                         ' ' +
-                                         MULParser.ATTR_POINTS +
-                                         "=\"");
+                          '<' +
+                          MULParser.ELE_ARMOR +
+                          ' ' +
+                          MULParser.ATTR_POINTS +
+                          "=\"");
                     thisLoc.append(EntityListFile.formatArmor(entity.getArmorForReal(loc, true)));
                     thisLoc.append("\" " + MULParser.ATTR_TYPE + "=\"" + MULParser.VALUE_REAR + "\"/>\n");
                 }
@@ -312,15 +312,15 @@ public class EntityListFile {
 
                     // Nope. Record missing actuators on Biped Meks.
                     if (isMek &&
-                              !entity.entityIsQuad() &&
-                              ((loc == Mek.LOC_RARM) || (loc == Mek.LOC_LARM)) &&
-                              ((loop == 2) || (loop == 3))) {
+                          !entity.entityIsQuad() &&
+                          ((loc == Mek.LOC_RARM) || (loc == Mek.LOC_LARM)) &&
+                          ((loop == 2) || (loop == 3))) {
                         thisLoc.append(indentStr(indentLvl + 1) +
-                                             '<' +
-                                             MULParser.ELE_SLOT +
-                                             ' ' +
-                                             MULParser.ATTR_INDEX +
-                                             "=\"");
+                              '<' +
+                              MULParser.ELE_SLOT +
+                              ' ' +
+                              MULParser.ATTR_INDEX +
+                              "=\"");
                         thisLoc.append(loop + 1);
                         thisLoc.append("\" " + MULParser.ATTR_TYPE + "=\"" + MULParser.VALUE_EMPTY + "\"/>\n");
                         haveSlot = true;
@@ -337,8 +337,8 @@ public class EntityListFile {
                     // if the "equipment" is a weapons bay,
                     // then let's make a note of it
                     if (entity.usesWeaponBays() &&
-                              (mount instanceof WeaponMounted) &&
-                              !((WeaponMounted) mount).getBayAmmo().isEmpty()) {
+                          (mount instanceof WeaponMounted) &&
+                          !((WeaponMounted) mount).getBayAmmo().isEmpty()) {
                         baySlotMap.put((WeaponMounted) slot.getMount(), loop + 1);
                     }
 
@@ -409,11 +409,11 @@ public class EntityListFile {
                         }
 
                         thisLoc.append(indentStr(indentLvl + 1) +
-                                             '<' +
-                                             MULParser.ELE_SLOT +
-                                             ' ' +
-                                             MULParser.ATTR_INDEX +
-                                             "=\"");
+                              '<' +
+                              MULParser.ELE_SLOT +
+                              ' ' +
+                              MULParser.ATTR_INDEX +
+                              "=\"");
                         thisLoc.append(loop + 1);
                         thisLoc.append("\" " + MULParser.ATTR_TYPE + "=\"");
                         thisLoc.append(mount.getType().getInternalName());
@@ -432,10 +432,10 @@ public class EntityListFile {
                     // Record the munition type of oneshot launchers
                     // and the ammunition shots of small SV weapons
                     else if (!isDestroyed &&
-                                   (mount != null) &&
-                                   (mount.getType() instanceof WeaponType) &&
-                                   ((mount.getType()).hasFlag(WeaponType.F_ONESHOT) ||
-                                          (entity.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)))) {
+                          (mount != null) &&
+                          (mount.getType() instanceof WeaponType) &&
+                          ((mount.getType()).hasFlag(WeaponType.F_ONESHOT) ||
+                                (entity.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)))) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
                               mount,
                               slot.isHit(),
@@ -465,11 +465,11 @@ public class EntityListFile {
             // Stabilizer hit
             if ((entity instanceof Tank) && ((Tank) entity).isStabiliserHit(loc)) {
                 thisLoc.append(indentStr(indentLvl + 1) +
-                                     '<' +
-                                     MULParser.ELE_STABILIZER +
-                                     ' ' +
-                                     MULParser.ATTR_IS_HIT +
-                                     "=\"true\"/>\n");
+                      '<' +
+                      MULParser.ELE_STABILIZER +
+                      ' ' +
+                      MULParser.ATTR_IS_HIT +
+                      "=\"true\"/>\n");
             }
 
             // ProtoMeks only have system slots,
@@ -916,7 +916,7 @@ public class EntityListFile {
             }
 
             if ((entity instanceof MekWarrior) &&
-                      !((MekWarrior) entity).getPickedUpByExternalIdAsString().equals("-1")) {
+                  !((MekWarrior) entity).getPickedUpByExternalIdAsString().equals("-1")) {
                 output.write("\" " + MULParser.ATTR_PICKUP_ID + "=\"");
                 output.write(((MekWarrior) entity).getPickedUpByExternalIdAsString());
             }
@@ -957,11 +957,11 @@ public class EntityListFile {
             final Crew crew = entity.getCrew();
             if (crew.getSlotCount() > 1) {
                 output.write(indentStr(indentLvl + 1) +
-                                   '<' +
-                                   MULParser.ELE_CREW +
-                                   ' ' +
-                                   MULParser.ATTR_CREWTYPE +
-                                   "=\"");
+                      '<' +
+                      MULParser.ELE_CREW +
+                      ' ' +
+                      MULParser.ATTR_CREWTYPE +
+                      "=\"");
                 output.write(crew.getCrewType().toString().toLowerCase());
                 writeCrewAttributes(output, entity, crew);
                 output.write("\">\n");
@@ -971,12 +971,12 @@ public class EntityListFile {
                         continue;
                     }
                     output.write(indentStr(indentLvl + 2) +
-                                       '<' +
-                                       MULParser.ELE_CREWMEMBER +
-                                       ' ' +
-                                       MULParser.ATTR_SLOT +
-                                       "=\"" +
-                                       pos);
+                          '<' +
+                          MULParser.ELE_CREWMEMBER +
+                          ' ' +
+                          MULParser.ATTR_SLOT +
+                          "=\"" +
+                          pos);
                     writePilotAttributes(output, entity, crew, pos);
                     output.write("\"/>\n");
                 }
@@ -1015,16 +1015,16 @@ public class EntityListFile {
                 BombLoadout extBombChoices = b.getExtBombChoices();
                 if (intBombChoices.getTotalBombs() > 0 || extBombChoices.getTotalBombs() > 0) {
                     output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_BOMBS + ">\n");
-                        for (Map.Entry<BombTypeEnum, Integer> entry : intBombChoices.entrySet()) {
-                            BombTypeEnum bombType = entry.getKey();
-                            int count = entry.getValue();
-                            if (count > 0) {
+                    for (Map.Entry<BombTypeEnum, Integer> entry : intBombChoices.entrySet()) {
+                        BombTypeEnum bombType = entry.getKey();
+                        int count = entry.getValue();
+                        if (count > 0) {
                             output.write(indentStr(indentLvl + 2) +
-                                               '<' +
-                                               MULParser.ELE_BOMB +
-                                               ' ' +
-                                               MULParser.ATTR_TYPE +
-                                               "=\"");
+                                  '<' +
+                                  MULParser.ELE_BOMB +
+                                  ' ' +
+                                  MULParser.ATTR_TYPE +
+                                  "=\"");
                             output.write(bombType.getInternalName());
                             output.write("\" " + MULParser.ATTR_LOAD + "=\"");
                             output.write(String.valueOf(count));
@@ -1037,11 +1037,11 @@ public class EntityListFile {
                         int count = entry.getValue();
                         if (count > 0) {
                             output.write(indentStr(indentLvl + 2) +
-                                               '<' +
-                                               MULParser.ELE_BOMB +
-                                               ' ' +
-                                               MULParser.ATTR_TYPE +
-                                               "=\"");
+                                  '<' +
+                                  MULParser.ELE_BOMB +
+                                  ' ' +
+                                  MULParser.ATTR_TYPE +
+                                  "=\"");
                             output.write(bombType.getInternalName());
                             output.write("\" " + MULParser.ATTR_LOAD + "=\"");
                             output.write(String.valueOf(count));
@@ -1054,11 +1054,11 @@ public class EntityListFile {
                             continue;
                         }
                         output.write(indentStr(indentLvl + 2) +
-                                           '<' +
-                                           MULParser.ELE_BOMB +
-                                           ' ' +
-                                           MULParser.ATTR_TYPE +
-                                           "=\"");
+                              '<' +
+                              MULParser.ELE_BOMB +
+                              ' ' +
+                              MULParser.ATTR_TYPE +
+                              "=\"");
                         output.write(m.getType().getShortName());
                         output.write("\" " + MULParser.ATTR_LOAD + "=\"");
                         output.write(String.valueOf(m.getBaseShotsLeft()));
@@ -1075,11 +1075,11 @@ public class EntityListFile {
 
                 // SI
                 output.write(indentStr(indentLvl + 1) +
-                                   '<' +
-                                   MULParser.ELE_SI +
-                                   ' ' +
-                                   MULParser.ATTR_INTEGRITY +
-                                   "=\"");
+                      '<' +
+                      MULParser.ELE_SI +
+                      ' ' +
+                      MULParser.ATTR_INTEGRITY +
+                      "=\"");
                 output.write(String.valueOf(a.getSI()));
                 output.write("\"/>\n");
 
@@ -1092,38 +1092,38 @@ public class EntityListFile {
                 if ((a instanceof Dropship) || (a instanceof Jumpship)) {
                     for (Bay nextbay : a.getTransportBays()) {
                         output.write(indentStr(indentLvl + 1) +
-                                           '<' +
-                                           MULParser.ELE_BAY +
-                                           ' ' +
-                                           MULParser.ATTR_INDEX +
-                                           "=\"" +
-                                           nextbay.getBayNumber() +
-                                           "\">\n");
+                              '<' +
+                              MULParser.ELE_BAY +
+                              ' ' +
+                              MULParser.ATTR_INDEX +
+                              "=\"" +
+                              nextbay.getBayNumber() +
+                              "\">\n");
                         output.write(indentStr(indentLvl + 2) +
-                                           '<' +
-                                           MULParser.ELE_BAYDAMAGE +
-                                           '>' +
-                                           nextbay.getBayDamage() +
-                                           "</" +
-                                           MULParser.ELE_BAYDAMAGE +
-                                           ">\n");
+                              '<' +
+                              MULParser.ELE_BAYDAMAGE +
+                              '>' +
+                              nextbay.getBayDamage() +
+                              "</" +
+                              MULParser.ELE_BAYDAMAGE +
+                              ">\n");
                         output.write(indentStr(indentLvl + 2) +
-                                           '<' +
-                                           MULParser.ELE_BAYDOORS +
-                                           '>' +
-                                           nextbay.getCurrentDoors() +
-                                           "</" +
-                                           MULParser.ELE_BAYDOORS +
-                                           ">\n");
+                              '<' +
+                              MULParser.ELE_BAYDOORS +
+                              '>' +
+                              nextbay.getCurrentDoors() +
+                              "</" +
+                              MULParser.ELE_BAYDOORS +
+                              ">\n");
                         for (Entity e : nextbay.getLoadedUnits()) {
                             output.write(indentStr(indentLvl + 2) +
-                                               '<' +
-                                               MULParser.ELE_LOADED +
-                                               '>' +
-                                               e.getId() +
-                                               "</" +
-                                               MULParser.ELE_LOADED +
-                                               ">\n");
+                                  '<' +
+                                  MULParser.ELE_LOADED +
+                                  '>' +
+                                  e.getId() +
+                                  "</" +
+                                  MULParser.ELE_LOADED +
+                                  ">\n");
                         }
                         output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_BAY + ">\n");
                     }
@@ -1134,21 +1134,21 @@ public class EntityListFile {
 
                     // kf integrity
                     output.write(indentStr(indentLvl + 1) +
-                                       '<' +
-                                       MULParser.ELE_KF +
-                                       ' ' +
-                                       MULParser.ATTR_INTEGRITY +
-                                       "=\"");
+                          '<' +
+                          MULParser.ELE_KF +
+                          ' ' +
+                          MULParser.ATTR_INTEGRITY +
+                          "=\"");
                     output.write(String.valueOf(j.getKFIntegrity()));
                     output.write("\"/>\n");
 
                     // kf sail integrity
                     output.write(indentStr(indentLvl + 1) +
-                                       '<' +
-                                       MULParser.ELE_SAIL +
-                                       ' ' +
-                                       MULParser.ATTR_INTEGRITY +
-                                       "=\"");
+                          '<' +
+                          MULParser.ELE_SAIL +
+                          ' ' +
+                          MULParser.ATTR_INTEGRITY +
+                          "=\"");
                     output.write(String.valueOf(j.getSailIntegrity()));
                     output.write("\"/>\n");
                 }
@@ -1176,9 +1176,9 @@ public class EntityListFile {
                         output.write(MULParser.ATTR_BA_MEA_MOUNT_LOC + "=\"" + m.getBaMountLoc() + "\" ");
                         if (manipulator != null) {
                             output.write(MULParser.ATTR_BA_MEA_TYPE_NAME +
-                                               "=\"" +
-                                               manipulator.getType().getInternalName() +
-                                               "\" ");
+                                  "=\"" +
+                                  manipulator.getType().getInternalName() +
+                                  "\" ");
                         }
                         output.write("/>\n");
                     } else if (m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
@@ -1212,11 +1212,11 @@ public class EntityListFile {
 
                     if ((C3iEntity.getC3UUIDAsString() != null) && C3iEntity.onSameC3NetworkAs(entity, true)) {
                         output.write(indentStr(indentLvl + 1) +
-                                           '<' +
-                                           MULParser.ELE_C3ILINK +
-                                           ' ' +
-                                           MULParser.ATTR_LINK +
-                                           "=\"");
+                              '<' +
+                              MULParser.ELE_C3ILINK +
+                              ' ' +
+                              MULParser.ATTR_LINK +
+                              "=\"");
                         output.write(C3iEntity.getC3UUIDAsString());
                         output.write("\"/>\n");
                     }
@@ -1233,11 +1233,11 @@ public class EntityListFile {
 
                     if ((NC3Entity.getC3UUIDAsString() != null) && NC3Entity.onSameC3NetworkAs(entity, true)) {
                         output.write(indentStr(indentLvl + 1) +
-                                           '<' +
-                                           MULParser.ELE_NC3LINK +
-                                           ' ' +
-                                           MULParser.ATTR_LINK +
-                                           "=\"");
+                              '<' +
+                              MULParser.ELE_NC3LINK +
+                              ' ' +
+                              MULParser.ATTR_LINK +
+                              "=\"");
                         output.write(NC3Entity.getC3UUIDAsString());
                         output.write("\"/>\n");
                     }
@@ -1248,23 +1248,23 @@ public class EntityListFile {
             // Record if this entity is transported by another
             if (entity.getTransportId() != Entity.NONE) {
                 output.write(indentStr(indentLvl + 1) +
-                                   '<' +
-                                   MULParser.ELE_CONVEYANCE +
-                                   ' ' +
-                                   MULParser.ATTR_ID +
-                                   "=\"" +
-                                   entity.getTransportId());
+                      '<' +
+                      MULParser.ELE_CONVEYANCE +
+                      ' ' +
+                      MULParser.ATTR_ID +
+                      "=\"" +
+                      entity.getTransportId());
                 output.write("\"/>\n");
             }
             // Record this unit's id number
             if (entity.getId() != Entity.NONE) {
                 output.write(indentStr(indentLvl + 1) +
-                                   '<' +
-                                   MULParser.ELE_GAME +
-                                   ' ' +
-                                   MULParser.ATTR_ID +
-                                   "=\"" +
-                                   entity.getId());
+                      '<' +
+                      MULParser.ELE_GAME +
+                      ' ' +
+                      MULParser.ATTR_ID +
+                      "=\"" +
+                      entity.getId());
                 output.write("\"/>\n");
             }
 
@@ -1284,12 +1284,12 @@ public class EntityListFile {
                 if (!aero.getEscapeCraft().isEmpty()) {
                     for (String id : aero.getEscapeCraft()) {
                         output.write(indentStr(indentLvl + 1) +
-                                           '<' +
-                                           MULParser.ELE_ESCCRAFT +
-                                           ' ' +
-                                           MULParser.ATTR_ID +
-                                           "=\"" +
-                                           id);
+                              '<' +
+                              MULParser.ELE_ESCCRAFT +
+                              ' ' +
+                              MULParser.ATTR_ID +
+                              "=\"" +
+                              id);
                         output.write("\"/>\n");
                     }
                 }
@@ -1300,17 +1300,17 @@ public class EntityListFile {
                     output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCCREW + ">\n");
                     for (String id : craft.getNOtherCrew().keySet()) {
                         output.write(indentStr(indentLvl + 2) +
-                                           '<' +
-                                           MULParser.ELE_SHIP +
-                                           ' ' +
-                                           MULParser.ATTR_ID +
-                                           "=\"" +
-                                           id +
-                                           '"' +
-                                           ' ' +
-                                           MULParser.ATTR_NUMBER +
-                                           "=\"" +
-                                           craft.getNOtherCrew().get(id));
+                              '<' +
+                              MULParser.ELE_SHIP +
+                              ' ' +
+                              MULParser.ATTR_ID +
+                              "=\"" +
+                              id +
+                              '"' +
+                              ' ' +
+                              MULParser.ATTR_NUMBER +
+                              "=\"" +
+                              craft.getNOtherCrew().get(id));
                         output.write("\"/>\n");
                     }
                     output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_ESCCREW + ">\n");
@@ -1320,17 +1320,17 @@ public class EntityListFile {
                     output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCPASS + ">\n");
                     for (String id : craft.getPassengers().keySet()) {
                         output.write(indentStr(indentLvl + 2) +
-                                           '<' +
-                                           MULParser.ELE_SHIP +
-                                           ' ' +
-                                           MULParser.ATTR_ID +
-                                           "=\"" +
-                                           id +
-                                           '"' +
-                                           ' ' +
-                                           MULParser.ATTR_NUMBER +
-                                           "=\"" +
-                                           craft.getPassengers().get(id));
+                              '<' +
+                              MULParser.ELE_SHIP +
+                              ' ' +
+                              MULParser.ATTR_ID +
+                              "=\"" +
+                              id +
+                              '"' +
+                              ' ' +
+                              MULParser.ATTR_NUMBER +
+                              "=\"" +
+                              craft.getPassengers().get(id));
                         output.write("\"/>\n");
                     }
                     output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_ESCPASS + ">\n");
@@ -1338,12 +1338,12 @@ public class EntityListFile {
                 if (craft instanceof EscapePods) {
                     // Original number of pods, used to set the strength of a group of pods
                     output.write(indentStr(indentLvl + 1) +
-                                       '<' +
-                                       MULParser.ELE_ORIG_PODS +
-                                       ' ' +
-                                       MULParser.ATTR_NUMBER +
-                                       "=\"" +
-                                       craft.getOSI());
+                          '<' +
+                          MULParser.ELE_ORIG_PODS +
+                          ' ' +
+                          MULParser.ATTR_NUMBER +
+                          "=\"" +
+                          craft.getOSI());
                     output.write("\"/>\n");
                 }
 
@@ -1352,17 +1352,17 @@ public class EntityListFile {
                     output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCCREW + ">\n");
                     for (String id : eCrew.getNOtherCrew().keySet()) {
                         output.write(indentStr(indentLvl + 2) +
-                                           '<' +
-                                           MULParser.ELE_SHIP +
-                                           ' ' +
-                                           MULParser.ATTR_ID +
-                                           "=\"" +
-                                           id +
-                                           '"' +
-                                           ' ' +
-                                           MULParser.ATTR_NUMBER +
-                                           "=\"" +
-                                           eCrew.getNOtherCrew().get(id));
+                              '<' +
+                              MULParser.ELE_SHIP +
+                              ' ' +
+                              MULParser.ATTR_ID +
+                              "=\"" +
+                              id +
+                              '"' +
+                              ' ' +
+                              MULParser.ATTR_NUMBER +
+                              "=\"" +
+                              eCrew.getNOtherCrew().get(id));
                         output.write("\"/>\n");
                     }
                     output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_ESCCREW + ">\n");
@@ -1372,29 +1372,29 @@ public class EntityListFile {
                     output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCPASS + ">\n");
                     for (String id : eCrew.getPassengers().keySet()) {
                         output.write(indentStr(indentLvl + 2) +
-                                           '<' +
-                                           MULParser.ELE_SHIP +
-                                           ' ' +
-                                           MULParser.ATTR_ID +
-                                           "=\"" +
-                                           id +
-                                           '"' +
-                                           ' ' +
-                                           MULParser.ATTR_NUMBER +
-                                           "=\"" +
-                                           eCrew.getPassengers().get(id));
+                              '<' +
+                              MULParser.ELE_SHIP +
+                              ' ' +
+                              MULParser.ATTR_ID +
+                              "=\"" +
+                              id +
+                              '"' +
+                              ' ' +
+                              MULParser.ATTR_NUMBER +
+                              "=\"" +
+                              eCrew.getPassengers().get(id));
                         output.write("\"/>\n");
                     }
                     output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_ESCPASS + ">\n");
                 }
                 // Original number of men
                 output.write(indentStr(indentLvl + 1) +
-                                   '<' +
-                                   MULParser.ELE_ORIG_MEN +
-                                   ' ' +
-                                   MULParser.ATTR_NUMBER +
-                                   "=\"" +
-                                   eCrew.getOInternal(Infantry.LOC_INFANTRY));
+                      '<' +
+                      MULParser.ELE_ORIG_MEN +
+                      ' ' +
+                      MULParser.ATTR_NUMBER +
+                      "=\"" +
+                      eCrew.getOInternal(Infantry.LOC_INFANTRY));
                 output.write("\"/>\n");
             }
 
@@ -1420,13 +1420,13 @@ public class EntityListFile {
 
 
                 output.write(indentStr(indentLvl + 1) +
-                                   '<' +
-                                   MULParser.ELE_CONSTRUCTION_DATA +
-                                   ' ' +
-                                   MULParser.ATTR_FILENAME +
-                                   "=\"" +
-                                   fileName +
-                                   "\">\n");
+                      '<' +
+                      MULParser.ELE_CONSTRUCTION_DATA +
+                      ' ' +
+                      MULParser.ATTR_FILENAME +
+                      "=\"" +
+                      fileName +
+                      "\">\n");
 
                 output.write(indentStr(indentLvl + 2));
 
@@ -1465,7 +1465,7 @@ public class EntityListFile {
         output.write("\" " + MULParser.ATTR_CLANPILOT + "=\"" + crew.isClanPilot(pos));
 
         if ((null != entity.getGame()) &&
-                  entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
+              entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
             output.write("\" " + MULParser.ATTR_GUNNERYL + "=\"");
             output.write(String.valueOf(crew.getGunneryL(pos)));
             output.write("\" " + MULParser.ATTR_GUNNERYM + "=\"");
@@ -1485,7 +1485,7 @@ public class EntityListFile {
                         entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
         }
         if ((null != entity.getGame()) &&
-                  entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
+              entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
             output.write("\" " + MULParser.ATTR_ARTILLERY + "=\"");
             output.write(String.valueOf(crew.getArtillery(pos)));
         }
@@ -1583,7 +1583,7 @@ public class EntityListFile {
                 output.write("\" " + MULParser.ATTR_AUTOEJECT + "=\"false");
             }
             if ((null != entity.getGame()) &&
-                      (entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION))) {
+                  (entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION))) {
                 if (((Mek) entity).isCondEjectAmmo()) {
                     output.write("\" " + MULParser.ATTR_CONDEJECTAMMO + "=\"true");
                 } else {

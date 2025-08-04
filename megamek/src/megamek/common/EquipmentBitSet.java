@@ -1,24 +1,44 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.util.BitSet;
 import java.util.Objects;
 
 /**
- * Represents a set of flags that can be used to represent the type and
- * special properties of the equipment.
+ * Represents a set of flags that can be used to represent the type and special properties of the equipment.
+ *
  * @author Luana Coppio
  */
 public class EquipmentBitSet {
@@ -38,6 +58,7 @@ public class EquipmentBitSet {
 
     /**
      * Copy constructor.
+     *
      * @param other the EquipmentBitSet to copy
      */
     public EquipmentBitSet(EquipmentBitSet other) {
@@ -46,7 +67,9 @@ public class EquipmentBitSet {
 
     /**
      * Returns true if the flag is set in the EquipmentBitSet.
+     *
      * @param flag the flag to check
+     *
      * @return true if the flag is set in the EquipmentBitSet
      */
     public boolean get(EquipmentFlag flag) {
@@ -61,6 +84,7 @@ public class EquipmentBitSet {
 
     /**
      * Clears the flag in the EquipmentBitSet.
+     *
      * @param flag the flag to clear
      */
     public void clear(EquipmentFlag flag) {
@@ -76,6 +100,7 @@ public class EquipmentBitSet {
 
     /**
      * Sets the flag in the EquipmentBitSet.
+     *
      * @param flag the flag to set
      */
     public void set(EquipmentFlag flag) {
@@ -85,7 +110,9 @@ public class EquipmentBitSet {
 
     /**
      * Returns a copy of this EquipmentBitSet with the flag set.
+     *
      * @param flag the flag to set
+     *
      * @return a copy of this EquipmentBitSet with the flag set
      */
     public EquipmentBitSet or(EquipmentFlag flag) {
@@ -96,7 +123,9 @@ public class EquipmentBitSet {
 
     /**
      * Returns a copy of this EquipmentBitSet with the flag cleared.
+     *
      * @param flag the flag to clear
+     *
      * @return a copy of this EquipmentBitSet with the flag cleared
      */
     public EquipmentBitSet andNot(EquipmentFlag flag) {
@@ -106,15 +135,13 @@ public class EquipmentBitSet {
     }
 
     /**
-     * Returns a new empty EquipmentBitSet and the flag set if it is set in this EquipmentBitSet.
-     * Example:
-     *  EquipmentBitSet a = new EquipmentBitSet();
-     *  a.set(F_HEAT_SINK);
-     *  a.set(F_DOUBLE_HEATSINK);
-     *  a.and(F_HEAT_SINK) // EquipmentBitSet with only F_HEAT_SINK set if it was originally set
-     *  a.has(F_HEAT_SINK); // true
-     *  a.has(F_DOUBLE_HEATSINK); // false
+     * Returns a new empty EquipmentBitSet and the flag set if it is set in this EquipmentBitSet. Example:
+     * EquipmentBitSet a = new EquipmentBitSet(); a.set(F_HEAT_SINK); a.set(F_DOUBLE_HEATSINK); a.and(F_HEAT_SINK) //
+     * EquipmentBitSet with only F_HEAT_SINK set if it was originally set a.has(F_HEAT_SINK); // true
+     * a.has(F_DOUBLE_HEATSINK); // false
+     *
      * @param flag the flag to check
+     *
      * @return a new empty EquipmentBitSet and the flag set if it is set in this EquipmentBitSet
      */
     public EquipmentBitSet and(EquipmentFlag flag) {
@@ -128,8 +155,8 @@ public class EquipmentBitSet {
     @Override
     public String toString() {
         return "EntityBitSet{" +
-            "bitSet=" + bitSet +
-            '}';
+              "bitSet=" + bitSet +
+              '}';
     }
 
     @Override

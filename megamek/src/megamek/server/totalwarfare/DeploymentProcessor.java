@@ -1,22 +1,39 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server.totalwarfare;
+
+import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.enums.BuildingType;
@@ -25,15 +42,13 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.logging.MMLogger;
 
-import java.util.Vector;
-
 /**
  * Handles unit deployment for the TWGameManager (not minefields or arty auto hexes)
  */
 public class DeploymentProcessor extends AbstractTWRuleHandler {
 
     private static final MMLogger LOGGER = MMLogger.create(DeploymentProcessor.class);
-    
+
     DeploymentProcessor(TWGameManager gameManager) {
         super(gameManager);
     }
@@ -78,13 +93,13 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         }
 
         boolean isLegalLocation = getGame().hasBoardLocation(coords, boardId)
-                && getGame().getBoard(boardId).isLegalDeployment(coords, entity);
+              && getGame().getBoard(boardId).isLegalDeployment(coords, entity);
 
         if ((turn == null) || !turn.isValid(connId, entity, getGame())
-                  // FIXME: The combination with assaultdrop and the assaultdrop check dont look right:
-                  || !(isLegalLocation
-                             || (assaultDrop && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP)
-                                       && entity.canAssaultDrop()))) {
+              // FIXME: The combination with assaultdrop and the assaultdrop check dont look right:
+              || !(isLegalLocation
+              || (assaultDrop && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP)
+              && entity.canAssaultDrop()))) {
 
             String msg = "server got invalid deployment packet from connection " + connId;
             msg += ", Entity: " + entity.getShortName();
@@ -135,8 +150,8 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
 
         if (!getGame().getPhase().isDeployment()) {
             String msg = "server received deployment unload packet " +
-                               "outside of deployment phase from connection " +
-                               connId;
+                  "outside of deployment phase from connection " +
+                  connId;
             msg += ", Entity: " + loader.getShortName();
             LOGGER.error(msg);
             return;
@@ -166,7 +181,8 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         // Now need to add a turn for the unloaded unit, to be taken immediately
         // Turn forced to be immediate to avoid messy turn ordering issues
         // (aka, how do we add the turn with individual initiative?)
-        getGame().insertTurnAfter(new SpecificEntityTurn(loaded.getOwnerId(), loaded.getId()), getGame().getTurnIndex() - 1);
+        getGame().insertTurnAfter(new SpecificEntityTurn(loaded.getOwnerId(), loaded.getId()),
+              getGame().getTurnIndex() - 1);
         // getGame().insertNextTurn(new GameTurn.SpecificEntityTurn(
         // loaded.getOwnerId(), loaded.getId()));
         gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
@@ -244,7 +260,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             entity.setAssaultDropInProgress(true);
         } else if ((entity instanceof VTOL) && (entity.getExternalUnits().isEmpty())) {
             while ((Compute.stackingViolation(getGame(), entity, coords, null, entity.climbMode()) != null) &&
-                         (entity.getElevation() <= 500)) {
+                  (entity.getElevation() <= 500)) {
                 entity.setElevation(entity.getElevation() + 1);
             }
         } else if (entity.isAero()) {
@@ -257,14 +273,16 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             if (!entity.isSpaceborne() && entity instanceof IAero a) {
                 // all spheroid craft should have velocity of zero in atmosphere
                 // regardless of what was entered
-                if (a.isSpheroid() || getGame().getPlanetaryConditions().getAtmosphere().isLighterThan(Atmosphere.THIN)) {
+                if (a.isSpheroid() || getGame().getPlanetaryConditions()
+                      .getAtmosphere()
+                      .isLighterThan(Atmosphere.THIN)) {
                     a.setCurrentVelocity(0);
                     a.setNextVelocity(0);
                 }
                 // make sure that entity is above the level of the hex if in
                 // atmosphere
                 if (getGame().getBoard(boardId).isLowAltitude()
-                          && (entity.getAltitude() <= hex.ceiling(true))) {
+                      && (entity.getAltitude() <= hex.ceiling(true))) {
                     // you can't be grounded on low atmosphere map
                     entity.setAltitude(hex.ceiling(true) + 1);
                 }
@@ -278,14 +296,16 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         }
 
         boolean wigeFlyover = entity.getMovementMode() == EntityMovementMode.WIGE &&
-                                    hex.containsTerrain(Terrains.BLDG_ELEV) &&
-                                    entity.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV);
+              hex.containsTerrain(Terrains.BLDG_ELEV) &&
+              entity.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV);
 
         // when first entering a building, we need to roll what type
         // of basement it has
         Building bldg = getGame().getBoard(boardId).getBuildingAt(entity.getPosition());
         if ((bldg != null)) {
-            if (bldg.rollBasement(entity.getPosition(), getGame().getBoard(boardId), gameManager.getMainPhaseReport())) {
+            if (bldg.rollBasement(entity.getPosition(),
+                  getGame().getBoard(boardId),
+                  gameManager.getMainPhaseReport())) {
                 gameManager.sendChangedHex(entity.getPosition(), boardId);
                 Vector<Building> buildings = new Vector<>();
                 buildings.add(bldg);

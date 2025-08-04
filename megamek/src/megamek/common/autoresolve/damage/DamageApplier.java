@@ -32,13 +32,17 @@
  */
 package megamek.common.autoresolve.damage;
 
-import megamek.common.*;
-import megamek.common.equipment.WeaponMounted;
-import megamek.logging.MMLogger;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import megamek.common.Compute;
+import megamek.common.Crew;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.HitData;
+import megamek.common.IEntityRemovalConditions;
+import megamek.logging.MMLogger;
 
 /**
  * @author Luana Coppio
@@ -50,18 +54,23 @@ public interface DamageApplier<E extends Entity> {
         public HitDetails withCrewDamage(int crewDamage) {
             return new HitDetails(hit, damageToApply, setArmorValueTo, hitInternal, crewDamage);
         }
+
         public HitDetails withInternalDamage(int internalDamage) {
             return new HitDetails(hit, damageToApply, setArmorValueTo, internalDamage, hitCrew);
         }
+
         public HitDetails killsCrew() {
             return new HitDetails(hit, damageToApply, setArmorValueTo, hitInternal, Crew.DEATH);
         }
+
         public HitDetails withIncreasedCrewDamage() {
             return new HitDetails(hit, damageToApply, setArmorValueTo, hitInternal, Math.min(hitCrew + 1, Crew.DEATH));
         }
+
         public HitDetails withDamage(int damage) {
             return new HitDetails(hit, damage, setArmorValueTo, hitInternal, hitCrew);
         }
+
         public HitDetails redirectedTo(HitData nextLocation) {
             return new HitDetails(nextLocation, damageToApply, setArmorValueTo, hitInternal, hitCrew);
         }
@@ -92,8 +101,7 @@ public interface DamageApplier<E extends Entity> {
     }
 
     /**
-     * Applies damage to the entity in clusters of a given size.
-     * This is USUALLY the function you will want to use.
+     * Applies damage to the entity in clusters of a given size. This is USUALLY the function you will want to use.
      *
      * @param dmg         the total damage to apply
      * @param clusterSize the size of the clusters
@@ -119,10 +127,9 @@ public interface DamageApplier<E extends Entity> {
 
 
     /**
-     * Applies damage to the entity in clusters of a given size.
-     * This is USUALLY the function you will want to use.
+     * Applies damage to the entity in clusters of a given size. This is USUALLY the function you will want to use.
      *
-     * @param hitDetails the details of the hit
+     * @param hitDetails  the details of the hit
      * @param clusterSize the size of the clusters
      */
     default int applyDamageInClusters(HitDetails hitDetails, int clusterSize) {
@@ -216,7 +223,10 @@ public interface DamageApplier<E extends Entity> {
         if (newInternalValue <= 0 && entityMustSurvive()) {
             newInternalValue = 1;
         }
-        logger.trace("[{}] Damage: {} - Internal at: {}", entity.getDisplayName(), hitDetails.damageToApply(), newInternalValue);
+        logger.trace("[{}] Damage: {} - Internal at: {}",
+              entity.getDisplayName(),
+              hitDetails.damageToApply(),
+              newInternalValue);
         if (newInternalValue > 0) {
             entity.setInternal(newInternalValue, hit);
             hitDetails = applyDamageToEquipments(hitDetails);
@@ -254,9 +264,10 @@ public interface DamageApplier<E extends Entity> {
     }
 
     /**
-     * Tries to damage the crew of the entity. If the crew is dead, the entity is marked as destroyed.
-     * The crew won't be damaged if they are already ejected or already dead.
-     * This function also does try to not outright kill the crew, as it has proven to be a bit too deadly.
+     * Tries to damage the crew of the entity. If the crew is dead, the entity is marked as destroyed. The crew won't be
+     * damaged if they are already ejected or already dead. This function also does try to not outright kill the crew,
+     * as it has proven to be a bit too deadly.
+     *
      * @param hitCrew the amount of hits to apply to ALL crew
      */
     default void tryToDamageCrew(int hitCrew) {
@@ -264,10 +275,11 @@ public interface DamageApplier<E extends Entity> {
     }
 
     /**
-     * Tries to damage the crew of the entity. If the crew is dead, the entity is marked as destroyed.
-     * The crew won't be damaged if they are already ejected or already dead.
-     * This function also does try to not outright kill the crew, as it has proven to be a bit too deadly.
-     * @param hitCrew the amount of hits to apply to ALL crew
+     * Tries to damage the crew of the entity. If the crew is dead, the entity is marked as destroyed. The crew won't be
+     * damaged if they are already ejected or already dead. This function also does try to not outright kill the crew,
+     * as it has proven to be a bit too deadly.
+     *
+     * @param hitCrew                 the amount of hits to apply to ALL crew
      * @param applyDamagePostEjection if the damage should be applied after the crew is ejected
      */
     default void tryToDamageCrew(int hitCrew, boolean applyDamagePostEjection) {
@@ -292,11 +304,13 @@ public interface DamageApplier<E extends Entity> {
     }
 
     /**
-     * Tries to not kill the crew. This function will set the amount of hits the crew will take.
-     * If the crew must survive, the crew will try to eject instead, and if they can't be
-     * ejected, it will set the total hits to DEATH - 1 (so... 5).
+     * Tries to not kill the crew. This function will set the amount of hits the crew will take. If the crew must
+     * survive, the crew will try to eject instead, and if they can't be ejected, it will set the total hits to DEATH -
+     * 1 (so... 5).
+     *
      * @param hitCrew the amount of hits to apply to ALL crew
-     * @param crew the crew to apply the hits to
+     * @param crew    the crew to apply the hits to
+     *
      * @return the amount of hits to apply to the crew
      */
     private Integer tryToNotKillTheCrew(int hitCrew, Crew crew) {
@@ -313,8 +327,9 @@ public interface DamageApplier<E extends Entity> {
 
     /**
      * Sets the entity as destroyed.
+     *
      * @param entity entity to be set as destroyed
-     * @param <E> the type of the entity
+     * @param <E>    the type of the entity
      */
     static <E extends Entity> void setEntityDestroyed(E entity) {
         entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_SALVAGEABLE);
@@ -325,8 +340,9 @@ public interface DamageApplier<E extends Entity> {
 
     /**
      * Sets the entity as devastated.
+     *
      * @param entity entity to be set as destroyed
-     * @param <E> the type of the entity
+     * @param <E>    the type of the entity
      */
     static <E extends Entity> void setEntityDevastated(E entity) {
         entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_DEVASTATED);
@@ -369,7 +385,10 @@ public interface DamageApplier<E extends Entity> {
             hit.setLocation(0);
         }
         entity().setArmor(currentArmorValue, hitDetails.hit());
-        logger.trace("[{}] Damage: {} - Armor at: {}", entity().getDisplayName(), hitDetails.damageToApply(), currentArmorValue);
+        logger.trace("[{}] Damage: {} - Armor at: {}",
+              entity().getDisplayName(),
+              hitDetails.damageToApply(),
+              currentArmorValue);
         return hitDetails;
     }
 
@@ -377,6 +396,7 @@ public interface DamageApplier<E extends Entity> {
      * Returns the hit data for the given hit location.
      *
      * @param hitLocation the hit location
+     *
      * @return the hit data
      */
     default HitData getHitData(int hitLocation) {
@@ -388,18 +408,19 @@ public interface DamageApplier<E extends Entity> {
      *
      * @param hit           the hit data
      * @param damageToApply the damage to apply
+     *
      * @return the hit details
      */
     default HitDetails setupHitDetails(HitData hit, int damageToApply) {
         int currentArmorValue = entity().getArmor(hit);
         int setArmorValueTo = currentArmorValue - damageToApply;
         int hitInternal = setArmorValueTo < 0 ?
-            switch (Compute.d6(2)) {
-                case 12 -> 3;
-                case 10, 11 -> 2;
-                case 8, 9 -> 1;
-                default -> 0;
-            } : 0 ;
+              switch (Compute.d6(2)) {
+                  case 12 -> 3;
+                  case 10, 11 -> 2;
+                  case 8, 9 -> 1;
+                  default -> 0;
+              } : 0;
         int hitCrew = hitInternal > 1 ? 1 : 0;
 
         return new HitDetails(hit, damageToApply, setArmorValueTo, hitInternal, hitCrew);

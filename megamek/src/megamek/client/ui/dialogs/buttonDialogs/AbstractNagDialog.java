@@ -32,13 +32,17 @@
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
+import java.awt.Container;
+import java.util.ResourceBundle;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+
 import megamek.MegaMek;
 import megamek.client.ui.enums.DialogResult;
-
-import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
-import java.awt.*;
-import java.util.ResourceBundle;
 
 public abstract class AbstractNagDialog extends AbstractButtonDialog {
     //region Variable Declarations
@@ -50,7 +54,7 @@ public abstract class AbstractNagDialog extends AbstractButtonDialog {
 
     //region Constructors
     protected AbstractNagDialog(final JFrame frame, final String name, final String title,
-                                final String description, final String key) {
+          final String description, final String key) {
         super(frame, name, title);
         this.key = key;
         setDescription(description.isBlank() ? description : resources.getString(description));
@@ -63,7 +67,7 @@ public abstract class AbstractNagDialog extends AbstractButtonDialog {
     }
 
     protected AbstractNagDialog(final JFrame frame, final ResourceBundle resources,
-                                final String name, final String title, final String key) {
+          final String name, final String title, final String key) {
         super(frame, true, resources, name, title);
         this.key = key;
     }
@@ -121,15 +125,15 @@ public abstract class AbstractNagDialog extends AbstractButtonDialog {
         panel.setLayout(layout);
 
         layout.setVerticalGroup(
-                layout.createSequentialGroup()
-                        .addComponent(txtDescription)
-                        .addComponent(getChkIgnore())
+              layout.createSequentialGroup()
+                    .addComponent(txtDescription)
+                    .addComponent(getChkIgnore())
         );
 
         layout.setHorizontalGroup(
-                layout.createParallelGroup(Alignment.LEADING)
-                        .addComponent(txtDescription)
-                        .addComponent(getChkIgnore())
+              layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(txtDescription)
+                    .addComponent(getChkIgnore())
         );
 
         return panel;

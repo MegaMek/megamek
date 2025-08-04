@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
@@ -34,7 +48,6 @@ import java.awt.event.MouseListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -61,13 +74,9 @@ import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
 /**
- * A JPanel that holds a table giving an overview of the current relative
- * strength
- * of the teams of the game. The table does not listen to game changes and
- * requires
- * being notified through {@link #refreshData()}. It accesses data through the
- * stored
- * ClientGUI.
+ * A JPanel that holds a table giving an overview of the current relative strength of the teams of the game. The table
+ * does not listen to game changes and requires being notified through {@link #refreshData()}. It accesses data through
+ * the stored ClientGUI.
  */
 public class TeamOverviewPanel extends JPanel {
 
@@ -86,8 +95,7 @@ public class TeamOverviewPanel extends JPanel {
     private int shownColumn;
 
     /**
-     * Constructs the team overview panel; the given ClientGUI is used to access the
-     * game data.
+     * Constructs the team overview panel; the given ClientGUI is used to access the game data.
      */
     public TeamOverviewPanel(ClientGUI cg) {
         clientGui = cg;
@@ -245,14 +253,14 @@ public class TeamOverviewPanel extends JPanel {
                         unitCounts[classIndex(entity)]++;
                         int mapType = clientGui.getClient().getMapSettings().getMedium();
                         if ((entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null)
-                                || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
-                                || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
-                                || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
-                                || (!entity.isDesignValid())) {
+                              || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
+                              || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
+                              || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
+                              || (!entity.isDesignValid())) {
                             unitCritical[classIndex(entity)] = true;
                         }
                         if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
-                                || ((entity.getC3Master() == null) && entity.hasC3S())) {
+                              || ((entity.getC3Master() == null) && entity.hasC3S())) {
                             unitWarnings[classIndex(entity)] = true;
                         }
                         if (entity.isHidden()) {
@@ -337,7 +345,7 @@ public class TeamOverviewPanel extends JPanel {
                 case TEAM:
                     boolean isEnemy = !teams.get(row).players().contains(clientGui.getClient().getLocalPlayer());
                     Color color = isEnemy ? GUIPreferences.getInstance().getEnemyUnitColor()
-                            : GUIPreferences.getInstance().getMyUnitColor();
+                          : GUIPreferences.getInstance().getMyUnitColor();
                     result.append(UIUtil.fontHTML(color) + "&nbsp;");
                     result.append(teamNames.get(row) + "</FONT>");
                     break;
@@ -395,16 +403,13 @@ public class TeamOverviewPanel extends JPanel {
         private boolean seeTeam(int row) {
             Game game = clientGui.getClient().getGame();
             return !game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)
-                    || game.getTeamForPlayer(clientGui.getClient().getLocalPlayer()).getId() == teamID.get(row);
+                  || game.getTeamForPlayer(clientGui.getClient().getLocalPlayer()).getId() == teamID.get(row);
         }
 
         /**
-         * Constructs and returns the string "(xx % of Team yy)". The provided values
-         * list
-         * is the data for the table column and the provided row is the row of current
-         * value.
-         * The reference value (that represents 100%) is taken from the selected row.
-         * Returns an empty string if nothing is selected or the base value is 0.
+         * Constructs and returns the string "(xx % of Team yy)". The provided values list is the data for the table
+         * column and the provided row is the row of current value. The reference value (that represents 100%) is taken
+         * from the selected row. Returns an empty string if nothing is selected or the base value is 0.
          */
         private String relativeValue(ArrayList<Long> values, int row) {
             int selectedRow = teamOverviewTable.getSelectedRow();
@@ -416,10 +421,10 @@ public class TeamOverviewPanel extends JPanel {
                     long percentage = 100 * values.get(row) / baseValue;
                     if (isDetached) {
                         return "<BR>" + UIUtil.fontHTML(UIUtil.uiGray())
-                                + String.format("(%d %%)", percentage);
+                              + String.format("(%d %%)", percentage);
                     } else {
                         return "<BR>" + UIUtil.fontHTML(UIUtil.uiGray())
-                                + String.format("(%d %% of %s)", percentage, selectedTeam);
+                              + String.format("(%d %% of %s)", percentage, selectedTeam);
                     }
                 }
             }
@@ -439,7 +444,7 @@ public class TeamOverviewPanel extends JPanel {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                boolean hasFocus, int row, int column) {
+              boolean hasFocus, int row, int column) {
 
             if (!(value instanceof List<?>)) {
                 return null;

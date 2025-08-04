@@ -24,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.customMek;
 
@@ -69,14 +74,14 @@ public class WeaponAmmoChoicePanel extends JPanel {
         this.setLayout(new GridBagLayout());
 
         if (weaponMounted.isOneShot() ||
-                  (entity.isSupportVehicle() && (weaponMounted.getType() instanceof InfantryWeapon))) {
+              (entity.isSupportVehicle() && (weaponMounted.getType() instanceof InfantryWeapon))) {
             // One-shot weapons can only access their own bin
             matchingAmmoBins.add(weaponMounted.getLinkedAmmo());
             // Fusillade and some small SV weapons are treated like one-shot weapons but may have a second munition
             // type available.
             if ((weaponMounted.getLinked().getLinked() != null) &&
-                      (((AmmoType) weaponMounted.getLinked().getType()).getMunitionType() !=
-                             (((AmmoType) weaponMounted.getLinked().getLinked().getType()).getMunitionType()))) {
+                  (((AmmoType) weaponMounted.getLinked().getType()).getMunitionType() !=
+                        (((AmmoType) weaponMounted.getLinked().getLinked().getType()).getMunitionType()))) {
                 matchingAmmoBins.add((AmmoMounted) weaponMounted.getLinked().getLinked());
             }
         } else {
@@ -111,7 +116,7 @@ public class WeaponAmmoChoicePanel extends JPanel {
         for (Mounted<?> ammoBin : matchingAmmoBins) {
             boolean isInternal = ammoBin.isOneShotAmmo() || ammoBin.isOneShot() || (ammoBin.getLocation() == -1);
             String prefix = isInternal ? "(Internal) " :
-                                  "(" + ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) + ") ";
+                  "(" + ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) + ") ";
             String ammoBinName = prefix + ammoBin.getName();
             comboAmmoBins.addItem(ammoBinName);
 
@@ -152,9 +157,9 @@ public class WeaponAmmoChoicePanel extends JPanel {
 
             comboAmmoBins.removeItemAt(index);
             comboAmmoBins.insertItemAt("(" +
-                                             ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) +
-                                             ") " +
-                                             selectedAmmoType.getName(), index);
+                  ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) +
+                  ") " +
+                  selectedAmmoType.getName(), index);
 
             if (currentBinIndex == index) {
                 comboAmmoBins.setSelectedIndex(index);

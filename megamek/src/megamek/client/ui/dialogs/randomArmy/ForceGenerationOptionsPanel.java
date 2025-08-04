@@ -1,16 +1,34 @@
 /*
- * MegaMek -
- * Copyright (C) 2016, 2020 - The MegaMek Team. All rights reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.randomArmy;
 
@@ -334,8 +352,8 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
         List<FactionRecord> recs = new ArrayList<>();
         for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
             if ((!fRec.isMinor() || chkShowMinor.isSelected()) &&
-                      !fRec.getKey().contains(".") &&
-                      fRec.isActiveInYear(ratGenYear)) {
+                  !fRec.getKey().contains(".") &&
+                  fRec.isActiveInYear(ratGenYear)) {
                 recs.add(fRec);
             }
         }
@@ -875,17 +893,17 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
                 return retVal;
             }
             return weightChecks.stream()
-                         .filter(AbstractButton::isSelected)
-                         .map(chk -> MathUtility.parseInt(chk.getName(), 0))
-                         .collect(Collectors.toList());
+                  .filter(AbstractButton::isSelected)
+                  .map(chk -> MathUtility.parseInt(chk.getName(), 0))
+                  .collect(Collectors.toList());
         }
 
         public List<MissionRole> getSelectedRoles() {
             return roleChecks.stream()
-                         .filter(AbstractButton::isSelected)
-                         .map(chk -> MissionRole.parseRole(chk.getName()))
-                         .filter(Objects::nonNull)
-                         .collect(Collectors.toList());
+                  .filter(AbstractButton::isSelected)
+                  .map(chk -> MissionRole.parseRole(chk.getName()))
+                  .filter(Objects::nonNull)
+                  .collect(Collectors.toList());
         }
 
         public int getRoleStrictness() {
@@ -901,9 +919,9 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
 
         public List<EntityMovementMode> getMotiveTypes() {
             return subtypeChecks.stream()
-                         .filter(AbstractButton::isSelected)
-                         .map(chk -> EntityMovementMode.parseFromString(chk.getName()))
-                         .collect(Collectors.toList());
+                  .filter(AbstractButton::isSelected)
+                  .map(chk -> EntityMovementMode.parseFromString(chk.getName()))
+                  .collect(Collectors.toList());
         }
     }
 
@@ -1014,14 +1032,14 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
 
             // Sort main types alphabetically, and subtypes alphabetically within the main.
             List<FormationType> formations = FormationType.getAllFormations()
-                                                   .stream()
-                                                   .filter(ft -> ft.isGround() == groundUnit)
-                                                   .toList();
+                  .stream()
+                  .filter(ft -> ft.isGround() == groundUnit)
+                  .toList();
             Map<String, Set<String>> formationGroups = formations.stream()
-                                                             .collect(Collectors.groupingBy(FormationType::getCategory,
-                                                                   TreeMap::new,
-                                                                   Collectors.mapping(FormationType::getName,
-                                                                         Collectors.toCollection(TreeSet::new))));
+                  .collect(Collectors.groupingBy(FormationType::getCategory,
+                        TreeMap::new,
+                        Collectors.mapping(FormationType::getName,
+                              Collectors.toCollection(TreeSet::new))));
 
             int rows = (formations.size() + 1) / 2;
 
@@ -1219,8 +1237,8 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
         public int getNetwork() {
             String networkOption = (String) cbNetwork.getSelectedItem();
             return (networkOptions.get(networkOption) != null) ?
-                         networkOptions.get((networkOption)) :
-                         ModelRecord.NETWORK_NONE;
+                  networkOptions.get((networkOption)) :
+                  ModelRecord.NETWORK_NONE;
         }
 
         private void showAnalysis() {

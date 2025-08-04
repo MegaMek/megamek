@@ -1,30 +1,47 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
 package megamek.client.bot.princess;
 
+import java.util.List;
+
 import megamek.client.bot.princess.FireControl.FireControlType;
-import megamek.common.*;
+import megamek.common.Coords;
+import megamek.common.EjectedCrew;
+import megamek.common.Entity;
+import megamek.common.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
-
-import java.util.List;
 
 public class InfantryPathRanker extends BasicPathRanker {
     private final static MMLogger logger = MMLogger.create(InfantryPathRanker.class);
@@ -37,7 +54,7 @@ public class InfantryPathRanker extends BasicPathRanker {
 
     @Override
     protected RankedPath rankPath(MovePath path, Game game, int maxRange, double fallTolerance,
-                                  List<Entity> enemies, Coords friendsCoords) {
+          List<Entity> enemies, Coords friendsCoords) {
         Entity movingUnit = path.getEntity();
         StringBuilder formula = new StringBuilder();
 
@@ -58,13 +75,13 @@ public class InfantryPathRanker extends BasicPathRanker {
 
             // Skip units not actually on the board.
             if (enemy.isOffBoard() || (enemy.getPosition() == null)
-                    || !game.getBoard().contains(enemy.getPosition())) {
+                  || !game.getBoard().contains(enemy.getPosition())) {
                 continue;
             }
 
             //skip broken enemies
             if (getOwner().getHonorUtil().isEnemyBroken(enemy.getId(),
-                 enemy.getOwnerId(), getOwner().getForcedWithdrawal())) {
+                  enemy.getOwnerId(), getOwner().getForcedWithdrawal())) {
                 continue;
             }
 
@@ -112,28 +129,44 @@ public class InfantryPathRanker extends BasicPathRanker {
         utility -= selfPreservationMod;
 
         formula.append("Calculation: {braveryMod [")
-            .append(LOG_DECIMAL.format(braveryMod)).append(" = ")
-            .append("((")
-            .append(LOG_DECIMAL.format(maximumDamageDone)).append(" * ")
-            .append(LOG_DECIMAL.format(braveryValue)).append(") - ")
-            .append(LOG_DECIMAL.format(expectedDamageTaken)).append("]")
-            .append(")] - aggressionMod [").append(aggressionMod).append(" = ")
-            .append(distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game)).append(" * ")
-            .append(getOwner().getBehaviorSettings().getHyperAggressionValue()).append("] - herdingMod [")
-            .append(herdingMod).append(" = ").append(distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game))
-            .append(" * ").append(getOwner().getBehaviorSettings().getHerdMentalityValue()).append("] + selfPreservationMod [")
-            .append(selfPreservationMod).append("]}");
+              .append(LOG_DECIMAL.format(braveryMod))
+              .append(" = ")
+              .append("((")
+              .append(LOG_DECIMAL.format(maximumDamageDone))
+              .append(" * ")
+              .append(LOG_DECIMAL.format(braveryValue))
+              .append(") - ")
+              .append(LOG_DECIMAL.format(expectedDamageTaken))
+              .append("]")
+              .append(")] - aggressionMod [")
+              .append(aggressionMod)
+              .append(" = ")
+              .append(distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game))
+              .append(" * ")
+              .append(getOwner().getBehaviorSettings().getHyperAggressionValue())
+              .append("] - herdingMod [")
+              .append(herdingMod)
+              .append(" = ")
+              .append(distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game))
+              .append(" * ")
+              .append(getOwner().getBehaviorSettings().getHerdMentalityValue())
+              .append("] + selfPreservationMod [")
+              .append(selfPreservationMod)
+              .append("]}");
 
-        logger.trace("Calculation: {braveryMod [{}] = (({} * {}) - {})] - aggressionMod [{}] = {} * {}] - herdingMod [{}] = {} * {}] + selfPreservationMod [{}]}",
-            LOG_DECIMAL.format(braveryMod),
-            LOG_DECIMAL.format(maximumDamageDone),
-            LOG_DECIMAL.format(braveryValue),
-            LOG_DECIMAL.format(expectedDamageTaken),
-            aggressionMod,
-            distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game), getOwner().getBehaviorSettings().getHyperAggressionValue(),
-            herdingMod,
-            distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game), getOwner().getBehaviorSettings().getHerdMentalityValue(),
-            selfPreservationMod);
+        logger.trace(
+              "Calculation: {braveryMod [{}] = (({} * {}) - {})] - aggressionMod [{}] = {} * {}] - herdingMod [{}] = {} * {}] + selfPreservationMod [{}]}",
+              LOG_DECIMAL.format(braveryMod),
+              LOG_DECIMAL.format(maximumDamageDone),
+              LOG_DECIMAL.format(braveryValue),
+              LOG_DECIMAL.format(expectedDamageTaken),
+              aggressionMod,
+              distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game),
+              getOwner().getBehaviorSettings().getHyperAggressionValue(),
+              herdingMod,
+              distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game),
+              getOwner().getBehaviorSettings().getHerdMentalityValue(),
+              selfPreservationMod);
 
         RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());
         rankedPath.setExpectedDamage(maximumDamageDone);
@@ -141,11 +174,12 @@ public class InfantryPathRanker extends BasicPathRanker {
     }
 
     @Override
-    EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean useExtremeRange, boolean useLOSRange) {
+    EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean useExtremeRange,
+          boolean useLOSRange) {
         //some preliminary calculations
         final double damageDiscount = 0.25;
         EntityEvaluationResponse returnResponse =
-                new EntityEvaluationResponse();
+              new EntityEvaluationResponse();
 
         //Aero's always move after other units, and would require an
         // entirely different evaluation
@@ -175,27 +209,27 @@ public class InfantryPathRanker extends BasicPathRanker {
         // for infantry, facing doesn't matter because you rotate for free
         // (unless you're using "dig in" rules, but we're not there yet)
         returnResponse.addToMyEstimatedDamage(
-                    ((InfantryFireControl) getFireControl(path.getEntity())).getMaxDamageAtRange(
-                        path,
-                        blankEnemyPath,
-                        range,
-                        useExtremeRange,
-                        useLOSRange) * damageDiscount);
+              ((InfantryFireControl) getFireControl(path.getEntity())).getMaxDamageAtRange(
+                    path,
+                    blankEnemyPath,
+                    range,
+                    useExtremeRange,
+                    useLOSRange) * damageDiscount);
 
         //in general if an enemy can end its position in range, it can hit me
         returnResponse.addToEstimatedEnemyDamage(
-                ((InfantryFireControl) getOwner().getFireControl(FireControlType.Infantry)).getMaxDamageAtRange(
-                        blankEnemyPath,
-                        path,
-                        range,
-                        useExtremeRange,
-                        useLOSRange) * damageDiscount);
+              ((InfantryFireControl) getOwner().getFireControl(FireControlType.Infantry)).getMaxDamageAtRange(
+                    blankEnemyPath,
+                    path,
+                    range,
+                    useExtremeRange,
+                    useLOSRange) * damageDiscount);
 
         //It is especially embarrassing if the enemy can move behind or flank me and then kick me
         if (canFlankAndKick(enemy, behind, leftFlank, rightFlank, myFacing)) {
             returnResponse.addToEstimatedEnemyDamage(
-                    Math.ceil(enemy.getWeight() / 5.0) *
-                    damageDiscount);
+                  Math.ceil(enemy.getWeight() / 5.0) *
+                        damageDiscount);
         }
         return returnResponse;
     }

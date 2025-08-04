@@ -32,13 +32,13 @@
  */
 package megamek.client.ui.entityreadout;
 
+import java.util.List;
+
 import megamek.client.ui.Messages;
 import megamek.common.EntityWeightClass;
 import megamek.common.Mounted;
 import megamek.common.Tank;
 import megamek.common.weapons.infantry.InfantryWeapon;
-
-import java.util.List;
 
 class TankReadout extends GeneralEntityReadout {
 

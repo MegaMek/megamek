@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -22,11 +43,9 @@ import megamek.common.enums.GamePhase;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
- * Weaponhandler for the Tight-Stream Electro-Magnetic Pulse (TSEMP) weapon,
- * which is found in FM:3145 pg 255.
+ * Weaponhandler for the Tight-Stream Electro-Magnetic Pulse (TSEMP) weapon, which is found in FM:3145 pg 255.
  *
- * @author arlith
- *         Created on Sept 5, 2005
+ * @author arlith Created on Sept 5, 2005
  */
 public class TSEMPHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = 5545991061428671743L;
@@ -60,7 +79,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if (roll.getIntValue() == 2  && weapon.is("TSEMP Repeating Cannon")) {
+        if (roll.getIntValue() == 2 && weapon.is("TSEMP Repeating Cannon")) {
             Report r = new Report(3162);
             r.subject = subjectId;
             weapon.setHit(true);
@@ -68,7 +87,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
             for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
                 CriticalSlot slot1 = ae.getCritical(wloc, i);
                 if ((slot1 == null) ||
-                        (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                      (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
                 Mounted<?> mounted = slot1.getMount();
@@ -102,7 +121,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
 
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
-            Building bldg, int hits, int nCluster, int bldgAbsorbs) {
+          Building bldg, int hits, int nCluster, int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
 
         // Increment the TSEMP hit counter
@@ -140,10 +159,10 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         }
 
         if (entityTarget.getEngine() != null &&
-                entityTarget.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) {
+              entityTarget.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) {
             tsempModifiers -= 1;
         } else if (entityTarget.getEngine() != null &&
-                entityTarget.getEngine().getEngineType() == Engine.STEAM) {
+              entityTarget.getEngine().getEngineType() == Engine.STEAM) {
             tsempModifiers -= 2;
         }
 
@@ -216,7 +235,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
                 // Check to see if the squad has been eliminated
                 if (entityTarget.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
                     vPhaseReport.addAll(gameManager.destroyEntity(entityTarget,
-                            "all troopers eliminated", false));
+                          "all troopers eliminated", false));
                 }
             } else {
                 entityTarget.setShutDown(true);

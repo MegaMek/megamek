@@ -1,18 +1,38 @@
 /*
- * MegaMek -
  * Copyright (C) 2000-2008 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client.ui.widget;
 
 import java.awt.Component;
@@ -22,7 +42,6 @@ import java.awt.MediaTracker;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-
 import javax.swing.ImageIcon;
 import javax.swing.border.EtchedBorder;
 
@@ -31,11 +50,10 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
 /**
- * A Border that has an image for each corner as well as images for the line
- * in between each corner (an edge). Edges can consist of multiple possible
- * icon and each possible icon can be tiled or static. The total amount of
- * space taken up by tiled icons is determined by subtracting the space of the
- * static icons and then evenly distributing it amongst each tiled icon.
+ * A Border that has an image for each corner as well as images for the line in between each corner (an edge). Edges can
+ * consist of multiple possible icon and each possible icon can be tiled or static. The total amount of space taken up
+ * by tiled icons is determined by subtracting the space of the static icons and then evenly distributing it amongst
+ * each tiled icon.
  *
  * @author arlith
  */
@@ -102,11 +120,9 @@ public class MegaMekBorder extends EtchedBorder {
     }
 
     /**
-     * Use the given skin specification to create ImageIcons for each of the
-     * files specified in the skin specification.
+     * Use the given skin specification to create ImageIcons for each of the files specified in the skin specification.
      *
-     * @param skin The skin specification that specifies which icons should be
-     *             used where
+     * @param skin The skin specification that specifies which icons should be used where
      */
     public void loadIcons(SkinSpecification skin) {
         // Assume they're loaded until something fails
@@ -210,29 +226,29 @@ public class MegaMekBorder extends EtchedBorder {
             if (iconsLoaded) {
                 insets = new Insets(0, 0, 0, 0);
                 insets.top = Math.min(tlCorner.getIconHeight(),
-                        trCorner.getIconHeight());
+                      trCorner.getIconHeight());
                 for (ImageIcon icon : topLine) {
                     insets.top = Math.min(insets.top,
-                            icon.getIconHeight());
+                          icon.getIconHeight());
                 }
                 insets.bottom = Math.min(blCorner.getIconHeight(),
-                        brCorner.getIconHeight());
+                      brCorner.getIconHeight());
                 for (ImageIcon icon : bottomLine) {
                     insets.bottom = Math.min(insets.bottom,
-                            icon.getIconHeight());
+                          icon.getIconHeight());
                 }
 
                 insets.left = Math.min(tlCorner.getIconWidth(),
-                        blCorner.getIconWidth());
+                      blCorner.getIconWidth());
                 for (ImageIcon icon : leftLine) {
                     insets.left = Math.min(insets.left,
-                            icon.getIconWidth());
+                          icon.getIconWidth());
                 }
                 insets.right = Math.min(trCorner.getIconWidth(),
-                        brCorner.getIconWidth());
+                      brCorner.getIconWidth());
                 for (ImageIcon icon : rightLine) {
                     insets.right = Math.min(insets.right,
-                            icon.getIconWidth());
+                          icon.getIconWidth());
                 }
             } else {
                 insets = new Insets(5, 5, 5, 5);
@@ -279,7 +295,7 @@ public class MegaMekBorder extends EtchedBorder {
         // Draw Bottom Right Corner Icon
         if (brCorner.getImageLoadStatus() == MediaTracker.COMPLETE) {
             paintCorner(c, g, width - brCorner.getIconWidth(),
-                    height - brCorner.getIconHeight(), brCorner);
+                  height - brCorner.getIconHeight(), brCorner);
         }
 
         // Compute the width and height for the border edges
@@ -288,21 +304,21 @@ public class MegaMekBorder extends EtchedBorder {
 
         // Paint top edge icons
         paintEdge(c, g, topLine, insets.left, 0, edgeWidth, insets.top, false,
-                topShouldTile, topNumTiledIcons, topStaticSpace);
+              topShouldTile, topNumTiledIcons, topStaticSpace);
 
         // Paint bottom edge icons
         paintEdge(c, g, bottomLine, insets.left, height - insets.bottom,
-                edgeWidth, insets.bottom, false, bottomShouldTile,
-                bottomNumTiledIcons, bottomStaticSpace);
+              edgeWidth, insets.bottom, false, bottomShouldTile,
+              bottomNumTiledIcons, bottomStaticSpace);
 
         // Paint left edge icons
         paintEdge(c, g, leftLine, 0, insets.top, insets.left, edgeHeight, true,
-                leftShouldTile, leftNumTiledIcons, leftStaticSpace);
+              leftShouldTile, leftNumTiledIcons, leftStaticSpace);
 
         // Paint right edge icons
         paintEdge(c, g, rightLine, width - insets.right, insets.top,
-                insets.right, edgeHeight, true, rightShouldTile,
-                rightNumTiledIcons, rightStaticSpace);
+              insets.right, edgeHeight, true, rightShouldTile,
+              rightNumTiledIcons, rightStaticSpace);
 
         g.translate(-x, -y);
     }
@@ -316,9 +332,8 @@ public class MegaMekBorder extends EtchedBorder {
     }
 
     /**
-     * Paints an edge for the border given a list of icons to paint. We need
-     * to know whether each icon should be tiled, how many tiled icons there
-     * are and how much space (width/height) needs to be filled by tiled icons.
+     * Paints an edge for the border given a list of icons to paint. We need to know whether each icon should be tiled,
+     * how many tiled icons there are and how much space (width/height) needs to be filled by tiled icons.
      *
      * @param c             The Component to pain on
      * @param g             The Graphics object to paint with
@@ -329,14 +344,14 @@ public class MegaMekBorder extends EtchedBorder {
      * @param staticSpace   How much space needs to be filled with tiledi cons
      */
     private void paintEdge(Component c, Graphics g, ArrayList<ImageIcon> icons,
-            int x, int y, int width, int height, boolean isLeftRight,
-            ArrayList<Boolean> shouldTile, int numTiledIcons, int staticSpace) {
+          int x, int y, int width, int height, boolean isLeftRight,
+          ArrayList<Boolean> shouldTile, int numTiledIcons, int staticSpace) {
         g = g.create(x, y, width, height);
 
         // Determine how much width/height a tiled icons will get to consume
         int tiledWidth = isLeftRight ? width : (int) ((width - staticSpace + 0.0) / numTiledIcons + 0.5);
         int tiledHeight = isLeftRight ? (int) ((height - staticSpace + 0.0)
-                / numTiledIcons + 0.5) : height;
+              / numTiledIcons + 0.5) : height;
 
         x = 0;
         y = 0;
@@ -376,13 +391,11 @@ public class MegaMekBorder extends EtchedBorder {
      * @param icon   The icon to paint
      * @param sX     The starting x location to paint the icon at
      * @param sY     The starting y location to paint the icon at
-     * @param width  The width of the space that needs to be filled with
-     *               the tiled icon
-     * @param height The height of the space that needs to be filled with
-     *               the tiled icon
+     * @param width  The width of the space that needs to be filled with the tiled icon
+     * @param height The height of the space that needs to be filled with the tiled icon
      */
     private void paintTiledIcon(Component c, Graphics g, ImageIcon icon,
-            int sX, int sY, int width, int height) {
+          int sX, int sY, int width, int height) {
         int tileW = icon.getIconWidth();
         int tileH = icon.getIconHeight();
         width += sX;

@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.loaders;
 
 import megamek.common.*;
@@ -99,7 +120,7 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
         // figure out structural integrity
         if (!dataFile.exists("structural_integrity")) {
             throw new EntityLoadingException(
-                    "Could not find structural integrity block.");
+                  "Could not find structural integrity block.");
         }
         a.setOSI(dataFile.getDataAsInt("structural_integrity")[0]);
 
@@ -127,7 +148,7 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
         // not done for small craft and up
         if (!dataFile.exists("SafeThrust")) {
             throw new EntityLoadingException(
-                    "Could not find Safe Thrust block.");
+                  "Could not find Safe Thrust block.");
         }
         a.setOriginalWalkMP(dataFile.getDataAsInt("SafeThrust")[0]);
 
@@ -192,7 +213,7 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
     }
 
     protected void loadEquipment(Dropship a, String sName, int nLoc)
-            throws EntityLoadingException {
+          throws EntityLoadingException {
         String[] saEquip1 = dataFile.getDataAsString(sName + " Equipment");
         String[] saEquip2 = new String[2];
         String[] saEquip;
@@ -258,7 +279,7 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
 
                 // check for ammo loadouts
                 if (equipName.contains(":") && (equipName.contains("Ammo")
-                        || equipName.contains("Pod"))) {
+                      || equipName.contains("Pod"))) {
                     // then split by the :
                     String[] temp;
                     temp = equipName.split(":");
@@ -283,7 +304,7 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
                             newmount = a.addEquipment(etype, nLoc, rearMount);
                         } else {
                             newmount = a.addEquipment(etype, nLoc, rearMount,
-                                    nAmmo);
+                                  nAmmo);
                         }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
@@ -303,7 +324,7 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
                                 newBay = false;
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(
-                                        ex.getMessage());
+                                      ex.getMessage());
                             }
                         }
 
@@ -312,12 +333,12 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
                             damage *= 10;
                         }
                         if (!newBay
-                                && ((bayDamage + damage) <= 700)
-                                && (bayMount.isRearMounted() == rearMount)
-                                && (weap.getAtClass() == ((WeaponType) bayMount
-                                        .getType()).getAtClass())
-                                && !(((WeaponType) bayMount.getType())
-                                        .isSubCapital() && !weap.isSubCapital())) {
+                              && ((bayDamage + damage) <= 700)
+                              && (bayMount.isRearMounted() == rearMount)
+                              && (weap.getAtClass() == ((WeaponType) bayMount
+                              .getType()).getAtClass())
+                              && !(((WeaponType) bayMount.getType())
+                              .isSubCapital() && !weap.isSubCapital())) {
                             // then we should add this weapon to the current bay
                             bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
                             bayDamage += damage;
@@ -326,7 +347,7 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
                                 bayMount = (WeaponMounted) a.addEquipment(weap.getBayType(), nLoc, rearMount);
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(
-                                        ex.getMessage());
+                                      ex.getMessage());
                             }
                             bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
                             // reset bay damage

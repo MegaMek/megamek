@@ -1,33 +1,45 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.util.EnumMap;
 
 /**
- * Enumeration of all 6 possible facings. It provides methods for translation
- * from old integer constants. Utility methods for turning left, right and
- * getting opposite direction are also provided.
- *
+ * Enumeration of all 6 possible facings. It provides methods for translation from old integer constants. Utility
+ * methods for turning left, right and getting opposite direction are also provided.
  *
  * @author Saginatio
- *
  */
 public enum Facing {
     N(0), NE(1), SE(2), S(3), SW(4), NW(5), NONE(6);
@@ -72,8 +84,7 @@ public enum Facing {
     }
 
     /**
-     * @return Facing in degrees, e.g. N.getAngle() returns 0, NE.getAngle() returns 30
-     *         and S.getAngle() returns 180.
+     * @return Facing in degrees, e.g. N.getAngle() returns 0, NE.getAngle() returns 30 and S.getAngle() returns 180.
      */
     public int getAngle() {
         if (this == NONE) {

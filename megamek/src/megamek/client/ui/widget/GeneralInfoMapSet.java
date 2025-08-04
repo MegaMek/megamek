@@ -1,18 +1,38 @@
 /*
-* Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org).
-* Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk).
-* Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk).
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 package megamek.client.ui.widget;
 
 import java.awt.Color;
@@ -21,7 +41,6 @@ import java.awt.FontMetrics;
 import java.awt.Image;
 import java.util.Enumeration;
 import java.util.Vector;
-
 import javax.swing.JComponent;
 
 import megamek.MMConstants;
@@ -45,21 +64,21 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
     private PMSimpleLabel mekTypeL0, statusL, pilotL, playerL,
-            teamL, weightL, bvL, mpL0, mpL1, mpL2, mpL3, mpL4, curMoveL, heatL,
-            movementTypeL, ejectL, elevationL, fuelL, curSensorsL,
-            visualRangeL;
+          teamL, weightL, bvL, mpL0, mpL1, mpL2, mpL3, mpL4, curMoveL, heatL,
+          movementTypeL, ejectL, elevationL, fuelL, curSensorsL,
+          visualRangeL;
     private PMSimpleLabel statusR, pilotR, playerR, teamR, weightR, bvR, mpR0,
-            mpR1, mpR2, mpR3, mpR4, curMoveR, heatR, movementTypeR, ejectR,
-            elevationR, fuelR, curSensorsR, visualRangeR;
+          mpR1, mpR2, mpR3, mpR4, curMoveR, heatR, movementTypeR, ejectR,
+          elevationR, fuelR, curSensorsR, visualRangeR;
     private PMMultiLineLabel quirksAndPartReps;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMekLargeFontSize());
+          GUIP.getUnitDisplayMekLargeFontSize());
     private static final Font FONT_TITLE = new Font(MMConstants.FONT_SANS_SERIF, Font.ITALIC,
-            GUIP.getUnitDisplayMekLargeFontSize());
+          GUIP.getUnitDisplayMekLargeFontSize());
     private int yCoord = 1;
 
     /**
@@ -95,21 +114,21 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         content.addArea(pilotL);
 
         pilotR = createLabel(Messages.getString("GeneralInfoMapSet.playerR"), fm,
-                pilotL.getSize().width + 10, getYCoord());
+              pilotL.getSize().width + 10, getYCoord());
         content.addArea(pilotR);
 
         playerL = createLabel(Messages.getString("GeneralInfoMapSet.playerL"), fm, 0, getNewYCoord());
         content.addArea(playerL);
 
         playerR = createLabel(Messages.getString("GeneralInfoMapSet.playerR"), fm,
-                playerL.getSize().width + 10, getYCoord());
+              playerL.getSize().width + 10, getYCoord());
         content.addArea(playerR);
 
         teamL = createLabel(Messages.getString("GeneralInfoMapSet.teamL"), fm, 0, getNewYCoord());
         content.addArea(teamL);
 
         teamR = createLabel(Messages.getString("GeneralInfoMapSet.teamR"), fm,
-                teamL.getSize().width + 10, getYCoord());
+              teamL.getSize().width + 10, getYCoord());
         content.addArea(teamR);
 
         statusL = createLabel(Messages.getString("GeneralInfoMapSet.statusL"), fm, 0, getNewYCoord());
@@ -182,31 +201,31 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         content.addArea(fuelR);
 
         movementTypeL = createLabel(Messages.getString("GeneralInfoMapSet.movementTypeL"), fm,
-                0, getNewYCoord());
+              0, getNewYCoord());
         content.addArea(movementTypeL);
         movementTypeR = createLabel(STAR3, fm, movementTypeL.getSize().width + 10, getYCoord());
         content.addArea(movementTypeR);
 
         ejectL = createLabel(Messages.getString("GeneralInfoMapSet.ejectL"), fm, 0,
-                getNewYCoord());
+              getNewYCoord());
         content.addArea(ejectL);
         ejectR = createLabel(STAR3, fm, ejectL.getSize().width + 10, getYCoord());
         content.addArea(ejectR);
 
         elevationL = createLabel(Messages.getString("GeneralInfoMapSet.elevationL"), fm, 0,
-                getNewYCoord());
+              getNewYCoord());
         content.addArea(elevationL);
         elevationR = createLabel(STAR3, fm, elevationL.getSize().width + 10, getYCoord());
         content.addArea(elevationR);
 
         curSensorsL = createLabel(Messages.getString("GeneralInfoMapSet.currentSensorsL"), fm,
-                0, getNewYCoord());
+              0, getNewYCoord());
         content.addArea(curSensorsL);
         curSensorsR = createLabel(STAR3, fm, curSensorsL.getSize().width + 10, getYCoord());
         content.addArea(curSensorsR);
 
         visualRangeL = createLabel(Messages.getString("GeneralInfoMapSet.visualRangeL"), fm,
-                0, getNewYCoord());
+              0, getNewYCoord());
         content.addArea(visualRangeL);
         visualRangeR = createLabel(STAR3, fm, visualRangeL.getSize().width + 10, getYCoord());
         content.addArea(visualRangeR);
@@ -229,12 +248,12 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             // If this is the case, we will just overwrite the name-overflow
             // area, since this info is more important.
             mekTypeL0.setString(Messages
-                    .getString("GeneralInfoMapSet.invalidDesign"));
+                  .getString("GeneralInfoMapSet.invalidDesign"));
             mekTypeL0.setVisible(true);
         }
 
         statusR.setString(en.isProne() ? Messages.getString("GeneralInfoMapSet.prone")
-                : Messages.getString("GeneralInfoMapSet.normal"));
+              : Messages.getString("GeneralInfoMapSet.normal"));
         if (en.getOwner() != null) {
             playerR.setString(en.getOwner().getName());
             if (en.getOwner().getTeam() == 0) {
@@ -251,7 +270,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             Crew c = en.getCrew();
             String pilotString = c.getDesc(c.getCurrentPilotIndex()) + " (";
             pilotString += c.getSkillsAsString(
-                    en.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
+                  en.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
             int crewAdvCount = c.countOptions(PilotOptions.LVL3_ADVANTAGES);
             if (crewAdvCount > 0) {
                 pilotString += ", +" + crewAdvCount;
@@ -287,12 +306,12 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         quirksAndPartReps.clear();
 
         if ((null != en.getGame())
-                && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+              && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             addOptionsToList(en.getQuirks(), quirksAndPartReps);
         }
 
         if ((null != en.getGame())
-                && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) {
+              && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) {
             // skip a line for readability
             quirksAndPartReps.addString("");
 
@@ -318,7 +337,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpR4.setVisible(true);
             mpR4.setString(Integer.toString(en.getActiveUMUCount()));
         } else if (en instanceof LandAirMek
-                && en.getMovementMode() == EntityMovementMode.WIGE) {
+              && en.getMovementMode() == EntityMovementMode.WIGE) {
             mpL4.setVisible(true);
             mpR4.setVisible(true);
             mpR1.setString(Integer.toString(((LandAirMek) en).getAirMekWalkMP()));
@@ -345,7 +364,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             }
         } else {
             curMoveR.setString(en.getMovementString(en.moved)
-                    + (en.moved == EntityMovementType.MOVE_NONE ? "" : " " + en.delta_distance));
+                  + (en.moved == EntityMovementType.MOVE_NONE ? "" : " " + en.delta_distance));
         }
 
         int heatCap = en.getHeatCapacity();
@@ -359,7 +378,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         heatR.color = GUIP.getColorForHeat(en.heat, Color.WHITE);
         heatR.setString(en.heat
-                + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")");
+              + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")");
 
         if (en instanceof Mek) {
             heatL.setVisible(true);
@@ -373,10 +392,10 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementTypeL"));
             movementTypeL.setVisible(true);
             movementTypeR.setString(Messages.getString("MovementType."
-                    + en.getMovementModeAsString()));
+                  + en.getMovementModeAsString()));
             movementTypeR.setVisible(true);
         } else if (en instanceof QuadVee || en instanceof LandAirMek
-                || (en instanceof Mek && ((Mek) en).hasTracks())) {
+              || (en instanceof Mek && ((Mek) en).hasTracks())) {
             movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementModeL"));
             if (en.getMovementMode() == EntityMovementMode.AERODYNE) {
                 // Show "Fighter/AirMek" instead of "Aerodyne/WiGE"
@@ -385,7 +404,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.WIGE"));
             } else {
                 movementTypeR.setString(Messages.getString("MovementType."
-                        + en.getMovementModeAsString()));
+                      + en.getMovementModeAsString()));
             }
             movementTypeL.setVisible(true);
             movementTypeR.setVisible(true);
@@ -394,7 +413,9 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             movementTypeR.setVisible(false);
         }
 
-        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+        if ((en.getGame() != null) && en.getGame()
+              .getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             curSensorsR.setVisible(true);
             visualRangeR.setVisible(true);
             curSensorsL.setVisible(true);
@@ -458,7 +479,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 mpL3.setVisible(false);
             }
         } else if (en instanceof Tank
-                || (en instanceof QuadVee && en.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) {
+              || (en instanceof QuadVee && en.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) {
             mpL0.setString(Messages.getString("GeneralInfoMapSet.mpL0"));
             mpL1.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL1"));
             mpL2.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL2"));
@@ -466,7 +487,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             fuelL.setVisible(false);
             fuelR.setVisible(false);
         } else if (en instanceof LandAirMek
-                && en.getMovementMode() == EntityMovementMode.WIGE) {
+              && en.getMovementMode() == EntityMovementMode.WIGE) {
             mpL0.setString(Messages.getString("GeneralInfoMapSet.mpL0"));
             mpL1.setString(Messages.getString("GeneralInfoMapSet.mpL1"));
             mpL2.setString(Messages.getString("GeneralInfoMapSet.mpL2"));
@@ -482,7 +503,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             fuelL.setVisible(false);
             fuelR.setVisible(false);
             if (en instanceof LandAirMek
-                    && en.getMovementMode() == EntityMovementMode.WIGE) {
+                  && en.getMovementMode() == EntityMovementMode.WIGE) {
                 mpL3.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL1"));
                 mpL4.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL2"));
             } else {
@@ -501,16 +522,17 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
     /**
      * Add all options from the given AbstractOptions instance into an array of PMSimpleLabel elements.
-     * @param optionsInstance AbstractOptions instance
+     *
+     * @param optionsInstance   AbstractOptions instance
      * @param quirksAndPartReps
      */
     public void addOptionsToList(IGameOptions optionsInstance, PMMultiLineLabel quirksAndPartReps) {
-        for (Enumeration<IOptionGroup> optionGroups = optionsInstance.getGroups(); optionGroups.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> optionGroups = optionsInstance.getGroups(); optionGroups.hasMoreElements(); ) {
             IOptionGroup group = optionGroups.nextElement();
             if (optionsInstance.count(group.getKey()) > 0) {
                 quirksAndPartReps.addString(group.getDisplayableName());
 
-                for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
+                for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
                     IOption option = options.nextElement();
                     if (option != null && option.booleanValue()) {
                         quirksAndPartReps.addString("  " + option.getDisplayableNameWithValue());
@@ -534,60 +556,60 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
         Image tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
-                udSpec.getBackgroundTile()).toString());
+              udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
-                udSpec.getTopLine()).toString());
+              udSpec.getTopLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
-                udSpec.getBottomLine()).toString());
+              udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
-                udSpec.getLeftLine()).toString());
+              udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
-                udSpec.getRightLine()).toString());
+              udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_LEFT;
+              | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
-                udSpec.getTopLeftCorner()).toString());
+              udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_LEFT;
+              | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
-                udSpec.getBottomLeftCorner()).toString());
+              udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_RIGHT;
+              | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
-                udSpec.getTopRightCorner()).toString());
+              udSpec.getTopRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_RIGHT;
+              | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
-                udSpec.getBottomRightCorner()).toString());
+              udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 

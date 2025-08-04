@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.actions;
 
 import megamek.common.*;
@@ -38,6 +59,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
      * @param game       The current {@link Game}
      * @param attackerId the attacking entity id
      * @param target     the attack's target
+     *
      * @return the to hit number for the current grapple attack
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
@@ -51,16 +73,14 @@ public class GrappleAttackAction extends PhysicalAttackAction {
      * @param attackerId
      * @param target
      * @param grappleSide
-     * @param isChainWhip
-     *                    Flag that determines if the attack is coming from a chain
-     *                    whip. If true, ignore illegal cases, as this comes from a
-     *                    bonus attack for a chain whip, and the attack should never
-     *                    be
-     *                    illegal. See TO pg 289.
+     * @param isChainWhip Flag that determines if the attack is coming from a chain whip. If true, ignore illegal cases,
+     *                    as this comes from a bonus attack for a chain whip, and the attack should never be illegal.
+     *                    See TO pg 289.
+     *
      * @return
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int grappleSide,
-            boolean isChainWhip) {
+          boolean isChainWhip) {
         final Entity ae = game.getEntity(attackerId);
 
         ToHitData toHit = checkIllegal(game, ae, target, grappleSide);
@@ -151,8 +171,8 @@ public class GrappleAttackAction extends PhysicalAttackAction {
             Mek attacker = (Mek) ae;
             Mek teMek = (te instanceof Mek) ? (Mek) te : null;
             if (attacker.hasActiveTSM(false)
-                    && ((teMek == null) || !teMek.hasActiveTSM(false)
-                            || teMek.hasActiveTSM(false))) {
+                  && ((teMek == null) || !teMek.hasActiveTSM(false)
+                  || teMek.hasActiveTSM(false))) {
                 toHit.addModifier(-2, "TSM Active Bonus");
             }
         }
@@ -182,6 +202,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
      * @param ae
      * @param target
      * @param grappleSide
+     *
      * @return
      */
     public static ToHitData checkIllegal(Game game, Entity ae, Targetable target, int grappleSide) {
@@ -206,12 +227,12 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+                  && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                  || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                  && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                  && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "A friendly unit can never be the target of a direct attack.");
+                      "A friendly unit can never be the target of a direct attack.");
             }
         }
 
@@ -224,14 +245,14 @@ public class GrappleAttackAction extends PhysicalAttackAction {
 
         // non-meks can't grapple or be grappled
         if ((!(ae instanceof BipedMek) && !(ae instanceof ProtoMek))
-                || (!(target instanceof Mek) && !(target instanceof ProtoMek))) {
+              || (!(target instanceof Mek) && !(target instanceof ProtoMek))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Only biped meks can grapple 'Meks and ProtoMeks");
+                  "Only biped meks can grapple 'Meks and ProtoMeks");
         }
 
         Entity te = (Entity) target;
         final boolean counter = ae.getGrappled() != Entity.NONE
-                && !ae.isGrappleAttacker();
+              && !ae.isGrappleAttacker();
 
         // check for no/minimal arms quirk
         if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
@@ -241,12 +262,12 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         // requires 2 good arms
         if (grappleSide == Entity.GRAPPLE_BOTH) {
             if (ae.isLocationBad(Mek.LOC_LARM)
-                    || ae.isLocationBad(Mek.LOC_RARM)) {
+                  || ae.isLocationBad(Mek.LOC_RARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
             }
 
             if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)
-                    || !ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)) {
+                  || !ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder missing/destroyed");
             }
         } else if (grappleSide == Entity.GRAPPLE_LEFT) {
@@ -305,7 +326,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         int atGr = ae.getGrappled();
         int deGr = te.getGrappled();
         if ((atGr != Entity.NONE || deGr != Entity.NONE)
-                && atGr != target.getId() && te.isGrappleAttacker()) {
+              && atGr != target.getId() && te.isGrappleAttacker()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Already grappled");
         }
 

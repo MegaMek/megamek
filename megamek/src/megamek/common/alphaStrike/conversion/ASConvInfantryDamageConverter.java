@@ -1,22 +1,43 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike.conversion;
+
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
+import static megamek.common.alphaStrike.BattleForceSUA.AC;
+import static megamek.common.alphaStrike.BattleForceSUA.AM;
+import static megamek.common.alphaStrike.BattleForceSUA.FLK;
+import static megamek.common.alphaStrike.BattleForceSUA.HT;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.Entity;
@@ -27,9 +48,6 @@ import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.InfantryAttack;
-
-import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 public class ASConvInfantryDamageConverter extends ASDamageConverter {
 
@@ -80,8 +98,8 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
         double damagePerTrooper = infantry.getDamagePerTrooper();
         double damage = damagePerTrooper * troopFactor / 10;
         report.addLine("Damage",
-                formatForReport(damagePerTrooper) + " x " + troopFactor + " / 10",
-                "= " + formatForReport(damage));
+              formatForReport(damagePerTrooper) + " x " + troopFactor + " / 10",
+              "= " + formatForReport(damage));
         return damage;
     }
 
@@ -102,13 +120,13 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
         for (Mounted<?> weapon : weaponsList) {
             WeaponType weaponType = (WeaponType) weapon.getType();
             if ((weaponType.hasFlag(WeaponType.F_FLAMER) || weaponType.hasFlag(WeaponType.F_PLASMA))
-                    && (ASLocationMapper.damageLocationMultiplier(entity, 0, weapon) > 0)) {
+                  && (ASLocationMapper.damageLocationMultiplier(entity, 0, weapon) > 0)) {
                 if (finalSDamage.damage < 1) {
                     report.addLine("Insufficient S damage", "No HT", "");
                 } else {
                     report.addLine(weapon.getName(), "(has heat damage)", "");
                     ASDamageVector finalHtValue = ASDamageVector.createNormRndDmg(Math.min(2, finalSDamage.damage), 0,
-                            0);
+                          0);
                     locations[0].setSUA(HT, finalHtValue); // don't set it directly, it gets overwritten
                     report.addLine("Final Ability", "", "HT" + finalHtValue);
                 }

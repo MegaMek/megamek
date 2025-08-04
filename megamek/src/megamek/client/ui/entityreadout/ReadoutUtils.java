@@ -32,19 +32,19 @@
  */
 package megamek.client.ui.entityreadout;
 
+import static megamek.client.ui.entityreadout.TableElement.JUSTIFIED_CENTER;
+import static megamek.client.ui.entityreadout.TableElement.JUSTIFIED_LEFT;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.bayweapons.BayWeapon;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static megamek.client.ui.entityreadout.TableElement.JUSTIFIED_CENTER;
-import static megamek.client.ui.entityreadout.TableElement.JUSTIFIED_LEFT;
 
 /**
  * This class contains some readout modules that are used by Entity types that are not in the same hierarchy (e.g.
@@ -153,7 +153,7 @@ final class ReadoutUtils {
         return result;
     }
 
-    private record BayInfo(int damagedWeapons, int totalHeat) { }
+    private record BayInfo(int damagedWeapons, int totalHeat) {}
 
     /**
      * Collects and returns the total weapon heat and the number of damaged weapons in the given bayWeapon.
@@ -300,5 +300,5 @@ final class ReadoutUtils {
         return transportsList;
     }
 
-    private ReadoutUtils() { }
+    private ReadoutUtils() {}
 }

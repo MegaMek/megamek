@@ -36,6 +36,7 @@ import megamek.ai.dataset.PlanetaryConditionsData.Field;
 
 /**
  * <p>Serializer for PlanetaryConditionsData to TSV format.</p>
+ *
  * @author Luana Coppio
  */
 public class PlanetaryConditionsDataSerializer

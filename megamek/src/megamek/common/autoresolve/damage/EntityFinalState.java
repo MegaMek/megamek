@@ -48,7 +48,8 @@ public enum EntityFinalState {
     final boolean noCrewDamage;
     final boolean entityMustBeDevastated;
 
-    EntityFinalState(boolean crewMustSurvive, boolean entityMustSurvive, boolean noCrewDamage, boolean entityMustBeDevastated) {
+    EntityFinalState(boolean crewMustSurvive, boolean entityMustSurvive, boolean noCrewDamage,
+          boolean entityMustBeDevastated) {
         this.crewMustSurvive = crewMustSurvive;
         this.entityMustSurvive = entityMustSurvive;
         this.noCrewDamage = noCrewDamage;

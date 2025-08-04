@@ -44,8 +44,6 @@ import javax.swing.*;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
-import megamek.client.ui.dialogs.buttonDialogs.BotConfigDialog;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.TipList;
 import megamek.client.ui.util.UIUtil.TipTextField;

@@ -1,28 +1,48 @@
 /*
- * MegaMek - Copyright (C) 2018, 2024 - The MegaMek Team
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
-import megamek.client.ui.Base64Image;
-import megamek.common.annotations.Nullable;
-
-import java.awt.*;
+import java.awt.Image;
 import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import megamek.client.ui.Base64Image;
+import megamek.common.annotations.Nullable;
 
 /**
  * Tracks fluff details for entities.
@@ -118,6 +138,7 @@ public class EntityFluff implements Serializable {
      * Retrieves the manufacturer of particular system component
      *
      * @param system The system component
+     *
      * @return The name of the manufacturer, or an empty string if it has not been set.
      */
     public String getSystemManufacturer(System system) {
@@ -127,10 +148,8 @@ public class EntityFluff implements Serializable {
     /**
      * Sets the name of the manufacturer of a particular system component.
      *
-     * @param system The system component
-     * @param manufacturer
-     *            The name of the manufacturer, or {@code null} or an empty string
-     *            to remove the entry.
+     * @param system       The system component
+     * @param manufacturer The name of the manufacturer, or {@code null} or an empty string to remove the entry.
      */
     public void setSystemManufacturer(System system, @Nullable String manufacturer) {
         if ((null != manufacturer) && !manufacturer.isBlank()) {
@@ -143,10 +162,9 @@ public class EntityFluff implements Serializable {
     /**
      * Retrieves the manufacturer of particular system component
      *
-     * @param system
-     *            The system component
-     * @return The name of the manufacturer, or an empty string if it has not been
-     *         set.
+     * @param system The system component
+     *
+     * @return The name of the manufacturer, or an empty string if it has not been set.
      */
     public String getSystemModel(System system) {
         return systemModels.getOrDefault(system, "");
@@ -155,11 +173,8 @@ public class EntityFluff implements Serializable {
     /**
      * Sets the model name of a particular system component.
      *
-     * @param system
-     *            The system component
-     * @param model
-     *            The model name, or {@code null} or an empty string to remove the
-     *            entry.
+     * @param system The system component
+     * @param model  The model name, or {@code null} or an empty string to remove the entry.
      */
     public void setSystemModel(System system, @Nullable String model) {
         if ((null != model) && !model.isBlank()) {
@@ -216,7 +231,7 @@ public class EntityFluff implements Serializable {
      */
     public List<String> createSystemManufacturersList() {
         return systemManufacturers.entrySet().stream().filter(e -> !e.getValue().isBlank())
-                .map(e -> e.getKey().toString() + ":" + e.getValue()).collect(Collectors.toList());
+              .map(e -> e.getKey().toString() + ":" + e.getValue()).collect(Collectors.toList());
     }
 
     /**
@@ -226,7 +241,7 @@ public class EntityFluff implements Serializable {
      */
     public List<String> createSystemModelsList() {
         return systemModels.entrySet().stream().filter(e -> !e.getValue().isBlank())
-                .map(e -> e.getKey().toString() + ":" + e.getValue()).collect(Collectors.toList());
+              .map(e -> e.getKey().toString() + ":" + e.getValue()).collect(Collectors.toList());
     }
 
     /** Sets the encoded form of the fluff image to the given String. */

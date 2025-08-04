@@ -37,6 +37,7 @@ import megamek.ai.dataset.UnitEnrichment.Field;
 /**
  * <p>Serializer for UnitEnrichment to TSV format.</p>
  * <p>Uses a flexible map-based approach with enum fields.</p>
+ *
  * @author Luana Coppio
  */
 public class UnitEnrichmentSerializer extends EntityDataSerializer<Field, UnitEnrichment> {

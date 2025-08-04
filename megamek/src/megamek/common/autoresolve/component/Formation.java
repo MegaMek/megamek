@@ -32,6 +32,9 @@
  */
 package megamek.common.autoresolve.component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.ai.utility.Memory;
 import megamek.common.Entity;
 import megamek.common.InitiativeRoll;
@@ -42,9 +45,6 @@ import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.autoresolve.acar.role.Role;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class Formation extends SBFFormation {
@@ -182,7 +182,7 @@ public class Formation extends SBFFormation {
             return entity.getDisplayName() + " ID:" + entity.getId();
         }
 
-        return getName()+ " ID:" + getId();
+        return getName() + " ID:" + getId();
     }
 
     public List<String> getElementNames() {
@@ -211,7 +211,9 @@ public class Formation extends SBFFormation {
     }
 
     /**
-     * Checks if the formation is crippled. Rules as described on Interstellar Operations BETA pg 242 - Crippling Damage
+     * Checks if the formation is crippled. Rules as described on Interstellar Operations BETA pg 242 - Crippling
+     * Damage
+     *
      * @return true in case it is crippled
      */
     public boolean isCrippled() {
@@ -230,9 +232,10 @@ public class Formation extends SBFFormation {
                     }
 
                     if (element.getCurrentArmor() == 0 &&
-                        ((element.getCurrentStructure() < (element.getFullStructure() / 2)) || (element.getFullStructure() == 1))) {
+                          ((element.getCurrentStructure() < (element.getFullStructure() / 2))
+                                || (element.getFullStructure() == 1))) {
                         if (!element.getASUnitType().equals(ASUnitType.CI)
-                            && !element.getASUnitType().equals(ASUnitType.BA)) {
+                              && !element.getASUnitType().equals(ASUnitType.BA)) {
                             lessThan20PercentOfArmorOrLess++;
                             totalUnitsWithArmor++;
                         }
@@ -243,15 +246,16 @@ public class Formation extends SBFFormation {
             }
 
             var halOfUnitsDoZeroDamage = halfOfUnitsDoZeroDamage >= Math.ceil(totalUnits / 2.0);
-            var halfOfUnitsHaveTwentyPercentOfArmorOrLess = lessThan20PercentOfArmorOrLess >= Math.ceil(totalUnitsWithArmor / 2.0);
+            var halfOfUnitsHaveTwentyPercentOfArmorOrLess = lessThan20PercentOfArmorOrLess >= Math.ceil(
+                  totalUnitsWithArmor / 2.0);
             var halfOfUnitsTookTwoTargetDamageOrMore = getUnits().stream()
-                .filter(u -> u.getTargetingCrits() >= 2)
-                .count() >= Math.ceil(getUnits().size() / 2.0);
+                  .filter(u -> u.getTargetingCrits() >= 2)
+                  .count() >= Math.ceil(getUnits().size() / 2.0);
 
             // Sets the latch for crippled variable so it is not recalculated
             unitIsCrippledLatch = halOfUnitsDoZeroDamage
-                || halfOfUnitsHaveTwentyPercentOfArmorOrLess
-                || halfOfUnitsTookTwoTargetDamageOrMore;
+                  || halfOfUnitsHaveTwentyPercentOfArmorOrLess
+                  || halfOfUnitsTookTwoTargetDamageOrMore;
         }
 
         return unitIsCrippledLatch;
@@ -259,7 +263,7 @@ public class Formation extends SBFFormation {
 
     public boolean hasDamageAtRange(ASRange range) {
         return getUnits().stream()
-            .anyMatch(u -> u.getCurrentDamage().getDamage(range).hasDamage());
+              .anyMatch(u -> u.getCurrentDamage().getDamage(range).hasDamage());
     }
 
     public void setStdDamage(ASDamageVector stdDamage) {
@@ -336,9 +340,29 @@ public class Formation extends SBFFormation {
 
     @Override
     public String toString() {
-        return "[Formation] " + getName() + ": " + getType() + "; SZ" + getSize() + "; TMM" + getTmm() + "; M" + getMovement()
-            + "; T" + getTactics() + "; M " + moraleStatus() + "; " + getPointValue() + "@" + getSkill() + "; " + getUnits().size() + " units"
-            + "; " + getSpecialAbilities().getSpecialsDisplayString(this);
+        return "[Formation] "
+              + getName()
+              + ": "
+              + getType()
+              + "; SZ"
+              + getSize()
+              + "; TMM"
+              + getTmm()
+              + "; M"
+              + getMovement()
+              + "; T"
+              + getTactics()
+              + "; M "
+              + moraleStatus()
+              + "; "
+              + getPointValue()
+              + "@"
+              + getSkill()
+              + "; "
+              + getUnits().size()
+              + " units"
+              + "; "
+              + getSpecialAbilities().getSpecialsDisplayString(this);
     }
 
 }

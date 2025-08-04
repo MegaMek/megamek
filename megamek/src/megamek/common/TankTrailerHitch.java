@@ -1,17 +1,37 @@
 /*
  * Copyright (c) 2002-2018 - Ben Mazur (bmazur@sev.org).
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.util.ArrayList;
@@ -53,17 +73,14 @@ public class TankTrailerHitch implements Transporter {
     private static final String HAVE_VACANCY_STRING = "One trailer";
 
     /**
-     * Get the <code>String</code> to report the presence (or lack thereof) of a
-     * towed trailer.
+     * Get the <code>String</code> to report the presence (or lack thereof) of a towed trailer.
      * <p>
      * Sub-classes are encouraged to override this method.
      *
-     * @param isLoaded
-     *            - a <code>boolean</code> that indicates a trailer is
-     *            currently loaded (if the value is <code>true</code>) or not
-     *            (if the value is <code>false</code>).
-     * @return a <code>String</code> describing the occupancy state of this
-     *         transporter.
+     * @param isLoaded - a <code>boolean</code> that indicates a trailer is currently loaded (if the value is
+     *                 <code>true</code>) or not (if the value is <code>false</code>).
+     *
+     * @return a <code>String</code> describing the occupancy state of this transporter.
      */
     protected String getVacancyString(boolean isLoaded) {
         if (isLoaded) {
@@ -80,14 +97,14 @@ public class TankTrailerHitch implements Transporter {
     }
 
     /**
-     * Determines if this object can accept the given unit. The unit may not be
-     * of the appropriate type or there may be no room for the unit.
+     * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
+     * no room for the unit.
      * <p>
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
+     * @param unit - the <code>Entity</code> to be loaded.
+     *
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
+     *       otherwise.
      */
     @Override
     public boolean canLoad(Entity unit) {
@@ -113,6 +130,7 @@ public class TankTrailerHitch implements Transporter {
      * Load the given unit.
      *
      * @param unit the <code>Entity</code> to be loaded.
+     *
      * @throws IllegalArgumentException If the unit can't be loaded
      */
     @Override
@@ -129,10 +147,9 @@ public class TankTrailerHitch implements Transporter {
     /**
      * Get a <code>List</code> of the units currently loaded into this payload.
      *
-     * @return A <code>Vector</code> of loaded <code>Entity</code> units. This
-     *         list will never be <code>null</code>, but it may be empty. The
-     *         returned <code>List</code> is independent from the under- lying
-     *         data structure; modifying one does not affect the other.
+     * @return A <code>Vector</code> of loaded <code>Entity</code> units. This list will never be <code>null</code>, but
+     *       it may be empty. The returned <code>List</code> is independent from the under- lying data structure;
+     *       modifying one does not affect the other.
      */
     @Override
     public final Vector<Entity> getLoadedUnits() {
@@ -151,10 +168,10 @@ public class TankTrailerHitch implements Transporter {
     /**
      * Unload the given unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be unloaded.
+     * @param unit - the <code>Entity</code> to be unloaded.
+     *
      * @return <code>true</code> if the unit was contained is loaded in this space,
-     * <code>false</code> otherwise.
+     *       <code>false</code> otherwise.
      */
     @Override
     public final boolean unload(Entity unit) {
@@ -176,6 +193,7 @@ public class TankTrailerHitch implements Transporter {
      * Sub-classes should override the <code>getVacancyString</code> method.
      *
      * @return A <code>String</code> meant for a human.
+     *
      * @see megamek.common.TankTrailerHitch#getUnusedString()
      */
     @Override
@@ -198,17 +216,14 @@ public class TankTrailerHitch implements Transporter {
     }
 
     /**
-     * Determine if transported units prevent a weapon in the given location
-     * from firing.
+     * Determine if transported units prevent a weapon in the given location from firing.
      *
-     * @param loc
-     *            - the <code>int</code> location attempting to fire.
-     * @param isRear
-     *            - a <code>boolean</code> value stating if the given location
-     *            is rear facing; if <code>false</code>, the location is front
-     *            facing.
+     * @param loc    - the <code>int</code> location attempting to fire.
+     * @param isRear - a <code>boolean</code> value stating if the given location is rear facing; if <code>false</code>,
+     *               the location is front facing.
+     *
      * @return <code>true</code> if a transported unit is in the way,
-     *         <code>false</code> if the weapon can fire.
+     *       <code>false</code> if the weapon can fire.
      */
     @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
@@ -217,21 +232,17 @@ public class TankTrailerHitch implements Transporter {
     }
 
     /**
-     * If a unit is being transported on the outside of the transporter, it can
-     * suffer damage when the transporter is hit by an attack. Currently, no
-     * more than one unit can be at any single location; that same unit can be
-     * "spread" over multiple locations.
+     * If a unit is being transported on the outside of the transporter, it can suffer damage when the transporter is
+     * hit by an attack. Currently, no more than one unit can be at any single location; that same unit can be "spread"
+     * over multiple locations.
      * <p>
      *
-     * @param loc
-     *            - the <code>int</code> location hit by attack.
-     * @param isRear
-     *            - a <code>boolean</code> value stating if the given location
-     *            is rear facing; if <code>false</code>, the location is front
-     *            facing.
-     * @return The <code>Entity</code> being transported on the outside at that
-     *         location. This value will be <code>null</code> if no unit is
-     *         transported on the outside at that location.
+     * @param loc    - the <code>int</code> location hit by attack.
+     * @param isRear - a <code>boolean</code> value stating if the given location is rear facing; if <code>false</code>,
+     *               the location is front facing.
+     *
+     * @return The <code>Entity</code> being transported on the outside at that location. This value will be
+     *       <code>null</code> if no unit is transported on the outside at that location.
      */
     @Override
     public final Entity getExteriorUnitAt(int loc, boolean isRear) {

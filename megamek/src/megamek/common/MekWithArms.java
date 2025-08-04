@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.util.ArrayList;
@@ -27,8 +42,8 @@ import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 
 /**
- * This class acts as a superclass to BipedMek and TripodMek to unify code that is shared between them, most of it arm-related as both have
- * two arms while QuadMeks have none.
+ * This class acts as a superclass to BipedMek and TripodMek to unify code that is shared between them, most of it
+ * arm-related as both have two arms while QuadMeks have none.
  */
 public abstract class MekWithArms extends Mek {
 
@@ -43,17 +58,21 @@ public abstract class MekWithArms extends Mek {
 
     private boolean hasAnyLowerArmOrHandActuator() {
         return hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) || hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)
-            || hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) || hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM);
+              || hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) || hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM);
     }
 
     @Override
     public List<Integer> getDefaultPickupLocations() {
         List<Integer> result = new ArrayList<>();
 
-        if (hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) && (getCarriedObject(Mek.LOC_LARM) == null) && !isLocationBad(Mek.LOC_LARM)) {
+        if (hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)
+              && (getCarriedObject(Mek.LOC_LARM) == null)
+              && !isLocationBad(Mek.LOC_LARM)) {
             result.add(Mek.LOC_LARM);
         }
-        if (hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) && (getCarriedObject(Mek.LOC_RARM) == null) && !isLocationBad(Mek.LOC_RARM)) {
+        if (hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM)
+              && (getCarriedObject(Mek.LOC_RARM) == null)
+              && !isLocationBad(Mek.LOC_RARM)) {
             result.add(Mek.LOC_RARM);
         }
 
@@ -85,15 +104,15 @@ public abstract class MekWithArms extends Mek {
         for (MiscMounted m : getMisc()) {
             MiscType type = m.getType();
             if (((m.getLocation() == Mek.LOC_LARM) || (m.getLocation() == Mek.LOC_RARM))
-                && type.isShield()
-                && !m.isInoperable()
-                && (getInternal(m.getLocation()) > 0)) {
+                  && type.isShield()
+                  && !m.isInoperable()
+                  && (getInternal(m.getLocation()) > 0)) {
                 for (int slot = 0; slot < getNumberOfCriticals(m.getLocation()); slot++) {
                     CriticalSlot cs = getCritical(m.getLocation(), slot);
                     if ((cs != null)
-                        && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT)
-                        && cs.getMount().equals(m) && !cs.isDestroyed()
-                        && !cs.isMissing()) {
+                          && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT)
+                          && cs.getMount().equals(m) && !cs.isDestroyed()
+                          && !cs.isMissing()) {
                         // when all crits of a shield are destroyed, it no longer hinders movement and stuff
                         return true;
                     }
@@ -106,8 +125,8 @@ public abstract class MekWithArms extends Mek {
     @Override
     public boolean canBrace() {
         return getCrew().isActive() && !isShutDown() && !isProne()
-            // needs to have at least one functional arm
-            && (!isLocationBad(Mek.LOC_RARM) || !isLocationBad(Mek.LOC_LARM));
+              // needs to have at least one functional arm
+              && (!isLocationBad(Mek.LOC_RARM) || !isLocationBad(Mek.LOC_LARM));
     }
 
     @Override
@@ -131,11 +150,11 @@ public abstract class MekWithArms extends Mek {
         boolean hasAES = false;
         for (MiscMounted mounted : getMisc()) {
             if ((mounted.getLocation() == location)
-                && mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM) && mounted.isOperable()) {
+                  && mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM) && mounted.isOperable()) {
                 hasAES = true;
             } // AES is destroyed therefore it cannot be used.
             else if ((mounted.getLocation() == location)
-                && mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+                  && mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
                 return false;
             }
         }
@@ -147,10 +166,10 @@ public abstract class MekWithArms extends Mek {
     public boolean hasRetractedBlade(int loc) {
         for (Mounted<?> m : getEquipment()) {
             if ((m.getLocation() == loc) && !m.isDestroyed() && !m.isBreached()
-                && (m.getType() instanceof MiscType)
-                && m.getType().hasFlag(MiscType.F_CLUB)
-                && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                && !m.curMode().equals("extended")) {
+                  && (m.getType() instanceof MiscType)
+                  && m.getType().hasFlag(MiscType.F_CLUB)
+                  && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                  && !m.curMode().equals("extended")) {
                 return true;
             }
         }
@@ -166,6 +185,7 @@ public abstract class MekWithArms extends Mek {
      * Returns true if this Mek has a vibroblade in the given location.
      *
      * @param location The location to check
+     *
      * @return boolean true if the Mek has a vibroblade in the location, false otherwise
      */
     public boolean hasVibrobladesInLocation(int location) {
@@ -213,8 +233,8 @@ public abstract class MekWithArms extends Mek {
             }
             EquipmentType type = mounted.getType();
             if ((type instanceof MiscType miscType) && miscType.isVibroblade()
-                && (mounted.curMode().equals("Active") || ignoreMode)
-                && mounted.isOperable()) {
+                  && (mounted.curMode().equals("Active") || ignoreMode)
+                  && mounted.isOperable()) {
                 if (miscType.hasSubType(MiscType.S_VIBRO_LARGE)) {
                     return 7;
                 } else if (miscType.hasSubType(MiscType.S_VIBRO_MEDIUM)) {
@@ -270,7 +290,7 @@ public abstract class MekWithArms extends Mek {
 
             Mounted<?> m = cs.getMount();
             if ((m instanceof MiscMounted miscMounted) && miscMounted.getType().isShield()
-                && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
+                  && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
                 return miscMounted.getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
         }
@@ -313,7 +333,7 @@ public abstract class MekWithArms extends Mek {
 
             Mounted<?> m = cs.getMount();
             if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield()
-                && m.curMode().equals(MiscType.S_PASSIVE_SHIELD)) {
+                  && m.curMode().equals(MiscType.S_PASSIVE_SHIELD)) {
                 return ((MiscMounted) m).getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
         }
@@ -344,13 +364,13 @@ public abstract class MekWithArms extends Mek {
 
             Mounted<?> m = cs.getMount();
             if ((m instanceof MiscMounted)
-                && ((MiscMounted) m).getType().isShield()
-                && (m.curMode().equals(MiscType.S_NO_SHIELD)
-                || isShutDown() ||
-                // if he has a shield and the mek is SD or pilot
-                // KOed then it goes to no defense mode
-                getCrew().isKoThisRound() || getCrew()
-                .isUnconscious())) {
+                  && ((MiscMounted) m).getType().isShield()
+                  && (m.curMode().equals(MiscType.S_NO_SHIELD)
+                  || isShutDown() ||
+                  // if he has a shield and the mek is SD or pilot
+                  // KOed then it goes to no defense mode
+                  getCrew().isKoThisRound() || getCrew()
+                  .isUnconscious())) {
                 return ((MiscMounted) m).getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
         }
@@ -360,7 +380,7 @@ public abstract class MekWithArms extends Mek {
     @Override
     public boolean canPickupGroundObject() {
         return hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) && (getCarriedObject(Mek.LOC_LARM) == null) ||
-            hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) && (getCarriedObject(Mek.LOC_RARM) == null);
+              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) && (getCarriedObject(Mek.LOC_RARM) == null);
     }
 
     @Override

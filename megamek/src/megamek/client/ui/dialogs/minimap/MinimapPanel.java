@@ -1,27 +1,45 @@
 /*
  * Copyright (c) 2002-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (c) 2021-2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.minimap;
 
-import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.*;
 import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.FACING_ARROW;
+import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STD_DESTROYED;
+import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_BASERECT;
+import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_CX;
+import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_DESTROYED;
+import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_SYMBOLSIZE;
 import static megamek.common.Terrains.*;
 
 import java.awt.*;
@@ -35,9 +53,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StreamTokenizer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
@@ -76,10 +100,8 @@ import megamek.utilities.GifWriter;
 import megamek.utilities.GifWriterThread;
 
 /**
- * Obviously, displays the map in scaled-down size.
- * TBD: -move the buttons from graphics to real Swing
- * buttons -clean up listenercode.. -initializecolors is fugly
- * -uses break-to-label -uses while-true
+ * Obviously, displays the map in scaled-down size. TBD: -move the buttons from graphics to real Swing buttons -clean up
+ * listenercode.. -initializecolors is fugly -uses break-to-label -uses while-true
  */
 public final class MinimapPanel extends JPanel implements IPreferenceChangeListener {
     private static final MMLogger logger = MMLogger.create(MinimapPanel.class);
@@ -121,8 +143,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
 
     /**
-     * The minimap zoom at which game summary images are saved regardless of the
-     * ingame minimap setting.
+     * The minimap zoom at which game summary images are saved regardless of the ingame minimap setting.
      */
     private static final int GAME_SUMMARY_ZOOM = 4;
 
@@ -155,8 +176,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     // if the container m_dialog is an instance of JDialog, it is 14. otherwise 0.
     private int buttonHeight = 0;
     /**
-     * Indicates if the minimap has been rolled up using the wide green button. Can
-     * only be true when in a dialog.
+     * Indicates if the minimap has been rolled up using the wide green button. Can only be true when in a dialog.
      */
     private boolean minimized = false;
     /** Stores the (non-minimized) height of the minimap when it is minimized. */
@@ -172,8 +192,10 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     private boolean paintBorders = GUIP.paintBorders();
     private Coords firstLOS;
     private Coords secondLOS;
-    private static final Set<Integer> removalReasons = Set.of(IEntityRemovalConditions.REMOVE_CAPTURED, IEntityRemovalConditions.REMOVE_SALVAGEABLE,
-    IEntityRemovalConditions.REMOVE_DEVASTATED, IEntityRemovalConditions.REMOVE_EJECTED);
+    private static final Set<Integer> removalReasons = Set.of(IEntityRemovalConditions.REMOVE_CAPTURED,
+          IEntityRemovalConditions.REMOVE_SALVAGEABLE,
+          IEntityRemovalConditions.REMOVE_DEVASTATED,
+          IEntityRemovalConditions.REMOVE_EJECTED);
     /** Signifies that the whole minimap must be repainted. */
     private boolean dirtyMap = true;
     /** Keeps track of portions of the minimap that must be repainted. */
@@ -210,16 +232,17 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     /**
-     * Returns a minimap image of the given board at the given zoom index. The
-     * game and boardview object will be used to display additional information.
+     * Returns a minimap image of the given board at the given zoom index. The game and boardview object will be used to
+     * display additional information.
      */
-    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, @Nullable File minimapTheme, int boardId) {
-       return getMinimapImage(game, bv, zoom, null, minimapTheme, Collections.emptyList(), boardId);
+    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, @Nullable File minimapTheme,
+          int boardId) {
+        return getMinimapImage(game, bv, zoom, null, minimapTheme, Collections.emptyList(), boardId);
     }
 
     /**
-     * Returns a minimap image of the given board at the given zoom index. The
-     * game and boardview object will be used to display additional information.
+     * Returns a minimap image of the given board at the given zoom index. The game and boardview object will be used to
+     * display additional information.
      */
     public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, IClientGUI clientGui,
           @Nullable File minimapTheme, List<Line> movePathLines, int boardId) {
@@ -243,14 +266,10 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     /**
-     * Creates a minimap panel. The only required parameter is a game that contains
-     * the board
-     * to display. When the dialog is not null, it is assumed that this minimap will
-     * be visible for a while and it will register itself to various objects
-     * as a listener to changes. When the dialog is null, it is assumed that the
-     * minimap is only
-     * used to create a snapshot image. When a boardview is given, the visible area
-     * is shown.
+     * Creates a minimap panel. The only required parameter is a game that contains the board to display. When the
+     * dialog is not null, it is assumed that this minimap will be visible for a while and it will register itself to
+     * various objects as a listener to changes. When the dialog is null, it is assumed that the minimap is only used to
+     * create a snapshot image. When a boardview is given, the visible area is shown.
      */
 
     public MinimapPanel(@Nullable MinimapDialog dlg, Game g, @Nullable BoardView bview, @Nullable IClientGUI cg,
@@ -275,8 +294,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     /**
-     * Registers the minimap as listener to the given game, board, boardview (that
-     * are not null).
+     * Registers the minimap as listener to the given game, board, boardview (that are not null).
      */
     private void initializeListeners() {
         game.addGameListener(new GameListenerAdapter() {
@@ -284,10 +302,10 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 if ((GUIP.getGameSummaryMinimap() || GUIP.getGifGameSummaryMinimap())
-                    && (e.getOldPhase().isDeployment() || e.getOldPhase().isMovement()
-                    || e.getOldPhase().isTargeting() || e.getOldPhase().isPremovement()
-                    || e.getOldPhase().isPrefiring() || e.getOldPhase().isFiring()
-                    || e.getOldPhase().isPhysical())) {
+                      && (e.getOldPhase().isDeployment() || e.getOldPhase().isMovement()
+                      || e.getOldPhase().isTargeting() || e.getOldPhase().isPremovement()
+                      || e.getOldPhase().isPrefiring() || e.getOldPhase().isFiring()
+                      || e.getOldPhase().isPhysical())) {
 
                     File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getUUIDString());
                     if (!dir.exists()) {
@@ -304,7 +322,8 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                         }
                         if (GUIP.getGifGameSummaryMinimap()) {
                             if (gifWriterThread == null || !gifWriterThread.isAlive()) {
-                                gifWriterThread = new GifWriterThread(new GifWriter(game.getUUIDString()), "GifWriterThread");
+                                gifWriterThread = new GifWriterThread(new GifWriter(game.getUUIDString()),
+                                      "GifWriterThread");
                                 gifWriterThread.start();
                             }
                             gifWriterThread.addFrame(image, 400);
@@ -326,7 +345,8 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                 if (e.getNewPhase().isDeployment() || e.getNewPhase().isLounge() || e.getNewPhase().isVictory()) {
                     movePathLines.clear();
                 } else {
-                    movePathLines.removeIf(line -> (line.round() + GUIP.getMovePathPersistenceOnMiniMap()) <= game.getCurrentRound());
+                    movePathLines.removeIf(line -> (line.round() + GUIP.getMovePathPersistenceOnMiniMap())
+                          <= game.getCurrentRound());
                 }
                 refreshMap();
             }
@@ -388,8 +408,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     /**
-     * Adds listeners to the dialog to manipulate the minimap if it has an
-     * assoicated dialog.
+     * Adds listeners to the dialog to manipulate the minimap if it has an assoicated dialog.
      */
     private void initializeDialog() {
         if (dialog != null) {
@@ -471,7 +490,8 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
             st.quoteChar('"');
             st.commentChar('#');
 
-            scan: while (true) {
+            scan:
+            while (true) {
                 switch (st.nextToken()) {
                     case StreamTokenizer.TT_EOF:
                     case StreamTokenizer.TT_EOL:
@@ -562,10 +582,10 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         topMargin = margin;
         leftMargin = margin;
         int requiredWidth = (board.getWidth() * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]))
-                + HEX_SIDE_BY_SIN30[zoom] + (2 * margin);
+              + HEX_SIDE_BY_SIN30[zoom] + (2 * margin);
         int requiredHeight = minimized ? BUTTON_HEIGHT
-                : (((2 * board.getHeight()) + 1)
-                        * HEX_SIDE_BY_COS30[zoom]) + (2 * margin) + buttonHeight;
+              : (((2 * board.getHeight()) + 1)
+              * HEX_SIDE_BY_COS30[zoom]) + (2 * margin) + buttonHeight;
 
         if (dialog != null) {
             setSize(new Dimension(requiredWidth, requiredHeight));
@@ -618,11 +638,15 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     };
 
     private final List<Line> movePathLines = new Vector<>();
-    public record Line(int x1, int y1, int x2, int y2, Color color, int round) {};
+
+    public record Line(int x1, int y1, int x2, int y2, Color color, int round) {}
+
+    ;
     private final Color MOVE_PATH_COLOR = new Color(0, 0, 0, 128);
 
     private void addMovePath(List<UnitLocation> unitLocations, Entity entity) {
-        if ((GUIP.getMovePathPersistenceOnMiniMap() <= 0) || !EntityVisibilityUtils.detectedOrHasVisual(getLocalPlayer(), game, entity)) {
+        if ((GUIP.getMovePathPersistenceOnMiniMap() <= 0)
+              || !EntityVisibilityUtils.detectedOrHasVisual(getLocalPlayer(), game, entity)) {
             return;
         }
         Coords previousCoords = entity.getPosition();
@@ -647,18 +671,17 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     /**
-     * Draws the minimap to the backbuffer. If the dialog is not visible
-     * or the minimap is minimized, drawing will be kept to a minimum.
+     * Draws the minimap to the backbuffer. If the dialog is not visible or the minimap is minimized, drawing will be
+     * kept to a minimum.
      */
     private void drawMap() {
         drawMap(false);
     }
 
     /**
-     * Draws the minimap to the backbuffer. When forceDraw is true,
-     * the map will be drawn even if it is minimized or not visible.
-     * This can be used to draw the minimap for saving it as an image regardless
-     * of its visual status onscreen.
+     * Draws the minimap to the backbuffer. When forceDraw is true, the map will be drawn even if it is minimized or not
+     * visible. This can be used to draw the minimap for saving it as an image regardless of its visual status
+     * onscreen.
      */
     private void drawMap(boolean forceDraw) {
         if ((lastDrawStarted > lastDrawMapReq) && !forceDraw) {
@@ -769,7 +792,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                     multiUnits.clear();
                     for (Entity e : game.getOutOfGameEntitiesVector()) {
                         if (e.getBoardLocation().isOn(boardId) &&
-                                  removalReasons.contains(e.getRemovalCondition())) {
+                              removalReasons.contains(e.getRemovalCondition())) {
                             paintUnit(g, e, true);
                         }
                     }
@@ -822,7 +845,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     private void paintMoveTracks(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
         Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
-            0, new float[]{6}, 3);
+              0, new float[] { 6 }, 3);
         g2d.setStroke(dashed);
         for (Line line : movePathLines) {
             paintMoveTrack(g2d, line);
@@ -833,7 +856,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     /** Indicates the deployment hexes. */
     private void drawDeploymentZone(Graphics g) {
         if ((null != client) && (null != game) && game.getPhase().isDeployment() && (bv != null)
-                && (bv.getDeployingEntity() != null) && (dialog != null) && (getLocalPlayer() != null)) {
+              && (bv.getDeployingEntity() != null) && (dialog != null) && (getLocalPlayer() != null)) {
             GameTurn turn = game.getTurn();
             if ((turn != null) && (turn.playerId() == getLocalPlayer().getId())) {
                 Entity deployingUnit = bv.getDeployingEntity();
@@ -843,8 +866,8 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                         Coords coords = new Coords(j, k);
 
                         if (board.isLegalDeployment(coords, deployingUnit) &&
-                                  !deployingUnit.isLocationProhibited(BoardLocation.of(coords, boardId)) &&
-                                  !deployingUnit.isBoardProhibited(board)) {
+                              !deployingUnit.isLocationProhibited(BoardLocation.of(coords, boardId)) &&
+                              !deployingUnit.isBoardProhibited(board)) {
                             paintSingleCoordBorder(g, j, k, Color.yellow);
                         }
                     }
@@ -863,8 +886,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     /**
-     * Draws a box showing the portion of the board that is currently visible in the
-     * boardview.
+     * Draws a box showing the portion of the board that is currently visible in the boardview.
      */
     private void paintVisibleSection(Graphics g) {
         if (minimized || (bv == null)) {
@@ -1163,7 +1185,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
             int atmosphericRow = BoardHelper.effectiveAtmosphericRowNumber(game, board, x);
             // Add atmosphere
             int step = 120 / (spaceInterfacePosition - 1);
-            g.setColor(new Color(75 - step/2 * atmosphericRow,
+            g.setColor(new Color(75 - step / 2 * atmosphericRow,
                   150 - step * atmosphericRow, 150 - step * atmosphericRow));
         } else if (BoardHelper.isGroundRowHex(board, x)) {
             g.setColor(Color.GREEN);
@@ -1209,7 +1231,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         // cross-board attacks don't get attack arrows (for now, must possibly allow some A2G, O2G, A2A attacks later
         // when target/attacker hexes are not really but effectively on the same board)
         if ((null == source) || (null == target) || !game.onTheSameBoard(source, target)
-                  || (target.getBoardId() != boardId)) {
+              || (target.getBoardId() != boardId)) {
             return;
         }
 
@@ -1219,8 +1241,8 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         }
         if (attack instanceof WeaponAttackAction) {
             WeaponAttackAction waa = (WeaponAttackAction) attack;
-            if ((getLocalPlayer() == null) ||( (attack.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
-                    && (waa.getEntity(game).getOwner().getId() != getLocalPlayer().getId()))) {
+            if ((getLocalPlayer() == null) || ((attack.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
+                  && (waa.getEntity(game).getOwner().getId() != getLocalPlayer().getId()))) {
                 return;
             }
         }
@@ -1229,19 +1251,19 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         int[] yPoints = new int[4];
 
         xPoints[0] = ((source.getPosition().getX() * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]))
-                + leftMargin + ((int) 1.5 * HEX_SIDE[zoom])) - 2;
+              + leftMargin + ((int) 1.5 * HEX_SIDE[zoom])) - 2;
         yPoints[0] = (((2 * source.getPosition().getY()) + 1 + (source
-                .getPosition().getX() % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
+              .getPosition().getX() % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
         xPoints[1] = ((target.getPosition().getX() * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]))
-                + leftMargin + ((int) 1.5 * HEX_SIDE[zoom])) - 2;
+              + leftMargin + ((int) 1.5 * HEX_SIDE[zoom])) - 2;
         yPoints[1] = (((2 * target.getPosition().getY()) + 1 + (target
-                .getPosition().getX() % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
+              .getPosition().getX() % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
         xPoints[2] = xPoints[1] + 2;
         xPoints[3] = xPoints[0] + 2;
         if (((source.getPosition().getX() > target.getPosition().getX()) && (source
-                .getPosition().getY() < target.getPosition().getY()))
-                || ((source.getPosition().getX() < target.getPosition().getX()) && (source
-                        .getPosition().getY() > target.getPosition().getY()))) {
+              .getPosition().getY() < target.getPosition().getY()))
+              || ((source.getPosition().getX() < target.getPosition().getX()) && (source
+              .getPosition().getY() > target.getPosition().getY()))) {
             yPoints[3] = yPoints[0] + 2;
             yPoints[2] = yPoints[1] + 2;
         } else {
@@ -1258,7 +1280,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
             if (action instanceof AttackAction) {
                 AttackAction otherAttack = (AttackAction) action;
                 if ((attack.getEntityId() == otherAttack.getTargetId())
-                        && (otherAttack.getEntityId() == attack.getTargetId())) {
+                      && (otherAttack.getEntityId() == attack.getTargetId())) {
                     // attackTarget _must_ be an entity since it's shooting back
                     // (?)
                     Entity attackTarget = game.getEntity(otherAttack.getEntityId());
@@ -1271,9 +1293,9 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                     xPoints[2] = xPoints[1] + 2;
                     xPoints[3] = xPoints[0] + 2;
                     if (((source.getPosition().getX() > target.getPosition().getX())
-                            && (source.getPosition().getY() < target.getPosition().getY()))
-                            || ((source.getPosition().getX() < target.getPosition().getX())
-                                    && (source.getPosition().getY() > target.getPosition().getY()))) {
+                          && (source.getPosition().getY() < target.getPosition().getY()))
+                          || ((source.getPosition().getX() < target.getPosition().getX())
+                          && (source.getPosition().getY() > target.getPosition().getY()))) {
                         yPoints[3] = yPoints[0] + 2;
                         yPoints[2] = yPoints[1] + 2;
                     } else {
@@ -1324,7 +1346,8 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         // Choose player or team color depending on preferences
         Color iconColor = entity.getOwner().getColour().getColour(false);
         if (GUIP.getTeamColoring() && (client != null)) {
-            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam() == getLocalPlayer().getTeam());
+            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam()
+                  == getLocalPlayer().getTeam());
             boolean isLocalPlayer = entity.getOwner().equals(getLocalPlayer());
             if (isLocalPlayer) {
                 iconColor = GUIP.getMyUnitColor();
@@ -1352,7 +1375,9 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
         Path2D form = MinimapUnitSymbols.getForm(entity);
 
-        Color borderColor = entity.moved != EntityMovementType.MOVE_NONE && !removedFromGame ? Color.BLACK : Color.WHITE;
+        Color borderColor = entity.moved != EntityMovementType.MOVE_NONE && !removedFromGame ?
+              Color.BLACK :
+              Color.WHITE;
         if (removedFromGame) {
             borderColor = changeColorForDestroyedUnit(borderColor.brighter(), DESTROYED_UNIT_ALPHA);
         }
@@ -1376,7 +1401,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
             // Set a thin brush for filled areas (leave a thick brush for line symbols
             if ((entity instanceof Mek) || (entity instanceof ProtoMek)
-                    || (entity instanceof VTOL) || (entity.isAero())) {
+                  || (entity instanceof VTOL) || (entity.isAero())) {
                 g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
             } else {
                 g2.setStroke(new BasicStroke(formStrokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
@@ -1406,7 +1431,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                     int stringWidth = currentMetrics.stringWidth(s);
                     GlyphVector gv = font.createGlyphVector(fontContext, s);
                     g2.fill(gv.getOutline((int) STRAT_CX - (float) stringWidth / 2,
-                        (float) STRAT_SYMBOLSIZE.getHeight() / 3.0f));
+                          (float) STRAT_SYMBOLSIZE.getHeight() / 3.0f));
                 }
             } else if (entity instanceof MekWarrior) {
                 g2.setColor(fontColor);
@@ -1455,7 +1480,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
             var font = new Font(MMConstants.FONT_SANS_SERIF, fontType, 75);
             GlyphVector gv = font.createGlyphVector(fontContext, s);
             g2.fill(gv.getOutline((float) -STRAT_SYMBOLSIZE.getWidth() / 3f,
-                (float) -STRAT_SYMBOLSIZE.getHeight() / 5 * 4));
+                  (float) -STRAT_SYMBOLSIZE.getHeight() / 5 * 4));
 
         }
         // If the unit is destroyed, it gets a strike on it.
@@ -1486,7 +1511,9 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         g2.setTransform(saveTransform);
 
         // Create a colored circle if this is the selected unit
-        Entity se = (clientGui == null) ? null : clientGui instanceof ClientGUI ? ((ClientGUI) clientGui).getDisplayedUnit() : null;
+        Entity se = (clientGui == null) ?
+              null :
+              clientGui instanceof ClientGUI ? ((ClientGUI) clientGui).getDisplayedUnit() : null;
 
         if (entity == se) {
             int rad = stratOpsSymbols ? 2 * unitSize - 1 : unitSize + unitSize / 2;
@@ -1530,7 +1557,8 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         // Choose player or team color depending on preferences
         Color iconColor = entity.getOwner().getColour().getColour(false);
         if (GUIP.getTeamColoring() && (client != null)) {
-            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam() == getLocalPlayer().getTeam());
+            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam()
+                  == getLocalPlayer().getTeam());
             boolean isLocalPlayer = entity.getOwner().equals(getLocalPlayer());
             if (isLocalPlayer) {
                 iconColor = GUIP.getMyUnitColor();
@@ -1556,7 +1584,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         }
         if (ecmActive && ecmRange > 0) {
             Stroke dashed = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
-                0, new float[]{6, 3}, 3);
+                  0, new float[] { 6, 3 }, 3);
             g2.setStroke(dashed);
             paintSensorRange(ecmRange, true, origin, g2);
         }
@@ -1712,7 +1740,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         } else if (hex.containsTerrain(FIRE)) {
             terrColor = terrainColors[FIRE];
         } else { // Otherwise, color based on terrains - higher valued terrains take color
-                 // precedence
+            // precedence
             for (int j = terrainColors.length - 1; j >= 0; j--) {
                 if ((hex.getTerrain(j) != null) && (terrainColors[j] != null)) {
                     if ((j == ROAD) || (j == BRIDGE)) {
@@ -1780,7 +1808,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         if (restY < HEX_SIDE_BY_COS30[zoom]) {
             if (evenColumn) {
                 if (restX < ((((restY - HEX_SIDE_BY_COS30[zoom])
-                        * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom]) * -1)) {
+                      * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom]) * -1)) {
                     gridX--;
                     gridY--;
                 }
@@ -1794,12 +1822,12 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         } else {
             if (evenColumn) {
                 if (restX < (((restY - HEX_SIDE_BY_COS30[zoom])
-                        * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom])) {
+                      * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom])) {
                     gridX--;
                 }
             } else {
                 if (restX < ((((restY - (2 * HEX_SIDE_BY_COS30[zoom]))
-                        * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom]) * -1)) {
+                      * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom]) * -1)) {
                     gridX--;
                 }
             }
@@ -1923,8 +1951,8 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     private void centerOnPos(double x, double y) {
         ShowThisBoardView();
         bv.centerOnPointRel(
-                ((x - leftMargin)) / ((HEX_SIDE_BY_SIN30[zoom] + HEX_SIDE[zoom]) * board.getWidth()),
-                ((y - topMargin)) / (2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight()));
+              ((x - leftMargin)) / ((HEX_SIDE_BY_SIN30[zoom] + HEX_SIDE[zoom]) * board.getWidth()),
+              ((y - topMargin)) / (2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight()));
         bv.stopSoftCentering();
         repaint();
     }
@@ -2063,33 +2091,69 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
         JMenu zoomMenu = new JMenu(Messages.getString("Minimap.menu.Zoom", zoom));
 
-        zoomMenu.add(menuItem(Messages.getString("Minimap.menu.ZoomIn"), ACTION_ZOOM_IN, zoom != MAX_ZOOM, l -> this.zoomIn(), false));
-        zoomMenu.add(menuItem(Messages.getString("Minimap.menu.ZoomOut"), ACTION_ZOOM_OUT, zoom != MIM_ZOOM, l -> this.zoomOut(), false));
+        zoomMenu.add(menuItem(Messages.getString("Minimap.menu.ZoomIn"),
+              ACTION_ZOOM_IN,
+              zoom != MAX_ZOOM,
+              l -> this.zoomIn(),
+              false));
+        zoomMenu.add(menuItem(Messages.getString("Minimap.menu.ZoomOut"),
+              ACTION_ZOOM_OUT,
+              zoom != MIM_ZOOM,
+              l -> this.zoomOut(),
+              false));
         popup.add(zoomMenu);
 
         JMenu heightMenu = new JMenu(Messages.getString("Minimap.menu.ShowHeight"));
-        heightMenu.add(menuItem(Messages.getString("Minimap.menu.ShowHeightNone"), ACTION_HEIGHT_NONE, zoom >= MIM_ZOOM_FOR_HEIGHT, l -> this.setHeightDisplay(SHOW_NO_HEIGHT), heightDisplayMode == SHOW_NO_HEIGHT));
-        heightMenu.add(menuItem(Messages.getString("Minimap.menu.ShowHeightGround"), ACTION_HEIGHT_GROUND, zoom >= MIM_ZOOM_FOR_HEIGHT, l -> this.setHeightDisplay(SHOW_GROUND_HEIGHT) , heightDisplayMode == SHOW_GROUND_HEIGHT));
-        heightMenu.add(menuItem(Messages.getString("Minimap.menu.ShowHeightBuilding"), ACTION_HEIGHT_BUILDING, zoom >= MIM_ZOOM_FOR_HEIGHT, l -> this.setHeightDisplay(SHOW_BUILDING_HEIGHT), heightDisplayMode == SHOW_BUILDING_HEIGHT));
-        heightMenu.add(menuItem(Messages.getString("Minimap.menu.ShowHeightTotal"), ACTION_HEIGHT_TOTAL, zoom >= MIM_ZOOM_FOR_HEIGHT, l -> this.setHeightDisplay(SHOW_TOTAL_HEIGHT), heightDisplayMode == SHOW_TOTAL_HEIGHT));
+        heightMenu.add(menuItem(Messages.getString("Minimap.menu.ShowHeightNone"),
+              ACTION_HEIGHT_NONE,
+              zoom >= MIM_ZOOM_FOR_HEIGHT,
+              l -> this.setHeightDisplay(SHOW_NO_HEIGHT),
+              heightDisplayMode == SHOW_NO_HEIGHT));
+        heightMenu.add(menuItem(Messages.getString("Minimap.menu.ShowHeightGround"),
+              ACTION_HEIGHT_GROUND,
+              zoom >= MIM_ZOOM_FOR_HEIGHT,
+              l -> this.setHeightDisplay(SHOW_GROUND_HEIGHT),
+              heightDisplayMode == SHOW_GROUND_HEIGHT));
+        heightMenu.add(menuItem(Messages.getString("Minimap.menu.ShowHeightBuilding"),
+              ACTION_HEIGHT_BUILDING,
+              zoom >= MIM_ZOOM_FOR_HEIGHT,
+              l -> this.setHeightDisplay(SHOW_BUILDING_HEIGHT),
+              heightDisplayMode == SHOW_BUILDING_HEIGHT));
+        heightMenu.add(menuItem(Messages.getString("Minimap.menu.ShowHeightTotal"),
+              ACTION_HEIGHT_TOTAL,
+              zoom >= MIM_ZOOM_FOR_HEIGHT,
+              l -> this.setHeightDisplay(SHOW_TOTAL_HEIGHT),
+              heightDisplayMode == SHOW_TOTAL_HEIGHT));
         popup.add(heightMenu);
 
         JMenu symbolsMenu = new JMenu(Messages.getString("Minimap.menu.ShowSymbols"));
-        symbolsMenu.add(menuItem(Messages.getString("Minimap.menu.ShowSymbolsNoSymbols"), ACTION_SYMBOLS_NO, true, l -> this.setSymbolsDisplay(SHOW_NO_SYMBOLS), symbolsDisplayMode == SHOW_NO_SYMBOLS));
-        symbolsMenu.add(menuItem(Messages.getString("Minimap.menu.ShowSymbolsSymbols"), ACTION_SYMBOLS_SHOW, true, l -> this.setSymbolsDisplay(SHOW_SYMBOLS), symbolsDisplayMode == SHOW_SYMBOLS));;
+        symbolsMenu.add(menuItem(Messages.getString("Minimap.menu.ShowSymbolsNoSymbols"),
+              ACTION_SYMBOLS_NO,
+              true,
+              l -> this.setSymbolsDisplay(SHOW_NO_SYMBOLS),
+              symbolsDisplayMode == SHOW_NO_SYMBOLS));
+        symbolsMenu.add(menuItem(Messages.getString("Minimap.menu.ShowSymbolsSymbols"),
+              ACTION_SYMBOLS_SHOW,
+              true,
+              l -> this.setSymbolsDisplay(SHOW_SYMBOLS),
+              symbolsDisplayMode == SHOW_SYMBOLS));
+        ;
 
-        JCheckBoxMenuItem toggleDrawSensor = new JCheckBoxMenuItem(Messages.getString("Minimap.menu.ToggleShowSensorRange"));
+        JCheckBoxMenuItem toggleDrawSensor = new JCheckBoxMenuItem(Messages.getString(
+              "Minimap.menu.ToggleShowSensorRange"));
         toggleDrawSensor.addActionListener(l -> setSensorRangeDisplay(!drawSensorRangeOnMiniMap));
         toggleDrawSensor.setSelected(drawSensorRangeOnMiniMap);
         symbolsMenu.add(toggleDrawSensor);
 
 
-        JCheckBoxMenuItem toggleDrawFacing = new JCheckBoxMenuItem(Messages.getString("Minimap.menu.ToggleDrawFacingArrows"));
+        JCheckBoxMenuItem toggleDrawFacing = new JCheckBoxMenuItem(Messages.getString(
+              "Minimap.menu.ToggleDrawFacingArrows"));
         toggleDrawFacing.addActionListener(l -> setFacingArrowsDisplay(!drawFacingArrowsOnMiniMap));
         toggleDrawFacing.setSelected(drawFacingArrowsOnMiniMap);
         symbolsMenu.add(toggleDrawFacing);
 
-        JCheckBoxMenuItem togglePaintBorders = new JCheckBoxMenuItem(Messages.getString("Minimap.menu.ToggleDrawHexBorder"));
+        JCheckBoxMenuItem togglePaintBorders = new JCheckBoxMenuItem(Messages.getString(
+              "Minimap.menu.ToggleDrawHexBorder"));
         togglePaintBorders.addActionListener(l -> {
             setPaintBordersDisplay(!paintBorders);
         });
@@ -2101,7 +2165,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     public JCheckBoxMenuItem menuItem(String text, String cmd, boolean enabled,
-                                      ActionListener listener, boolean checked) {
+          ActionListener listener, boolean checked) {
         JCheckBoxMenuItem result = new JCheckBoxMenuItem(text);
         result.setActionCommand(cmd);
         result.addActionListener(listener);
@@ -2113,7 +2177,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.MMSYMBOL)
-                || e.getName().equals(GUIPreferences.TEAM_COLORING)) {
+              || e.getName().equals(GUIPreferences.TEAM_COLORING)) {
             refreshMap();
         }
     }

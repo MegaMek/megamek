@@ -32,9 +32,10 @@
  */
 package megamek.client.ui.boardeditor;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
 import java.util.List;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JList;
 
 /**
  * ListCellRenderer for rendering tooltips for each item in a list or combobox. Code from SourceForge:

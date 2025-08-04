@@ -1,46 +1,66 @@
 /*
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Insets;
 import java.util.StringTokenizer;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 /**
- * This class has been downloaded from a third-party source:
- * Author: Rob Camick
- * Website: https://tips4java.wordpress.com/2008/11/06/wrap-layout/
- * FlowLayout subclass that fully supports wrapping of components.
+ * This class has been downloaded from a third-party source: Author: Rob Camick Website:
+ * https://tips4java.wordpress.com/2008/11/06/wrap-layout/ FlowLayout subclass that fully supports wrapping of
+ * components.
  */
 public class WrapLayout extends FlowLayout {
     /**
-     * Constructs a new <code>WrapLayout</code> with a left
-     * alignment and a default 5-unit horizontal and vertical gap.
+     * Constructs a new <code>WrapLayout</code> with a left alignment and a default 5-unit horizontal and vertical gap.
      */
     public WrapLayout() {
         super();
     }
 
     /**
-     * Constructs a new <code>FlowLayout</code> with the specified
-     * alignment and a default 5-unit horizontal and vertical gap.
-     * The value of the alignment argument must be one of
+     * Constructs a new <code>FlowLayout</code> with the specified alignment and a default 5-unit horizontal and
+     * vertical gap. The value of the alignment argument must be one of
      * <code>WrapLayout</code>, <code>WrapLayout</code>,
      * or <code>WrapLayout</code>.
+     *
      * @param align the alignment value
      */
     public WrapLayout(int align) {
@@ -48,15 +68,15 @@ public class WrapLayout extends FlowLayout {
     }
 
     /**
-     * Creates a new flow layout manager with the indicated alignment
-     * and the indicated horizontal and vertical gaps.
+     * Creates a new flow layout manager with the indicated alignment and the indicated horizontal and vertical gaps.
      * <p>
      * The value of the alignment argument must be one of
      * <code>WrapLayout</code>, <code>WrapLayout</code>,
      * or <code>WrapLayout</code>.
+     *
      * @param align the alignment value
-     * @param hgap the horizontal gap between components
-     * @param vgap the vertical gap between components
+     * @param hgap  the horizontal gap between components
+     * @param vgap  the vertical gap between components
      */
     public WrapLayout(int align, int hgap, int vgap) {
         super(align, hgap, vgap);
@@ -65,9 +85,10 @@ public class WrapLayout extends FlowLayout {
     /**
      * Returns the preferred dimensions for this layout given the
      * <i>visible</i> components in the specified target container.
+     *
      * @param target the component which needs to be laid out
-     * @return the preferred dimensions to lay out the
-     * subcomponents of the specified container
+     *
+     * @return the preferred dimensions to lay out the subcomponents of the specified container
      */
     @Override
     public Dimension preferredLayoutSize(Container target) {
@@ -75,11 +96,12 @@ public class WrapLayout extends FlowLayout {
     }
 
     /**
-     * Returns the minimum dimensions needed to layout the <i>visible</i>
-     * components contained in the specified target container.
+     * Returns the minimum dimensions needed to layout the <i>visible</i> components contained in the specified target
+     * container.
+     *
      * @param target the component which needs to be laid out
-     * @return the minimum dimensions to lay out the
-     * subcomponents of the specified container
+     *
+     * @return the minimum dimensions to lay out the subcomponents of the specified container
      */
     @Override
     public Dimension minimumLayoutSize(Container target) {
@@ -89,11 +111,11 @@ public class WrapLayout extends FlowLayout {
     }
 
     /**
-     * Returns the minimum or preferred dimension needed to layout the target
-     * container.
+     * Returns the minimum or preferred dimension needed to layout the target container.
      *
-     * @param target target to get layout size for
+     * @param target    target to get layout size for
      * @param preferred should preferred size be calculated
+     *
      * @return the dimension to layout the target container
      */
     private Dimension layoutSize(Container target, boolean preferred) {
@@ -174,11 +196,10 @@ public class WrapLayout extends FlowLayout {
     }
 
     /**
-     * A new row has been completed. Use the dimensions of this row
-     * to update the preferred size for the container.
+     * A new row has been completed. Use the dimensions of this row to update the preferred size for the container.
      *
-     * @param dim update the width and height when appropriate
-     * @param rowWidth the width of the row to add
+     * @param dim       update the width and height when appropriate
+     * @param rowWidth  the width of the row to add
      * @param rowHeight the height of the row to add
      */
     private void addRow(Dimension dim, int rowWidth, int rowHeight) {
@@ -195,6 +216,7 @@ public class WrapLayout extends FlowLayout {
      * Inserts line breaks into a given input string to ensure that no line exceeds a maximum length of 100.
      *
      * @param input The input string to be wrapped.
+     *
      * @return The string with line breaks inserted.
      */
     public static String wordWrap(String input) {
@@ -204,8 +226,9 @@ public class WrapLayout extends FlowLayout {
     /**
      * Inserts line breaks into a given input string to ensure that no line exceeds a maximum length.
      *
-     * @param input The input string to be wrapped.
+     * @param input             The input string to be wrapped.
      * @param maximumCharacters The maximum number of characters (including whitespaces) on each line.
+     *
      * @return The string with line breaks inserted.
      */
     public static String wordWrap(String input, int maximumCharacters) {

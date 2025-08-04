@@ -1,15 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.customMek;
 
@@ -20,11 +40,9 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,7 +52,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import megamek.common.BombLoadout;
-import megamek.common.BombType;
 import megamek.common.BombType.BombTypeEnum;
 import megamek.common.IBomber;
 
@@ -57,12 +74,12 @@ public class BombChoicePanel extends JPanel implements ItemListener {
     private JPanel interiorPanel;
     private JPanel exteriorPanel;
     private Map<String, EnumMap<BombTypeEnum, JComboBox<String>>> b_choices = Map.of(
-        INTNAME, new EnumMap<>(BombTypeEnum.class),
-        EXTNAME, new EnumMap<>(BombTypeEnum.class)
+          INTNAME, new EnumMap<>(BombTypeEnum.class),
+          EXTNAME, new EnumMap<>(BombTypeEnum.class)
     );
     private Map<String, EnumMap<BombTypeEnum, JLabel>> b_labels = Map.of(
-        INTNAME, new EnumMap<>(BombTypeEnum.class),
-        EXTNAME, new EnumMap<>(BombTypeEnum.class)
+          INTNAME, new EnumMap<>(BombTypeEnum.class),
+          EXTNAME, new EnumMap<>(BombTypeEnum.class)
     );
     private HashMap<String, Integer> maxPoints = new HashMap<String, Integer>();
     private HashMap<String, Integer> maxSize = new HashMap<String, Integer>();
@@ -89,7 +106,7 @@ public class BombChoicePanel extends JPanel implements ItemListener {
         initPanel();
     }
 
-    private void initArrays(){
+    private void initArrays() {
         // Initialize control arrays
         maxSize.put(INTNAME, 0);
         maxSize.put(EXTNAME, 0);
@@ -107,7 +124,7 @@ public class BombChoicePanel extends JPanel implements ItemListener {
 
         int columns = (maxPoints.get(INTNAME) > 0 ? 1 : 0) + (maxPoints.get(EXTNAME) > 0 ? 1 : 0);
         // Should not occur!
-        if (columns == 0){
+        if (columns == 0) {
             empty = true;
             return;
         }
@@ -121,8 +138,12 @@ public class BombChoicePanel extends JPanel implements ItemListener {
         CompoundBorder compoundBorder = new CompoundBorder(titledBorder, emptyBorder);
         outer.setBorder(compoundBorder);
 
-        interiorPanel = initSubPanel(maxPoints.get(INTNAME) - intBombChoices.getTotalBombCost(), intBombChoices, INTNAME);
-        exteriorPanel = initSubPanel(maxPoints.get(EXTNAME) - extBombChoices.getTotalBombCost(), extBombChoices, EXTNAME);
+        interiorPanel = initSubPanel(maxPoints.get(INTNAME) - intBombChoices.getTotalBombCost(),
+              intBombChoices,
+              INTNAME);
+        exteriorPanel = initSubPanel(maxPoints.get(EXTNAME) - extBombChoices.getTotalBombCost(),
+              extBombChoices,
+              EXTNAME);
 
         if (maxPoints.get(INTNAME) != 0) {
             outer.add(interiorPanel);
@@ -133,7 +154,7 @@ public class BombChoicePanel extends JPanel implements ItemListener {
         add(outer);
     }
 
-    private JPanel initSubPanel(int availBombPoints, BombLoadout bombChoices, String title){
+    private JPanel initSubPanel(int availBombPoints, BombLoadout bombChoices, String title) {
 
         // Set up sub-panel
         JPanel inner = new JPanel();
@@ -152,7 +173,7 @@ public class BombChoicePanel extends JPanel implements ItemListener {
         int column = 0;
         int row = 0;
         for (BombTypeEnum type : BombTypeEnum.values()) {
-            if (type == BombTypeEnum.NONE) continue;
+            if (type == BombTypeEnum.NONE) {continue;}
 
             JLabel label = new JLabel();
             JComboBox<String> comboBox = new JComboBox<>();
@@ -162,12 +183,12 @@ public class BombChoicePanel extends JPanel implements ItemListener {
             int currentCount = bombChoices.getCount(type);
             int maxNumBombs = Math.round(availBombPoints / type.getCost()) + currentCount;
 
-            if (type.getCost() > maxSize.get(title))  {
+            if (type.getCost() > maxSize.get(title)) {
                 maxNumBombs = 0;
             }
 
             // somehow too many bombs were added
-            if ((currentCount * type.getCost())  > maxSize.get(title)) {
+            if ((currentCount * type.getCost()) > maxSize.get(title)) {
                 currentCount = maxSize.get(title) / type.getCost();
                 bombChoices.put(type, currentCount);
             }
@@ -229,10 +250,10 @@ public class BombChoicePanel extends JPanel implements ItemListener {
     @Override
     public void itemStateChanged(ItemEvent ie) {
 
-        for (String title: new String[]{INTNAME, EXTNAME}){
+        for (String title : new String[] { INTNAME, EXTNAME }) {
             BombLoadout current = new BombLoadout();
             for (BombTypeEnum type : BombTypeEnum.values()) {
-                if (type == BombTypeEnum.NONE) continue;
+                if (type == BombTypeEnum.NONE) {continue;}
                 int selectedCount = b_choices.get(title).get(type).getSelectedIndex();
                 if (selectedCount > 0) {
                     current.put(type, selectedCount);
@@ -241,8 +262,8 @@ public class BombChoicePanel extends JPanel implements ItemListener {
             int availBombPoints = maxPoints.get(title) - current.getTotalBombCost();
 
             for (BombTypeEnum type : BombTypeEnum.values()) {
-                if (type == BombTypeEnum.NONE) continue;
-                
+                if (type == BombTypeEnum.NONE) {continue;}
+
                 JComboBox<String> comboBox = b_choices.get(title).get(type);
                 comboBox.removeItemListener(this);
                 comboBox.removeAllItems();
@@ -288,18 +309,18 @@ public class BombChoicePanel extends JPanel implements ItemListener {
         // Internal bombs
         BombLoadout intChoices = new BombLoadout();
         for (BombTypeEnum type : BombTypeEnum.values()) {
-            if (type == BombTypeEnum.NONE) continue;
+            if (type == BombTypeEnum.NONE) {continue;}
             int count = b_choices.get(INTNAME).get(type).getSelectedIndex();
             if (count > 0) {
                 intChoices.put(type, count);
             }
         }
         bomber.setIntBombChoices(intChoices);
-        
+
         // External bombs
         BombLoadout extChoices = new BombLoadout();
         for (BombTypeEnum type : BombTypeEnum.values()) {
-            if (type == BombTypeEnum.NONE) continue;
+            if (type == BombTypeEnum.NONE) {continue;}
             int count = b_choices.get(EXTNAME).get(type).getSelectedIndex();
             if (count > 0) {
                 extChoices.put(type, count);
@@ -315,7 +336,7 @@ public class BombChoicePanel extends JPanel implements ItemListener {
         }
 
         for (BombTypeEnum type : BombTypeEnum.values()) {
-            if (type == BombTypeEnum.NONE) continue;
+            if (type == BombTypeEnum.NONE) {continue;}
             int intCount = b_choices.get(INTNAME).get(type).getSelectedIndex();
             int extCount = b_choices.get(EXTNAME).get(type).getSelectedIndex();
             int totalCount = intCount + extCount;
@@ -328,9 +349,9 @@ public class BombChoicePanel extends JPanel implements ItemListener {
 
     @Override
     public void setEnabled(boolean enabled) {
-        for (String title : new String[]{INTNAME, EXTNAME}) {
+        for (String title : new String[] { INTNAME, EXTNAME }) {
             for (BombTypeEnum type : BombTypeEnum.values()) {
-                if (type == BombTypeEnum.NONE) continue;
+                if (type == BombTypeEnum.NONE) {continue;}
                 JComboBox<String> comboBox = b_choices.get(title).get(type);
                 if ((type == BombTypeEnum.ALAMO) && !at2Nukes) {
                     comboBox.setEnabled(false);

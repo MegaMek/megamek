@@ -1,17 +1,37 @@
-/**
- * MegaMek - Copyright (C) 2004,2005, 2022 MegaMekTeam
+/*
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
- /*
+
+/*
  * Created on March 20, 2022
  * @author Hammer
  */
@@ -24,34 +44,34 @@ import megamek.common.AmmoType;
 public class InfantrySniperRifleFNFJ12DarkCaste extends InfantryWeapon {
 
     /**
-    *
-    */
-   private static final long serialVersionUID = -3164871600230559641L;
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-   public InfantrySniperRifleFNFJ12DarkCaste() {
-       super();
+    public InfantrySniperRifleFNFJ12DarkCaste() {
+        super();
 
-       name = "Sniper Rifle (FNF-J12 (Dark Caste))";
-       setInternalName(name);
-       addLookupName("FNF-J12 (Dark Caste)");
-       ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-       bv = .336;
-       tonnage =  0.006;
-       infantryDamage =  0.42;
-       infantryRange =  5;
-       ammoWeight =  0.006;
-       cost = 3500;
-       ammoCost =  70;
-       shots =  8;
-       bursts =  1;
-       flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-       rulesRefs = "Shrapnel #1";
-       techAdvancement
-       .setTechBase(TechBase.CLAN)
-       .setTechRating(TechRating.E)
-       .setAvailability(AvailabilityValue.X,AvailabilityValue.E,AvailabilityValue.E,AvailabilityValue.E)
-       .setISAdvancement(DATE_NONE, DATE_NONE,2835,DATE_NONE,DATE_NONE)
-       .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(Faction.TH);
-   }
+        name = "Sniper Rifle (FNF-J12 (Dark Caste))";
+        setInternalName(name);
+        addLookupName("FNF-J12 (Dark Caste)");
+        ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
+        bv = .336;
+        tonnage = 0.006;
+        infantryDamage = 0.42;
+        infantryRange = 5;
+        ammoWeight = 0.006;
+        cost = 3500;
+        ammoCost = 70;
+        shots = 8;
+        bursts = 1;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        rulesRefs = "Shrapnel #1";
+        techAdvancement
+              .setTechBase(TechBase.CLAN)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
+              .setISAdvancement(DATE_NONE, DATE_NONE, 2835, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, true, false, false)
+              .setProductionFactions(Faction.TH);
+    }
 }

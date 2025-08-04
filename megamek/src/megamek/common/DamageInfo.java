@@ -36,45 +36,41 @@ package megamek.common;
 import megamek.common.weapons.DamageType;
 
 /**
- * Record class for passing damage application information to a Damage Manager's damageEntity()
- * method.
- *
- * This moves a lot of boilerplate and chained function call responsibility out of TWGameManager
- * in preparation for replacing those overloaded functions with a single function, and having callers
- * instantiate DamageInfo
- *
+ * Record class for passing damage application information to a Damage Manager's damageEntity() method.
+ * <p>
+ * This moves a lot of boilerplate and chained function call responsibility out of TWGameManager in preparation for
+ * replacing those overloaded functions with a single function, and having callers instantiate DamageInfo
  *
  * @param entity        the target entity that will suffer damage
  * @param hit           the hit data for the location hit
  * @param damage        the amount of damage to apply
- * @param ammoExplosion ammo explosion type damage is applied directly to the IS, hurts the pilot, causes
- *                      auto-ejects, and can blow the unit to smithereens
+ * @param ammoExplosion ammo explosion type damage is applied directly to the IS, hurts the pilot, causes auto-ejects,
+ *                      and can blow the unit to smithereens
  * @param damageType    The DamageType of the attack (mostly used by specialty armor handling).
  * @param damageIS      Should the target location's internal structure be damaged directly?
  * @param areaSatArty   Is the damage from an area saturating artillery attack / AE damage?
  * @param throughFront  Is the damage coming through the hex the unit is facing?  For Cowl, etc.
  * @param underWater    Is the damage coming from an underwater attack?
  * @param nukeS2S       is this a ship-to-ship nuke?
- *
  */
 public record DamageInfo(
-        Entity entity,
-        HitData hit,
-        int damage,
-        boolean ammoExplosion,
-        DamageType damageType,
-        boolean damageIS,
-        boolean areaSatArty,
-        boolean throughFront,
-        boolean underWater,
-        boolean nukeS2S
-    ) {
+      Entity entity,
+      HitData hit,
+      int damage,
+      boolean ammoExplosion,
+      DamageType damageType,
+      boolean damageIS,
+      boolean areaSatArty,
+      boolean throughFront,
+      boolean underWater,
+      boolean nukeS2S
+) {
 
     public DamageInfo(
           Entity entity,
           HitData hit,
           int damage
-    ){
+    ) {
         this(
               entity,
               hit,
@@ -91,7 +87,7 @@ public record DamageInfo(
           HitData hit,
           int damage,
           boolean ammoExplosion
-    ){
+    ) {
         this(
               entity,
               hit,
@@ -110,7 +106,7 @@ public record DamageInfo(
           boolean ammoExplosion,
           DamageType bFrag,
           boolean damageIS
-    ){
+    ) {
         this(
               entity,
               hit,
@@ -130,7 +126,7 @@ public record DamageInfo(
           DamageType bFrag,
           boolean damageIS,
           boolean areaSatArty
-    ){
+    ) {
         this(
               entity,
               hit,
@@ -152,7 +148,7 @@ public record DamageInfo(
           boolean damageIS,
           boolean areaSatArty,
           boolean throughFront
-    ){
+    ) {
         this(
               entity,
               hit,

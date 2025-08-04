@@ -1,31 +1,48 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike.cardDrawer;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Path2D;
 
 import megamek.client.ui.util.StringDrawer;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
-
-import java.awt.*;
-import java.awt.geom.Arc2D;
-import java.awt.geom.Path2D;
 
 public class ASAeroCard extends ASHeatTrackingCard {
 
@@ -49,14 +66,14 @@ public class ASAeroCard extends ASHeatTrackingCard {
 
             new StringDrawer("TP: ").at(44, upperY).centerY().maxWidth(55).font(headerFont).draw(g);
             new StringDrawer(element.getASUnitType().toString()).at(107, upperY).useConfig(valueConfig).maxWidth(64)
-                    .draw(g);
+                  .draw(g);
 
             new StringDrawer("SZ: ").at(182, upperY).centerY().font(headerFont).maxWidth(56).draw(g);
             new StringDrawer(element.getSize() + "").at(244, upperY).useConfig(valueConfig).maxWidth(33).draw(g);
 
             new StringDrawer("THR: ").at(281, upperY).centerY().font(headerFont).maxWidth(94).draw(g);
             new StringDrawer(AlphaStrikeHelper.getMovementAsString(element)).at(380, upperY).useConfig(valueConfig)
-                    .maxWidth(44).draw(g);
+                  .maxWidth(44).draw(g);
 
             new StringDrawer("ROLE: ").at(44, lowerY).centerY().font(headerFont).maxWidth(85).draw(g);
             new StringDrawer(element.getRole().toString()).at(138, lowerY).useConfig(valueConfig).maxWidth(250).draw(g);
@@ -117,7 +134,7 @@ public class ASAeroCard extends ASHeatTrackingCard {
         if (element != null) {
             int lowerY = armorBoxY + armorBoxHeight / 2 + 18;
             new StringDrawer(element.getThreshold() + "").at(606, lowerY).useConfig(valueConfig).center().maxWidth(52)
-                    .draw(g);
+                  .draw(g);
         }
     }
 
@@ -126,7 +143,7 @@ public class ASAeroCard extends ASHeatTrackingCard {
         drawBox(g, 36, damageBoxY, BOX_WIDTH_WIDE, damageBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
 
         new StringDrawer("DAMAGE").at(36 + 19, damageBoxY + damageBoxHeight / 2).center()
-                .rotate(-Math.PI / 2).font(hitsTitleFont).maxWidth(70).draw(g);
+              .rotate(-Math.PI / 2).font(hitsTitleFont).maxWidth(70).draw(g);
 
         int upperY = damageBoxY + damageBoxHeight / 2 - 20;
         int lowerY = damageBoxY + damageBoxHeight / 2 + 22;
@@ -140,12 +157,12 @@ public class ASAeroCard extends ASHeatTrackingCard {
         new StringDrawer("E (+6)").at(posS + 3 * delta, upperY).center().maxWidth(110).draw(g);
         g.setFont(valueFont);
         new StringDrawer(damage.S.toStringWithZero()).at(posS, lowerY).useConfig(valueConfig).center().maxWidth(110)
-                .draw(g);
+              .draw(g);
         new StringDrawer(damage.M.toStringWithZero()).at(posS + delta, lowerY).useConfig(valueConfig).center()
-                .maxWidth(110).draw(g);
+              .maxWidth(110).draw(g);
         new StringDrawer(damage.L.toStringWithZero()).at(posS + 2 * delta, lowerY).useConfig(valueConfig).center()
-                .maxWidth(110).draw(g);
+              .maxWidth(110).draw(g);
         new StringDrawer(damage.E.toStringWithZero()).at(posS + 3 * delta, lowerY).useConfig(valueConfig).center()
-                .maxWidth(110).draw(g);
+              .maxWidth(110).draw(g);
     }
 }

@@ -51,13 +51,15 @@ public class UnitPosition {
 
     /**
      * Unit Position Data Object
-     * @author Luana Coppio
-     * @param position unit position using offset coordinates
+     *
+     * @param position           unit position using offset coordinates
      * @param secondaryPositions Set of secondary positions of the unit
-     * @param facing Facing of the unit, units with no facing are treated as if they were facing north
-     * @param elevation current topographical elevation
-     * @param altitude current altitude if airborne
-     * @param height height of the unit, 0 indexed.
+     * @param facing             Facing of the unit, units with no facing are treated as if they were facing north
+     * @param elevation          current topographical elevation
+     * @param altitude           current altitude if airborne
+     * @param height             height of the unit, 0 indexed.
+     *
+     * @author Luana Coppio
      */
     private UnitPosition(Coords position,
           Set<Coords> secondaryPositions,

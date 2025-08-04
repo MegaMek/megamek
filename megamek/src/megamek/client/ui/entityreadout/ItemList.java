@@ -33,8 +33,8 @@
 package megamek.client.ui.entityreadout;
 
 /**
- * This ViewElement is an item list with a heading. It behaves like (and is implemented as) a single-column table
- * that is left-aligned.
+ * This ViewElement is an item list with a heading. It behaves like (and is implemented as) a single-column table that
+ * is left-aligned.
  */
 class ItemList extends TableElement {
 

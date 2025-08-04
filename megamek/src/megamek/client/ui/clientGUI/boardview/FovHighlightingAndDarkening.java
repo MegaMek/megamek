@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview;
 
@@ -38,11 +52,11 @@ import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
-import megamek.common.moves.MoveStep;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.IlluminationLevel;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -66,8 +80,8 @@ public class FovHighlightingAndDarkening {
         ringsChangeListener = e -> {
             String eName = e.getName();
             if (eName.equals(GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII) ||
-                      eName.equals(GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB) ||
-                      eName.equals(GUIPreferences.FOV_HIGHLIGHT_ALPHA)) {
+                  eName.equals(GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB) ||
+                  eName.equals(GUIPreferences.FOV_HIGHLIGHT_ALPHA)) {
                 updateRingsProperties();
             }
         };
@@ -92,8 +106,8 @@ public class FovHighlightingAndDarkening {
      * hex/entity, then darkens hex c. If there is a LOS from the hex c to the selected hex/entity, then hex c is
      * colored according to distance.
      *
-     * @param boardGraph     The board on which we paint.
-     * @param c              Hex that is being processed.
+     * @param boardGraph The board on which we paint.
+     * @param c          Hex that is being processed.
      */
     boolean draw(Graphics2D boardGraph, Coords c) {
         Coords viewerPosition = null;
@@ -105,10 +119,10 @@ public class FovHighlightingAndDarkening {
             if (viewer.isOnBoard(boardView.getBoardId())) {
                 // multi-hex units look from the hex closest to the target to avoid self-blocking
                 viewerPosition = viewer.getSecondaryPositions()
-                            .values()
-                            .stream()
-                            .min(Comparator.comparingInt(co -> co.distance(c)))
-                            .orElse(viewer.getPosition());
+                      .values()
+                      .stream()
+                      .min(Comparator.comparingInt(co -> co.distance(c)))
+                      .orElse(viewer.getPosition());
             }
         }
 
@@ -128,26 +142,26 @@ public class FovHighlightingAndDarkening {
             final int lw = 7;
 
             boolean sensorsOn = (boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS) ||
-                                       boardView.game.getOptions()
-                                             .booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
+                  boardView.game.getOptions()
+                        .booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
             boolean doubleBlindOn = boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
             boolean inclusiveSensorsOn = boardView.game.getOptions()
-                                               .booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE);
+                  .booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE);
 
             // Determine if any of the entities at the coordinates are illuminated, or if the
             // coordinates are illuminated themselves
             boolean targetIlluminated = boardView.game.getEntitiesVector(c, boardView.boardId)
-                                              .stream()
-                                              .anyMatch(Entity::isIlluminated) ||
-                                              !IlluminationLevel.determineIlluminationLevel(boardView.game,
-                                                    boardView.boardId, c).isNone();
+                  .stream()
+                  .anyMatch(Entity::isIlluminated) ||
+                  !IlluminationLevel.determineIlluminationLevel(boardView.game,
+                        boardView.boardId, c).isNone();
 
             final int max_dist;
             // We don't want to have to compute a LoSEffects yet, as that can be expensive on large viewing areas
             if ((boardView.getSelectedEntity() != null) && doubleBlindOn) {
                 // We can only use this is double-blind is on, otherwise visual range won't affect LoS
                 max_dist = this.boardView.game.getPlanetaryConditions()
-                                 .getVisualRange(this.boardView.getSelectedEntity(), targetIlluminated);
+                      .getVisualRange(this.boardView.getSelectedEntity(), targetIlluminated);
             } else {
                 max_dist = 60;
             }
@@ -260,10 +274,10 @@ public class FovHighlightingAndDarkening {
         StepSprite lastStepSprite = pathSprites.isEmpty() ? null : pathSprites.get(pathSprites.size() - 1);
         // lets check if cache should be cleared
         if ((cachedSelectedEntity != boardView.getSelectedEntity()) ||
-                  (cachedStepSprite != lastStepSprite) ||
-                  (!src.equals(cachedSrc)) ||
-                  (cacheGameChanged) ||
-                  (cacheBoardId != boardId)) {
+              (cachedStepSprite != lastStepSprite) ||
+              (!src.equals(cachedSrc)) ||
+              (cacheGameChanged) ||
+              (cacheBoardId != boardId)) {
             clearCache();
             cachedSelectedEntity = boardView.getSelectedEntity();
             cachedStepSprite = lastStepSprite;
@@ -355,8 +369,8 @@ public class FovHighlightingAndDarkening {
         // Need to re-write this to work with Low Alt maps
         // LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
         LosEffects.AttackInfo attackInfo = LosEffects.prepLosAttackInfo(
-                boardView.game, boardView.getSelectedEntity(), null, src, dest, boardId,
-                guip.getMekInFirst(), guip.getMekInSecond());
+              boardView.game, boardView.getSelectedEntity(), null, src, dest, boardId,
+              guip.getMekInFirst(), guip.getMekInSecond());
         // ai.attackPos = src;
         // ai.targetPos = dest;
         // First, we check for a selected unit and use its height. If
@@ -375,8 +389,8 @@ public class FovHighlightingAndDarkening {
                 elevation = (attackInfo.lowAltitude) ? ae.getAltitude() : ae.getElevation();
             }
             attackInfo.attackAbsHeight = (attackInfo.lowAltitude) ?
-                                               elevation :
-                                               srcHex.getLevel() + elevation + ae.getHeight();
+                  elevation :
+                  srcHex.getLevel() + elevation + ae.getHeight();
         } else {
             // For hexes, getLevel is functionally the same as getAltitude()
             attackInfo.attackAbsHeight = srcHex.getLevel() + attackInfo.attackHeight;
@@ -394,7 +408,9 @@ public class FovHighlightingAndDarkening {
         }
         if ((attackInfo.targetHeight == Integer.MIN_VALUE) && (attackInfo.targetAbsHeight == Integer.MIN_VALUE)) {
             // Current hack for more-correct shading on low-alt maps
-            attackInfo.targetHeight = (attackInfo.lowAltitude) ? 1 : (GUIPreferences.getInstance().getMekInSecond()) ? 1 : 0;
+            attackInfo.targetHeight = (attackInfo.lowAltitude) ?
+                  1 :
+                  (GUIPreferences.getInstance().getMekInSecond()) ? 1 : 0;
             attackInfo.targetAbsHeight = dstHex.getLevel() + attackInfo.targetHeight;
         }
         return LosEffects.calculateLos(boardView.game, attackInfo);

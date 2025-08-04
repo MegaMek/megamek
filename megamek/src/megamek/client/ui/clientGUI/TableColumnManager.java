@@ -1,42 +1,72 @@
 /*
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI;
 
-import java.awt.*;
-import java.beans.*;
+import java.awt.Component;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
+import javax.swing.AbstractButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTable;
+import javax.swing.MenuElement;
+import javax.swing.MenuSelectionManager;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 /**
- * The TableColumnManager can be used to manage TableColumns. It will give the
- * user the ability to hide columns and then reshow them in their last viewed
- * position. This functionality is supported by a popup menu added to the
- * table header of the table. The TableColumnModel is still used to control
- * the view for the table. The manager will invoke the appropriate methods
- * of the TableColumnModel to hide/show columns as required.
- *
+ * The TableColumnManager can be used to manage TableColumns. It will give the user the ability to hide columns and then
+ * reshow them in their last viewed position. This functionality is supported by a popup menu added to the table header
+ * of the table. The TableColumnModel is still used to control the view for the table. The manager will invoke the
+ * appropriate methods of the TableColumnModel to hide/show columns as required.
+ * <p>
  * Taken from: https://tips4java.wordpress.com/2011/05/08/table-column-manager/
  */
 public class TableColumnManager implements MouseListener, ActionListener, TableColumnModelListener,
-        PropertyChangeListener {
+                                           PropertyChangeListener {
     private JTable table;
     private TableColumnModel tcm;
     private boolean menuPopup;
@@ -46,9 +76,8 @@ public class TableColumnManager implements MouseListener, ActionListener, TableC
     /**
      * Create a TableColumnManager for a table.
      *
-     * @param table the table whose TableColumns will be managed
-     * @param menuPopup enable or disable a popup menu to allow the users to
-     *                  manager the visibility of TableColumns.
+     * @param table     the table whose TableColumns will be managed
+     * @param menuPopup enable or disable a popup menu to allow the users to manager the visibility of TableColumns.
      */
     public TableColumnManager(JTable table, boolean menuPopup) {
         this.table = table;
@@ -59,11 +88,10 @@ public class TableColumnManager implements MouseListener, ActionListener, TableC
     }
 
     /**
-     * Reset the TableColumnManager to only manage the TableColumns that are
-     * currently visible in the table.
-     *
-     * Generally this method should only be invoked by the TableColumnManager
-     * when the TableModel of the table is changed.
+     * Reset the TableColumnManager to only manage the TableColumns that are currently visible in the table.
+     * <p>
+     * Generally this method should only be invoked by the TableColumnManager when the TableModel of the table is
+     * changed.
      */
     public void reset() {
         table.getColumnModel().removeColumnModelListener(this);
@@ -80,11 +108,10 @@ public class TableColumnManager implements MouseListener, ActionListener, TableC
     }
 
     /**
-     * Add/remove support for a popup menu to the table header. The popup
-     * menu will give the user control over which columns are visible.
+     * Add/remove support for a popup menu to the table header. The popup menu will give the user control over which
+     * columns are visible.
      *
-     * @param menuPopup when true support for displaying a popup menu is added
-     *                  otherwise the popup menu is removed.
+     * @param menuPopup when true support for displaying a popup menu is added otherwise the popup menu is removed.
      */
     public void setMenuPopup(boolean menuPopup) {
         table.getTableHeader().removeMouseListener(this);
@@ -175,8 +202,7 @@ public class TableColumnManager implements MouseListener, ActionListener, TableC
     }
 
     /**
-     * Show a hidden column in the table. The column will be positioned
-     * at its proper place in the view of the table.
+     * Show a hidden column in the table. The column will be positioned at its proper place in the view of the table.
      *
      * @param column the TableColumn to be shown.
      */
@@ -245,9 +271,8 @@ public class TableColumnManager implements MouseListener, ActionListener, TableC
     }
 
     /**
-     * Show a popup containing items for all the columns found in the
-     * table column manager. The popup will be displayed below the table
-     * header columns that was clicked.
+     * Show a popup containing items for all the columns found in the table column manager. The popup will be displayed
+     * below the table header columns that was clicked.
      *
      * @param index index of the table header column that was clicked
      */
@@ -262,7 +287,7 @@ public class TableColumnManager implements MouseListener, ActionListener, TableC
         for (TableColumn tableColumn : allColumns) {
             Object value = tableColumn.getHeaderValue();
             JCheckBoxMenuItem item = new JCheckBoxMenuItem(value.toString());
-            item.addActionListener( this);
+            item.addActionListener(this);
 
             try {
                 tcm.getColumnIndex(value);
@@ -290,9 +315,10 @@ public class TableColumnManager implements MouseListener, ActionListener, TableC
     //endregion MouseListener
 
     //region ActionListener
+
     /**
-     * A table column will either be added to the table or removed from the
-     * table depending on the state of the menu item that was clicked.
+     * A table column will either be added to the table or removed from the table depending on the state of the menu
+     * item that was clicked.
      */
     @Override
     public void actionPerformed(ActionEvent event) {
@@ -314,7 +340,7 @@ public class TableColumnManager implements MouseListener, ActionListener, TableC
     public void columnAdded(TableColumnModelEvent e) {
         // A table column was added to the TableColumnModel so we need
         // to update the manager to track this column
-        TableColumn column = tcm.getColumn( e.getToIndex() );
+        TableColumn column = tcm.getColumn(e.getToIndex());
 
         if (!allColumns.contains(column)) {
             allColumns.add(column);
@@ -332,15 +358,15 @@ public class TableColumnManager implements MouseListener, ActionListener, TableC
         //  track the new location
 
         int index = e.getToIndex();
-        TableColumn column = tcm.getColumn( index );
-        allColumns.remove( column );
+        TableColumn column = tcm.getColumn(index);
+        allColumns.remove(column);
 
         if (index == 0) {
             allColumns.add(0, column);
         } else {
             index--;
-            TableColumn visibleColumn = tcm.getColumn( index );
-            int insertionColumn = allColumns.indexOf( visibleColumn );
+            TableColumn visibleColumn = tcm.getColumn(index);
+            int insertionColumn = allColumns.indexOf(visibleColumn);
             allColumns.add(insertionColumn + 1, column);
         }
     }

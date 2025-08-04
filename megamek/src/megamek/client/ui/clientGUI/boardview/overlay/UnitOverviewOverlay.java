@@ -1,16 +1,36 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview.overlay;
 
@@ -123,7 +143,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
 
         graph.setFont(FONT);
         ArrayList<Entity> v = clientgui.getClient().getGame()
-                .getPlayerEntities(clientgui.getClient().getLocalPlayer(), true);
+              .getPlayerEntities(clientgui.getClient().getLocalPlayer(), true);
         unitIds = new int[v.size()];
 
         scroll = v.size() > unitsPerPage;
@@ -144,24 +164,24 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
             if (scrollOffset > 0) {
                 graph.drawImage(pageUp, x, y, null);
                 graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                        null);
+                      null);
             } else {
                 graph.drawImage(pageUpG, x, y, null);    // Top of list = greyed out buttons
                 graph.drawImage(scrollUpG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                        null);
+                      null);
             }
             y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING
-                    + BUTTON_PADDING;
+                  + BUTTON_PADDING;
         }
 
         for (int i = scrollOffset; (i < v.size())
-                && (i < actUnitsPerPage + scrollOffset); i++) {
+              && (i < actUnitsPerPage + scrollOffset); i++) {
             Entity e = v.get(i);
             unitIds[i] = e.getId();
             String name = getIconName(e, fm);
             Image i1 = clientgui.getCurrentBoardView()
-                             .map(bv -> ((BoardView) bv).getTilesetManager().iconFor(e))
-                             .orElse(null);
+                  .map(bv -> ((BoardView) bv).getTilesetManager().iconFor(e))
+                  .orElse(null);
 
             graph.drawImage(i1, x, y, null);
             printLine(graph, x + 3, y + 46, name);
@@ -173,8 +193,8 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
 
             Game game = clientgui.getClient().getGame();
             GameTurn turn = game.getPhase().isSimultaneous(game)
-                    ? game.getTurnForPlayer(clientgui.getClient().getLocalPlayer().getId())
-                    : game.getTurn();
+                  ? game.getTurnForPlayer(clientgui.getClient().getLocalPlayer().getId())
+                  : game.getTurn();
 
             if ((turn != null) && turn.isValidEntity(e, game)) {
                 Color oldColor = graph.getColor();
@@ -200,11 +220,11 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
             if (scrollOffset == unitIds.length - actUnitsPerPage) {
                 graph.drawImage(scrollDownG, x, y, null);   // Bottom of list = greyed out buttons
                 graph.drawImage(pageDownG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                        null);
+                      null);
             } else {
                 graph.drawImage(scrollDown, x, y, null);
                 graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                        null);
+                      null);
             }
 
         }
@@ -225,7 +245,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         int yOffset = DIST_TOP;
 
         if ((x < xOffset) || (x > xOffset + ICON_WIDTH) || (y < yOffset)
-                || (y > yOffset + (unitsPerPage * (ICON_HEIGHT + PADDING)))) {
+              || (y > yOffset + (unitsPerPage * (ICON_HEIGHT + PADDING)))) {
             return false;
         }
 
@@ -243,10 +263,10 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         }
 
         for (int i = scrollOffset; (i < unitIds.length)
-                && (i < actUnits + scrollOffset); i++) {
+              && (i < actUnits + scrollOffset); i++) {
             if ((y > yOffset) && (y < yOffset + ICON_HEIGHT)) {
                 clientgui.getBoardView().processBoardViewEvent(new BoardViewEvent(
-                        clientgui.getBoardView(), BoardViewEvent.SELECT_UNIT, unitIds[i]));
+                      clientgui.getBoardView(), BoardViewEvent.SELECT_UNIT, unitIds[i]));
                 isHit = true;
                 return true;
             }
@@ -278,7 +298,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         int yOffset = DIST_TOP;
 
         return (x >= xOffset) && (x <= xOffset + ICON_WIDTH) && (y >= yOffset)
-                && (y <= yOffset + (unitsPerPage * (ICON_HEIGHT + PADDING)));
+              && (y <= yOffset + (unitsPerPage * (ICON_HEIGHT + PADDING)));
     }
 
     @Override
@@ -301,7 +321,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         boolean mtHeat = false;
         int mHeat = 30;
         if ((entity.getGame() != null)
-                && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
+              && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
             mHeat = 50;
             mtHeat = true;
         }
@@ -314,7 +334,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         graph.setColor(Color.red);
         if (mtHeat) {
             graph.fillRect(x + 51, y + 3 + (30 - (int) (heat * 0.6)), 2,
-                    (int) (heat * 0.6));
+                  (int) (heat * 0.6));
         } else {
             graph.fillRect(x + 51, y + 3 + (30 - heat), 2, heat);
         }
@@ -385,9 +405,9 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
             if (a.isRolled()) {
                 // draw "rolled"
                 graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-                graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 11, y+29);
+                graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 11, y + 29);
                 graph.setColor(GUIP.getWarningColor());
-                graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 10, y+28);
+                graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 10, y + 28);
             }
 
             if (a.isOutControlTotal() && a.isRandomMove()) {
@@ -407,7 +427,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
             if (entity.isEvading()) {
                 // draw evasion
                 graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-                graph.drawString(Messages.getString("UnitOverview.EVADE"), x +11, y + 24);
+                graph.drawString(Messages.getString("UnitOverview.EVADE"), x + 11, y + 24);
                 graph.setColor(GUIP.getWarningColor());
                 graph.drawString(Messages.getString("UnitOverview.EVADE"), x + 10, y + 23);
             }
@@ -453,7 +473,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
             graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), x - 2, y + 33);
         } else if (!entity.isDeployed()) {
             int roundsLeft = entity.getDeployRound()
-                    - clientgui.getClient().getGame().getRoundCount();
+                  - clientgui.getClient().getGame().getRoundCount();
             if (roundsLeft > 0) {
                 printLine(graph, x + 25, y + 28, Integer.toString(roundsLeft));
             }
@@ -513,7 +533,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
             String iconName = e.getChassis() + " " + e.getModel();
             return adjustString(iconName, metrics);
         } else if ((e instanceof Infantry) || (e instanceof Mek) || (e instanceof GunEmplacement)
-                || (e instanceof Aero)) {
+              || (e instanceof Aero)) {
             return adjustString(e.getModel(), metrics);
         } else if (e instanceof Tank) {
             String iconName = e.getShortName();

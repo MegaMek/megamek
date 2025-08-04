@@ -49,8 +49,10 @@ import megamek.common.enums.GamePhase;
 
 /**
  * Abstract base class for serializers that convert entity data maps to TSV format.
+ *
  * @param <F> The enum type representing field names
  * @param <T> The type of EntityDataMap to be serialized
+ *
  * @author Luana Coppio
  */
 public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDataMap<F>> {
@@ -84,13 +86,13 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
             // Special handling for lists of enums
             if (!((List<?>) value).isEmpty() && ((List<?>) value).get(0) instanceof Enum) {
                 return ((List<?>) value).stream()
-                             .map(step -> ((Enum<?>) step).name())
-                             .collect(Collectors.joining(" "));
+                      .map(step -> ((Enum<?>) step).name())
+                      .collect(Collectors.joining(" "));
             }
             // Default handling for other lists
             return ((List<?>) value).stream()
-                         .map(String::valueOf)
-                         .collect(Collectors.joining(" "));
+                  .map(String::valueOf)
+                  .collect(Collectors.joining(" "));
         });
     }
 
@@ -99,6 +101,7 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
 
     /**
      * Creates a serializer with all fields of the enum in their natural order.
+     *
      * @param fieldEnumClass The class of the enum type F
      */
     protected EntityDataSerializer(Class<F> fieldEnumClass) {
@@ -107,6 +110,7 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
 
     /**
      * Creates a serializer with custom field order.
+     *
      * @param fieldOrder The desired order of fields for serialization
      */
     protected EntityDataSerializer(List<F> fieldOrder) {
@@ -151,13 +155,14 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
 
     public String getHeaderLine() {
         return VERSION + TAB + fieldOrder.stream()
-                     .map(Enum::name)
-                     .collect(Collectors.joining(TAB));
+              .map(Enum::name)
+              .collect(Collectors.joining(TAB));
     }
 
     /**
      * Adds a custom field format handler.
-     * @param type The class type to handle
+     *
+     * @param type      The class type to handle
      * @param formatter The formatting function
      */
     public void addFormatHandler(Class<?> type, Function<Object, String> formatter) {
@@ -165,9 +170,11 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
     }
 
     /**
-     * Gets the string representation for a null value for the given field.
-     * Subclasses can override this to provide field-specific default values.
+     * Gets the string representation for a null value for the given field. Subclasses can override this to provide
+     * field-specific default values.
+     *
      * @param field The field enum
+     *
      * @return The string representation for a null value
      */
     protected String getNullValue(F field) {

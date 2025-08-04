@@ -32,10 +32,13 @@
  */
 package megamek.client.ui.entityreadout;
 
-import megamek.client.ui.Messages;
-import megamek.client.ui.util.DiscordFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
+import megamek.client.ui.util.DiscordFormat;
 
 /**
  * Data laid out in a table with named columns. The columns are left-justified by default, but justification can be set
@@ -201,7 +204,7 @@ class TableElement implements MultiRowViewElement {
                 sb.append(PLAIN_COL_PADDING);
             }
         }
-        sb.append(DiscordFormat.RESET) .append("\n");
+        sb.append(DiscordFormat.RESET).append("\n");
         for (int r = 0; r < data.size(); r++) {
             final ViewElement[] row = data.get(r);
             if (r % 2 == 1) {

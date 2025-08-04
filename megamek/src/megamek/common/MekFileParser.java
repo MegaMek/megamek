@@ -1,17 +1,38 @@
 /*
- * MekFileParser.java - Copyright (C) 2002-2004 Josh Yockey
+ * Copyright (C) 2002-2004 Josh Yockey
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.io.*;
@@ -249,9 +270,9 @@ public class MekFileParser {
             ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_SENSOR));
             ent.setNextSensor(ent.getSensors().firstElement());
         } else if (ent.hasETypeFlag(Entity.ETYPE_DROPSHIP) ||
-                         ent.hasETypeFlag(Entity.ETYPE_SPACE_STATION) ||
-                         ent.hasETypeFlag(Entity.ETYPE_JUMPSHIP) ||
-                         ent.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+              ent.hasETypeFlag(Entity.ETYPE_SPACE_STATION) ||
+              ent.hasETypeFlag(Entity.ETYPE_JUMPSHIP) ||
+              ent.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
             // Large craft get active radar
             // And both a passive sensor suite and thermal/optical sensors, which only work
             // in space
@@ -283,17 +304,17 @@ public class MekFileParser {
             }
             // link laser insulators
             if ((m.getType().hasFlag(MiscType.F_LASER_INSULATOR) ||
-                       m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
+                  m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
                 // We can link to a laser in the same location that isn't already linked.
                 Predicate<Mounted<?>> linkable = mount -> (mount.getLinkedBy() == null) &&
-                                                                (mount.getLocation() == m.getLocation()) &&
-                                                                (mount.getType() instanceof WeaponType) &&
-                                                                (mount.getType().hasFlag(WeaponType.F_LASER) ||
-                                                                       mount.getType() instanceof CLChemicalLaserWeapon);
+                      (mount.getLocation() == m.getLocation()) &&
+                      (mount.getType() instanceof WeaponType) &&
+                      (mount.getType().hasFlag(WeaponType.F_LASER) ||
+                            mount.getType() instanceof CLChemicalLaserWeapon);
                 // The laser pulse module is also restricted to non-pulse lasers, IS only
                 if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
                     linkable = linkable.and(mount -> !mount.getType().hasFlag(WeaponType.F_PULSE) &&
-                                                           !mount.getType().isClan());
+                          !mount.getType().isClan());
                 }
 
                 /*
@@ -351,8 +372,8 @@ public class MekFileParser {
                     }
                 }
             } else if (m.getType().hasFlag(MiscType.F_ARTEMIS) ||
-                             m.getType().hasFlag(MiscType.F_ARTEMIS_V) ||
-                             m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                  m.getType().hasFlag(MiscType.F_ARTEMIS_V) ||
+                  m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
 
                 // link up to a weapon in the same location
                 for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
@@ -378,7 +399,7 @@ public class MekFileParser {
                     LOGGER.error("Unable to match Artemis to launcher for {}", ent.getShortName());
                 }
             } else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType().hasFlag(MiscType.F_VOIDSIG)) &&
-                             (ent instanceof Mek)) {
+                  (ent instanceof Mek)) {
                 // Find an ECM suite to link to the stealth system. Stop looking after we find the first ECM suite.
                 for (Mounted<?> mEquip : ent.getMisc()) {
                     MiscType miscType = (MiscType) mEquip.getType();
@@ -418,11 +439,11 @@ public class MekFileParser {
 
                         // Only Legal IS PPC's are allowed.
                         if ((mWeapon.getType() instanceof ISPPC) ||
-                                  (mWeapon.getType() instanceof ISLightPPC) ||
-                                  (mWeapon.getType() instanceof ISHeavyPPC) ||
-                                  (mWeapon.getType() instanceof ISERPPC) ||
-                                  (mWeapon.getType() instanceof ISSnubNosePPC) ||
-                                  (mWeapon.getType() instanceof CLERPPC && ent.getYear() >= 3101)) {
+                              (mWeapon.getType() instanceof ISLightPPC) ||
+                              (mWeapon.getType() instanceof ISHeavyPPC) ||
+                              (mWeapon.getType() instanceof ISERPPC) ||
+                              (mWeapon.getType() instanceof ISSnubNosePPC) ||
+                              (mWeapon.getType() instanceof CLERPPC && ent.getYear() >= 3101)) {
                             m.setLinked(mWeapon);
                             break;
                         }
@@ -498,19 +519,19 @@ public class MekFileParser {
             if ((ent instanceof Mek) && m.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
 
                 if (ent.hasTargComp() ||
-                          ((Mek) ent).hasTSM(true) ||
-                          (!ent.getMPBoosters().isNone() &&
-                                 !ent.hasWorkingMisc(MiscType.F_MASC, MiscType.S_SUPERCHARGER))) {
+                      ((Mek) ent).hasTSM(true) ||
+                      (!ent.getMPBoosters().isNone() &&
+                            !ent.hasWorkingMisc(MiscType.F_MASC, MiscType.S_SUPERCHARGER))) {
                     LOGGER.error("Loading AES with incompatible systems for {}", ent.getShortName());
                 }
 
                 if ((m.getLocation() != Mek.LOC_LARM) &&
-                          (m.getLocation() != Mek.LOC_LLEG) &&
-                          (m.getLocation() != Mek.LOC_RARM) &&
-                          (m.getLocation() != Mek.LOC_RLEG) &&
-                          (m.getLocation() != Mek.LOC_CLEG)) {
+                      (m.getLocation() != Mek.LOC_LLEG) &&
+                      (m.getLocation() != Mek.LOC_RARM) &&
+                      (m.getLocation() != Mek.LOC_RLEG) &&
+                      (m.getLocation() != Mek.LOC_CLEG)) {
                     throw new EntityLoadingException("Unable to load AES due to incompatible location for " +
-                                                           ent.getShortName());
+                          ent.getShortName());
                 }
 
             }
@@ -520,10 +541,10 @@ public class MekFileParser {
             }
 
             if (m.getType().hasFlag(MiscType.F_MODULAR_ARMOR) &&
-                      (((ent instanceof Mek) && (m.getLocation() == Mek.LOC_HEAD)) ||
-                             ((ent instanceof VTOL) && (m.getLocation() == VTOL.LOC_ROTOR)))) {
+                  (((ent instanceof Mek) && (m.getLocation() == Mek.LOC_HEAD)) ||
+                        ((ent instanceof VTOL) && (m.getLocation() == VTOL.LOC_ROTOR)))) {
                 throw new EntityLoadingException("Unable to load Modular Armor in Rotor/Head location for " +
-                                                       ent.getShortName());
+                      ent.getShortName());
             }
 
             if (m.getType().hasFlag(MiscType.F_TALON)) {
@@ -538,7 +559,7 @@ public class MekFileParser {
                     }
                 } else {
                     throw new EntityLoadingException("Unable to load talons in non-Mek entity for " +
-                                                           ent.getShortName());
+                          ent.getShortName());
                 }
             }
 
@@ -561,7 +582,7 @@ public class MekFileParser {
 
                             // Check for PPC that isn't cross linked
                             if (!bayWeaponType.hasFlag(WeaponType.F_PPC) ||
-                                      (bayMountedWeapon.getCrossLinkedBy() != null)) {
+                                  (bayMountedWeapon.getCrossLinkedBy() != null)) {
                                 continue;
                             }
 
@@ -569,11 +590,11 @@ public class MekFileParser {
                             if (bayMountedWeapon.getLocation() == m.getLocation()) {
                                 // Only Legal IS PPC's are allowed.
                                 if ((bayWeaponType instanceof ISPPC) ||
-                                          (bayWeaponType instanceof ISLightPPC) ||
-                                          (bayWeaponType instanceof ISHeavyPPC) ||
-                                          (bayWeaponType instanceof ISERPPC) ||
-                                          (bayWeaponType instanceof ISSnubNosePPC) ||
-                                          (bayWeaponType instanceof CLERPPC && ent.getYear() >= 3101)) {
+                                      (bayWeaponType instanceof ISLightPPC) ||
+                                      (bayWeaponType instanceof ISHeavyPPC) ||
+                                      (bayWeaponType instanceof ISERPPC) ||
+                                      (bayWeaponType instanceof ISSnubNosePPC) ||
+                                      (bayWeaponType instanceof CLERPPC && ent.getYear() >= 3101)) {
 
                                     m.setCrossLinked(bayMountedWeapon);
                                     break;
@@ -592,14 +613,14 @@ public class MekFileParser {
 
                         // Only Legal IS PPC's are allowed.
                         if ((mWeapon.getType() instanceof ISPPC) ||
-                                  (mWeapon.getType() instanceof ISLightPPC) ||
-                                  (mWeapon.getType() instanceof ISHeavyPPC) ||
-                                  (mWeapon.getType() instanceof ISERPPC) ||
-                                  (mWeapon.getType() instanceof ISSnubNosePPC) ||
-                                  (mWeapon.getType() instanceof CLEnhancedPPC) ||
-                                  (mWeapon.getType() instanceof CLImprovedPPC) ||
-                                  (mWeapon.getType() instanceof ISKinsSlaughterPPC) ||
-                                  (mWeapon.getType() instanceof CLERPPC && ent.getYear() >= 3101)) {
+                              (mWeapon.getType() instanceof ISLightPPC) ||
+                              (mWeapon.getType() instanceof ISHeavyPPC) ||
+                              (mWeapon.getType() instanceof ISERPPC) ||
+                              (mWeapon.getType() instanceof ISSnubNosePPC) ||
+                              (mWeapon.getType() instanceof CLEnhancedPPC) ||
+                              (mWeapon.getType() instanceof CLImprovedPPC) ||
+                              (mWeapon.getType() instanceof ISKinsSlaughterPPC) ||
+                              (mWeapon.getType() instanceof CLERPPC && ent.getYear() >= 3101)) {
 
                             m.setCrossLinked(mWeapon);
                             break;
@@ -622,8 +643,8 @@ public class MekFileParser {
                     // First, make sure every valid DWP weapon has ammo
                     for (Mounted<?> weapon : ent.getWeaponList()) {
                         if (weapon.isDWPMounted() &&
-                                  (weapon.getLinked() == null) &&
-                                  AmmoType.isAmmoValid(ammo, (WeaponType) weapon.getType())) {
+                              (weapon.getLinked() == null) &&
+                              AmmoType.isAmmoValid(ammo, (WeaponType) weapon.getType())) {
                             weapon.setLinked(ammo);
                             break;
                         }
@@ -782,14 +803,14 @@ public class MekFileParser {
      */
     static void linkDumpers(Entity entity) {
         List<Mounted<?>> dumpers = entity.getMisc()
-                                         .stream()
-                                         .filter(mounted -> mounted.getType().hasFlag(MiscType.F_DUMPER))
-                                         .collect(Collectors.toList());
+              .stream()
+              .filter(mounted -> mounted.getType().hasFlag(MiscType.F_DUMPER))
+              .collect(Collectors.toList());
 
         List<Mounted<?>> cargos = entity.getMisc()
-                                        .stream()
-                                        .filter(mounted -> mounted.is(EquipmentTypeLookup.CARGO))
-                                        .collect(Collectors.toList());
+              .stream()
+              .filter(mounted -> mounted.is(EquipmentTypeLookup.CARGO))
+              .collect(Collectors.toList());
         cargos.forEach(cargo -> cargo.setLinkedBy(null));
 
         for (Mounted<?> dumper : dumpers) {
@@ -822,12 +843,12 @@ public class MekFileParser {
                 for (int i = 0; i < entity.getNumberOfCriticals(mga.getLocation()); i++) {
                     CriticalSlot slot = entity.getCritical(mga.getLocation(), i);
                     if ((slot != null) &&
-                              (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) &&
-                              (slot.getMount().getType() instanceof WeaponType weaponType)) {
+                          (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) &&
+                          (slot.getMount().getType() instanceof WeaponType weaponType)) {
                         int eqNum = entity.getEquipmentNum(slot.getMount());
                         if (!usedMG.contains(eqNum) &&
-                                  weaponType.hasFlag(WeaponType.F_MG) &&
-                                  (mga.getType().getRackSize() == weaponType.getRackSize())) {
+                              weaponType.hasFlag(WeaponType.F_MG) &&
+                              (mga.getType().getRackSize() == weaponType.getRackSize())) {
                             mga.addWeaponToBay(eqNum);
                             usedMG.add(eqNum);
                             if (mga.getBayWeapons().size() >= 4) {

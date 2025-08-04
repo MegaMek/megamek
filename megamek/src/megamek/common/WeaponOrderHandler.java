@@ -1,18 +1,38 @@
 /*
-* MegaMek -
-* Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+
+ * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 package megamek.common;
 
 import java.io.BufferedWriter;
@@ -25,22 +45,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.xml.parsers.DocumentBuilder;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
- * This class loads the custom weapon orders lists from the
- * mmconf/customWeaponOrder.xml files.
+ * This class loads the custom weapon orders lists from the mmconf/customWeaponOrder.xml files.
  *
  * @author Arlith
  */
@@ -60,7 +77,7 @@ public class WeaponOrderHandler {
             } else {
                 final WeaponOrder other = (WeaponOrder) obj;
                 return Objects.equals(orderType, other.orderType)
-                        && Objects.equals(customWeaponOrderMap, other.customWeaponOrderMap);
+                      && Objects.equals(customWeaponOrderMap, other.customWeaponOrderMap);
             }
         }
 
@@ -102,7 +119,7 @@ public class WeaponOrderHandler {
         }
 
         Writer output = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(file)));
+              new FileOutputStream(file)));
 
         // Output the doctype and header stuff.
         output.write("<?xml version=\"1.0\"?>\n");
@@ -160,6 +177,7 @@ public class WeaponOrderHandler {
      * Load customWeaponOrderMap from a file.
      *
      * @return
+     *
      * @throws IOException
      */
     private synchronized static Map<String, WeaponOrder> loadWeaponOrderFile() throws IOException {
@@ -184,7 +202,7 @@ public class WeaponOrderHandler {
             NodeList listOfEntries = doc.getElementsByTagName(UNIT);
             int totalEntries = listOfEntries.getLength();
             log.append("\n\tTotal number of custom weapon order entries: ")
-                    .append(totalEntries);
+                  .append(totalEntries);
             for (int unitCount = 0; unitCount < totalEntries; unitCount++) {
 
                 // Get the first element of this node.
@@ -192,33 +210,33 @@ public class WeaponOrderHandler {
 
                 // Get the chassis
                 Element unitIdElement = (Element) unitList
-                        .getElementsByTagName(ID).item(0);
+                      .getElementsByTagName(ID).item(0);
                 if (unitIdElement == null) {
                     log.append("\n\tMissing <" + ID + "> element #").append(
-                            unitCount);
+                          unitCount);
                     continue;
                 }
                 String unitId = unitIdElement.getTextContent();
 
                 // Get the weapon sort order type
                 Element orderTypeElement = (Element) unitList
-                        .getElementsByTagName(ORDER_TYPE).item(0);
+                      .getElementsByTagName(ORDER_TYPE).item(0);
                 if (orderTypeElement == null) {
                     log.append("\n\tMissing <" + ORDER_TYPE + "> element #")
-                            .append(unitCount);
+                          .append(unitCount);
                     continue;
                 }
 
                 // Get the weapon order
                 Element weaponListElement = (Element) unitList
-                        .getElementsByTagName(WEAPON_LIST).item(0);
+                      .getElementsByTagName(WEAPON_LIST).item(0);
                 if (weaponListElement == null) {
                     log.append("\n\tMissing <" + WEAPON_LIST + "> element #")
-                            .append(unitCount);
+                          .append(unitCount);
                     continue;
                 }
                 Element orderListElement = (Element) unitList
-                        .getElementsByTagName(ORDER_LIST).item(0);
+                      .getElementsByTagName(ORDER_LIST).item(0);
                 if (orderListElement == null) {
                     log.append("\n\tMissing <" + ORDER_LIST + "> element #").append(unitCount);
                     continue;
@@ -231,8 +249,8 @@ public class WeaponOrderHandler {
                     String[] orderList = orderListElement.getTextContent().split(",");
                     for (int i = 0; i < weaponList.length; i++) {
                         weapOrder.customWeaponOrderMap.put(
-                                Integer.parseInt(weaponList[i]),
-                                Integer.parseInt(orderList[i]));
+                              Integer.parseInt(weaponList[i]),
+                              Integer.parseInt(orderList[i]));
                     }
                 }
                 weapOrderMap.put(unitId, weapOrder);
@@ -250,8 +268,9 @@ public class WeaponOrderHandler {
      *
      * @param chassis The unit's chassis.
      * @param model   The unit's model
-     * @return A {@code Map} for the custom weapon order for the given
-     *         unit. If the unit is not in the list, a NULL value is returned.
+     *
+     * @return A {@code Map} for the custom weapon order for the given unit. If the unit is not in the list, a NULL
+     *       value is returned.
      */
     @Nullable
     public static synchronized WeaponOrder getWeaponOrder(String chassis, String model) {
@@ -296,8 +315,8 @@ public class WeaponOrderHandler {
      * @param customWeapOrder
      */
     public synchronized static void setWeaponOrder(String chassis, String model,
-            WeaponSortOrder type,
-            Map<Integer, Integer> customWeapOrder) {
+          WeaponSortOrder type,
+          Map<Integer, Integer> customWeapOrder) {
         if (!initialized.get() || (null == weaponOrderMap)) {
             try {
                 weaponOrderMap = loadWeaponOrderFile();
@@ -308,7 +327,7 @@ public class WeaponOrderHandler {
         }
 
         if (chassis == null || chassis.length() < 1 || model == null
-                || model.length() < 1) {
+              || model.length() < 1) {
             return;
         }
         String unitId = chassis;

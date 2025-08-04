@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.util;
 
 import java.awt.GraphicsEnvironment;
@@ -41,15 +62,15 @@ public class AddBotUtil {
     private final List<String> results = new ArrayList<>();
     public static final String COMMAND = "replacePlayer";
     public static final String USAGE = "Replaces a player who is a ghost with a bot." +
-                                             "\nUsage /replacePlayer <-b:Princess> <-c:Config> <-v:Verbosity> " +
-                                             "<-p:>name." +
-                                             "\n  <-b> Specifies use if Princess. " +
-                                             "\n  <-c> Specifies a saved configuration to be used by Princess.  If left out" +
-                                             " DEFAULT will be used." +
-                                             "\n  <-v> Specifies the verbosity level for Princess " +
-                                             "(DEBUG/INFO/WARNING/ERROR)." +
-                                             "\n  <-p> Specifies the player name.  The '-p' is only required when the '-c' " +
-                                             "or '-v' parameters are also used.";
+          "\nUsage /replacePlayer <-b:Princess> <-c:Config> <-v:Verbosity> " +
+          "<-p:>name." +
+          "\n  <-b> Specifies use if Princess. " +
+          "\n  <-c> Specifies a saved configuration to be used by Princess.  If left out" +
+          " DEFAULT will be used." +
+          "\n  <-v> Specifies the verbosity level for Princess " +
+          "(DEBUG/INFO/WARNING/ERROR)." +
+          "\n  <-p> Specifies the player name.  The '-p' is only required when the '-c' " +
+          "or '-v' parameters are also used.";
 
     private String concatResults() {
         final StringBuilder output = new StringBuilder();
@@ -138,7 +159,7 @@ public class AddBotUtil {
             botClient = makeNewPrincessClient(target, host, port);
             if (!StringUtility.isNullOrBlank(configName)) {
                 final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance()
-                                                        .getBehavior(configName.toString());
+                      .getBehavior(configName.toString());
                 if (null != behavior) {
                     ((Princess) botClient).setBehaviorSettings(behavior);
                 } else {
@@ -190,9 +211,9 @@ public class AddBotUtil {
         Objects.requireNonNull(game);
 
         Optional<Player> possible = game.getPlayersList()
-                                          .stream()
-                                          .filter(p -> p.getName().equals(playerName))
-                                          .findFirst();
+              .stream()
+              .filter(p -> p.getName().equals(playerName))
+              .findFirst();
         if (possible.isEmpty()) {
             message.append("No player with the name '" + playerName + "'.");
             return null;
@@ -233,9 +254,9 @@ public class AddBotUtil {
         Objects.requireNonNull(game);
 
         Optional<Player> possible = game.getPlayersList()
-                                          .stream()
-                                          .filter(p -> p.getName().equals(playerName))
-                                          .findFirst();
+              .stream()
+              .filter(p -> p.getName().equals(playerName))
+              .findFirst();
         if (possible.isEmpty()) {
             message.append("No player with the name '" + playerName + "'.");
             return null;
@@ -279,9 +300,9 @@ public class AddBotUtil {
         Objects.requireNonNull(game);
 
         Optional<Player> possible = game.getPlayersList()
-                                          .stream()
-                                          .filter(p -> p.getName().equals(playerName))
-                                          .findFirst();
+              .stream()
+              .filter(p -> p.getName().equals(playerName))
+              .findFirst();
 
         if (possible.isEmpty()) {
             message.append("No player with the name '" + playerName + "'.");

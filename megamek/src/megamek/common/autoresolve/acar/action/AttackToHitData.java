@@ -1,17 +1,39 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.autoresolve.acar.action;
+
+import java.util.List;
 
 import megamek.common.InGameObject;
 import megamek.common.TargetRoll;
@@ -19,8 +41,6 @@ import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.internationalization.I18n;
 import megamek.common.strategicBattleSystems.SBFUnit;
-
-import java.util.List;
 
 public class AttackToHitData extends TargetRoll {
 
@@ -79,17 +99,17 @@ public class AttackToHitData extends TargetRoll {
     private static void processRange(AttackToHitData toHit, StandardUnitAttack attack) {
         var range = attack.getRange();
         switch (range) {
-            case SHORT -> toHit.addModifier(-1, I18n.getText( "acar.short_range"));
+            case SHORT -> toHit.addModifier(-1, I18n.getText("acar.short_range"));
             case MEDIUM -> toHit.addModifier(+2, I18n.getText("acar.medium_range"));
             case LONG -> toHit.addModifier(+4, I18n.getText("acar.long_range"));
-            default -> toHit.addModifier(TargetRoll.IMPOSSIBLE, I18n.getText( "acar.extreme_range"));
+            default -> toHit.addModifier(TargetRoll.IMPOSSIBLE, I18n.getText("acar.extreme_range"));
         }
     }
 
     private static void processTMM(AttackToHitData toHit, SimulationContext game, StandardUnitAttack attack) {
         var target = game.getFormation(attack.getTargetId()).orElseThrow();
         if (target.getTmm() > 0) {
-            toHit.addModifier(target.getTmm(), I18n.getText( "acar.TMM"));
+            toHit.addModifier(target.getTmm(), I18n.getText("acar.TMM"));
         }
     }
 
@@ -115,7 +135,8 @@ public class AttackToHitData extends TargetRoll {
         }
     }
 
-    private static void processSecondaryTarget(AttackToHitData toHit, SimulationContext game, StandardUnitAttack attack) {
+    private static void processSecondaryTarget(AttackToHitData toHit, SimulationContext game,
+          StandardUnitAttack attack) {
         var attacker = game.getFormation(attack.getEntityId()).orElseThrow();
         if (targetsOfFormation(attacker, game).size() > 2) {
             toHit.addModifier(TargetRoll.IMPOSSIBLE, I18n.getText("acar.more_than_two_targets"));
@@ -125,21 +146,22 @@ public class AttackToHitData extends TargetRoll {
     }
 
     /**
-     * Returns a list of target IDs of all the targets of all attacks that the attacker of the given
-     * attack is performing this round. The result can be empty (the unit isn't attacking anything or
-     * it is not the firing phase), it can have one or two entries.
+     * Returns a list of target IDs of all the targets of all attacks that the attacker of the given attack is
+     * performing this round. The result can be empty (the unit isn't attacking anything or it is not the firing phase),
+     * it can have one or two entries.
      *
      * @param unit The attacker to check attacks for
      * @param game The game
+     *
      * @return A list of all target IDs
      */
     public static List<Integer> targetsOfFormation(InGameObject unit, SimulationContext game) {
         return game.getActionsVector().stream()
-            .filter(a -> a.getEntityId() == unit.getId())
-            .filter(AttackAction.class::isInstance)
-            .map(AttackAction.class::cast)
-            .map(AttackAction::getTargetId)
-            .distinct()
-            .toList();
+              .filter(a -> a.getEntityId() == unit.getId())
+              .filter(AttackAction.class::isInstance)
+              .map(AttackAction.class::cast)
+              .map(AttackAction::getTargetId)
+              .distinct()
+              .toList();
     }
 }

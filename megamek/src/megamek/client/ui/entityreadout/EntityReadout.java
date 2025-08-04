@@ -33,11 +33,19 @@
  */
 package megamek.client.ui.entityreadout;
 
-import megamek.client.ui.util.ViewFormatting;
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-
 import java.util.Collection;
+
+import megamek.client.ui.util.ViewFormatting;
+import megamek.common.Aero;
+import megamek.common.BattleArmor;
+import megamek.common.Entity;
+import megamek.common.FighterSquadron;
+import megamek.common.GunEmplacement;
+import megamek.common.Infantry;
+import megamek.common.Mek;
+import megamek.common.ProtoMek;
+import megamek.common.Tank;
+import megamek.common.annotations.Nullable;
 
 /**
  * The Entity information shown in the unit selector and many other places in MM, MML and MHQ.

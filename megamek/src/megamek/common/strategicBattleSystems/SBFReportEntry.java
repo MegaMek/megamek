@@ -1,37 +1,52 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.strategicBattleSystems;
+
+import static megamek.client.ui.util.UIUtil.hexColor;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JTextPane;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Report;
 import megamek.common.ReportEntry;
 import megamek.common.Roll;
-
-import javax.swing.*;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import static megamek.client.ui.util.UIUtil.hexColor;
 
 public class SBFReportEntry implements ReportEntry {
 
@@ -67,7 +82,7 @@ public class SBFReportEntry implements ReportEntry {
         styleSheet.addRule(".roll { font-weight:bold; }");
         styleSheet.addRule(".dice { font-family:Noto Sans Symbols 2; }");
         styleSheet.addRule(".header { font-weight:bold; font-size: "
-                + (int) (1.2 * size) + "pt; padding:10 0; margin:0; text-decoration: underline; }");
+              + (int) (1.2 * size) + "pt; padding:10 0; margin:0; text-decoration: underline; }");
         styleSheet.addRule("span.info { color: " + hexColor(GUIP.getReportInfoColor()) + " }");
     }
 
@@ -99,11 +114,11 @@ public class SBFReportEntry implements ReportEntry {
     // }
 
     /**
-     * Add the given int to the list of data that will be substituted for the
-     * &lt;data&gt; tags in the report. The order in which items are added must
-     * match the order of the tags in the report text.
+     * Add the given int to the list of data that will be substituted for the &lt;data&gt; tags in the report. The order
+     * in which items are added must match the order of the tags in the report text.
      *
      * @param data the int to be substituted
+     *
      * @return This Report to allow chaining
      */
     public SBFReportEntry add(int data) {
@@ -111,14 +126,13 @@ public class SBFReportEntry implements ReportEntry {
     }
 
     /**
-     * Add the given int to the list of data that will be substituted for the
-     * &lt;data&gt; tags in the report, and mark it as double-blind sensitive
-     * information if <code>obscure</code> is true. The order in which items
-     * are added must match the order of the tags in the report text.
+     * Add the given int to the list of data that will be substituted for the &lt;data&gt; tags in the report, and mark
+     * it as double-blind sensitive information if <code>obscure</code> is true. The order in which items are added must
+     * match the order of the tags in the report text.
      *
      * @param data    the int to be substituted
-     * @param obscure boolean indicating whether the data is double-blind
-     *                sensitive
+     * @param obscure boolean indicating whether the data is double-blind sensitive
+     *
      * @return This Report to allow chaining
      */
     public SBFReportEntry add(int data, boolean obscure) {
@@ -126,11 +140,11 @@ public class SBFReportEntry implements ReportEntry {
     }
 
     /**
-     * Add the given String to the list of data that will be substituted for the
-     * &lt;data&gt; tags in the report. The order in which items are added must
-     * match the order of the tags in the report text.
+     * Add the given String to the list of data that will be substituted for the &lt;data&gt; tags in the report. The
+     * order in which items are added must match the order of the tags in the report text.
      *
      * @param data the String to be substituted
+     *
      * @return This Report to allow chaining
      */
     public SBFReportEntry add(String data) {
@@ -138,14 +152,13 @@ public class SBFReportEntry implements ReportEntry {
     }
 
     /**
-     * Add the given String to the list of data that will be substituted for the
-     * &lt;data&gt; tags in the report, and mark it as double-blind sensitive
-     * information if <code>obscure</code> is true. The order in which items
-     * are added must match the order of the tags in the report text.
+     * Add the given String to the list of data that will be substituted for the &lt;data&gt; tags in the report, and
+     * mark it as double-blind sensitive information if <code>obscure</code> is true. The order in which items are added
+     * must match the order of the tags in the report text.
      *
      * @param data    the String to be substituted
-     * @param obscure boolean indicating whether the data is double-blind
-     *                sensitive
+     * @param obscure boolean indicating whether the data is double-blind sensitive
+     *
      * @return This Report to allow chaining
      */
     public SBFReportEntry add(String data, boolean obscure) {
@@ -164,9 +177,8 @@ public class SBFReportEntry implements ReportEntry {
     }
 
     /**
-     * Indent the report. Equivalent to calling {@link #indent(int)} with a
-     * parameter of 1.
-     * 
+     * Indent the report. Equivalent to calling {@link #indent(int)} with a parameter of 1.
+     *
      * @return This Report to allow chaining
      */
     public SBFReportEntry indent() {
@@ -177,6 +189,7 @@ public class SBFReportEntry implements ReportEntry {
      * Indent the report n times.
      *
      * @param n the number of times to indent the report
+     *
      * @return This Report to allow chaining
      */
     public SBFReportEntry indent(int n) {

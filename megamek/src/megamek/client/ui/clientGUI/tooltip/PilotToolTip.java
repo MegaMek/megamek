@@ -1,16 +1,35 @@
 /*
-* MegaMek - Copyright (C) 2020 - The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
 package megamek.client.ui.clientGUI.tooltip;
 
 import static megamek.client.ui.clientGUI.tooltip.TipUtil.getOptionList;
@@ -23,7 +42,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
 import javax.imageio.ImageIO;
 
 import megamek.client.ui.Messages;
@@ -77,7 +95,7 @@ public final class PilotToolTip {
     // PRIVATE
 
     private static StringBuilder getPilotTip(final Entity entity, boolean detailed, boolean showPortrait,
-            boolean showDefaultPortrait, boolean report) {
+          boolean showDefaultPortrait, boolean report) {
         String result = "";
 
         if (!detailed) {
@@ -99,7 +117,7 @@ public final class PilotToolTip {
         row = UIUtil.tag("TR", "", cols);
         rows += row;
         String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=2 BORDER=0", rows);
-        result +=  UIUtil.tag("DIV", "width=100%", table);
+        result += UIUtil.tag("DIV", "width=100%", table);
 
         if (!detailed) {
             result += "<HR STYLE=WIDTH:90% />";
@@ -147,7 +165,7 @@ public final class PilotToolTip {
             if ((crew.getNickname(i) != null) && !crew.getNickname(i).isBlank()) {
                 String sNickName = UIUtil.tag("B", "", crew.getNickname(i).toUpperCase());
                 String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(UIUtil.uiNickColor()));
-                sCrew += UIUtil.tag("FONT", attr,  sNickName);
+                sCrew += UIUtil.tag("FONT", attr, sNickName);
             } else if ((crew.getName(i) != null) && !crew.getName(i).isBlank()) {
                 sCrew += crew.getName(i) + " ";
             } else {
@@ -160,7 +178,7 @@ public final class PilotToolTip {
 
             if (!crew.getStatusDesc(i).isEmpty()) {
                 String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getWarningColor()));
-                sCrew += UIUtil.tag("FONT", attr,  crew.getStatusDesc(i));
+                sCrew += UIUtil.tag("FONT", attr, crew.getStatusDesc(i));
             }
             result += sCrew + "<BR>";
         }
@@ -180,16 +198,16 @@ public final class PilotToolTip {
         Game game = entity.getGame();
 
         String pickedUp = game.getEntitiesVector().stream()
-                .filter(e -> (e.isDeployed()
-                        && ((e instanceof MekWarrior) && ((MekWarrior) e).getPickedUpById() == entity.getId())))
-                .map(e -> e.getCrew().getName())
-                .collect(Collectors.joining(", "));
+              .filter(e -> (e.isDeployed()
+                    && ((e instanceof MekWarrior) && ((MekWarrior) e).getPickedUpById() == entity.getId())))
+              .map(e -> e.getCrew().getName())
+              .collect(Collectors.joining(", "));
 
         String col = "";
 
         if (!pickedUp.isEmpty()) {
             String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
-            pickedUp = UIUtil.tag("FONT", attr,  Messages.getString("BoardView1.Tooltip.PickedUp") + pickedUp);
+            pickedUp = UIUtil.tag("FONT", attr, Messages.getString("BoardView1.Tooltip.PickedUp") + pickedUp);
             String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
             pickedUp = UIUtil.tag("span", fontSizeAttr, pickedUp);
             col = UIUtil.tag("TD", "", pickedUp);
@@ -216,7 +234,7 @@ public final class PilotToolTip {
                 float imgSize = UIUtil.scaleForGUI(PORTRAIT_BASESIZE);
                 imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
                 Image portrait = baseImage.getScaledInstance(-1, (int) imgSize,
-                        Image.SCALE_SMOOTH);
+                      Image.SCALE_SMOOTH);
                 String img = "";
 
                 if (!report) {
@@ -225,11 +243,11 @@ public final class PilotToolTip {
                         // This is done to avoid using HTML rescaling on the portrait which does
                         // not do any smoothing and has extremely ugly results
                         String tempPath = Configuration.imagesDir() + TEMP_DIR + PORTRAIT_PREFIX
-                            + crew.getExternalIdAsString() + "_" + i + PNG_EXT;
+                              + crew.getExternalIdAsString() + "_" + i + PNG_EXT;
                         File tempFile = new File(tempPath);
                         if (!tempFile.exists()) {
                             BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null),
-                                portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                                  portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
                             bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
                             ImageIO.write(bufferedImage, "PNG", tempFile);
                         }
@@ -252,9 +270,8 @@ public final class PilotToolTip {
     }
 
     /**
-     * Returns a tooltip part with crew advantages. When detailed is
-     * true, the advantages will be fully listed, otherwise only the
-     * groups and number of advantages per group are given.
+     * Returns a tooltip part with crew advantages. When detailed is true, the advantages will be fully listed,
+     * otherwise only the groups and number of advantages per group are given.
      */
     private static StringBuilder crewAdvs(final Entity entity, boolean detailed) {
         String result = "";
@@ -262,7 +279,7 @@ public final class PilotToolTip {
         Crew crew = entity.getCrew();
         sOptionList = getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed);
         String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipQuirkColor()));
-        sOptionList = UIUtil.tag("FONT", attr,  sOptionList);
+        sOptionList = UIUtil.tag("FONT", attr, sOptionList);
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         result = UIUtil.tag("span", fontSizeAttr, sOptionList);
 
@@ -278,19 +295,19 @@ public final class PilotToolTip {
 
         try {
             StreamSupport.stream(Files.newDirectoryStream(Paths.get(tempPath), filter).spliterator(), true)
-                    .forEach(p -> {
-                        try {
-                            Files.delete(p);
-                        } catch (Exception ex) {
-                        }
-                    });
+                  .forEach(p -> {
+                      try {
+                          Files.delete(p);
+                      } catch (Exception ex) {
+                      }
+                  });
         } catch (Exception ex) {
         }
     }
 
     public static void deleteImageCache(Crew crew, int pos) {
         String tempPath = Configuration.imagesDir() + TEMP_DIR + PORTRAIT_PREFIX + crew.getExternalIdAsString() + "_"
-                + pos + PNG_EXT;
+              + pos + PNG_EXT;
         File tempFile = new File(tempPath);
         try {
             Files.deleteIfExists(tempFile.toPath());

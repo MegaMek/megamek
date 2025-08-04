@@ -1,20 +1,37 @@
-/**
- * MegaMek - Copyright (C) 2013 Ben Mazur (bmazur@sev.org) Copyright (c) 2024, 2025 - The MegaMek Team. All Rights
- * Reserved. Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
- * <p>
+/*
+ * Copyright (C) 2013 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024-2025 - The MegaMek Team. All Rights Reserved.
+ *
  * This file is part of MegaMek.
- * <p>
- * MegaMek is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
- * version.
- * <p>
- * MegaMek is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * <p>
- * You should have received a copy of the GNU General Public License along with MegaMek. If not, see
- * <http://www.gnu.org/licenses/>.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.io.PrintWriter;
@@ -114,7 +131,7 @@ public class TripodMek extends MekWithArms {
                         if (legHasHipCrit(i)) {
                             hipHits++;
                             if ((game == null) ||
-                                      !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                                 continue;
                             }
                         }
@@ -131,7 +148,7 @@ public class TripodMek extends MekWithArms {
             } else {
                 if (hipHits > 0) {
                     if ((game != null) &&
-                              game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                          game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                         mp = mp - 2 * hipHits;
                     } else {
                         mp = (hipHits == 1) ? (int) Math.ceil(mp / 2.0) : 0;
@@ -188,8 +205,8 @@ public class TripodMek extends MekWithArms {
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND) &&
-                      conditions.getWeather().isClear() &&
-                      conditions.getWind().isTornadoF1ToF3()) {
+                  conditions.getWeather().isClear() &&
+                  conditions.getWind().isTornadoF1ToF3()) {
                 mp += 1;
             }
         }
@@ -303,13 +320,13 @@ public class TripodMek extends MekWithArms {
     @Override
     public boolean canGoHullDown() {
         return (game != null) &&
-                     game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN) &&
-                     ((!isLocationBad(Mek.LOC_LLEG) &&
-                             !isLocationBad(Mek.LOC_RLEG) &&
-                             !isLocationBad(LOC_CLEG) &&
-                             !isLocationDoomed(Mek.LOC_LLEG) &&
-                             !isLocationDoomed(Mek.LOC_RLEG)) && !isLocationDoomed(LOC_CLEG)) &&
-                     !isGyroDestroyed();
+              game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN) &&
+              ((!isLocationBad(Mek.LOC_LLEG) &&
+                    !isLocationBad(Mek.LOC_RLEG) &&
+                    !isLocationBad(LOC_CLEG) &&
+                    !isLocationDoomed(Mek.LOC_LLEG) &&
+                    !isLocationDoomed(Mek.LOC_RLEG)) && !isLocationDoomed(LOC_CLEG)) &&
+              !isGyroDestroyed();
     }
 
     @Override
@@ -320,8 +337,8 @@ public class TripodMek extends MekWithArms {
     @Override
     public boolean hasMPReducingHardenedArmor() {
         return (armorType[LOC_LLEG] == EquipmentType.T_ARMOR_HARDENED) ||
-                     (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED) ||
-                     (armorType[LOC_CLEG] == EquipmentType.T_ARMOR_HARDENED);
+              (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED) ||
+              (armorType[LOC_CLEG] == EquipmentType.T_ARMOR_HARDENED);
     }
 
     @Override
@@ -372,7 +389,7 @@ public class TripodMek extends MekWithArms {
                 switch (roll) {
                     case 2:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                              !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(tac(table, side, Mek.LOC_CT, cover, false));
@@ -415,7 +432,7 @@ public class TripodMek extends MekWithArms {
                 switch (roll) {
                     case 2:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                              !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(tac(table, side, Mek.LOC_LT, cover, false));
@@ -440,13 +457,13 @@ public class TripodMek extends MekWithArms {
                         return new HitData(Mek.LOC_LT);
                     case 8:
                         if (game.getOptions()
-                                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                              .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_CT, true);
                         }
                         return new HitData(Mek.LOC_CT);
                     case 9:
                         if (game.getOptions()
-                                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                              .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_RT, true);
                         }
                         return new HitData(Mek.LOC_RT);
@@ -466,7 +483,7 @@ public class TripodMek extends MekWithArms {
                 switch (roll) {
                     case 2:
                         if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                              !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(tac(table, side, Mek.LOC_RT, cover, false));
@@ -491,13 +508,13 @@ public class TripodMek extends MekWithArms {
                         return new HitData(Mek.LOC_RT);
                     case 8:
                         if (game.getOptions()
-                                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                              .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_CT, true);
                         }
                         return new HitData(Mek.LOC_CT);
                     case 9:
                         if (game.getOptions()
-                                  .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                              .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS)) {
                             return new HitData(Mek.LOC_LT, true);
                         }
                         return new HitData(Mek.LOC_LT);
@@ -515,11 +532,11 @@ public class TripodMek extends MekWithArms {
             } else if (side == ToHitData.SIDE_REAR) {
                 // normal rear hits
                 if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS) &&
-                          isProne()) {
+                      isProne()) {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                      !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_CT, cover, true));
@@ -561,7 +578,7 @@ public class TripodMek extends MekWithArms {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                      !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_CT, cover, true));

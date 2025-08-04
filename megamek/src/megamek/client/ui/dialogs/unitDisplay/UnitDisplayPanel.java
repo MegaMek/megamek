@@ -1,16 +1,36 @@
 /*
- * MegaMek - Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.unitDisplay;
 
@@ -54,8 +74,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
 /**
- * Displays the info for a mek. This is also a sort of interface for special
- * movement and firing actions.
+ * Displays the info for a mek. This is also a sort of interface for special movement and firing actions.
  */
 public class UnitDisplayPanel extends JPanel {
     private static final MMLogger logger = MMLogger.create(UnitDisplayPanel.class);
@@ -140,11 +159,12 @@ public class UnitDisplayPanel extends JPanel {
 
     /**
      * Creates and lays out a new mek display.
-     * @param clientGui The ClientGUI for the GUI that is creating this UnitDisplay.
+     *
+     * @param clientGui  The ClientGUI for the GUI that is creating this UnitDisplay.
      * @param controller The MegaMekController for the GUI that is creating this UnitDisplay.
      */
     public UnitDisplayPanel(@Nullable ClientGUI clientGui,
-            @Nullable MegaMekController controller) {
+          @Nullable MegaMekController controller) {
         super(new GridBagLayout());
         this.clientgui = clientGui;
 
@@ -153,7 +173,7 @@ public class UnitDisplayPanel extends JPanel {
         tabStrip = new MekPanelTabStrip(this);
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
         Image tile = getToolkit()
-                .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
+              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
         int b = BackGroundDrawer.TILING_BOTH;
         BackGroundDrawer bgd = new BackGroundDrawer(tile, b);
@@ -198,7 +218,7 @@ public class UnitDisplayPanel extends JPanel {
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
 
-        ((GridBagLayout)getLayout()).setConstraints(displayP, c);
+        ((GridBagLayout) getLayout()).setConstraints(displayP, c);
         add(displayP);
 
         if (controller != null) {
@@ -277,8 +297,10 @@ public class UnitDisplayPanel extends JPanel {
                     GUI_PREFERENCES.setUnitDisplayNontabbedPosY(unitDisplayDialog.getLocation().y);
                     GUI_PREFERENCES.setUnitDisplayNonTabbedSizeWidth(unitDisplayDialog.getSize().width);
                     GUI_PREFERENCES.setUnitDisplayNonTabbedSizeHeight(unitDisplayDialog.getSize().height);
-                    unitDisplayDialog.setLocation(GUI_PREFERENCES.getUnitDisplayPosX(), GUI_PREFERENCES.getUnitDisplayPosY());
-                    unitDisplayDialog.setSize(GUI_PREFERENCES.getUnitDisplaySizeWidth(), GUI_PREFERENCES.getUnitDisplaySizeHeight());
+                    unitDisplayDialog.setLocation(GUI_PREFERENCES.getUnitDisplayPosX(),
+                          GUI_PREFERENCES.getUnitDisplayPosY());
+                    unitDisplayDialog.setSize(GUI_PREFERENCES.getUnitDisplaySizeWidth(),
+                          GUI_PREFERENCES.getUnitDisplaySizeHeight());
                     setDisplayTabbed();
                 } else {
                     GUI_PREFERENCES.setUnitDisplayPosX(unitDisplayDialog.getLocation().x);
@@ -286,9 +308,9 @@ public class UnitDisplayPanel extends JPanel {
                     GUI_PREFERENCES.setUnitDisplaySizeWidth(unitDisplayDialog.getSize().width);
                     GUI_PREFERENCES.setUnitDisplaySizeHeight(unitDisplayDialog.getSize().height);
                     unitDisplayDialog.setLocation(GUI_PREFERENCES.getUnitDisplayNontabbedPosX(),
-                            GUI_PREFERENCES.getUnitDisplayNontabbedPosY());
+                          GUI_PREFERENCES.getUnitDisplayNontabbedPosY());
                     unitDisplayDialog.setSize(GUI_PREFERENCES.getUnitDisplayNonTabbedSizeWidth(),
-                            GUI_PREFERENCES.getUnitDisplayNonTabbedSizeHeight());
+                          GUI_PREFERENCES.getUnitDisplayNonTabbedSizeHeight());
                     setDisplayNonTabbed();
                 }
             }
@@ -305,7 +327,6 @@ public class UnitDisplayPanel extends JPanel {
 
     /**
      * switch display to the tabbed version
-     *
      */
     private void setDisplayTabbed() {
         tabStrip.setVisible(true);
@@ -335,7 +356,6 @@ public class UnitDisplayPanel extends JPanel {
 
     /**
      * switch display to the non tabbed version
-     *
      */
     public void setDisplayNonTabbed() {
         tabStrip.setVisible(false);
@@ -355,12 +375,18 @@ public class UnitDisplayPanel extends JPanel {
         sPanScroll.setVisible(true);
         ePanScroll.setVisible(true);
 
-        linkParentChild(UnitDisplayPanel.NON_TABBED_A1, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A1));
-        linkParentChild(UnitDisplayPanel.NON_TABBED_B1, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B1));
-        linkParentChild(UnitDisplayPanel.NON_TABBED_C1, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C1));
-        linkParentChild(UnitDisplayPanel.NON_TABBED_A2, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A2));
-        linkParentChild(UnitDisplayPanel.NON_TABBED_B2, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B2));
-        linkParentChild(UnitDisplayPanel.NON_TABBED_C2, UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C2));
+        linkParentChild(UnitDisplayPanel.NON_TABBED_A1,
+              UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A1));
+        linkParentChild(UnitDisplayPanel.NON_TABBED_B1,
+              UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B1));
+        linkParentChild(UnitDisplayPanel.NON_TABBED_C1,
+              UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C1));
+        linkParentChild(UnitDisplayPanel.NON_TABBED_A2,
+              UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A2));
+        linkParentChild(UnitDisplayPanel.NON_TABBED_B2,
+              UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B2));
+        linkParentChild(UnitDisplayPanel.NON_TABBED_C2,
+              UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C2));
 
         displayP.add(splitABC);
 
@@ -372,7 +398,6 @@ public class UnitDisplayPanel extends JPanel {
 
     /**
      * Save splitter locations to preferences
-     *
      */
     public void saveSplitterLoc() {
         GUI_PREFERENCES.setUnitDisplaySplitABCLoc(splitABC.getDividerLocation());
@@ -384,7 +409,6 @@ public class UnitDisplayPanel extends JPanel {
 
     /**
      * connect parent to child panel
-     *
      */
     private void linkParentChild(String t, String v) {
         switch (t) {
@@ -411,7 +435,6 @@ public class UnitDisplayPanel extends JPanel {
 
     /**
      * add child panel to parent
-     *
      */
     private void addChildPanel(JPanel p, String v) {
         switch (v) {
@@ -431,23 +454,23 @@ public class UnitDisplayPanel extends JPanel {
     /**
      * Register the keyboard commands that the UnitDisplay should process
      *
-     * @param ud UnitDisplay
+     * @param ud         UnitDisplay
      * @param controller MegaMekController
      */
     private void registerKeyboardCommands(final UnitDisplayPanel ud,
-            final MegaMekController controller) {
+          final MegaMekController controller) {
         controller.registerCommandAction(KeyCommandBind.UD_GENERAL, ud::isVisible,
-                () -> showPanel(MekPanelTabStrip.SUMMARY));
+              () -> showPanel(MekPanelTabStrip.SUMMARY));
         controller.registerCommandAction(KeyCommandBind.UD_PILOT, ud::isVisible,
-                () -> showPanel(MekPanelTabStrip.PILOT));
+              () -> showPanel(MekPanelTabStrip.PILOT));
         controller.registerCommandAction(KeyCommandBind.UD_ARMOR, ud::isVisible,
-                () -> showPanel(MekPanelTabStrip.ARMOR));
+              () -> showPanel(MekPanelTabStrip.ARMOR));
         controller.registerCommandAction(KeyCommandBind.UD_SYSTEMS, ud::isVisible,
-                () -> showPanel(MekPanelTabStrip.SYSTEMS));
+              () -> showPanel(MekPanelTabStrip.SYSTEMS));
         controller.registerCommandAction(KeyCommandBind.UD_WEAPONS, ud::isVisible,
-                () -> showPanel(MekPanelTabStrip.WEAPONS));
+              () -> showPanel(MekPanelTabStrip.WEAPONS));
         controller.registerCommandAction(KeyCommandBind.UD_EXTRAS, ud::isVisible,
-                () -> showPanel(MekPanelTabStrip.EXTRAS));
+              () -> showPanel(MekPanelTabStrip.EXTRAS));
     }
 
     @Override
@@ -552,8 +575,7 @@ public class UnitDisplayPanel extends JPanel {
     }
 
     /**
-     * Adds the specified mek display listener to receive events from this
-     * view.
+     * Adds the specified mek display listener to receive events from this view.
      *
      * @param listener the listener.
      */

@@ -34,6 +34,7 @@ package megamek.common.moves;
 
 /**
  * Enum representing the result of a phase pass.
+ *
  * @author Luana Coppio
  * @since 0.50.07
  */
@@ -45,6 +46,7 @@ enum PhasePassResult {
 
     /**
      * Check if the phase pass result requires the move to be compiled.
+     *
      * @return true if the phase pass result is compile
      */
     public boolean isCompile() {
@@ -55,6 +57,7 @@ enum PhasePassResult {
 
     /**
      * Check if the phase pass result does not want the move to be compiled.
+     *
      * @return true if the phase pass result is break
      */
     public boolean isBreak() {

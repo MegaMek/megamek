@@ -250,7 +250,7 @@ public final class Eras {
         for (int x = 0; x < nl.getLength(); x++) {
             final Node wn = nl.item(x);
             if (wn.getParentNode().equals(element) && (wn.getNodeType() == Node.ELEMENT_NODE)
-                      && wn.getNodeName().equalsIgnoreCase("era") && wn.hasChildNodes()) {
+                  && wn.getNodeName().equalsIgnoreCase("era") && wn.hasChildNodes()) {
                 addEra(generateInstanceFromXML(wn.getChildNodes()));
             }
         }
@@ -303,7 +303,7 @@ public final class Eras {
      */
     private boolean isValid(Era era) {
         return !era.code().isBlank() && !era.name().isBlank()
-                     && ((era.mulId() == -1) || (era.mulId() > 0));
+              && ((era.mulId() == -1) || (era.mulId() > 0));
     }
 
     /**

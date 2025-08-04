@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021, 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,19 +32,23 @@
  */
 package megamek.client.ui.boardeditor;
 
-import java.awt.Container;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+import static megamek.client.ui.Messages.getString;
+import static megamek.client.ui.util.UIUtil.FixedYPanel;
 
+import java.awt.Container;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 
-import static megamek.client.ui.util.UIUtil.*;
-import static megamek.client.ui.Messages.*;
-
 /**
- * A Board Editor dialog asking the user for a desired level change for the board.
- * {@link #getLevelChange()} reports the result of the dialog.
+ * A Board Editor dialog asking the user for a desired level change for the board. {@link #getLevelChange()} reports the
+ * result of the dialog.
  */
 final class LevelChangeDialog extends AbstractButtonDialog {
 

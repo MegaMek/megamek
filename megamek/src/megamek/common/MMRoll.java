@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.util.Collections;
@@ -58,8 +79,8 @@ public class MMRoll extends Roll {
      * Most other rolls have a minimum value of zero.
      *
      * @param rng - the <code>MMRandom</code> that produces random numbers.
-     * @param max - the smallest <code>int</code> value that is higher than
-     *            all rolls; all rolls will be in the value set [0, max).
+     * @param max - the smallest <code>int</code> value that is higher than all rolls; all rolls will be in the value
+     *            set [0, max).
      */
     public MMRoll(MMRandom rng, int max) {
         super(max, 0);
@@ -68,14 +89,11 @@ public class MMRoll extends Roll {
     }
 
     /**
-     * Create a set of virtual dice with the given number of faces that start
-     * with the given value.
+     * Create a set of virtual dice with the given number of faces that start with the given value.
      *
      * @param rng   - the <code>MMRandom</code> that produces random numbers.
-     * @param count - the <code>int</code> number of results possible on each
-     *              virtual die.
-     * @param start - the <code>int</code> value that is the start of the
-     *              value set of each virtual die.
+     * @param count - the <code>int</code> number of results possible on each virtual die.
+     * @param start - the <code>int</code> value that is the start of the value set of each virtual die.
      */
     public MMRoll(MMRandom rng, int count, int start) {
         super(count, start);
@@ -84,16 +102,13 @@ public class MMRoll extends Roll {
     }
 
     /**
-     * Create a set of virtual dice with the given number of faces that start
-     * with the given value, where only a subset of the highest will be kept.
+     * Create a set of virtual dice with the given number of faces that start with the given value, where only a subset
+     * of the highest will be kept.
      *
      * @param rng   - the <code>MMRandom</code> that produces random numbers.
-     * @param count - the <code>int</code> number of results possible on each
-     *              virtual die.
-     * @param start - the <code>int</code> value that is the start of the
-     *              value set of each virtual die.
-     * @param keep  - the <code>int</code> number of dice to keep from the total
-     *              rolled
+     * @param count - the <code>int</code> number of results possible on each virtual die.
+     * @param start - the <code>int</code> value that is the start of the value set of each virtual die.
+     * @param keep  - the <code>int</code> number of dice to keep from the total rolled
      */
     public MMRoll(MMRandom rng, int count, int start, int keep) {
         super(count, start);
@@ -128,8 +143,7 @@ public class MMRoll extends Roll {
     }
 
     /**
-     * Get the value of the roll. This is the total of each of the rolls of each
-     * virtual die.
+     * Get the value of the roll. This is the total of each of the rolls of each virtual die.
      *
      * @return the <code>int</code> value of the roll.
      */
@@ -139,8 +153,7 @@ public class MMRoll extends Roll {
     }
 
     /**
-     * Get a <code>String</code> containing the roll for each of the virtual
-     * dice.
+     * Get a <code>String</code> containing the roll for each of the virtual dice.
      *
      * @return the <code>String</code> value of the roll.
      */
@@ -175,8 +188,7 @@ public class MMRoll extends Roll {
     }
 
     /**
-     * Get a <code>String</code> report that can be parsed to analyse the
-     * roll.
+     * Get a <code>String</code> report that can be parsed to analyse the roll.
      *
      * @return the <code>String</code> details of the roll.
      */
@@ -188,9 +200,9 @@ public class MMRoll extends Roll {
 
         // Include the id.
         buffer.append("Roll #").append(this.id).append(" - range: [").append(
-                this.min).append(",").append(this.faces + this.min - 1).append(
-                        "], result: ")
-                .append(this.total);
+                    this.min).append(",").append(this.faces + this.min - 1).append(
+                    "], result: ")
+              .append(this.total);
 
         // Handle more than one die.
         if (all.size() > 1) {
@@ -217,10 +229,9 @@ public class MMRoll extends Roll {
      * FIXME : Convert to actual unit testing
      * Test harness for this class.
      *
-     * @param args - the array of <code>String</code> arguments: first is the
-     *             number of rolls (defaults to two), second is number of sides
-     *             (defaults to six sides), third is the starting number
-     *             (defaults to one for six sided dice, zero for anything else).
+     * @param args - the array of <code>String</code> arguments: first is the number of rolls (defaults to two), second
+     *             is number of sides (defaults to six sides), third is the starting number (defaults to one for six
+     *             sided dice, zero for anything else).
      */
     public static void main(String[] args) {
         MMRandom rng;

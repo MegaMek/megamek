@@ -32,24 +32,20 @@ package megamek.client.ui.util;
 
 import java.awt.Component;
 import java.awt.Container;
-
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
 
 import megamek.logging.MMLogger;
 
 /**
- * A 1.4 file that provides utility methods for
- * creating form- or grid-style layouts with SpringLayout.
- * These utilities are used by several programs, such as
- * SpringBox and SpringCompactGrid.
+ * A 1.4 file that provides utility methods for creating form- or grid-style layouts with SpringLayout. These utilities
+ * are used by several programs, such as SpringBox and SpringCompactGrid.
  */
 public class SpringUtilities {
     private static final MMLogger logger = MMLogger.create(SpringUtilities.class);
 
     /**
-     * A debugging utility that prints to stdout the component's
-     * minimum, preferred, and maximum sizes.
+     * A debugging utility that prints to stdout the component's minimum, preferred, and maximum sizes.
      */
     public static void printSizes(Component c) {
         logger.debug("minimumSize = " + c.getMinimumSize());
@@ -65,12 +61,9 @@ public class SpringUtilities {
     }
 
     /**
-     * Aligns the first <code>rows</code> * <code>cols</code>
-     * components of <code>parent</code> in
-     * a grid. Each component in a column is as wide as the maximum
-     * preferred width of the components in that column;
-     * height is similarly determined for each row.
-     * The parent is made just big enough to fit them all.
+     * Aligns the first <code>rows</code> * <code>cols</code> components of <code>parent</code> in a grid. Each
+     * component in a column is as wide as the maximum preferred width of the components in that column; height is
+     * similarly determined for each row. The parent is made just big enough to fit them all.
      *
      * @param rows     number of rows
      * @param cols     number of columns
@@ -80,7 +73,7 @@ public class SpringUtilities {
      * @param yPad     y padding between cells
      */
     public static void makeCompactGrid(Container parent, int rows, int cols, int initialX, int initialY,
-            int xPad, int yPad) {
+          int xPad, int yPad) {
         SpringLayout layout;
         try {
             layout = (SpringLayout) parent.getLayout();

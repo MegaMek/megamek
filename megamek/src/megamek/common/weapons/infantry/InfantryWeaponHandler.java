@@ -1,19 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
- * 
+ * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ *
  * This file is part of MegaMek.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons.infantry;
 
 import java.util.Vector;
@@ -41,7 +59,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
      * @param g
      */
     public InfantryWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            TWGameManager m) {
+          TWGameManager m) {
         super(t, w, g, m);
         bSalvo = true;
     }
@@ -91,23 +109,23 @@ public class InfantryWeaponHandler extends WeaponHandler {
             troopersHit = 1;
         } else {
             troopersHit = Compute.missilesHit(((Infantry) ae)
-                    .getShootingStrength(), nHitMod);
+                  .getShootingStrength(), nHitMod);
         }
         double damage = calculateBaseDamage(ae, weapon, wtype);
 
         if ((ae instanceof Infantry) && (nRange == 0)
-                && ae.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+              && ae.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             damage += 0.14;
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
-        
+
         // beast-mounted infantry get range 0 bonus damage per platoon
         if ((ae instanceof Infantry) && (nRange == 0)) {
             InfantryMount mount = ((Infantry) ae).getMount();
             if (mount != null) {
                 if (!target.isConventionalInfantry()) {
                     damageDealt += mount.getVehicleDamage();
-                } else if (mount.getBurstDamageDice() > 0){
+                } else if (mount.getBurstDamageDice() > 0) {
                     damageDealt += Compute.d6(mount.getBurstDamageDice());
                 }
             }
@@ -116,8 +134,8 @@ public class InfantryWeaponHandler extends WeaponHandler {
         // conventional infantry weapons with high damage get treated as if they have
         // the infantry burst mod
         if (target.isConventionalInfantry() &&
-                (wtype.hasFlag(WeaponType.F_INF_BURST) ||
-                        (ae.isConventionalInfantry() && ((Infantry) ae).primaryWeaponDamageCapped()))) {
+              (wtype.hasFlag(WeaponType.F_INF_BURST) ||
+                    (ae.isConventionalInfantry() && ((Infantry) ae).primaryWeaponDamageCapped()))) {
             damageDealt += Compute.d6();
         }
         if ((target instanceof Infantry) && ((Infantry) target).isMechanized()) {
@@ -140,7 +158,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             r.add("");
         }
         r.add(toHit.getTableDesc() + ", causing " + damageDealt
-                + " damage.");
+              + " damage.");
         r.newlines = 0;
         vPhaseReport.addElement(r);
         if (target.isConventionalInfantry()) {
@@ -190,15 +208,15 @@ public class InfantryWeaponHandler extends WeaponHandler {
             if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
                 logger.error(String.format("Handler can't find any ammo for %s firing %s",
-                        ae.getShortName(), weapon.getName()));
+                      ae.getShortName(), weapon.getName()));
                 return;
             }
 
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
             // Swap between standard and inferno if the unit has some left of the other type
             if ((ammo.getUsableShotsLeft() <= 0)
-                    && (ammo.getLinked() != null)
-                    && (ammo.getLinked().getUsableShotsLeft() > 0)) {
+                  && (ammo.getLinked() != null)
+                  && (ammo.getLinked().getUsableShotsLeft() > 0)) {
                 weapon.setLinked(ammo.getLinked());
                 weapon.getLinked().setLinked(ammo);
             }
@@ -207,8 +225,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
     }
 
     /**
-     * Utility function to calculate variable damage based only on the firing
-     * entity.
+     * Utility function to calculate variable damage based only on the firing entity.
      */
     public static double calculateBaseDamage(Entity ae, Mounted<?> weapon, WeaponType wtype) {
         if (ae.isConventionalInfantry()) {
@@ -218,8 +235,8 @@ public class InfantryWeaponHandler extends WeaponHandler {
         } else if (ae.isSupportVehicle()) {
             // Damage for some weapons depends on what type of ammo is being used
             if ((weapon.getLinked() != null)
-                    && ((AmmoType) weapon.getLinked().getType()).getMunitionType()
-                            .contains(AmmoType.Munitions.M_INFERNO)) {
+                  && ((AmmoType) weapon.getLinked().getType()).getMunitionType()
+                  .contains(AmmoType.Munitions.M_INFERNO)) {
                 return ((InfantryWeapon) wtype).getInfernoVariant().getInfantryDamage();
             } else {
                 return ((InfantryWeapon) wtype).getNonInfernoVariant().getInfantryDamage();
@@ -234,7 +251,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
         if ((entityTarget instanceof BattleArmor) && ae.isConventionalInfantry()) {
             // TacOps crits against BA do not happen for infantry weapon attacks
             hit = ((BattleArmor) entityTarget).rollHitLocation(toHit.getSideTable(),
-                    waa.getAimedLocation(), waa.getAimingMode(), true);
+                  waa.getAimedLocation(), waa.getAimingMode(), true);
             hit.setGeneralDamageType(generalDamageType);
             hit.setCapital(wtype.isCapital());
             hit.setBoxCars(roll.getIntValue() == 12);

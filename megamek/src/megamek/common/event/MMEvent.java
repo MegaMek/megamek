@@ -1,11 +1,34 @@
 /*
- * MMEvent.java - Simple event system helper class
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
- * Copyright (C) 2016 MegaMek Team
+ * This file is part of MegaMek.
  *
- * This file is part of MegaMek
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
- * Some rights reserved. See megamek/docs/license.txt
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.common.event;
@@ -15,15 +38,15 @@ package megamek.common.event;
  */
 public abstract class MMEvent {
     protected boolean cancelled = false;
-    
+
     public MMEvent() {
     }
-    
+
     /** @return true if the event can be cancelled (aborted) */
     public boolean isCancellable() {
         return false;
     }
-    
+
     /** @return true if the event is cancelled */
     public boolean isCancelled() {
         return cancelled;

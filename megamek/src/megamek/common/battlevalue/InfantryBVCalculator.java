@@ -1,33 +1,48 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.battlevalue;
 
-import megamek.common.Entity;
-import megamek.common.Infantry;
-import megamek.common.Mounted;
-import megamek.common.weapons.infantry.InfantryWeapon;
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
+import megamek.common.Entity;
+import megamek.common.Infantry;
+import megamek.common.Mounted;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class InfantryBVCalculator extends BVCalculator {
 
@@ -113,15 +128,15 @@ public class InfantryBVCalculator extends BVCalculator {
         int troopers = Math.max(0, infantry.getInternal(Infantry.LOC_INFANTRY));
         if (troopers < originalTroopers) {
             bvReport.addLine("Surviving troopers:",
-                    formatForReport(offensiveValue) + " x " + troopers + " / " + originalTroopers,
-                    "= " + formatForReport(offensiveValue * troopers / originalTroopers));
+                  formatForReport(offensiveValue) + " x " + troopers + " / " + originalTroopers,
+                  "= " + formatForReport(offensiveValue * troopers / originalTroopers));
             offensiveValue *= (double) troopers / originalTroopers;
         }
 
         bvReport.startTentativeSection();
         bvReport.addLine("Field Guns:", "", "");
         Predicate<Mounted<?>> weaponFilter = m -> countAsOffensiveWeapon(m)
-                && m.getLocation() == Infantry.LOC_FIELD_GUNS;
+              && m.getLocation() == Infantry.LOC_FIELD_GUNS;
         double fieldGunBV = processWeaponSection(true, weaponFilter, true);
         bvReport.finalizeTentativeSection(fieldGunBV > 0);
 
@@ -136,8 +151,8 @@ public class InfantryBVCalculator extends BVCalculator {
         bvReport.addEmptyLine();
         bvReport.addSubHeader("Battle Value:");
         bvReport.addLine("Defensive BR + Offensive BR:",
-                formatForReport(defensiveValue) + " + " + formatForReport(offensiveValue),
-                "= " + formatForReport(baseBV));
+              formatForReport(defensiveValue) + " + " + formatForReport(offensiveValue),
+              "= " + formatForReport(baseBV));
 
         List<String> modifierList = new ArrayList<>();
         double typeModifier = 1;
@@ -176,7 +191,7 @@ public class InfantryBVCalculator extends BVCalculator {
             String calculation = formatForReport(baseBV) + " x " + formatForReport(typeModifier);
             calculation += " (" + String.join(", ", modifierList) + ")";
             bvReport.addLine("Type Modifier:", calculation,
-                    "= " + formatForReport(baseBV * typeModifier));
+                  "= " + formatForReport(baseBV * typeModifier));
             baseBV *= typeModifier;
         }
         bvReport.addLine("--- Base Unit BV:", "" + (int) Math.round(baseBV));

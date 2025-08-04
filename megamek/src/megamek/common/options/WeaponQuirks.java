@@ -1,31 +1,52 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.options;
+
+import static java.util.stream.Collectors.toList;
+
+import java.io.Serial;
+import java.util.List;
 
 import megamek.common.*;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
 
-import java.io.Serial;
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
-
 /**
- * This class represents the weapon quirks of an individual weapon. Each weapon on a unit has its own
- * WeaponQuirks object assigned that contains its specific quirks, see {@link Mounted#getQuirks()}.
- * When changing this, note that all options should remain boolean options.
+ * This class represents the weapon quirks of an individual weapon. Each weapon on a unit has its own WeaponQuirks
+ * object assigned that contains its specific quirks, see {@link Mounted#getQuirks()}. When changing this, note that all
+ * options should remain boolean options.
  *
  * @author Taharqa (Jay Lawson)
  */
@@ -86,19 +107,19 @@ public class WeaponQuirks extends AbstractOptions {
     }
 
     public static boolean isQuirkDisallowed(IOption quirk, Entity en,
-                                                EquipmentType equipmentType) {
+          EquipmentType equipmentType) {
         String qName = quirk.getName();
         // There may be some non-WeaponType quirks, specifically melee weapons
         if (!(equipmentType instanceof WeaponType) && !equipmentType.hasFlag(MiscType.F_CLUB)) {
             return true;
         } else if ((equipmentType instanceof MiscType) && equipmentType.hasFlag(MiscType.F_CLUB)) {
             return qName.equals(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)
-                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)
-                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)
-                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
-                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)
-                || qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
-                || qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD);
+                  || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)
+                  || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)
+                  || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
+                  || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)
+                  || qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
+                  || qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD);
         }
         if (!(equipmentType instanceof WeaponType weaponType)) {
             throw new IllegalArgumentException("EquipmentType must be a WeaponType");
@@ -120,14 +141,14 @@ public class WeaponQuirks extends AbstractOptions {
 
         if (en instanceof ProtoMek) {
             if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)
-                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
+                  || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
                 return true;
             }
         }
 
         boolean hasBadCoolingQuirk = qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
-            || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
-            || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING);
+              || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
+              || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING);
         if (en instanceof Tank || en instanceof BattleArmor || en instanceof ProtoMek) {
             if (hasBadCoolingQuirk) {
                 return true;
@@ -146,8 +167,8 @@ public class WeaponQuirks extends AbstractOptions {
 
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE)) {
             if (en instanceof ProtoMek
-                || en instanceof Aero
-                || en instanceof GunEmplacement)  {
+                  || en instanceof Aero
+                  || en instanceof GunEmplacement) {
 
                 return true;
             }

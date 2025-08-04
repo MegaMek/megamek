@@ -1,17 +1,35 @@
 /*
- * MegaMek -
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018, 2020 The MegaMek Team
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 /*
@@ -336,8 +354,8 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         conditions.setAtmosphere(comAtmosphere.getItemAt(comAtmosphere.getSelectedIndex()));
         conditions.setFog(comFog.getItemAt(comFog.getSelectedIndex()));
         BlowingSand blowingSand = chkBlowingSands.isSelected() ?
-                                        BlowingSand.BLOWING_SAND :
-                                        BlowingSand.BLOWING_SAND_NONE;
+              BlowingSand.BLOWING_SAND :
+              BlowingSand.BLOWING_SAND_NONE;
         conditions.setBlowingSand(blowingSand);
         conditions.setShiftingWindDirection(chkShiftWindDir.isSelected());
         conditions.setShiftingWindStrength(chkShiftWindStr.isSelected());
@@ -375,7 +393,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
 
         boolean blowingSandsLessThanModerateGale = chkBlowingSands.isSelected() && wind.isWeakerThan(Wind.MOD_GALE);
         boolean shiftWindsLessThanModerateGale = chkShiftWindStr.isSelected() &&
-                                                       conditions.getWindMax().isWeakerThan(Wind.MOD_GALE);
+              conditions.getWindMax().isWeakerThan(Wind.MOD_GALE);
         if (blowingSandsLessThanModerateGale || shiftWindsLessThanModerateGale) {
             windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.sandsLost"));
             sandTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.sandsLost"));
@@ -404,7 +422,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
 
         if (chkShiftWindStr.isSelected()) {
             if (comWind.getItemAt(comWind.getSelectedIndex()).isWeakerThan(conditions.getWindMin()) ||
-                      comWind.getItemAt(comWind.getSelectedIndex()).isStrongerThan(conditions.getWindMax())) {
+                  comWind.getItemAt(comWind.getSelectedIndex()).isStrongerThan(conditions.getWindMax())) {
                 windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.windRange"));
             }
         }
@@ -417,11 +435,11 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         refreshWarning(labBlowingSands, sandTip);
 
         return (tempTip.isEmpty()) &&
-                     (weatherTip.isEmpty()) &&
-                     (atmosphereTip.isEmpty()) &&
-                     (sandTip.isEmpty()) &&
-                     (windTip.isEmpty()) &&
-                     (gravTip.isEmpty());
+              (weatherTip.isEmpty()) &&
+              (atmosphereTip.isEmpty()) &&
+              (sandTip.isEmpty()) &&
+              (windTip.isEmpty()) &&
+              (gravTip.isEmpty());
     }
 
     /**

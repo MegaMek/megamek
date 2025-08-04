@@ -32,6 +32,24 @@
  */
 package megamek.client.ui.dialogs.abstractDialogs;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.SwingWorker;
+
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.RawImagePanel;
 import megamek.common.Board;
@@ -45,20 +63,6 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
 import megamek.server.victory.VictoryResult;
 import org.apache.commons.lang3.time.StopWatch;
-
-import javax.swing.*;
-import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class AutoResolveChanceDialog extends AbstractDialog implements PropertyChangeListener {
     private static final MMLogger logger = MMLogger.create(AutoResolveChanceDialog.class);
@@ -77,6 +81,7 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
     private final PlanetaryConditions planetaryConditions;
     private int returnCode = JOptionPane.CLOSED_OPTION;
     private final TreeMap<Integer, String> splashImages = new TreeMap<>();
+
     {
         splashImages.put(0, Configuration.miscImagesDir() + "/acar_splash_hd.png");
     }
@@ -153,7 +158,7 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
 
     private AutoResolveChanceDialog(JFrame frame, int numberOfSimulations, int numberOfThreads, int currentTeam,
           SetupForces setupForces, Board board, PlanetaryConditions planetaryConditions) {
-        super(frame, true, "AutoResolveMethod.dialog.name","AutoResolveMethod.dialog.title");
+        super(frame, true, "AutoResolveMethod.dialog.name", "AutoResolveMethod.dialog.title");
         this.numberOfSimulations = numberOfSimulations;
         this.setupForces = setupForces;
         this.numberOfThreads = numberOfThreads;
@@ -277,36 +282,41 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
                 messageKey = "AutoResolveDialog.messageFailedCalc";
                 logger.warn("No combat scenarios were simulated, possible error!");
             } else {
-                var timePerRun = (stopWatch.getTime(TimeUnit.MILLISECONDS) / (double) numberOfSimulations) / (double) numberOfThreads;
-                logger.debug("Simulated victories: {} runs, {} victories, {} losses, {} draws, {} failed - processed in {} seconds per CPU core - total of {}",
-                    simulatedVictories.getRuns(),
-                    simulatedVictories.getVictories(),
-                    simulatedVictories.getLosses(),
-                    simulatedVictories.getDraws(),
-                    simulatedVictories.noResults(),
-                    timePerRun,
-                    stopWatch.toString());
+                var timePerRun = (stopWatch.getTime(TimeUnit.MILLISECONDS) / (double) numberOfSimulations)
+                      / (double) numberOfThreads;
+                logger.debug(
+                      "Simulated victories: {} runs, {} victories, {} losses, {} draws, {} failed - processed in {} seconds per CPU core - total of {}",
+                      simulatedVictories.getRuns(),
+                      simulatedVictories.getVictories(),
+                      simulatedVictories.getLosses(),
+                      simulatedVictories.getDraws(),
+                      simulatedVictories.noResults(),
+                      timePerRun,
+                      stopWatch.toString());
             }
 
             message = I18n.getFormattedText(messageKey,
-                simulatedVictories.getRuns(),
-                simulatedVictories.getVictories(),
-                simulatedVictories.getLosses(),
-                simulatedVictories.getDraws(),
-                simulatedVictories.getRuns() != 0 ? simulatedVictories.getVictories() * 100 / simulatedVictories.getRuns() : 0);
+                  simulatedVictories.getRuns(),
+                  simulatedVictories.getVictories(),
+                  simulatedVictories.getLosses(),
+                  simulatedVictories.getDraws(),
+                  simulatedVictories.getRuns() != 0 ?
+                        simulatedVictories.getVictories() * 100 / simulatedVictories.getRuns() :
+                        0);
 
             var code = JOptionPane.showConfirmDialog(
-                getFrame(),
-                message, title,
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.INFORMATION_MESSAGE);
+                  getFrame(),
+                  message, title,
+                  JOptionPane.YES_NO_OPTION,
+                  JOptionPane.INFORMATION_MESSAGE);
 
             dialog.returnCode = code;
             return code;
         }
 
         /**
-         * Calculates the victory chance for a given scenario and list of units by running multiple auto resolve scenarios in parallel.
+         * Calculates the victory chance for a given scenario and list of units by running multiple auto resolve
+         * scenarios in parallel.
          *
          * @return the calculated victory chance score
          */
@@ -323,9 +333,9 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
                 for (int i = 0; i < numberOfSimulations; i++) {
                     futures.add(executor.submit(() -> {
                         var autoResolveConcludedEvent = Resolver.simulationRunWithoutLog(
-                            setupForces, SimulationOptions.empty(), new Board(board.getWidth(), board.getHeight()),
+                                    setupForces, SimulationOptions.empty(), new Board(board.getWidth(), board.getHeight()),
                                     new PlanetaryConditions(planetaryConditions))
-                            .resolveSimulation();
+                              .resolveSimulation();
                         setProgress(Math.min(100 * runCounter.incrementAndGet() / numberOfSimulations, 100));
                         return autoResolveConcludedEvent;
                     }));

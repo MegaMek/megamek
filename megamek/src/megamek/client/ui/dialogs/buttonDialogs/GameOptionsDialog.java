@@ -1,21 +1,35 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
@@ -41,11 +55,11 @@ import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.buttons.MMToggleButton;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.DialogOptionListener;
-import megamek.client.ui.buttons.MMToggleButton;
-import megamek.client.ui.panels.DialogOptionComponentYPanel;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
+import megamek.client.ui.panels.DialogOptionComponentYPanel;
 import megamek.common.Entity;
 import megamek.common.Mek;
 import megamek.common.Tank;
@@ -375,56 +389,56 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
         if (OptionsConstants.INIT_INF_DEPLOY_EVEN.equals(option.getName())) {
             if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() ||
-                      !(options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() ||
-                      !editable) {
+                  !(options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() ||
+                  !editable) {
                 optionComp.setEditable(false);
             }
         } else if (OptionsConstants.INIT_INF_MOVE_MULTI.equals(option.getName())) {
             if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() ||
-                      (options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() ||
-                      (options.getOption(OptionsConstants.INIT_INF_MOVE_LATER)).booleanValue() ||
-                      !editable) {
+                  (options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() ||
+                  (options.getOption(OptionsConstants.INIT_INF_MOVE_LATER)).booleanValue() ||
+                  !editable) {
                 optionComp.setEditable(false);
             }
         } else if (OptionsConstants.INIT_INF_MOVE_EVEN.equals(option.getName())) {
             if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() ||
-                      (options.getOption(OptionsConstants.INIT_INF_MOVE_MULTI)).booleanValue() ||
-                      (options.getOption(OptionsConstants.INIT_INF_MOVE_LATER)).booleanValue() ||
-                      !editable) {
+                  (options.getOption(OptionsConstants.INIT_INF_MOVE_MULTI)).booleanValue() ||
+                  (options.getOption(OptionsConstants.INIT_INF_MOVE_LATER)).booleanValue() ||
+                  !editable) {
                 optionComp.setEditable(false);
             }
         } else if (OptionsConstants.INIT_INF_MOVE_LATER.equals(option.getName())) {
             if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() ||
-                      (options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() ||
-                      (options.getOption(OptionsConstants.INIT_INF_MOVE_MULTI)).booleanValue() ||
-                      !editable) {
+                  (options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() ||
+                  (options.getOption(OptionsConstants.INIT_INF_MOVE_MULTI)).booleanValue() ||
+                  !editable) {
                 optionComp.setEditable(false);
             }
         } else if (OptionsConstants.INIT_PROTOS_MOVE_EVEN.equals(option.getName())) {
             if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() ||
-                      !(options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() ||
-                      !editable) {
+                  !(options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() ||
+                  !editable) {
                 optionComp.setEditable(false);
             }
         } else if (OptionsConstants.INIT_PROTOS_MOVE_MULTI.equals(option.getName())) {
             if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() ||
-                      (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() ||
-                      (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)).booleanValue() ||
-                      !editable) {
+                  (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() ||
+                  (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)).booleanValue() ||
+                  !editable) {
                 optionComp.setEditable(false);
             }
         } else if (OptionsConstants.INIT_PROTOS_MOVE_EVEN.equals(option.getName())) {
             if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() ||
-                      (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)).booleanValue() ||
-                      (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)).booleanValue() ||
-                      !editable) {
+                  (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)).booleanValue() ||
+                  (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)).booleanValue() ||
+                  !editable) {
                 optionComp.setEditable(false);
             }
         } else if (OptionsConstants.INIT_PROTOS_MOVE_LATER.equals(option.getName())) {
             if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() ||
-                      (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() ||
-                      (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)).booleanValue() ||
-                      !editable) {
+                  (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() ||
+                  (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)).booleanValue() ||
+                  !editable) {
                 optionComp.setEditable(false);
             }
         } else if (option.getName().equals(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)) {
@@ -498,7 +512,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         } else if (option.getName().equals(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             // Disable if any lance movement is on
             if (!options.getOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT).booleanValue() &&
-                      !options.getOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT).booleanValue()) {
+                  !options.getOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT).booleanValue()) {
                 optionComp.setEditable(editable);
             } else {
                 optionComp.setEditable(false);
@@ -648,7 +662,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
         }
         if (option.getName().equals(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT) ||
-                  option.getName().equals(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)) {
+              option.getName().equals(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)) {
             comps = optionComps.get(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE);
             for (DialogOptionComponentYPanel comp_i : comps) {
                 comp_i.setEditable(!state);

@@ -1,23 +1,37 @@
 /*
- * MegaMek -
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.verifier;
 
 import java.util.ArrayList;
@@ -30,6 +44,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import megamek.common.*;
+import megamek.common.ITechnology.AvailabilityValue;
+import megamek.common.ITechnology.TechBase;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.MiscMounted;
@@ -39,8 +55,6 @@ import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
-import megamek.common.ITechnology.AvailabilityValue;
-import megamek.common.ITechnology.TechBase;
 import megamek.logging.MMLogger;
 
 /**
@@ -51,35 +65,34 @@ public class TestSupportVehicle extends TestEntity {
     private final static MMLogger logger = MMLogger.create(TestSupportVehicle.class);
 
     /**
-     * Support vehicle categories for construction purposes. Most of these match
-     * with a particular movement mode, but the construction rules treat naval and
-     * rail units as single types.
+     * Support vehicle categories for construction purposes. Most of these match with a particular movement mode, but
+     * the construction rules treat naval and rail units as single types.
      */
     public enum SVType implements ITechnologyDelegator {
         AIRSHIP(300, EntityMovementMode.AIRSHIP,
-                new double[] { 0.2, 0.25, 0.3 }, new double[] { 0.004, 0.008, 0.012 }),
+              new double[] { 0.2, 0.25, 0.3 }, new double[] { 0.004, 0.008, 0.012 }),
         FIXED_WING(200, EntityMovementMode.AERODYNE,
-                new double[] { 0.08, 0.1, 0.15 }, new double[] { 0.005, 0.01, 0.015 }),
+              new double[] { 0.08, 0.1, 0.15 }, new double[] { 0.005, 0.01, 0.015 }),
         HOVERCRAFT(100, EntityMovementMode.HOVER,
-                new double[] { 0.2, 0.25, 0.3 }, new double[] { 0.0025, 0.004, 0.007 }),
+              new double[] { 0.2, 0.25, 0.3 }, new double[] { 0.0025, 0.004, 0.007 }),
         NAVAL(300, EntityMovementMode.NAVAL,
-                new double[] { 0.12, 0.15, 0.17 }, new double[] { 0.004, 0.007, 0.009 }),
+              new double[] { 0.12, 0.15, 0.17 }, new double[] { 0.004, 0.007, 0.009 }),
         TRACKED(200, EntityMovementMode.TRACKED,
-                new double[] { 0.13, 0.15, 0.25 }, new double[] { 0.006, 0.013, 0.025 }),
+              new double[] { 0.13, 0.15, 0.25 }, new double[] { 0.006, 0.013, 0.025 }),
         VTOL(60, EntityMovementMode.VTOL,
-                new double[] { 0.2, 0.25, 0.3 }, new double[] { 0.002, 0.0025, 0.004 }),
+              new double[] { 0.2, 0.25, 0.3 }, new double[] { 0.002, 0.0025, 0.004 }),
         WHEELED(160, EntityMovementMode.WHEELED,
-                new double[] { 0.12, 0.15, 0.18 }, new double[] { 0.0025, 0.0075, 0.015 }),
+              new double[] { 0.12, 0.15, 0.18 }, new double[] { 0.0025, 0.0075, 0.015 }),
         WIGE(240, EntityMovementMode.WIGE,
-                new double[] { 0.12, 0.15, 0.17 }, new double[] { 0.003, 0.005, 0.006 }),
+              new double[] { 0.12, 0.15, 0.17 }, new double[] { 0.003, 0.005, 0.006 }),
         RAIL(600, EntityMovementMode.RAIL,
-                new double[] { 0.15, 0.2, 0.3 }, new double[] { 0.003, 0.004, 0.005 }),
+              new double[] { 0.15, 0.2, 0.3 }, new double[] { 0.003, 0.004, 0.005 }),
         SATELLITE(300, EntityMovementMode.STATION_KEEPING,
-                new double[] { 0.08, 0.12, 0.16 }, new double[] { 0.1, 0.1, 0.1 });
+              new double[] { 0.08, 0.12, 0.16 }, new double[] { 0.1, 0.1, 0.1 });
 
         /**
-         * The maximum tonnage for a large support vehicle of this type; for airship
-         * this is the maximum for a medium for now.
+         * The maximum tonnage for a large support vehicle of this type; for airship this is the maximum for a medium
+         * for now.
          */
         public final int maxTonnage;
         public final EntityMovementMode defaultMovementMode;
@@ -91,7 +104,7 @@ public class TestSupportVehicle extends TestEntity {
         private final double[] baseEngineValue;
 
         SVType(int maxTonnage, EntityMovementMode defaultMovementMode, double[] baseChassisValue,
-                double[] baseEngineValue) {
+              double[] baseEngineValue) {
             this.maxTonnage = maxTonnage;
             this.defaultMovementMode = defaultMovementMode;
             this.baseChassisValue = baseChassisValue;
@@ -110,8 +123,9 @@ public class TestSupportVehicle extends TestEntity {
          * Finds the enum value corresponding to a support vehicle.
          *
          * @param entity The support vehicle
-         * @return The support vehicle type, or {@code null} if the entity's movement
-         *         type is not a valid one for a support vehicle.
+         *
+         * @return The support vehicle type, or {@code null} if the entity's movement type is not a valid one for a
+         *       support vehicle.
          */
         public static @Nullable SVType getVehicleType(Entity entity) {
             // When grounded, FWS revert to wheeled movement mode; must be independent of
@@ -152,8 +166,8 @@ public class TestSupportVehicle extends TestEntity {
          * The base chassis value is used for calculating the chassis weight.
          *
          * @param sizeClass The {@link EntityWeightClass} of the support vehicle.
-         * @return The base chassis value. Returns 0 if not a support vehicle weight
-         *         class.
+         *
+         * @return The base chassis value. Returns 0 if not a support vehicle weight class.
          */
         public double getBaseChassisValue(int sizeClass) {
             int index = sizeClass - EntityWeightClass.WEIGHT_SMALL_SUPPORT;
@@ -169,8 +183,8 @@ public class TestSupportVehicle extends TestEntity {
          * The base chassis value is used for calculating the chassis weight.
          *
          * @param supportVehicle A support vehicle
-         * @return The base chassis value. Returns 0 if the entity is not a support
-         *         vehicle.
+         *
+         * @return The base chassis value. Returns 0 if the entity is not a support vehicle.
          */
         public static double getBaseChassisValue(Entity supportVehicle) {
             SVType type = getVehicleType(supportVehicle);
@@ -186,8 +200,8 @@ public class TestSupportVehicle extends TestEntity {
          * The base engine value is used for calculating the engine weight.
          *
          * @param sizeClass The {@link EntityWeightClass} of the support vehicle.
-         * @return The base engine value. Returns 0 if not a support vehicle weight
-         *         class.
+         *
+         * @return The base engine value. Returns 0 if not a support vehicle weight class.
          */
         public double getBaseEngineValue(int sizeClass) {
             int index = sizeClass - EntityWeightClass.WEIGHT_SMALL_SUPPORT;
@@ -203,8 +217,8 @@ public class TestSupportVehicle extends TestEntity {
          * The base engine value is used for calculating the engine weight.
          *
          * @param supportVehicle A support vehicle
-         * @return The base engine value. Returns 0 if the entity is not a support
-         *         vehicle.
+         *
+         * @return The base engine value. Returns 0 if the entity is not a support vehicle.
          */
         public static double getBaseEngineValue(Entity supportVehicle) {
             SVType type = getVehicleType(supportVehicle);
@@ -228,58 +242,57 @@ public class TestSupportVehicle extends TestEntity {
                 case AIRSHIP:
                 case STATION_KEEPING:
                     return FixedWingSupport.getConstructionTechAdvancement(defaultMovementMode,
-                            EntityWeightClass.WEIGHT_SMALL_SUPPORT);
+                          EntityWeightClass.WEIGHT_SMALL_SUPPORT);
                 case VTOL:
                     return SupportVTOL.getConstructionTechAdvancement(EntityWeightClass.WEIGHT_SMALL_SUPPORT);
                 default:
                     return SupportTank.getConstructionTechAdvancement(defaultMovementMode,
-                            EntityWeightClass.WEIGHT_SMALL_SUPPORT);
+                          EntityWeightClass.WEIGHT_SMALL_SUPPORT);
             }
         }
     }
 
     /**
-     * Additional construction data for chassis mods, used to determine whether they
-     * are legal for particular units.
+     * Additional construction data for chassis mods, used to determine whether they are legal for particular units.
      */
     public enum ChassisModification implements ITechnologyDelegator {
         AMPHIBIOUS(1.75, EquipmentTypeLookup.AMPHIBIOUS_CHASSIS_MOD,
-                SVType.allBut(SVType.HOVERCRAFT, SVType.NAVAL)),
+              SVType.allBut(SVType.HOVERCRAFT, SVType.NAVAL)),
         ARMORED(1.5, EquipmentTypeLookup.ARMORED_CHASSIS_MOD,
-                SVType.allBut(SVType.AIRSHIP)),
+              SVType.allBut(SVType.AIRSHIP)),
         BICYCLE(0.75, EquipmentTypeLookup.BICYCLE_CHASSIS_MOD,
-                EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED)),
+              EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED)),
         CONVERTIBLE(1.1, EquipmentTypeLookup.CONVERTIBLE_CHASSIS_MOD,
-                EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED, SVType.TRACKED)),
+              EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED, SVType.TRACKED)),
         DUNE_BUGGY(1.5, EquipmentTypeLookup.DUNE_BUGGY_CHASSIS_MOD,
-                EnumSet.of(SVType.WHEELED)),
+              EnumSet.of(SVType.WHEELED)),
         ENVIRONMENTAL_SEALING(2.0, EquipmentTypeLookup.SV_ENVIRONMENTAL_SEALING_CHASSIS_MOD,
-                EnumSet.allOf(SVType.class)),
+              EnumSet.allOf(SVType.class)),
         EXTERNAL_POWER_PICKUP(1.1, EquipmentTypeLookup.EXTERNAL_POWER_PICKUP_CHASSIS_MOD,
-                EnumSet.of(SVType.RAIL)),
+              EnumSet.of(SVType.RAIL)),
         HYDROFOIL(1.7, EquipmentTypeLookup.HYDROFOIL_CHASSIS_MOD,
-                EnumSet.of(SVType.NAVAL)),
+              EnumSet.of(SVType.NAVAL)),
         MONOCYCLE(0.5, EquipmentTypeLookup.MONOCYCLE_CHASSIS_MOD,
-                EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED), true),
+              EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED), true),
         OFFROAD(1.5, EquipmentTypeLookup.OFFROAD_CHASSIS_MOD,
-                EnumSet.of(SVType.WHEELED)),
+              EnumSet.of(SVType.WHEELED)),
         OMNI(1.0, EquipmentTypeLookup.OMNI_CHASSIS_MOD),
         PROP(1.2, EquipmentTypeLookup.PROP_CHASSIS_MOD,
-                EnumSet.of(SVType.FIXED_WING)),
+              EnumSet.of(SVType.FIXED_WING)),
         SNOWMOBILE(1.75, EquipmentTypeLookup.SNOWMOBILE_CHASSIS_MOD,
-                EnumSet.of(SVType.WHEELED, SVType.TRACKED)),
+              EnumSet.of(SVType.WHEELED, SVType.TRACKED)),
         STOL(1.5, EquipmentTypeLookup.STOL_CHASSIS_MOD,
-                EnumSet.of(SVType.FIXED_WING)),
+              EnumSet.of(SVType.FIXED_WING)),
         SUBMERSIBLE(1.8, EquipmentTypeLookup.SUBMERSIBLE_CHASSIS_MOD,
-                EnumSet.of(SVType.NAVAL)),
+              EnumSet.of(SVType.NAVAL)),
         TRACTOR(1.2, EquipmentTypeLookup.TRACTOR_CHASSIS_MOD,
-                EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.NAVAL, SVType.RAIL)),
+              EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.NAVAL, SVType.RAIL)),
         TRAILER(0.8, EquipmentTypeLookup.TRAILER_CHASSIS_MOD,
-                EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.RAIL)),
+              EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.RAIL)),
         ULTRA_LIGHT(0.5, EquipmentTypeLookup.ULTRALIGHT_CHASSIS_MOD,
-                true),
+              true),
         VSTOL(2.0, EquipmentTypeLookup.VSTOL_CHASSIS_MOD,
-                EnumSet.of(SVType.FIXED_WING));
+              EnumSet.of(SVType.FIXED_WING));
 
         public final double multiplier;
         public final MiscType equipment;
@@ -309,35 +322,37 @@ public class TestSupportVehicle extends TestEntity {
          * Checks for compatibility with a support vehicle type and weight class
          *
          * @param supportVehicle The support vehicle
+         *
          * @return Whether the mod is valid for the vehicle
          */
         public boolean validFor(Entity supportVehicle) {
             return supportVehicle.isSupportVehicle() && allowedTypes.contains(SVType.getVehicleType(supportVehicle))
-                    && (!smallOnly || (isSmallSupportVehicle(supportVehicle)))
-                    // Hydrofoil has a specific upper weight limit rather than a weight class.
-                    && (!this.equals(HYDROFOIL) || supportVehicle.getWeight() <= 100.0)
-                    // Can't put a turret on a convertible
-                    && (!this.equals(CONVERTIBLE) || !(supportVehicle instanceof Tank supportVehicleTank)
-                            || (supportVehicleTank.hasNoTurret()))
-                    // External power pickup (rail) is only valid with the external engine type
-                    && (!this.equals(EXTERNAL_POWER_PICKUP)
-                            || (supportVehicle.getEngine().getEngineType() == Engine.EXTERNAL));
+                  && (!smallOnly || (isSmallSupportVehicle(supportVehicle)))
+                  // Hydrofoil has a specific upper weight limit rather than a weight class.
+                  && (!this.equals(HYDROFOIL) || supportVehicle.getWeight() <= 100.0)
+                  // Can't put a turret on a convertible
+                  && (!this.equals(CONVERTIBLE) || !(supportVehicle instanceof Tank supportVehicleTank)
+                  || (supportVehicleTank.hasNoTurret()))
+                  // External power pickup (rail) is only valid with the external engine type
+                  && (!this.equals(EXTERNAL_POWER_PICKUP)
+                  || (supportVehicle.getEngine().getEngineType() == Engine.EXTERNAL));
         }
 
         /**
          * Checks whether something about the vehicle requires a specific chassis mod.
          *
          * @param supportVehicle A support vehicle
+         *
          * @return Whether this chassis mod is required by the vehicle.
          */
         public boolean requiredFor(Entity supportVehicle) {
             switch (this) {
                 case PROP:
                     return supportVehicle instanceof FixedWingSupport fixedWingSupport
-                            && SVEngine.getEngineType(fixedWingSupport.getEngine()).electric;
+                          && SVEngine.getEngineType(fixedWingSupport.getEngine()).electric;
                 case EXTERNAL_POWER_PICKUP:
                     return supportVehicle.getMovementMode().equals(EntityMovementMode.RAIL)
-                            && SVEngine.getEngineType(supportVehicle.getEngine()).equals(SVEngine.EXTERNAL);
+                          && SVEngine.getEngineType(supportVehicle.getEngine()).equals(SVEngine.EXTERNAL);
                 default:
                     return false;
             }
@@ -347,8 +362,8 @@ public class TestSupportVehicle extends TestEntity {
          * Checks for compatibility between different chassis modifications
          *
          * @param other Another chassis mod
-         * @return Whether this chassis mod can be installed on the same vehicle as
-         *         another mod.
+         *
+         * @return Whether this chassis mod can be installed on the same vehicle as another mod.
          */
         public boolean compatibleWith(ChassisModification other) {
             switch (this) {
@@ -381,9 +396,11 @@ public class TestSupportVehicle extends TestEntity {
          * Find the enum value that corresponds to an {@link EquipmentType} instance.
          *
          * @param equipmentType The equipment to match
+         *
          * @return The corresponding enum value, or {@code null} if there is no match.
          */
-        public @Nullable static ChassisModification getChassisMod(EquipmentType equipmentType) {
+        public @Nullable
+        static ChassisModification getChassisMod(EquipmentType equipmentType) {
             for (ChassisModification mod : values()) {
                 if (mod.equipment.equals(equipmentType)) {
                     return mod;
@@ -395,8 +412,8 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     /**
-     * Additional construction data for engine types, used to determine which ones
-     * are available for which vehicle types.
+     * Additional construction data for engine types, used to determine which ones are available for which vehicle
+     * types.
      */
     public enum SVEngine implements ITechnologyDelegator {
         STEAM(Engine.STEAM, EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.AIRSHIP, SVType.NAVAL, SVType.RAIL)),
@@ -404,9 +421,9 @@ public class TestSupportVehicle extends TestEntity {
         BATTERY(Engine.BATTERY, true),
         FUEL_CELL(Engine.FUEL_CELL, true),
         SOLAR(Engine.SOLAR,
-                EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.AIRSHIP, SVType.FIXED_WING, SVType.NAVAL, SVType.WIGE,
-                        SVType.SATELLITE),
-                true),
+              EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.AIRSHIP, SVType.FIXED_WING, SVType.NAVAL, SVType.WIGE,
+                    SVType.SATELLITE),
+              true),
         FISSION(Engine.FISSION),
         FUSION(Engine.NORMAL_ENGINE),
         MAGLEV(Engine.MAGLEV, EnumSet.of(SVType.RAIL)),
@@ -442,10 +459,11 @@ public class TestSupportVehicle extends TestEntity {
          * Finds the enum value corresponding to an {@link Engine}.
          *
          * @param engine The engine
-         * @return The enum value for the engine, or {@code null} if it is not a valid
-         *         SV engine type.
+         *
+         * @return The enum value for the engine, or {@code null} if it is not a valid SV engine type.
          */
-        public @Nullable static SVEngine getEngineType(Engine engine) {
+        public @Nullable
+        static SVEngine getEngineType(Engine engine) {
             if (null != engine) {
                 for (SVEngine svEngine : values()) {
                     if (svEngine.engine.getEngineType() == engine.getEngineType()) {
@@ -459,6 +477,7 @@ public class TestSupportVehicle extends TestEntity {
 
         /**
          * @param type The support vehicle type
+         *
          * @return Whether the engine is valid for the support vee.
          */
         public boolean isValidFor(SVType type) {
@@ -467,6 +486,7 @@ public class TestSupportVehicle extends TestEntity {
 
         /**
          * @param entity A support vehicle
+         *
          * @return Whether the engine is valid for the support vee.
          */
         public boolean isValidFor(Entity entity) {
@@ -484,51 +504,51 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     /**
-     * Tech advancement data for structural components with variable tech levels
-     * (structure, armor, engine). This is assembled from the table on TM, p. 122
-     * and IO, p. 49, primitive construction rules (IO, p. 120-121) and a pending
+     * Tech advancement data for structural components with variable tech levels (structure, armor, engine). This is
+     * assembled from the table on TM, p. 122 and IO, p. 49, primitive construction rules (IO, p. 120-121) and a pending
      * proposal to the rules committee for E.
      */
     public static final TechAdvancement[] TECH_LEVEL_TA = {
-            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.A)
-                    .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
-                    .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A,
-                            AvailabilityValue.A),
+          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.A)
+                .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
+                .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A,
+                AvailabilityValue.A),
 
-            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.B)
-                    .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
-                    .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B,
-                            AvailabilityValue.A),
+          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.B)
+                .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
+                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B,
+                AvailabilityValue.A),
 
-            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.C)
-                    .setAdvancement(ITechnology.DATE_ES, ITechnology.DATE_ES, ITechnology.DATE_ES)
-                    .setPrototypeFactions(ITechnology.Faction.TA).setProductionFactions(ITechnology.Faction.TA)
-                    .setAvailability(AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B,
-                            AvailabilityValue.B),
+          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.C)
+                .setAdvancement(ITechnology.DATE_ES, ITechnology.DATE_ES, ITechnology.DATE_ES)
+                .setPrototypeFactions(ITechnology.Faction.TA).setProductionFactions(ITechnology.Faction.TA)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B,
+                AvailabilityValue.B),
 
-            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.D)
-                    .setAdvancement(2420, 2430, 2435).setApproximate(true, true, false)
-                    .setPrototypeFactions(ITechnology.Faction.TH).setProductionFactions(ITechnology.Faction.TH)
-                    .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C,
-                            AvailabilityValue.B),
+          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.D)
+                .setAdvancement(2420, 2430, 2435).setApproximate(true, true, false)
+                .setPrototypeFactions(ITechnology.Faction.TH).setProductionFactions(ITechnology.Faction.TH)
+                .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C,
+                AvailabilityValue.B),
 
-            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.E)
-                    .setISAdvancement(2557, 2571, 3055).setClanAdvancement(2557, 2571, 2815)
-                    .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D,
-                            AvailabilityValue.C),
+          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.E)
+                .setISAdvancement(2557, 2571, 3055).setClanAdvancement(2557, 2571, 2815)
+                .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D,
+                AvailabilityValue.C),
 
-            new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.F)
-                    .setISAdvancement(ITechnology.DATE_NONE, ITechnology.DATE_NONE, 3065)
-                    .setISApproximate(false, false, true)
-                    .setClanAdvancement(2820, 2825, 2830).setClanApproximate(true, true, false)
-                    .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D,
-                            AvailabilityValue.C)
+          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.F)
+                .setISAdvancement(ITechnology.DATE_NONE, ITechnology.DATE_NONE, 3065)
+                .setISApproximate(false, false, true)
+                .setClanAdvancement(2820, 2825, 2830).setClanApproximate(true, true, false)
+                .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D,
+                AvailabilityValue.C)
     };
 
     /**
      * The chassis weight multiplier for tech ratings A-F
      */
     private static final EnumMap<ITechnology.TechRating, Double> STRUCTURE_TECH_MULTIPLIER = new EnumMap<>(ITechnology.TechRating.class);
+
     static {
         STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.A, 1.6);
         STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.B, 1.3);
@@ -539,11 +559,11 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     /**
-     * Filters all vehicle armor according to given tech constraints. Standard armor
-     * is treated as basic
-     * support vehicle armor.
+     * Filters all vehicle armor according to given tech constraints. Standard armor is treated as basic support vehicle
+     * armor.
      *
      * @param techManager Applies the filtering criteria
+     *
      * @return A list of armor equipment that meets the tech constraints
      */
     public static List<ArmorType> legalArmorsFor(ITechManager techManager) {
@@ -556,7 +576,7 @@ public class TestSupportVehicle extends TestEntity {
 
             // Installing non-BAR armor on a support vehicle is advanced
             if (!armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)
-                    && (techManager.getTechLevel().ordinal() < SimpleTechLevel.ADVANCED.ordinal())) {
+                  && (techManager.getTechLevel().ordinal() < SimpleTechLevel.ADVANCED.ordinal())) {
                 continue;
             }
 
@@ -568,13 +588,12 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     /**
-     * The maximum number of armor points a support vehicle is computed by
-     * multiplying the total tonnage by a factor determined by the vehicle type and
-     * adding four.
+     * The maximum number of armor points a support vehicle is computed by multiplying the total tonnage by a factor
+     * determined by the vehicle type and adding four.
      *
      * @param vee The support vehicle
-     * @return The maximum number of armor points. If the entity cannot be
-     *         identified as a support vehicle, returns 0.
+     *
+     * @return The maximum number of armor points. If the entity cannot be identified as a support vehicle, returns 0.
      */
     public static int maxArmorFactor(Entity vee) {
         SVType type = SVType.getVehicleType(vee);
@@ -614,11 +633,11 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     /**
-     * Calculates the weight of each point of armor. For standard SV armor this is
-     * based on the tech and BAR ratings. For advanced armors this is the reciprocal
-     * of the number of points per ton.
+     * Calculates the weight of each point of armor. For standard SV armor this is based on the tech and BAR ratings.
+     * For advanced armors this is the reciprocal of the number of points per ton.
      *
      * @param vee The support vehicle
+     *
      * @return The weight of each armor point in tons, rounded to the kilogram.
      */
     public static double armorWeightPerPoint(Entity vee) {
@@ -637,6 +656,7 @@ public class TestSupportVehicle extends TestEntity {
      *
      * @param type  The support vehicle type
      * @param small Whether the {@link Entity} is a small support vehicle
+     *
      * @return Whether the vehicle can use sponson turrets.
      */
     public static boolean sponsonLegal(SVType type, boolean small) {
@@ -661,8 +681,7 @@ public class TestSupportVehicle extends TestEntity {
     private final TestTank testTank;
 
     /**
-     * Used by fixed wing, airship, and satellite for some calculations and
-     * validation
+     * Used by fixed wing, airship, and satellite for some calculations and validation
      */
     private final TestAero testAero;
 
@@ -676,16 +695,16 @@ public class TestSupportVehicle extends TestEntity {
     @Override
     public String printWeightStructure() {
         return StringUtil.makeLength(
-                "Chassis: ", getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightStructure(), usesKgStandard()) + "\n";
+              "Chassis: ", getPrintSize() - 5)
+              + TestEntity.makeWeightString(getWeightStructure(), usesKgStandard()) + "\n";
     }
 
     @Override
     public String printWeightEngine() {
         return StringUtil.makeLength(String.format("Engine: %s (%s)",
-                engine.getEngineName(), getEntity().getEngineTechRating().getName()),
-                getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightEngine(), usesKgStandard()) + "\n";
+                    engine.getEngineName(), getEntity().getEngineTechRating().getName()),
+              getPrintSize() - 5)
+              + TestEntity.makeWeightString(getWeightEngine(), usesKgStandard()) + "\n";
     }
 
     @Override
@@ -699,9 +718,9 @@ public class TestSupportVehicle extends TestEntity {
         }
 
         return StringUtil.makeLength(
-                String.format("Armor: %d (%s)", getTotalOArmor(), name),
-                getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightArmor(), usesKgStandard()) + "\n";
+              String.format("Armor: %d (%s)", getTotalOArmor(), name),
+              getPrintSize() - 5)
+              + TestEntity.makeWeightString(getWeightArmor(), usesKgStandard()) + "\n";
 
     }
 
@@ -744,6 +763,7 @@ public class TestSupportVehicle extends TestEntity {
      * Rounds up to the nearest half ton or kilogram as appropriate to the vehicle
      *
      * @param val The weight to round, in tons
+     *
      * @return The rounded weight, in tons
      */
     private double ceilWeight(double val) {
@@ -799,7 +819,7 @@ public class TestSupportVehicle extends TestEntity {
     private double getWeightFireControl() {
         for (Mounted<?> mounted : supportVee.getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_BASIC_FIRECONTROL)
-                    || mounted.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
+                  || mounted.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
                 return mounted.getTonnage();
             }
         }
@@ -872,19 +892,19 @@ public class TestSupportVehicle extends TestEntity {
             for (Mounted<?> mounted : supportVee.getWeaponList()) {
                 WeaponType weaponType = (WeaponType) mounted.getType();
                 if (weaponType.hasFlag(WeaponType.F_ENERGY) && !(weaponType instanceof CLChemicalLaserWeapon)
-                        && !(weaponType instanceof VehicleFlamerWeapon)) {
+                      && !(weaponType instanceof VehicleFlamerWeapon)) {
                     weight += mounted.getTonnage();
                 }
 
                 if ((mounted.getLinkedBy() != null) && (mounted.getLinkedBy().getType() instanceof MiscType)
-                        && mounted.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                      && mounted.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
                     weight += mounted.getLinkedBy().getTonnage();
                 }
             }
 
             for (Mounted<?> mounted : supportVee.getMisc()) {
                 if (mounted.getType().hasFlag(MiscType.F_CLUB)
-                        && mounted.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
+                      && mounted.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
                     weight += mounted.getTonnage();
                 }
             }
@@ -894,8 +914,9 @@ public class TestSupportVehicle extends TestEntity {
         return 0;
     }
 
-    private static final EquipmentBitSet EXCLUDE = MiscType.F_BASIC_FIRECONTROL.asEquipmentBitSet().or(MiscType.F_ADVANCED_FIRECONTROL)
-                .or(MiscType.F_CHASSIS_MODIFICATION);
+    private static final EquipmentBitSet EXCLUDE = MiscType.F_BASIC_FIRECONTROL.asEquipmentBitSet()
+          .or(MiscType.F_ADVANCED_FIRECONTROL)
+          .or(MiscType.F_CHASSIS_MODIFICATION);
 
     @Override
     protected boolean includeMiscEquip(MiscType eq) {
@@ -927,8 +948,8 @@ public class TestSupportVehicle extends TestEntity {
             return testTank.printWeightMisc();
         } else {
             return getWeightPowerAmp() != 0 ? StringUtil.makeLength(
-                    "Power Amp:", getPrintSize() - 5)
-                    + TestEntity.makeWeightString(getWeightPowerAmp(), usesKgStandard()) + "\n" : "";
+                  "Power Amp:", getPrintSize() - 5)
+                  + TestEntity.makeWeightString(getWeightPowerAmp(), usesKgStandard()) + "\n" : "";
         }
     }
 
@@ -937,15 +958,15 @@ public class TestSupportVehicle extends TestEntity {
         String fireCon = "";
         for (Mounted<?> mounted : supportVee.getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_BASIC_FIRECONTROL)
-                    || mounted.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
+                  || mounted.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
                 fireCon = StringUtil.makeLength(mounted.getName(), getPrintSize() - 5)
-                        + TestEntity.makeWeightString(mounted.getTonnage(), usesKgStandard()) + "\n";
+                      + TestEntity.makeWeightString(mounted.getTonnage(), usesKgStandard()) + "\n";
                 break;
             }
         }
         double weight = getWeightCrewAccommodations();
         String crewStr = weight > 0 ? StringUtil.makeLength("Crew Accommodations:", getPrintSize() - 5)
-                + TestEntity.makeWeightString(weight, usesKgStandard()) + "\n" : "";
+              + TestEntity.makeWeightString(weight, usesKgStandard()) + "\n" : "";
         return fireCon + crewStr;
     }
 
@@ -959,9 +980,9 @@ public class TestSupportVehicle extends TestEntity {
             if (weight > 0) {
                 buff.append(StringUtil.makeLength("Ammo [" + mounted.getName() + "]", 20));
                 buff.append(" ").append(
-                        StringUtil.makeLength(getLocationAbbr(mounted.getLocation()),
-                                getPrintSize() - 5 - 20))
-                        .append(TestEntity.makeWeightString(weight, true)).append("\n");
+                            StringUtil.makeLength(getLocationAbbr(mounted.getLocation()),
+                                  getPrintSize() - 5 - 20))
+                      .append(TestEntity.makeWeightString(weight, true)).append("\n");
             }
         }
         return buff;
@@ -971,7 +992,7 @@ public class TestSupportVehicle extends TestEntity {
         // first clip is free
         if ((mounted.getSize() > 1) && (mounted.getType() instanceof InfantryWeapon)) {
             return RoundWeight.nextKg((mounted.getSize() - 1)
-                    * ((InfantryWeapon) mounted.getType()).getAmmoWeight());
+                  * ((InfantryWeapon) mounted.getType()).getAmmoWeight());
         }
 
         return 0.0;
@@ -1008,13 +1029,13 @@ public class TestSupportVehicle extends TestEntity {
         }
 
         if ((supportVee instanceof Tank supportTank) && (supportTank.fuelTonnagePer100km() > 0.0)
-                && (supportTank.getFuelTonnage() <= 0.0)) {
+              && (supportTank.getFuelTonnage() <= 0.0)) {
             buff.append("Support vehicles with ").append(engine.getEngineName())
-                    .append(" engine must allocate some weight for fuel.\n");
+                  .append(" engine must allocate some weight for fuel.\n");
             correct = false;
         } else if ((supportVee instanceof FixedWingSupport fixedWingSupport)
-                && (fixedWingSupport.getOriginalFuel() <= 0.0)
-                && (fixedWingSupport.kgPerFuelPoint() > 0)) {
+              && (fixedWingSupport.getOriginalFuel() <= 0.0)
+              && (fixedWingSupport.kgPerFuelPoint() > 0)) {
             buff.append("Aerospace units must allocate some weight for fuel.\n");
             correct = false;
         }
@@ -1055,10 +1076,10 @@ public class TestSupportVehicle extends TestEntity {
 
                 if (perPoint < 0.001) {
                     buff.append("BAR ")
-                            .append(bar)
-                            .append(" exceeds maximum for armor tech rating ")
-                            .append(supportVee.getArmorTechRating().getName())
-                            .append(".\n");
+                          .append(bar)
+                          .append(" exceeds maximum for armor tech rating ")
+                          .append(supportVee.getArmorTechRating().getName())
+                          .append(".\n");
                     correct = false;
                 }
             }
@@ -1094,15 +1115,15 @@ public class TestSupportVehicle extends TestEntity {
 
         for (Mounted<?> mounted : supportVee.getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)
-                    && (getEntity() instanceof Aero || getEntity() instanceof VTOL)) {
+                  && (getEntity() instanceof Aero || getEntity() instanceof VTOL)) {
                 buff.append("Armored Motive system and incompatible movement mode!\n\n");
                 correct = false;
             } else if (mounted.getType().hasFlag(MiscType.F_LIFEBOAT)
-                    && mounted.getType().hasSubType(MiscType.S_MARITIME_ESCAPE_POD | MiscType.S_MARITIME_LIFEBOAT)
-                    && !SVType.NAVAL.equals(SVType.getVehicleType(supportVee))
-                    && !supportVee.hasWorkingMisc(MiscType.F_AMPHIBIOUS)) {
+                  && mounted.getType().hasSubType(MiscType.S_MARITIME_ESCAPE_POD | MiscType.S_MARITIME_LIFEBOAT)
+                  && !SVType.NAVAL.equals(SVType.getVehicleType(supportVee))
+                  && !supportVee.hasWorkingMisc(MiscType.F_AMPHIBIOUS)) {
                 buff.append(mounted.getName())
-                        .append(" requires naval support vehicle or amphibious chassis modification.\n");
+                      .append(" requires naval support vehicle or amphibious chassis modification.\n");
                 correct = false;
             } else if (mounted.getType().hasFlag(MiscType.F_EXTERNAL_STORES_HARDPOINT)) {
                 hardPoints++;
@@ -1143,9 +1164,9 @@ public class TestSupportVehicle extends TestEntity {
         }
 
         if (supportVee.isOmni()
-                && (supportVee.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
-                        || supportVee.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))
-                && (weaponWeight / 10.0 > supportVee.getBaseChassisFireConWeight())) {
+              && (supportVee.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
+              || supportVee.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))
+              && (weaponWeight / 10.0 > supportVee.getBaseChassisFireConWeight())) {
             buff.append("Omni configuration exceeds weapon capacity of base chassis fire control system.\n");
             correct = false;
         }
@@ -1155,13 +1176,13 @@ public class TestSupportVehicle extends TestEntity {
                 buff.append(type.getName()).append(" cannot be used by support vehicles.\n");
                 correct = false;
             } else if ((type instanceof WeaponType)
-                    && !isSmallSupportVehicle()
-                    && !type.hasFlag(WeaponType.F_TANK_WEAPON)) {
+                  && !isSmallSupportVehicle()
+                  && !type.hasFlag(WeaponType.F_TANK_WEAPON)) {
                 buff.append(type.getName()).append(" cannot be used by support vehicles.\n");
                 correct = false;
             } else if (!TestTank.legalForMotiveType(type, supportVee.getMovementMode(), true)) {
                 buff.append(type.getName()).append(" is incompatible with ")
-                        .append(supportVee.getMovementModeAsString());
+                      .append(supportVee.getMovementModeAsString());
                 correct = false;
             }
 
@@ -1220,7 +1241,8 @@ public class TestSupportVehicle extends TestEntity {
             correct = false;
         }
 
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)
+              || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
 
@@ -1245,9 +1267,9 @@ public class TestSupportVehicle extends TestEntity {
         boolean illegal = super.hasIllegalEquipmentCombinations(buffer);
         for (Mounted<?> mounted : supportVee.getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_ARMORED_CHASSIS)
-                    || mounted.getType().hasFlag(MiscType.F_AMPHIBIOUS)
-                    || mounted.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
-                    || mounted.getType().hasFlag(MiscType.F_SUBMERSIBLE)) {
+                  || mounted.getType().hasFlag(MiscType.F_AMPHIBIOUS)
+                  || mounted.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
+                  || mounted.getType().hasFlag(MiscType.F_SUBMERSIBLE)) {
                 for (int loc = supportVee.firstArmorIndex(); loc < supportVee.locations(); loc++) {
                     // Tanks have the body location first. Aero SVs have it last, but also have the
                     // squadron wings location.
@@ -1257,7 +1279,7 @@ public class TestSupportVehicle extends TestEntity {
 
                     if (supportVee.getOArmor(loc) == 0) {
                         buffer.append(mounted.getType().getName())
-                                .append(" requires at least one point of armor in every location.\n");
+                              .append(" requires at least one point of armor in every location.\n");
                         illegal = true;
                         break;
                     }
@@ -1273,9 +1295,9 @@ public class TestSupportVehicle extends TestEntity {
     boolean hasIllegalChassisMods(StringBuffer buff) {
         boolean illegal = false;
         final Set<ChassisModification> chassisMods = supportVee.getMisc().stream()
-                .filter(m -> m.getType().hasFlag(MiscType.F_CHASSIS_MODIFICATION))
-                .map(m -> ChassisModification.getChassisMod(m.getType()))
-                .filter(Objects::nonNull).collect(Collectors.toSet());
+              .filter(m -> m.getType().hasFlag(MiscType.F_CHASSIS_MODIFICATION))
+              .map(m -> ChassisModification.getChassisMod(m.getType()))
+              .filter(Objects::nonNull).collect(Collectors.toSet());
 
         if (!chassisMods.contains(ChassisModification.ARMORED)) {
             ArmorType armor = ArmorType.forEntity(supportVee);
@@ -1292,26 +1314,26 @@ public class TestSupportVehicle extends TestEntity {
         }
 
         if (supportVee.isAero() && SVEngine.getEngineType(supportVee.getEngine()).electric
-                && !chassisMods.contains(ChassisModification.PROP)) {
+              && !chassisMods.contains(ChassisModification.PROP)) {
             buff.append(
-                    "Fixed Wing and Airship support vehicles with electric engines requires the Prop Chassis Mod.\n");
+                  "Fixed Wing and Airship support vehicles with electric engines requires the Prop Chassis Mod.\n");
             illegal = true;
         }
 
         if ((supportVee.getEngine().getEngineType() == Engine.EXTERNAL)
-                && !chassisMods.contains(ChassisModification.EXTERNAL_POWER_PICKUP)) {
+              && !chassisMods.contains(ChassisModification.EXTERNAL_POWER_PICKUP)) {
             buff.append("An external engine requires the External Power Pickup Chassis Mod.\n");
             illegal = true;
         }
 
         if (chassisMods.contains(ChassisModification.HYDROFOIL)
-                && (supportVee.getWeight() > 100.0)) {
+              && (supportVee.getWeight() > 100.0)) {
             buff.append("The Hydrofoil Chassis Mod may not be used on naval support vehicles larger than 100 tons.\n");
             illegal = true;
         }
 
         if (chassisMods.contains(ChassisModification.CONVERTIBLE)
-                && (supportVee instanceof Tank) && !((Tank) supportVee).hasNoTurret()) {
+              && (supportVee instanceof Tank) && !((Tank) supportVee).hasNoTurret()) {
             buff.append("The Convertible Chassis Mod may not be used with a turret.\n");
             illegal = true;
         }
@@ -1319,22 +1341,22 @@ public class TestSupportVehicle extends TestEntity {
         for (ChassisModification mod : chassisMods) {
             if (!mod.allowedTypes.contains(SVType.getVehicleType(supportVee))) {
                 buff.append(mod.equipment.getName())
-                        .append(" is not valid for ")
-                        .append(supportVee.getMovementModeAsString())
-                        .append("\n");
+                      .append(" is not valid for ")
+                      .append(supportVee.getMovementModeAsString())
+                      .append("\n");
                 illegal = true;
             }
 
             if (mod.smallOnly && !isSmallSupportVehicle()) {
                 buff.append(mod.equipment.getName())
-                        .append(" is only valid with small support vehicles.\n");
+                      .append(" is only valid with small support vehicles.\n");
                 illegal = true;
             }
 
             if (!mod.validFor(supportVee)) {
                 buff.append("Incompatible chassis mod: ")
-                        .append(mod.equipment.getName())
-                        .append("\n");
+                      .append(mod.equipment.getName())
+                      .append("\n");
                 illegal = true;
             }
 
@@ -1343,9 +1365,9 @@ public class TestSupportVehicle extends TestEntity {
                 // only gets checked once.
                 if ((mod2.ordinal() > mod.ordinal()) && !mod.compatibleWith(mod2)) {
                     buff.append(mod.equipment.getName())
-                            .append(" is incompatible with ")
-                            .append(mod2.equipment.getName())
-                            .append("\n");
+                          .append(" is incompatible with ")
+                          .append(mod2.equipment.getName())
+                          .append("\n");
                     illegal = true;
                 }
             }
@@ -1361,14 +1383,14 @@ public class TestSupportVehicle extends TestEntity {
 
             // Pillion and ejection seating are subclasses of StandardSeatCargoBay
             int seating = supportVee.getTransports().stream()
-                    .filter(t -> t instanceof StandardSeatCargoBay)
-                    .mapToInt(t -> (int) ((Bay) t).getCapacity())
-                    .sum();
+                  .filter(t -> t instanceof StandardSeatCargoBay)
+                  .mapToInt(t -> (int) ((Bay) t).getCapacity())
+                  .sum();
 
             if (seating < minCrew) {
                 buff.append("Minimum crew is ").append(minCrew)
-                        .append(" but there is only seating for ")
-                        .append(seating).append(".\n");
+                      .append(" but there is only seating for ")
+                      .append(seating).append(".\n");
                 return true;
             }
         }
@@ -1426,30 +1448,30 @@ public class TestSupportVehicle extends TestEntity {
     public StringBuffer printEntity() {
         StringBuffer buff = new StringBuffer();
         buff.append(getName())
-                .append("\n")
-                .append("Found in: ")
-                .append(fileString)
-                .append("\n")
-                .append(printTechLevel())
-                .append("Intro year: ")
-                .append(supportVee.getYear())
-                .append("\n")
-                .append(printSource())
-                .append(printShortMovement());
+              .append("\n")
+              .append("Found in: ")
+              .append(fileString)
+              .append("\n")
+              .append(printTechLevel())
+              .append("Intro year: ")
+              .append(supportVee.getYear())
+              .append("\n")
+              .append(printSource())
+              .append(printShortMovement());
 
         if (correctWeight(buff, true, true)) {
             if (!usesKgStandard()) {
                 buff.append("Weight: ")
-                        .append(getWeight())
-                        .append(" (")
-                        .append(calculateWeight())
-                        .append(")\n");
+                      .append(getWeight())
+                      .append(" (")
+                      .append(calculateWeight())
+                      .append(")\n");
             } else {
                 buff.append("Weight: ")
-                        .append(getWeight() * 1000)
-                        .append(" kg (")
-                        .append(calculateWeight() * 1000)
-                        .append(" kg)\n");
+                      .append(getWeight() * 1000)
+                      .append(" kg (")
+                      .append(calculateWeight() * 1000)
+                      .append(" kg)\n");
             }
         }
 
@@ -1482,8 +1504,8 @@ public class TestSupportVehicle extends TestEntity {
             }
 
             if (!(mount.getType() instanceof AmmoType)
-                    && (EquipmentType.getArmorType(mount.getType()) == EquipmentType.T_ARMOR_UNKNOWN)
-                    && !((mount instanceof MiscMounted) && mount.getType().hasFlag(MiscType.F_JUMP_JET))) {
+                  && (EquipmentType.getArmorType(mount.getType()) == EquipmentType.T_ARMOR_UNKNOWN)
+                  && !((mount instanceof MiscMounted) && mount.getType().hasFlag(MiscType.F_JUMP_JET))) {
                 buff.append(StringUtil.makeLength(mount.getName(), 30));
                 buff.append(mount.getType().getSupportVeeSlots(supportVee)).append("\n");
             }
@@ -1511,8 +1533,8 @@ public class TestSupportVehicle extends TestEntity {
 
         if (armorSlots != 0) {
             buff.append(StringUtil.makeLength("Armor", 30))
-                    .append(armorSlots)
-                    .append("\n");
+                  .append(armorSlots)
+                  .append("\n");
         }
 
         // for ammo, each type of ammo takes one slots, regardless of sub-munition type
@@ -1541,7 +1563,7 @@ public class TestSupportVehicle extends TestEntity {
                 troopSpaceFound = true;
             } else if ((transport instanceof Bay transportBay) && !transportBay.isQuarters()) {
                 buff.append(StringUtil.makeLength(transportBay.getType(), 30))
-                        .append("1\n");
+                      .append("1\n");
             }
         }
         return buff;
@@ -1569,7 +1591,7 @@ public class TestSupportVehicle extends TestEntity {
      */
     public int occupiedSlotCount() {
         return getCrewSlots() + getArmorSlots() + getAmmoSlots()
-                + getWeaponSlots() + getMiscEquipSlots() + getTransportSlots();
+              + getWeaponSlots() + getMiscEquipSlots() + getTransportSlots();
     }
 
     /**
@@ -1584,7 +1606,7 @@ public class TestSupportVehicle extends TestEntity {
 
             for (int loc = 0; loc < supportVee.locations(); loc++) {
                 ArmorType armor = ArmorType.of(supportVee.getArmorType(loc),
-                        TechConstants.isClan(supportVee.getArmorTechLevel(loc)));
+                      TechConstants.isClan(supportVee.getArmorTechLevel(loc)));
 
                 if (null != armor) {
                     space += armor.getPatchworkSlotsMekSV();
@@ -1645,7 +1667,7 @@ public class TestSupportVehicle extends TestEntity {
         for (Mounted<?> mounted : supportVee.getMisc()) {
             // Skip armor and jump jets
             if ((EquipmentType.getArmorType(mounted.getType()) == EquipmentType.T_ARMOR_UNKNOWN)
-                    && !mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
+                  && !mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
                 slots += mounted.getType().getSupportVeeSlots(supportVee);
             }
         }
@@ -1664,14 +1686,13 @@ public class TestSupportVehicle extends TestEntity {
     public static final int INDEX_STEERAGE = 3;
 
     /**
-     * Calculates capacity of quarters above the minimum crew requirement. Only
-     * quarters above the minimum crew requirement take up equipment slots. Second
-     * class quarters are considered passenger accommodations and always count
-     * toward slots. Others are assigned to the least bulky type first.
+     * Calculates capacity of quarters above the minimum crew requirement. Only quarters above the minimum crew
+     * requirement take up equipment slots. Second class quarters are considered passenger accommodations and always
+     * count toward slots. Others are assigned to the least bulky type first.
      *
      * @param supportVehicle A support vehicle
-     * @return An array of the count of each type of quarters that require slots.
-     *         See INDEX_* constants for indices.
+     *
+     * @return An array of the count of each type of quarters that require slots. See INDEX_* constants for indices.
      */
     public static int[] extraCrewQuartersCount(Entity supportVehicle) {
         int firstClass = 0;
@@ -1711,22 +1732,22 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     /**
-     * Calculates the number of equipment slots taken up by crew quarters. Quarters
-     * for minimum crew do not take up slots.
+     * Calculates the number of equipment slots taken up by crew quarters. Quarters for minimum crew do not take up
+     * slots.
      *
      * @return The number of equipment slots required by crew quarters.
      */
     public int getCrewSlots() {
         int[] excess = extraCrewQuartersCount(getEntity());
         return (int) Math.ceil(excess[INDEX_FIRST_CLASS] / 5.0)
-                + (int) Math.ceil(excess[INDEX_SECOND_CLASS] / 20.0)
-                + (int) Math.ceil(excess[INDEX_STD_CREW] / 20.0)
-                + (int) Math.ceil(excess[INDEX_STEERAGE] / 50.0);
+              + (int) Math.ceil(excess[INDEX_SECOND_CLASS] / 20.0)
+              + (int) Math.ceil(excess[INDEX_STD_CREW] / 20.0)
+              + (int) Math.ceil(excess[INDEX_STEERAGE] / 50.0);
     }
 
     /**
-     * Each distinct bay requires a slot, regardless of size. All {@link InfantryCompartment}
-     * is treated as a single bay.
+     * Each distinct bay requires a slot, regardless of size. All {@link InfantryCompartment} is treated as a single
+     * bay.
      *
      * @return The number of slots required by transporters.
      */

@@ -5,7 +5,7 @@
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL),
- * version 2 or (at your option) any later version,
+ * version 3 or (at your option) any later version,
  * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
@@ -24,23 +24,28 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot;
-
-import megamek.common.Board;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Hex;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 
+import megamek.common.Board;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.Hex;
+
 /**
- * Minefield deployment planner that randomly selects positions on the board. It focuses on
- * positions that are paved or have vegetation, but will also select clear hexes if it runs out of
- * other options.
+ * Minefield deployment planner that randomly selects positions on the board. It focuses on positions that are paved or
+ * have vegetation, but will also select clear hexes if it runs out of other options.
+ *
  * @author Luana Coppio
  */
 public class RandomMinefieldDeploymentPlanner implements MinefieldDeploymentPlanner {
@@ -63,8 +68,7 @@ public class RandomMinefieldDeploymentPlanner implements MinefieldDeploymentPlan
             if ((hex != null)
                   && !hex.hasDepth1WaterOrDeeper()
                   && (hex.hasPavementOrRoad() || hex.hasVegetation()
-                  || (hex.isClearHex() && (maxTries < numberOfCoords * 10))))
-            {
+                  || (hex.isClearHex() && (maxTries < numberOfCoords * 10)))) {
                 coordsSet.add(coords);
             }
             maxTries--;

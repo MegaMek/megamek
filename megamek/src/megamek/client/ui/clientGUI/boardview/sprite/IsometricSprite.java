@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
@@ -188,8 +202,8 @@ public class IsometricSprite extends HexSprite {
         updateBounds();
         // create image for buffer
         GraphicsConfiguration config = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                                             .getDefaultScreenDevice()
-                                             .getDefaultConfiguration();
+              .getDefaultScreenDevice()
+              .getDefaultConfiguration();
         image = config.createCompatibleImage(bounds.width, bounds.height, Transparency.TRANSLUCENT);
         Graphics2D g = (Graphics2D) image.getGraphics();
 
@@ -198,7 +212,7 @@ public class IsometricSprite extends HexSprite {
         boolean translucentHiddenUnits = GUIP.getTranslucentHiddenUnits();
 
         if ((trackThisEntitiesVisibilityInfo(entity) && !entity.isVisibleToEnemy() && translucentHiddenUnits) ||
-                  (entity.relHeight() < 0)) {
+              (entity.relHeight() < 0)) {
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
         }
         g.drawImage(bv.getScaledImage(bv.getTileManager().imageFor(entity, secondaryPos), true), 0, 0, this);
@@ -217,9 +231,9 @@ public class IsometricSprite extends HexSprite {
 
         IGameOptions opts = this.bv.game.getOptions();
         return opts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
-                     ((e.getOwner().getId() == localPlayer.getId()) ||
-                            (opts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION) &&
-                                   (e.getOwner().getTeam() == localPlayer.getTeam())));
+              ((e.getOwner().getId() == localPlayer.getId()) ||
+                    (opts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION) &&
+                          (e.getOwner().getTeam() == localPlayer.getTeam())));
     }
 
     /**
@@ -230,19 +244,19 @@ public class IsometricSprite extends HexSprite {
      */
     private boolean onlyDetectedBySensors() {
         boolean sensors = (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS) ||
-                                 bv.game.getOptions()
-                                       .booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
+              bv.game.getOptions()
+                    .booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
         boolean sensorsDetectAll = bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
         boolean hasVisual = entity.hasSeenEntity(bv.getLocalPlayer());
         boolean hasDetected = entity.hasDetectedEntity(bv.getLocalPlayer());
 
         return sensors &&
-                     doubleBlind &&
-                     !sensorsDetectAll &&
-                     !trackThisEntitiesVisibilityInfo(entity) &&
-                     hasDetected &&
-                     !hasVisual;
+              doubleBlind &&
+              !sensorsDetectAll &&
+              !trackThisEntitiesVisibilityInfo(entity) &&
+              hasDetected &&
+              !hasVisual;
     }
 
     @Override

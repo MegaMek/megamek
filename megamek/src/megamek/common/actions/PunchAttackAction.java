@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.actions;
 
 import megamek.client.ui.Messages;
@@ -49,7 +70,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
     }
 
     public PunchAttackAction(int entityId, int targetType, int targetId, int arm, boolean leftBlade,
-            boolean rightBlade, boolean zweihandering) {
+          boolean rightBlade, boolean zweihandering) {
         super(entityId, targetType, targetId);
         this.arm = arm;
         this.leftBlade = leftBlade;
@@ -66,7 +87,6 @@ public class PunchAttackAction extends PhysicalAttackAction {
     }
 
     /**
-     *
      * @return true if the entity is zweihandering (attacking with both hands)
      */
     public boolean isZweihandering() {
@@ -85,16 +105,16 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
     public ToHitData toHit(Game game) {
         return PunchAttackAction.toHit(game, getEntityId(), game.getTarget(getTargetType(),
-                getTargetId()), getArm(), isZweihandering());
+              getTargetId()), getArm(), isZweihandering());
     }
 
     /**
-     * punches are impossible when physical attacks are impossible, or a
-     * retractable blade is extended
+     * punches are impossible when physical attacks are impossible, or a retractable blade is extended
      *
      * @param game   The current {@link Game}
      * @param ae
      * @param target
+     *
      * @return
      */
     protected static String toHitIsImpossible(Game game, Entity ae, Targetable target, int arm) {
@@ -109,13 +129,13 @@ public class PunchAttackAction extends PhysicalAttackAction {
             attackerHeight--;
         }
         final int targetElevation = target.getElevation()
-                + targHex.getLevel(); // The absolute level of the target's base
+              + targHex.getLevel(); // The absolute level of the target's base
         final int targetHeight = targetElevation + target.getHeight(); // The absolute level of the target's top
         final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mek.LOC_RARM
-                : Mek.LOC_LARM;
+              : Mek.LOC_LARM;
         if (((ae.getGrappled() != Entity.NONE)
-                && (((ae.getGrappleSide() == Entity.GRAPPLE_LEFT) && (arm == Mek.LOC_LARM))))
-                || ((ae.getGrappleSide() == Entity.GRAPPLE_RIGHT) && (arm == Mek.LOC_RARM))) {
+              && (((ae.getGrappleSide() == Entity.GRAPPLE_LEFT) && (arm == Mek.LOC_LARM))))
+              || ((ae.getGrappleSide() == Entity.GRAPPLE_RIGHT) && (arm == Mek.LOC_RARM))) {
             return "grappled with punching arm";
         }
         if ((ae instanceof Mek) && ((Mek) ae).hasExtendedRetractableBlade()) {
@@ -196,9 +216,9 @@ public class PunchAttackAction extends PhysicalAttackAction {
         Hex targHex = game.getHexOf(target);
         final int attackerHeight = ae.relHeight() + attHex.getLevel(); // The absolute level of the attacker's arms
         final int targetElevation = target.getElevation()
-                + targHex.getLevel(); // The absolute level of the target's arms
+              + targHex.getLevel(); // The absolute level of the target's arms
         final int armArc = (arm == PunchAttackAction.RIGHT) ? Compute.ARC_RIGHTARM
-                : Compute.ARC_LEFTARM;
+              : Compute.ARC_LEFTARM;
 
         ToHitData toHit;
 
@@ -221,9 +241,9 @@ public class PunchAttackAction extends PhysicalAttackAction {
             // The Mek must have both arms, the target must
             // be a tank, and both must be in the same hex.
             if (!ae.isLocationBad(Mek.LOC_RARM)
-                    && !ae.isLocationBad(Mek.LOC_LARM)
-                    && (target instanceof Tank)
-                    && (ae.getPosition().distance(target.getPosition()) == 0)) {
+                  && !ae.isLocationBad(Mek.LOC_LARM)
+                  && (target instanceof Tank)
+                  && (ae.getPosition().distance(target.getPosition()) == 0)) {
                 toHit.addModifier(2, "attacker is prone");
             } else {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
@@ -232,20 +252,20 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
         // Check facing if the Mek is not prone.
         else if (!ComputeArc.isInArc(ae.getPosition(), ae.getSecondaryFacing(),
-                target, armArc)) {
+              target, armArc)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 
         // Attacks against adjacent buildings automatically hit.
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-                || (target instanceof GunEmplacement)) {
+              || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
+              || (target instanceof GunEmplacement)) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                    "Targeting adjacent building.");
+                  "Targeting adjacent building.");
         }
 
         final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mek.LOC_RARM
-                : Mek.LOC_LARM;
+              : Mek.LOC_LARM;
         final int otherArm = armLoc == Mek.LOC_RARM ? Mek.LOC_LARM : Mek.LOC_RARM;
 
         // damaged or missing actuators
@@ -280,27 +300,27 @@ public class PunchAttackAction extends PhysicalAttackAction {
         // Missing hand actuator is not cumulative with missing actuator,
         // but critical damage is cumulative
         if (!hasClaws && !hasHandActuator && hasLowerArmActuator
-                && (((arm == PunchAttackAction.RIGHT) && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_RA))
-                        || (arm == PunchAttackAction.LEFT)
-                                && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_LA))) {
+              && (((arm == PunchAttackAction.RIGHT) && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_RA))
+              || (arm == PunchAttackAction.LEFT)
+              && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_LA))) {
             toHit.addModifier(1, "Hand actuator missing");
             // Check for present but damaged hand actuator
         } else if (hasHandActuator && !hasClaws &&
-                !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc)) {
+              !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc)) {
             toHit.addModifier(1, "Hand actuator destroyed");
         } else if (hasClaws) {
             toHit.addModifier(1, "Using Claws");
         }
 
         if (hasHandActuator
-                && (((arm == PunchAttackAction.RIGHT) && ae.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA))
-                        || ((arm == PunchAttackAction.LEFT)
-                                && ae.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)))) {
+              && (((arm == PunchAttackAction.RIGHT) && ae.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA))
+              || ((arm == PunchAttackAction.LEFT)
+              && ae.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)))) {
             toHit.addModifier(-1, "Battlefist");
         }
 
         // elevation
-        if(isConvertedQuadVee(target, game)){
+        if (isConvertedQuadVee(target, game)) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         } else {
             if ((attackerHeight == targetElevation) && !ae.isHullDown()) {
@@ -346,9 +366,9 @@ public class PunchAttackAction extends PhysicalAttackAction {
      * Damage that the specified mek does with a punch.
      */
     public static int getDamageFor(Entity entity, int arm,
-            boolean targetInfantry, boolean zweihandering) {
+          boolean targetInfantry, boolean zweihandering) {
         final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mek.LOC_RARM
-                : Mek.LOC_LARM;
+              : Mek.LOC_LARM;
         int damage = (int) Math.ceil(entity.getWeight() / 10.0);
 
         // Rules state tonnage/7 for claws
@@ -376,7 +396,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
             multiplier *= 2.0f;
         }
         int toReturn = (int) Math.floor(damage * multiplier)
-                + entity.modifyPhysicalDamageForMeleeSpecialist();
+              + entity.modifyPhysicalDamageForMeleeSpecialist();
         // underwater damage is half, round up (see bug 1110692)
         if (entity.getLocationStatus(armLoc) == ILocationExposureStatus.WET) {
             toReturn = (int) Math.ceil(toReturn * 0.5f);
@@ -396,23 +416,23 @@ public class PunchAttackAction extends PhysicalAttackAction {
         switch (arm) {
             case PunchAttackAction.BOTH:
                 rollLeft = PunchAttackAction.toHit(game, this.getEntityId(),
-                        game.getTarget(this.getTargetType(), this.getTargetId()), PunchAttackAction.LEFT, false)
-                        .getValueAsString();
+                            game.getTarget(this.getTargetType(), this.getTargetId()), PunchAttackAction.LEFT, false)
+                      .getValueAsString();
                 rollRight = PunchAttackAction.toHit(game, this.getEntityId(),
-                        game.getTarget(this.getTargetType(), this.getTargetId()), PunchAttackAction.RIGHT, false)
-                        .getValueAsString();
+                            game.getTarget(this.getTargetType(), this.getTargetId()), PunchAttackAction.RIGHT, false)
+                      .getValueAsString();
                 buffer = Messages.getString("BoardView1.punchBoth", rollLeft, rollRight);
                 break;
             case PunchAttackAction.LEFT:
                 rollLeft = PunchAttackAction.toHit(game, this.getEntityId(),
-                        game.getTarget(this.getTargetType(), this.getTargetId()), PunchAttackAction.LEFT, false)
-                        .getValueAsString();
+                            game.getTarget(this.getTargetType(), this.getTargetId()), PunchAttackAction.LEFT, false)
+                      .getValueAsString();
                 buffer = Messages.getString("BoardView1.punchLeft", rollLeft);
                 break;
             case PunchAttackAction.RIGHT:
                 rollRight = PunchAttackAction.toHit(game, this.getEntityId(),
-                        game.getTarget(this.getTargetType(), this.getTargetId()), PunchAttackAction.RIGHT, false)
-                        .getValueAsString();
+                            game.getTarget(this.getTargetType(), this.getTargetId()), PunchAttackAction.RIGHT, false)
+                      .getValueAsString();
                 buffer = Messages.getString("BoardView1.punchRight", rollRight);
                 break;
             default:

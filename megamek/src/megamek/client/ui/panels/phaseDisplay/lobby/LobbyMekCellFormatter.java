@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2021-2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
@@ -53,7 +67,7 @@ class LobbyMekCellFormatter {
     static String unitTableEntry(InGameObject unit, ChatLounge lobby, boolean forceView, boolean compactView) {
         if (unit instanceof Entity) {
             return compactView ? formatUnitCompact((Entity) unit, lobby, forceView)
-                    : formatUnitFull((Entity) unit, lobby, forceView);
+                  : formatUnitFull((Entity) unit, lobby, forceView);
         } else if (unit instanceof AlphaStrikeElement) {
             return MekTableASUnitEntry.fullEntry((AlphaStrikeElement) unit, lobby, forceView, compactView);
             // TODO : Provide a suitable lobby table entry
@@ -65,7 +79,7 @@ class LobbyMekCellFormatter {
     static String pilotTableEntry(InGameObject unit, boolean compactView, boolean hide, boolean rpgSkills) {
         if (unit instanceof Entity) {
             return compactView ? formatPilotCompact((Entity) unit, hide, rpgSkills)
-                    : formatPilotFull((Entity) unit, hide);
+                  : formatPilotFull((Entity) unit, hide);
         } else if (unit instanceof AlphaStrikeElement) {
             // TODO : Provide a suitable lobby table entry
             return "AlphaStrikeElement " + ((AlphaStrikeElement) unit).getName();
@@ -75,10 +89,8 @@ class LobbyMekCellFormatter {
     }
 
     /**
-     * Creates and returns the display content of the Unit column for the given
-     * entity and
-     * for the non-compact display mode.
-     * When blindDrop is true, the unit details are not given.
+     * Creates and returns the display content of the Unit column for the given entity and for the non-compact display
+     * mode. When blindDrop is true, the unit details are not given.
      */
     static String formatUnitFull(Entity entity, ChatLounge lobby, boolean forceView) {
         StringBuilder result = new StringBuilder("<HTML><NOBR>" + fontHTML());
@@ -91,7 +103,7 @@ class LobbyMekCellFormatter {
         Player owner = entity.getOwner();
         boolean localGM = localPlayer.isGameMaster();
         boolean hideEntity = !localGM && owner.isEnemyOf(localPlayer)
-            && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
+              && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             result.append(MekTableModel.DOT_SPACER);
             if (entity instanceof Infantry) {
@@ -130,10 +142,10 @@ class LobbyMekCellFormatter {
 
         // Critical (Red) Warnings
         if ((game.getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null)
-            || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
-            || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
-            || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
-            || (!entity.isDesignValid())) {
+              || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
+              || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
+              || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
+              || (!entity.isDesignValid())) {
             result.append(UIUtil.fontHTML(GUIP.getWarningColor()));
             result.append(WARNING_SIGN + "</FONT>");
             hasCritical = true;
@@ -261,7 +273,7 @@ class LobbyMekCellFormatter {
         int sp = entity.getStartingPos(true);
         int spe = entity.getStartingPos(false);
         if ((!entity.isOffBoard())
-            && (sp >= 0)) {
+              && (sp >= 0)) {
             firstEntry = dotSpacer(result, firstEntry);
             if (spe != Board.START_NONE) {
                 result.append(UIUtil.fontHTML(uiLightGreen()));
@@ -339,7 +351,7 @@ class LobbyMekCellFormatter {
                 if (entity.hasC3S()) {
                     firstEntry = dotSpacer(result, firstEntry);
                     result.append(
-                        UIUtil.fontHTML(uiC3Color()) + Messages.getString("ChatLounge.C3S") + UNCONNECTED_SIGN);
+                          UIUtil.fontHTML(uiC3Color()) + Messages.getString("ChatLounge.C3S") + UNCONNECTED_SIGN);
                     result.append("</FONT>");
                 }
 
@@ -360,7 +372,7 @@ class LobbyMekCellFormatter {
                 if (entity.hasC3MM()) {
                     String msg_freec3mnodes = Messages.getString("ChatLounge.FreeC3MNodes");
                     result.append(MessageFormat.format(" " + msg_freec3mnodes,
-                        entity.calculateFreeC3MNodes(), entity.calculateFreeC3Nodes()));
+                          entity.calculateFreeC3MNodes(), entity.calculateFreeC3Nodes()));
                 } else {
                     result.append(getString("ChatLounge.C3MNodes", entity.calculateFreeC3MNodes()));
                 }
@@ -491,11 +503,11 @@ class LobbyMekCellFormatter {
             }
         }
         if ((entity instanceof Aero)
-                && (!(entity instanceof Jumpship))
-                && (!(entity instanceof SmallCraft))) {
+              && (!(entity instanceof Jumpship))
+              && (!(entity instanceof SmallCraft))) {
             Aero aero = ((Aero) entity);
             if ((aero.hasEjectSeat())
-                    && (!aero.isAutoEject())) {
+                  && (!aero.isAutoEject())) {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(UIUtil.fontHTML(uiYellow()));
                 result.append(WARNING_SIGN + "\u23CF<I>");
@@ -508,10 +520,8 @@ class LobbyMekCellFormatter {
     }
 
     /**
-     * Creates and returns the display content of the C3-MekTree cell for the given
-     * entity and
-     * for the compact display mode. Assumes that no enemy or blind-drop-hidden
-     * units are provided.
+     * Creates and returns the display content of the C3-MekTree cell for the given entity and for the compact display
+     * mode. Assumes that no enemy or blind-drop-hidden units are provided.
      */
     static String formatUnitCompact(Entity entity, ChatLounge lobby, boolean forceView) {
         Client client = lobby.getClientgui().getClient();
@@ -521,7 +531,7 @@ class LobbyMekCellFormatter {
         Player owner = entity.getOwner();
         boolean localGM = localPlayer.isGameMaster();
         boolean hideEntity = !localGM && owner.isEnemyOf(localPlayer)
-                && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
+              && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             String value = "<HTML><NOBR>&nbsp;&nbsp;";
             if (PreferenceManager.getClientPreferences().getShowUnitId()) {
@@ -575,10 +585,10 @@ class LobbyMekCellFormatter {
 
         // Critical (Red) Warnings
         if ((game.getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null)
-                || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
-                || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
-                || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
-                || (!entity.isDesignValid())) {
+              || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
+              || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
+              || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
+              || (!entity.isDesignValid())) {
             result.append(UIUtil.fontHTML(GUIP.getWarningColor()));
             result.append(WARNING_SIGN + "</FONT>");
         }
@@ -743,7 +753,7 @@ class LobbyMekCellFormatter {
             result.append(Messages.getString("ChatLounge.compact.deployRound", entity.getDeployRound()));
             if (entity.getStartingPos(false) != Board.START_NONE) {
                 result.append(Messages.getString("ChatLounge.compact.deployZone",
-                        IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos(false)]));
+                      IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos(false)]));
             }
             result.append("</I></FONT>");
         }
@@ -795,11 +805,11 @@ class LobbyMekCellFormatter {
             }
         }
         if ((entity instanceof Aero)
-                && (!(entity instanceof Jumpship))
-                && (!(entity instanceof SmallCraft))) {
+              && (!(entity instanceof Jumpship))
+              && (!(entity instanceof SmallCraft))) {
             Aero aero = ((Aero) entity);
             if ((aero.hasEjectSeat())
-                    && (!aero.isAutoEject())) {
+                  && (!aero.isAutoEject())) {
                 result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiGreen()));
                 result.append(UIUtil.fontHTML(uiYellow()));
                 result.append(WARNING_SIGN + "\u23CF</FONT>");
@@ -810,20 +820,16 @@ class LobbyMekCellFormatter {
     }
 
     /**
-     * Creates and returns the display content of the C3-MekTree cell for the given
-     * entity and
-     * for the compact display mode. Assumes that no enemy or blind-drop-hidden
-     * units are provided.
+     * Creates and returns the display content of the C3-MekTree cell for the given entity and for the compact display
+     * mode. Assumes that no enemy or blind-drop-hidden units are provided.
      */
     static String formatForceCompact(Force force, ChatLounge lobby) {
         return formatForce(force, lobby);
     }
 
     /**
-     * Creates and returns the display content of the C3-MekTree cell for the given
-     * entity and
-     * for the compact display mode. Assumes that no enemy or blind-drop-hidden
-     * units are provided.
+     * Creates and returns the display content of the C3-MekTree cell for the given entity and for the compact display
+     * mode. Assumes that no enemy or blind-drop-hidden units are provided.
      */
     static String formatForceFull(Force force, ChatLounge lobby) {
         return formatForce(force, lobby);
@@ -880,13 +886,13 @@ class LobbyMekCellFormatter {
         result.append(fontHTML(color));
         result.append(MekTableModel.DOT_SPACER);
         int totalBv = fullEntities.stream().filter(e -> !e.isPartOfFighterSquadron())
-                .mapToInt(Entity::calculateBattleValue).sum();
+              .mapToInt(Entity::calculateBattleValue).sum();
         if (totalBv > 0) {
             String msg_bvplain = Messages.getString("ChatLounge.BVplain");
             result.append(msg_bvplain + " ").append(String.format("%,d", totalBv));
             // Unit Type
             long unittypes = fullEntities.stream().map(e -> Entity.getEntityMajorTypeName(e.getEntityType())).distinct()
-                    .count();
+                  .count();
             result.append(fontHTML(color));
             result.append(MekTableModel.DOT_SPACER);
             if (unittypes > 1) {
@@ -905,10 +911,8 @@ class LobbyMekCellFormatter {
     }
 
     /**
-     * Creates and returns the display content of the Pilot column for the given
-     * entity and
-     * for the compact display mode.
-     * When blindDrop is true, the pilot details are not given.
+     * Creates and returns the display content of the Pilot column for the given entity and for the compact display
+     * mode. When blindDrop is true, the pilot details are not given.
      */
     static String formatPilotCompact(Entity entity, boolean blindDrop, boolean rpgSkills) {
         Crew pilot = entity.getCrew();
@@ -943,10 +947,8 @@ class LobbyMekCellFormatter {
     }
 
     /**
-     * Creates and returns the display content of the Pilot column for the given
-     * entity and
-     * for the non-compact display mode.
-     * When blindDrop is true, the pilot details are not given.
+     * Creates and returns the display content of the Pilot column for the given entity and for the non-compact display
+     * mode. When blindDrop is true, the pilot details are not given.
      */
     static String formatPilotFull(Entity entity, boolean blindDrop) {
         StringBuilder result = new StringBuilder("<HTML><NOBR>");

@@ -134,15 +134,15 @@ public enum ChatCommands {
 
     public String getSyntax() {
         return "princessName: " +
-                     getAbbreviation() +
-                     "/" +
-                     getCommand() +
-                     (chatCommand.defineArguments().isEmpty() ? "" : ": " + chatCommand.getArgumentsRepr());
+              getAbbreviation() +
+              "/" +
+              getCommand() +
+              (chatCommand.defineArguments().isEmpty() ? "" : ": " + chatCommand.getArgumentsRepr());
     }
 
     public String getDescription() {
         return (chatCommand.defineArguments().isEmpty() ? "" : chatCommand.getArgumentsDescription() + " ") +
-                     description;
+              description;
     }
 
     public String getCommand() {

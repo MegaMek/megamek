@@ -1,22 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.io.Serial;
@@ -41,21 +56,21 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
+          Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+          int bldgAbsorbs) {
         missed = false;
 
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                toHit.getSideTable(), waa.getAimedLocation(),
-                waa.getAimingMode(), toHit.getCover());
+              toHit.getSideTable(), waa.getAimedLocation(),
+              waa.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
         hit.setAttackerId(getAttackerId());
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), ComputeSideTable.sideTable(ae, entityTarget, weapon
-                .getCalledShot().getCall()))) {
+              .getCover(), ComputeSideTable.sideTable(ae, entityTarget, weapon
+              .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
-                    nCluster, bldgAbsorbs);
+                  nCluster, bldgAbsorbs);
             return;
         }
 
@@ -82,7 +97,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
 
         nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs,
-                vPhaseReport, bldg, targetStickingOutOfBuilding);
+              vPhaseReport, bldg, targetStickingOutOfBuilding);
 
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
@@ -116,7 +131,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
             }
 
             if ((target instanceof BattleArmor)
-                    && (((BattleArmor) target).getInternal(hit.getLocation()) != IArmorState.ARMOR_DOOMED)) {
+                  && (((BattleArmor) target).getInternal(hit.getLocation()) != IArmorState.ARMOR_DOOMED)) {
                 int critRoll = Compute.d6(2);
                 int loc = hit.getLocation();
                 if (critRoll >= 10) {
@@ -134,11 +149,11 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 }
             }
             vPhaseReport
-                    .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
-                            false, ae.getSwarmTargetId() == entityTarget
-                                    .getId() ? DamageType.IGNORE_PASSENGER
-                                    : DamageType.NONE, false, false,
-                            throughFront, underWater));
+                  .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
+                        false, ae.getSwarmTargetId() == entityTarget
+                              .getId() ? DamageType.IGNORE_PASSENGER
+                              : DamageType.NONE, false, false,
+                        throughFront, underWater));
         }
     }
 
@@ -146,10 +161,10 @@ public class SRMTandemChargeHandler extends SRMHandler {
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
-                    wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                  wtype.getInfantryDamageClass(),
+                  ((Infantry) target).isMechanized(),
+                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
 
             toReturn = applyGlancingBlowModifier(toReturn, true);
 

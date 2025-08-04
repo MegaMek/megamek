@@ -43,14 +43,14 @@ import megamek.common.Board;
 import megamek.common.Entity;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
-import megamek.common.autoresolve.component.Formation;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.utilities.BoardsTagger;
 
 
 /**
- * Generates narrative summary text for battle reports based on the context and outcome.
- * Uses localized text templates from properties files.
+ * Generates narrative summary text for battle reports based on the context and outcome. Uses localized text templates
+ * from properties files.
+ *
  * @author Luana Coppio
  * @since 0.50.07
  */
@@ -77,6 +77,7 @@ public class ShortBattleReportGenerator {
 
     // Terrain categorization map
     private static final Map<String, Set<String>> TERRAIN_CATEGORIES = new HashMap<>();
+
     static {
         // Urban terrain
         TERRAIN_CATEGORIES.put("urban", Set.of(
@@ -238,8 +239,8 @@ public class ShortBattleReportGenerator {
 
         // Combine into final report
         return new PublicReportEntry(REPORT_FORMAT)
-                     .add(firstParagraph)
-                     .add(secondParagraph);
+              .add(firstParagraph)
+              .add(secondParagraph);
     }
 
     /**
@@ -269,20 +270,20 @@ public class ShortBattleReportGenerator {
             for (var player : team.players()) {
                 // Get remaining entities (active units)
                 var playerEntities = context.getInGameObjects().stream()
-                                           .filter(e -> e.getOwnerId() == player.getId())
-                                           .filter(Entity.class::isInstance)
-                                           .count();
+                      .filter(e -> e.getOwnerId() == player.getId())
+                      .filter(Entity.class::isInstance)
+                      .count();
 
                 // Get destroyed entities
                 var deadEntities = context.getGraveyard().stream()
-                                         .filter(e -> e.getOwnerId() == player.getId())
-                                         .filter(Entity.class::isInstance)
-                                         .count();
+                      .filter(e -> e.getOwnerId() == player.getId())
+                      .filter(Entity.class::isInstance)
+                      .count();
 
                 // Get retreating entities
                 var retreatingEntities = context.getRetreatingUnits().stream()
-                                               .filter(e -> e.getOwnerId() == player.getId())
-                                               .count();
+                      .filter(e -> e.getOwnerId() == player.getId())
+                      .count();
 
                 remainingUnits += (int) playerEntities;
                 destroyedUnits += (int) deadEntities;
@@ -301,17 +302,17 @@ public class ShortBattleReportGenerator {
 
         // Calculate total units
         data.totalInitialUnits = data.teams.values().stream()
-                                       .mapToInt(t -> t.initialUnits)
-                                       .sum();
+              .mapToInt(t -> t.initialUnits)
+              .sum();
         data.totalRemainingUnits = data.teams.values().stream()
-                                         .mapToInt(t -> t.remainingUnits)
-                                         .sum();
+              .mapToInt(t -> t.remainingUnits)
+              .sum();
         data.totalDestroyedUnits = data.teams.values().stream()
-                                         .mapToInt(t -> t.destroyedUnits)
-                                         .sum();
+              .mapToInt(t -> t.destroyedUnits)
+              .sum();
         data.totalRetreatingUnits = data.teams.values().stream()
-                                          .mapToInt(t -> t.retreatingUnits)
-                                          .sum();
+              .mapToInt(t -> t.retreatingUnits)
+              .sum();
 
         // Get terrain tags
         data.terrainTags = getTerrainTags();
@@ -333,33 +334,33 @@ public class ShortBattleReportGenerator {
         List<String> teamDescriptions = new ArrayList<>();
         for (TeamData team : data.teams.values()) {
             teamDescriptions.add(new PublicReportEntry("acar.report.team_forces")
-                                       .add(team.teamName)
-                                       .add(team.initialUnits)
-                                       .noNL()
-                                       .text());
+                  .add(team.teamName)
+                  .add(team.initialUnits)
+                  .noNL()
+                  .text());
         }
 
         // Select terrain description
         String terrainKey = selectTerrainKey(data.terrainTags);
         List<String> terrainFeatures = getUpToThreeTerrainFeatures(data.terrainTags);
         String terrainDescription = new PublicReportEntry(terrainKey)
-                                          .add(String.join(", ", terrainFeatures))
-                                          .noNL()
-                                          .text();
+              .add(String.join(", ", terrainFeatures))
+              .noNL()
+              .text();
 
         // Get atmospheric description
         String atmosphereDescription = new PublicReportEntry(data.atmosphericConditions)
-                                             .noNL()
-                                             .text();
+              .noNL()
+              .text();
 
         // Combine into first paragraph
         return new PublicReportEntry(forceCompositionKey)
-                     .add(data.totalInitialUnits)
-                     .add(String.join(new PublicReportEntry("acar.report.and").noNL().text(), teamDescriptions))
-                     .add(terrainDescription)
-                     .add(atmosphereDescription)
-                     .noNL()
-                     .text();
+              .add(data.totalInitialUnits)
+              .add(String.join(new PublicReportEntry("acar.report.and").noNL().text(), teamDescriptions))
+              .add(terrainDescription)
+              .add(atmosphereDescription)
+              .noNL()
+              .text();
     }
 
     /**
@@ -369,9 +370,9 @@ public class ShortBattleReportGenerator {
         // Select duration descriptor
         String durationKey = selectDurationKey(data.rounds);
         String durationText = new PublicReportEntry(durationKey)
-                                    .add(data.rounds)
-                                    .noNL()
-                                    .text();
+              .add(data.rounds)
+              .noNL()
+              .text();
 
         // Generate casualty report
         String casualtyText = generateCasualtyReport(data);
@@ -384,12 +385,12 @@ public class ShortBattleReportGenerator {
 
         // Combine into second paragraph
         return new PublicReportEntry("acar.report.paragraph2_format")
-                     .add(durationText)
-                     .add(casualtyText)
-                     .add(victoryText)
-                     .add(forceStatusText)
-                     .noNL()
-                     .text();
+              .add(durationText)
+              .add(casualtyText)
+              .add(victoryText)
+              .add(forceStatusText)
+              .noNL()
+              .text();
     }
 
     /**
@@ -422,17 +423,17 @@ public class ShortBattleReportGenerator {
         List<String> casualtyDetails = new ArrayList<>();
         for (TeamData team : data.teams.values()) {
             casualtyDetails.add(new PublicReportEntry("acar.report.team_losses")
-                                      .add(team.teamName)
-                                      .add(team.losses)
-                                      .noNL()
-                                      .text());
+                  .add(team.teamName)
+                  .add(team.losses)
+                  .noNL()
+                  .text());
         }
 
         return new PublicReportEntry(casualtyKey)
-                     .add(totalLosses)
-                     .add(String.join(", ", casualtyDetails))
-                     .noNL()
-                     .text();
+              .add(totalLosses)
+              .add(String.join(", ", casualtyDetails))
+              .noNL()
+              .text();
     }
 
     /**
@@ -462,9 +463,9 @@ public class ShortBattleReportGenerator {
         }
 
         return new PublicReportEntry(victoryKey)
-                     .add(winner.teamName)
-                     .noNL()
-                     .text();
+              .add(winner.teamName)
+              .noNL()
+              .text();
     }
 
     /**
@@ -488,11 +489,11 @@ public class ShortBattleReportGenerator {
             }
 
             statusReports.add(new PublicReportEntry(statusKey)
-                                    .add(team.teamName)
-                                    .add(team.remainingUnits)
-                                    .add(team.initialUnits)
-                                    .noNL()
-                                    .text());
+                  .add(team.teamName)
+                  .add(team.remainingUnits)
+                  .add(team.initialUnits)
+                  .noNL()
+                  .text());
         }
 
         return String.join(" ", statusReports);
@@ -520,10 +521,10 @@ public class ShortBattleReportGenerator {
         }
 
         String dominantCategory = (categoryCounts.size() >= 3) ? "mixed" :
-                                        categoryCounts.entrySet().stream()
-                                              .max(Map.Entry.comparingByValue())
-                                              .map(Map.Entry::getKey)
-                                              .orElse("mixed");
+              categoryCounts.entrySet().stream()
+                    .max(Map.Entry.comparingByValue())
+                    .map(Map.Entry::getKey)
+                    .orElse("mixed");
 
         // Map category to terrain key
         return switch (dominantCategory) {
@@ -560,7 +561,7 @@ public class ShortBattleReportGenerator {
      */
     private List<String> getTerrainTags() {
         return BoardsTagger.tagsFor(board).stream().map(t -> t.replace(" (Auto)", ""))
-                     .toList();
+              .toList();
     }
 
     /**
@@ -602,8 +603,8 @@ public class ShortBattleReportGenerator {
 
     private List<String> getUpToThreeTerrainFeatures(List<String> terrainTags) {
         return terrainTags.stream().limit(3)
-                     .map(t -> "acar.report.terrain." + t)
-                     .map(t -> new PublicReportEntry(t).noNL().text()).toList();
+              .map(t -> "acar.report.terrain." + t)
+              .map(t -> new PublicReportEntry(t).noNL().text()).toList();
     }
 
     /**

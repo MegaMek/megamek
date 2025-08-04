@@ -32,18 +32,19 @@
  */
 package megamek.common.autoresolve.damage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Crew;
 import megamek.common.Infantry;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Luana Coppio
  */
-public record InfantryDamageApplier(Infantry entity, EntityFinalState entityFinalState) implements DamageApplier<Infantry> {
+public record InfantryDamageApplier(Infantry entity, EntityFinalState entityFinalState)
+      implements DamageApplier<Infantry> {
 
     @Override
     public int getRandomHitLocation() {

@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024-2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server.sbf;
 
 import java.util.ArrayList;
@@ -102,11 +117,11 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
             // Send each player what they should receive ...
             for (int playerId : game.getPlayersList().stream().map(Player::getId).toList()) {
                 List<Packet> packets = pendingPackets.stream()
-                                             // ... including packets to PLAYER_NONE; these go to every player
-                                             .filter(p -> (p.recipient == Player.PLAYER_NONE) ||
-                                                                (p.recipient == playerId))
-                                             .map(PendingPacket::packet)
-                                             .toList();
+                      // ... including packets to PLAYER_NONE; these go to every player
+                      .filter(p -> (p.recipient == Player.PLAYER_NONE) ||
+                            (p.recipient == playerId))
+                      .map(PendingPacket::packet)
+                      .toList();
                 // the redundant new ArrayList is necessary to prevent an xstream error
                 super.send(playerId, new Packet(PacketCommand.MULTI_PACKET, new ArrayList<>(packets)));
             }
@@ -158,7 +173,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
     @Override
     public void requestGameMaster(Player player) {
     }
-    
+
     @Override
     public List<ServerCommand> getCommandList(Server server) {
         return Collections.emptyList();
@@ -220,9 +235,9 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
             send(connId, packetHelper.createPlanetaryConditionsPacket());
             //
             if (game.getPhase().isFiring() ||
-                      game.getPhase().isTargeting() ||
-                      game.getPhase().isOffboard() ||
-                      game.getPhase().isPhysical()) {
+                  game.getPhase().isTargeting() ||
+                  game.getPhase().isOffboard() ||
+                  game.getPhase().isPhysical()) {
                 // can't go above, need board to have been sent
                 // send(connId, packetHelper.createAttackPacket(getGame().getActionsVector(),
                 // false));
@@ -330,8 +345,8 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
     private void setPlayerDone(Player player, boolean normalDone) {
         // FIXME This is highly specialized and very arcane!!
         if (getGame().getPhase().isReport() &&
-                  getGame().getOptions().booleanOption(OptionsConstants.BASE_GM_CONTROLS_DONE_REPORT_PHASE) &&
-                  getGame().getPlayersList().stream().filter(p -> p.isGameMaster()).count() > 0) {
+              getGame().getOptions().booleanOption(OptionsConstants.BASE_GM_CONTROLS_DONE_REPORT_PHASE) &&
+              getGame().getPlayersList().stream().filter(p -> p.isGameMaster()).count() > 0) {
             if (player.isGameMaster()) {
                 player.setDone(false);
             } else {
@@ -409,7 +424,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
                 addPendingPacket(packetHelper.createTurnIndexPacket(prevPlayerId));
             } else {
                 addPendingPacket(packetHelper.createTurnIndexPacket(player.map(Player::getId)
-                                                                          .orElse(Player.PLAYER_NONE)));
+                      .orElse(Player.PLAYER_NONE)));
                 // send(packetHelper.createTurnIndexPacket(player.map(Player::getId).orElse(Player.PLAYER_NONE)));
             }
 
@@ -553,7 +568,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         Optional<SBFFormation> formationInfo = game.getFormation(formationId);
 
         if (formationInfo.isEmpty() ||
-                  !attacks.stream().map(EntityAction::getEntityId).allMatch(id -> id == formationId)) {
+              !attacks.stream().map(EntityAction::getEntityId).allMatch(id -> id == formationId)) {
             logger.error("Invalid formation ID or diverging attacker IDs");
             repeatTurn(connId); // TODO: This is untested; questionable if this can save a game after an error
             return;
@@ -568,9 +583,9 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
 
         // is this the right phase?
         if (!getGame().getPhase().isFiring() &&
-                  !getGame().getPhase().isPhysical() &&
-                  !getGame().getPhase().isTargeting() &&
-                  !getGame().getPhase().isOffboard()) {
+              !getGame().getPhase().isPhysical() &&
+              !getGame().getPhase().isTargeting() &&
+              !getGame().getPhase().isOffboard()) {
             logger.error("Server got attack packet in wrong phase");
             return;
         }

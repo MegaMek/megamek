@@ -1,9 +1,0 @@
-Federated Suns Navy
-Defender Battlecruiser (Standard),4
-New Syrtis Carrier (2557),8
-Robinson Transport Block II,20
-Aegis Heavy Cruiser (2582),16
-Davion Destroyer Block II,31
-Congress D Frigate (Standard),8
-Vincent Corvette Mk 39,8
-Baron Destroyer (2520),6

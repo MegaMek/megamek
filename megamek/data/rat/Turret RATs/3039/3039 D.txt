@@ -1,5 +1,0 @@
-Turrets 3039 D
-@DirectFire Turrets 3039, 30
-@InDirectFire Turrets 3039, 30
-@AntiAir Turrets 3025, 30
-@Special Turrets 3039, 10

@@ -1,9 +1,0 @@
-key: FS.pm
-name: Planetary Militia
-yearsActive:
-  - start: 2317
-ratingLevels:
-  - F
-fallBackFactions:
-  - IS.pm
-  - FS

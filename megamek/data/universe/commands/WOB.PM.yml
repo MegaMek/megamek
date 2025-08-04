@@ -1,9 +1,0 @@
-key: WOB.PM
-name: Protectorate Militia
-yearsActive:
-  - start: 3066
-    end: 3078
-ratingLevels:
-  - B
-fallBackFactions:
-  - WOB

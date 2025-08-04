@@ -1,8 +1,0 @@
-key: FS.CrMM
-name: Crucis March Militia
-yearsActive:
-  - start: 2754
-ratingLevels:
-  - D
-fallBackFactions:
-  - FS

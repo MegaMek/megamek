@@ -36,3 +36,16 @@ ratingLevels:
   - A
 fallBackFactions:
   - Periphery.Deep
+factionLeaders:
+  - title: "Captain-Marshal"
+    firstName: "Helga"
+    surname: "Bauer"
+    gender: "FEMALE"
+    startYear: 3120
+    endYear: 3135
+  - title: "Captain-Marshal"
+    firstName: "Rudolf"
+    surname: "Schmidt"
+    gender: "MALE"
+    startYear: 3135
+    endYear: 3140

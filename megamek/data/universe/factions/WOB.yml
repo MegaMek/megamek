@@ -25,3 +25,22 @@ fallBackFactions:
 formationBaseSize: 6
 formationGrouping: 6
 rankSystem: WOBM
+factionLeaders:
+  - title: "Primus"
+    firstName: "William"
+    surname: "Blane"
+    gender: "MALE"
+    startYear: 3052
+    endYear: 3067
+  - title: "Precentor Martial"
+    firstName: "Cameron"
+    surname: "St. Jamais"
+    gender: "MALE"
+    startYear: 3067
+    endYear: 3078
+  - title: "The Master"
+    firstName: ""
+    surname: ""
+    gender: "MALE"
+    startYear: 3078
+    endYear: 3081

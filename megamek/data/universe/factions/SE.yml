@@ -14,3 +14,9 @@ ratingLevels:
 fallBackFactions:
   - CEI
   - Periphery
+factionLeaders:
+  - title: "Khan"
+    firstName: "Magon"
+    surname: "Scott"
+    gender: "MALE"
+    startYear: 3137

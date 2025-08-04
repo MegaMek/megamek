@@ -29,3 +29,57 @@ ratingLevels:
 fallBackFactions:
   - CLAN.HW
 postInvasionHonorRating: STRICT
+factionLeaders:
+  - title: "Khan"
+    firstName: "Cyrus"
+    surname: "Elam"
+    gender: "MALE"
+    startYear: 2807
+    endYear: 2834
+  - title: "Khan"
+    firstName: "Shandra"
+    surname: "Dinour"
+    gender: "FEMALE"
+    startYear: 2834
+    endYear: 2854
+  - title: "Khan"
+    firstName: "Mikhail"
+    surname: "Yeh"
+    gender: "MALE"
+    startYear: 2962 #Unofficial: no canon startYear
+    endYear: 2982
+  - title: "Khan"
+    firstName: "Nikolai"
+    surname: "Djerassi"
+    gender: "MALE"
+    startYear: 3032 #Unofficial: no canon startYear
+    endYear: 3052
+  - title: "Khan"
+    firstName: "Ariel"
+    surname: "Suvorov"
+    gender: "FEMALE"
+    startYear: 3052
+    endYear: 3079
+  - title: "Khan"
+    firstName: "Colin"
+    surname: "Yeh"
+    gender: "MALE"
+    startYear: 3079
+    endYear: 3086
+  - title: "Khan"
+    firstName: "Connor"
+    surname: "Rood"
+    gender: "MALE"
+    startYear: 3086
+    endYear: 3108
+  - title: "Khan"
+    firstName: "Enrico"
+    surname: "Kirov"
+    gender: "MALE"
+    startYear: 3108
+    endYear: 3137
+  - title: "Khan"
+    firstName: "Magon"
+    surname: "Scott"
+    gender: "MALE"
+    startYear: 3137

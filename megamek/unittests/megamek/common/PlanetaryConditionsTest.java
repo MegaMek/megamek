@@ -1,22 +1,50 @@
 /*
- * Copyright (c) 2024-2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
+
+import java.util.stream.Stream;
 
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -30,12 +58,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
-
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 class PlanetaryConditionsTest {
 
@@ -302,7 +324,7 @@ class PlanetaryConditionsTest {
             }
 
             @Test
-            void testShiftingWindDirectionEnabled () {
+            void testShiftingWindDirectionEnabled() {
                 // Arrange
                 try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
 
@@ -316,7 +338,7 @@ class PlanetaryConditionsTest {
             }
 
             @Test
-            void testShiftingWindDirectionCW () {
+            void testShiftingWindDirectionCW() {
                 // Arrange
                 try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
                     compute.when(Compute::d6).thenReturn(1);
@@ -330,8 +352,9 @@ class PlanetaryConditionsTest {
                     assertEquals(WindDirection.NORTHEAST, planetaryConditions.getWindDirection());
                 }
             }
+
             @Test
-            void testShiftingWindDirectionCCW () {
+            void testShiftingWindDirectionCCW() {
                 // Arrange
                 try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
                     compute.when(Compute::d6).thenReturn(6);
@@ -355,7 +378,7 @@ class PlanetaryConditionsTest {
             }
 
             @Test
-            void testShiftingWindStrengthEnabled () {
+            void testShiftingWindStrengthEnabled() {
                 // Arrange
                 try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
 
@@ -369,7 +392,7 @@ class PlanetaryConditionsTest {
             }
 
             @Test
-            void testShiftingWindStrengthDecreaseStrength () {
+            void testShiftingWindStrengthDecreaseStrength() {
                 // Arrange
                 try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
                     compute.when(Compute::d6).thenReturn(1);
@@ -385,7 +408,7 @@ class PlanetaryConditionsTest {
             }
 
             @Test
-            void testShiftingWindStrengthDecreaseTowardsLimit () {
+            void testShiftingWindStrengthDecreaseTowardsLimit() {
                 // Arrange
                 planetaryConditions.setWindMin(Wind.LIGHT_GALE);
                 try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
@@ -402,7 +425,7 @@ class PlanetaryConditionsTest {
             }
 
             @Test
-            void testShiftingWindStrengthDecreasePastLimit () {
+            void testShiftingWindStrengthDecreasePastLimit() {
                 // Arrange
                 planetaryConditions.setWindMin(Wind.LIGHT_GALE);
                 try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
@@ -421,7 +444,7 @@ class PlanetaryConditionsTest {
             }
 
             @Test
-            void testShiftingWindStrengthIncreaseStrength () {
+            void testShiftingWindStrengthIncreaseStrength() {
                 // Arrange
                 try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
                     compute.when(Compute::d6).thenReturn(6);
@@ -437,7 +460,7 @@ class PlanetaryConditionsTest {
             }
 
             @Test
-            void testShiftingWindStrengthIncreaseTowardsLimit () {
+            void testShiftingWindStrengthIncreaseTowardsLimit() {
                 // Arrange
                 planetaryConditions.setWindMax(Wind.STORM);
                 try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
@@ -454,7 +477,7 @@ class PlanetaryConditionsTest {
             }
 
             @Test
-            void testShiftingWindStrengthIncreasePastLimit () {
+            void testShiftingWindStrengthIncreasePastLimit() {
                 // Arrange
                 planetaryConditions.setWindMax(Wind.STORM);
                 try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {

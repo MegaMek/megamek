@@ -32,12 +32,12 @@
  */
 package megamek.common;
 
+import java.util.List;
+
 import megamek.utils.EntityLoader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 
 class EntityTechTest {
@@ -55,7 +55,8 @@ class EntityTechTest {
         Assertions.assertEquals("2735 (Star League)", entity.getIntroductionDateAndEra());
         Assertions.assertEquals("-",
               entity.getPrototypeRangeDate());
-        Assertions.assertEquals("2735-2814 (Star League to Early Succession Wars), 3041-3054 (Late Succession Wars - Renaissance to Clan Invasion)",
+        Assertions.assertEquals(
+              "2735-2814 (Star League to Early Succession Wars), 3041-3054 (Late Succession Wars - Renaissance to Clan Invasion)",
               entity.getProductionDateRange());
         Assertions.assertEquals("3055+ (Clan Invasion and onwards)",
               entity.getCommonDateRange());

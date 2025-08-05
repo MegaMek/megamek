@@ -39,11 +39,11 @@ public record StepLog(MoveStep step) {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("step", step)
-                     .append("entity", step.getEntity())
-                     .append("mode", step.getMovementMode())
-                     .append("distance", step.getDistance())
-                     .append("elevation", step.getElevation())
-                     .append("position", step.getPosition())
-                     .toString();
+              .append("entity", step.getEntity())
+              .append("mode", step.getMovementMode())
+              .append("distance", step.getDistance())
+              .append("elevation", step.getElevation())
+              .append("position", step.getPosition())
+              .toString();
     }
 }

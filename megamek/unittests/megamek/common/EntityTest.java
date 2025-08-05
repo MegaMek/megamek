@@ -88,8 +88,7 @@ class EntityTest {
     }
 
     /**
-     * Verify that if a unit's name appears in the list of canon unit names, it is
-     * canon
+     * Verify that if a unit's name appears in the list of canon unit names, it is canon
      */
     @Test
     void testCanon() {
@@ -99,8 +98,7 @@ class EntityTest {
     }
 
     /**
-     * Verify that if a unit's name does _not_ appear in the list of canon unit
-     * names, it is not canon
+     * Verify that if a unit's name does _not_ appear in the list of canon unit names, it is not canon
      */
     @Test
     void testForceCanonicityFailure() {
@@ -110,8 +108,7 @@ class EntityTest {
     }
 
     /**
-     * Verify that if a unit's name does appear in the _file_ listing canon unit
-     * names, it is canon
+     * Verify that if a unit's name does appear in the _file_ listing canon unit names, it is canon
      */
     @Test
     void testCanonUnitInCanonUnitListFile() {
@@ -123,9 +120,8 @@ class EntityTest {
     }
 
     /**
-     * Verify new Tank method .isImmobilizedForJump() returns correct values in
-     * various states. Note: vehicles cannot lose individual Jump Jets via crits,
-     * so this is not tested.
+     * Verify new Tank method .isImmobilizedForJump() returns correct values in various states. Note: vehicles cannot
+     * lose individual Jump Jets via crits, so this is not tested.
      */
     @Test
     void testIsImmobilizedForJump() {

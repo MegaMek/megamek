@@ -33,12 +33,12 @@
 
 package megamek.common;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import megamek.common.equipment.WeaponMounted;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ArtilleryTrackerTest {
 
@@ -130,8 +130,8 @@ class ArtilleryTrackerTest {
     }
 
     /**
-     * This test shows that any automatic hit mods are removed from _all_ weapons at the same
-     * time.
+     * This test shows that any automatic hit mods are removed from _all_ weapons at the same time.
+     *
      * @throws LocationFullException
      */
     @Test

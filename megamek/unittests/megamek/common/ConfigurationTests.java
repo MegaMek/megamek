@@ -1,21 +1,35 @@
 /*
  * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common;
 
@@ -39,8 +53,7 @@ class ConfigurationTests {
     }
 
     /**
-     * Test method for
-     * {@link megamek.common.Configuration#setConfigDir(java.io.File)}.
+     * Test method for {@link megamek.common.Configuration#setConfigDir(java.io.File)}.
      */
     @Test
     final void testSetConfigDir() {
@@ -60,8 +73,7 @@ class ConfigurationTests {
     }
 
     /**
-     * Test method for
-     * {@link megamek.common.Configuration#setDataDir(java.io.File)}.
+     * Test method for {@link megamek.common.Configuration#setDataDir(java.io.File)}.
      */
     @Test
     final void testSetDataDir() {
@@ -81,8 +93,7 @@ class ConfigurationTests {
     }
 
     /**
-     * Test method for
-     * {@link megamek.common.Configuration#setDocsDir(java.io.File)}.
+     * Test method for {@link megamek.common.Configuration#setDocsDir(java.io.File)}.
      */
     @Test
     final void testSetDocsDir() {
@@ -99,12 +110,11 @@ class ConfigurationTests {
     @Test
     final void testArmyTablesDir() {
         assertEquals(new File("data", "rat").toString(), Configuration
-                .armyTablesDir().toString());
+              .armyTablesDir().toString());
     }
 
     /**
-     * Test method for
-     * {@link megamek.common.Configuration#setArmyTablesDir(java.io.File)}.
+     * Test method for {@link megamek.common.Configuration#setArmyTablesDir(java.io.File)}.
      */
     @Test
     final void testSetArmyTablesDir() {
@@ -113,7 +123,7 @@ class ConfigurationTests {
         // Should reset to default.
         Configuration.setArmyTablesDir(null);
         assertEquals(new File("data", "rat").toString(), Configuration
-                .armyTablesDir().toString());
+              .armyTablesDir().toString());
     }
 
     /**
@@ -122,12 +132,11 @@ class ConfigurationTests {
     @Test
     final void testBoardsDir() {
         assertEquals(new File("data", "boards").toString(), Configuration
-                .boardsDir().toString());
+              .boardsDir().toString());
     }
 
     /**
-     * Test method for
-     * {@link megamek.common.Configuration#setBoardsDir(java.io.File)}.
+     * Test method for {@link megamek.common.Configuration#setBoardsDir(java.io.File)}.
      */
     @Test
     final void testSetBoardsDir() {
@@ -136,7 +145,7 @@ class ConfigurationTests {
         // Should reset to default.
         Configuration.setBoardsDir(null);
         assertEquals(new File("data", "boards").toString(), Configuration
-                .boardsDir().toString());
+              .boardsDir().toString());
     }
 
     /**
@@ -145,12 +154,11 @@ class ConfigurationTests {
     @Test
     final void testUnitsDir() {
         assertEquals(new File("data", "mekfiles").toString(), Configuration
-                .unitsDir().toString());
+              .unitsDir().toString());
     }
 
     /**
-     * Test method for
-     * {@link megamek.common.Configuration#setUnitsDir(java.io.File)}.
+     * Test method for {@link megamek.common.Configuration#setUnitsDir(java.io.File)}.
      */
     @Test
     final void testSetUnitsDir() {
@@ -159,7 +167,7 @@ class ConfigurationTests {
         // Should reset to default.
         Configuration.setUnitsDir(null);
         assertEquals(new File("data", "mekfiles").toString(), Configuration
-                .unitsDir().toString());
+              .unitsDir().toString());
     }
 
     /**
@@ -168,12 +176,11 @@ class ConfigurationTests {
     @Test
     final void testScenariosDir() {
         assertEquals(new File("data", "scenarios").toString(), Configuration
-                .scenariosDir().toString());
+              .scenariosDir().toString());
     }
 
     /**
-     * Test method for
-     * {@link megamek.common.Configuration#setScenariosDir(java.io.File)}.
+     * Test method for {@link megamek.common.Configuration#setScenariosDir(java.io.File)}.
      */
     @Test
     final void testSetScenariosDir() {
@@ -182,7 +189,7 @@ class ConfigurationTests {
         // Should reset to default.
         Configuration.setScenariosDir(null);
         assertEquals(new File("data", "scenarios").toString(), Configuration
-                .scenariosDir().toString());
+              .scenariosDir().toString());
     }
 
     /**
@@ -191,12 +198,11 @@ class ConfigurationTests {
     @Test
     final void testSoundsDir() {
         assertEquals(new File("data", "sounds").toString(), Configuration
-                .soundsDir().toString());
+              .soundsDir().toString());
     }
 
     /**
-     * Test method for
-     * {@link megamek.common.Configuration#setSoundsDir(java.io.File)}.
+     * Test method for {@link megamek.common.Configuration#setSoundsDir(java.io.File)}.
      */
     @Test
     final void testSetSoundsDir() {
@@ -205,7 +211,7 @@ class ConfigurationTests {
         // Should reset to default.
         Configuration.setSoundsDir(null);
         assertEquals(new File("data", "sounds").toString(), Configuration
-                .soundsDir().toString());
+              .soundsDir().toString());
     }
 
     /**
@@ -214,12 +220,11 @@ class ConfigurationTests {
     @Test
     final void testImagesDir() {
         assertEquals(new File("data", "images").toString(), Configuration
-                .imagesDir().toString());
+              .imagesDir().toString());
     }
 
     /**
-     * Test method for
-     * {@link megamek.common.Configuration#setImagesDir(java.io.File)}.
+     * Test method for {@link megamek.common.Configuration#setImagesDir(java.io.File)}.
      */
     @Test
     final void testSetImagesDir() {
@@ -228,7 +233,7 @@ class ConfigurationTests {
         // Should reset to default.
         Configuration.setImagesDir(null);
         assertEquals(new File("data", "images").toString(), Configuration
-                .imagesDir().toString());
+              .imagesDir().toString());
     }
 
     /**
@@ -237,7 +242,7 @@ class ConfigurationTests {
     @Test
     final void testCamoDir() {
         assertEquals(new File(Configuration.imagesDir(), "camo").toString(),
-                Configuration.camoDir().toString());
+              Configuration.camoDir().toString());
     }
 
     /**
@@ -246,7 +251,7 @@ class ConfigurationTests {
     @Test
     final void testHexesDir() {
         assertEquals(new File(Configuration.imagesDir(), "hexes").toString(),
-                Configuration.hexesDir().toString());
+              Configuration.hexesDir().toString());
     }
 
     /**
@@ -255,7 +260,7 @@ class ConfigurationTests {
     @Test
     final void testFluffImagesDir() {
         assertEquals(new File(Configuration.imagesDir(), "fluff").toString(),
-                Configuration.fluffImagesDir().toString());
+              Configuration.fluffImagesDir().toString());
     }
 
     /**
@@ -264,7 +269,7 @@ class ConfigurationTests {
     @Test
     final void testMiscImagesDir() {
         assertEquals(new File(Configuration.imagesDir(), "misc").toString(),
-                Configuration.miscImagesDir().toString());
+              Configuration.miscImagesDir().toString());
     }
 
     /**
@@ -273,8 +278,8 @@ class ConfigurationTests {
     @Test
     final void testPortraitImagesDir() {
         assertEquals(
-                new File(Configuration.imagesDir(), "portraits").toString(),
-                Configuration.portraitImagesDir().toString());
+              new File(Configuration.imagesDir(), "portraits").toString(),
+              Configuration.portraitImagesDir().toString());
     }
 
     /**
@@ -283,7 +288,7 @@ class ConfigurationTests {
     @Test
     final void testUnitImagesDir() {
         assertEquals(new File(Configuration.imagesDir(), "units").toString(),
-                Configuration.unitImagesDir().toString());
+              Configuration.unitImagesDir().toString());
     }
 
     /**
@@ -292,6 +297,6 @@ class ConfigurationTests {
     @Test
     final void testWidgetsDir() {
         assertEquals(new File(Configuration.imagesDir(), "widgets").toString(),
-                Configuration.widgetsDir().toString());
+              Configuration.widgetsDir().toString());
     }
 }

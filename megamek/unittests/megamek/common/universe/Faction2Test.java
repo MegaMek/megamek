@@ -32,10 +32,11 @@
  */
 package megamek.common.universe;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import megamek.client.ratgenerator.FactionRecord;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class Faction2Test {
 

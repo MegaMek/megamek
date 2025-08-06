@@ -1,17 +1,41 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.autoresolve.acar.handler;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Optional;
 
 import megamek.codeUtilities.ObjectUtility;
 import megamek.common.Compute;
@@ -27,10 +51,6 @@ import megamek.common.autoresolve.acar.report.IAttackReporter;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.util.weightedMaps.WeightedDoubleMap;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Optional;
 
 public class StandardUnitAttackHandler extends AbstractActionHandler {
 
@@ -91,7 +111,7 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
                 if (attacker.isSingleEntity()) {
                     damage = calculateDamage(attack, attackingUnit);
                 } else {
-                    damage = new int[]{ attackingUnit.getCurrentDamage().getDamage(attack.getRange()).damage };
+                    damage = new int[] { attackingUnit.getCurrentDamage().getDamage(attack.getRange()).damage };
                 }
                 applyDamage(target, targetUnit, damage, attackingUnit);
             }
@@ -174,7 +194,7 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
     }
 
     private int[] calculateDamage(StandardUnitAttack attack,
-                                SBFUnit attackingUnit) {
+          SBFUnit attackingUnit) {
 
         return attackingUnit.getElements().stream().mapToInt(e -> getDamage(e, attack.getRange())).toArray();
     }
@@ -186,7 +206,7 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
     private int getDamage(AlphaStrikeElement element, ASRange range) {
         var stdDamage = element.getStandardDamage();
         var specialDmgVectors = element.getSpecialAbilities().getInternalRepr().values().stream()
-            .filter(o -> o instanceof ASDamageVector).map(o -> (ASDamageVector) o).toList();
+              .filter(o -> o instanceof ASDamageVector).map(o -> (ASDamageVector) o).toList();
 
         if (stdDamage.hasDamage()) {
             return stdDamage.getDamage(range).damage;
@@ -194,14 +214,34 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
             return specialDmgVectors.stream().mapToInt(d -> d.getDamage(range).damage).sum();
         }
 
-        var frontArcDamages = element.getFrontArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
-            .map(o -> (ASDamageVector) o).toList();
-        var leftArcDamages = element.getLeftArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
-            .map(o -> (ASDamageVector) o).toList();
-        var rightArcDamages = element.getRightArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
-            .map(o -> (ASDamageVector) o).toList();
-        var rearArcDamages = element.getRearArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
-            .map(o -> (ASDamageVector) o).toList();
+        var frontArcDamages = element.getFrontArc()
+              .getInternalRepr()
+              .values()
+              .stream()
+              .filter(o -> o instanceof ASDamageVector)
+              .map(o -> (ASDamageVector) o)
+              .toList();
+        var leftArcDamages = element.getLeftArc()
+              .getInternalRepr()
+              .values()
+              .stream()
+              .filter(o -> o instanceof ASDamageVector)
+              .map(o -> (ASDamageVector) o)
+              .toList();
+        var rightArcDamages = element.getRightArc()
+              .getInternalRepr()
+              .values()
+              .stream()
+              .filter(o -> o instanceof ASDamageVector)
+              .map(o -> (ASDamageVector) o)
+              .toList();
+        var rearArcDamages = element.getRearArc()
+              .getInternalRepr()
+              .values()
+              .stream()
+              .filter(o -> o instanceof ASDamageVector)
+              .map(o -> (ASDamageVector) o)
+              .toList();
 
         var frontArcDmgTotal = frontArcDamages.stream().mapToInt(d -> d.getDamage(range).damage).sum();
         var leftArcDmgTotal = leftArcDamages.stream().mapToInt(d -> d.getDamage(range).damage).sum();
@@ -209,10 +249,10 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
         var rearArcDmgTotal = rearArcDamages.stream().mapToInt(d -> d.getDamage(range).damage).sum();
 
         var arcSelectionWeightedDoubleMap = WeightedDoubleMap.of(
-            ArcSelection.FRONT, frontArcDmgTotal,
-            ArcSelection.LEFT, leftArcDmgTotal,
-            ArcSelection.RIGHT, rightArcDmgTotal,
-            ArcSelection.REAR, rearArcDmgTotal);
+              ArcSelection.FRONT, frontArcDmgTotal,
+              ArcSelection.LEFT, leftArcDmgTotal,
+              ArcSelection.RIGHT, rightArcDmgTotal,
+              ArcSelection.REAR, rearArcDmgTotal);
 
         if (!arcSelectionWeightedDoubleMap.isEmpty()) {
             switch (arcSelectionWeightedDoubleMap.randomItem()) {
@@ -261,10 +301,20 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
     }
 
     private void countKill(SBFUnit attackingUnit, SBFUnit targetUnit) {
-        var killers = attackingUnit.getElements().stream().map(AlphaStrikeElement::getId)
-            .map(e -> simulationManager().getGame().getEntity(e)).filter(Optional::isPresent).map(Optional::get).toList();
-        var targets = targetUnit.getElements().stream().map(AlphaStrikeElement::getId)
-            .map(e -> simulationManager().getGame().getEntity(e)).filter(Optional::isPresent).map(Optional::get).toList();
+        var killers = attackingUnit.getElements()
+              .stream()
+              .map(AlphaStrikeElement::getId)
+              .map(e -> simulationManager().getGame().getEntity(e))
+              .filter(Optional::isPresent)
+              .map(Optional::get)
+              .toList();
+        var targets = targetUnit.getElements()
+              .stream()
+              .map(AlphaStrikeElement::getId)
+              .map(e -> simulationManager().getGame().getEntity(e))
+              .filter(Optional::isPresent)
+              .map(Optional::get)
+              .toList();
         for (var target : targets) {
             ObjectUtility.getRandomItemSafe(killers).ifPresent(e -> e.addKill(target));
         }

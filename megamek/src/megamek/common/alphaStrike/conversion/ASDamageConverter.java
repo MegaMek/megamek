@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike.conversion;
 
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
@@ -216,12 +231,12 @@ public class ASDamageConverter {
                 double modifiedDamage = baseDamage * damageMultiplier * locationMultiplier;
                 String calculation = "+ " + formatForReport(modifiedDamage);
                 calculation += (damageMultiplier != 1) ?
-                                     " (" +
-                                           formatForReport(baseDamage) +
-                                           " x " +
-                                           formatForReport(damageMultiplier) +
-                                           ")" :
-                                     "";
+                      " (" +
+                            formatForReport(baseDamage) +
+                            " x " +
+                            formatForReport(damageMultiplier) +
+                            ")" :
+                      "";
                 rawDamage += modifiedDamage;
                 report.addLine(getWeaponDesc(weapon), calculation, "= " + formatForReport(rawDamage));
             }
@@ -241,7 +256,7 @@ public class ASDamageConverter {
     protected double determineDamage(Mounted<?> weapon, int range) {
         WeaponType weaponType = (WeaponType) weapon.getType();
         if ((weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY) ||
-                  (weaponType.getBattleForceClass() == WeaponType.BFCLASS_TORP)) {
+              (weaponType.getBattleForceClass() == WeaponType.BFCLASS_TORP)) {
             return 0;
         }
         return ((WeaponType) weapon.getType()).getBattleForceDamage(range, weapon.getLinkedBy());
@@ -401,7 +416,7 @@ public class ASDamageConverter {
 
         // Actuator Enhancement System
         if (entity.hasWorkingMisc(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM, -1, weapon.getLocation()) &&
-                  ((weapon.getLocation() == Mek.LOC_LARM) || (weapon.getLocation() == Mek.LOC_RARM))) {
+              ((weapon.getLocation() == Mek.LOC_LARM) || (weapon.getLocation() == Mek.LOC_RARM))) {
             damageModifier *= 1.05;
         }
 
@@ -416,8 +431,8 @@ public class ASDamageConverter {
         for (Mounted<?> weapon : weaponsList) {
             WeaponType weaponType = (WeaponType) weapon.getType();
             if ((weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA) &&
-                      !weaponType.hasFlag(WeaponType.F_ONESHOT) &&
-                      (!(entity instanceof BattleArmor) || weaponType instanceof MissileWeapon)) {
+                  !weaponType.hasFlag(WeaponType.F_ONESHOT) &&
+                  (!(entity instanceof BattleArmor) || weaponType instanceof MissileWeapon)) {
                 weaponCount.merge(weaponType, 1, Integer::sum);
             }
         }
@@ -427,7 +442,7 @@ public class ASDamageConverter {
             for (Mounted<?> ammo : entity.getAmmo()) {
                 AmmoType ammoType = (AmmoType) ammo.getType();
                 if ((ammoType.getAmmoType() == weaponType.getAmmoType()) &&
-                          (ammoType.getRackSize() == weaponType.getRackSize())) {
+                      (ammoType.getRackSize() == weaponType.getRackSize())) {
                     ammoCount += ammo.getUsableShotsLeft();
                 }
             }
@@ -435,7 +450,7 @@ public class ASDamageConverter {
             if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY) {
                 divisor = 6;
             } else if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA ||
-                             weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB) {
+                  weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB) {
                 divisor = 2;
             }
 
@@ -499,7 +514,7 @@ public class ASDamageConverter {
 
     protected void processArtillery(Mounted<?> weapon, WeaponType weaponType) {
         if ((weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY) ||
-                  weaponType.is(EquipmentTypeLookup.IS_BA_TUBE_ARTY)) {
+              weaponType.is(EquipmentTypeLookup.IS_BA_TUBE_ARTY)) {
             assignToLocations(weapon, getArtilleryType(weaponType), 1);
         }
     }
@@ -514,7 +529,7 @@ public class ASDamageConverter {
     protected void assignToLocations(Mounted<?> weapon, BattleForceSUA sua) {
         for (int loc = 0; loc < locations.length; loc++) {
             if ((ASLocationMapper.damageLocationMultiplierForSpecials(entity, loc, weapon) != 0) &&
-                      !locations[loc].hasSUA(sua)) {
+                  !locations[loc].hasSUA(sua)) {
                 locations[loc].setSUA(sua);
                 reportAssignToLocations(weapon, sua, "", loc);
             }
@@ -733,7 +748,8 @@ public class ASDamageConverter {
         return rawDmg;
     }
 
-    protected double determineSpecialsDamage(WeaponType weaponType, Mounted<?> linked, int range, BattleForceSUA dmgType) {
+    protected double determineSpecialsDamage(WeaponType weaponType, Mounted<?> linked, int range,
+          BattleForceSUA dmgType) {
         if (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
             return 0;
         }
@@ -746,7 +762,7 @@ public class ASDamageConverter {
      */
     protected static boolean qualifiesForSpecial(double[] damage, BattleForceSUA dmgType) {
         if (dmgType.isAnyOf(FLK, TOR, REAR, TUR, MSL, CAP, SCAP, STD, PNT) &&
-                  damage[0] + damage[1] + damage[2] + damage[3] > 0) {
+              damage[0] + damage[1] + damage[2] + damage[3] > 0) {
             return true;
         } else if (dmgType == IF) {
             return damage[2] > 0;
@@ -799,11 +815,11 @@ public class ASDamageConverter {
         WeaponType weaponType = (WeaponType) weapon.getType();
         return switch (dmgType) {
             case LRM -> !MountedHelper.isAnyArtemis(weapon.getLinkedBy()) &&
-                              ((weaponType.getBattleForceClass() == WeaponType.BFCLASS_LRM) ||
-                                     (weaponType.getBattleForceClass() == WeaponType.BFCLASS_MML));
+                  ((weaponType.getBattleForceClass() == WeaponType.BFCLASS_LRM) ||
+                        (weaponType.getBattleForceClass() == WeaponType.BFCLASS_MML));
             case SRM -> !MountedHelper.isAnyArtemis(weapon.getLinkedBy()) &&
-                              ((weaponType.getBattleForceClass() == WeaponType.BFCLASS_SRM) ||
-                                     (weaponType.getBattleForceClass() == WeaponType.BFCLASS_MML));
+                  ((weaponType.getBattleForceClass() == WeaponType.BFCLASS_SRM) ||
+                        (weaponType.getBattleForceClass() == WeaponType.BFCLASS_MML));
             case FLK -> weaponType.getBattleForceClass() == WeaponType.BFCLASS_FLAK;
             case AC -> weaponType.getBattleForceClass() == WeaponType.BFCLASS_AC;
             case TOR -> weaponType.getBattleForceClass() == WeaponType.BFCLASS_TORP;
@@ -816,9 +832,9 @@ public class ASDamageConverter {
             case CAP -> weaponType.getBattleForceClass() == WeaponType.BFCLASS_CAPITAL;
             case SCAP -> weaponType.getBattleForceClass() == WeaponType.BFCLASS_SUBCAPITAL;
             case STD -> (weaponType.getBattleForceClass() != WeaponType.BFCLASS_CAPITAL_MISSILE) &&
-                              (weaponType.getBattleForceClass() != WeaponType.BFCLASS_CAPITAL) &&
-                              (weaponType.getBattleForceClass() != WeaponType.BFCLASS_SUBCAPITAL) &&
-                              (weaponType.getBattleForceClass() != WeaponType.BFCLASS_TORP);
+                  (weaponType.getBattleForceClass() != WeaponType.BFCLASS_CAPITAL) &&
+                  (weaponType.getBattleForceClass() != WeaponType.BFCLASS_SUBCAPITAL) &&
+                  (weaponType.getBattleForceClass() != WeaponType.BFCLASS_TORP);
             default -> false;
         };
     }
@@ -840,8 +856,8 @@ public class ASDamageConverter {
 
     protected static boolean isArtilleryCannon(WeaponType weapon) {
         return (weapon.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM_CANNON) ||
-                     (weapon.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER_CANNON) ||
-                     (weapon.getAmmoType() == AmmoType.AmmoTypeEnum.THUMPER_CANNON);
+              (weapon.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER_CANNON) ||
+              (weapon.getAmmoType() == AmmoType.AmmoTypeEnum.THUMPER_CANNON);
     }
 
     /**
@@ -954,8 +970,8 @@ public class ASDamageConverter {
         }
 
         if (entity.hasWorkingMisc(MiscType.F_STEALTH, -1) ||
-                  entity.hasWorkingMisc(MiscType.F_VOIDSIG, -1) ||
-                  entity.hasWorkingMisc(MiscType.F_NULLSIG, -1)) {
+              entity.hasWorkingMisc(MiscType.F_VOIDSIG, -1) ||
+              entity.hasWorkingMisc(MiscType.F_NULLSIG, -1)) {
             totalHeat += 10;
         }
 
@@ -969,9 +985,9 @@ public class ASDamageConverter {
     protected int weaponHeat(Mounted<?> weapon, boolean onlyRear, boolean onlyLongRange) {
         WeaponType weaponType = (WeaponType) weapon.getType();
         if (weaponType.hasFlag(WeaponType.F_ONESHOT) ||
-                  (onlyRear && !weapon.isRearMounted()) ||
-                  (!onlyRear && weapon.isRearMounted()) ||
-                  (onlyLongRange && weaponType.getBattleForceDamage(LONG_RANGE) == 0)) {
+              (onlyRear && !weapon.isRearMounted()) ||
+              (!onlyRear && weapon.isRearMounted()) ||
+              (onlyLongRange && weaponType.getBattleForceDamage(LONG_RANGE) == 0)) {
             return 0;
         } else {
             return weaponHeat(weaponType);
@@ -982,7 +998,7 @@ public class ASDamageConverter {
         if (entity.getJumpType() == Mek.JUMP_PROTOTYPE_IMPROVED) {
             return Math.max(3, element.getJumpMove());
         } else if ((entity.getJumpType() == Mek.JUMP_IMPROVED) &&
-                         (entity.getEngine().getEngineType() == Engine.XXL_ENGINE)) {
+              (entity.getEngine().getEngineType() == Engine.XXL_ENGINE)) {
             return Math.max(3, element.getJumpMove() / 2);
         } else if (entity.getJumpType() == Mek.JUMP_IMPROVED) {
             return Math.max(3, ASConverter.roundUp(0.25 * element.getJumpMove()));

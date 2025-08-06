@@ -1,17 +1,38 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.preference;
 
 import java.io.File;
@@ -23,7 +44,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.xml.namespace.QName;
 
 import jakarta.xml.bind.JAXBContext;
@@ -92,7 +112,8 @@ public class PreferenceManager {
 
     /**
      * Migrates the preference store from previous names to the new name if any is present;
-     * @param name the new name for the preference store
+     *
+     * @param name          the new name for the preference store
      * @param previousNames the previous names of the preference store to migrate from
      */
     private void migratePreferenceStore(String name, String[] previousNames) {
@@ -112,8 +133,8 @@ public class PreferenceManager {
         stores = new Hashtable<>();
         clientPreferenceStore = new PreferenceStore();
         String cfgName = System.getProperty(
-                CFG_FILE_OPTION_NAME,
-                new MegaMekFile(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).toString());
+              CFG_FILE_OPTION_NAME,
+              new MegaMekFile(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).toString());
         load(cfgName);
         clientPreferences = new ClientPreferences(clientPreferenceStore);
     }
@@ -165,7 +186,7 @@ public class PreferenceManager {
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
             marshaller.setProperty("org.glassfish.jaxb.xmlHeaders", "<?xml version=\"1.0\"?>");
             JAXBElement<Settings> element = new JAXBElement<>(new QName(ROOT_NODE_NAME),
-                    Settings.class, new Settings(clientPreferenceStore, stores));
+                  Settings.class, new Settings(clientPreferenceStore, stores));
             marshaller.marshal(element, file);
         } catch (Exception ex) {
             logger.error("Failed writing client settings XML", ex);

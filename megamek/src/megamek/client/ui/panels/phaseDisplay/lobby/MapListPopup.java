@@ -1,22 +1,40 @@
 /*
- * MegaMek - Copyright (C) 2021 - The MegaMek Team
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
- * listener program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * listener program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
-
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
@@ -28,7 +46,7 @@ class MapListPopup {
     static final String MLP_SURPRISE = "SURPRISE";
 
     static ScalingPopup mapListPopup(List<String> boards, int numButtons, ActionListener listener,
-            ChatLounge lobby, boolean enableRotation) {
+          ChatLounge lobby, boolean enableRotation) {
 
         if (boards.isEmpty()) {
             return new ScalingPopup();
@@ -39,11 +57,17 @@ class MapListPopup {
         ScalingPopup popup = new ScalingPopup();
         if (numButtons == 1) {
             String name = mapShortName(boards.get(0));
-            JMenuItem mi = menuItem("Set \"" + name + "\" as Board 0", MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + false, true, listener);
+            JMenuItem mi = menuItem("Set \"" + name + "\" as Board 0",
+                  MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + false,
+                  true,
+                  listener);
             popup.add(mi);
             mi.setEnabled(oneSelected);
             if (enableRotation) {
-                mi = menuItem("Set Rotated \"" + name + "\" as Board 0", MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + true, true, listener);
+                mi = menuItem("Set Rotated \"" + name + "\" as Board 0",
+                      MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + true,
+                      true,
+                      listener);
                 popup.add(mi);
                 mi.setEnabled(oneSelected);
             }
@@ -71,14 +95,19 @@ class MapListPopup {
      * Returns the "set as board" submenu.
      */
     private static JMenu singleBoardMenu(boolean enabled, boolean rotated, ActionListener listener,
-            int numB, List<String> boards) {
+          int numB, List<String> boards) {
         String name = mapShortName(boards.get(0));
 
-        JMenu menu = new JMenu(!rotated ? "Set \"" + name + "\" as Board..." : " Set \"" + name + "\" as Board (rotated)...");
+        JMenu menu = new JMenu(!rotated ?
+              "Set \"" + name + "\" as Board..." :
+              " Set \"" + name + "\" as Board (rotated)...");
         menu.setEnabled(enabled);
         if (enabled) {
             for (int i = 0; i < numB; i++) {
-                menu.add(menuItem("Board " + (i + 1), MLP_BOARD + ":" + i + ":" + boards.get(0) + ":" + rotated, enabled, listener));
+                menu.add(menuItem("Board " + (i + 1),
+                      MLP_BOARD + ":" + i + ":" + boards.get(0) + ":" + rotated,
+                      enabled,
+                      listener));
             }
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
@@ -89,7 +118,7 @@ class MapListPopup {
      * Returns the "Load" submenu, allowing general embarking
      */
     private static JMenu multiBoardRandomMenu(boolean enabled, ActionListener listener,
-            int numB, List<String> boards) {
+          int numB, List<String> boards) {
 
         JMenu menu = new JMenu("Set Random Board...");
         menu.setEnabled(enabled);
@@ -108,14 +137,14 @@ class MapListPopup {
      * Returns the "Load" submenu, allowing general embarking
      */
     private static JMenu multiBoardSurpriseMenu(boolean enabled, ActionListener listener,
-            int numB, List<String> boards) {
+          int numB, List<String> boards) {
 
         JMenu menu = new JMenu("Set Surprise Board...");
         menu.setEnabled(enabled);
         if (enabled) {
             for (int i = 0; i < numB; i++) {
                 menu.add(menuItem("Board " + (i + 1), MLP_SURPRISE + ":" + i + ":"
-                        + String.join("\n", boards), enabled, listener));
+                      + String.join("\n", boards), enabled, listener));
             }
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
@@ -124,22 +153,21 @@ class MapListPopup {
 
 
     /**
-     * Returns a single menu item with the given text, the given command string
-     * cmd, the given enabled state, and assigned the given listener.
+     * Returns a single menu item with the given text, the given command string cmd, the given enabled state, and
+     * assigned the given listener.
      */
     private static JMenuItem menuItem(String text, String cmd, boolean enabled,
-            ActionListener listener) {
+          ActionListener listener) {
 
         return menuItem(text, cmd, enabled, listener, Integer.MIN_VALUE);
     }
 
     /**
-     * Returns a single menu item with the given text, the given command string
-     * cmd, the given enabled state, and assigned the given listener. Also assigns
-     * the given key mnemonic.
+     * Returns a single menu item with the given text, the given command string cmd, the given enabled state, and
+     * assigned the given listener. Also assigns the given key mnemonic.
      */
     private static JMenuItem menuItem(String text, String cmd, boolean enabled,
-            ActionListener listener, int mnemonic) {
+          ActionListener listener, int mnemonic) {
 
         JMenuItem result = new JMenuItem(text);
         result.setActionCommand(cmd);

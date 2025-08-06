@@ -32,6 +32,9 @@
  */
 package megamek.client.ui.entityreadout;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MenuButton;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
@@ -44,8 +47,6 @@ import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.templates.TROView;
-
-import javax.swing.*;
 
 /**
  * The EntityViewPane displays the entity summary, TRO and AS card panels within a TabbedPane.

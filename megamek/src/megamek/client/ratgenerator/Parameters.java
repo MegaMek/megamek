@@ -24,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ratgenerator;
 
@@ -68,8 +73,8 @@ public final class Parameters implements Cloneable {
         this.networkMask = networkMask;
 
         this.movementModes = ((movementModes == null) || movementModes.isEmpty()) ?
-                                   EnumSet.noneOf(EntityMovementMode.class) :
-                                   EnumSet.copyOf(movementModes);
+              EnumSet.noneOf(EntityMovementMode.class) :
+              EnumSet.copyOf(movementModes);
 
         this.roles = ((roles == null) || roles.isEmpty()) ? EnumSet.noneOf(MissionRole.class) : EnumSet.copyOf(roles);
 
@@ -90,14 +95,14 @@ public final class Parameters implements Cloneable {
         this.networkMask = networkMask;
 
         this.movementModes = ((movementModes == null) || movementModes.isEmpty()) ?
-                                   EnumSet.noneOf(EntityMovementMode.class) :
-                                   EnumSet.copyOf(movementModes);
+              EnumSet.noneOf(EntityMovementMode.class) :
+              EnumSet.copyOf(movementModes);
 
         this.roles = ((roles == null) || roles.isEmpty()) ? EnumSet.noneOf(MissionRole.class) : EnumSet.copyOf(roles);
 
         this.rolesExcluded = ((rolesExcluded == null) || rolesExcluded.isEmpty()) ?
-                                   EnumSet.noneOf((MissionRole.class)) :
-                                   EnumSet.copyOf(rolesExcluded);
+              EnumSet.noneOf((MissionRole.class)) :
+              EnumSet.copyOf(rolesExcluded);
 
         this.roleStrictness = roleStrictness;
         this.deployingFaction = (deployingFaction == null) ? faction : deployingFaction;
@@ -329,28 +334,28 @@ public final class Parameters implements Cloneable {
     @Override
     public String toString() {
         return "Parameters{" +
-                     "faction=" +
-                     (faction != null ? faction : "null") +
-                     ", deployingFaction=" +
-                     (deployingFaction != null ? deployingFaction : "null") +
-                     ", unitType=" +
-                     unitType +
-                     ", year=" +
-                     year +
-                     ", rating=" +
-                     (rating != null ? rating : "null") +
-                     ", weightClasses=" +
-                     (weightClasses != null ? weightClasses : "[]") +
-                     ", networkMask=" +
-                     networkMask +
-                     ", movementModes=" +
-                     (movementModes != null ? movementModes : "[]") +
-                     ", roles=" +
-                     (roles != null ? roles : "[]") +
-                     ", rolesExcluded=" +
-                     (rolesExcluded != null ? rolesExcluded : "[]") +
-                     ", roleStrictness=" +
-                     roleStrictness +
-                     '}';
+              "faction=" +
+              (faction != null ? faction : "null") +
+              ", deployingFaction=" +
+              (deployingFaction != null ? deployingFaction : "null") +
+              ", unitType=" +
+              unitType +
+              ", year=" +
+              year +
+              ", rating=" +
+              (rating != null ? rating : "null") +
+              ", weightClasses=" +
+              (weightClasses != null ? weightClasses : "[]") +
+              ", networkMask=" +
+              networkMask +
+              ", movementModes=" +
+              (movementModes != null ? movementModes : "[]") +
+              ", roles=" +
+              (roles != null ? roles : "[]") +
+              ", rolesExcluded=" +
+              (rolesExcluded != null ? rolesExcluded : "[]") +
+              ", roleStrictness=" +
+              roleStrictness +
+              '}';
     }
 }

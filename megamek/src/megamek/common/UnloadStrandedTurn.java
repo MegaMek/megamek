@@ -1,48 +1,62 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.common;
 
-import megamek.common.annotations.Nullable;
+package megamek.common;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.IntStream;
 
+import megamek.common.annotations.Nullable;
+
 /**
- * A type of game turn that indicates that one or more players should be given the opportunity
- * to unload entities that are stranded on immobile transports. Each player declares which
- * stranded units they will unload at the beginning of the movement phase, without being told
- * what stranded units their opponent(s) are unloading.
+ * A type of game turn that indicates that one or more players should be given the opportunity to unload entities that
+ * are stranded on immobile transports. Each player declares which stranded units they will unload at the beginning of
+ * the movement phase, without being told what stranded units their opponent(s) are unloading.
  * <p>
- * According to Randall Bills, the "minimum move" rule allow stranded units to dismount at the start
- * of the turn [there used to be an ancient link to a forum post here].
+ * According to Randall Bills, the "minimum move" rule allow stranded units to dismount at the start of the turn [there
+ * used to be an ancient link to a forum post here].
  */
 public class UnloadStrandedTurn extends GameTurn {
     private static final long serialVersionUID = 2403095752478007872L;
     private int[] entityIds;
 
     /**
-     * Any player that owns an entity whose ID is in the passed array should be given a chance
-     * to unload it.
+     * Any player that owns an entity whose ID is in the passed array should be given a chance to unload it.
      *
      * @param ids the array of <code>int</code> IDs of stranded entities. This value must not be
      *            <code>null</code> or empty.
+     *
      * @throws IllegalArgumentException if a <code>null</code> or empty value is passed for ids.
      */
     public UnloadStrandedTurn(int... ids) {
@@ -61,13 +75,12 @@ public class UnloadStrandedTurn extends GameTurn {
     }
 
     /**
-     * Any player that owns an entity in the passed enumeration should be given a chance to
-     * unload it.
+     * Any player that owns an entity in the passed enumeration should be given a chance to unload it.
      *
      * @param entities the <code>Enumeration</code> of stranded entities. This value must not be
      *                 <code>null</code> or empty.
-     * @throws IllegalArgumentException if a <code>null</code> or empty value is passed for
-     *                                  entities.
+     *
+     * @throws IllegalArgumentException if a <code>null</code> or empty value is passed for entities.
      */
     public UnloadStrandedTurn(Iterator<Entity> entities) {
         super(Player.PLAYER_NONE);
@@ -116,6 +129,7 @@ public class UnloadStrandedTurn extends GameTurn {
      *
      * @param entity the <code>Entity</code> being tested for the move.
      * @param game   The {@link Game} the entity belongs to
+     *
      * @return <code>true</code> if the entity can be moved.
      */
     @Override
@@ -145,8 +159,8 @@ public class UnloadStrandedTurn extends GameTurn {
     public boolean isValid(int playerId, IGame game) {
         Game actualGame = (Game) game;
         return IntStream.range(0, entityIds.length)
-                .anyMatch(index -> (actualGame.getEntity(entityIds[index]) != null)
-                        && (playerId == actualGame.getEntity(entityIds[index]).getOwnerId()));
+              .anyMatch(index -> (actualGame.getEntity(entityIds[index]) != null)
+                    && (playerId == actualGame.getEntity(entityIds[index]).getOwnerId()));
     }
 
     @Override

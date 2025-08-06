@@ -1,16 +1,36 @@
 /*
- * Copyright (C) 2018 - The MegaMek Team
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.verifier;
 
 import java.util.HashMap;
@@ -63,8 +83,8 @@ public class TestProtoMek extends TestEntity {
 
     public static int maxJumpMP(ProtoMek proto) {
         if (proto.getMisc().stream().map(Mounted::getType)
-                .anyMatch(eq -> eq.hasFlag(MiscType.F_JUMP_JET)
-                        && eq.hasSubType(MiscType.S_IMPROVED))) {
+              .anyMatch(eq -> eq.hasFlag(MiscType.F_JUMP_JET)
+                    && eq.hasSubType(MiscType.S_IMPROVED))) {
             return (int) Math.ceil(proto.getOriginalWalkMP() * 1.5);
         }
         return proto.getOriginalWalkMP();
@@ -160,8 +180,8 @@ public class TestProtoMek extends TestEntity {
     @Override
     public String printWeightStructure() {
         return StringUtil.makeLength("Structure: " + getEntity().getTotalOInternal(),
-                getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightStructure(), true) + "\n";
+              getPrintSize() - 5)
+              + TestEntity.makeWeightString(getWeightStructure(), true) + "\n";
     }
 
     @Override
@@ -172,7 +192,7 @@ public class TestProtoMek extends TestEntity {
     @Override
     public String printWeightControls() {
         return StringUtil.makeLength("Controls:", getPrintSize() - 5)
-                + makeWeightString(getWeightControls(), true) + "\n";
+              + makeWeightString(getWeightControls(), true) + "\n";
     }
 
     @Override
@@ -180,10 +200,10 @@ public class TestProtoMek extends TestEntity {
         for (Mounted<?> m : getEntity().getMisc()) {
             buff.append(StringUtil.makeLength(m.getName(), 20));
             buff.append(
-                    StringUtil.makeLength(getLocationAbbr(m.getLocation()),
-                            getPrintSize() - 5 - 20))
-                    .append(
-                            TestEntity.makeWeightString(round(m.getTonnage(), Ceil.KILO), true));
+                        StringUtil.makeLength(getLocationAbbr(m.getLocation()),
+                              getPrintSize() - 5 - 20))
+                  .append(
+                        TestEntity.makeWeightString(round(m.getTonnage(), Ceil.KILO), true));
             buff.append("\n");
         }
         return buff;
@@ -194,9 +214,9 @@ public class TestProtoMek extends TestEntity {
         for (Mounted<?> m : getEntity().getWeaponList()) {
             buff.append(StringUtil.makeLength(m.getName(), 20));
             buff.append(
-                    StringUtil.makeLength(getLocationAbbr(m.getLocation()),
-                            getPrintSize() - 5 - 20))
-                    .append(TestEntity.makeWeightString(m.getTonnage(), true)).append("\n");
+                        StringUtil.makeLength(getLocationAbbr(m.getLocation()),
+                              getPrintSize() - 5 - 20))
+                  .append(TestEntity.makeWeightString(m.getTonnage(), true)).append("\n");
         }
         return buff;
     }
@@ -208,11 +228,11 @@ public class TestProtoMek extends TestEntity {
 
             buff.append(StringUtil.makeLength(mt.getName(), 20));
             buff.append(" ").append(
-                    StringUtil.makeLength(getLocationAbbr(m.getLocation()),
-                            getPrintSize() - 5 - 20))
-                    .append(TestEntity.makeWeightString(
-                            Math.ceil(mt.getKgPerShot() * m.getBaseShotsLeft()) / 1000.0, true))
-                    .append("\n");
+                        StringUtil.makeLength(getLocationAbbr(m.getLocation()),
+                              getPrintSize() - 5 - 20))
+                  .append(TestEntity.makeWeightString(
+                        Math.ceil(mt.getKgPerShot() * m.getBaseShotsLeft()) / 1000.0, true))
+                  .append("\n");
         }
         return buff;
     }
@@ -253,7 +273,8 @@ public class TestProtoMek extends TestEntity {
             correct = false;
         }
         correct = correct && correctMovement(buff);
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)
+              || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
@@ -287,11 +308,11 @@ public class TestProtoMek extends TestEntity {
                 illegal = true;
             }
             if ((mount.getType() instanceof WeaponType)
-                    && !mount.getType().hasFlag(WeaponType.F_PROTO_WEAPON)) {
+                  && !mount.getType().hasFlag(WeaponType.F_PROTO_WEAPON)) {
                 buff.append(mount).append(" is not a legal ProtoMek weapon.\n");
                 illegal = true;
             } else if ((mount.getType() instanceof MiscType)
-                    && !mount.getType().hasFlag(MiscType.F_PROTOMEK_EQUIPMENT)) {
+                  && !mount.getType().hasFlag(MiscType.F_PROTOMEK_EQUIPMENT)) {
                 buff.append(mount).append(" is not legal ProtoMek equipment.\n");
                 illegal = true;
             }
@@ -330,13 +351,13 @@ public class TestProtoMek extends TestEntity {
         for (int loc = 0; loc < proto.locations(); loc++) {
             if (slotsByLoc.getOrDefault(loc, 0) > maxSlotsByLocation(loc, proto)) {
                 buff.append("Exceeds ").append(maxSlotsByLocation(loc, proto))
-                        .append(" slot limit in ").append(proto.getLocationName(loc)).append("\n");
+                      .append(" slot limit in ").append(proto.getLocationName(loc)).append("\n");
                 illegal = true;
             }
 
             if (weightByLoc.getOrDefault(loc, 0.0) > maxWeightByLocation(loc, proto)) {
                 buff.append("Exceeds ").append(maxWeightByLocation(loc, proto) * 1000)
-                        .append(" kg limit in ").append(proto.getLocationName(loc)).append("\n");
+                      .append(" kg limit in ").append(proto.getLocationName(loc)).append("\n");
                 illegal = true;
             }
         }
@@ -352,23 +373,23 @@ public class TestProtoMek extends TestEntity {
      * @param protoMek The ProtoMek
      * @param eq       The equipment
      * @param location A location index on the Entity
-     * @param buffer   If non-null and the location is invalid, will be appended
-     *                 with an explanation
+     * @param buffer   If non-null and the location is invalid, will be appended with an explanation
+     *
      * @return Whether the equipment can be mounted in the location on the ProtoMek
      */
     public static boolean isValidProtoMekLocation(ProtoMek protoMek, EquipmentType eq, int location,
-            @Nullable StringBuffer buffer) {
+          @Nullable StringBuffer buffer) {
         if (eq instanceof MiscType) {
             if (eq.hasFlag(MiscType.F_PROTOMEK_MELEE) && eq.hasSubType(MiscType.S_PROTOMEK_WEAPON)
-                    && (location != ProtoMek.LOC_LARM) && (location != ProtoMek.LOC_RARM)) {
+                  && (location != ProtoMek.LOC_LARM) && (location != ProtoMek.LOC_RARM)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
                 }
                 return false;
             }
             if ((eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)
-                    || (eq.hasFlag(MiscType.F_PROTOMEK_MELEE) && eq.hasSubType(MiscType.S_PROTO_QMS)))
-                    && (location != ProtoMek.LOC_TORSO)) {
+                  || (eq.hasFlag(MiscType.F_PROTOMEK_MELEE) && eq.hasSubType(MiscType.S_PROTO_QMS)))
+                  && (location != ProtoMek.LOC_TORSO)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in the torso.\n");
                 }
@@ -383,7 +404,7 @@ public class TestProtoMek extends TestEntity {
         } else if (TestProtoMek.maxSlotsByLocation(location, protoMek) == 0) {
             if (buffer != null) {
                 buffer.append(eq.getName()).append(" cannot be mounted in the ")
-                        .append(protoMek.getLocationName(location)).append("\n");
+                      .append(protoMek.getLocationName(location)).append("\n");
             }
             return false;
         }
@@ -391,10 +412,10 @@ public class TestProtoMek extends TestEntity {
     }
 
     /**
-     * Checks for exceeding the maximum number of armor points by location for the
-     * tonnage.
+     * Checks for exceeding the maximum number of armor points by location for the tonnage.
      *
      * @param buffer A string buffer for appending error messages.
+     *
      * @return Whether the number of armor points is legal
      */
     public boolean correctArmor(StringBuffer buffer) {
@@ -402,8 +423,8 @@ public class TestProtoMek extends TestEntity {
         for (int loc = 0; loc < proto.locations(); loc++) {
             if (proto.getOArmor(loc) > maxArmorFactor(proto, loc)) {
                 buffer.append(proto.getLocationAbbr(loc))
-                        .append(" exceeds maximum of ")
-                        .append(maxArmorFactor(proto, loc)).append(" armor points.\n");
+                      .append(" exceeds maximum of ")
+                      .append(maxArmorFactor(proto, loc)).append(" armor points.\n");
                 correct = false;
             }
         }
@@ -413,10 +434,10 @@ public class TestProtoMek extends TestEntity {
     }
 
     /**
-     * Checks whether the protoMek meets the minimum MP requirements for the
-     * configuration.
+     * Checks whether the protoMek meets the minimum MP requirements for the configuration.
      *
      * @param buffer A buffer for error messages
+     *
      * @return Whether the MP is legal.
      */
     public boolean correctMovement(StringBuffer buffer) {
@@ -451,7 +472,7 @@ public class TestProtoMek extends TestEntity {
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {
             buff.append("Weight: ").append(getWeight() * 1000).append(" kg (")
-                    .append(calculateWeight() * 1000).append(" kg)\n");
+                  .append(calculateWeight() * 1000).append(" kg)\n");
         }
         buff.append(printWeightCalculation()).append("\n");
         buff.append(printArmorPlacement());
@@ -487,6 +508,7 @@ public class TestProtoMek extends TestEntity {
      * Determine the minimum walk MP for the ProtoMek based on configuration
      *
      * @param proto The ProtoMek
+     *
      * @return The minimum walk MP
      */
     public int getMinimumWalkMP(ProtoMek proto) {
@@ -503,11 +525,12 @@ public class TestProtoMek extends TestEntity {
      * Computes the required engine rating
      *
      * @param proto The ProtoMek
+     *
      * @return The engine rating required for the weight, speed, and configuration
      */
     public static int calcEngineRating(ProtoMek proto) {
         return calcEngineRating(proto.getOriginalWalkMP(),
-                proto.getWeight(), proto.isQuad() || proto.isGlider());
+              proto.getWeight(), proto.isQuad() || proto.isGlider());
     }
 
     /**
@@ -516,6 +539,7 @@ public class TestProtoMek extends TestEntity {
      * @param walkMP       The base walking MP
      * @param tonnage      The weight of the ProtoMek in tons
      * @param quadOrGlider Whether the ProtoMek is a quad or glider configuration
+     *
      * @return The engine rating required for the weight, speed, and configuration
      */
     public static int calcEngineRating(int walkMP, double tonnage, boolean quadOrGlider) {
@@ -536,10 +560,10 @@ public class TestProtoMek extends TestEntity {
     }
 
     /**
-     * Determines whether a piece of equipment counts toward the slot and weight
-     * limits of a location.
+     * Determines whether a piece of equipment counts toward the slot and weight limits of a location.
      *
      * @param etype The equipment
+     *
      * @return Whether the equipment takes a slot.
      */
     public static boolean requiresSlot(EquipmentType etype) {
@@ -548,8 +572,8 @@ public class TestProtoMek extends TestEntity {
         }
         if (etype instanceof MiscType) {
             return !(etype.hasFlag(MiscType.F_MASC)
-                    || etype.hasFlag(MiscType.F_UMU)
-                    || etype.hasFlag(MiscType.F_JUMP_JET));
+                  || etype.hasFlag(MiscType.F_UMU)
+                  || etype.hasFlag(MiscType.F_JUMP_JET));
         }
         return true;
     }
@@ -559,6 +583,7 @@ public class TestProtoMek extends TestEntity {
      *
      * @param loc   The ProtoMek location
      * @param proto The ProtoMek
+     *
      * @return The number of equipment slots in the location
      */
     public static int maxSlotsByLocation(int loc, ProtoMek proto) {
@@ -571,6 +596,7 @@ public class TestProtoMek extends TestEntity {
      * @param loc   The ProtoMek location
      * @param quad  Whether the ProtoMek is a quad
      * @param ultra Whether the ProtoMek is ultraheavy
+     *
      * @return The number of equipment slots in the location
      */
     public static int maxSlotsByLocation(int loc, boolean quad, boolean ultra) {
@@ -602,6 +628,7 @@ public class TestProtoMek extends TestEntity {
      *
      * @param loc   The Protomek location
      * @param proto The Protomek
+     *
      * @return The weight limit for that location, in tons.
      */
     public static double maxWeightByLocation(int loc, ProtoMek proto) {
@@ -614,6 +641,7 @@ public class TestProtoMek extends TestEntity {
      * @param loc   The Protomek location
      * @param quad  Whether the protoMek is a quad
      * @param ultra Whether the protoMek is ultraheavy
+     *
      * @return The weight limit for that location, in tons.
      */
     public static double maxWeightByLocation(int loc, boolean quad, boolean ultra) {
@@ -642,10 +670,10 @@ public class TestProtoMek extends TestEntity {
     private static final int[] MAX_ARMOR_FACTOR = { 15, 17, 22, 24, 33, 35, 40, 42, 51, 53, 58, 60, 65, 67 };
 
     /**
-     * Calculate the maximum armor factor based on weight and whether there is a
-     * main gun location
+     * Calculate the maximum armor factor based on weight and whether there is a main gun location
      *
      * @param proto The protoMek
+     *
      * @return The maximum total number of armor points
      */
     public static int maxArmorFactor(ProtoMek proto) {
@@ -653,11 +681,11 @@ public class TestProtoMek extends TestEntity {
     }
 
     /**
-     * Calculate the maximum armor factor based on weight and whether there is a
-     * main gun location
+     * Calculate the maximum armor factor based on weight and whether there is a main gun location
      *
      * @param weight  The weight of the protoMek in tons
      * @param mainGun Whether the protoMek has a main gun location
+     *
      * @return The maximum total number of armor points
      */
     public static int maxArmorFactor(double weight, boolean mainGun) {
@@ -674,6 +702,7 @@ public class TestProtoMek extends TestEntity {
      *
      * @param proto    The protoMek
      * @param location The location index
+     *
      * @return The maximum total number of armor points
      */
     public static int maxArmorFactor(ProtoMek proto, int location) {
@@ -686,7 +715,7 @@ public class TestProtoMek extends TestEntity {
                 return 0;
             }
         } else if ((location == ProtoMek.LOC_LARM)
-                || (location == ProtoMek.LOC_RARM)) {
+              || (location == ProtoMek.LOC_RARM)) {
             if (proto.isQuad()) {
                 return 0;
             } else if (proto.getWeight() < 6) {

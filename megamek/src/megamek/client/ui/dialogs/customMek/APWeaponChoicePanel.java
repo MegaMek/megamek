@@ -24,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.customMek;
 
@@ -86,7 +91,7 @@ public class APWeaponChoicePanel extends JPanel {
             WeaponType weaponType = it.next();
             comboChoices.addItem(weaponType.getName());
             if ((equipmentType != null) &&
-                      Objects.equals(weaponType.getInternalName(), equipmentType.getInternalName())) {
+                  Objects.equals(weaponType.getInternalName(), equipmentType.getInternalName())) {
                 comboChoices.setSelectedIndex(x);
             }
         }
@@ -135,8 +140,8 @@ public class APWeaponChoicePanel extends JPanel {
                       locationCritical++) {
                     CriticalSlot criticalSlot = entity.getCritical(location, locationCritical);
                     if (criticalSlot != null &&
-                              criticalSlot.getMount() != null &&
-                              criticalSlot.getMount().equals(mAPMountedLinked)) {
+                          criticalSlot.getMount() != null &&
+                          criticalSlot.getMount().equals(mAPMountedLinked)) {
                         entity.setCritical(location, locationCritical, null);
                     }
                 }

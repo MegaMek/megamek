@@ -30,23 +30,35 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
- package megamek.common.util;
+package megamek.common.util;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
-import megamek.common.*;
+import megamek.common.AmmoType;
+import megamek.common.EquipmentMode;
+import megamek.common.EquipmentType;
 import megamek.common.ITechnology.AvailabilityValue;
-import megamek.common.ITechnology.Faction;
-import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.ITechnology.Era;
+import megamek.common.ITechnology.Faction;
+import megamek.common.MiscType;
+import megamek.common.TechAdvancement;
+import megamek.common.TechAdvancement.AdvancementPhase;
+import megamek.common.WeaponType;
 import megamek.logging.MMLogger;
 
 /**
- * Utility class for serializing EquipmentType objects to YAML-compatible data structures.
- * This isolates YAML serialization logic from the core EquipmentType class.
+ * Utility class for serializing EquipmentType objects to YAML-compatible data structures. This isolates YAML
+ * serialization logic from the core EquipmentType class.
  */
 public class YamlSerializerEquipmentType {
     private static final MMLogger logger = MMLogger.create(YamlSerializerEquipmentType.class);
@@ -55,46 +67,47 @@ public class YamlSerializerEquipmentType {
 
     public YamlSerializerEquipmentType() {
     }
-    
+
     /**
      * Constructs a map containing the YAML-serializable data for the given equipment type.
-     * 
+     *
      * @param equipment The equipment type to serialize
+     *
      * @return A map containing the YAML-serializable data for the equipment type
      */
     public Map<String, Object> serialize(EquipmentType equipment) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("version", VERSION);
-        
+
         // Basic identification
         addBasicIdentification(data, equipment);
-        
+
         // Equipment statistics
         addStatistics(data, equipment);
-        
+
         // Equipment modes
         addModes(data, equipment);
-        
+
         // Technology advancement
         addTechAdvancement(data, equipment);
-        
+
         return data;
     }
-    
+
     /**
      * Adds basic identification information to the YAML data map.
      */
     private void addBasicIdentification(Map<String, Object> data, EquipmentType equipment) {
         data.put("id", equipment.getInternalName());
         data.put("name", equipment.getName());
-        
+
         YamlEncDec.addPropIfNotEmpty(data, "shortName", equipment.getShortName());
         YamlEncDec.addPropIfNotEmpty(data, "sortingName", equipment.getSortingName());
         YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", equipment.getRulesRefs());
-        
+
         addAliases(data, equipment);
     }
-    
+
     /**
      * Adds alias names to the YAML data map, excluding duplicates.
      */
@@ -103,42 +116,43 @@ public class YamlSerializerEquipmentType {
         if (names == null || !names.hasMoreElements()) {
             return;
         }
-        
+
         Set<String> uniqueAliases = new LinkedHashSet<>();
-        
+
         while (names.hasMoreElements()) {
             String aliasName = names.nextElement();
             if (aliasName != null && !aliasName.trim().isEmpty()) {
                 if (aliasName.equals(equipment.getInternalName())
-                        || aliasName.equals(equipment.getName())
-                        || aliasName.equals(equipment.getShortName())) {
+                      || aliasName.equals(equipment.getName())
+                      || aliasName.equals(equipment.getShortName())) {
                     continue;
                 }
                 uniqueAliases.add(aliasName);
             }
         }
-        
+
         if (!uniqueAliases.isEmpty()) {
             data.put("aliases", new ArrayList<>(uniqueAliases));
         }
     }
-    
+
     /**
      * Gets the value of a field directly using reflection, avoiding method calls.
-     * 
-     * @param object The object to get the field value from
+     *
+     * @param object    The object to get the field value from
      * @param fieldName The name of the field
+     *
      * @return The field value, or null if the field cannot be accessed
      */
     protected static Object getFieldValue(Object object, String fieldName) {
         if (object == null) {
             return null;
         }
-        
+
         try {
             Class<?> clazz = object.getClass();
             Field field = null;
-            
+
             // Search for the field in the class hierarchy
             while (clazz != null && field == null) {
                 try {
@@ -147,43 +161,52 @@ public class YamlSerializerEquipmentType {
                     clazz = clazz.getSuperclass();
                 }
             }
-            
+
             if (field == null) {
-                logger.warn("Field '{}' not found in class hierarchy of {}", fieldName, object.getClass().getSimpleName());
+                logger.warn("Field '{}' not found in class hierarchy of {}",
+                      fieldName,
+                      object.getClass().getSimpleName());
                 return null;
             }
-            
+
             field.setAccessible(true);
             return field.get(object);
-            
+
         } catch (IllegalAccessException | SecurityException e) {
-            logger.warn("Failed to access field '{}' in {}: {}", fieldName, object.getClass().getSimpleName(), e.getMessage());
+            logger.warn("Failed to access field '{}' in {}: {}",
+                  fieldName,
+                  object.getClass().getSimpleName(),
+                  e.getMessage());
             return null;
         }
     }
-    
+
     /**
      * Gets a typed field value.
-     * 
-     * @param <T> The expected type of the field
-     * @param object The object to get the field value from
-     * @param fieldName The name of the field
+     *
+     * @param <T>          The expected type of the field
+     * @param object       The object to get the field value from
+     * @param fieldName    The name of the field
      * @param expectedType The expected type of the field
+     *
      * @return The field value cast to the expected type, or null if not accessible or wrong type
      */
     @SuppressWarnings("unchecked")
     private static <T> T getTypedFieldValue(Object object, String fieldName, Class<T> expectedType) {
         Object value = getFieldValue(object, fieldName);
-        
+
         if (value == null) {
             return null;
         }
-        
+
         if (expectedType.isInstance(value)) {
             return (T) value;
         }
-        
-        logger.warn("Field '{}' has type {} but expected {}", fieldName, value.getClass().getSimpleName(), expectedType.getSimpleName());
+
+        logger.warn("Field '{}' has type {} but expected {}",
+              fieldName,
+              value.getClass().getSimpleName(),
+              expectedType.getSimpleName());
         return null;
     }
 
@@ -203,44 +226,75 @@ public class YamlSerializerEquipmentType {
     protected static String getStringFieldValue(Object object, String fieldName) {
         return getTypedFieldValue(object, fieldName, String.class);
     }
-    
+
     /**
      * Adds equipment statistics to the YAML data map.
      */
     private void addStatistics(Map<String, Object> data, EquipmentType equipment) {
         EquipmentType defaultEquipment = createDefaultInstance(equipment);
         Map<String, Object> stats = new LinkedHashMap<>();
-        
+
         // Core statistics
-        addVariableOrFixedValue(stats, "tonnage", getDoubleFieldValue(equipment, "tonnage"), equipment::isVariableTonnage);
+        addVariableOrFixedValue(stats,
+              "tonnage",
+              getDoubleFieldValue(equipment, "tonnage"),
+              equipment::isVariableTonnage);
         addVariableOrFixedValue(stats, "cost", getDoubleFieldValue(equipment, "cost"), equipment::isVariableCost);
         addVariableOrFixedValue(stats, "bv", getDoubleFieldValue(equipment, "bv"), equipment::isVariableBV);
-        addVariableOrFixedValue(stats, "criticals", getIntegerFieldValue(equipment, "criticals"), equipment::isVariableCriticals);
+        addVariableOrFixedValue(stats,
+              "criticals",
+              getIntegerFieldValue(equipment, "criticals"),
+              equipment::isVariableCriticals);
 
         // Optional statistics
-        YamlEncDec.addPropIfNotDefault(stats, "hittable", getBooleanFieldValue(equipment, "hittable"), getBooleanFieldValue(defaultEquipment, "hittable"));
-        YamlEncDec.addPropIfNotDefault(stats, "spreadable", getBooleanFieldValue(equipment, "spreadable"), getBooleanFieldValue(defaultEquipment, "spreadable"));
-        YamlEncDec.addPropIfNotDefault(stats, "explosive", getBooleanFieldValue(equipment, "explosive"), getBooleanFieldValue(defaultEquipment, "explosive"));
-        YamlEncDec.addPropIfNotDefault(stats, "toHitModifier", getIntegerFieldValue(equipment, "toHitModifier"), getIntegerFieldValue(defaultEquipment, "toHitModifier"));
-        YamlEncDec.addPropIfNotDefault(stats, "tankslots", getIntegerFieldValue(equipment, "tankslots"), getIntegerFieldValue(defaultEquipment, "tankslots"));
-        YamlEncDec.addPropIfNotDefault(stats, "svslots", getIntegerFieldValue(equipment, "svslots"), getIntegerFieldValue(defaultEquipment, "svslots"));
-        YamlEncDec.addPropIfNotDefault(stats, "omniFixedOnly", getBooleanFieldValue(equipment, "omniFixedOnly"), getBooleanFieldValue(defaultEquipment, "omniFixedOnly"));
-        YamlEncDec.addPropIfNotDefault(stats, "instantModeSwitch", getBooleanFieldValue(equipment, "instantModeSwitch"), getBooleanFieldValue(defaultEquipment, "instantModeSwitch"));
+        YamlEncDec.addPropIfNotDefault(stats,
+              "hittable",
+              getBooleanFieldValue(equipment, "hittable"),
+              getBooleanFieldValue(defaultEquipment, "hittable"));
+        YamlEncDec.addPropIfNotDefault(stats,
+              "spreadable",
+              getBooleanFieldValue(equipment, "spreadable"),
+              getBooleanFieldValue(defaultEquipment, "spreadable"));
+        YamlEncDec.addPropIfNotDefault(stats,
+              "explosive",
+              getBooleanFieldValue(equipment, "explosive"),
+              getBooleanFieldValue(defaultEquipment, "explosive"));
+        YamlEncDec.addPropIfNotDefault(stats,
+              "toHitModifier",
+              getIntegerFieldValue(equipment, "toHitModifier"),
+              getIntegerFieldValue(defaultEquipment, "toHitModifier"));
+        YamlEncDec.addPropIfNotDefault(stats,
+              "tankslots",
+              getIntegerFieldValue(equipment, "tankslots"),
+              getIntegerFieldValue(defaultEquipment, "tankslots"));
+        YamlEncDec.addPropIfNotDefault(stats,
+              "svslots",
+              getIntegerFieldValue(equipment, "svslots"),
+              getIntegerFieldValue(defaultEquipment, "svslots"));
+        YamlEncDec.addPropIfNotDefault(stats,
+              "omniFixedOnly",
+              getBooleanFieldValue(equipment, "omniFixedOnly"),
+              getBooleanFieldValue(defaultEquipment, "omniFixedOnly"));
+        YamlEncDec.addPropIfNotDefault(stats,
+              "instantModeSwitch",
+              getBooleanFieldValue(equipment, "instantModeSwitch"),
+              getBooleanFieldValue(defaultEquipment, "instantModeSwitch"));
 
         data.put("stats", stats);
     }
-    
+
     /**
      * Adds a value to the map, using VARIABLE constant if the value is variable.
      */
-    private void addVariableOrFixedValue(Map<String, Object> map, String key, Object value, BooleanSupplier isVariable) {
+    private void addVariableOrFixedValue(Map<String, Object> map, String key, Object value,
+          BooleanSupplier isVariable) {
         if (isVariable.getAsBoolean()) {
             map.put(key, VARIABLE);
         } else {
             map.put(key, value);
         }
     }
-    
+
     /**
      * Creates a default instance of the appropriate equipment type for comparison.
      */
@@ -261,7 +315,7 @@ public class YamlSerializerEquipmentType {
             return new EquipmentType();
         }
     }
-    
+
     /**
      * Adds equipment modes to the YAML data map.
      */
@@ -269,22 +323,22 @@ public class YamlSerializerEquipmentType {
         if (!equipment.hasModes()) {
             return;
         }
-        
+
         List<String> modeNames = new ArrayList<>();
         Enumeration<EquipmentMode> modes = equipment.getModes();
-        
+
         while (modes.hasMoreElements()) {
             EquipmentMode mode = modes.nextElement();
             if (mode != null && mode.getName() != null) {
                 modeNames.add(mode.getName());
             }
         }
-        
+
         if (!modeNames.isEmpty()) {
             data.put("modes", modeNames);
         }
     }
-    
+
     /**
      * Adds technology advancement information to the YAML data map.
      */
@@ -293,29 +347,29 @@ public class YamlSerializerEquipmentType {
         if (techAdvancement == null) {
             return;
         }
-        
+
         EquipmentType defaultEquipment = createDefaultInstance(equipment);
         TechAdvancement defaultTech = defaultEquipment.getTechAdvancement();
-        
+
         Map<String, Object> techData = new LinkedHashMap<>();
-        
+
         // Basic tech information
         techData.put("base", techAdvancement.getTechBase().name().toLowerCase());
         techData.put("rating", techAdvancement.getTechRating().name());
         techData.put("level", techAdvancement.getStaticTechLevel().name().toLowerCase());
-        
+
         // Availability by era
         addAvailabilityData(techData, techAdvancement);
-        
+
         // Advancement dates
         addAdvancementData(techData, techAdvancement, defaultTech);
-        
+
         // Faction information
         addFactionData(techData, techAdvancement);
-        
+
         data.put("tech", techData);
     }
-    
+
     /**
      * Adds availability information by era to the technology data.
      */
@@ -327,85 +381,87 @@ public class YamlSerializerEquipmentType {
         }
         techData.put("availability", availability);
     }
-    
+
     /**
      * Adds advancement phase dates to the technology data.
      */
-    private void addAdvancementData(Map<String, Object> techData, TechAdvancement techAdvancement, TechAdvancement defaultTech) {
+    private void addAdvancementData(Map<String, Object> techData, TechAdvancement techAdvancement,
+          TechAdvancement defaultTech) {
         Map<String, Object> advancement = new LinkedHashMap<>();
-        
+
         Map<String, Object> advancementIS = createAdvancementPhaseMap(false, techAdvancement, defaultTech);
         Map<String, Object> advancementClan = createAdvancementPhaseMap(true, techAdvancement, defaultTech);
-        
+
         if (!advancementIS.isEmpty()) {
             advancement.put("is", advancementIS);
         }
         if (!advancementClan.isEmpty()) {
             advancement.put("clan", advancementClan);
         }
-        
+
         if (!advancement.isEmpty()) {
             techData.put("advancement", advancement);
         }
     }
-    
+
     /**
      * Creates advancement phase map for IS or Clan technology.
      */
-    private Map<String, Object> createAdvancementPhaseMap(boolean isClan, TechAdvancement techAdvancement, TechAdvancement defaultTech) {
+    private Map<String, Object> createAdvancementPhaseMap(boolean isClan, TechAdvancement techAdvancement,
+          TechAdvancement defaultTech) {
         Map<String, Object> advancementMap = new LinkedHashMap<>();
-        
+
         for (AdvancementPhase phase : AdvancementPhase.values()) {
-            Integer advancement = isClan ? techAdvancement.getClanAdvancement(phase) 
-                                       : techAdvancement.getISAdvancement(phase);
+            Integer advancement = isClan ? techAdvancement.getClanAdvancement(phase)
+                  : techAdvancement.getISAdvancement(phase);
             if (advancement == null) {
                 continue;
             }
-            
-            boolean isApproximate = isClan ? techAdvancement.getClanApproximate(phase) 
-                                          : techAdvancement.getISApproximate(phase);
+
+            boolean isApproximate = isClan ? techAdvancement.getClanApproximate(phase)
+                  : techAdvancement.getISApproximate(phase);
             String advancementStr = (isApproximate ? "~" : "") + advancement;
-            
+
             String defaultAdvancementStr = getDefaultAdvancementString(phase, isClan, defaultTech);
-            
+
             YamlEncDec.addPropIfNotDefault(advancementMap, phase.name().toLowerCase(),
                   advancementStr, defaultAdvancementStr);
         }
-        
+
         return advancementMap;
     }
-    
+
     /**
      * Gets the default advancement string for comparison.
      */
     private String getDefaultAdvancementString(AdvancementPhase phase, boolean isClan, TechAdvancement defaultTech) {
-        Integer defaultAdvancement = isClan ? defaultTech.getClanAdvancement(phase) 
-                                           : defaultTech.getISAdvancement(phase);
+        Integer defaultAdvancement = isClan ? defaultTech.getClanAdvancement(phase)
+              : defaultTech.getISAdvancement(phase);
         if (defaultAdvancement == null) {
             return null;
         }
-        
-        boolean defaultApproximate = isClan ? defaultTech.getClanApproximate(phase) 
-                                           : defaultTech.getISApproximate(phase);
+
+        boolean defaultApproximate = isClan ? defaultTech.getClanApproximate(phase)
+              : defaultTech.getISApproximate(phase);
         return (defaultApproximate ? "~" : "") + defaultAdvancement;
     }
-    
+
     /**
      * Adds faction information to the technology data.
      */
     private void addFactionData(Map<String, Object> techData, TechAdvancement techAdvancement) {
         Map<String, Object> factions = new LinkedHashMap<>();
-        
+
         addFactionList(factions, "prototype", techAdvancement.getPrototypeFactions());
         addFactionList(factions, "production", techAdvancement.getProductionFactions());
         addFactionList(factions, "extinction", techAdvancement.getExtinctionFactions());
         addFactionList(factions, "reintroduction", techAdvancement.getReintroductionFactions());
-        
+
         if (!factions.isEmpty()) {
             techData.put("factions", factions);
         }
     }
-    
+
     /**
      * Adds a faction list to the factions map if not empty.
      */
@@ -413,13 +469,13 @@ public class YamlSerializerEquipmentType {
         if (factionSet == null || factionSet.isEmpty()) {
             return;
         }
-        
+
         List<String> factionCodes = factionSet.stream()
-            .filter(Objects::nonNull)
-            .map(Faction::getCodeMM)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-        
+              .filter(Objects::nonNull)
+              .map(Faction::getCodeMM)
+              .filter(Objects::nonNull)
+              .collect(Collectors.toList());
+
         if (!factionCodes.isEmpty()) {
             factions.put(key, factionCodes);
         }

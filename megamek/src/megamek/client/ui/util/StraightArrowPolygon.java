@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 
 package megamek.client.ui.util;
 
@@ -18,14 +39,13 @@ import java.awt.Point;
 import java.awt.Polygon;
 
 /**
- * This class calculates and stores points of polygon shaped as straight arrow.
- * Minimum required arguments are two Point elements - start and end of arrow.
+ * This class calculates and stores points of polygon shaped as straight arrow. Minimum required arguments are two Point
+ * elements - start and end of arrow.
  * <p> Special feature of this class is last boolean argument. It defines if it
- * will be full shaped arrow or left half only. Private Polygon hotArea contains
- * same points as an arrow itself except when arrow is changed to halved hotArea
- * stays if full arrow shape. It was done in order to get only one tooltip for
+ * will be full shaped arrow or left half only. Private Polygon hotArea contains same points as an arrow itself except
+ * when arrow is changed to halved hotArea stays if full arrow shape. It was done in order to get only one tooltip for
  * two arrows in case of mutual attack.
- * 
+ *
  * @author Slava Zipunov (zipp32)
  */
 public class StraightArrowPolygon extends Polygon {
@@ -44,8 +64,8 @@ public class StraightArrowPolygon extends Polygon {
      * Most extencive constructor with all paremeters given
      */
     public StraightArrowPolygon(Point startPoint, Point endPoint,
-            int headLength, int headWidth, int arrowWidthAtHead, int tailWidth,
-            int tailLength, boolean halved) {
+          int headLength, int headWidth, int arrowWidthAtHead, int tailWidth,
+          int tailLength, boolean halved) {
         super();
         this.startPoint = startPoint;
         this.endPoint = endPoint;
@@ -72,7 +92,7 @@ public class StraightArrowPolygon extends Polygon {
      * One more constructor
      */
     public StraightArrowPolygon(Point startPoint, Point endPoint, int width,
-            boolean halved) {
+          boolean halved) {
         super();
         this.startPoint = startPoint;
         this.endPoint = endPoint;
@@ -87,7 +107,7 @@ public class StraightArrowPolygon extends Polygon {
      * I know, it is annoying, but another constructor
      */
     public StraightArrowPolygon(Point startPoint, Point endPoint, int width,
-            int headWidth, boolean halved) {
+          int headWidth, boolean halved) {
         super();
         this.startPoint = startPoint;
         this.endPoint = endPoint;
@@ -109,46 +129,46 @@ public class StraightArrowPolygon extends Polygon {
         double cos = dX / arrowLength;
         this.addPoint(startPoint.x, startPoint.y);
         this.addPoint((int) Math.round(startPoint.x + tailWidth * sin
-                - tailLength * cos), (int) Math.round(startPoint.y - tailWidth
-                * cos - tailLength * sin));
+              - tailLength * cos), (int) Math.round(startPoint.y - tailWidth
+              * cos - tailLength * sin));
         this.addPoint((int) Math.round(endPoint.x - headLength * cos
-                + arrowWidthAtHead * sin), (int) Math.round(endPoint.y
-                - headLength * sin - arrowWidthAtHead * cos));
+              + arrowWidthAtHead * sin), (int) Math.round(endPoint.y
+              - headLength * sin - arrowWidthAtHead * cos));
         this.addPoint((int) Math.round(endPoint.x - headLength * cos
-                + headWidth * sin), (int) Math.round(endPoint.y - headLength
-                * sin - headWidth * cos));
+              + headWidth * sin), (int) Math.round(endPoint.y - headLength
+              * sin - headWidth * cos));
         this.addPoint(endPoint.x, endPoint.y);
         if (!halved) {
             this.addPoint((int) Math.round(endPoint.x - headLength * cos
-                    - headWidth * sin), (int) Math.round(endPoint.y
-                    - headLength * sin + headWidth * cos));
+                  - headWidth * sin), (int) Math.round(endPoint.y
+                  - headLength * sin + headWidth * cos));
             this.addPoint((int) Math.round(endPoint.x - headLength * cos
-                    - arrowWidthAtHead * sin), (int) Math.round(endPoint.y
-                    - headLength * sin + arrowWidthAtHead * cos));
+                  - arrowWidthAtHead * sin), (int) Math.round(endPoint.y
+                  - headLength * sin + arrowWidthAtHead * cos));
             this.addPoint((int) Math.round(startPoint.x - tailWidth * sin
-                    - tailLength * cos), (int) Math.round(startPoint.y
-                    + tailWidth * cos - tailLength * sin));
+                  - tailLength * cos), (int) Math.round(startPoint.y
+                  + tailWidth * cos - tailLength * sin));
         }
         hotArea.addPoint(startPoint.x, startPoint.y);
         hotArea.addPoint((int) Math.round(startPoint.x + tailWidth * sin
-                - tailLength * cos), (int) Math.round(startPoint.y - tailWidth
-                * cos - tailLength * sin));
+              - tailLength * cos), (int) Math.round(startPoint.y - tailWidth
+              * cos - tailLength * sin));
         hotArea.addPoint((int) Math.round(endPoint.x - headLength * cos
-                + arrowWidthAtHead * sin), (int) Math.round(endPoint.y
-                - headLength * sin - arrowWidthAtHead * cos));
+              + arrowWidthAtHead * sin), (int) Math.round(endPoint.y
+              - headLength * sin - arrowWidthAtHead * cos));
         hotArea.addPoint((int) Math.round(endPoint.x - headLength * cos
-                + headWidth * sin), (int) Math.round(endPoint.y - headLength
-                * sin - headWidth * cos));
+              + headWidth * sin), (int) Math.round(endPoint.y - headLength
+              * sin - headWidth * cos));
         hotArea.addPoint(endPoint.x, endPoint.y);
         hotArea.addPoint((int) Math.round(endPoint.x - headLength * cos
-                - headWidth * sin), (int) Math.round(endPoint.y - headLength
-                * sin + headWidth * cos));
+              - headWidth * sin), (int) Math.round(endPoint.y - headLength
+              * sin + headWidth * cos));
         hotArea.addPoint((int) Math.round(endPoint.x - headLength * cos
-                - arrowWidthAtHead * sin), (int) Math.round(endPoint.y
-                - headLength * sin + arrowWidthAtHead * cos));
+              - arrowWidthAtHead * sin), (int) Math.round(endPoint.y
+              - headLength * sin + arrowWidthAtHead * cos));
         hotArea.addPoint((int) Math.round(startPoint.x - tailWidth * sin
-                - tailLength * cos), (int) Math.round(startPoint.y + tailWidth
-                * cos - tailLength * sin));
+              - tailLength * cos), (int) Math.round(startPoint.y + tailWidth
+              * cos - tailLength * sin));
     }
 
     @Override

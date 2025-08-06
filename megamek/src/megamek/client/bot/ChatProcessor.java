@@ -56,8 +56,8 @@ public class ChatProcessor {
     boolean shouldBotAcknowledgeDefeat(String message, BotClient bot) {
         boolean result = false;
         if (!StringUtility.isNullOrBlank(message) &&
-                  (message.contains("declares individual victory at the end of the turn.") ||
-                         message.contains("declares team victory at the end of the turn."))) {
+              (message.contains("declares individual victory at the end of the turn.") ||
+                    message.contains("declares team victory at the end of the turn."))) {
             String[] splitMessage = message.split(" ");
             int i = 1;
             StringBuilder name = new StringBuilder(splitMessage[i]);
@@ -192,7 +192,7 @@ public class ChatProcessor {
         if (tokenizer.hasMoreElements()) {
             String[] additionalArguments = tokenizer.nextToken().trim().split(" ");
             arguments = Stream.concat(Arrays.stream(arguments), Arrays.stream(additionalArguments))
-                              .toArray(String[]::new);
+                  .toArray(String[]::new);
         }
 
 
@@ -222,7 +222,7 @@ public class ChatProcessor {
     private static void processChatCommand(Princess princess, String command, String[] arguments) {
         for (ChatCommands cmd : ChatCommands.values()) {
             if (command.toLowerCase().equalsIgnoreCase(cmd.getAbbreviation()) ||
-                      command.toLowerCase().equalsIgnoreCase(cmd.getCommand())) {
+                  command.toLowerCase().equalsIgnoreCase(cmd.getCommand())) {
                 try {
                     Arguments args = ArgumentsParser.parse(arguments, cmd.getChatCommand().defineArguments());
                     cmd.getChatCommand().execute(princess, args);

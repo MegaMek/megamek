@@ -1,21 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.client.bot;
@@ -40,7 +54,7 @@ public final class PhysicalCalculator {
     }
 
     public static PhysicalOption getBestPhysical(Entity entity, Game game, BehaviorSettings behaviorSettings,
-                                                 IHonorUtil honorUtil) {
+          IHonorUtil honorUtil) {
         // Infantry can't conduct physical attacks.
         if (entity instanceof Infantry) {
             return null;
@@ -450,7 +464,7 @@ public final class PhysicalCalculator {
                     // Get the base damage from target falling, multiplied by
                     // the elevation difference
                     dmg = calculateFallingDamage(Compute.oddsAbove(odds.getValue(), toAptPiloting) / 100.0, to) *
-                                (1.0 + elev_diff);
+                          (1.0 + elev_diff);
                     // Calculate breach factor of falling damage
                     breach = punchThroughMod(to, ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, dmg, Math.min(dmg, 5.0));
                     // If breach factor is > 1 and displacement hex has water
@@ -521,8 +535,8 @@ public final class PhysicalCalculator {
     private static double calculateFallingDamage(double odds, Entity ent) {
         double dmg = odds;
         dmg *= 1.0 -
-                     (Compute.oddsAbove(ent.getBasePilotingRoll().getValue(),
-                           ent.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)) / 100.0);
+              (Compute.oddsAbove(ent.getBasePilotingRoll().getValue(),
+                    ent.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)) / 100.0);
         dmg *= ent.getWeight() * 0.1;
         return dmg;
     }
@@ -658,14 +672,14 @@ public final class PhysicalCalculator {
             if (hitTable == ToHitData.HIT_KICK) {
                 max_index = -1;
                 if ((hitSide == ToHitData.SIDE_FRONT) ||
-                          (hitSide == ToHitData.SIDE_REAR) ||
-                          (hitSide == ToHitData.SIDE_RIGHT)) {
+                      (hitSide == ToHitData.SIDE_REAR) ||
+                      (hitSide == ToHitData.SIDE_RIGHT)) {
                     max_index++;
                     armor_values[max_index] = target.getArmor(Mek.LOC_RLEG, false);
                 }
                 if ((hitSide == ToHitData.SIDE_FRONT) ||
-                          (hitSide == ToHitData.SIDE_REAR) ||
-                          (hitSide == ToHitData.SIDE_LEFT)) {
+                      (hitSide == ToHitData.SIDE_REAR) ||
+                      (hitSide == ToHitData.SIDE_LEFT)) {
                     max_index++;
                     armor_values[max_index] = target.getArmor(Mek.LOC_LLEG, false);
                 }

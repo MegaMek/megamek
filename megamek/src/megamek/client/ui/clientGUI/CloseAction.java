@@ -24,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI;
 
@@ -79,10 +84,10 @@ public class CloseAction extends AbstractAction {
     @Override
     public String toString() {
         return "CloseAction{" +
-                     "owner=" +
-                     (owner != null ? owner.getClass().getSimpleName() : "null") +
-                     ", name=" +
-                     getValue(NAME) +
-                     '}';
+              "owner=" +
+              (owner != null ? owner.getClass().getSimpleName() : "null") +
+              ", name=" +
+              getValue(NAME) +
+              '}';
     }
 }

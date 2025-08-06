@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.options;
 
 import java.util.Enumeration;
@@ -19,9 +40,8 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 /**
- * Abstract base class for Singletons representing Options' static information
- * such as displayable name, description etc. The derived classes must implement
- * the Singleton pattern
+ * Abstract base class for Singletons representing Options' static information such as displayable name, description
+ * etc. The derived classes must implement the Singleton pattern
  */
 public class AbstractOptionsInfo implements IOptionsInfo {
     protected static final String GROUP_SUFFIX = ".group.";
@@ -30,9 +50,8 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     protected static final String DESCRIPTION_SUFFIX = ".description";
 
     /**
-     * The OptionsInfo name that must be unique. Every instance of the
-     * AbstractOptionsInfo must have unique name, it's used to query the NLS
-     * dependent information from the common resource bundle.
+     * The OptionsInfo name that must be unique. Every instance of the AbstractOptionsInfo must have unique name, it's
+     * used to query the NLS dependent information from the common resource bundle.
      *
      * @see #getOptionDisplayableName
      * @see #getGroupDisplayableName
@@ -41,22 +60,20 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     private final String name;
 
     /**
-     * Hashtable of the <code>OptionInfo</code> used to store/find option
-     * info.
+     * Hashtable of the <code>OptionInfo</code> used to store/find option info.
      */
     private final Hashtable<String, OptionInfo> optionsHash = new Hashtable<>();
 
     /**
-     * List of option groups. The order of groups is important. The first group
-     * added by <code>addGroup</code> is the first in the
+     * List of option groups. The order of groups is important. The first group added by <code>addGroup</code> is the
+     * first in the
      * <code>Enumeration</code> returned by <code>getGroups</code>
      */
     private final Vector<IBasicOptionGroup> groups = new Vector<>();
 
     /**
-     * Flag that indicates that this filling the options info data is
-     * completed. <code>addGroup</code> and <code>addOptionInfo</code> will
-     * have no effect if it's <code>true</code>
+     * Flag that indicates that this filling the options info data is completed. <code>addGroup</code> and
+     * <code>addOptionInfo</code> will have no effect if it's <code>true</code>
      *
      * @see #finish
      * @see #addGroup
@@ -65,17 +82,15 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     private boolean finished;
 
     /**
-     * The <code>HashSet</code> used to check if the options info is already
-     * registered
+     * The <code>HashSet</code> used to check if the options info is already registered
      *
      * @see AbstractOptionsInfo()
      */
     private static final HashSet<String> names = new HashSet<>();
 
     /**
-     * Protected constructor. It is called only by descendants. The name must be
-     * unique because it's used to query the NLS dependent information from the
-     * resource bundle.
+     * Protected constructor. It is called only by descendants. The name must be unique because it's used to query the
+     * NLS dependent information from the resource bundle.
      *
      * @param name options info name
      */
@@ -123,7 +138,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
             }
             if (group == null) {
                 group = (key == null ? new OptionGroup(name) : new OptionGroup(
-                        name, key));
+                      name, key));
                 groups.addElement(group);
             }
         }
@@ -138,10 +153,10 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     }
 
     /**
-     * Returns the user-friendly NLS dependent name suitable for displaying in
-     * the options editor dialogs etc.
+     * Returns the user-friendly NLS dependent name suitable for displaying in the options editor dialogs etc.
      *
      * @param groupName the group name which we want the display format
+     *
      * @return group displayable name
      */
     protected String getGroupDisplayableName(String groupName) {
@@ -149,16 +164,15 @@ public class AbstractOptionsInfo implements IOptionsInfo {
             IBasicOptionGroup g = groups.elementAt(i);
             if (g != null && g.getName().equals(groupName)) {
                 return Messages.getString(name + GROUP_SUFFIX + groupName
-                        + DISPLAYABLE_NAME_SUFFIX);
+                      + DISPLAYABLE_NAME_SUFFIX);
             }
         }
         return null;
     }
 
     /**
-     * Records that filling of this structure is finished. <code>addGroup</code>
-     * and <code>addOptionInfo</code> will have no effect after call of this
-     * function
+     * Records that filling of this structure is finished. <code>addGroup</code> and <code>addOptionInfo</code> will
+     * have no effect after call of this function
      *
      * @see #addGroup
      * @see #addOptionInfo

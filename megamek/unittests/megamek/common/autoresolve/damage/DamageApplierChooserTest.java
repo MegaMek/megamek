@@ -32,18 +32,21 @@
  */
 package megamek.common.autoresolve.damage;
 
-import megamek.common.*;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import megamek.common.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 class DamageApplierChooserTest {
     private enum MekType {
@@ -191,10 +194,10 @@ class DamageApplierChooserTest {
 
     private static void assertCriticalSlotsDestroyed(Entity osiris, int loc) {
         assertAll(osiris.getCriticalSlots(loc).stream()
-                    .filter(Objects::nonNull)
-                    .filter(CriticalSlot::isEverHittable)
-                    .map(criticalSlot -> (Executable) (() -> assertTrue(criticalSlot.isDestroyed(),
-                          "Equipment " + criticalSlot + " should be destroyed"))
-                    ).toList());
+              .filter(Objects::nonNull)
+              .filter(CriticalSlot::isEverHittable)
+              .map(criticalSlot -> (Executable) (() -> assertTrue(criticalSlot.isDestroyed(),
+                    "Equipment " + criticalSlot + " should be destroyed"))
+              ).toList());
     }
 }

@@ -54,7 +54,6 @@ import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.abstractDialogs.AbstractDialog;
 import megamek.client.ui.panels.alphaStrike.ASStatsTablePanel;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Entity;
@@ -197,9 +196,9 @@ public class ASStatsDialog extends AbstractDialog {
 
     private void save() {
         List<AlphaStrikeElement> elements = entities.stream()
-                                                  .filter(ASConverter::canConvert)
-                                                  .map(e -> ASConverter.convert(e, true))
-                                                  .collect(Collectors.toList());
+              .filter(ASConverter::canConvert)
+              .map(e -> ASConverter.convert(e, true))
+              .collect(Collectors.toList());
         if (elements.isEmpty()) {
             return;
         }

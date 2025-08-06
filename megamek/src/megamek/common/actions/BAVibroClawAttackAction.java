@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2008 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2008 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.actions;
 
 import megamek.common.*;
@@ -30,7 +51,7 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
     }
 
     public BAVibroClawAttackAction(int entityId, int targetType,
-            int targetId) {
+          int targetId) {
         super(entityId, targetType, targetId);
     }
 
@@ -43,7 +64,7 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
 
     public ToHitData toHit(Game game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(),
-                getTargetId()));
+              getTargetId()));
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
@@ -68,12 +89,12 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+                  && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                  || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                  && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                  && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "A friendly unit can never be the target of a direct attack.");
+                      "A friendly unit can never be the target of a direct attack.");
             }
         }
 
@@ -90,36 +111,36 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         // can't target yourself
         if ((te != null) && ae.equals(te)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "You can't target yourself");
+                  "You can't target yourself");
         }
 
         // only BA can make this attack
         if (!(ae instanceof BattleArmor)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Non-BA can't make vibroclaw-physicalattacks");
+                  "Non-BA can't make vibroclaw-physicalattacks");
         }
 
         if ((te != null) && !((te instanceof Infantry))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "can't target non-infantry");
+                  "can't target non-infantry");
         }
 
         // need to have vibroclaws to make this attack
         if (ae.getVibroClaws() == 0) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "no vibro claws mounted");
+                  "no vibro claws mounted");
         }
 
         // Can't target a transported entity.
         if ((te != null) && (Entity.NONE != te.getTransportId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is a passenger.");
+                  "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
         if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is swarming a Mek.");
+                  "Target is swarming a Mek.");
         }
 
         // check range
@@ -131,13 +152,13 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         // check elevation
         if ((te != null) && (te.getElevation() > 0)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target elevation not in range");
+                  "Target elevation not in range");
         }
 
         // can't physically attack meks making dfa attacks
         if ((te != null) && te.isMakingDfa()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is making a DFA attack");
+                  "Target is making a DFA attack");
         }
 
         // Can only attack other entities

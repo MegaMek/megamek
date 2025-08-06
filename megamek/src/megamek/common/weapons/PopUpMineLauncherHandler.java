@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -32,7 +53,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
      * @param g
      */
     public PopUpMineLauncherHandler(ToHitData toHit, WeaponAttackAction waa,
-            Game g, TWGameManager m) {
+          Game g, TWGameManager m) {
         super(toHit, waa, g, m);
         sSalvoType = " mine(s) ";
     }
@@ -80,11 +101,11 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
      */
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
+          Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+          int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                toHit.getSideTable(), waa.getAimedLocation(),
-                waa.getAimingMode(), toHit.getCover());
+              toHit.getSideTable(), waa.getAimedLocation(),
+              waa.getAimingMode(), toHit.getCover());
         hit.setAttackerId(getAttackerId());
         if (target instanceof Mek) {
             hit = new HitData(Mek.LOC_CT);
@@ -94,12 +115,12 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
         hit.setGeneralDamageType(generalDamageType);
         // Do criticals.
         Vector<Report> specialDamageReport = gameManager
-                .criticalEntity(
-                        entityTarget,
-                        hit.getLocation(), hit.isRear(),
-                        entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED ? -2
-                                : 0,
-                        4);
+              .criticalEntity(
+                    entityTarget,
+                    hit.getLocation(), hit.isRear(),
+                    entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED ? -2
+                          : 0,
+                    4);
 
         // Replace "no effect" results with 4 points of damage.
         if ((specialDamageReport.lastElement()).messageId == 6005) {
@@ -107,15 +128,15 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
             // ASSUMPTION: buildings CAN'T absorb *this* damage.
             // specialDamage = damageEntity(entityTarget, hit, damage);
             specialDamageReport = gameManager
-                    .damageEntity(
-                            entityTarget,
-                            hit,
-                            damage,
-                            false,
-                            ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType,
-                            false, false, throughFront,
-                            underWater);
+                  .damageEntity(
+                        entityTarget,
+                        hit,
+                        damage,
+                        false,
+                        ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER
+                              : damageType,
+                        false, false, throughFront,
+                        underWater);
         } else {
             // add newline _before_ last report
             try {

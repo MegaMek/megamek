@@ -1,22 +1,52 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.jacksonadapters;
+
+import static megamek.common.jacksonadapters.MMUReader.ID;
+import static megamek.common.jacksonadapters.MMUReader.JUMP;
+import static megamek.common.jacksonadapters.MMUReader.MOVE;
+import static megamek.common.jacksonadapters.MMUReader.MOVE_MODE;
+import static megamek.common.jacksonadapters.MMUReader.SIZE;
+import static megamek.common.jacksonadapters.MMUReader.SKILL;
+import static megamek.common.jacksonadapters.MMUReader.SPECIALS;
+import static megamek.common.jacksonadapters.MMUReader.TRSP_MOVE;
+import static megamek.common.jacksonadapters.MMUReader.TRSP_MOVE_MODE;
+import static megamek.common.jacksonadapters.SBFUnitSerializer.PV;
+import static megamek.common.jacksonadapters.SBFUnitSerializer.SBF_TYPE;
+import static megamek.common.jacksonadapters.SBFUnitSerializer.TMM;
+
+import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -24,15 +54,10 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import megamek.common.Entity;
 import megamek.common.strategicBattleSystems.SBFFormation;
 
-import java.io.IOException;
-
-import static megamek.common.jacksonadapters.MMUReader.*;
-import static megamek.common.jacksonadapters.SBFUnitSerializer.*;
-
 /**
  * This Jackson serializer writes an SBF Formation to YAML output. Since the base values can be calculated from the
  * stats of the SBF units, only the units are written unless the "FullStats" View is used (see {@link MMUWriter}.
- *
+ * <p>
  * In addition, any transients like damage are written if present (2024: only partially implemented).
  */
 public class SBFFormationSerializer extends StdSerializer<SBFFormation> {
@@ -51,7 +76,7 @@ public class SBFFormationSerializer extends StdSerializer<SBFFormation> {
 
     @Override
     public void serialize(SBFFormation formation, JsonGenerator jgen, SerializerProvider provider)
-            throws IOException {
+          throws IOException {
 
         boolean writeFullStats = MMUWriter.Views.FullStats.class.equals(provider.getActiveView());
         jgen.writeStartObject();

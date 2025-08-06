@@ -1,33 +1,50 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.autoresolve.acar.phase;
+
+import static megamek.common.Board.*;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import megamek.common.BoardLocation;
 import megamek.common.Compute;
 import megamek.common.Coords;
-import megamek.common.IEntityRemovalConditions;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.report.DeploymentReport;
 import megamek.common.autoresolve.acar.report.IDeploymentReport;
 import megamek.common.autoresolve.component.Formation;
-import megamek.common.autoresolve.damage.EntityFinalState;
 import megamek.common.enums.GamePhase;
-
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static megamek.common.Board.*;
 
 public class DeploymentPhase extends PhaseHandler {
     private final int boardNorthSide;
@@ -37,6 +54,7 @@ public class DeploymentPhase extends PhaseHandler {
     private final int boardSouthSide = 0;
     private final IDeploymentReport deploymentReporter;
     private final AtomicBoolean headerLatch = new AtomicBoolean(false);
+
     public DeploymentPhase(SimulationManager simulationManager) {
         super(simulationManager, GamePhase.DEPLOYMENT);
         this.deploymentReporter = DeploymentReport.create(simulationManager);
@@ -51,9 +69,9 @@ public class DeploymentPhase extends PhaseHandler {
         headerLatch.set(false);
         // Automatically deploy all formations that are set to deploy this round
         getSimulationManager().getGame().getActiveFormations().stream()
-            .filter( f-> !f.isDeployed())
-            .filter( f-> f.getDeployRound() == getSimulationManager().getGame().getCurrentRound())
-            .forEach(this::deployUnit);
+              .filter(f -> !f.isDeployed())
+              .filter(f -> f.getDeployRound() == getSimulationManager().getGame().getCurrentRound())
+              .forEach(this::deployUnit);
     }
 
     private void deployUnit(Formation formation) {

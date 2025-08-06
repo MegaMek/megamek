@@ -1,17 +1,38 @@
 /*
- * MegaMek -
+
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -182,13 +203,15 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                 // The appropriate term here is "Bwahahahahaha..."
                 gameManager.drawNukeHitOnBoard(targetPos);
                 gameManager.getGame().processGameEvent(
-                    new GamePlayerStrategicActionEvent(gameManager,
-                        new NukeDetonatedAction(ae.getId(), ae.getOwnerId(), AmmoType.Munitions.M_DAVY_CROCKETT_M)));
+                      new GamePlayerStrategicActionEvent(gameManager,
+                            new NukeDetonatedAction(ae.getId(),
+                                  ae.getOwnerId(),
+                                  AmmoType.Munitions.M_DAVY_CROCKETT_M)));
                 gameManager.doNuclearExplosion(targetPos, 1, vPhaseReport);
                 return false;
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {
                 gameManager.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
-                        ammoType.getRackSize(), ae.getId());
+                      ammoType.getRackSize(), ae.getId());
                 return false;
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_SMOKE)) {
                 gameManager.deliverArtillerySmoke(targetPos, vPhaseReport);
@@ -199,12 +222,12 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                 // so just hit it for full damage.
                 if (asfFlak) {
                     AreaEffectHelper.artilleryDamageEntity((Entity) target, ammoType.getRackSize(), null,
-                            0, false, asfFlak, isFlak, height,
-                            targetPos, atype, targetPos, false, ae, null, getAttackerId(),
-                            vPhaseReport, gameManager);
+                          0, false, asfFlak, isFlak, height,
+                          targetPos, atype, targetPos, false, ae, null, getAttackerId(),
+                          vPhaseReport, gameManager);
                 } else {
                     AreaEffectHelper.processFuelAirDamage(targetPos, target.getBoardId(), height,
-                            ammoType, ae, vPhaseReport, gameManager);
+                          ammoType, ae, vPhaseReport, gameManager);
                 }
 
                 return false;
@@ -223,19 +246,19 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             vPhaseReport.addElement(r);
 
             AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game,
-                    gameManager);
+                  gameManager);
         }
 
         gameManager.artilleryDamageArea(targetPos, ammoType,
-                subjectId, ae, isFlak, height, mineClear, vPhaseReport,
-                asfFlak);
+              subjectId, ae, isFlak, height, mineClear, vPhaseReport,
+              asfFlak);
 
         // artillery may unintentionally clear minefields, but only if it wasn't trying
         // to
         // TODO : Does this apply to arty cannons?
         if (!mineClear) {
             AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game,
-                    gameManager);
+                  gameManager);
         }
 
         return false;

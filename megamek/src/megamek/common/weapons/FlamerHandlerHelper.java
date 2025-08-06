@@ -43,14 +43,15 @@ import megamek.common.equipment.ArmorType;
 
 /**
  * Helper class that contains common functionality for flamer-type weapons.
- * @author NickAragua
  *
+ * @author NickAragua
  */
 public class FlamerHandlerHelper {
     /**
      * Handles flamer heat damage.
      */
-    public static void doHeatDamage(Entity entityTarget, Vector<Report> vPhaseReport, WeaponType wtype, int subjectId, HitData hit) {
+    public static void doHeatDamage(Entity entityTarget, Vector<Report> vPhaseReport, WeaponType wtype, int subjectId,
+          HitData hit) {
         Report r = new Report(3400);
         r.subject = subjectId;
         r.indent(2);
@@ -70,7 +71,7 @@ public class FlamerHandlerHelper {
             if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING) {
                 actualDamage = heatDamage / 2;
                 heatDamageReducedByArmor = true;
-            // reflective armor divides heat damage by 2, with a minimum of 1
+                // reflective armor divides heat damage by 2, with a minimum of 1
             } else if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE) {
                 actualDamage = Math.max(1, heatDamage / 2);
                 heatDamageReducedByArmor = true;
@@ -82,7 +83,7 @@ public class FlamerHandlerHelper {
             entityTarget.heatFromExternal += actualDamage;
             r.add(actualDamage);
             r.choose(true);
-            r.messageId=3406;
+            r.messageId = 3406;
             r.add(heatDamage);
             r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
         } else {

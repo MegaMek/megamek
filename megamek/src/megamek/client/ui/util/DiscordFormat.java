@@ -32,19 +32,32 @@
  */
 package megamek.client.ui.util;
 
-import megamek.client.ui.Messages;
-
 import java.util.regex.Pattern;
 
 public enum DiscordFormat {
     // Text colors
-    GRAY(30), RED(31), GREEN(32), YELLOW(33), BLUE(34), PINK(35), CYAN(36), WHITE(37),
+    GRAY(30),
+    RED(31),
+    GREEN(32),
+    YELLOW(33),
+    BLUE(34),
+    PINK(35),
+    CYAN(36),
+    WHITE(37),
 
     // Background colors
-    BG_BLUEISH_BLACK(40), BG_RUST(41), BG_DARKER_GREY(42), BG_DARK_GREY(43), BG_GREY(44), BG_BLURPLE(45), BG_LIGHT_GREY(46), BG_OFF_WHITE(47),
+    BG_BLUEISH_BLACK(40),
+    BG_RUST(41),
+    BG_DARKER_GREY(42),
+    BG_DARK_GREY(43),
+    BG_GREY(44),
+    BG_BLURPLE(45),
+    BG_LIGHT_GREY(46),
+    BG_OFF_WHITE(47),
 
     // Font effects
-    BOLD(1), UNDERLINE(4),
+    BOLD(1),
+    UNDERLINE(4),
 
     RESET(0);
 

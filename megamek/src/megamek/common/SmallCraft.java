@@ -1,15 +1,37 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
- * MegaAero - Copyright (C) 2007 Jay Lawson This program is free software; you
- * can redistribute it and/or modify it under the terms of the GNU General
- * Public License as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * MegaAero - Copyright (C) 2007 Jay Lawson
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.util.HashMap;
@@ -55,30 +77,30 @@ public class SmallCraft extends Aero {
     private static final TechAdvancement TA_SM_CRAFT = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE,
                 2350,
                 2400)
-                                                             .setISApproximate(false, true, false)
-                                                             .setProductionFactions(Faction.TH)
-                                                             .setTechRating(TechRating.D)
-                                                             .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
-                                                             .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setISApproximate(false, true, false)
+          .setProductionFactions(Faction.TH)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_SM_CRAFT_PRIMITIVE = new TechAdvancement(TechBase.IS)
-                                                                       // Per MUL team and per availability codes should exist to around 2781
-                                                                       .setISAdvancement(DATE_ES,
-                                                                             2200,
-                                                                             DATE_NONE,
-                                                                             2781,
-                                                                             DATE_NONE)
-                                                                       .setISApproximate(false,
-                                                                             true,
-                                                                             false,
-                                                                             true,
-                                                                             false)
-                                                                       .setProductionFactions(Faction.TA)
-                                                                       .setTechRating(TechRating.D)
-                                                                       .setAvailability(AvailabilityValue.D,
-                                                                             AvailabilityValue.X,
-                                                                             AvailabilityValue.F,
-                                                                             AvailabilityValue.F)
-                                                                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          // Per MUL team and per availability codes should exist to around 2781
+          .setISAdvancement(DATE_ES,
+                2200,
+                DATE_NONE,
+                2781,
+                DATE_NONE)
+          .setISApproximate(false,
+                true,
+                false,
+                true,
+                false)
+          .setProductionFactions(Faction.TA)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.D,
+                AvailabilityValue.X,
+                AvailabilityValue.F,
+                AvailabilityValue.F)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     public SmallCraft() {
         // A placeholder engine for SC and DS
@@ -792,9 +814,9 @@ public class SmallCraft extends Aero {
         }
 
         if (mountedAmmo.isAmmoUsable() &&
-                  !wtype.hasFlag(WeaponType.F_ONESHOT) &&
-                  (atype.getAmmoType() == wtype.getAmmoType()) &&
-                  (atype.getRackSize() == wtype.getRackSize())) {
+              !wtype.hasFlag(WeaponType.F_ONESHOT) &&
+              (atype.getAmmoType() == wtype.getAmmoType()) &&
+              (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;
         }
@@ -903,8 +925,8 @@ public class SmallCraft extends Aero {
     public void autoSetMaxBombPoints() {
         // Only internal cargo bays can be considered for this type of unit.
         maxIntBombPoints = getTransportBays().stream()
-                                 .mapToInt(tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0)
-                                 .sum();
+              .mapToInt(tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0)
+              .sum();
     }
 
     @Override

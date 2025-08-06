@@ -1,21 +1,35 @@
 /*
  * Copyright (c) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021, 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay;
 
@@ -33,7 +47,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -58,21 +71,25 @@ import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.SkinSpecification;
 import megamek.client.ui.widget.SkinXMLHandler;
-import megamek.common.*;
+import megamek.common.Game;
+import megamek.common.IGame;
+import megamek.common.KeyBindParser;
+import megamek.common.Player;
+import megamek.common.PlayerTurn;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 
 /**
- * This is a parent class for the button display for each phase.  Every phase has a panel of control
- * buttons along with a Done button. Each button corresponds to a command that can be carried out in
- * the current phase. This class formats the button panel, the done button, and a status display area.
- * Control buttons are grouped and the groups can be cycled through.
+ * This is a parent class for the button display for each phase.  Every phase has a panel of control buttons along with
+ * a Done button. Each button corresponds to a command that can be carried out in the current phase. This class formats
+ * the button panel, the done button, and a status display area. Control buttons are grouped and the groups can be
+ * cycled through.
  *
  * @see AbstractPhaseDisplay
  */
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
-        implements ActionListener, IPreferenceChangeListener, KeyBindReceiver {
+      implements ActionListener, IPreferenceChangeListener, KeyBindReceiver {
 
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
     protected static final Dimension MIN_BUTTON_SIZE = new Dimension(32, 32);
@@ -89,17 +106,20 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     /**
      * Interface that defines what a command for a phase is.
+     *
      * @author arlith
      */
     public interface PhaseCommand {
         String getCmd();
+
         int getPriority();
+
         void setPriority(int p);
     }
 
     /**
-     * Comparator for comparing the priority of two commands, used to determine
-     * button order.
+     * Comparator for comparing the priority of two commands, used to determine button order.
+     *
      * @author arlith
      */
     public static class CommandComparator implements Comparator<PhaseCommand> {
@@ -158,9 +178,10 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         KeyBindParser.addPreferenceChangeListener(this);
 
         MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.EXTEND_TURN_TIMER, this, this::extendTimer);
-        MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.PAUSE.cmd, this::pauseGameWhenOnlyBotUnitsRemain);
+        MegaMekGUI.getKeyDispatcher()
+              .registerCommandAction(KeyCommandBind.PAUSE.cmd, this::pauseGameWhenOnlyBotUnitsRemain);
         MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.UNPAUSE.cmd,
-            () -> ((AbstractClient) clientgui.getClient()).sendUnpause());
+              () -> ((AbstractClient) clientgui.getClient()).sendUnpause());
     }
 
     private void pauseGameWhenOnlyBotUnitsRemain() {
@@ -197,7 +218,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected abstract void setButtonsTooltips();
 
     protected String createToolTip(String cmd, String keyPrefix, String hotKeyDesc) {
-        String result  = "";
+        String result = "";
         String ttKey = keyPrefix + cmd + ".tooltip";
         String toolTip = hotKeyDesc;
         if (!toolTip.isEmpty()) {
@@ -217,10 +238,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     }
 
     /**
-     * Adds buttons to the button panel.  The buttons to be added are retrieved
-     * with the <code>getButtonList()</code> method.  The number of buttons to
-     * display is defined in <code>buttonsPerGroup</code> and which group of
-     * buttons will be displayed is set by <code>currentButtonGroup</code>.
+     * Adds buttons to the button panel.  The buttons to be added are retrieved with the <code>getButtonList()</code>
+     * method.  The number of buttons to display is defined in <code>buttonsPerGroup</code> and which group of buttons
+     * will be displayed is set by <code>currentButtonGroup</code>.
      */
     public void setupButtonPanel() {
         panButtons.removeAll();
@@ -270,7 +290,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected UIUtil.FixedXPanel setupDonePanel() {
         donePanel = new UIUtil.FixedXPanel();
         donePanel.setPreferredSize(new Dimension(
-                UIUtil.scaleForGUI(DONE_BUTTON_WIDTH + 5), MIN_BUTTON_SIZE.height * 2 + 5));
+              UIUtil.scaleForGUI(DONE_BUTTON_WIDTH + 5), MIN_BUTTON_SIZE.height * 2 + 5));
         donePanel.setOpaque(false);
         donePanel.setBackground(Color.DARK_GRAY);
         donePanel.setBorder(new EmptyBorder(0, 10, 0, 0));
@@ -316,8 +336,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     @Override
     public boolean shouldReceiveKeyCommands() {
         return clientgui.getClient().isMyTurn()
-                && !clientgui.isChatBoxActive()
-                && !isIgnoringEvents() && isVisible();
+              && !clientgui.isChatBoxActive()
+              && !isIgnoringEvents() && isVisible();
     }
 
     public void startTimer() {
@@ -338,8 +358,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     }
 
     /**
-     * @return True when there is a turn timer and it has expired, false when there was no turn timer or
-     * it has not yet expired.
+     * @return True when there is a turn timer and it has expired, false when there was no turn timer or it has not yet
+     *       expired.
      */
     public boolean isTimerExpired() {
         return (turnTimer != null) && turnTimer.isTimerExpired();
@@ -372,14 +392,14 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         if (game.getPhase().isReport()) {
             int playerCountToShow = GUIP.getPlayersRemainingToShow();
             List<Player> remainingPlayers = game.getPlayersList().stream()
-                    .filter(p -> !p.isBot() && !p.isObserver() && !p.isDone())
-                    .sorted(Comparator.comparingInt(Player::getId))
-                    .toList();
+                  .filter(p -> !p.isBot() && !p.isObserver() && !p.isDone())
+                  .sorted(Comparator.comparingInt(Player::getId))
+                  .toList();
             if (!remainingPlayers.isEmpty()) {
                 String playersText = remainingPlayers.stream()
-                        .limit(playerCountToShow)
-                        .map(Player::getName)
-                        .collect(Collectors.joining(", "));
+                      .limit(playerCountToShow)
+                      .map(Player::getName)
+                      .collect(Collectors.joining(", "));
                 if (remainingPlayers.size() > playerCountToShow) {
                     playersText += ", ...";
                 }

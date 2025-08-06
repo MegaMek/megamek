@@ -1,38 +1,71 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.common.planetaryconditions;
 
-import megamek.common.Messages;
+package megamek.common.planetaryconditions;
 
 import java.util.Arrays;
 
+import megamek.common.Messages;
+
 public enum Weather {
     CLEAR("WEATHER_CLEAR", "PlanetaryConditions.DisplayableName.Weather.Clear", "\u239A"),
-    LIGHT_RAIN("WEATHER_LIGHT_RAIN", "PlanetaryConditions.DisplayableName.Weather.LightRain", "\u2601 \u2022 \u2022 \u2022 \u2022"),
-    MOD_RAIN("WEATHER_MOD_RAIN", "PlanetaryConditions.DisplayableName.Weather.ModerateRain", "\u2601 \u2601 \u2022 \u2022 \u2022"),
-    HEAVY_RAIN("WEATHER_HEAVY_RAIN", "PlanetaryConditions.DisplayableName.Weather.HeavyRain", "\u2601 \u2601 \u2601 \u2022 \u2022"),
-    GUSTING_RAIN("WEATHER_GUSTING_RAIN", "PlanetaryConditions.DisplayableName.Weather.GustingRain", "\u2601 \u2601 \u2601 \u2601 \u2022"),
-    DOWNPOUR("WEATHER_DOWNPOUR", "PlanetaryConditions.DisplayableName.Weather.TorrentialDownpour", "\u2601 \u2601 \u2601 \u2601 \u2601"),
-    LIGHT_SNOW("WEATHER_LIGHT_SNOW", "PlanetaryConditions.DisplayableName.Weather.LightSnowfall", "\u2744 \u2022 \u2022 \u2022"),
-    MOD_SNOW("WEATHER_MOD_SNOW", "PlanetaryConditions.DisplayableName.Weather.ModerateSnowfall", "\u2744 \u2744 \u2022 \u2022"),
-    SNOW_FLURRIES("WEATHER_SNOW_FLURRIES", "PlanetaryConditions.DisplayableName.Weather.SnowFlurries", "\u2744 \u2744 \u2744 \u2022"),
-    HEAVY_SNOW("WEATHER_HEAVY_SNOW", "PlanetaryConditions.DisplayableName.Weather.HeavySnowfall", "\u2744 \u2744 \u2744 \u2744"),
+    LIGHT_RAIN("WEATHER_LIGHT_RAIN",
+          "PlanetaryConditions.DisplayableName.Weather.LightRain",
+          "\u2601 \u2022 \u2022 \u2022 \u2022"),
+    MOD_RAIN("WEATHER_MOD_RAIN",
+          "PlanetaryConditions.DisplayableName.Weather.ModerateRain",
+          "\u2601 \u2601 \u2022 \u2022 \u2022"),
+    HEAVY_RAIN("WEATHER_HEAVY_RAIN",
+          "PlanetaryConditions.DisplayableName.Weather.HeavyRain",
+          "\u2601 \u2601 \u2601 \u2022 \u2022"),
+    GUSTING_RAIN("WEATHER_GUSTING_RAIN",
+          "PlanetaryConditions.DisplayableName.Weather.GustingRain",
+          "\u2601 \u2601 \u2601 \u2601 \u2022"),
+    DOWNPOUR("WEATHER_DOWNPOUR",
+          "PlanetaryConditions.DisplayableName.Weather.TorrentialDownpour",
+          "\u2601 \u2601 \u2601 \u2601 \u2601"),
+    LIGHT_SNOW("WEATHER_LIGHT_SNOW",
+          "PlanetaryConditions.DisplayableName.Weather.LightSnowfall",
+          "\u2744 \u2022 \u2022 \u2022"),
+    MOD_SNOW("WEATHER_MOD_SNOW",
+          "PlanetaryConditions.DisplayableName.Weather.ModerateSnowfall",
+          "\u2744 \u2744 \u2022 \u2022"),
+    SNOW_FLURRIES("WEATHER_SNOW_FLURRIES",
+          "PlanetaryConditions.DisplayableName.Weather.SnowFlurries",
+          "\u2744 \u2744 \u2744 \u2022"),
+    HEAVY_SNOW("WEATHER_HEAVY_SNOW",
+          "PlanetaryConditions.DisplayableName.Weather.HeavySnowfall",
+          "\u2744 \u2744 \u2744 \u2744"),
     SLEET("WEATHER_SLEET", "PlanetaryConditions.DisplayableName.Weather.Sleet", "\u26C6 \u2022"),
     ICE_STORM("WEATHER_ICE_STORM", "PlanetaryConditions.DisplayableName.Weather.IceStorm", "\u26C6 \u26C6"),
     LIGHT_HAIL("WEATHER_LIGHT_HAIL", "PlanetaryConditions.DisplayableName.Weather.LightHail", "\u2591 \u2022"),
@@ -124,159 +157,159 @@ public enum Weather {
 
     public boolean isHeavyRainOrDownpour() {
         return isHeavyRain()
-                || isDownpour();
+              || isDownpour();
     }
 
     public boolean isLightRainOrLightSnow() {
         return isLightRain()
-                || isLightSnow();
+              || isLightSnow();
     }
 
     public boolean isSnowFlurriesOrIceStorm() {
         return isSnowFlurries()
-                || isIceStorm();
+              || isIceStorm();
     }
 
     public boolean isHeavyRainOrGustingRain() {
         return isHeavyRain()
-                || isGustingRain();
+              || isGustingRain();
     }
 
 
     public boolean isLightRainOrModerateRainOrLightningStorm() {
         return isLightRain()
-                || isModerateRain()
-                || isLightningStorm();
+              || isModerateRain()
+              || isLightningStorm();
     }
 
     public boolean isModerateSnowOrSnowFlurries() {
         return isModerateSnow()
-                || isSnowFlurries();
+              || isSnowFlurries();
     }
 
     public boolean isModerateRainOrLightningStorm() {
         return isModerateRain()
-                || isLightningStorm();
+              || isLightningStorm();
     }
 
     public boolean isModerateRainOrModerateSnowOrLightningStorm() {
         return isModerateRain()
-                || isModerateSnow()
-                || isLightningStorm();
+              || isModerateSnow()
+              || isLightningStorm();
     }
 
     public boolean isDownpourOrHeavySnowOrIceStormOrLightningStorm() {
         return isDownpour()
-                || isHeavySnow()
-                || isIceStorm()
-                || isLightningStorm();
+              || isHeavySnow()
+              || isIceStorm()
+              || isLightningStorm();
     }
 
     public boolean isSnowFlurriesOrSleetOrIceStorm() {
         return isSnowFlurries()
-                || isSleet()
-                || isIceStorm();
+              || isSleet()
+              || isIceStorm();
     }
 
     public boolean isHeavySnowOrLightHailOrHeaveHail() {
         return isHeavySnow()
-                || isLightHail()
-                || isHeavyHail();
+              || isLightHail()
+              || isHeavyHail();
     }
 
     public boolean isLightRainOrLightSnowOrLightHail() {
         return isLightRain()
-                || isLightSnow()
-                || isLightHail();
+              || isLightSnow()
+              || isLightHail();
     }
 
     public boolean isHeavyRainOrGustingRainOrDownpour() {
         return isHeavyRain()
-                || isGustingRain()
-                || isDownpour();
+              || isGustingRain()
+              || isDownpour();
     }
 
     public boolean isHeavyRainOrGustingRainOrHeavySnow() {
         return isHeavyRain()
-                || isGustingRain()
-                || isHeavySnow();
+              || isGustingRain()
+              || isHeavySnow();
     }
 
     public boolean isHeavyRainOrSnowFlurries() {
         return isHeavyRain()
-                || isSnowFlurries();
+              || isSnowFlurries();
     }
 
     public boolean isModerateSnowOrHeavySnowOrSnowFlurries() {
         return isModerateSnow()
-                || isHeavySnow()
-                || isSnowFlurries();
+              || isHeavySnow()
+              || isSnowFlurries();
     }
 
     public boolean isLightSnowOrSleetOrLightHailOrHeavyHail() {
         return isLightSnow()
-                || isSleet()
-                || isLightHail()
-                || isHeavyHail();
+              || isSleet()
+              || isLightHail()
+              || isHeavyHail();
     }
 
     public boolean isModerateSnowOrHeavySnowOrSnowFlurriesOrSleet() {
         return isModerateSnow()
-                || isHeavySnow()
-                || isSnowFlurries()
-                || isSleet();
+              || isHeavySnow()
+              || isSnowFlurries()
+              || isSleet();
     }
 
     public boolean isModerateRainOrHeavyRainOrGustingRainOrDownpourOrLightningStorm() {
         return isModerateRain()
-                || isHeavyRain()
-                || isGustingRain()
-                || isDownpour()
-                || isLightningStorm();
+              || isHeavyRain()
+              || isGustingRain()
+              || isDownpour()
+              || isLightningStorm();
     }
 
     public boolean isGustingRainOrSnowFlurriesOrIceStormOrLightningStorm() {
         return isGustingRain()
-                || isSnowFlurries()
-                || isIceStorm()
-                || isLightningStorm();
+              || isSnowFlurries()
+              || isIceStorm()
+              || isLightningStorm();
     }
 
     public boolean isLightSnowOrModerateSnowOrSnowFlurriesOrHeavySnowOrSleet() {
         return isLightSnow()
-                || isModerateSnow()
-                || isSnowFlurries()
-                || isHeavySnow()
-                || isSleet();
+              || isModerateSnow()
+              || isSnowFlurries()
+              || isHeavySnow()
+              || isSleet();
     }
 
     public boolean isGustingRainOrDownpourOrHeavySnowOrIceStormOrSleetOrHeavyHail() {
         return isGustingRain()
-                || isDownpour()
-                || isHeavySnow()
-                || isIceStorm()
-                || isSleet()
-                || isHeavyHail();
+              || isDownpour()
+              || isHeavySnow()
+              || isIceStorm()
+              || isSleet()
+              || isHeavyHail();
     }
 
     public boolean isHeavyRainOrGustingRainOrDownpourOrLightSnowOrModerateSnowOrSnowFlurries() {
         return isHeavyRain()
-                || isGustingRain()
-                || isDownpour()
-                || isLightSnow()
-                || isModerateSnow()
-                || isSnowFlurries();
+              || isGustingRain()
+              || isDownpour()
+              || isLightSnow()
+              || isModerateSnow()
+              || isSnowFlurries();
     }
 
     public boolean isModerateRainOrHeavyRainOrGustingRainOrModerateSnowOrSnowFlurriesOrHeavySnowOrSleetOrLightningStorm() {
         return isModerateRain()
-                || isHeavyRain()
-                || isGustingRain()
-                || isModerateSnow()
-                || isSnowFlurries()
-                || isHeavySnow()
-                || isSleet()
-                || isLightningStorm();
+              || isHeavyRain()
+              || isGustingRain()
+              || isModerateSnow()
+              || isSnowFlurries()
+              || isHeavySnow()
+              || isSleet()
+              || isLightningStorm();
     }
 
     public boolean isAnyRain() {

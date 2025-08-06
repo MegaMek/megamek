@@ -32,10 +32,10 @@
  */
 package megamek.client.ui.entityreadout;
 
+import java.util.List;
+
 import megamek.client.ui.Messages;
 import megamek.common.ProtoMek;
-
-import java.util.List;
 
 class ProtoMekReadout extends GeneralEntityReadout {
 

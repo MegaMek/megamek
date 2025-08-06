@@ -53,6 +53,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Base class for all tests that need a game board.
+ *
  * @author Luana Coppio
  */
 public abstract class GameBoardTestCase {
@@ -66,9 +67,8 @@ public abstract class GameBoardTestCase {
     }
 
     /**
-     * Map of all boards used in the move path tests.
-     * The BOARDS should be initialized in the static block of the test class.
-     * Example:
+     * Map of all boards used in the move path tests. The BOARDS should be initialized in the static block of the test
+     * class. Example:
      * <pre>
      *     static {
      *         initializeBoard("BOARD_NAME","""
@@ -86,6 +86,7 @@ public abstract class GameBoardTestCase {
 
     /**
      * Load a board from a string
+     *
      * @param name name for the board
      * @param data the board as a string
      */
@@ -96,8 +97,11 @@ public abstract class GameBoardTestCase {
 
     /**
      * Get a board by name
+     *
      * @param name the name of the board
+     *
      * @return the board
+     *
      * @throws IllegalArgumentException if the board is not found
      */
     protected static Board getBoard(String name) {
@@ -113,6 +117,7 @@ public abstract class GameBoardTestCase {
 
     /**
      * Get the game instance
+     *
      * @return the game instance
      */
     protected Game getGame() {
@@ -121,6 +126,7 @@ public abstract class GameBoardTestCase {
 
     /**
      * Get the entity instance
+     *
      * @return the entity instance
      */
     public Entity getEntity() {
@@ -129,6 +135,7 @@ public abstract class GameBoardTestCase {
 
     /**
      * Set the board for the game instance
+     *
      * @param name the name of the board loaded in the initialization of the class
      */
     protected void setBoard(String name) {
@@ -137,13 +144,15 @@ public abstract class GameBoardTestCase {
 
     /**
      * Initialize a unit for the test
-     * @param unit the Entity instance to be initializes
-     * @param game the game
-     * @param movementMode the movement mode
+     *
+     * @param unit              the Entity instance to be initializes
+     * @param game              the game
+     * @param movementMode      the movement mode
      * @param startingElevation the starting elevation (Integer.MAX_VALUE means to place on the board
      *                          {@link Hex#ceiling()})
+     * @param <T>               the type of the unit extended from Entity
+     *
      * @return the initialized unit
-     * @param <T> the type of the unit extended from Entity
      */
     private static <T extends Entity> T initializeUnit(
           T unit,
@@ -232,8 +241,10 @@ public abstract class GameBoardTestCase {
 
     /**
      * Checks if a move step type is valid for the current path and entity
-     * @param path The current path
+     *
+     * @param path     The current path
      * @param stepType The step type to check
+     *
      * @return true if valid, false otherwise
      */
     private boolean isValidStepType(MovePath path, MovePath.MoveStepType stepType) {
@@ -243,7 +254,8 @@ public abstract class GameBoardTestCase {
         return switch (stepType) {
             case START_JUMP -> entity.getOriginalJumpMP() > 0;
             case SWIM -> entity.hasUMU();
-            case HOVER -> Set.of(EntityMovementMode.HOVER, EntityMovementMode.WIGE, EntityMovementMode.VTOL).contains(entity.getMovementMode());
+            case HOVER -> Set.of(EntityMovementMode.HOVER, EntityMovementMode.WIGE, EntityMovementMode.VTOL)
+                  .contains(entity.getMovementMode());
             case DFA -> entity instanceof Mek;
             case CHARGE -> entity instanceof Mek || entity instanceof Tank;
             case LAY_MINE, CHAFF, CLEAR_MINEFIELD, BRACE, SELF_DESTRUCT -> false;
@@ -253,46 +265,54 @@ public abstract class GameBoardTestCase {
 
     /**
      * Generates the MovePath for the test
-     * @param entity the entity
+     *
+     * @param entity            the entity
      * @param startingElevation the starting elevation
-     * @param movementMode the movement mode
-     * @param steps the steps to be added to the MovePath
+     * @param movementMode      the movement mode
+     * @param steps             the steps to be added to the MovePath
+     *
      * @return the MovePath
      */
     protected MovePath getMovePathFor(Entity entity, int startingElevation, @Nullable EntityMovementMode movementMode,
-          MovePath.MoveStepType ... steps) {
+          MovePath.MoveStepType... steps) {
         return getMovePath(new MovePath(getGame(), initializeUnit(entity, getGame(), movementMode, startingElevation)),
               steps);
     }
 
     /**
      * Generates the MovePath for the test
+     *
      * @param entity the entity
-     * @param steps the steps to be added to the MovePath
+     * @param steps  the steps to be added to the MovePath
+     *
      * @return the MovePath
      */
-    protected MovePath getMovePathFor(Entity entity, MovePath.MoveStepType ... steps) {
+    protected MovePath getMovePathFor(Entity entity, MovePath.MoveStepType... steps) {
         return getMovePathFor(entity, Integer.MAX_VALUE, null, steps);
     }
 
     /**
      * Generates the MovePath for the test
-     * @param entity the entity
+     *
+     * @param entity       the entity
      * @param movementMode the movement mode
-     * @param steps the steps to be added to the MovePath
+     * @param steps        the steps to be added to the MovePath
+     *
      * @return the MovePath
      */
     protected MovePath getMovePathFor(Entity entity, @Nullable EntityMovementMode movementMode,
-          MovePath.MoveStepType ... steps) {
+          MovePath.MoveStepType... steps) {
         return getMovePathFor(entity, Integer.MAX_VALUE, movementMode, steps);
     }
 
     /**
      * Generates the movepath for the test
+     *
      * @param path the game
+     *
      * @return the MovePath
      */
-    private static MovePath getMovePath(final MovePath path,final MovePath.MoveStepType... steps) {
+    private static MovePath getMovePath(final MovePath path, final MovePath.MoveStepType... steps) {
         MovePath movePath = path.clone();
         for (var step : steps) {
             movePath = movePath.addStep(step);
@@ -307,12 +327,11 @@ public abstract class GameBoardTestCase {
     }
 
     /**
-     *
-     * @param movePath the MovePath
+     * @param movePath           the MovePath
      * @param expectedElevations list of integers representing the expected elevation for each of the steps on the
      *                           MovePath
      */
-    public void assertMovePathElevations(MovePath movePath, int ... expectedElevations) {
+    public void assertMovePathElevations(MovePath movePath, int... expectedElevations) {
         assertMovePathElevations(movePath,
               Arrays.stream(expectedElevations)
                     .mapToObj(i -> ExpectedElevation.of(i, ""))
@@ -320,15 +339,14 @@ public abstract class GameBoardTestCase {
     }
 
     /**
-     *
-     * @param movePath the MovePath
+     * @param movePath           the MovePath
      * @param expectedElevations list of ExpectedElevation representing the expected elevation for each of the steps on
      *                           the MovePath and the justification for the expected elevation
      */
-    public void assertMovePathElevations(MovePath movePath, ExpectedElevation ... expectedElevations) {
+    public void assertMovePathElevations(MovePath movePath, ExpectedElevation... expectedElevations) {
         Vector<MoveStep> steps = movePath.getStepVector();
         assertEquals(steps.size(), expectedElevations.length, "Number of expected elevations must match the " +
-                                                                    "number of steps on movePath.");
+              "number of steps on movePath.");
         for (int i = 0; i < steps.size(); i++) {
             Hex hex = getGame().getBoard().getHex(steps.get(i).getPosition());
             assertEquals(expectedElevations[i].expectedElevation(), steps.get(i).getElevation(),
@@ -340,8 +358,7 @@ public abstract class GameBoardTestCase {
 
 
     /**
-     * Before each test, reset the game and the entity
-     * to not interfere with other tests
+     * Before each test, reset the game and the entity to not interfere with other tests
      */
     @BeforeEach
     void setUpEach() {

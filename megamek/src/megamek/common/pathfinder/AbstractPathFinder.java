@@ -1,22 +1,36 @@
-
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.pathfinder;
 
 import java.util.ArrayList;
@@ -32,12 +46,10 @@ import java.util.PriorityQueue;
 import megamek.logging.MMLogger;
 
 /**
- * This class provides a skeletal implementation of pathfinder algorithm in a
- * given directed graph.
- *
- * It uses a generalisation of Dijkstra algorithm. User must provide methods
- * that allow traversing the graph and evaluating paths. All needed methods have
- * been encapsulated and separated in classes:
+ * This class provides a skeletal implementation of pathfinder algorithm in a given directed graph.
+ * <p>
+ * It uses a generalisation of Dijkstra algorithm. User must provide methods that allow traversing the graph and
+ * evaluating paths. All needed methods have been encapsulated and separated in classes:
  * <ul>
  * <li>DestinationNodeFactory and EdgeNeighborsFactory - responsible for
  * representing graph</li>
@@ -49,12 +61,12 @@ import megamek.logging.MMLogger;
  * traverse whole graph.</li>
  * </ul>
  *
- * @author Saginatio
- *
  * @param <N> the type of nodes in the graph.
- * @param <C> the type of computed lowest cost for a node. If needed this type
- *            can contain information for recreating the path.
+ * @param <C> the type of computed lowest cost for a node. If needed this type can contain information for recreating
+ *            the path.
  * @param <E> the type of directed edges used by the graph.
+ *
+ * @author Saginatio
  */
 public class AbstractPathFinder<N, C, E> {
     private static final MMLogger logger = MMLogger.create(AbstractPathFinder.class);
@@ -70,6 +82,7 @@ public class AbstractPathFinder<N, C, E> {
     public interface AdjacencyMap<E> {
         /**
          * @param e a directed edge
+         *
          * @return all the edges that lead from destination node of e
          */
         Collection<E> getAdjacent(E e);
@@ -86,6 +99,7 @@ public class AbstractPathFinder<N, C, E> {
          * Returns a destination node of a given edge.
          *
          * @param e a directed edge
+         *
          * @return the destination node of the given edge
          */
         N getDestination(E e);
@@ -104,21 +118,21 @@ public class AbstractPathFinder<N, C, E> {
          * @param v          best value till now. Might be null.
          * @param e          candidate for the new best value
          * @param comparator edge comparator
+         *
          * @return new best value or null if no relaxation happened
          */
         C doRelax(C v, E e, Comparator<E> comparator);
     }
 
     /**
-     * Represents a function that allows removing unwanted objects from a
-     * collection.
+     * Represents a function that allows removing unwanted objects from a collection.
      */
     public static abstract class Filter<T> {
         /**
-         * Returns filtered collection by removing those objects that fail
-         * {@link #shouldStay} test.
+         * Returns filtered collection by removing those objects that fail {@link #shouldStay} test.
          *
          * @param collection collection to be filtered
+         *
          * @return filtered collection
          */
         public Collection<T> doFilter(Collection<T> collection) {
@@ -135,6 +149,7 @@ public class AbstractPathFinder<N, C, E> {
          * Tests if the object should stay in the collection.
          *
          * @param object tested object
+         *
          * @return true if the object should stay in the collection
          */
         public abstract boolean shouldStay(T object);
@@ -148,6 +163,7 @@ public class AbstractPathFinder<N, C, E> {
     public interface StopCondition<E> {
         /**
          * @param e the last edge that was successfully relaxed
+         *
          * @return true iff algorithm should stop searching for new paths
          */
         boolean shouldStop(E e);
@@ -168,8 +184,8 @@ public class AbstractPathFinder<N, C, E> {
     }
 
     /**
-     * A timeout stop condition. The shouldStop() returns answer based on time
-     * elapsed since initialisation or last restart() call.
+     * A timeout stop condition. The shouldStop() returns answer based on time elapsed since initialisation or last
+     * restart() call.
      */
     public static class StopConditionTimeout<E> implements StopCondition<E> {
         // this class should be redesigned to use an executor.
@@ -226,24 +242,20 @@ public class AbstractPathFinder<N, C, E> {
     private StopConditionsAlternation<E> stopCondition = new StopConditionsAlternation<>();
 
     /**
-     * @param edgeDestinationMap functional interface for retrieving destination
-     *                           node of an edge.
+     * @param edgeDestinationMap functional interface for retrieving destination node of an edge.
      * @param edgeRelaxer        functional interface for calculating relaxed cost.
-     * @param edgeAdjacencyMap   functional interface for retrieving neighbouring
-     *                           edges.
-     * @param edgeComparator     implementation of path comparator. Each path is
-     *                           defined by its last edge. <i>(path:= edge
-     *                           concatenated with
-     *                           best path to the source of the edge)</i>
+     * @param edgeAdjacencyMap   functional interface for retrieving neighbouring edges.
+     * @param edgeComparator     implementation of path comparator. Each path is defined by its last edge. <i>(path:=
+     *                           edge concatenated with best path to the source of the edge)</i>
      */
     public AbstractPathFinder(DestinationMap<N, E> edgeDestinationMap, EdgeRelaxer<C, E> edgeRelaxer,
-            AdjacencyMap<E> edgeAdjacencyMap, Comparator<E> edgeComparator) {
+          AdjacencyMap<E> edgeAdjacencyMap, Comparator<E> edgeComparator) {
         if (edgeDestinationMap == null
-                || edgeRelaxer == null
-                || edgeAdjacencyMap == null
-                || edgeComparator == null) {
+              || edgeRelaxer == null
+              || edgeAdjacencyMap == null
+              || edgeComparator == null) {
             throw new IllegalArgumentException("Arguments must be non null:"
-                    + stopCondition + edgeDestinationMap + edgeRelaxer + edgeAdjacencyMap + edgeComparator);
+                  + stopCondition + edgeDestinationMap + edgeRelaxer + edgeAdjacencyMap + edgeComparator);
         }
         this.destinationMap = edgeDestinationMap;
         this.edgeRelaxer = edgeRelaxer;
@@ -254,8 +266,8 @@ public class AbstractPathFinder<N, C, E> {
     }
 
     /**
-     * Adds an EdgeFilter. If this method is invoked multiple times: an edge is
-     * removed from the graph iff at least one filter removes it.
+     * Adds an EdgeFilter. If this method is invoked multiple times: an edge is removed from the graph iff at least one
+     * filter removes it.
      *
      * @see Filter
      */
@@ -310,8 +322,8 @@ public class AbstractPathFinder<N, C, E> {
             }
         } catch (OutOfMemoryError ex) {
             logger.error(
-                    "Not enough memory to analyse all options. Try setting time limit to lower value, or increase java memory limit.",
-                    ex);
+                  "Not enough memory to analyse all options. Try setting time limit to lower value, or increase java memory limit.",
+                  ex);
         } catch (IllegalArgumentException ex) {
             logger.debug("Lost sight of a unit while plotting predicted paths", ex);
         } catch (Exception ex) {
@@ -338,16 +350,15 @@ public class AbstractPathFinder<N, C, E> {
 
     /**
      * @param node
-     * @return calculated cost for this node or null if this node has not been
-     *         reached.
+     *
+     * @return calculated cost for this node or null if this node has not been reached.
      */
     protected C getCostOf(N node) {
         return pathsCosts.get(node);
     }
 
     /**
-     * Returns the cost map. <b>Important:</b> Neither the returned map, nor its
-     * elements, should be modified.
+     * Returns the cost map. <b>Important:</b> Neither the returned map, nor its elements, should be modified.
      *
      * @return map Node to LowestCost
      */
@@ -369,10 +380,8 @@ public class AbstractPathFinder<N, C, E> {
     /**
      * Sets comparator.
      *
-     * @param comparator implementation of path comparator. Each path is
-     *                   uniquely defined by its last edge. <i>(path:= an edge
-     *                   concatenated with the best path to the source of the
-     *                   edge)</i>
+     * @param comparator implementation of path comparator. Each path is uniquely defined by its last edge. <i>(path:=
+     *                   an edge concatenated with the best path to the source of the edge)</i>
      */
     public void setComparator(Comparator<E> comparator) {
         this.comparator = Objects.requireNonNull(comparator);

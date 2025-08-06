@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2014-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.util.HashMap;
@@ -26,9 +41,8 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 
 /**
- * This class describes a vehicle crew that has abandoned its vehicle and now
- * functions as a rifle
- * foot platoon of equal size.
+ * This class describes a vehicle crew that has abandoned its vehicle and now functions as a rifle foot platoon of equal
+ * size.
  *
  * @author Klaus Mittag
  */
@@ -81,11 +95,11 @@ public class EjectedCrew extends Infantry {
         setOriginalRideExternalId(originalRide.getExternalIdAsString());
         Game tmpGame = originalRide.getGame();
         if (tmpGame != null
-                && (!(this instanceof MekWarrior)
-                        || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MEKWARRIORS))) {
+              && (!(this instanceof MekWarrior)
+              || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MEKWARRIORS))) {
             try {
                 addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE),
-                        Infantry.LOC_INFANTRY);
+                      Infantry.LOC_INFANTRY);
                 setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
             } catch (Exception ex) {
                 logger.error("", ex);
@@ -94,8 +108,8 @@ public class EjectedCrew extends Infantry {
     }
 
     /**
-     * Used to set up an ejected crew for large spacecraft per rules in SO p27
-     * Multiple entities will be set up, each with a different strength
+     * Used to set up an ejected crew for large spacecraft per rules in SO p27 Multiple entities will be set up, each
+     * with a different strength
      *
      * @param originalRide     - the launching spacecraft
      * @param escapedThisRound - The number of people that got out this round
@@ -149,11 +163,11 @@ public class EjectedCrew extends Infantry {
         }
         Game tmpGame = game;
         if (tmpGame != null
-                && (!(this instanceof MekWarrior)
-                        || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MEKWARRIORS))) {
+              && (!(this instanceof MekWarrior)
+              || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MEKWARRIORS))) {
             try {
                 addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE),
-                        Infantry.LOC_INFANTRY);
+                      Infantry.LOC_INFANTRY);
                 setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
             } catch (Exception ex) {
                 logger.error("", ex);
@@ -198,17 +212,15 @@ public class EjectedCrew extends Infantry {
     }
 
     /**
-     * Returns a mapping of how many crewmembers from other units this unit is
-     * carrying
-     * and what ship they're from by external ID
+     * Returns a mapping of how many crewmembers from other units this unit is carrying and what ship they're from by
+     * external ID
      */
     public Map<String, Integer> getNOtherCrew() {
         return nOtherCrew;
     }
 
     /**
-     * Convenience method to return all crew from other craft aboard from the above
-     * Map
+     * Convenience method to return all crew from other craft aboard from the above Map
      *
      * @return
      */
@@ -221,8 +233,7 @@ public class EjectedCrew extends Infantry {
     }
 
     /**
-     * Adds a number of crewmembers from another ship keyed by that ship's external
-     * ID
+     * Adds a number of crewmembers from another ship keyed by that ship's external ID
      *
      * @param id The external ID of the ship these crew came from
      * @param n  The number to add
@@ -236,9 +247,8 @@ public class EjectedCrew extends Infantry {
     }
 
     /**
-     * Returns a mapping of how many passengers from other units this unit is
-     * carrying
-     * and what ship they're from by external ID
+     * Returns a mapping of how many passengers from other units this unit is carrying and what ship they're from by
+     * external ID
      */
     public Map<String, Integer> getPassengers() {
         return passengers;
@@ -258,8 +268,7 @@ public class EjectedCrew extends Infantry {
     }
 
     /**
-     * Adds a number of passengers from another ship keyed by that ship's external
-     * ID
+     * Adds a number of passengers from another ship keyed by that ship's external ID
      *
      * @param id The external ID of the ship these passengers came from
      * @param n  The number to add
@@ -286,8 +295,8 @@ public class EjectedCrew extends Infantry {
      */
 
     /**
-     * Because they deploy in their vehicles rather than as infantry, crews
-     * (including MekWarriors) never count as squads.
+     * Because they deploy in their vehicles rather than as infantry, crews (including MekWarriors) never count as
+     * squads.
      *
      * @return <code>false</code>
      */

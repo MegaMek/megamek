@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.util.Random;
@@ -18,9 +39,8 @@ import java.util.Random;
 import megamek.logging.MMLogger;
 
 /**
- * Used by Compute to generate random numbers, usually dice rolls. The base
- * class is abstract, having a number of concrete subclasses that it will give
- * using the generate() method.
+ * Used by Compute to generate random numbers, usually dice rolls. The base class is abstract, having a number of
+ * concrete subclasses that it will give using the generate() method.
  *
  * @author Ben
  * @since April 27, 2003, 11:29 PM
@@ -35,8 +55,7 @@ public abstract class MMRandom {
     public static final int R_POOL36 = 2;
 
     /**
-     * Gives you the type asked for, defaulting to SunRandom if there are any
-     * errors.
+     * Gives you the type asked for, defaulting to SunRandom if there are any errors.
      */
     static MMRandom generate(int type) {
         logger.info("Generating RNG type #" + type);
@@ -59,10 +78,11 @@ public abstract class MMRandom {
     /**
      * Simulates six-sided die rolls.
      *
-     * @param nDice - the <code>int</code> number of dice to roll. If this
-     *              value is less than or equal to zero, an
+     * @param nDice - the <code>int</code> number of dice to roll. If this value is less than or equal to zero, an
      *              <code>IllegalArgumentException</code> will be thrown.
+     *
      * @return a <code>Roll</code> object containing the roll results.
+     *
      * @throws IllegalArgumentException will be thrown if the input is &lt;= 0.
      */
     public Roll d6(int nDice) {
@@ -101,11 +121,11 @@ public abstract class MMRandom {
     }
 
     /**
-     * Returns a random <code>int</code> in the range from 0 to one less than
-     * the supplied max value.
+     * Returns a random <code>int</code> in the range from 0 to one less than the supplied max value.
      *
-     * @param maxValue - the smallest <code>int</code> value which will exceed
-     *                 any random number returned by this method.
+     * @param maxValue - the smallest <code>int</code> value which will exceed any random number returned by this
+     *                 method.
+     *
      * @return a random <code>int</code> from the value set [0, maxValue).
      */
     public abstract int randomInt(int maxValue);
@@ -146,7 +166,7 @@ public abstract class MMRandom {
         public CryptoRandom() throws NoSuchMethodException {
             // hack: just check to see if there's java.util.Random@nextInt(int)
             new java.util.Random().getClass().getMethod("nextInt",
-                    new Class[] { Integer.TYPE });
+                  new Class[] { Integer.TYPE });
 
             // all clear, get on with the normal init
             random = new java.security.SecureRandom();
@@ -167,8 +187,8 @@ public abstract class MMRandom {
     }
 
     /**
-     * Behaves like SunRandom for everything but d6(2) calls. Then, it takes
-     * numbers from an array of the 36 possible results of two dice, shuffled.
+     * Behaves like SunRandom for everything but d6(2) calls. Then, it takes numbers from an array of the 36 possible
+     * results of two dice, shuffled.
      */
     static class Pool36Random extends SunRandom {
         public static final int NUM_SHUFFLES = 360;
@@ -206,8 +226,8 @@ public abstract class MMRandom {
         }
 
         /**
-         * Swaps two of the numbers in the pool NUM_SHUFFLES times. Resets the
-         * index. Uses the regular RNG to shuffle (OH NO!)
+         * Swaps two of the numbers in the pool NUM_SHUFFLES times. Resets the index. Uses the regular RNG to shuffle
+         * (OH NO!)
          */
         void shufflePool() {
             MMShuffle temp;

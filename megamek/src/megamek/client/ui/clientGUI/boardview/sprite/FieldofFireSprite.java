@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
@@ -37,8 +51,7 @@ import megamek.common.Coords;
 import megamek.common.RangeType;
 
 /**
- * This sprite is used to paint the field of fire
- * for weapons.
+ * This sprite is used to paint the field of fire for weapons.
  *
  * <BR>
  * <BR>
@@ -59,20 +72,20 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     private static final float lineThickness = 1.4f;
     private static final Color lineColor = Color.WHITE;
     private static final Stroke lineStroke = new BasicStroke(lineThickness, BasicStroke.CAP_BUTT,
-            BasicStroke.JOIN_MITER, 10f, new float[] { 2f, 2f }, 0f);
+          BasicStroke.JOIN_MITER, 10f, new float[] { 2f, 2f }, 0f);
     // ### -------------
 
     // the fields control when and how borders are drawn
     // across a hex instead of along its borders
     private static final int[] bDir = {
-            0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 2, 1, 0, 0, 0, 0, 0,
-            0, 0, 1, 0, 3, 3, 3, 0, 2, 2, 1, 0, 2, 5, 4, 5, 6, 5, 1, 5,
-            0, 5, 2, 5, 2, 2, 1, 5, 4, 4, 4, 4, 4, 4, 1, 4, 3, 3, 3, 3, 2, 2, 1, 0
+          0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 2, 1, 0, 0, 0, 0, 0,
+          0, 0, 1, 0, 3, 3, 3, 0, 2, 2, 1, 0, 2, 5, 4, 5, 6, 5, 1, 5,
+          0, 5, 2, 5, 2, 2, 1, 5, 4, 4, 4, 4, 4, 4, 1, 4, 3, 3, 3, 3, 2, 2, 1, 0
     };
     private static final int[] bTypes = {
-            0, 0, 0, 1, 0, 0, 1, 2, 0, 0, 0, 6, 1, 7, 2, 3, 0, 0, 0, 7,
-            0, 1, 6, 5, 1, 6, 7, 4, 2, 5, 3, 8, 0, 1, 4, 2, 6, 6, 7, 3,
-            0, 7, 2, 5, 6, 4, 5, 8, 1, 2, 6, 3, 7, 5, 4, 8, 2, 3, 5, 8, 3, 8, 8, 0
+          0, 0, 0, 1, 0, 0, 1, 2, 0, 0, 0, 6, 1, 7, 2, 3, 0, 0, 0, 7,
+          0, 1, 6, 5, 1, 6, 7, 4, 2, 5, 3, 8, 0, 1, 4, 2, 6, 6, 7, 3,
+          0, 7, 2, 5, 6, 4, 5, 8, 1, 2, 6, 3, 7, 5, 4, 8, 2, 3, 5, 8, 3, 8, 8, 0
     };
 
     private static final int COLORS_MAX = 5;
@@ -90,7 +103,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     private final int rangeBracket;
 
     public FieldofFireSprite(BoardView boardView1, int rangeBracket, Coords l,
-                             int borders) {
+          int borders) {
         // the color of the super doesn't matter
         super(boardView1, Color.BLACK, l, borders);
         Color c = getFieldOfFireColor(rangeBracket);
@@ -185,40 +198,40 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         switch (bTypes[borders]) {
             case 1: // 2 adjacent borders
                 drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW),
-                        getHexCrossLine01(bDir[borders], borderW));
+                      getHexCrossLine01(bDir[borders], borderW));
                 break;
             case 2: // 3 adjacent borders
                 drawBorderXC(graph, getHexCrossArea012(bDir[borders], borderW),
-                        getHexCrossLine012(bDir[borders], borderW));
+                      getHexCrossLine012(bDir[borders], borderW));
                 break;
             case 3: // 4 adjacent borders
                 drawBorderXC(graph, getHexCrossArea0123(bDir[borders], borderW),
-                        getHexCrossLine0123(bDir[borders], borderW));
+                      getHexCrossLine0123(bDir[borders], borderW));
                 break;
             case 4: // twice two adjacent borders
                 drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW),
-                        getHexCrossLine01(bDir[borders], borderW));
+                      getHexCrossLine01(bDir[borders], borderW));
                 drawBorderXC(graph, getHexCrossArea01(bDir[borders] + 3, borderW),
-                        getHexCrossLine01(bDir[borders] + 3, borderW));
+                      getHexCrossLine01(bDir[borders] + 3, borderW));
                 break;
             case 5: // three adjacent borders and one lone
                 drawBorderXC(graph, getHexCrossArea012(bDir[borders], borderW),
-                        getHexCrossLine012(bDir[borders], borderW));
+                      getHexCrossLine012(bDir[borders], borderW));
                 drawLoneBorder(graph, bDir[borders] + 4);
                 break;
             case 6: // two adjacent borders and one lone
                 drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW),
-                        getHexCrossLine01(bDir[borders], borderW));
+                      getHexCrossLine01(bDir[borders], borderW));
                 drawLoneBorder(graph, bDir[borders] + 3);
                 break;
             case 7: // two adjacent borders and one lone (other hexface)
                 drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW),
-                        getHexCrossLine01(bDir[borders], borderW));
+                      getHexCrossLine01(bDir[borders], borderW));
                 drawLoneBorder(graph, bDir[borders] + 4);
                 break;
             case 8:
                 drawBorderXC(graph, getHexCrossArea01234(bDir[borders], borderW),
-                        getHexCrossLine01234(bDir[borders], borderW));
+                      getHexCrossLine01234(bDir[borders], borderW));
                 break;
             default:
                 drawNormalBorders(graph);

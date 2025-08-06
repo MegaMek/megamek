@@ -64,6 +64,7 @@ public class BuildingTemplate implements Serializable {
      *
      * @param type   type of the building {@link BuildingType}
      * @param coords vector containing Coords of all hexes the building covers
+     *
      * @deprecated Unused, will be removed in future versions. Use the other constructor
      */
     @Deprecated(since = "0.50.07", forRemoval = true)

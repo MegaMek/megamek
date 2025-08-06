@@ -1,19 +1,49 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.autoresolve.acar;
 
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -37,10 +67,6 @@ import megamek.logging.MMLogger;
 import megamek.server.scriptedevent.TriggeredEvent;
 import org.apache.commons.lang3.NotImplementedException;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
 /**
  * @author Luana Coppio
  */
@@ -52,8 +78,8 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
     private final SimulationOptions options;
 
     /**
-    * Objectives that must be considered during the game
-    */
+     * Objectives that must be considered during the game
+     */
     private static final int AWAITING_FIRST_TURN = -1;
     private final List<Action> pendingActions = new ArrayList<>();
 
@@ -134,9 +160,9 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
 
     public List<Deployable> deployableInGameObjects() {
         return getInGameObjects().stream()
-            .filter(Deployable.class::isInstance)
-            .map(Deployable.class::cast)
-            .collect(Collectors.toList());
+              .filter(Deployable.class::isInstance)
+              .map(Deployable.class::cast)
+              .collect(Collectors.toList());
     }
 
     public int getNoOfEntities() {
@@ -367,14 +393,14 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
 
     public List<Entity> getRetreatingUnits() {
         return this.graveyard.stream()
-            .filter(entity -> entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT)
-            .toList();
+              .filter(entity -> entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT)
+              .toList();
     }
 
     public int getLiveDeployedEntitiesOwnedBy(Player player) {
         var res = getActiveFormations(player).stream()
-            .filter(Formation::isDeployed)
-            .count();
+              .filter(Formation::isDeployed)
+              .count();
 
         return (int) res;
     }
@@ -414,6 +440,7 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
      * Returns the formation of the given ID, if one can be found.
      *
      * @param formationID the ID to look for
+     *
      * @return The formation or an empty Optional
      */
     public Optional<Formation> getFormation(int formationID) {
@@ -432,27 +459,26 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
     // check current turn, phase, formation
     private boolean isEligibleForAction(Formation formation) {
         return (getTurn() instanceof FormationTurn)
-            && getTurn().isValidEntity(formation, this);
+              && getTurn().isValidEntity(formation, this);
     }
 
     /**
-     * Returns the list of formations that are in the game's InGameObject list, i.e.
-     * that aren't destroyed
-     * or otherwise removed from play.
+     * Returns the list of formations that are in the game's InGameObject list, i.e. that aren't destroyed or otherwise
+     * removed from play.
      *
      * @return The currently active formations
      */
     public List<Formation> getActiveFormations() {
         return getInGameObjects().stream()
-            .filter(u -> u instanceof Formation)
-            .map(u -> (Formation) u)
-            .toList();
+              .filter(u -> u instanceof Formation)
+              .map(u -> (Formation) u)
+              .toList();
     }
 
     public List<Formation> getActiveDeployedFormations() {
         return getActiveFormations().stream()
-            .filter(Formation::isDeployed)
-            .toList();
+              .filter(Formation::isDeployed)
+              .toList();
     }
 
     public List<Formation> getActiveFormations(Player player) {
@@ -462,8 +488,8 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
 
     public List<Formation> getActiveFormations(int playerId) {
         return getActiveFormations().stream()
-            .filter(f -> f.getOwnerId() == playerId)
-            .toList();
+              .filter(f -> f.getOwnerId() == playerId)
+              .toList();
     }
 
     public void addUnitToGraveyard(Entity entity) {
@@ -544,7 +570,7 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
             clusterSize = 1;
         }
         DamageApplierChooser.choose(entity, entityFinalState)
-            .applyDamageInClusters(totalDamage, clusterSize);
+              .applyDamageInClusters(totalDamage, clusterSize);
     }
 
     public void removeEntity(Entity entity) {
@@ -608,9 +634,8 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
     }
 
     /**
-     * Removes all pending EntityActions by the InGameObject (Entity, unit) of the
-     * given ID from the list
-     * of pending actions.
+     * Removes all pending EntityActions by the InGameObject (Entity, unit) of the given ID from the list of pending
+     * actions.
      */
     public void removeActionsFor(int id) {
         pendingActions.removeIf(action -> action.getEntityId() == id);
@@ -624,30 +649,24 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
     }
 
     /**
-     * Returns the pending EntityActions. Do not use to modify the actions; Arlith
-     * said: I will be
-     * angry. &gt;:[
+     * Returns the pending EntityActions. Do not use to modify the actions; Arlith said: I will be angry. &gt;:[
      */
     public List<Action> getActionsVector() {
         return Collections.unmodifiableList(pendingActions);
     }
 
     /**
-     * Adds the specified action to the list of pending EntityActions for this phase
-     * and fires a GameNewActionEvent.
+     * Adds the specified action to the list of pending EntityActions for this phase and fires a GameNewActionEvent.
      */
     public void addAction(Action action) {
         pendingActions.add(action);
     }
 
     /**
-     * Clears and re-calculates the deployment table, i.e. assembles all
-     * units/objects in the game
-     * that are undeployed (that includes returning units or reinforcements)
-     * together with the game
-     * round that they are supposed to deploy on. This method can be called at any
-     * time in the game
-     * and will assemble deployment according to the present game state.
+     * Clears and re-calculates the deployment table, i.e. assembles all units/objects in the game that are undeployed
+     * (that includes returning units or reinforcements) together with the game round that they are supposed to deploy
+     * on. This method can be called at any time in the game and will assemble deployment according to the present game
+     * state.
      */
     public void setupDeployment() {
         deploymentTable.clear();

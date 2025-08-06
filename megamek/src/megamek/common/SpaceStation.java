@@ -1,22 +1,44 @@
 /*
-* MegaAero - Copyright (C) 2007 Jay Lawson
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * Copyright (C) 2007 Jay Lawson
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
+
+import java.io.Serial;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.cost.SpaceStationCostCalculator;
 import megamek.common.options.OptionsConstants;
-
-import java.io.Serial;
 
 /**
  * @author Jay Lawson
@@ -44,25 +66,25 @@ public class SpaceStation extends Jumpship {
     }
 
     private static final TechAdvancement TA_SPACE_STATION = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_ES, DATE_ES)
-            .setTechRating(TechRating.D)
-            .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setAdvancement(DATE_ES, DATE_ES)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     private static final TechAdvancement TA_SPACE_STATION_KF_ADAPTER = new TechAdvancement(TechBase.ALL)
-            .setISAdvancement(2350, 2375, DATE_NONE, 2850, 3048).setClanAdvancement(2350, 2375)
-            .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
-            // The adapter itself is tech rating C, but this is the base for a station with an adapter.
-            .setReintroductionFactions(Faction.FS).setTechRating(TechRating.D)
-            .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setISAdvancement(2350, 2375, DATE_NONE, 2850, 3048).setClanAdvancement(2350, 2375)
+          .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
+          // The adapter itself is tech rating C, but this is the base for a station with an adapter.
+          .setReintroductionFactions(Faction.FS).setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     private static final TechAdvancement TA_SPACE_STATION_MODULAR = new TechAdvancement(TechBase.ALL)
-            .setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090).setClanAdvancement(2565, 2585)
-            .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
-            .setReintroductionFactions(Faction.RS).setTechRating(TechRating.D)
-            .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090).setClanAdvancement(2565, 2585)
+          .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
+          .setReintroductionFactions(Faction.RS).setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -75,7 +97,7 @@ public class SpaceStation extends Jumpship {
         }
     }
 
-    public static TechAdvancement getKFAdapterTA() { return TA_SPACE_STATION_KF_ADAPTER; }
+    public static TechAdvancement getKFAdapterTA() {return TA_SPACE_STATION_KF_ADAPTER;}
 
     public static TechAdvancement getModularTA() {
         return TA_SPACE_STATION_MODULAR;
@@ -83,6 +105,7 @@ public class SpaceStation extends Jumpship {
 
     /**
      * Designates whether this is a modular space station
+     *
      * @param modularOrKFAdapter Whether the space station can be transported by jumpship.
      */
     public void setModularOrKFAdapter(boolean modularOrKFAdapter) {
@@ -91,7 +114,7 @@ public class SpaceStation extends Jumpship {
 
     /**
      * @return True if this space station has a modular construction (or has a KF adapter for stations less than 100kt,
-     *         otherwise false.
+     *       otherwise false.
      */
     public boolean isModularOrKFAdapter() {
         return modularOrKFAdapter;
@@ -162,6 +185,6 @@ public class SpaceStation extends Jumpship {
 
     @Override
     public int getGenericBattleValue() {
-        return (int) Math.round(Math.exp(5.1322 + 0.2384*Math.log(getWeight())));
+        return (int) Math.round(Math.exp(5.1322 + 0.2384 * Math.log(getWeight())));
     }
 }

@@ -32,23 +32,22 @@
  */
 package megamek.common;
 
-import megamek.common.options.OptionsConstants;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import megamek.common.options.OptionsConstants;
+
 /**
  * An enum for the various rules levels
- * 
- * @author Neoancient
  *
+ * @author Neoancient
  */
 public enum SimpleTechLevel {
-    INTRO ("Introductory"),
-    STANDARD ("Standard"), 
-    ADVANCED ("Advanced"),
-    EXPERIMENTAL ("Experimental"),
-    UNOFFICIAL ("Unofficial");
+    INTRO("Introductory"),
+    STANDARD("Standard"),
+    ADVANCED("Advanced"),
+    EXPERIMENTAL("Experimental"),
+    UNOFFICIAL("Unofficial");
 
     private final String strVal;
 
@@ -100,13 +99,13 @@ public enum SimpleTechLevel {
             case INTRO:
                 return TechConstants.T_INTRO_BOXSET;
             case STANDARD:
-                return clan? TechConstants.T_CLAN_TW : TechConstants.T_IS_TW_NON_BOX;
+                return clan ? TechConstants.T_CLAN_TW : TechConstants.T_IS_TW_NON_BOX;
             case ADVANCED:
-                return clan? TechConstants.T_CLAN_ADVANCED : TechConstants.T_IS_ADVANCED;
+                return clan ? TechConstants.T_CLAN_ADVANCED : TechConstants.T_IS_ADVANCED;
             case EXPERIMENTAL:
-                return clan? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL;
+                return clan ? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL;
             case UNOFFICIAL:
-                return clan? TechConstants.T_CLAN_UNOFFICIAL: TechConstants.T_IS_UNOFFICIAL;
+                return clan ? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
             default:
                 return TechConstants.T_INTRO_BOXSET;
         }
@@ -114,8 +113,9 @@ public enum SimpleTechLevel {
 
     /**
      * Finds simple tech level equivalent of compound tech base/rules level constant
-     * 
+     *
      * @param level A TechConstants tech level constant
+     *
      * @return
      */
     public static SimpleTechLevel convertCompoundToSimple(int level) {
@@ -140,7 +140,7 @@ public enum SimpleTechLevel {
                 return SimpleTechLevel.STANDARD;
         }
     }
-    
+
     public static SimpleTechLevel getGameTechLevel(Game game) {
         return SimpleTechLevel.parse(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
     }

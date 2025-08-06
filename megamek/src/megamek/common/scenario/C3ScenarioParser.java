@@ -32,15 +32,15 @@
  */
 package megamek.common.scenario;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import megamek.common.Entity;
-import megamek.common.jacksonadapters.MMUReader;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import megamek.common.Entity;
+import megamek.common.jacksonadapters.MMUReader;
 
 /**
  * This class is used for parsing C3 network information from MM V2 scenarios (.mms) into an intermediate ParsedC3Info
@@ -104,5 +104,5 @@ class C3ScenarioParser {
         return network;
     }
 
-    private C3ScenarioParser() { }
+    private C3ScenarioParser() {}
 }

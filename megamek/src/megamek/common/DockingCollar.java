@@ -1,17 +1,37 @@
 /*
  * Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org).
- * Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.util.ArrayList;
@@ -24,9 +44,8 @@ import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**
- * Represents a Docking Collar (Docking Hardpoint, TO: AUE p.116) with which a
- * JumpShip,
- * WarShip, Space Station or Mobile Structure can carry one DropShip.
+ * Represents a Docking Collar (Docking Hardpoint, TO: AUE p.116) with which a JumpShip, WarShip, Space Station or
+ * Mobile Structure can carry one DropShip.
  */
 public class DockingCollar implements Transporter {
     private static final MMLogger logger = MMLogger.create(DockingCollar.class);
@@ -54,14 +73,14 @@ public class DockingCollar implements Transporter {
     @Override
     public boolean canLoad(Entity unit) {
         return (unit instanceof Dropship) && !((Dropship) unit).isDockCollarDamaged()
-                && (getUnused() == 1) && !isDamaged();
+              && (getUnused() == 1) && !isDamaged();
     }
 
     @Override
     public void load(Entity unit) throws IllegalArgumentException {
         if (!canLoad(unit)) {
             throw new IllegalArgumentException("Cannot load "
-                    + unit.getShortName() + " into this Docking Collar.");
+                  + unit.getShortName() + " into this Docking Collar.");
         }
         dockedUnits.add(unit.getId());
     }
@@ -71,7 +90,7 @@ public class DockingCollar implements Transporter {
     public void recover(Entity unit) throws IllegalArgumentException {
         if (!canLoad(unit)) {
             throw new IllegalArgumentException("Cannot recover "
-                    + unit.getShortName() + " into this Docking Collar.");
+                  + unit.getShortName() + " into this Docking Collar.");
         }
         dockedUnits.add(unit.getId());
     }
@@ -80,14 +99,13 @@ public class DockingCollar implements Transporter {
     public List<Entity> getLoadedUnits() {
         correctDockedUnitList();
         return dockedUnits.stream()
-                .map(id -> game.getEntity(id))
-                .collect(Collectors.toList());
+              .map(id -> game.getEntity(id))
+              .collect(Collectors.toList());
     }
 
     /**
-     * Cleans out docked unit IDs that no longer match an active entity. This is a
-     * precaution
-     * that ideally shouldn't be necessary.
+     * Cleans out docked unit IDs that no longer match an active entity. This is a precaution that ideally shouldn't be
+     * necessary.
      */
     private void correctDockedUnitList() {
         if (dockedUnits.removeIf(id -> game.getEntity(id) == null)) {
@@ -96,13 +114,10 @@ public class DockingCollar implements Transporter {
     }
 
     /**
-     * DropShips launchable from this Docking Collar. This is different from loaded
-     * in that
-     * units in recovery cannot launch.
+     * DropShips launchable from this Docking Collar. This is different from loaded in that units in recovery cannot
+     * launch.
      *
-     * @return A list of DropShips that can launch from this Docking Collar. The
-     *         list may be empty
-     *         but not null.
+     * @return A list of DropShips that can launch from this Docking Collar. The list may be empty but not null.
      */
     public List<Entity> getLaunchableUnits() {
         if (damaged) {
@@ -110,11 +125,11 @@ public class DockingCollar implements Transporter {
         } else {
             correctDockedUnitList();
             return dockedUnits.stream()
-                    .map(id -> game.getEntity(id))
-                    .filter(entity -> entity.getRecoveryTurn() == 0)
-                    .filter(entity -> entity instanceof Dropship)
-                    .filter(entity -> !((Dropship) entity).isDockCollarDamaged())
-                    .collect(Collectors.toList());
+                  .map(id -> game.getEntity(id))
+                  .filter(entity -> entity.getRecoveryTurn() == 0)
+                  .filter(entity -> entity instanceof Dropship)
+                  .filter(entity -> !((Dropship) entity).isDockCollarDamaged())
+                  .collect(Collectors.toList());
         }
     }
 

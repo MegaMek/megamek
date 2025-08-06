@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2019-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.client.bot.princess;
@@ -34,11 +48,10 @@ import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 
 /**
- * Princess-Bot fire control class used to calculate firing plans for units that
- * can shoot at multiple targets without incurring a penalty.
+ * Princess-Bot fire control class used to calculate firing plans for units that can shoot at multiple targets without
+ * incurring a penalty.
  *
  * @author NickAragua
- *
  */
 public class MultiTargetFireControl extends FireControl {
     private final static MMLogger logger = MMLogger.create(MultiTargetFireControl.class);
@@ -48,15 +61,14 @@ public class MultiTargetFireControl extends FireControl {
     }
 
     /**
-     * Calculates the best firing plan for a particular entity, assuming that
-     * everybody has already moved.
-     * Assumes no restriction on number of units that may be targeted.
+     * Calculates the best firing plan for a particular entity, assuming that everybody has already moved. Assumes no
+     * restriction on number of units that may be targeted.
      */
     @Override
     public FiringPlan getBestFiringPlan(final Entity shooter,
-            final IHonorUtil honorUtil,
-            final Game game,
-            final Map<WeaponMounted, Double> ammoConservation) {
+          final IHonorUtil honorUtil,
+          final Game game,
+          final Map<WeaponMounted, Double> ammoConservation) {
         FiringPlan bestPlan = new FiringPlan();
 
         // optimal firing patterns for units such as DropShips, Thunderbolts with
@@ -122,8 +134,8 @@ public class MultiTargetFireControl extends FireControl {
      * Get me the best shot that this particular weapon can take.
      *
      * @param weapon Weapon to fire.
-     * @return The weapon fire info with the most expected damage. Null if no such
-     *         thing.
+     *
+     * @return The weapon fire info with the most expected damage. Null if no such thing.
      */
     WeaponFireInfo getBestShot(Entity shooter, WeaponMounted weapon) {
         WeaponFireInfo bestShot = null;
@@ -132,7 +144,7 @@ public class MultiTargetFireControl extends FireControl {
             WeaponFireInfo betterShot = null;
             final int ownerID = (target instanceof Entity) ? ((Entity) target).getOwnerId() : -1;
             if (owner.getHonorUtil().isEnemyBroken(target.getId(), ownerID,
-                    owner.getBehaviorSettings().isForcedWithdrawal())) {
+                  owner.getBehaviorSettings().isForcedWithdrawal())) {
                 logger.info(target.getDisplayName() + " is broken - ignoring");
                 continue;
             }
@@ -154,7 +166,7 @@ public class MultiTargetFireControl extends FireControl {
                     // this is a better shot if it has a chance of doing damage and the damage is
                     // better than the previous best shot
                     if ((shot.getExpectedDamage() > 0) &&
-                            ((betterShot == null) || (shot.getExpectedDamage() > betterShot.getExpectedDamage()))) {
+                          ((betterShot == null) || (shot.getExpectedDamage() > betterShot.getExpectedDamage()))) {
                         betterShot = shot;
                     }
                 }
@@ -162,7 +174,7 @@ public class MultiTargetFireControl extends FireControl {
             // Now do the same comparison for the better shot of all these shots to
             // determine the *best* shot
             if ((betterShot != null && betterShot.getExpectedDamage() > 0) &&
-                    ((bestShot == null) || (betterShot.getExpectedDamage() > bestShot.getExpectedDamage()))) {
+                  ((bestShot == null) || (betterShot.getExpectedDamage() > bestShot.getExpectedDamage()))) {
                 bestShot = betterShot;
             }
         }
@@ -171,23 +183,17 @@ public class MultiTargetFireControl extends FireControl {
     }
 
     /**
-     * calculates the 'utility' of a firing plan. This particular function
-     * ignores any characteristics of the firing plan that depend on having a single
-     * target.
+     * calculates the 'utility' of a firing plan. This particular function ignores any characteristics of the firing
+     * plan that depend on having a single target.
      *
-     * @param firingPlan
-     *                          The {@link FiringPlan} to be calculated.
-     * @param overheatTolerance
-     *                          How much overheat we're willing to forgive.
-     * @param shooterIsAero
-     *                          Set TRUE if the shooter is an Aero unit. Overheating
-     *                          Aero's
-     *                          take stiffer penalties.
+     * @param firingPlan        The {@link FiringPlan} to be calculated.
+     * @param overheatTolerance How much overheat we're willing to forgive.
+     * @param shooterIsAero     Set TRUE if the shooter is an Aero unit. Overheating Aero's take stiffer penalties.
      */
     @Override
     void calculateUtility(final FiringPlan firingPlan,
-            final int overheatTolerance,
-            final boolean shooterIsAero) {
+          final int overheatTolerance,
+          final boolean shooterIsAero) {
         int overheat = 0;
         if (firingPlan.getHeat() > overheatTolerance) {
             overheat = firingPlan.getHeat() - overheatTolerance;
@@ -225,8 +231,8 @@ public class MultiTargetFireControl extends FireControl {
         }
 
         boolean shooterIsLarge = shooter.hasETypeFlag(Entity.ETYPE_DROPSHIP) ||
-                shooter.hasETypeFlag(Entity.ETYPE_JUMPSHIP) ||
-                shooter.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT);
+              shooter.hasETypeFlag(Entity.ETYPE_JUMPSHIP) ||
+              shooter.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT);
 
         // the logic is significantly different when heat is generated by firing arc,
         // rather than by individual weapon/bay
@@ -241,12 +247,12 @@ public class MultiTargetFireControl extends FireControl {
     }
 
     /**
-     * Worker function that calculates a firing plan for a shooter under the "heat
-     * per weapon arc" rules
-     * (which are the default), given a list of optimal shots for each weapon.
+     * Worker function that calculates a firing plan for a shooter under the "heat per weapon arc" rules (which are the
+     * default), given a list of optimal shots for each weapon.
      *
      * @param shooter  The unit doing the shooting.
      * @param shotList The list of optimal weapon shots.
+     *
      * @return An optimal firing plan.
      */
     FiringPlan calculatePerArcFiringPlan(Entity shooter, List<WeaponFireInfo> shotList) {
@@ -263,9 +269,9 @@ public class MultiTargetFireControl extends FireControl {
         int heatCapacity = shooter.getHeatCapacity();
         // account for artillery fired during the Targeting (offboard) phase; we reduce the heat capacity and treat
         // the arc's heat as 0 because this arc has already fired - so it can be included in the solution for "free"
-        for ( WeaponMounted weapon : shooter.getWeaponList().stream().filter(Mounted::isUsedThisRound).toList()) {
+        for (WeaponMounted weapon : shooter.getWeaponList().stream().filter(Mounted::isUsedThisRound).toList()) {
             int arc = weapon.isRearMounted() ? -shooter.getWeaponArc(weapon.getEquipmentNum()) :
-                            shooter.getWeaponArc(weapon.getEquipmentNum());
+                  shooter.getWeaponArc(weapon.getEquipmentNum());
             if (!arcShots.containsKey(arc)) {
                 heatCapacity -= shooter.getHeatInArc(weapon.getLocation(), weapon.isRearMounted());
                 arcShots.put(arc, new ArrayList<>());
@@ -285,7 +291,7 @@ public class MultiTargetFireControl extends FireControl {
             if (!arcShots.containsKey(arc)) {
                 arcShots.put(arc, new ArrayList<>());
                 arcHeat.put(arc,
-                        shooter.getHeatInArc(shot.getWeapon().getLocation(), shot.getWeapon().isRearMounted()));
+                      shooter.getHeatInArc(shot.getWeapon().getLocation(), shot.getWeapon().isRearMounted()));
                 arcDamage.put(arc, 0.0);
             }
 
@@ -320,7 +326,7 @@ public class MultiTargetFireControl extends FireControl {
                 } else if (arcHeat.get(currentArc) <= heatIndex) {
                     int previousHeatIndex = heatIndex - arcHeat.get(currentArc);
                     double currentArcDamage = arcDamage.get(currentArc)
-                            + damageBackpack[arcIndex - 1][previousHeatIndex];
+                          + damageBackpack[arcIndex - 1][previousHeatIndex];
                     double accumulatedPreviousArcDamage = damageBackpack[arcIndex - 1][heatIndex];
 
                     if (currentArcDamage > accumulatedPreviousArcDamage) {
@@ -329,7 +335,7 @@ public class MultiTargetFireControl extends FireControl {
                         damageBackpack[arcIndex][heatIndex] = currentArcDamage;
                         // make sure we don't accidentally update the cell we're examining
                         List<Integer> appendedArcList = new ArrayList<>(
-                                arcBackpack.get(arcIndex - 1).get(previousHeatIndex));
+                              arcBackpack.get(arcIndex - 1).get(previousHeatIndex));
                         appendedArcList.add(currentArc);
                         arcBackpack.get(arcIndex).put(heatIndex, appendedArcList);
                     } else {
@@ -360,16 +366,16 @@ public class MultiTargetFireControl extends FireControl {
     }
 
     /**
-     * Worker function that calculates a firing plan for a shooter under the
-     * "individual weapon heat" rules,
-     * given a list of optimal shots for each weapon.
+     * Worker function that calculates a firing plan for a shooter under the "individual weapon heat" rules, given a
+     * list of optimal shots for each weapon.
      *
      * @param shooter  The unit doing the shooting.
      * @param shotList The list of optimal weapon shots.
+     *
      * @return An optimal firing plan.
      */
     FiringPlan calculateIndividualWeaponFiringPlan(Entity shooter, List<WeaponFireInfo> shotList,
-            boolean shooterIsLarge) {
+          boolean shooterIsLarge) {
         FiringPlan retVal = new FiringPlan();
 
         // the 'heat capacity' is affected negatively by having existing heat and by
@@ -430,7 +436,7 @@ public class MultiTargetFireControl extends FireControl {
                 } else if (shotList.get(shotIndex - 1).getHeat() <= heatIndex) {
                     int previousHeatIndex = heatIndex - shotList.get(shotIndex - 1).getHeat();
                     double currentShotDamage = shotList.get(shotIndex - 1).getExpectedDamage() +
-                            damageBackpack[shotIndex - 1][previousHeatIndex];
+                          damageBackpack[shotIndex - 1][previousHeatIndex];
                     double accumulatedPreviousShotDamage = damageBackpack[shotIndex - 1][heatIndex];
 
                     if (currentShotDamage > accumulatedPreviousShotDamage) {
@@ -439,7 +445,7 @@ public class MultiTargetFireControl extends FireControl {
                         damageBackpack[shotIndex][heatIndex] = currentShotDamage;
                         // make sure we don't accidentally update the cell we're examining
                         List<Integer> appendedShotList = new ArrayList<>(
-                                shotBackpack.get(shotIndex - 1).get(previousHeatIndex));
+                              shotBackpack.get(shotIndex - 1).get(previousHeatIndex));
                         appendedShotList.add(shotIndex - 1);
                         shotBackpack.get(shotIndex).put(heatIndex, appendedShotList);
                     } else {

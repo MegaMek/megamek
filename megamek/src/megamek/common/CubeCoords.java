@@ -73,7 +73,9 @@ public record CubeCoords(double q, double r, double s) {
 
     /**
      * Adds another CubeCoords to this one and returns a new CubeCoords object.
+     *
      * @param other the CubeCoords to add
+     *
      * @return a new CubeCoords object with the sum of the coordinates
      */
     public CubeCoords add(CubeCoords other) {
@@ -82,7 +84,9 @@ public record CubeCoords(double q, double r, double s) {
 
     /**
      * Subtracts another CubeCoords from this one and returns a new CubeCoords object.
+     *
      * @param other the CubeCoords to subtract
+     *
      * @return a new CubeCoords object with the difference of the coordinates
      */
     public CubeCoords subtract(CubeCoords other) {

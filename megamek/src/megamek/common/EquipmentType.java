@@ -42,15 +42,11 @@ import java.util.stream.Collectors;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.util.YamlEncDec;
-import megamek.common.util.YamlSerializerEquipmentType;
 import megamek.common.weapons.autocannons.HVACWeapon;
-import megamek.common.weapons.c3.ISC3M;
-import megamek.common.weapons.c3.ISC3MBS;
 import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.logging.MMLogger;
-import megamek.common.TechAdvancement.AdvancementPhase;
 
 /**
  * Represents any type of equipment mounted on a 'Mek, excluding systems and actuators.
@@ -408,7 +404,7 @@ public class EquipmentType implements ITechnology {
 
         // Special case: discharged M- and B-pods shouldn't explode.
         if (((this instanceof MPodWeapon) || (this instanceof BPodWeapon)) &&
-                  ((mounted.getLinked() == null) || (mounted.getLinked().getUsableShotsLeft() == 0))) {
+              ((mounted.getLinked() == null) || (mounted.getLinked().getUsableShotsLeft() == 0))) {
             return false;
         }
 
@@ -422,7 +418,7 @@ public class EquipmentType implements ITechnology {
 
         // special-case. RACs only explode when jammed
         if ((mounted.getType() instanceof WeaponType) &&
-                  (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY)) {
+              (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY)) {
             if (!mounted.isJammed()) {
                 return false;
             }
@@ -430,17 +426,17 @@ public class EquipmentType implements ITechnology {
 
         // special case. ACs only explode when firing incendiary ammo
         if ((mounted.getType() instanceof WeaponType) &&
-                  ((((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
-                         (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
-                         (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
-                         (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.PAC))) {
+              ((((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
+                    (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
+                    (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
+                    (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.PAC))) {
             if (!mounted.isUsedThisRound()) {
                 return false;
             }
             Mounted<?> ammo = mounted.getLinked();
             if ((ammo == null) ||
-                      !(ammo.getType() instanceof AmmoType) ||
-                      (!((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC))) {
+                  !(ammo.getType() instanceof AmmoType) ||
+                  (!((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC))) {
                 return false;
             }
         }
@@ -448,8 +444,8 @@ public class EquipmentType implements ITechnology {
         // special case. HVACs only explode when there's ammo left
         if (mounted.getType() instanceof HVACWeapon) {
             if ((mounted.getEntity() == null) ||
-                      (mounted.getLinked() == null) ||
-                      (mounted.getEntity().getTotalAmmoOfType(mounted.getLinked().getType()) == 0)) {
+                  (mounted.getLinked() == null) ||
+                  (mounted.getEntity().getTotalAmmoOfType(mounted.getLinked().getType()) == 0)) {
                 return false;
             }
         }
@@ -457,7 +453,7 @@ public class EquipmentType implements ITechnology {
         // special case. Blue Shield Particle Field Damper only explodes when
         // switched on
         if ((mounted.getType() instanceof MiscType) &&
-                  (mounted.getType().hasFlag(MiscType.F_BLUE_SHIELD) && mounted.curMode().equals("Off"))) {
+              (mounted.getType().hasFlag(MiscType.F_BLUE_SHIELD) && mounted.curMode().equals("Off"))) {
             return false;
         }
 
@@ -469,15 +465,15 @@ public class EquipmentType implements ITechnology {
                 return true;
             }
             if ((mounted.getType() instanceof MiscType) &&
-                      mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) &&
-                      (mounted.getLinked() != null)) {
+                  mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) &&
+                  (mounted.getLinked() != null)) {
                 return true;
             }
 
         }
         if ((mounted.getType() instanceof MiscType) &&
-                  mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) &&
-                  !mounted.curMode().equals("Charge")) {
+              mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) &&
+              !mounted.curMode().equals("Charge")) {
             return false;
         }
         if ((mounted.getType() instanceof PPCWeapon) && (mounted.hasChargedCapacitor() == 0)) {
@@ -635,6 +631,7 @@ public class EquipmentType implements ITechnology {
      * Sets the modes that this type of equipment can be in. By default, the EquipmentType doesn't have the modes, so
      * don't try to call this method with null or empty argument.
      * TODO: Refactor so the equipment knows the phase they can be armed/disarmed
+     *
      * @param modes non null, non empty list of available mode names.
      */
     protected void setModes(String... modes) {
@@ -663,6 +660,7 @@ public class EquipmentType implements ITechnology {
     /**
      * Add a mode to the Equipment
      * TODO: Refactor so the equipment knows the phase they can be armed/disarmed
+     *
      * @param mode The mode to be added
      *
      * @return true if the mode was added; false if modes was null or the mode was already present
@@ -916,18 +914,18 @@ public class EquipmentType implements ITechnology {
                 2430,
                 2439,
                 2505)
-                                                                         .setApproximate(true, false, false)
-                                                                         .setIntroLevel(true)
-                                                                         .setTechRating(TechRating.D)
-                                                                         .setAvailability(AvailabilityValue.C,
-                                                                               AvailabilityValue.C,
-                                                                               AvailabilityValue.C,
-                                                                               AvailabilityValue.C)
-                                                                         .setStaticTechLevel(SimpleTechLevel.INTRO);
+          .setApproximate(true, false, false)
+          .setIntroLevel(true)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.C,
+                AvailabilityValue.C,
+                AvailabilityValue.C,
+                AvailabilityValue.C)
+          .setStaticTechLevel(SimpleTechLevel.INTRO);
     protected static final TechAdvancement TA_NONE = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE)
-                                                           .setTechRating(TechRating.A)
-                                                           .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
-                                                           .setStaticTechLevel(SimpleTechLevel.INTRO);
+          .setTechRating(TechRating.A)
+          .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+          .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     public static TechAdvancement getStructureTechAdvancement(int at, boolean clan) {
         if (at == T_STRUCTURE_STANDARD) {
@@ -1152,7 +1150,7 @@ public class EquipmentType implements ITechnology {
 
     /**
      * Constructs a map containing the YAML-serializable data for this equipment type.
-     * 
+     *
      * @return A map containing the YAML-serializable data for this equipment type.
      */
     public Map<String, Object> getYamlData() {
@@ -1186,26 +1184,26 @@ public class EquipmentType implements ITechnology {
 
                 // Gather the unique tech levels for this equipment ...
                 List<Integer> levels = equipmentType.getTechLevels()
-                                             .keySet()
-                                             .stream()
-                                             .map(equipmentType::getTechLevel)
-                                             .sorted() // ordered for ease of use
-                                             .distinct()
-                                             .collect(Collectors.toList());
+                      .keySet()
+                      .stream()
+                      .map(equipmentType::getTechLevel)
+                      .sorted() // ordered for ease of use
+                      .distinct()
+                      .collect(Collectors.toList());
 
                 // ... and use them to output the tech names ...
                 bufferedWriter.write("\",\"");
                 bufferedWriter.write(levels.stream()
-                                           .map(TechConstants::getTechName)
-                                           .distinct()
-                                           .collect(Collectors.joining("/")));
+                      .map(TechConstants::getTechName)
+                      .distinct()
+                      .collect(Collectors.joining("/")));
 
                 // ... and associated rules levels.
                 bufferedWriter.write("\",\"");
                 bufferedWriter.write(levels.stream()
-                                           .map(TechConstants::getLevelName)
-                                           .distinct()
-                                           .collect(Collectors.joining("/")));
+                      .map(TechConstants::getLevelName)
+                      .distinct()
+                      .collect(Collectors.joining("/")));
 
                 bufferedWriter.write("\",\"");
                 bufferedWriter.write(equipmentType.getFullRatingName());
@@ -1302,26 +1300,26 @@ public class EquipmentType implements ITechnology {
 
                 // Gather the unique tech levels for this equipment ...
                 List<Integer> levels = weaponType.getTechLevels()
-                                             .keySet()
-                                             .stream()
-                                             .map(weaponType::getTechLevel)
-                                             .sorted() // ordered for ease of use
-                                             .distinct()
-                                             .collect(Collectors.toList());
+                      .keySet()
+                      .stream()
+                      .map(weaponType::getTechLevel)
+                      .sorted() // ordered for ease of use
+                      .distinct()
+                      .collect(Collectors.toList());
 
                 // ... and use them to output the tech names ...
                 bufferedWriter.write("\",\"");
                 bufferedWriter.write(levels.stream()
-                                           .map(TechConstants::getTechName)
-                                           .distinct()
-                                           .collect(Collectors.joining("/")));
+                      .map(TechConstants::getTechName)
+                      .distinct()
+                      .collect(Collectors.joining("/")));
 
                 // ... and associated rules levels.
                 bufferedWriter.write("\",\"");
                 bufferedWriter.write(levels.stream()
-                                           .map(TechConstants::getLevelName)
-                                           .distinct()
-                                           .collect(Collectors.joining("/")));
+                      .map(TechConstants::getLevelName)
+                      .distinct()
+                      .collect(Collectors.joining("/")));
 
                 bufferedWriter.write("\",\"");
                 bufferedWriter.write(weaponType.getFullRatingName());
@@ -1451,26 +1449,26 @@ public class EquipmentType implements ITechnology {
 
                 // Gather the unique tech levels for this equipment ...
                 List<Integer> levels = ammoType.getTechLevels()
-                                             .keySet()
-                                             .stream()
-                                             .map(ammoType::getTechLevel)
-                                             .sorted() // ordered for ease of use
-                                             .distinct()
-                                             .collect(Collectors.toList());
+                      .keySet()
+                      .stream()
+                      .map(ammoType::getTechLevel)
+                      .sorted() // ordered for ease of use
+                      .distinct()
+                      .collect(Collectors.toList());
 
                 // ... and use them to output the tech names ...
                 bufferedWriter.write("\",\"");
                 bufferedWriter.write(levels.stream()
-                                           .map(TechConstants::getTechName)
-                                           .distinct()
-                                           .collect(Collectors.joining("/")));
+                      .map(TechConstants::getTechName)
+                      .distinct()
+                      .collect(Collectors.joining("/")));
 
                 // ... and associated rules levels.
                 bufferedWriter.write("\",\"");
                 bufferedWriter.write(levels.stream()
-                                           .map(TechConstants::getLevelName)
-                                           .distinct()
-                                           .collect(Collectors.joining("/")));
+                      .map(TechConstants::getLevelName)
+                      .distinct()
+                      .collect(Collectors.joining("/")));
 
                 bufferedWriter.write("\",\"");
                 bufferedWriter.write(ammoType.getFullRatingName());
@@ -1592,26 +1590,26 @@ public class EquipmentType implements ITechnology {
 
                 // Gather the unique tech levels for this equipment ...
                 List<Integer> levels = equipmentType.getTechLevels()
-                                             .keySet()
-                                             .stream()
-                                             .map(equipmentType::getTechLevel)
-                                             .sorted() // ordered for ease of use
-                                             .distinct()
-                                             .collect(Collectors.toList());
+                      .keySet()
+                      .stream()
+                      .map(equipmentType::getTechLevel)
+                      .sorted() // ordered for ease of use
+                      .distinct()
+                      .collect(Collectors.toList());
 
                 // ... and use them to output the tech names ...
                 bufferedWriter.write("\",\"");
                 bufferedWriter.write(levels.stream()
-                                           .map(TechConstants::getTechName)
-                                           .distinct()
-                                           .collect(Collectors.joining("/")));
+                      .map(TechConstants::getTechName)
+                      .distinct()
+                      .collect(Collectors.joining("/")));
 
                 // ... and associated rules levels.
                 bufferedWriter.write("\",\"");
                 bufferedWriter.write(levels.stream()
-                                           .map(TechConstants::getLevelName)
-                                           .distinct()
-                                           .collect(Collectors.joining("/")));
+                      .map(TechConstants::getLevelName)
+                      .distinct()
+                      .collect(Collectors.joining("/")));
 
                 bufferedWriter.write("\",\"");
                 bufferedWriter.write(equipmentType.getFullRatingName());
@@ -1812,8 +1810,8 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * @return True if this equipment type is any type of C3 equipment, meaning C3S/M and variations of those, C3i,
-     * Nova CEWS, NC3 and BA C3. Note that this returns true for some MiscTypes as well as some WeaponTypes.
+     * @return True if this equipment type is any type of C3 equipment, meaning C3S/M and variations of those, C3i, Nova
+     *       CEWS, NC3 and BA C3. Note that this returns true for some MiscTypes as well as some WeaponTypes.
      */
     public boolean isC3Equipment() {
         return false;

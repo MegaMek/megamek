@@ -37,6 +37,7 @@ import megamek.ai.dataset.UnitState.Field;
 /**
  * <p>Serializer for UnitState to TSV format.</p>
  * <p>Uses a flexible map-based approach with enum fields.</p>
+ *
  * @author Luana Coppio
  */
 public class UnitStateSerializer extends EntityDataSerializer<UnitState.Field, UnitState> {

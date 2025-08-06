@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.actions;
 
 import megamek.common.*;
@@ -38,12 +59,12 @@ public class ThrashAttackAction extends AbstractAttackAction {
     }
 
     /**
-     * To-hit number for thrashing attack. This attack can only be made by a
-     * prone Mek in a clear or pavement terrain hex that contains infantry. This
-     * attack will force a PSR check for the prone Mek; if the PSR is missed,
-     * the Mek takes normal falling damage.
+     * To-hit number for thrashing attack. This attack can only be made by a prone Mek in a clear or pavement terrain
+     * hex that contains infantry. This attack will force a PSR check for the prone Mek; if the PSR is missed, the Mek
+     * takes normal falling damage.
      *
      * @param game The current {@link Game} containing all entities.
+     *
      * @return the <code>ToHitData</code> containing the target roll.
      */
     public ToHitData toHit(Game game) {
@@ -67,12 +88,12 @@ public class ThrashAttackAction extends AbstractAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+                  && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                  || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                  && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                  && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "A friendly unit can never be the target of a direct attack.");
+                      "A friendly unit can never be the target of a direct attack.");
             }
         }
 
@@ -98,7 +119,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
 
         // Check range.
         if (target.getPosition() == null
-                || ae.getPosition().distance(target.getPosition()) > 0) {
+              || ae.getPosition().distance(target.getPosition()) > 0) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in same hex");
         }
 
@@ -109,21 +130,21 @@ public class ThrashAttackAction extends AbstractAttackAction {
         // Check terrain.
         Hex hex = game.getBoard().getHex(ae.getPosition());
         if (hex.containsTerrain(Terrains.WOODS)
-                || hex.containsTerrain(Terrains.JUNGLE)
-                || hex.containsTerrain(Terrains.ROUGH)
-                || hex.containsTerrain(Terrains.RUBBLE)
-                || hex.containsTerrain(Terrains.FUEL_TANK)
-                || hex.containsTerrain(Terrains.BUILDING)) {
+              || hex.containsTerrain(Terrains.JUNGLE)
+              || hex.containsTerrain(Terrains.ROUGH)
+              || hex.containsTerrain(Terrains.RUBBLE)
+              || hex.containsTerrain(Terrains.FUEL_TANK)
+              || hex.containsTerrain(Terrains.BUILDING)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Not a clear or pavement hex.");
         }
 
         // Can't target woods or a building with a thrash attack.
         if (target.getTargetType() == Targetable.TYPE_BUILDING
-                || target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
-                || target.getTargetType() == Targetable.TYPE_FUEL_TANK
-                || target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE
-                || target.getTargetType() == Targetable.TYPE_HEX_CLEAR
-                || target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
+              || target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
+              || target.getTargetType() == Targetable.TYPE_FUEL_TANK
+              || target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE
+              || target.getTargetType() == Targetable.TYPE_HEX_CLEAR
+              || target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 
@@ -131,14 +152,14 @@ public class ThrashAttackAction extends AbstractAttackAction {
         for (int loop = 0; loop < ae.locations(); loop++) {
             if (ae.weaponFiredFrom(loop)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Weapons fired from " + ae.getLocationName(loop) + " this turn");
+                      "Weapons fired from " + ae.getLocationName(loop) + " this turn");
             }
         }
 
         // Mek must have at least one working arm or leg.
         if (ae.isLocationBad(Mek.LOC_RARM) && ae.isLocationBad(Mek.LOC_LARM)
-                && ae.isLocationBad(Mek.LOC_RLEG)
-                && ae.isLocationBad(Mek.LOC_LLEG)) {
+              && ae.isLocationBad(Mek.LOC_RLEG)
+              && ae.isLocationBad(Mek.LOC_LLEG)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Mek has no arms or legs to thrash");
         }
 
@@ -150,6 +171,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
      * Damage caused by a successful thrashing attack.
      *
      * @param entity - the <code>Entity</code> conducting the thrash attack.
+     *
      * @return The <code>int</code> amount of damage caused by this attack.
      */
     public static int getDamageFor(Entity entity) {

@@ -32,10 +32,8 @@
  */
 package megamek.common.util;
 
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.function.BooleanSupplier;
-import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import megamek.common.AmmoType;
 import megamek.common.EquipmentType;
@@ -51,8 +49,9 @@ public class YamlSerializerAmmoType extends YamlSerializerEquipmentType {
 
     /**
      * Constructs a map containing the YAML-serializable data for the given ammo type.
-     * 
+     *
      * @param ammo The ammo type to serialize
+     *
      * @return A map containing the YAML-serializable data for the equipment type
      */
     public Map<String, Object> serialize(AmmoType ammo) {

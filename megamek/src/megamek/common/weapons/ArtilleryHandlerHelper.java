@@ -1,22 +1,44 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Vector;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -28,13 +50,6 @@ import megamek.common.Report;
 import megamek.common.Targetable;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Vector;
 
 /**
  * Contains some helper methods for artillery and similar weapon handlers.
@@ -81,7 +96,9 @@ public final class ArtilleryHandlerHelper {
 
     /**
      * @param entity The unit in question
+     *
      * @return True when the given unit has the Forward Observer ability
+     *
      * @see OptionsConstants#MISC_FORWARD_OBSERVER
      */
     public static boolean isForwardObserver(Entity entity) {
@@ -105,5 +122,5 @@ public final class ArtilleryHandlerHelper {
         }
     }
 
-    private ArtilleryHandlerHelper() { }
+    private ArtilleryHandlerHelper() {}
 }

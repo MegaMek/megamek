@@ -1,41 +1,54 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.calculationReport;
 
+import java.util.Locale;
+import javax.swing.JComponent;
+
 import megamek.common.annotations.Nullable;
 
-import javax.swing.*;
-import java.util.Locale;
-
 /**
- * This represents a report for any typical MegaMek suite calculation such as BV, cost or AS conversion.
- * It assumes that each line will have at most three entries, a sort of header text (Damage:), a calculation
- * (5 + 5 + 7 * 0.2) and a result on the right side (11.4).
+ * This represents a report for any typical MegaMek suite calculation such as BV, cost or AS conversion. It assumes that
+ * each line will have at most three entries, a sort of header text (Damage:), a calculation (5 + 5 + 7 * 0.2) and a
+ * result on the right side (11.4).
  * <BR><BR>
- * The result can be given as a String or as a double value with a prefix String. When a double value is
- * given, it will be rounded to one decimal digit. Since the second entry (the calculation text) can
- * be more complicated than a single number, it can only be passed as a String and rounding must be
- * performed by the caller if needed.
+ * The result can be given as a String or as a double value with a prefix String. When a double value is given, it will
+ * be rounded to one decimal digit. Since the second entry (the calculation text) can be more complicated than a single
+ * number, it can only be passed as a String and rounding must be performed by the caller if needed.
  * <BR><BR>
  * Classes that implement this interface ideally provide a runtime representation of the resulting report when
- * overriding toJComponent(). This should be displayable in a Swing Panel and not be null. At the worst,
- * a text explaining that the report is not available in this format should be given.
+ * overriding toJComponent(). This should be displayable in a Swing Panel and not be null. At the worst, a text
+ * explaining that the report is not available in this format should be given.
  *
  * @author Simon (Juliez)
  */
@@ -48,87 +61,89 @@ public interface CalculationReport {
     /**
      * Adds a single line to the CalculationReport.
      *
-     * @param type The first element of this line, such as "Damage: "
+     * @param type        The first element of this line, such as "Damage: "
      * @param calculation A calculation or other info, displayed after the type
-     * @param result A result or other info, displayed on the right side
+     * @param result      A result or other info, displayed on the right side
+     *
      * @return The CalculationReport itself. Enables multiple stringed addLine calls
      */
     CalculationReport addLine(@Nullable String type, @Nullable String calculation, @Nullable String result);
 
     /**
-     * Adds a single line to the CalculationReport. This method performs rounding to
-     * a single decimal digit on the result and writes resultPrefix in front of it.
+     * Adds a single line to the CalculationReport. This method performs rounding to a single decimal digit on the
+     * result and writes resultPrefix in front of it.
      *
-     * @param type The first element of this line, such as "Damage: "
-     * @param calculation A calculation or other info, displayed after the type
+     * @param type         The first element of this line, such as "Damage: "
+     * @param calculation  A calculation or other info, displayed after the type
      * @param resultPrefix A text to be display immediately in front of the result, such as "= "
-     * @param result A numerical result which will be rounded to a single decimal, e.g. 25.1
+     * @param result       A numerical result which will be rounded to a single decimal, e.g. 25.1
+     *
      * @return The CalculationReport itself. Enables multiple stringed addLine calls
      */
     default CalculationReport addLine(@Nullable String type, @Nullable String calculation,
-                              @Nullable String resultPrefix, double result) {
+          @Nullable String resultPrefix, double result) {
         return addLine(type, calculation, getRoundedResultString(resultPrefix, result));
     }
 
     /**
-     * Adds a single line to the CalculationReport. This method performs rounding to
-     * a single decimal digit on the result and writes resultPrefix in front of it.
-     * This line has only two elements, the type ("Damage: ") and the result displayed
-     * on the right side.
+     * Adds a single line to the CalculationReport. This method performs rounding to a single decimal digit on the
+     * result and writes resultPrefix in front of it. This line has only two elements, the type ("Damage: ") and the
+     * result displayed on the right side.
      *
-     * @param type The first element of this line, such as "Damage: "
+     * @param type         The first element of this line, such as "Damage: "
      * @param resultPrefix A text to be display immediately in front of the result, such as "= "
-     * @param result A numerical result which will be rounded to a single decimal, e.g. 25.1
+     * @param result       A numerical result which will be rounded to a single decimal, e.g. 25.1
+     *
      * @return The CalculationReport itself. Enables multiple stringed addLine calls
      */
     default CalculationReport addLine(@Nullable String type,
-                                      @Nullable String resultPrefix, double result) {
+          @Nullable String resultPrefix, double result) {
         return addLine(type, "", getRoundedResultString(resultPrefix, result));
     }
 
     /**
-     * Adds a single line to the CalculationReport in the way addLine() does, except
-     * the result has a line above it that may e.g. indicate a summary of previous values.
-     * This method performs rounding to a single decimal digit on the result and
-     * writes resultPrefix in front of it.
+     * Adds a single line to the CalculationReport in the way addLine() does, except the result has a line above it that
+     * may e.g. indicate a summary of previous values. This method performs rounding to a single decimal digit on the
+     * result and writes resultPrefix in front of it.
      *
-     * @param type The first element of this line, such as "Damage: "
-     * @param calculation A calculation or other info, displayed after the type
+     * @param type         The first element of this line, such as "Damage: "
+     * @param calculation  A calculation or other info, displayed after the type
      * @param resultPrefix A text to be display immediately in front of the result, such as "= "
-     * @param result A numerical result which will be rounded to a single decimal, e.g. 25.1
+     * @param result       A numerical result which will be rounded to a single decimal, e.g. 25.1
+     *
      * @return The CalculationReport itself. Enables multiple stringed addLine calls
      */
     default CalculationReport addResultLine(@Nullable String type, @Nullable String calculation,
-                                      @Nullable String resultPrefix, double result) {
+          @Nullable String resultPrefix, double result) {
         return addResultLine(type, calculation, getRoundedResultString(resultPrefix, result));
     }
 
     /**
-     * Adds a single line to the CalculationReport in the way addLine() does, except
-     * the result has a line above it that may e.g. indicate a summary of previous values.
-     * This line has only two elements, the type ("Damage: ") and the result displayed
-     * on the right side. This method performs rounding to a single decimal digit on the
-     * result and writes resultPrefix in front of it.
+     * Adds a single line to the CalculationReport in the way addLine() does, except the result has a line above it that
+     * may e.g. indicate a summary of previous values. This line has only two elements, the type ("Damage: ") and the
+     * result displayed on the right side. This method performs rounding to a single decimal digit on the result and
+     * writes resultPrefix in front of it.
      *
-     * @param type The first element of this line, such as "Damage: "
+     * @param type         The first element of this line, such as "Damage: "
      * @param resultPrefix A text to be display immediately in front of the result, such as "= "
-     * @param result A numerical result which will be rounded to a single decimal, e.g. 25.1
+     * @param result       A numerical result which will be rounded to a single decimal, e.g. 25.1
+     *
      * @return The CalculationReport itself. Enables multiple stringed addLine calls
      */
     default CalculationReport addResultLine(@Nullable String type,
-                                            @Nullable String resultPrefix, double result) {
+          @Nullable String resultPrefix, double result) {
         return addResultLine(type, "", getRoundedResultString(resultPrefix, result));
     }
 
     /**
-     * Adds a single line to the CalculationReport in the way addLine() does, except
-     * the result has a line above it that may e.g. indicate a summary of previous values.
-     * This line has only one element, the result displayed on the right side. This method
-     * performs rounding to a single decimal digit on the result and writes resultPrefix
-     * in front of it.
+     * Adds a single line to the CalculationReport in the way addLine() does, except the result has a line above it that
+     * may e.g. indicate a summary of previous values. This line has only one element, the result displayed on the right
+     * side. This method performs rounding to a single decimal digit on the result and writes resultPrefix in front of
+     * it.
      *
      * @param resultPrefix A text to be display immediately in front of the result, such as "= "
-     * @param result A numerical result which will be rounded to a single decimal, e.g. 25.1
+     * @param result       A numerical result which will be rounded to a single decimal, e.g. 25.1
+     *
      * @return The CalculationReport itself. Enables multiple stringed addLine calls
      */
     default CalculationReport addResultLine(@Nullable String resultPrefix, double result) {
@@ -145,11 +160,12 @@ public interface CalculationReport {
     }
 
     /**
-     * Adds a single line to the CalculationReport. This line has only two elements, the type
-     * ("Damage: ") and a result displayed on the right side.
+     * Adds a single line to the CalculationReport. This line has only two elements, the type ("Damage: ") and a result
+     * displayed on the right side.
      *
-     * @param type The first element of this line, such as "Damage: "
+     * @param type   The first element of this line, such as "Damage: "
      * @param result A result or other info, displayed on the right side
+     *
      * @return The CalculationReport itself. Enables multiple stringed addLine calls
      */
     default CalculationReport addLine(@Nullable String type, @Nullable String result) {
@@ -157,10 +173,10 @@ public interface CalculationReport {
     }
 
     /**
-     * Adds a single line to the CalculationReport. This line only has one element displayed
-     * on the right side.
+     * Adds a single line to the CalculationReport. This line only has one element displayed on the right side.
      *
      * @param result A result or other info, displayed on the right side
+     *
      * @return The CalculationReport itself. Enables multiple stringed addLine calls
      */
     default CalculationReport addLine(@Nullable String result) {
@@ -171,27 +187,29 @@ public interface CalculationReport {
      * Adds a single line to the CalculationReport containing a sub-header.
      *
      * @param text The header text
+     *
      * @return The CalculationReport itself. Enables multiple stringed addLine calls
      */
     CalculationReport addSubHeader(String text);
 
     /**
-     * Adds a single line to the CalculationReport containing the header for the CalculationReport.
-     * This would typically be used as the first line but can be used anywhere in the CalculationReport
-     * and multiple times.
+     * Adds a single line to the CalculationReport containing the header for the CalculationReport. This would typically
+     * be used as the first line but can be used anywhere in the CalculationReport and multiple times.
      *
      * @param text The header text
+     *
      * @return The CalculationReport itself. Enables multiple stringed addLine calls
      */
     CalculationReport addHeader(String text);
 
     /**
-     * Adds a single line to the CalculationReport in the way addLine() does, except
-     * the result has a line above it that may e.g. indicate a summary of previous values.
+     * Adds a single line to the CalculationReport in the way addLine() does, except the result has a line above it that
+     * may e.g. indicate a summary of previous values.
      *
-     * @param type The first element of this line, such as "Damage: "
+     * @param type        The first element of this line, such as "Damage: "
      * @param calculation A calculation or other info, displayed after the type
-     * @param result A result or other info, displayed on the right side
+     * @param result      A result or other info, displayed on the right side
+     *
      * @return The CalculationReport itself. Enables multiple stringed addLine calls
      */
     CalculationReport addResultLine(@Nullable String type, @Nullable String calculation, @Nullable String result);
@@ -204,17 +222,17 @@ public interface CalculationReport {
     JComponent toJComponent();
 
     /**
-     * Returns the assembled rounded result value with the prefix applied. Uses the fixed Locale.US
-     * as the Java way of converting "" + value seems to use Locale.US by default as well.
+     * Returns the assembled rounded result value with the prefix applied. Uses the fixed Locale.US as the Java way of
+     * converting "" + value seems to use Locale.US by default as well.
      */
     private String getRoundedResultString(String resultPrefix, double result) {
         return ((resultPrefix != null) ? resultPrefix : "")
-                + String.format(Locale.US, "%1$,.1f", result);
+              + String.format(Locale.US, "%1$,.1f", result);
     }
 
     /**
-     * Formats the given double with only the necessary digits and at most three digits. Uses the fixed Locale.US
-     * as the Java way of converting "" + value seems to use Locale.US by default as well.
+     * Formats the given double with only the necessary digits and at most three digits. Uses the fixed Locale.US as the
+     * Java way of converting "" + value seems to use Locale.US by default as well.
      */
     static String formatForReport(double d) {
         long timesThousand = Math.round(1000 * d);
@@ -230,39 +248,33 @@ public interface CalculationReport {
     }
 
     /**
-     * Starts a report section that is tentative, i.e. that may be added or discarded depending
-     * on whether {@link #endTentativeSection()} or {@link #discardTentativeSection()} is called
-     * at a later point.
-     * All lines added to the report after calling this method are kept separate until either
-     * {@link #endTentativeSection()} or {@link #discardTentativeSection()} is called.
-     * When subsequently {@link #endTentativeSection()} is called, the lines of the section are
-     * written to the report normally.
-     * When subsequently {@link #discardTentativeSection()} is called, all lines in the section
-     * are discarded (not written to the report).
-     * Note that calling this method multiple times has no further effect. The first consecutive
-     * call of this method stays the one that marks the start of the section. Not more than a
-     * single section is maintained at any time.
+     * Starts a report section that is tentative, i.e. that may be added or discarded depending on whether
+     * {@link #endTentativeSection()} or {@link #discardTentativeSection()} is called at a later point. All lines added
+     * to the report after calling this method are kept separate until either {@link #endTentativeSection()} or
+     * {@link #discardTentativeSection()} is called. When subsequently {@link #endTentativeSection()} is called, the
+     * lines of the section are written to the report normally. When subsequently {@link #discardTentativeSection()} is
+     * called, all lines in the section are discarded (not written to the report). Note that calling this method
+     * multiple times has no further effect. The first consecutive call of this method stays the one that marks the
+     * start of the section. Not more than a single section is maintained at any time.
      */
     void startTentativeSection();
 
     /**
-     * End the current section of lines, writing them to the report normally.
-     * Note that when a section has been ended and no new section begun, calling this method again
-     * has no effect.
+     * End the current section of lines, writing them to the report normally. Note that when a section has been ended
+     * and no new section begun, calling this method again has no effect.
      */
     void endTentativeSection();
 
     /**
      * Discard all lines written to this section (all lines added to the report after calling
-     * {@link #startTentativeSection()}).
-     * Note that when a section has been ended and no new section begun, calling this method again
-     * has no effect.
+     * {@link #startTentativeSection()}). Note that when a section has been ended and no new section begun, calling this
+     * method again has no effect.
      */
     void discardTentativeSection();
 
     /**
-     * End the current section of lines, keeping or discarding the section depending on the given
-     * keepSection. Calls either {@link #endTentativeSection()} or {@link #discardTentativeSection()}.
+     * End the current section of lines, keeping or discarding the section depending on the given keepSection. Calls
+     * either {@link #endTentativeSection()} or {@link #discardTentativeSection()}.
      *
      * @param keepSection When true, keeps the current section, otherwise discards it.
      */

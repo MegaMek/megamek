@@ -1,7 +1,6 @@
 /*
- * MegaMek -
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -27,10 +26,15 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI;
 
-import static megamek.common.Compute.*;
+import static megamek.common.Compute.d6;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -50,7 +54,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
-
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -60,19 +63,6 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
-
-import megamek.client.ui.dialogs.*;
-import megamek.client.ui.dialogs.clientDialogs.PlanetaryConditionsDialog;
-import megamek.client.ui.dialogs.unitSelectorDialogs.MainMenuUnitBrowserDialog;
-import megamek.client.ui.dialogs.buttonDialogs.BotConfigDialog;
-import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
-import megamek.client.ui.dialogs.buttonDialogs.GameOptionsDialog;
-import megamek.client.ui.dialogs.helpDialogs.HelpDialog;
-import megamek.client.ui.boardeditor.BoardEditorPanel;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import megamek.MMConstants;
 import megamek.MegaMek;
@@ -85,13 +75,24 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
-import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.boardeditor.BoardEditorPanel;
+import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
+import megamek.client.ui.dialogs.CommonAboutDialog;
+import megamek.client.ui.dialogs.ConfirmDialog;
+import megamek.client.ui.dialogs.ScenarioDialog;
+import megamek.client.ui.dialogs.UnitLoadingDialog;
+import megamek.client.ui.dialogs.buttonDialogs.BotConfigDialog;
+import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
+import megamek.client.ui.dialogs.buttonDialogs.GameOptionsDialog;
+import megamek.client.ui.dialogs.clientDialogs.PlanetaryConditionsDialog;
 import megamek.client.ui.dialogs.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.dialogs.gameConnectionDialogs.HostDialog;
+import megamek.client.ui.dialogs.helpDialogs.HelpDialog;
+import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
 import megamek.client.ui.dialogs.scenario.ScenarioChooserDialog;
+import megamek.client.ui.dialogs.unitSelectorDialogs.MainMenuUnitBrowserDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.skinEditor.SkinEditorMainGUIPanel;
-import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.MegaMekButton;
@@ -101,17 +102,7 @@ import megamek.client.ui.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.SkinnedJPanel;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.Compute;
-import megamek.common.Configuration;
-import megamek.common.Game;
-import megamek.common.GameType;
-import megamek.common.IGame;
-import megamek.common.KeyBindParser;
-import megamek.common.MekFileParser;
-import megamek.common.MekSummaryCache;
-import megamek.common.PlanetaryConditionsUsing;
-import megamek.common.Player;
-import megamek.common.WeaponOrderHandler;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.jacksonadapters.BotParser;
 import megamek.common.options.IBasicOption;
@@ -132,6 +123,10 @@ import megamek.server.Server;
 import megamek.server.sbf.SBFGameManager;
 import megamek.server.totalwarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class MegaMekGUI implements IPreferenceChangeListener {
     private static final MMLogger LOGGER = MMLogger.create(MegaMekGUI.class);
@@ -186,18 +181,20 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             }
         });
 
-        tipOfTheDay = new TipOfTheDay(Messages.getString("TipOfTheDay.title.text"), "megamek.client.TipOfTheDay", frame);
+        tipOfTheDay = new TipOfTheDay(Messages.getString("TipOfTheDay.title.text"),
+              "megamek.client.TipOfTheDay",
+              frame);
         frame.setContentPane(new SkinnedJPanel(UIComponents.MainMenuBorder, 1));
 
         List<Image> iconList = new ArrayList<>();
         iconList.add(frame.getToolkit()
-                           .getImage(new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16).toString()));
+              .getImage(new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16).toString()));
         iconList.add(frame.getToolkit()
-                           .getImage(new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_32X32).toString()));
+              .getImage(new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_32X32).toString()));
         iconList.add(frame.getToolkit()
-                           .getImage(new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_48X48).toString()));
+              .getImage(new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_48X48).toString()));
         iconList.add(frame.getToolkit()
-                           .getImage(new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()));
+              .getImage(new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()));
         frame.setIconImages(iconList);
 
         CommonMenuBar menuBar = CommonMenuBar.getMenuBarForMainMenu();
@@ -252,18 +249,20 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             int originalMedalHeight = image.getHeight(null);
 
             int targetMedalHeight = (int) (panelHeight * medalHeightScalePercent);
-            if (targetMedalHeight < 1) targetMedalHeight = 1; // Ensure minimum size
+            if (targetMedalHeight < 1) {
+                targetMedalHeight = 1; // Ensure minimum size
+            }
 
             double scaleFactor = (double) targetMedalHeight / originalMedalHeight;
             targetMedalWidth = (int) (originalMedalWidth * scaleFactor);
-            if (targetMedalWidth < 1) targetMedalWidth = 1;
+            if (targetMedalWidth < 1) {targetMedalWidth = 1;}
 
             // Position: bottom-right corner with padding
             int medalX = panelWidth - targetMedalWidth - padding;
             int medalY = panelHeight - targetMedalHeight - padding;
 
-            if (medalX < 0) medalX = 0;
-            if (medalY < 0) medalY = 0;
+            if (medalX < 0) {medalX = 0;}
+            if (medalY < 0) {medalY = 0;}
 
             g2d.drawImage(image, medalX, medalY, targetMedalWidth, targetMedalHeight, null);
         }
@@ -279,18 +278,20 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             int originalLogoHeight = image.getHeight(null);
 
             int targetLogoWidth = (int) (panelWidth * logoWidthScalePercent);
-            if (targetLogoWidth < 1) targetLogoWidth = 1; // Ensure minimum size
+            if (targetLogoWidth < 1) {
+                targetLogoWidth = 1; // Ensure minimum size
+            }
 
             double scaleFactor = (double) targetLogoWidth / originalLogoWidth;
             int targetLogoHeight = (int) (originalLogoHeight * scaleFactor);
-            if (targetLogoHeight < 1) targetLogoHeight = 1;
+            if (targetLogoHeight < 1) {targetLogoHeight = 1;}
 
             // Position: bottom-right corner with padding (after the medal)
             int logoX = panelWidth - targetLogoWidth - padding - targetMedalWidth - padding;
             int logoY = panelHeight - targetLogoHeight - padding;
 
-            if (logoX < 0) logoX = 0;
-            if (logoY < 0) logoY = 0;
+            if (logoX < 0) {logoX = 0;}
+            if (logoY < 0) {logoY = 0;}
 
             g2d.drawImage(image, logoX, logoY, targetLogoWidth, targetLogoHeight, null);
         }
@@ -359,8 +360,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // displays aren't as large as their secondary displays.
         Dimension scaledMonitorSize = UIUtil.getScaledScreenSize(frame);
         splashImage = getImage(FILENAME_MEGAMEK_SPLASH, scaledMonitorSize.width, scaledMonitorSize.height);
-        logoImage = new ManagedVolatileImage(getImage(FILENAME_LOGO, scaledMonitorSize.width, scaledMonitorSize.height), Transparency.TRANSLUCENT);
-        medalImage = new ManagedVolatileImage(getImage(FILENAME_MEDAL, scaledMonitorSize.width, scaledMonitorSize.height), Transparency.TRANSLUCENT);
+        logoImage = new ManagedVolatileImage(getImage(FILENAME_LOGO, scaledMonitorSize.width, scaledMonitorSize.height),
+              Transparency.TRANSLUCENT);
+        medalImage = new ManagedVolatileImage(getImage(FILENAME_MEDAL,
+              scaledMonitorSize.width,
+              scaledMonitorSize.height), Transparency.TRANSLUCENT);
         Dimension splashPanelPreferredSize = calculateSplashPanelPreferredSize(scaledMonitorSize, splashImage);
         // This is an empty panel that will contain the splash image
         splashPanel = new RawImagePanel(splashImage) {
@@ -481,30 +485,31 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     /**
      * Calculates the preferred size for the splash panel
-     * 
+     *
      * @param scaledMonitorSize the scaled monitor dimensions
-     * @param splashImage the reference image for the aspect ratio
+     * @param splashImage       the reference image for the aspect ratio
+     *
      * @return the calculated preferred size for the splash panel
      */
     private Dimension calculateSplashPanelPreferredSize(Dimension scaledMonitorSize, Image splashImage) {
         // Calculate max dimensions (75% of screen)
         int maxWidth = (int) (scaledMonitorSize.width * 0.75);
         int maxHeight = (int) (scaledMonitorSize.height * 0.75);
-        
+
         if (splashImage != null && splashImage.getWidth(null) > 0 && splashImage.getHeight(null) > 0) {
             // Calculate aspect ratio preserving dimensions
             double imageWidth = splashImage.getWidth(null);
             double imageHeight = splashImage.getHeight(null);
             double imageAspectRatio = imageWidth / imageHeight;
-            
+
             int targetWidth = maxWidth;
             int targetHeight = (int) (targetWidth / imageAspectRatio);
-            
+
             if (targetHeight > maxHeight) {
                 targetHeight = maxHeight;
                 targetWidth = (int) (targetHeight * imageAspectRatio);
             }
-            
+
             return new Dimension(targetWidth, targetHeight);
         } else {
             // Fallback to original calculation if image is not available
@@ -722,8 +727,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             @Override
             public boolean accept(File dir) {
                 return dir.getName().endsWith(MMConstants.SAVE_FILE_EXT) ||
-                             dir.getName().endsWith(MMConstants.SAVE_FILE_GZ_EXT) ||
-                             dir.isDirectory();
+                      dir.getName().endsWith(MMConstants.SAVE_FILE_GZ_EXT) ||
+                      dir.isDirectory();
             }
 
             @Override
@@ -822,10 +827,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (SuiteConstants.VERSION.is(version)) {
             return true;
         } else if (version.toString().toLowerCase().contains("nightly") &&
-              (version.getMajor() == SuiteConstants.VERSION.getMajor() && 
+              (version.getMajor() == SuiteConstants.VERSION.getMajor() &&
                     version.getMinor() == SuiteConstants.VERSION.getMinor() &&
                     version.getPatch() == SuiteConstants.VERSION.getPatch())
-                && version.toString().contains(SuiteConstants.VERSION.toString())) {
+              && version.toString().contains(SuiteConstants.VERSION.toString())) {
             // Nightly version of current development version
             return true;
         } else {
@@ -880,8 +885,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         for (int i = 0; i < nodePlayersChildren.getLength(); i++) {
             final Node nodeEntry = nodePlayersChildren.item(i);
             if ((nodeEntry.getNodeType() != Node.ELEMENT_NODE) ||
-                      !nodeEntry.hasChildNodes() ||
-                      !"entry".equals(nodeEntry.getNodeName())) {
+                  !nodeEntry.hasChildNodes() ||
+                  !"entry".equals(nodeEntry.getNodeName())) {
                 continue;
             }
 
@@ -889,8 +894,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             for (int k = 0; k < nodeEntryChildren.getLength(); k++) {
                 final Node nodePlayerClass = nodeEntryChildren.item(k);
                 if ((nodePlayerClass.getNodeType() != Node.ELEMENT_NODE) ||
-                          !nodePlayerClass.hasChildNodes() ||
-                          !Player.class.getName().equals(nodePlayerClass.getNodeName())) {
+                      !nodePlayerClass.hasChildNodes() ||
+                      !Player.class.getName().equals(nodePlayerClass.getNodeName())) {
                     continue;
                 }
 
@@ -1041,7 +1046,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     Princess c = new Princess(pa[x].getName(), MMConstants.LOCALHOST, port);
                     c.startPrecognition();
                     if (scenario.hasBotInfo(pa[x].getName()) &&
-                              scenario.getBotInfo(pa[x].getName()) instanceof BotParser.PrincessRecord princessRecord) {
+                          scenario.getBotInfo(pa[x].getName()) instanceof BotParser.PrincessRecord princessRecord) {
                         c.setBehaviorSettings(princessRecord.behaviorSettings());
                     }
                     c.getGame().addGameListener(new BotGUI(frame, c));

@@ -1,18 +1,36 @@
 /*
-* MegaMek -
-* Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2024 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
 package megamek.client.ui.tileset;
 
 import java.awt.Component;
@@ -34,7 +52,6 @@ import java.awt.image.RescaleOp;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Objects;
-
 import javax.swing.ImageIcon;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -96,15 +113,16 @@ public class EntityImage {
     private static final float SHADOW_INTENSITY = 0.7f; // 0 = no shadow, 1 = black shadow
     private static final float SHADOW_OFFSET = 5f; // due to unit height
     private static final RescaleOp BLACK_FILTER = new RescaleOp(new float[] { 0, 0, 0, SHADOW_INTENSITY },
-            new float[] { 0, 0, 0, 1 - SHADOW_INTENSITY }, null);
+          new float[] { 0, 0, 0, 1 - SHADOW_INTENSITY }, null);
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private static final GraphicsConfiguration GRAPHICS_CONFIGURATION = GraphicsEnvironment
-            .getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+          .getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
     /** Facing-dependent camo overlays (add shadows and highlighting) */
     private static final int[][] pOverlays = new int[6][IMG_SIZE];
+
     static {
         try {
             for (int i = 0; i < 6; i++) {
@@ -177,12 +195,12 @@ public class EntityImage {
     }
 
     public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage,
-            Entity entity, int secondaryPos) {
+          Entity entity, int secondaryPos) {
         return createIcon(base, wreck, camouflage, entity, secondaryPos, false, true);
     }
 
     public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage,
-            Entity entity, int secondaryPos, boolean preview, boolean withShadows) {
+          Entity entity, int secondaryPos, boolean preview, boolean withShadows) {
         if (entity instanceof FighterSquadron) {
             return new FighterSquadronIcon(base, wreck, camouflage, entity, secondaryPos, preview, withShadows);
         } else {
@@ -195,17 +213,17 @@ public class EntityImage {
     }
 
     public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
-            Entity entity, int secondaryPos) {
+          Entity entity, int secondaryPos) {
         this(base, wreck, camouflage, entity, secondaryPos, false, true);
     }
 
     public EntityImage(Image base, Image wreck, Camouflage camouflage,
-            Entity entity, int secondaryPos, boolean preview, boolean withShadows) {
+          Entity entity, int secondaryPos, boolean preview, boolean withShadows) {
         this(base, wreck, camouflage, null, entity, secondaryPos, preview, withShadows);
     }
 
     public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
-            Entity entity, int secondaryPos, boolean preview, boolean withShadows) {
+          Entity entity, int secondaryPos, boolean preview, boolean withShadows) {
         this.base = base;
         setCamouflage(camouflage);
         this.wreck = wreck;
@@ -227,8 +245,8 @@ public class EntityImage {
     }
 
     /**
-     * Worker function that calculates the entity's damage level for the purposes of
-     * displaying damage to avoid particularly dumb-looking situations
+     * Worker function that calculates the entity's damage level for the purposes of displaying damage to avoid
+     * particularly dumb-looking situations
      */
     private int calculateDamageLevel(Entity entity) {
         // gun emplacements don't show up as crippled when destroyed, which leads to
@@ -250,8 +268,8 @@ public class EntityImage {
         // case, it looks stupid for the entity to be all shot up, so we pretend there's
         // no damage.
         if ((calculatedDamageLevel > Entity.DMG_NONE) &&
-                (entity.getArmorRemainingPercent() >= 1.0) &&
-                (entity.getInternalRemainingPercent() >= 1.0)) {
+              (entity.getArmorRemainingPercent() >= 1.0) &&
+              (entity.getInternalRemainingPercent() >= 1.0)) {
             calculatedDamageLevel = Entity.DMG_NONE;
         }
 
@@ -328,9 +346,9 @@ public class EntityImage {
         double cx = base.getWidth(null) / 2.0;
         double cy = base.getHeight(null) / 2.0;
         AffineTransformOp xform = new AffineTransformOp(
-                AffineTransform.getRotateInstance(
-                        (-Math.PI / 3) * (6 - dir), cx, cy),
-                AffineTransformOp.TYPE_BICUBIC);
+              AffineTransform.getRotateInstance(
+                    (-Math.PI / 3) * (6 - dir), cx, cy),
+              AffineTransformOp.TYPE_BICUBIC);
         BufferedImage src;
         if (img instanceof BufferedImage) {
             src = (BufferedImage) img;
@@ -338,7 +356,7 @@ public class EntityImage {
             src = ImageUtil.createAcceleratedImage(img);
         }
         BufferedImage dst = ImageUtil.createAcceleratedImage(
-                src.getWidth(), src.getHeight());
+              src.getWidth(), src.getHeight());
         xform.filter(src, dst);
         return dst;
     }
@@ -416,8 +434,8 @@ public class EntityImage {
                 // Apply the camo only on the icon pixels, not on transparent pixels
                 if (alpha != 0) {
                     int pixel1 = colourCamouflage ? colour
-                            : rotatedAndScaledColor(i, getCamouflage().getRotationRadians(),
-                                    getCamouflage().getScaleFactor(), pCamo);
+                          : rotatedAndScaledColor(i, getCamouflage().getRotationRadians(),
+                          getCamouflage().getScaleFactor(), pCamo);
                     int red1 = (pixel1 >> 16) & 0xff;
                     int green1 = (pixel1 >> 8) & 0xff;
                     int blue1 = (pixel1) & 0xff;
@@ -453,16 +471,15 @@ public class EntityImage {
     }
 
     /**
-     * Returns a color from the given camoImage lookup array where the given lookup
-     * index is rotated by the
-     * given angle and scaled by the given scale.
+     * Returns a color from the given camoImage lookup array where the given lookup index is rotated by the given angle
+     * and scaled by the given scale.
      *
      * @param originalIndex The original lookup index (0 ... 84 x 72 - 1)
      * @param angle         The rotation angle in radians (0 = no change)
      * @param scale         The scale factor (1 = no change)
      * @param camoImage     The image pixel grabber lookup array
-     * @return The rotated and scaled image pixel color as an int value (as from the
-     *         image lookup array)
+     *
+     * @return The rotated and scaled image pixel color as an int value (as from the image lookup array)
      */
     private int rotatedAndScaledColor(int originalIndex, double angle, double scale, int[] camoImage) {
         // get the pixel coordinates
@@ -516,13 +533,13 @@ public class EntityImage {
     }
 
     /**
-     * Returns a valid lookup index for the pixel array for any values of x and y.
-     * The lookup is calculated so that the image is mirrored vertically and
-     * horizontally to avoid unnecessary seams at the image border. Note that for a
+     * Returns a valid lookup index for the pixel array for any values of x and y. The lookup is calculated so that the
+     * image is mirrored vertically and horizontally to avoid unnecessary seams at the image border. Note that for a
      * pixel at (0,0) the pixel color extends from -0.5, -0.5 to +0.5, +0.5.
      *
      * @param x the image x coordinate (any value allowed)
      * @param y the image y coordinate (any value allowed)
+     *
      * @return a lookup within allowed values (0 ... 84 x 72 - 1)
      */
     private int mirroredIndex(double x, double y) {
@@ -665,8 +682,8 @@ public class EntityImage {
         try {
             // No smoke and fire for damage up to moderate
             if (dmgLevel == Entity.DMG_NONE
-                    || dmgLevel == Entity.DMG_LIGHT
-                    || dmgLevel == Entity.DMG_MODERATE) {
+                  || dmgLevel == Entity.DMG_LIGHT
+                  || dmgLevel == Entity.DMG_MODERATE) {
                 return dmgEmpty;
             }
 
@@ -715,7 +732,7 @@ public class EntityImage {
 
         // blurring requires a slightly bigger image
         BufferedImage temp = GRAPHICS_CONFIGURATION.createCompatibleImage(
-                IMG_WIDTH + radius * 2, IMG_HEIGHT + radius * 2, Transparency.TRANSLUCENT);
+              IMG_WIDTH + radius * 2, IMG_HEIGHT + radius * 2, Transparency.TRANSLUCENT);
         Graphics g = temp.getGraphics();
         g.drawImage(blackedOut, radius, radius, null);
         g.dispose();
@@ -723,7 +740,7 @@ public class EntityImage {
 
         // reduce back to the correct image size
         BufferedImage result = GRAPHICS_CONFIGURATION.createCompatibleImage(IMG_WIDTH, IMG_HEIGHT,
-                Transparency.TRANSLUCENT);
+              Transparency.TRANSLUCENT);
         Graphics gResult = result.getGraphics();
         int xOffset = 0;
         if (unitElevation == 0) {
@@ -731,7 +748,7 @@ public class EntityImage {
         }
         int yOffset = xOffset * 7 / 19; // values taken from the light direction used in terrain shadows
         gResult.drawImage(shadow, -xOffset, yOffset, IMG_WIDTH - 1 - xOffset, IMG_HEIGHT - 1 + yOffset,
-                radius, radius, IMG_WIDTH + radius - 1, IMG_HEIGHT + radius - 1, null);
+              radius, radius, IMG_WIDTH + radius - 1, IMG_HEIGHT + radius - 1, null);
 
         // re-apply the actual icon on top of the shadow
         gResult.drawImage(image, 0, 0, null);
@@ -740,9 +757,8 @@ public class EntityImage {
     }
 
     /**
-     * @return a random image of all the images in the category (= directory) cat.
-     *         To have reproducible images for individual units the image is chosen
-     *         based on the hash value of the name (and the hex in multi-hex units).
+     * @return a random image of all the images in the category (= directory) cat. To have reproducible images for
+     *       individual units the image is chosen based on the hash value of the name (and the hex in multi-hex units).
      */
     private static Image getIM(String cat, String name, int pos) throws Exception {
         int img = Math.abs((name + pos).hashCode()) % getSize(DecalImages.getItemNames(cat));
@@ -755,8 +771,7 @@ public class EntityImage {
     }
 
     /**
-     * @return the size of the collection of an iterator. Local helper function for
-     *         DirectoryItems.
+     * @return the size of the collection of an iterator. Local helper function for DirectoryItems.
      */
     private static <T> int getSize(Iterator<T> iter) {
         int result = 0;

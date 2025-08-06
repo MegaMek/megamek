@@ -1,34 +1,47 @@
 /*
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.List;
-
 import javax.swing.AbstractAction;
 
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
-import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.clientGUI.boardview.overlay.TurnDetailsOverlay;
+import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.MegaMekButton;
@@ -61,7 +74,9 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         var donePanel = super.setupDonePanel();
         butSkipTurn = new MegaMekButton("SKIP", SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
         butSkipTurn.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height));
-        String f = UIUtil.fontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE_NO_ACTION)+ "</FONT>";
+        String f = UIUtil.fontHTML(UIUtil.uiLightViolet())
+              + KeyCommandBind.getDesc(KeyCommandBind.DONE_NO_ACTION)
+              + "</FONT>";
         butSkipTurn.setToolTipText("<html><body>" + f + "</body></html>");
         addToDonePanel(donePanel, butSkipTurn);
 
@@ -75,8 +90,8 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
                         return;
                     }
                     if ((clientgui.getClient().isMyTurn())
-                            || (game.getTurn() == null)
-                            || (game.getPhase().isReport())) {
+                          || (game.getTurn() == null)
+                          || (game.getPhase().isReport())) {
                         // act like Done button
                         performDoneNoAction();
                         // When the turn is ended, we could miss a key release event
@@ -87,7 +102,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
             });
 
             clientgui.controller.registerCommandAction(KeyCommandBind.DONE_NO_ACTION, this::shouldReceiveDoneKeyCommand,
-                    this::performDoneNoAction);
+                  this::performDoneNoAction);
         }
 
         updateDonePanel();
@@ -101,12 +116,12 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
 
     public boolean shouldReceiveDoneKeyCommand() {
         return ((clientgui.getClient().isMyTurn()
-                || (game.getTurn() == null)
-                || (game.getPhase().isReport())))
-                && !clientgui.isChatBoxActive()
-                && !isIgnoringEvents()
-                && isVisible()
-                && (butDone.isEnabled() || butSkipTurn.isEnabled());
+              || (game.getTurn() == null)
+              || (game.getPhase().isReport())))
+              && !clientgui.isChatBoxActive()
+              && !isIgnoringEvents()
+              && isVisible()
+              && (butDone.isEnabled() || butSkipTurn.isEnabled());
     }
 
     @Override
@@ -121,17 +136,16 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         updateDonePanel();
     }
 
-    /** called to reset, show, hide and relabel the Done panel buttons. Override to change button labels and states,
-     * being sure to call {@link #updateDonePanelButtons(String, String, boolean, List)}
-     * to set the button labels and states
+    /**
+     * called to reset, show, hide and relabel the Done panel buttons. Override to change button labels and states,
+     * being sure to call {@link #updateDonePanelButtons(String, String, boolean, List)} to set the button labels and
+     * states
      */
     abstract protected void updateDonePanel();
 
     /**
-     * @return true if a nag dialog should be shown when there is no action given to current unit.
-     * This is true if user option wants a nag
-     * they have not preemptively checked @butIgnoreNag
-     * the turn timer is not expired
+     * @return true if a nag dialog should be shown when there is no action given to current unit. This is true if user
+     *       option wants a nag they have not preemptively checked @butIgnoreNag the turn timer is not expired
      */
     protected boolean needNagForNoAction() {
         return GUIP.getNagForNoAction() && !ignoreNoActionNag && !isTimerExpired();
@@ -230,14 +244,16 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         return doYesNoBotherDialog(title, body, () -> GUIP.setNagForLaunchDoors(false));
     }
 
-    /** set labels and enables on the done and skip buttons depending on the GUIP getNagForNoAction option
+    /**
+     * set labels and enables on the done and skip buttons depending on the GUIP getNagForNoAction option
      *
      * @param doneButtonLabel
      * @param skipButtonLabel
-     * @param isDoingAction true if user has entered actions for this turn, false if not.
+     * @param isDoingAction   true if user has entered actions for this turn, false if not.
      */
-    protected void updateDonePanelButtons(final String doneButtonLabel, final String skipButtonLabel, final boolean isDoingAction,
-                                          @Nullable List<String> turnDetails) {
+    protected void updateDonePanelButtons(final String doneButtonLabel, final String skipButtonLabel,
+          final boolean isDoingAction,
+          @Nullable List<String> turnDetails) {
         if (isIgnoringEvents()) {
             return;
         }
@@ -258,8 +274,8 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
 
         // point blank shots don't have the "isMyTurn()" characteristic
         if ((currentEntity == Entity.NONE)
-                || getClientgui().getClient().getGame().getInGameObject(currentEntity).isEmpty()
-                || (!clientgui.getClient().isMyTurn() && !clientgui.isProcessingPointblankShot())) {
+              || getClientgui().getClient().getGame().getInGameObject(currentEntity).isEmpty()
+              || (!clientgui.getClient().isMyTurn() && !clientgui.isProcessingPointblankShot())) {
             butDone.setEnabled(false);
             butSkipTurn.setEnabled(false);
         } else if (isDoingAction || ignoreNoActionNag) {
@@ -285,10 +301,10 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * @return The currently selected entity, if any, or null. A null check is **always** required, as displays
-     * are active when it's not the player's turn and when the setting to not auto-select a unit for the
-     * player is active, no unit may be selected even in a player's turn.
-     * Note that this is not necessarily equal to the currently *viewed* unit in the unit display.
+     * @return The currently selected entity, if any, or null. A null check is **always** required, as displays are
+     *       active when it's not the player's turn and when the setting to not auto-select a unit for the player is
+     *       active, no unit may be selected even in a player's turn. Note that this is not necessarily equal to the
+     *       currently *viewed* unit in the unit display.
      *
      * @see ClientGUI#getDisplayedUnit()
      */
@@ -309,6 +325,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         game.removeGameListener(this);
         clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));
     }
+
     public int getCurrentEntity() {
         return currentEntity;
     }

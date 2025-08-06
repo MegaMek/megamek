@@ -1,33 +1,47 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.common.util.weightedMaps;
 
-import megamek.common.annotations.Nullable;
+package megamek.common.util.weightedMaps;
 
 import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
+import megamek.common.annotations.Nullable;
+
 /**
- * Constructs a table of values each with a double weight that makes them more or less likely to be
- * selected at random
+ * Constructs a table of values each with a double weight that makes them more or less likely to be selected at random
  *
  * @param <T> The values in the table
  */
@@ -88,7 +102,7 @@ public class WeightedDoubleMap<T> extends AbstractWeightedMap<Double, T> {
         for (int i = 0; i < input.length; i += 2) {
             @SuppressWarnings("unchecked")
             T t = Objects.requireNonNull((T) input[i]);
-            double weight = (double) input[i+1];
+            double weight = (double) input[i + 1];
             if (weight == 0.0d) {
                 continue;
             }
@@ -116,27 +130,52 @@ public class WeightedDoubleMap<T> extends AbstractWeightedMap<Double, T> {
         return new WeightedDoubleMap<>(t1, w1, t2, w2, t3, w3, t4, w4);
     }
 
-    public static <T> WeightedDoubleMap<T> of(T t1, double w1, T t2, double w2, T t3, double w3, T t4, double w4, T t5, double w5) {
+    public static <T> WeightedDoubleMap<T> of(T t1, double w1, T t2, double w2, T t3, double w3, T t4, double w4, T t5,
+          double w5) {
         return new WeightedDoubleMap<>(t1, w1, t2, w2, t3, w3, t4, w4, t5, w5);
     }
 
-    public static <T> WeightedDoubleMap<T> of(T t1, double w1, T t2, double w2, T t3, double w3, T t4, double w4, T t5, double w5, T t6, double w6) {
+    public static <T> WeightedDoubleMap<T> of(T t1, double w1, T t2, double w2, T t3, double w3, T t4, double w4, T t5,
+          double w5, T t6, double w6) {
         return new WeightedDoubleMap<>(t1, w1, t2, w2, t3, w3, t4, w4, t5, w5, t6, w6);
     }
 
-    public static <T> WeightedDoubleMap<T> of(T t1, double w1, T t2, double w2, T t3, double w3, T t4, double w4, T t5, double w5, T t6, double w6, T t7, double w7) {
+    public static <T> WeightedDoubleMap<T> of(T t1, double w1, T t2, double w2, T t3, double w3, T t4, double w4, T t5,
+          double w5, T t6, double w6, T t7, double w7) {
         return new WeightedDoubleMap<>(t1, w1, t2, w2, t3, w3, t4, w4, t5, w5, t6, w6, t7, w7);
     }
 
-    public static <T> WeightedDoubleMap<T> of(T t1, double w1, T t2, double w2, T t3, double w3, T t4, double w4, T t5, double w5, T t6, double w6, T t7, double w7, T t8, double w8) {
+    public static <T> WeightedDoubleMap<T> of(T t1, double w1, T t2, double w2, T t3, double w3, T t4, double w4, T t5,
+          double w5, T t6, double w6, T t7, double w7, T t8, double w8) {
         return new WeightedDoubleMap<>(t1, w1, t2, w2, t3, w3, t4, w4, t5, w5, t6, w6, t7, w7, t8, w8);
     }
 
-    public static <T> WeightedDoubleMap<T> of(T t1, double w1, T t2, double w2, T t3, double w3, T t4, double w4, T t5, double w5, T t6, double w6, T t7, double w7, T t8, double w8, T t9, double w9) {
+    public static <T> WeightedDoubleMap<T> of(T t1, double w1, T t2, double w2, T t3, double w3, T t4, double w4, T t5,
+          double w5, T t6, double w6, T t7, double w7, T t8, double w8, T t9, double w9) {
         return new WeightedDoubleMap<>(t1, w1, t2, w2, t3, w3, t4, w4, t5, w5, t6, w6, t7, w7, t8, w8, t9, w9);
     }
 
-    public static <T> WeightedDoubleMap<T> of(T t1, double w1, T t2, double w2, T t3, double w3, T t4, double w4, T t5, double w5, T t6, double w6, T t7, double w7, T t8, double w8, T t9, double w9, T t10, double w10) {
-        return new WeightedDoubleMap<>(t1, w1, t2, w2, t3, w3, t4, w4, t5, w5, t6, w6, t7, w7, t8, w8, t9, w9, t10, w10);
+    public static <T> WeightedDoubleMap<T> of(T t1, double w1, T t2, double w2, T t3, double w3, T t4, double w4, T t5,
+          double w5, T t6, double w6, T t7, double w7, T t8, double w8, T t9, double w9, T t10, double w10) {
+        return new WeightedDoubleMap<>(t1,
+              w1,
+              t2,
+              w2,
+              t3,
+              w3,
+              t4,
+              w4,
+              t5,
+              w5,
+              t6,
+              w6,
+              t7,
+              w7,
+              t8,
+              w8,
+              t9,
+              w9,
+              t10,
+              w10);
     }
 }

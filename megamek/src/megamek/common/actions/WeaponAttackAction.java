@@ -640,7 +640,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     public BombLoadout getBombPayload() {
         BombLoadout combined = new BombLoadout(bombPayloads.get("internal"));
         bombPayloads.get("external").forEach((type, count) ->
-            combined.merge(type, count, Integer::sum));
+              combined.merge(type, count, Integer::sum));
         return combined;
     }
 
@@ -704,7 +704,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     }
 
     // This is a stub. ArtilleryAttackActions actually need to use it
-    public void updateTurnsTilHit(Game game) { }
+    public void updateTurnsTilHit(Game game) {}
 
     /**
      * Quick routine to determine if the target should be treated as being in a short building.
@@ -727,8 +727,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // and its height above the hex ceiling (i.e building roof) is 1
         // the height determination takes being prone into account
         return targetHex.containsTerrain(Terrains.BUILDING) &&
-                     (targetEntity.getHeight() > 0) &&
-                     (targetEntity.relHeight() == 1);
+              (targetEntity.getHeight() > 0) &&
+              (targetEntity.relHeight() == 1);
     }
 
     @Override
@@ -738,9 +738,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
             return "Attacking Null Target with id " + getTargetId() + " using Weapon with id " + weaponId;
         }
         return "attacking " +
-                     getTarget(client.getGame()).getDisplayName() +
-                     " with " +
-                     getEntity(client.getGame()).getEquipment(weaponId).getName();
+              getTarget(client.getGame()).getDisplayName() +
+              " with " +
+              getEntity(client.getGame()).getEquipment(weaponId).getName();
     }
 
     @Override

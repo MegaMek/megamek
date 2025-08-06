@@ -1,17 +1,41 @@
 /*
- * MegaMek - Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server.commands;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
@@ -21,10 +45,6 @@ import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.EnumArgument;
 import megamek.server.totalwarfare.TWGameManager;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
 /**
  * @author Luana Coppio
  */
@@ -32,6 +52,7 @@ public class DisasterCommand extends GamemasterServerCommand {
 
     public static final String TYPE = "type";
     private static final Random random = new Random();
+
     enum Disaster {
 
         RANDOM {
@@ -97,53 +118,62 @@ public class DisasterCommand extends GamemasterServerCommand {
 
     public DisasterCommand(Server server, TWGameManager gameManager) {
         super(server, gameManager, "disaster", Messages.getString("Gamemaster.cmd.disaster.help"),
-            Messages.getString("Gamemaster.cmd.disaster.longName"));
+              Messages.getString("Gamemaster.cmd.disaster.longName"));
     }
 
     @Override
     public List<Argument<?>> defineArguments() {
-        return List.of(new EnumArgument<>(TYPE, Messages.getString("Gamemaster.cmd.disaster.type"), Disaster.class, Disaster.RANDOM));
+        return List.of(new EnumArgument<>(TYPE,
+              Messages.getString("Gamemaster.cmd.disaster.type"),
+              Disaster.class,
+              Disaster.RANDOM));
     }
 
     private void runDisasterCommand(int connId, Disaster disaster) {
         switch (disaster) {
             case HURRICANE:
-                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "wind=6", "winddir=6"});
+                new ChangeWeatherCommand(server, gameManager).run(connId,
+                      new String[] { "weather", "wind=6", "winddir=6" });
                 server.sendServerChat("Hurricane incoming!");
                 break;
             case LIGHTNING_STORM:
-                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "weather=14"});
+                new ChangeWeatherCommand(server, gameManager).run(connId, new String[] { "weather", "weather=14" });
                 server.sendServerChat("Lightning storm incoming!");
                 break;
             case ECLIPSE:
-                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "light=4"});
+                new ChangeWeatherCommand(server, gameManager).run(connId, new String[] { "weather", "light=4" });
                 server.sendServerChat("The sun is being eclipsed...");
                 break;
             case SOLAR_FLARE:
-                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "light=5", "emi=1"});
-                new FirestormCommand(server, gameManager).run(connId, new String[]{"firestorm", "1", "5"});
+                new ChangeWeatherCommand(server, gameManager).run(connId,
+                      new String[] { "weather", "light=5", "emi=1" });
+                new FirestormCommand(server, gameManager).run(connId, new String[] { "firestorm", "1", "5" });
                 server.sendServerChat("Sensors warn of an imminent solar flare incoming! Expect some fires.");
                 break;
             case SUPERNOVA:
-                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "light=5", "emi=1", "atmo=2", "wind=0", "weather=0"});
-                new FirestormCommand(server, gameManager).run(connId, new String[]{"firestorm", "2", "75"});
+                new ChangeWeatherCommand(server, gameManager).run(connId,
+                      new String[] { "weather", "light=5", "emi=1", "atmo=2", "wind=0", "weather=0" });
+                new FirestormCommand(server, gameManager).run(connId, new String[] { "firestorm", "2", "75" });
                 server.sendServerChat("The star is going supernova!");
                 server.sendServerChat("Everything is on fire! We are doomed!");
                 break;
             case SANDSTORM:
-                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "blowsand=1", "wind=4", "winddir=6"});
+                new ChangeWeatherCommand(server, gameManager).run(connId,
+                      new String[] { "weather", "blowsand=1", "wind=4", "winddir=6" });
                 server.sendServerChat("A sandstorm is approaching!");
                 break;
             case ICE_STORM:
-                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "fog=1", "weather=11", "wind=6", "winddir=6"});
+                new ChangeWeatherCommand(server, gameManager).run(connId,
+                      new String[] { "weather", "fog=1", "weather=11", "wind=6", "winddir=6" });
                 server.sendServerChat("An ice storm is incoming!");
                 break;
             case FIRESTORM:
-                new FirestormCommand(server, gameManager).run(connId, new String[]{"firestorm", "2", "50"});
+                new FirestormCommand(server, gameManager).run(connId, new String[] { "firestorm", "2", "50" });
                 server.sendServerChat("A firestorm is consuming the battlefield!");
                 break;
             case SMOG:
-                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "atmo=5", "fog=2", "light=1"});
+                new ChangeWeatherCommand(server, gameManager).run(connId,
+                      new String[] { "weather", "atmo=5", "fog=2", "light=1" });
                 server.sendServerChat("A thick smog is covering the battlefield!");
                 break;
             case TRAITOR:
@@ -154,7 +184,7 @@ public class DisasterCommand extends GamemasterServerCommand {
                 var otherPlayers = players.stream().filter(p -> p != randomPlayer).toList();
                 var newOwner = otherPlayers.get(random.nextInt(otherPlayers.size()));
                 new ChangeOwnershipCommand(server, gameManager).run(connId,
-                    new String[]{"traitor", "" + randomUnit.getId(), "" + newOwner.getId()});
+                      new String[] { "traitor", "" + randomUnit.getId(), "" + newOwner.getId() });
                 server.sendServerChat("A traitor has been revealed!");
                 break;
             case ORBITAL_BOMBARDMENT_3:
@@ -177,9 +207,9 @@ public class DisasterCommand extends GamemasterServerCommand {
 
     private void orbitalBombardment(int connId) {
         var coords = getRandomHexCoords();
-        new OrbitalBombardmentCommand(server, gameManager).run(connId, new String[]{"ob",
-            coords.getX() + 1 + "",
-            coords.getY() + 1 + ""
+        new OrbitalBombardmentCommand(server, gameManager).run(connId, new String[] { "ob",
+                                                                                      coords.getX() + 1 + "",
+                                                                                      coords.getY() + 1 + ""
         });
     }
 

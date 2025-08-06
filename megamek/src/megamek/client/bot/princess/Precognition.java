@@ -1,21 +1,35 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot.princess;
 
@@ -47,9 +61,8 @@ import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 
 /**
- * unit_potential_locations keeps track of all the potential coordinates and
- * facings a unit could reach It tries to keep all the calculations up to date,
- * and do most of the work when the opponent is moving
+ * unit_potential_locations keeps track of all the potential coordinates and facings a unit could reach It tries to keep
+ * all the calculations up to date, and do most of the work when the opponent is moving
  */
 public class Precognition implements Runnable {
     private final static MMLogger logger = MMLogger.create(Precognition.class);
@@ -57,18 +70,15 @@ public class Precognition implements Runnable {
     private final Princess owner;
 
     /**
-     * Precognition's version of the game, which should mirror the game in
-     * Princess, but should not be the same reference. If Precognition and
-     * Princess share the same game reference, then this will cause concurrency
-     * issues.
+     * Precognition's version of the game, which should mirror the game in Princess, but should not be the same
+     * reference. If Precognition and Princess share the same game reference, then this will cause concurrency issues.
      */
     private Game game;
     private final ReentrantLock GAME_LOCK = new ReentrantLock();
 
     /**
-     * Computing ECMInfo requires iterating over all Entities in the Game and
-     * this can be an expensive operation, so it's cheaper to use cache it and
-     * re-use the cache.
+     * Computing ECMInfo requires iterating over all Entities in the Game and this can be an expensive operation, so
+     * it's cheaper to use cache it and re-use the cache.
      */
     private List<ECMInfo> ecmInfo;
 
@@ -104,13 +114,12 @@ public class Precognition implements Runnable {
         setPathEnumerator(new PathEnumerator(owner, getGame()));
         // Initialize ECM Info, especially important if Princess added mid-game
         ecmInfo = ComputeECM.computeAllEntitiesECMInfo(
-                getGame().getEntitiesVector());
+              getGame().getEntitiesVector());
     }
 
     /**
-     * Pared down version of Client.handlePacket; essentially it's only looking
-     * for packets that update Game. This ensures that Precognition's Game
-     * instance stays up-to-date with Princess's instance of Game.
+     * Pared down version of Client.handlePacket; essentially it's only looking for packets that update Game. This
+     * ensures that Precognition's Game instance stays up-to-date with Princess's instance of Game.
      *
      * @param c The packet to be handled.
      */
@@ -143,7 +152,7 @@ public class Precognition implements Runnable {
                     break;
                 case CHAT:
                     getGame().processGameEvent(new GamePlayerChatEvent(this, null,
-                            (String) c.getObject(0)));
+                          (String) c.getObject(0)));
                     break;
                 case ENTITY_ADD:
                     receiveEntityAdd(c);
@@ -347,8 +356,8 @@ public class Precognition implements Runnable {
     }
 
     /**
-     * Tells the thread there's something to do Note, you can't just call
-     * notifyAll in the event listener because it doesn't have the thread
+     * Tells the thread there's something to do Note, you can't just call notifyAll in the event listener because it
+     * doesn't have the thread
      */
     private synchronized void wakeUp() {
         notifyAll();
@@ -359,8 +368,8 @@ public class Precognition implements Runnable {
     }
 
     /**
-     * Makes sure pathEnumerator has up-to-date information about other units
-     * locations call this right before making a move. automatically pauses.
+     * Makes sure pathEnumerator has up-to-date information about other units locations call this right before making a
+     * move. automatically pauses.
      */
     void ensureUpToDate() {
         try {
@@ -374,8 +383,8 @@ public class Precognition implements Runnable {
                     continue;
                 }
                 if (((!getPathEnumerator().getLastKnownLocations().containsKey(entity.getId()))
-                        || (!getPathEnumerator().getLastKnownLocations().get(entity.getId())
-                                .equals(CoordFacingCombo.createCoordFacingCombo(entity))))) {
+                      || (!getPathEnumerator().getLastKnownLocations().get(entity.getId())
+                      .equals(CoordFacingCombo.createCoordFacingCombo(entity))))) {
                     markUnitAsDirty(entity.getId());
                 }
             }
@@ -407,7 +416,7 @@ public class Precognition implements Runnable {
                 if (!getEventsToProcess().isEmpty()) {
                     processGameEvents();
                     ecmInfo = ComputeECM.computeAllEntitiesECMInfo(
-                            getGame().getEntitiesVector());
+                          getGame().getEntitiesVector());
                 } else if (!getDirtyUnits().isEmpty()) {
                     Entity entity = getGame().getEntity(getDirtyUnits().pollFirst());
                     if ((entity != null) && isEntityOnMap(entity)) {
@@ -431,18 +440,17 @@ public class Precognition implements Runnable {
     }
 
     /**
-     * Waits until the thread is not paused, and there's indication that it has
-     * something to do
+     * Waits until the thread is not paused, and there's indication that it has something to do
      */
     private synchronized void waitForUnpause() {
         try {
             while (!getDone().get() &&
-                    (getWaitWhenDone().get() ||
-                            (getEventsToProcess().isEmpty() &&
-                                    getDirtyUnits().isEmpty()))) {
+                  (getWaitWhenDone().get() ||
+                        (getEventsToProcess().isEmpty() &&
+                              getDirtyUnits().isEmpty()))) {
                 logger.debug("waitWhenDone = " + getWaitWhenDone() +
-                        " :: eventsToProcess = " + getEventsToProcess().size() +
-                        " :: dirtyUnits = " + getDirtyUnits().size());
+                      " :: eventsToProcess = " + getEventsToProcess().size() +
+                      " :: dirtyUnits = " + getDirtyUnits().size());
                 getWaiting().set(true);
                 try {
                     wait();
@@ -457,8 +465,8 @@ public class Precognition implements Runnable {
     }
 
     /**
-     * Process game events that have happened since the thread last checked i.e.
-     * if a unit has moved, my precaculated paths are no longer valid
+     * Process game events that have happened since the thread last checked i.e. if a unit has moved, my precaculated
+     * paths are no longer valid
      */
     private void processGameEvents() {
         // We don't want Game to change while this is happening
@@ -502,8 +510,8 @@ public class Precognition implements Runnable {
                         continue; // no sense in updating a unit if it hasn't moved
                     }
                     logger.debug("Received entity change event for "
-                            + changeEvent.getEntity().getDisplayName()
-                            + " (ID " + entity.getId() + ")");
+                          + changeEvent.getEntity().getDisplayName()
+                          + " (ID " + entity.getId() + ")");
                     markUnitAsDirty(changeEvent.getEntity().getId());
                 } else if (event instanceof GamePhaseChangeEvent) {
                     GamePhaseChangeEvent phaseChange = (GamePhaseChangeEvent) event;
@@ -527,8 +535,8 @@ public class Precognition implements Runnable {
     }
 
     /**
-     * Called when a unit has moved and should be put on the dirty list, as well
-     * as any units who's moves contain that unit
+     * Called when a unit has moved and should be put on the dirty list, as well as any units who's moves contain that
+     * unit
      */
     private void markUnitAsDirty(int id) {
         // Prevent Game from changing while processing
@@ -548,24 +556,24 @@ public class Precognition implements Runnable {
             // in their list become dirty
             if (!getGame().getEntity(id).isAero()) {
                 TreeSet<Integer> toDirty = new TreeSet<>(
-                        getPathEnumerator().getEntitiesWithLocation(
-                                getGame().getEntity(id).getPosition(), true));
+                      getPathEnumerator().getEntitiesWithLocation(
+                            getGame().getEntity(id).getPosition(), true));
                 if (getPathEnumerator().getLastKnownLocations()
-                        .containsKey(id)) {
+                      .containsKey(id)) {
                     if ((getGame().getEntity(id) != null)
-                            && getGame().getEntity(id).isSelectableThisTurn()) {
+                          && getGame().getEntity(id).isSelectableThisTurn()) {
                         toDirty.addAll(getPathEnumerator()
-                                .getEntitiesWithLocation(getPathEnumerator()
-                                        .getLastKnownLocations().get(id)
-                                        .getCoords(), true));
+                              .getEntitiesWithLocation(getPathEnumerator()
+                                    .getLastKnownLocations().get(id)
+                                    .getCoords(), true));
                     }
                 }
                 // no need to dirty units that aren't selectable this turn
                 List<Integer> toRemove = new ArrayList<>();
                 for (Integer index : toDirty) {
                     if ((getGame().getEntity(index) == null)
-                            || (!getGame().getEntity(index).isSelectableThisTurn()
-                                    && getGame().getPhase().isMovement())) {
+                          || (!getGame().getEntity(index).isSelectableThisTurn()
+                          && getGame().getPhase().isMovement())) {
                         toRemove.add(index);
                     }
                 }
@@ -578,7 +586,7 @@ public class Precognition implements Runnable {
                     StringBuilder msg = new StringBuilder("The following units have become dirty");
                     if (getGame().getEntity(id) != null) {
                         msg.append(" as a result of a nearby move of ")
-                                .append(getGame().getEntity(id).getDisplayName());
+                              .append(getGame().getEntity(id).getDisplayName());
                     }
 
                     Iterator<Integer> dirtyIterator = toDirty.descendingIterator();
@@ -595,11 +603,11 @@ public class Precognition implements Runnable {
             }
             Entity entity = getGame().getEntity(id);
             if (((entity != null) && entity.isSelectableThisTurn())
-                    || !getGame().getPhase().isMovement()) {
+                  || !getGame().getPhase().isMovement()) {
                 getDirtyUnits().add(id);
             } else if (entity != null) {
                 getPathEnumerator().getLastKnownLocations().put(id,
-                        CoordFacingCombo.createCoordFacingCombo(entity));
+                      CoordFacingCombo.createCoordFacingCombo(entity));
             }
         } finally {
             GAME_LOCK.unlock();

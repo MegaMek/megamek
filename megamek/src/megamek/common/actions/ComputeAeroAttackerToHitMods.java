@@ -32,15 +32,15 @@
  */
 package megamek.common.actions;
 
+import java.util.EnumSet;
+import java.util.function.Predicate;
+
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-
-import java.util.EnumSet;
-import java.util.function.Predicate;
 
 class ComputeAeroAttackerToHitMods {
 
@@ -84,7 +84,7 @@ class ComputeAeroAttackerToHitMods {
         }
 
         boolean isBombing = (wtype != null) &&
-                                  (wtype.hasFlag(WeaponType.F_ALT_BOMB) || wtype.hasFlag(WeaponType.F_DIVE_BOMB));
+              (wtype.hasFlag(WeaponType.F_ALT_BOMB) || wtype.hasFlag(WeaponType.F_DIVE_BOMB));
 
         // Generic modifiers that apply to airborne and ground attackers
 
@@ -116,19 +116,19 @@ class ComputeAeroAttackerToHitMods {
                 toHit.addModifier(3, Messages.getString("WeaponAttackAction.AimWithTCompOnly"));
             }
         } else if (attacker.hasTargComp()
-                         && (wtype != null)
-                         && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
-                         && !wtype.hasFlag(WeaponType.F_CWS)
-                         && !wtype.hasFlag(WeaponType.F_TASER)) {
+              && (wtype != null)
+              && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
+              && !wtype.hasFlag(WeaponType.F_CWS)
+              && !wtype.hasFlag(WeaponType.F_TASER)) {
 
             // LB-X cluster, HAG flak, flak ammo ineligible for TC bonus
             boolean usesLBXCluster = usesAmmo &&
-                                           (atype != null) &&
-                                           (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX ||
-                                                  atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX_THB) &&
-                                           munition.contains(AmmoType.Munitions.M_CLUSTER);
+                  (atype != null) &&
+                  (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX ||
+                        atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX_THB) &&
+                  munition.contains(AmmoType.Munitions.M_CLUSTER);
             boolean usesHAGFlak = usesAmmo && (atype != null) && (atype.getAmmoType() == AmmoType.AmmoTypeEnum.HAG)
-                                        && isFlakAttack;
+                  && isFlakAttack;
             boolean isSBGauss = usesAmmo && (atype != null) && (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SBGAUSS);
             boolean isFlakAmmo = usesAmmo && (atype != null) && (munition.contains(AmmoType.Munitions.M_FLAK));
             if (!usesAmmo || !(usesLBXCluster || usesHAGFlak || isSBGauss || isFlakAmmo)) {
@@ -144,16 +144,16 @@ class ComputeAeroAttackerToHitMods {
             // Arguably a weapon effect, except that it only applies when used by a fighter (isn't recoil fun?)
             // So it's here instead of with other weapon mods that apply across the board
             if ((wtype != null)
-                      && ((wtype.ammoType == AmmoType.AmmoTypeEnum.GAUSS_HEAVY)
-                             || (wtype.ammoType == AmmoType.AmmoTypeEnum.IGAUSS_HEAVY))
-                      && !(attacker instanceof Dropship)
-                      && !(attacker instanceof Jumpship)) {
+                  && ((wtype.ammoType == AmmoType.AmmoTypeEnum.GAUSS_HEAVY)
+                  || (wtype.ammoType == AmmoType.AmmoTypeEnum.IGAUSS_HEAVY))
+                  && !(attacker instanceof Dropship)
+                  && !(attacker instanceof Jumpship)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.FighterHeavyGauss"));
             }
 
             // Space ECM
             if (attacker.isSpaceborne() && game.onTheSameBoard(attacker, target)
-                      && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+                  && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
                 int ecm = ComputeECM.getLargeCraftECM(attacker, attacker.getPosition(), target.getPosition());
                 if (!attacker.isLargeCraft()) {
                     ecm += ComputeECM.getSmallCraftECM(attacker, attacker.getPosition(), target.getPosition());
@@ -211,7 +211,8 @@ class ComputeAeroAttackerToHitMods {
                 if (isBombing) {
                     toHit.addModifier(2, Messages.getString("WeaponAttackAction.Bombing"));
                     if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
-                        toHit.addModifier(attacker.getAltitude(), Messages.getString("WeaponAttackAction.BombAltitude"));
+                        toHit.addModifier(attacker.getAltitude(),
+                              Messages.getString("WeaponAttackAction.BombAltitude"));
                     }
                     // CO p.75
                     if (attacker.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
@@ -297,15 +298,15 @@ class ComputeAeroAttackerToHitMods {
             // targeting mods for evasive action by large craft
             // Per TW, this does not apply when firing Capital Missiles
             if (aero.isEvading() && (wtype != null)
-                      && (!(wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE ||
-                                  wtype.getAtClass() == WeaponType.CLASS_AR10 ||
-                                  wtype.getAtClass() == WeaponType.CLASS_TELE_MISSILE))) {
+                  && (!(wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE ||
+                  wtype.getAtClass() == WeaponType.CLASS_AR10 ||
+                  wtype.getAtClass() == WeaponType.CLASS_TELE_MISSILE))) {
                 toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeEvading"));
             }
 
             // SO p.113: ECHO maneuvers for large craft
             if (((aero instanceof Warship) || (aero instanceof Dropship))
-                      && (aero.getFacing() != aero.getSecondaryFacing())) {
+                  && (aero.getFacing() != aero.getSecondaryFacing())) {
                 // if we're computing this for an "attack preview", then we add 2 MP to the mp used, as we haven't
                 // used the MP yet. If we're actually processing the attack, then the entity will be marked as 'done'
                 // and we have already added the 2 MP, so we don't need to double-count it
@@ -368,5 +369,5 @@ class ComputeAeroAttackerToHitMods {
         return true;
     }
 
-    private ComputeAeroAttackerToHitMods() { }
+    private ComputeAeroAttackerToHitMods() {}
 }

@@ -1,23 +1,50 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.common.options;
 
-import megamek.common.annotations.Nullable;
+package megamek.common.options;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
+import megamek.common.annotations.Nullable;
 
 /**
  * Parent class for options settings
@@ -78,7 +105,7 @@ public abstract class AbstractOptions implements Serializable, IGameOptions {
             separator = "";
         }
 
-        for (Enumeration<IOptionGroup> i = getGroups(); i.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
 
             if ((groupKey != null) && !group.getKey().equalsIgnoreCase(groupKey)) {
@@ -86,7 +113,7 @@ public abstract class AbstractOptions implements Serializable, IGameOptions {
             }
 
             for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
+                  .hasMoreElements(); ) {
                 IOption option = j.nextElement();
                 if (option != null && option.booleanValue()) {
                     if (!listBuilder.isEmpty()) {
@@ -94,8 +121,8 @@ public abstract class AbstractOptions implements Serializable, IGameOptions {
                     }
                     listBuilder.append(option.getName());
                     if ((option.getType() == IOption.STRING)
-                            || (option.getType() == IOption.CHOICE)
-                            || (option.getType() == IOption.INTEGER)) {
+                          || (option.getType() == IOption.CHOICE)
+                          || (option.getType() == IOption.INTEGER)) {
                         listBuilder.append(" ").append(option.stringValue());
                     }
                 }
@@ -171,22 +198,22 @@ public abstract class AbstractOptions implements Serializable, IGameOptions {
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
-            String defaultValue) {
+          String defaultValue) {
         addOption(group, name, IOption.STRING, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
-            boolean defaultValue) {
+          boolean defaultValue) {
         addOption(group, name, IOption.BOOLEAN, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
-            int defaultValue) {
+          int defaultValue) {
         addOption(group, name, IOption.INTEGER, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
-            float defaultValue) {
+          float defaultValue) {
         addOption(group, name, IOption.FLOAT, defaultValue);
     }
 
@@ -248,7 +275,7 @@ public abstract class AbstractOptions implements Serializable, IGameOptions {
             @Override
             public String getDisplayableName() {
                 return getOptionsInfoImp().getGroupDisplayableName(
-                        group.getName());
+                      group.getName());
             }
 
             @Override

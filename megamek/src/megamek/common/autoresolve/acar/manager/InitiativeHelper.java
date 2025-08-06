@@ -1,16 +1,36 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.autoresolve.acar.manager;
 
 import java.util.ArrayList;
@@ -63,10 +83,10 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
         if (phase.isFiring() || phase.isMovement()) {
             for (var player : game().getPlayersList()) {
                 var actionsForThisTurn = game().getActiveFormations(player)
-                                               .stream()
-                                               .filter(Formation::isDeployed)
-                                               .filter(unit -> unit.isEligibleForPhase(phase))
-                                               .count();
+                      .stream()
+                      .filter(Formation::isDeployed)
+                      .filter(unit -> unit.isEligibleForPhase(phase))
+                      .count();
                 var turnsForPlayer = (int) Math.min(actionsForThisTurn, player.getInitiative().size());
                 for (int i = 0; i < turnsForPlayer; i++) {
                     var initiative = player.getInitiative().getRoll(i);
@@ -76,10 +96,10 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
         } else if (phase.isDeployment()) {
             for (var player : game().getPlayersList()) {
                 var actionsForThisTurn = game().getActiveFormations(player)
-                                               .stream()
-                                               .filter(Formation::isDeployed)
-                                               .filter(unit -> !unit.isDeployed())
-                                               .count();
+                      .stream()
+                      .filter(Formation::isDeployed)
+                      .filter(unit -> !unit.isDeployed())
+                      .count();
                 var turnsForPlayer = (int) Math.min(actionsForThisTurn, player.getInitiative().size());
                 for (int i = 0; i < turnsForPlayer; i++) {
                     var initiative = player.getInitiative().getRoll(i);
@@ -89,10 +109,10 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
         } else {
             for (var player : game().getPlayersList()) {
                 var actionsForThisTurn = game().getActiveFormations(player)
-                                               .stream()
-                                               .filter(unit -> unit.isEligibleForPhase(phase))
-                                               .filter(Formation::isDeployed)
-                                               .count();
+                      .stream()
+                      .filter(unit -> unit.isEligibleForPhase(phase))
+                      .filter(Formation::isDeployed)
+                      .count();
                 var turnsForPlayer = (int) Math.min(actionsForThisTurn, player.getInitiative().size());
                 for (int i = 0; i < turnsForPlayer; i++) {
                     var initiative = player.getInitiative().getRoll(i);
@@ -102,9 +122,9 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
         }
 
         final List<AcTurn> turns = formationTurns.stream()
-                                         .sorted()
-                                         .map(InitiativeFormationTurn::acTurn)
-                                         .collect(Collectors.toList());
+              .sorted()
+              .map(InitiativeFormationTurn::acTurn)
+              .collect(Collectors.toList());
 
         game().setTurns(turns);
         game().resetTurnIndex();
@@ -112,10 +132,10 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
 
     private Team getTeamForPlayerId(int id) {
         return game().getTeams()
-                     .stream()
-                     .filter(t -> t.players().stream().anyMatch(p -> p.getId() == id))
-                     .findFirst()
-                     .orElse(null);
+              .stream()
+              .filter(t -> t.players().stream().anyMatch(p -> p.getId() == id))
+              .findFirst()
+              .orElse(null);
     }
 
     private Player getPlayerForFormation(Formation formation) {

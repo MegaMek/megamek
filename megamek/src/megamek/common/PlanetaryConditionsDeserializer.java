@@ -1,32 +1,55 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import megamek.common.planetaryconditions.*;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.BlowingSand;
+import megamek.common.planetaryconditions.EMI;
+import megamek.common.planetaryconditions.Fog;
+import megamek.common.planetaryconditions.Light;
+import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryconditions.Weather;
+import megamek.common.planetaryconditions.Wind;
+import megamek.common.planetaryconditions.WindDirection;
 
 public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryConditions> {
 
@@ -47,25 +70,25 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
     static final String WIND_MAX = "maximum";
 
     static final Map<String, Atmosphere> PRESSURE_VALUES = Map.of("vacuum", Atmosphere.VACUUM,
-            "trace", Atmosphere.TRACE, "thin", Atmosphere.THIN,
-            "standard", Atmosphere.STANDARD, "high", Atmosphere.HIGH,
-            "very high", Atmosphere.VERY_HIGH);
+          "trace", Atmosphere.TRACE, "thin", Atmosphere.THIN,
+          "standard", Atmosphere.STANDARD, "high", Atmosphere.HIGH,
+          "very high", Atmosphere.VERY_HIGH);
 
     static final Map<String, Fog> FOG_VALUES = Map.of("none", Fog.FOG_NONE,
-            "light", Fog.FOG_LIGHT, "heavy", Fog.FOG_HEAVY);
+          "light", Fog.FOG_LIGHT, "heavy", Fog.FOG_HEAVY);
 
     static final Map<String, Light> LIGHT_VALUES = Map.of("none", Light.DAY,
-            "dusk", Light.DUSK, "full moon", Light.FULL_MOON,
-            "moonless", Light.MOONLESS, "pitchblack", Light.PITCH_BLACK);
+          "dusk", Light.DUSK, "full moon", Light.FULL_MOON,
+          "moonless", Light.MOONLESS, "pitchblack", Light.PITCH_BLACK);
 
     static final Map<String, Wind> WIND_VALUES = Map.of("none", Wind.CALM,
-            "light gale", Wind.LIGHT_GALE, "moderate gale", Wind.MOD_GALE,
-            "strong gale", Wind.STRONG_GALE, "storm", Wind.STORM,
-            "tornado", Wind.TORNADO_F1_TO_F3, "tornado f4", Wind.TORNADO_F4);
+          "light gale", Wind.LIGHT_GALE, "moderate gale", Wind.MOD_GALE,
+          "strong gale", Wind.STRONG_GALE, "storm", Wind.STORM,
+          "tornado", Wind.TORNADO_F1_TO_F3, "tornado f4", Wind.TORNADO_F4);
 
     static final Map<String, WindDirection> DIR_VALUES = Map.of("random", WindDirection.RANDOM,
-            "N", WindDirection.NORTH, "NE", WindDirection.NORTHEAST, "SE", WindDirection.SOUTHEAST,
-            "S", WindDirection.SOUTH, "SW", WindDirection.SOUTHWEST, "NW", WindDirection.NORTHWEST);
+          "N", WindDirection.NORTH, "NE", WindDirection.NORTHEAST, "SE", WindDirection.SOUTHEAST,
+          "S", WindDirection.SOUTH, "SW", WindDirection.SOUTHWEST, "NW", WindDirection.NORTHWEST);
 
     static final Map<String, Weather> WEATHER_VALUES = new HashMap<>();
 
@@ -96,7 +119,7 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
 
     @Override
     public PlanetaryConditions deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException {
+          throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
         PlanetaryConditions result = new PlanetaryConditions();
         if (node.has(TEMPERATURE)) {
@@ -110,7 +133,7 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
         }
         if (node.has(BLOWING_SAND)) {
             result.setBlowingSand(node.get(BLOWING_SAND).booleanValue() ?
-                    BlowingSand.BLOWING_SAND : BlowingSand.BLOWING_SAND_NONE);
+                  BlowingSand.BLOWING_SAND : BlowingSand.BLOWING_SAND_NONE);
         }
         if (node.has(ALLOW_TERRAIN_CHANGES)) {
             result.setTerrainAffected(node.get(ALLOW_TERRAIN_CHANGES).booleanValue());

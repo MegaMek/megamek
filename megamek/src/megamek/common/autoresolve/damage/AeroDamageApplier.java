@@ -32,20 +32,22 @@
  */
 package megamek.common.autoresolve.damage;
 
+import static megamek.common.Compute.randomInt;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.common.Aero;
 import megamek.common.Compute;
 import megamek.common.HitData;
 import megamek.common.IEntityRemovalConditions;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static megamek.common.Compute.randomInt;
-
 /**
  * Applies damage to an Aero entity.
- * @param entity Aero entity
+ *
+ * @param entity           Aero entity
  * @param entityFinalState The final state of the entity
+ *
  * @author Luana Coppio
  */
 public record AeroDamageApplier(Aero entity, EntityFinalState entityFinalState) implements DamageApplier<Aero> {

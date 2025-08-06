@@ -1,24 +1,43 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
-import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.*;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.CUT_LBORDER;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.CUT_LINSIDE;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.CUT_RBORDER;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.CUT_RINSIDE;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexBorderArea;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexBorderLine;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -37,7 +56,7 @@ public class MovementEnvelopeSprite extends HexSprite {
     private static final int BORDER_THICKNESS = 10;
     private static final int BORDER_OPACITY = 60;
     private static final float LINE_THICKNESS = 2;
-    
+
     // sprite settings
     protected final Color drawColor;
     protected final int borders;
@@ -47,12 +66,12 @@ public class MovementEnvelopeSprite extends HexSprite {
         drawColor = c;
         this.borders = borders;
     }
-    
+
     @Override
     public void prepare() {
         // adjust bounds (image size) to board zoom
         updateBounds();
-        
+
         // create image for buffer
         image = createNewHexImage();
         Graphics2D graph = (Graphics2D) image.getGraphics();
@@ -62,7 +81,7 @@ public class MovementEnvelopeSprite extends HexSprite {
         graph.scale(bv.getScale(), bv.getScale());
 
         graph.setStroke(new BasicStroke(LINE_THICKNESS, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
-                10f, new float[] { 5f, 3f }, 0f));
+              10f, new float[] { 5f, 3f }, 0f));
 
         // cycle through directions
         for (int i = 0; i < 6; i++) {
@@ -72,7 +91,7 @@ public class MovementEnvelopeSprite extends HexSprite {
                 cut |= ((borders & (1 << ((i + 5) % 6))) == 0) ? CUT_LBORDER : CUT_LINSIDE;
 
                 graph.setColor(new Color(drawColor.getRed(), drawColor.getGreen(),
-                        drawColor.getBlue(), BORDER_OPACITY));
+                      drawColor.getBlue(), BORDER_OPACITY));
                 graph.fill(getHexBorderArea(i, cut, BORDER_THICKNESS));
 
                 // 2) thin dashed line border
@@ -82,5 +101,5 @@ public class MovementEnvelopeSprite extends HexSprite {
         }
         graph.dispose();
     }
-    
+
 }

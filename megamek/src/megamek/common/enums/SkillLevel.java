@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2020-2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.enums;
 
 import java.util.List;
@@ -47,7 +62,7 @@ public enum SkillLevel {
     // region Constructors
     SkillLevel(final String name, final String toolTipText, final int experienceLevel) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
-                MegaMek.getMMOptions().getLocale());
+              MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
         this.toolTipText = resources.getString(toolTipText);
         this.experienceLevel = experienceLevel;
@@ -60,8 +75,8 @@ public enum SkillLevel {
     }
 
     /**
-     * Retrieves the current experience level of this entity. Where None is {@code 0}, Ultra-Green
-     * is {@code 1}, Green is {@code 2} and so forth.
+     * Retrieves the current experience level of this entity. Where None is {@code 0}, Ultra-Green is {@code 1}, Green
+     * is {@code 2} and so forth.
      *
      * @return the experience level as an integer.
      */
@@ -126,11 +141,11 @@ public enum SkillLevel {
     public boolean isHeroicOrGreater() {
         return isHeroic() || isLegendary();
     }
-    
+
     public boolean isGreaterThan(SkillLevel skillLevel) {
         return (!this.equals(skillLevel) && this.experienceLevel > skillLevel.experienceLevel);
     }
-    
+
     public boolean equalsOrGreaterThan(SkillLevel skillLevel) {
         return (this.equals(skillLevel) || (this.isGreaterThan(skillLevel)));
     }
@@ -144,9 +159,8 @@ public enum SkillLevel {
     }
 
     /**
-     * This returns the default skill values by level. This should never return the
-     * value for NONE,
-     * as NONE means one does not have the skill.
+     * This returns the default skill values by level. This should never return the value for NONE, as NONE means one
+     * does not have the skill.
      *
      * @return the default skill array pairing
      */
@@ -154,7 +168,7 @@ public enum SkillLevel {
         switch (this) {
             case NONE:
                 MMLogger.create(SkillLevel.class).error(
-                        "Attempting to get illegal default skill values for NONE Skill Level. Returning { 8, 8 }");
+                      "Attempting to get illegal default skill values for NONE Skill Level. Returning { 8, 8 }");
                 return new int[] { 8, 8 };
             case ULTRA_GREEN:
                 return new int[] { 6, 7 };
@@ -219,9 +233,10 @@ public enum SkillLevel {
      * Parses an integer value to a {@link SkillLevel} enumeration.
      *
      * @param value the integer value to parse
+     *
      * @return the {@link SkillLevel} enum corresponding to the given integer value
-     * @throws IllegalStateException if the integer value does not match any {@link SkillLevel} enum
-     * value
+     *
+     * @throws IllegalStateException if the integer value does not match any {@link SkillLevel} enum value
      */
     public static SkillLevel parseFromInteger(final int value) {
         return switch (value) {
@@ -234,7 +249,7 @@ public enum SkillLevel {
             case 6 -> HEROIC;
             case 7 -> LEGENDARY;
             default -> throw new IllegalStateException(
-                "Unexpected value in megamek/common/enums/SkillLevel.java: " + value);
+                  "Unexpected value in megamek/common/enums/SkillLevel.java: " + value);
         };
     }
     // endregion File I/O

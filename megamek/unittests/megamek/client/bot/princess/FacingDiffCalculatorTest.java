@@ -68,7 +68,7 @@ class FacingDiffCalculatorTest {
         when(path.getFinalCoords()).thenReturn(new Coords(4, 4));
         when(path.getFinalFacing()).thenReturn(0);
         int facingDiff = facingDiffCalculator.getFacingDiff(mek, path, new Coords(10, 10),
-              new Coords(10,10), new Coords(5,4));
+              new Coords(10, 10), new Coords(5, 4));
         assertEquals(3, facingDiff);
 
         // If the final position is not adjacent to the closest enemy position, then it must face the enemy median
@@ -83,7 +83,7 @@ class FacingDiffCalculatorTest {
         when(mek.getArmor(Mek.LOC_RLEG)).thenReturn(8);
 
         facingDiff = facingDiffCalculator.getFacingDiff(mek, path, new Coords(10, 10),
-              new Coords(10,10), new Coords(2,2));
+              new Coords(10, 10), new Coords(2, 2));
         assertEquals(1, facingDiff);
 
 
@@ -124,7 +124,7 @@ class FacingDiffCalculatorTest {
         when(path.getFinalCoords()).thenReturn(new Coords(4, 4));
         when(path.getFinalFacing()).thenReturn(0);
         int facingDiff = facingDiffCalculator.getFacingDiff(mek, path, new Coords(10, 10),
-              new Coords(10,10), new Coords(5,4));
+              new Coords(10, 10), new Coords(5, 4));
         assertEquals(2, facingDiff);
 
         // If the final position is not adjacent to the closest enemy position, then it must face the enemy median
@@ -140,7 +140,7 @@ class FacingDiffCalculatorTest {
         when(mek.getArmor(Mek.LOC_RLEG)).thenReturn(8);
 
         facingDiff = facingDiffCalculator.getFacingDiff(mek, path, new Coords(10, 10),
-              new Coords(10,10), new Coords(2,2));
+              new Coords(10, 10), new Coords(2, 2));
         assertEquals(0, facingDiff);
 
 

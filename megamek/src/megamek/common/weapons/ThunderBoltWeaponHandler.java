@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -33,13 +54,13 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
      * @param m
      */
     public ThunderBoltWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            TWGameManager m) {
+          TWGameManager m) {
         super(t, w, g, m);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -58,16 +79,16 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         }
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                    bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  bDirect ? toHit.getMoS() / 3 : 0,
+                  wtype.getInfantryDamageClass(),
+                  ((Infantry) target).isMechanized(),
+                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
         return (int) Math.ceil(toReturn);
     }
-    
+
     /**
      * Calculate the attack value based on range
      *
@@ -88,14 +109,14 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         } else if (range == WeaponType.RANGE_EXT) {
             av = wtype.getRoundExtAV();
         }
-        
+
         // For squadrons, total the missile armor for the launched volley
         if (ae.isCapitalFighter()) {
             armor = armor * nweapons;
         }
         CapMissileArmor = armor - (int) counterAV;
         CapMissileAMSMod = calcCapMissileAMSMod();
-                        
+
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
@@ -105,28 +126,28 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         av = (int) Math.floor(getBracketingMultiplier() * av);
         return (av);
     }
-    
+
     @Override
     protected int calcCapMissileAMSMod() {
         CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);
         return CapMissileAMSMod;
     }
-    
+
     @Override
     protected int getCapMissileAMSMod() {
         return CapMissileAMSMod;
     }
-    
+
     @Override
     //Thunderbolts apply damage all in one block.
     //This was referenced incorrectly for Aero damage.
     protected boolean usesClusterTable() {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.MissileWeaponHandler#calcHits(java.util.Vector)
      */
@@ -137,7 +158,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             // Or bay AMS if Aero Sanity is on
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                    : null;
+                  : null;
             if (entityTarget != null && entityTarget.isLargeCraft()) {
                 if (getParentBayHandler() != null) {
                     WeaponHandler bayHandler = getParentBayHandler();
@@ -148,18 +169,18 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         }
         bSalvo = true;
         // Report AMS/Pointdefense failure due to Overheating.
-        if (pdOverheated 
-                && (!(amsBayEngaged
-                        || amsBayEngagedCap
-                        || amsBayEngagedMissile
-                        || pdBayEngaged
-                        || pdBayEngagedCap
-                        || pdBayEngagedMissile))) {
-            Report r = new Report (3359);
+        if (pdOverheated
+              && (!(amsBayEngaged
+              || amsBayEngagedCap
+              || amsBayEngagedMissile
+              || pdBayEngaged
+              || pdBayEngagedCap
+              || pdBayEngagedMissile))) {
+            Report r = new Report(3359);
             r.subject = subjectId;
             r.indent();
             vPhaseReport.addElement(r);
-        } 
+        }
         if (amsEngaged || apdsEngaged) {
             Report r = new Report(3235);
             r.subject = subjectId;
@@ -186,7 +207,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         }
         return 1;
     }
-    
+
     /**
      * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
      */
@@ -194,7 +215,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
     protected void setAMSBayReportingFlag() {
         amsBayEngagedCap = true;
     }
-    
+
     /**
      * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
      */
@@ -202,7 +223,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
     protected void setPDBayReportingFlag() {
         pdBayEngagedCap = true;
     }
-    
+
     @Override
     // For AntiShip missiles, which behave more like Thunderbolts than capital missiles except for this
     // All other thunderbolt type large missiles should be unable to score a critical hit here

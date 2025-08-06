@@ -1,15 +1,34 @@
 /*
- * MegaMek - Copyright (c) 2016-2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ratgenerator;
 
@@ -23,23 +42,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.xml.parsers.DocumentBuilder;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
- * Container for all the rule nodes for a faction. Has methods for processing
- * the rules to
- * fill out a ForceDescriptor.
+ * Container for all the rule nodes for a faction. Has methods for processing the rules to fill out a ForceDescriptor.
  *
  * @author Neoancient
  */
@@ -156,10 +171,8 @@ public class Ruleset {
         /**
          * Notifies listener of progress in generating force.
          *
-         * @param progress The fraction of the task that has been completed in this
-         *                 step.
+         * @param progress The fraction of the task that has been completed in this step.
          * @param message  A message that describes the current step.
-         *
          */
         void updateProgress(double progress, String message);
     }
@@ -198,10 +211,8 @@ public class Ruleset {
     }
 
     /**
-     * Recursively build the force structure by assigning appropriate values to the
-     * current node,
-     * including number and type of subforce and attached force nodes, and process
-     * those as well.
+     * Recursively build the force structure by assigning appropriate values to the current node, including number and
+     * type of subforce and attached force nodes, and process those as well.
      *
      * @param fd
      */
@@ -224,7 +235,7 @@ public class Ruleset {
             } else {
                 applied = fn.apply(fd);
                 logger.debug("Selecting force node " + fn.show()
-                        + " from ruleset " + rs.getFaction());
+                      + " from ruleset " + rs.getFaction());
             }
         } while (rs != null && (fn == null || !applied));
 
@@ -522,10 +533,10 @@ public class Ruleset {
                         fn = ForceNode.createFromXml(wn);
                     } catch (IllegalArgumentException ex) {
                         logger.error(ex, "In file " + f.getName() + " while processing force node"
-                                + ((wn.getAttributes().getNamedItem("eschName") == null) ? ""
-                                        : " "
-                                                + wn.getAttributes().getNamedItem("eschName"))
-                                + ": " + ex.getMessage());
+                              + ((wn.getAttributes().getNamedItem("eschName") == null) ? ""
+                              : " "
+                              + wn.getAttributes().getNamedItem("eschName"))
+                              + ": " + ex.getMessage());
                     }
                     if (fn != null) {
                         retVal.forceNodes.add(fn);

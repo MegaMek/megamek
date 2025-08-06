@@ -1,17 +1,38 @@
 /*
- * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+  Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.awt.Image;
@@ -32,6 +53,7 @@ public class SpecialHexDisplay implements Serializable {
     @Serial
     private static final long serialVersionUID = 27470795993329492L;
     public static final int LARGE_EXPLOSION_IMAGE_RADIUS = 4;
+
     public enum Type {
         ARTILLERY_AUTOHIT(new MegaMekFile(Configuration.hexesDir(), "artyauto.gif")) {
             @Override
@@ -153,8 +175,10 @@ public class SpecialHexDisplay implements Serializable {
 
         /**
          * Get the image for this type of special hex display.
+         *
          * @param imageName The name of the image to get
-         * @return  The image
+         *
+         * @return The image
          */
         public Image getImage(String imageName) {
             if (useFolderStructure()) {
@@ -230,6 +254,7 @@ public class SpecialHexDisplay implements Serializable {
      * members of the owner.
      *
      * @param owner The owner of this autohit hex
+     *
      * @return A SpecialHexDisplay autohit marker
      */
     public static SpecialHexDisplay createArtyAutoHit(Player owner) {
@@ -242,6 +267,7 @@ public class SpecialHexDisplay implements Serializable {
      * round limitation and is visible to team members of the owner.
      *
      * @param owner The owner of this artillery attack
+     *
      * @return A SpecialHexDisplay Incoming marker
      */
     public static SpecialHexDisplay createIncomingArty(Player owner, int landingGameRound) {
@@ -255,6 +281,7 @@ public class SpecialHexDisplay implements Serializable {
      * round limitation and is visible to team members of the owner.
      *
      * @param owner The owner of this artillery attack
+     *
      * @return A SpecialHexDisplay Incoming marker
      */
     public static SpecialHexDisplay createIncomingFire(Player owner, int landingGameRound, String message) {
@@ -262,8 +289,8 @@ public class SpecialHexDisplay implements Serializable {
     }
 
     /**
-     * Creates an Artillery Missmarker for the given owner and the given round in which it landed. It has no
-     * round limitation and is visible to everyone.
+     * Creates an Artillery Missmarker for the given owner and the given round in which it landed. It has no round
+     * limitation and is visible to everyone.
      *
      * @param owner   The owner of this artillery attack
      * @param round   The game round in which the attack landed and scattered
@@ -351,7 +378,8 @@ public class SpecialHexDisplay implements Serializable {
      * Determines whether this special hex should be obscured from the given
      * <code>Player</code>.
      *
-     * @param other     The player to check for
+     * @param other The player to check for
+     *
      * @return True if the special hex should be obscured
      */
     public boolean isObscured(@Nullable Player other) {
@@ -361,7 +389,7 @@ public class SpecialHexDisplay implements Serializable {
         if ((obscured == SHD_VISIBLETO_OWNER) && owner.equals(other)) {
             return false;
         } else if ((obscured == SHD_VISIBLETO_TEAM) && (other != null)
-                && (owner.getTeam() == other.getTeam())) {
+              && (owner.getTeam() == other.getTeam())) {
             return false;
         }
 
@@ -386,22 +414,22 @@ public class SpecialHexDisplay implements Serializable {
      */
     public boolean drawNow(GamePhase phase, int curRound, Player playerChecking, GUIPreferences guiPref) {
         boolean shouldDisplay = thisRound(curRound)
-                || (pastRound(curRound) && type.drawBefore())
-                || (futureRound(curRound) && type.drawAfter());
+              || (pastRound(curRound) && type.drawBefore())
+              || (futureRound(curRound) && type.drawAfter());
 
         if (phase.isBefore(GamePhase.OFFBOARD)
-                && ((type == Type.ARTILLERY_TARGET)
-                        || type == Type.ARTILLERY_MISS
-                        || (type == Type.ARTILLERY_HIT))) {
+              && ((type == Type.ARTILLERY_TARGET)
+              || type == Type.ARTILLERY_MISS
+              || (type == Type.ARTILLERY_HIT))) {
             shouldDisplay = shouldDisplay || thisRound(curRound - 1);
         }
 
         // Arty icons for the owner are drawn in BoardView1.drawArtillery
         // and shouldn't be drawn twice
         if (isOwner(playerChecking) &&
-                  (type == Type.ARTILLERY_ADJUSTED ||
-                         type == Type.ARTILLERY_INCOMING ||
-                         type == Type.ARTILLERY_TARGET)) {
+              (type == Type.ARTILLERY_ADJUSTED ||
+                    type == Type.ARTILLERY_INCOMING ||
+                    type == Type.ARTILLERY_TARGET)) {
             return false;
         }
 
@@ -415,8 +443,7 @@ public class SpecialHexDisplay implements Serializable {
         // that did damage
         if (guiPref != null) {
             switch (type) {
-                case ARTILLERY_HIT ->
-                    shouldDisplay &= !info.contains(Messages.getString("ArtilleryMessage.drifted"));
+                case ARTILLERY_HIT -> shouldDisplay &= !info.contains(Messages.getString("ArtilleryMessage.drifted"));
                 case ARTILLERY_MISS -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_ARTILLERY_MISSES);
                 case ARTILLERY_DRIFT -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_ARTILLERY_DRIFTS);
                 case BOMB_MISS -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_MISSES);
@@ -428,7 +455,8 @@ public class SpecialHexDisplay implements Serializable {
     }
 
     /**
-     * @param toPlayer  The player to check
+     * @param toPlayer The player to check
+     *
      * @return True if the player is the owner of this Special Hex Display
      */
     public boolean isOwner(Player toPlayer) {
@@ -445,7 +473,7 @@ public class SpecialHexDisplay implements Serializable {
         }
         final SpecialHexDisplay other = (SpecialHexDisplay) obj;
         return (type == other.type) && Objects.equals(owner, other.owner) && (round == other.round)
-                && info.equals(other.info);
+              && info.equals(other.info);
     }
 
     @Override
@@ -456,6 +484,6 @@ public class SpecialHexDisplay implements Serializable {
     @Override
     public String toString() {
         return "SHD: " + type.name() + ", " + "round " + round + (owner != null ? ", by "
-                + owner.getName() : "");
+              + owner.getName() : "");
     }
 }

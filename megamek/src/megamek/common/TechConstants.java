@@ -1,18 +1,38 @@
 /*
- * MegaMek -
+
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018 The MegaMek Team
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import megamek.common.options.OptionsConstants;
@@ -282,12 +302,12 @@ public class TechConstants {
         // if it's unofficial and mixed, allow everything
         if (mixed) {
             if (((entityTechlevel == T_IS_EXPERIMENTAL) || (entityTechlevel == T_CLAN_EXPERIMENTAL)) &&
-                      ((equipmentTechlevel != T_IS_UNOFFICIAL) && (equipmentTechlevel != T_CLAN_UNOFFICIAL))) {
+                  ((equipmentTechlevel != T_IS_UNOFFICIAL) && (equipmentTechlevel != T_CLAN_UNOFFICIAL))) {
                 return true;
             }
             if (((entityTechlevel == T_IS_ADVANCED) || (entityTechlevel == T_CLAN_ADVANCED)) &&
-                      ((equipmentTechlevel != T_IS_UNOFFICIAL) && (equipmentTechlevel != T_CLAN_UNOFFICIAL)) &&
-                      ((equipmentTechlevel != T_IS_EXPERIMENTAL) && (equipmentTechlevel != T_CLAN_EXPERIMENTAL))) {
+                  ((equipmentTechlevel != T_IS_UNOFFICIAL) && (equipmentTechlevel != T_CLAN_UNOFFICIAL)) &&
+                  ((equipmentTechlevel != T_IS_EXPERIMENTAL) && (equipmentTechlevel != T_CLAN_EXPERIMENTAL))) {
                 return true;
             }
             if ((entityTechlevel == T_IS_UNOFFICIAL) || (entityTechlevel == T_CLAN_UNOFFICIAL)) {
@@ -304,43 +324,43 @@ public class TechConstants {
 
         // IS box set can be in any IS
         if ((equipmentTechlevel == T_INTRO_BOXSET) &&
-                  ((entityTechlevel == T_IS_TW_NON_BOX) ||
-                         (entityTechlevel == T_IS_TW_ALL) ||
-                         (entityTechlevel == T_TW_ALL) ||
-                         (entityTechlevel == T_IS_ADVANCED) ||
-                         (entityTechlevel == T_IS_EXPERIMENTAL) ||
-                         (entityTechlevel == T_IS_UNOFFICIAL) ||
-                         (entityTechlevel == T_ALL))) {
+              ((entityTechlevel == T_IS_TW_NON_BOX) ||
+                    (entityTechlevel == T_IS_TW_ALL) ||
+                    (entityTechlevel == T_TW_ALL) ||
+                    (entityTechlevel == T_IS_ADVANCED) ||
+                    (entityTechlevel == T_IS_EXPERIMENTAL) ||
+                    (entityTechlevel == T_IS_UNOFFICIAL) ||
+                    (entityTechlevel == T_ALL))) {
             return true;
         }
 
         // IS TW stuff can be in any IS unit
         if ((equipmentTechlevel == T_IS_TW_NON_BOX ||
-                   equipmentTechlevel == T_TW_ALL ||
-                   equipmentTechlevel == T_IS_TW_ALL) &&
-                  ((entityTechlevel == T_IS_TW_ALL) ||
-                         (entityTechlevel == T_IS_TW_NON_BOX) ||
-                         (entityTechlevel == T_TW_ALL) ||
-                         (entityTechlevel == T_IS_ADVANCED) ||
-                         (entityTechlevel == T_IS_EXPERIMENTAL) ||
-                         (entityTechlevel == T_IS_UNOFFICIAL) ||
-                         (entityTechlevel == T_ALL))) {
+              equipmentTechlevel == T_TW_ALL ||
+              equipmentTechlevel == T_IS_TW_ALL) &&
+              ((entityTechlevel == T_IS_TW_ALL) ||
+                    (entityTechlevel == T_IS_TW_NON_BOX) ||
+                    (entityTechlevel == T_TW_ALL) ||
+                    (entityTechlevel == T_IS_ADVANCED) ||
+                    (entityTechlevel == T_IS_EXPERIMENTAL) ||
+                    (entityTechlevel == T_IS_UNOFFICIAL) ||
+                    (entityTechlevel == T_ALL))) {
             return true;
         }
         // clan TW stuff can be in any clan
         if ((equipmentTechlevel == T_CLAN_TW || equipmentTechlevel == T_TW_ALL) &&
-                  ((entityTechlevel == T_CLAN_TW) ||
-                         (entityTechlevel == T_CLAN_ADVANCED) ||
-                         (entityTechlevel == T_CLAN_EXPERIMENTAL) ||
-                         (entityTechlevel == T_CLAN_UNOFFICIAL) ||
-                         (entityTechlevel == T_ALL))) {
+              ((entityTechlevel == T_CLAN_TW) ||
+                    (entityTechlevel == T_CLAN_ADVANCED) ||
+                    (entityTechlevel == T_CLAN_EXPERIMENTAL) ||
+                    (entityTechlevel == T_CLAN_UNOFFICIAL) ||
+                    (entityTechlevel == T_ALL))) {
             return true;
         }
         // IS advanced stuff can be in IS advanced or higher
         if ((equipmentTechlevel == T_IS_ADVANCED) &&
-                  ((entityTechlevel == T_IS_EXPERIMENTAL) ||
-                         (entityTechlevel == T_IS_UNOFFICIAL) ||
-                         (entityTechlevel == T_ALL))) {
+              ((entityTechlevel == T_IS_EXPERIMENTAL) ||
+                    (entityTechlevel == T_IS_UNOFFICIAL) ||
+                    (entityTechlevel == T_ALL))) {
             return true;
         }
 
@@ -351,22 +371,22 @@ public class TechConstants {
 
         // clan advanced stuff can be in clan advanced or higher
         if ((equipmentTechlevel == T_CLAN_ADVANCED) &&
-                  ((entityTechlevel == T_CLAN_EXPERIMENTAL) ||
-                         (entityTechlevel == T_CLAN_UNOFFICIAL) ||
-                         (entityTechlevel == T_ALL))) {
+              ((entityTechlevel == T_CLAN_EXPERIMENTAL) ||
+                    (entityTechlevel == T_CLAN_UNOFFICIAL) ||
+                    (entityTechlevel == T_ALL))) {
             return true;
         }
         // IS experimental stuff can be in IS unoffical or all (identical level
         // is caught above
         if ((equipmentTechlevel == T_IS_EXPERIMENTAL) &&
-                  ((entityTechlevel == T_IS_UNOFFICIAL) || (entityTechlevel == T_ALL))) {
+              ((entityTechlevel == T_IS_UNOFFICIAL) || (entityTechlevel == T_ALL))) {
             return true;
         }
         // clan experimental stuff can be in clan unoffical or all (identical
         // level
         // is caught above
         if ((equipmentTechlevel == T_CLAN_EXPERIMENTAL) &&
-                  ((entityTechlevel == T_CLAN_UNOFFICIAL) || (entityTechlevel == T_ALL))) {
+              ((entityTechlevel == T_CLAN_UNOFFICIAL) || (entityTechlevel == T_ALL))) {
             return true;
         }
         return false;
@@ -374,15 +394,15 @@ public class TechConstants {
 
     public static String getTechName(int level) {
         if ((level == T_INTRO_BOXSET) ||
-                  (level == T_IS_TW_NON_BOX) ||
-                  (level == T_IS_ADVANCED) ||
-                  (level == T_IS_EXPERIMENTAL) ||
-                  (level == T_IS_UNOFFICIAL)) {
+              (level == T_IS_TW_NON_BOX) ||
+              (level == T_IS_ADVANCED) ||
+              (level == T_IS_EXPERIMENTAL) ||
+              (level == T_IS_UNOFFICIAL)) {
             return "Inner Sphere";
         } else if ((level == T_CLAN_TW) ||
-                         (level == T_CLAN_ADVANCED) ||
-                         (level == T_CLAN_EXPERIMENTAL) ||
-                         (level == T_CLAN_UNOFFICIAL)) {
+              (level == T_CLAN_ADVANCED) ||
+              (level == T_CLAN_EXPERIMENTAL) ||
+              (level == T_CLAN_UNOFFICIAL)) {
             return "Clan";
         } else if (level == T_ALLOWED_ALL) {
             return "IS/Clan";

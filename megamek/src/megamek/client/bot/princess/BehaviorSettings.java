@@ -1,21 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot.princess;
 
@@ -47,69 +61,69 @@ public class BehaviorSettings implements Serializable {
     private static final long serialVersionUID = -1895924639830817372L;
 
     static final double[] SELF_PRESERVATION_VALUES = {
-            2.5,
-            5,
-            7.5,
-            10,
-            12.5,
-            15,
-            17.5,
-            20,
-            22.5,
-            25,
-            30 };
+          2.5,
+          5,
+          7.5,
+          10,
+          12.5,
+          15,
+          17.5,
+          20,
+          22.5,
+          25,
+          30 };
 
     static final int[] FALL_SHAME_VALUES = {
-            10,
-            40,
-            80,
-            100,
-            160,
-            500,
-            500,
-            500,
-            500,
-            500,
-            500 };
+          10,
+          40,
+          80,
+          100,
+          160,
+          500,
+          500,
+          500,
+          500,
+          500,
+          500 };
 
     protected static final double[] BRAVERY = {
-            0.1,
-            0.3,
-            0.6,
-            0.9,
-            1.2,
-            1.5,
-            1.8,
-            2.1,
-            2.4,
-            2.7,
-            3.0 };
+          0.1,
+          0.3,
+          0.6,
+          0.9,
+          1.2,
+          1.5,
+          1.8,
+          2.1,
+          2.4,
+          2.7,
+          3.0 };
 
     static final double[] HYPER_AGGRESSION_VALUES = {
-            0.25,
-            0.5,
-            1,
-            1.5,
-            2,
-            2.5,
-            3,
-            3.5,
-            10,
-            50,
-            500 };
+          0.25,
+          0.5,
+          1,
+          1.5,
+          2,
+          2.5,
+          3,
+          3.5,
+          10,
+          50,
+          500 };
 
     static final double[] HERD_MENTALITY_VALUES = {
-            0.1,
-            0.2,
-            0.4,
-            0.6,
-            0.8,
-            1.0,
-            1.2,
-            1.4,
-            1.6,
-            1.8,
-            2.0 };
+          0.1,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0,
+          1.2,
+          1.4,
+          1.6,
+          1.8,
+          2.0 };
 
     public static final int MAX_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING = 12;
     public static final int MIN_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING = 1;
@@ -128,7 +142,7 @@ public class BehaviorSettings implements Serializable {
     private CardinalEdge destinationEdge = CardinalEdge.NONE; // Which edge am I trying to reach?
     private CardinalEdge retreatEdge = CardinalEdge.NEAREST; // To which edge will my units flee when crippled?
     private final Set<String> strategicBuildingTargets = new HashSet<>(); // What (besides enemy units) do I want to
-                                                                          // blow up?
+    // blow up?
     private final Set<Integer> priorityUnitTargets = new HashSet<>(); // What units do I especially want to blow up?
     private int herdMentalityIndex = 5; // How close do I want to stick to my teammates?
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
@@ -191,6 +205,7 @@ public class BehaviorSettings implements Serializable {
     public void setExperimental(boolean experimental) {
         this.experimental = experimental;
     }
+
     /**
      * @param experimental Set TRUE if I am running experimental features.
      */
@@ -215,7 +230,7 @@ public class BehaviorSettings implements Serializable {
     /**
      * @return TRUE if I am a bloody pirate. Ignores the dishonored enemies list and just attacks.
      */
-     public boolean iAmAPirate() {
+    public boolean iAmAPirate() {
         return iAmAPirate;
     }
 
@@ -259,16 +274,14 @@ public class BehaviorSettings implements Serializable {
     }
 
     /**
-     * @return TRUE if I should flee off the board even if I am not crippled or
-     *         Forced Withdrawal is not in effect.
+     * @return TRUE if I should flee off the board even if I am not crippled or Forced Withdrawal is not in effect.
      */
     public boolean shouldAutoFlee() {
         return autoFlee;
     }
 
     /**
-     * @param autoFlee Set TRUE if I should flee off the board even if I am not
-     *                 crippled or Forced Withdrawal is not in
+     * @param autoFlee Set TRUE if I should flee off the board even if I am not crippled or Forced Withdrawal is not in
      *                 effect.
      */
     public void setAutoFlee(final boolean autoFlee) {
@@ -285,8 +298,8 @@ public class BehaviorSettings implements Serializable {
     }
 
     /**
-     * Sets the name for this type of behavior. Must be unique in order to save.
-     * Throws a PrincessException when the description is empty.
+     * Sets the name for this type of behavior. Must be unique in order to save. Throws a PrincessException when the
+     * description is empty.
      *
      * @param description The name to be used.
      */
@@ -414,8 +427,7 @@ public class BehaviorSettings implements Serializable {
     }
 
     /**
-     * When this is true, Princess will follow the Forced Withdrawal rules from
-     * Total Warfare.
+     * When this is true, Princess will follow the Forced Withdrawal rules from Total Warfare.
      *
      * @return Should Princess follow the Forced Withdrawal rules?
      */
@@ -424,8 +436,7 @@ public class BehaviorSettings implements Serializable {
     }
 
     /**
-     * When this is true, Princess will follow the Forced Withdrawal rules from
-     * Total Warfare.
+     * When this is true, Princess will follow the Forced Withdrawal rules from Total Warfare.
      *
      * @param forcedWithdrawal Should Princess follow the Forced Withdrawal rules?
      */
@@ -434,8 +445,7 @@ public class BehaviorSettings implements Serializable {
     }
 
     /**
-     * When this is true, Princess will follow the Forced Withdrawal rules from
-     * Total Warfare.
+     * When this is true, Princess will follow the Forced Withdrawal rules from Total Warfare.
      *
      * @param forcedWithdrawal Should Princess follow the Forced Withdrawal rules?
      */
@@ -469,6 +479,7 @@ public class BehaviorSettings implements Serializable {
      * How quickly will I try to escape once damaged?
      *
      * @param index The index of the Bravery modifier to retrieve.
+     *
      * @return Bravery modifier value at given index.
      */
     public double getBraveryValue(final int index) {
@@ -513,9 +524,9 @@ public class BehaviorSettings implements Serializable {
 
     /**
      * @param index The index of the {@link #FALL_SHAME_VALUES} sought.
-     * @return The value at the given index. Indexes less than 0 are treated as 0
-     *         and indexes greater than 10 are
-     *         treated as 10.
+     *
+     * @return The value at the given index. Indexes less than 0 are treated as 0 and indexes greater than 10 are
+     *       treated as 10.
      */
     public int getFallShameValue(final int index) {
         return FALL_SHAME_VALUES[validateIndex(index)];
@@ -560,8 +571,8 @@ public class BehaviorSettings implements Serializable {
     /**
      * How close do I want to stick to my teammates?
      *
-     * @param index The index [0-10] of the herd mentality value that should be
-     *              used.
+     * @param index The index [0-10] of the herd mentality value that should be used.
+     *
      * @return The herd mentality value at the specified index.
      */
     public double getHerdMentalityValue(final int index) {
@@ -571,8 +582,7 @@ public class BehaviorSettings implements Serializable {
     /**
      * How close do I want to stick to my teammates?
      *
-     * @param herdMentalityIndex The index [0-10] of the herd mentality that should
-     *                           be used.
+     * @param herdMentalityIndex The index [0-10] of the herd mentality that should be used.
      */
     public void setHerdMentalityIndex(final int herdMentalityIndex) {
         this.herdMentalityIndex = validateIndex(herdMentalityIndex);
@@ -581,8 +591,7 @@ public class BehaviorSettings implements Serializable {
     /**
      * How close do I want to stick to my teammates?
      *
-     * @param index The index ["0"-"10"] of the herd mentality value that should be
-     *              used.
+     * @param index The index ["0"-"10"] of the herd mentality value that should be used.
      */
     public void setHerdMentalityIndex(final String index) throws PrincessException {
         try {
@@ -617,8 +626,8 @@ public class BehaviorSettings implements Serializable {
     /**
      * Princess's home edge.
      *
-     * @param destinationEdge the index of the {@link CardinalEdge} princess should
-     *                        flee to. See {@link CardinalEdge#getIndex()}
+     * @param destinationEdge the index of the {@link CardinalEdge} princess should flee to. See
+     *                        {@link CardinalEdge#getIndex()}
      */
     public void setDestinationEdge(final int destinationEdge) {
         setDestinationEdge(CardinalEdge.getCardinalEdge(destinationEdge));
@@ -627,11 +636,12 @@ public class BehaviorSettings implements Serializable {
     /**
      * Princess's home edge.
      *
-     * @param destinationEdge the index of the {@link CardinalEdge} princess should
-     *                        flee to. See {@link CardinalEdge#getIndex()}
+     * @param destinationEdge the index of the {@link CardinalEdge} princess should flee to. See
+     *                        {@link CardinalEdge#getIndex()}
+     *
      * @deprecated unused
      */
-    @Deprecated(since="0.50.06", forRemoval = true)
+    @Deprecated(since = "0.50.06", forRemoval = true)
     public void setDestinationEdge(final String destinationEdge) throws PrincessException {
         try {
             setDestinationEdge(Integer.parseInt(destinationEdge.trim()));
@@ -665,8 +675,8 @@ public class BehaviorSettings implements Serializable {
     /**
      * Princess's home edge.
      *
-     * @param retreatEdge the index of the {@link CardinalEdge} princess should flee
-     *                    to. See {@link CardinalEdge#getIndex()}
+     * @param retreatEdge the index of the {@link CardinalEdge} princess should flee to. See
+     *                    {@link CardinalEdge#getIndex()}
      */
     public void setRetreatEdge(final int retreatEdge) {
         setRetreatEdge(CardinalEdge.getCardinalEdge(retreatEdge));
@@ -675,8 +685,8 @@ public class BehaviorSettings implements Serializable {
     /**
      * Princess's home edge.
      *
-     * @param retreatEdge the index of the {@link CardinalEdge} princess should flee
-     *                    to. See {@link CardinalEdge#getIndex()}
+     * @param retreatEdge the index of the {@link CardinalEdge} princess should flee to. See
+     *                    {@link CardinalEdge#getIndex()}
      */
     public void setRetreatEdge(final String retreatEdge) throws PrincessException {
         try {
@@ -708,6 +718,7 @@ public class BehaviorSettings implements Serializable {
      * How close to I want to get to my enemies?
      *
      * @param index The index[0-10] of the hyper aggression value desired.
+     *
      * @return The hyper aggression value at the given index.
      */
     public double getHyperAggressionValue(final int index) {
@@ -717,8 +728,7 @@ public class BehaviorSettings implements Serializable {
     /**
      * How close to I want to get to my enemies?
      *
-     * @param hyperAggressionIndex The index [0-10] of the hyper aggression value to
-     *                             be used.
+     * @param hyperAggressionIndex The index [0-10] of the hyper aggression value to be used.
      */
     public void setHyperAggressionIndex(final int hyperAggressionIndex) {
         this.hyperAggressionIndex = validateIndex(hyperAggressionIndex);
@@ -827,6 +837,7 @@ public class BehaviorSettings implements Serializable {
      * How worried about enemy damage am I?
      *
      * @param index The index [0-10] of the self-preservation value desired.
+     *
      * @return The self-preservation value at the specified index.
      */
     public double getSelfPreservationValue(int index) {
@@ -836,8 +847,7 @@ public class BehaviorSettings implements Serializable {
     /**
      * How worried about enemy damage am I?
      *
-     * @param selfPreservationIndex The index [0-10] of the self-preservation value
-     *                              to be used.
+     * @param selfPreservationIndex The index [0-10] of the self-preservation value to be used.
      */
     public void setSelfPreservationIndex(final int selfPreservationIndex) {
         this.selfPreservationIndex = validateIndex(selfPreservationIndex);
@@ -860,6 +870,7 @@ public class BehaviorSettings implements Serializable {
      * Sets up the behavior parameters based on the passed in XML.
      *
      * @param behavior The XML element containing the behavior parameters.
+     *
      * @return TRUE if the XML was successfully parsed.
      */
     @SuppressWarnings("UnusedReturnValue")
@@ -929,11 +940,10 @@ public class BehaviorSettings implements Serializable {
     /**
      * Returns an XML representation of the behavior settings.
      *
-     * @return An XML {@link org.w3c.dom.Element} describing this behavior settings
-     *         object.
+     * @return An XML {@link org.w3c.dom.Element} describing this behavior settings object.
      */
     Element toXml(final Document doc,
-            final boolean includeTargets) {
+          final boolean includeTargets) {
         try {
             final Element behavior = doc.createElement("behavior");
 
@@ -1053,18 +1063,18 @@ public class BehaviorSettings implements Serializable {
         out.append("\n\t Forced Withdrawal: ").append(isForcedWithdrawal());
         out.append("\n\t Flee: ").append(autoFlee);
         out.append("\n\t Self Preservation: ").append(getSelfPreservationIndex()).append(":")
-                .append(getSelfPreservationValue(getSelfPreservationIndex()));
+              .append(getSelfPreservationValue(getSelfPreservationIndex()));
         out.append("\n\t Hyper Aggression: ").append(getHyperAggressionIndex()).append(":")
-                .append(getHyperAggressionValue(getHyperAggressionIndex()));
+              .append(getHyperAggressionValue(getHyperAggressionIndex()));
         out.append("\n\t Fall Shame: ").append(getFallShameIndex()).append(":")
-                .append(getFallShameValue(getFallShameIndex()));
+              .append(getFallShameValue(getFallShameIndex()));
         out.append("\n\t Bravery: ").append(getBraveryIndex()).append(":").append(getBraveryValue(getBraveryIndex()));
         out.append("\n\t AntiCrowding: ").append(getAntiCrowding());
         out.append("\n\t FavorHigherTMM: ").append(getFavorHigherTMM());
         out.append("\n\t NumberOfEnemiesToConsiderFacing: ").append(getNumberOfEnemiesToConsiderFacing());
         out.append("\n\t AllowFacingTolerance: ").append(getAllowFacingTolerance());
         out.append("\n\t Herd Mentality: ").append(getHerdMentalityIndex()).append(":")
-                .append(getHerdMentalityValue(getHerdMentalityIndex()));
+              .append(getHerdMentalityValue(getHerdMentalityIndex()));
         out.append("\n\t Exclusive Herding: ").append(isExclusiveHerding());
         out.append("\n\t I am a Pirate: ").append(iAmAPirate());
         out.append("\n\t I Ignore Damage Output: ").append(isIgnoreDamageOutput());

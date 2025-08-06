@@ -1,15 +1,34 @@
 /*
- * MegaMek - Copyright (C) 2020 The MegaMek Team
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.client.ui.dialogs.customMek;
@@ -19,7 +38,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -34,9 +52,8 @@ import megamek.common.Mounted;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
- * Panel that allows splitting ammo between standard and inferno for light and
- * medium weapons
- * that have inferno variants.
+ * Panel that allows splitting ammo between standard and inferno for light and medium weapons that have inferno
+ * variants.
  */
 public class SmallSVMunitionsChoicePanel extends JPanel {
     private final Entity entity;
@@ -52,7 +69,7 @@ public class SmallSVMunitionsChoicePanel extends JPanel {
 
         for (Mounted<?> weapon : entity.getWeaponList()) {
             if ((weapon.getType() instanceof InfantryWeapon)
-                    && ((InfantryWeapon) weapon.getType()).hasInfernoAmmo()) {
+                  && ((InfantryWeapon) weapon.getType()).hasInfernoAmmo()) {
                 AmmoRowPanel row = new AmmoRowPanel(weapon);
                 gbc.gridy++;
                 add(row, gbc);
@@ -62,11 +79,8 @@ public class SmallSVMunitionsChoicePanel extends JPanel {
     }
 
     /**
-     * Distribute the ammo between the standard and inferno bins. Original shots in
-     * each bin will
-     * be set to the number of shots rounded up to full clips. Any completely empty
-     * clips will
-     * be assigned to the standard bin.
+     * Distribute the ammo between the standard and inferno bins. Original shots in each bin will be set to the number
+     * of shots rounded up to full clips. Any completely empty clips will be assigned to the standard bin.
      */
     public void apply() {
         for (AmmoRowPanel row : rows) {
@@ -114,12 +128,12 @@ public class SmallSVMunitionsChoicePanel extends JPanel {
             gbc.insets = new Insets(0, 5, 0, 5);
             gbc.gridwidth = 5;
             add(new JLabel(String.format("(%s) %s", entity.getLocationAbbr(weapon.getLocation()),
-                    weapon.getName())), gbc);
+                  weapon.getName())), gbc);
             gbc.gridx = 5;
             gbc.gridwidth = 1;
             gbc.weightx = 1.0;
             add(new JLabel(String.format(Messages.getString("CustomMekDialog.formatSmSVAmmoShots"),
-                    shotsPerClip, (int) weapon.getSize())), gbc);
+                  shotsPerClip, (int) weapon.getSize())), gbc);
 
             gbc.gridx = 0;
             gbc.gridy = 1;

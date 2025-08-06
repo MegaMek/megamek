@@ -1,24 +1,45 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.advancedsearch;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import megamek.common.Entity;
@@ -29,9 +50,8 @@ import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
 /**
- * Class to perform filtering on units. This class stores a list of
- * constraints and for a given <code>MekSummary</code> it can tell whether
- * that <code>MekSummary</code> meets the constraints or not.
+ * Class to perform filtering on units. This class stores a list of constraints and for a given <code>MekSummary</code>
+ * it can tell whether that <code>MekSummary</code> meets the constraints or not.
  *
  * @author JSmyrloglou
  * @author Arlith
@@ -213,8 +233,7 @@ public class MekSearchFilter {
     }
 
     /**
-     * Deep copy constructor. New instantiations of all state variables are
-     * created.
+     * Deep copy constructor. New instantiations of all state variables are created.
      *
      * @param sf The <code>MekSearchFilter</code> to create a copy of.
      */
@@ -618,15 +637,21 @@ public class MekSearchFilter {
             return false;
         }
 
-        if (!StringUtil.isBetween(mek.getSuperHeavyVehicleBays(), f.sStartSuperHeavyVehicleBays, f.sEndSuperHeavyVehicleBays)) {
+        if (!StringUtil.isBetween(mek.getSuperHeavyVehicleBays(),
+              f.sStartSuperHeavyVehicleBays,
+              f.sEndSuperHeavyVehicleBays)) {
             return false;
         }
 
-        if (!StringUtil.isBetween(mek.getSuperHeavyVehicleDoors(), f.sStartSuperHeavyVehicleDoors, f.sEndSuperHeavyVehicleDoors)) {
+        if (!StringUtil.isBetween(mek.getSuperHeavyVehicleDoors(),
+              f.sStartSuperHeavyVehicleDoors,
+              f.sEndSuperHeavyVehicleDoors)) {
             return false;
         }
 
-        if (!StringUtil.isBetween(mek.getSuperHeavyVehicleUnits(), f.sStartSuperHeavyVehicleUnits, f.sEndSuperHeavyVehicleUnits)) {
+        if (!StringUtil.isBetween(mek.getSuperHeavyVehicleUnits(),
+              f.sStartSuperHeavyVehicleUnits,
+              f.sEndSuperHeavyVehicleUnits)) {
             return false;
         }
 
@@ -654,7 +679,9 @@ public class MekSearchFilter {
             return false;
         }
 
-        if (!StringUtil.isBetween(mek.getNavalRepairFacilities(), f.sStartNavalRepairFacilities, f.sEndNavalRepairFacilities)) {
+        if (!StringUtil.isBetween(mek.getNavalRepairFacilities(),
+              f.sStartNavalRepairFacilities,
+              f.sEndNavalRepairFacilities)) {
             return false;
         }
 
@@ -754,12 +781,12 @@ public class MekSearchFilter {
 
         if (f.weaponQuirkInclude == 0) {
             if ((!f.weaponQuirkTypeExclude.isEmpty())
-                    && (allMatch(f.weaponQuirkTypeExclude, mek.getWeaponQuirkNames()))) {
+                  && (allMatch(f.weaponQuirkTypeExclude, mek.getWeaponQuirkNames()))) {
                 return false;
             }
         } else {
             if ((!f.weaponQuirkTypeExclude.isEmpty())
-                    && (anyMatch(f.weaponQuirkTypeExclude, mek.getWeaponQuirkNames()))) {
+                  && (anyMatch(f.weaponQuirkTypeExclude, mek.getWeaponQuirkNames()))) {
                 return false;
             }
         }
@@ -934,11 +961,11 @@ public class MekSearchFilter {
     }
 
     /**
-     * Evalutes the given list of equipment names and quantities against the
-     * expression tree in this filter.
+     * Evalutes the given list of equipment names and quantities against the expression tree in this filter.
      *
      * @param eq  Collection of equipment names
      * @param qty The number of each piece of equipment
+     *
      * @return True if the provided lists satisfy the expression tree
      */
     public boolean evaluate(List<String> eq, List<Integer> qty) {
@@ -946,12 +973,12 @@ public class MekSearchFilter {
     }
 
     /**
-     * Recursive helper function for evaluating an ExpressionTree on a
-     * collection of equipment names and quantities.
+     * Recursive helper function for evaluating an ExpressionTree on a collection of equipment names and quantities.
      *
      * @param eq  A collection of equipment names
      * @param qty The number of occurrences of each piece of equipment
      * @param n   The current node in the ExpressionTree
+     *
      * @return True if the tree evaluates successfully, else false
      */
     private boolean evaluate(List<String> eq, List<Integer> qty, ExpNode n) {
@@ -964,15 +991,15 @@ public class MekSearchFilter {
                 // all equipment that matches the weaponClass value.
                 // First, convert the two separate lists into a map of name->quantity.
                 List<Map.Entry<String, Integer>> nameQtyPairs = IntStream.range(0, Math.min(eq.size(), qty.size()))
-                        .mapToObj(i -> Map.entry(eq.get(i), qty.get(i)))
-                        .toList();
+                      .mapToObj(i -> Map.entry(eq.get(i), qty.get(i)))
+                      .toList();
 
                 // Now, stream that map, filtering on a match with the WeaponClass, then extract
                 // the quantities and sum them up.
                 int total = nameQtyPairs.stream()
-                        .filter(p -> n.equipmentClass.matches(p.getKey()))
-                        .map(Map.Entry::getValue)
-                        .reduce(0, Integer::sum);
+                      .filter(p -> n.equipmentClass.matches(p.getKey()))
+                      .map(Map.Entry::getValue)
+                      .reduce(0, Integer::sum);
 
                 // If the requested quantity is 0, then we match if and only if the total number
                 // of matching equipment is also 0.
@@ -1043,9 +1070,8 @@ public class MekSearchFilter {
     }
 
     /**
-     * This class allows to create a tree where the leaf nodes contain names
-     * and quantities of pieces of equipment while the non-leaf nodes contain
-     * boolean operations (AND and OR).
+     * This class allows to create a tree where the leaf nodes contain names and quantities of pieces of equipment while
+     * the non-leaf nodes contain boolean operations (AND and OR).
      *
      * @author Arlith
      */
@@ -1057,8 +1083,7 @@ public class MekSearchFilter {
         }
 
         /**
-         * Deep copy constructor. New instantiations of all state variables
-         * are created.
+         * Deep copy constructor. New instantiations of all state variables are created.
          *
          * @param et The <code>ExpressionTree</code> to create a copy of.
          */
@@ -1088,8 +1113,7 @@ public class MekSearchFilter {
         }
 
         /**
-         * Deep copy constructor. New instantiations of all state variables
-         * are created.
+         * Deep copy constructor. New instantiations of all state variables are created.
          *
          * @param e The <code>ExpressionTree</code> to create a copy of.
          */
@@ -1181,11 +1205,13 @@ public class MekSearchFilter {
     }
 
     /**
-     * Returns true if the given searchTarget contains all the tokens (separated by space) given in the saerchTokens String. Comparisons are
-     * done ignoring case. Returns false when any of the strings is null or the search tokens are empty.
+     * Returns true if the given searchTarget contains all the tokens (separated by space) given in the saerchTokens
+     * String. Comparisons are done ignoring case. Returns false when any of the strings is null or the search tokens
+     * are empty.
      *
      * @param searchTarget The String that may contains the search tokens, such as "Shrapnel #9"
      * @param searchTokens The String that contains the search tokens, such as "shra 9"
+     *
      * @return True if all search tokens are contained in the searchTarget
      */
     private boolean findTokenized(@Nullable String searchTarget, @Nullable String searchTokens) {

@@ -32,15 +32,15 @@
  */
 package megamek.client.ui.dialogs.unitDisplay;
 
+import java.awt.BorderLayout;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import java.awt.BorderLayout;
 
 /**
- * A UnitDisplayContainer implementation that provides a singleton dialog and display.
- * This container maintains a single instance of UnitDisplayDialog and UnitDisplay
- * that persists across multiple access attempts. The dialog is hidden rather than
- * disposed when closed, allowing it to be reused.
+ * A UnitDisplayContainer implementation that provides a singleton dialog and display. This container maintains a single
+ * instance of UnitDisplayDialog and UnitDisplay that persists across multiple access attempts. The dialog is hidden
+ * rather than disposed when closed, allowing it to be reused.
+ *
  * @author Luana Coppio
  */
 public class SharedDisplayContainer implements UnitDisplayContainer {
@@ -61,10 +61,11 @@ public class SharedDisplayContainer implements UnitDisplayContainer {
     }
 
     /**
-     * Returns the singleton instance of SharedDisplayContainer, creating it if necessary.
-     * If the instance or its components are null, a new instance is created.
+     * Returns the singleton instance of SharedDisplayContainer, creating it if necessary. If the instance or its
+     * components are null, a new instance is created.
      *
      * @param frame the parent frame for the dialog
+     *
      * @return the shared container instance
      */
     public static SharedDisplayContainer getInstance(JFrame frame) {

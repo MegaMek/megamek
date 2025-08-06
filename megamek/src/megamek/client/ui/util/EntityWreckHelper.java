@@ -1,16 +1,36 @@
 /*
- * MegaMek - Copyright (C) 2020 - The MegaMek Team
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 
 package megamek.client.ui.util;
 
@@ -18,17 +38,14 @@ import megamek.client.ui.tileset.TilesetManager;
 import megamek.common.*;
 
 /**
- * This class handles logic for displaying various kinds of damage and
- * destruction decals
- * 
- * @author NickAragua
+ * This class handles logic for displaying various kinds of damage and destruction decals
  *
+ * @author NickAragua
  */
 public class EntityWreckHelper {
     /**
-     * Logic that determines if we should be display "destroyed" decals below the
-     * destroyed entity.
-     * Assumes that the entity is destroyed.
+     * Logic that determines if we should be display "destroyed" decals below the destroyed entity. Assumes that the
+     * entity is destroyed.
      */
     public static boolean displayDestroyedDecal(Entity entity) {
         // don't display "generic" destroyed decals in the following situations:
@@ -38,11 +55,11 @@ public class EntityWreckHelper {
         // for units on top of a bridge (looks kind of stupid)
 
         if (entity.getGame().getBoard(entity).isSpace() ||
-                (entity instanceof Mek) ||
-                (entity instanceof Infantry) ||
-                (entity instanceof GunEmplacement) ||
-                !entity.getSecondaryPositions().isEmpty() ||
-                entityOnBridge(entity)) {
+              (entity instanceof Mek) ||
+              (entity instanceof Infantry) ||
+              (entity instanceof GunEmplacement) ||
+              !entity.getSecondaryPositions().isEmpty() ||
+              entityOnBridge(entity)) {
             return false;
         }
 
@@ -54,35 +71,32 @@ public class EntityWreckHelper {
     }
 
     /**
-     * Logic that determines whether we should display a 'fuel leak' for the given
-     * entity.
+     * Logic that determines whether we should display a 'fuel leak' for the given entity.
      */
     public static boolean displayFuelLeak(Entity entity) {
         return (entity instanceof Tank) &&
-                (entity.getMovementMode() != EntityMovementMode.VTOL) &&
-                (entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) &&
-                entity.isPermanentlyImmobilized(false) &&
-                !entity.getGame().getBoard(entity).isSpace() &&
-                !entityOnBridge(entity);
+              (entity.getMovementMode() != EntityMovementMode.VTOL) &&
+              (entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) &&
+              entity.isPermanentlyImmobilized(false) &&
+              !entity.getGame().getBoard(entity).isSpace() &&
+              !entityOnBridge(entity);
     }
 
     /**
-     * Whether we should display 'motive damage' for the given entity, meaning loose
-     * treads and such
+     * Whether we should display 'motive damage' for the given entity, meaning loose treads and such
      */
     public static boolean displayMotiveDamage(Entity entity) {
         return entity.isPermanentlyImmobilized(false) &&
-                ((entity.getMovementMode() == EntityMovementMode.WHEELED) ||
-                        (entity.getMovementMode() == EntityMovementMode.TRACKED))
-                &&
-                entity.getSecondaryPositions().isEmpty() &&
-                !entity.getGame().getBoard(entity).isSpace() &&
-                !entityOnBridge(entity);
+              ((entity.getMovementMode() == EntityMovementMode.WHEELED) ||
+                    (entity.getMovementMode() == EntityMovementMode.TRACKED))
+              &&
+              entity.getSecondaryPositions().isEmpty() &&
+              !entity.getGame().getBoard(entity).isSpace() &&
+              !entityOnBridge(entity);
     }
 
     /**
-     * Whether a given entity should display a crater instead of its standard
-     * wreckage marker.
+     * Whether a given entity should display a crater instead of its standard wreckage marker.
      */
     public static boolean displayDevastation(Entity entity) {
         return (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED);

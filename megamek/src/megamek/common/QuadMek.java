@@ -1,22 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org), Cord Awtry (kipsta@bs-interactive.com)
- * Copyright (c) 2024, 2025 - The MegaMek Team. All Rights Reserved.
+  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org), Cord Awtry (kipsta@bs-interactive.com)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.io.PrintWriter;
@@ -112,7 +127,7 @@ public class QuadMek extends Mek {
                         if (legHasHipCrit(i)) {
                             hipHits++;
                             if ((game == null) ||
-                                      !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                                 continue;
                             }
                         }
@@ -135,7 +150,7 @@ public class QuadMek extends Mek {
             if (mp > 0) {
                 if (hipHits > 0) {
                     if ((game != null) &&
-                              game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                          game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                         mp = mp - (2 * hipHits);
                     } else {
                         for (int i = 0; i < hipHits; i++) {
@@ -178,10 +193,10 @@ public class QuadMek extends Mek {
 
         // TSM negates some heat, but provides no benefit when using tracks.
         if (((heat >= 9) || mpCalculationSetting.forceTSM) &&
-                  hasTSM(false) &&
-                  (legsDestroyed < 2) &&
-                  !movementMode.isTracked() &&
-                  !movementMode.isWheeled()) {
+              hasTSM(false) &&
+              (legsDestroyed < 2) &&
+              !movementMode.isTracked() &&
+              !movementMode.isWheeled()) {
             if (mpCalculationSetting.forceTSM && mpCalculationSetting.ignoreHeat) {
                 // When forcing TSM but ignoring heat we must assume heat to be 9 to activate
                 // TSM, this adds -1 MP!
@@ -197,8 +212,8 @@ public class QuadMek extends Mek {
             mp = Math.max(mp + weatherMod, 0);
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND) &&
-                      conditions.getWeather().isClear() &&
-                      conditions.getWind().isTornadoF1ToF3()) {
+                  conditions.getWeather().isClear() &&
+                  conditions.getWind().isTornadoF1ToF3()) {
                 mp += 1;
             }
         }
@@ -213,7 +228,7 @@ public class QuadMek extends Mek {
     @Override
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
         if (countBadLegs() <= 1 ||
-                  (this instanceof QuadVee && getConversionMode() == QuadVee.CONV_MODE_VEHICLE && !convertingNow)) {
+              (this instanceof QuadVee && getConversionMode() == QuadVee.CONV_MODE_VEHICLE && !convertingNow)) {
             return super.getRunMP(mpCalculationSetting);
         } else {
             return getWalkMP(mpCalculationSetting);
@@ -417,7 +432,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                      !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_CT, cover, false));
@@ -453,7 +468,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                      !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_CT, cover, true));
@@ -489,7 +504,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                      !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_LT, cover, false));
@@ -525,7 +540,7 @@ public class QuadMek extends Mek {
                     switch (roll) {
                         case 2:
                             if (shouldUseEdge(OptionsConstants.EDGE_WHEN_TAC) &&
-                                      !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                                 result.setUndoneLocation(tac(table, side, Mek.LOC_RT, cover, false));
@@ -771,36 +786,36 @@ public class QuadMek extends Mek {
         // if hitting front arc, need to swap them
         if (side == ToHitData.SIDE_FRONT) {
             if (((cover & LosEffects.COVER_LOWRIGHT) != 0) &&
-                      ((location == Mek.LOC_LARM) || (location == Mek.LOC_LLEG))) {
+                  ((location == Mek.LOC_LARM) || (location == Mek.LOC_LLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_LOWLEFT) != 0) &&
-                      ((location == Mek.LOC_RARM) || (location == Mek.LOC_RLEG))) {
+                  ((location == Mek.LOC_RARM) || (location == Mek.LOC_RLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_RIGHT) != 0) &&
-                      ((location == Mek.LOC_LARM) || (location == Mek.LOC_LT) || (location == Mek.LOC_LLEG))) {
+                  ((location == Mek.LOC_LARM) || (location == Mek.LOC_LT) || (location == Mek.LOC_LLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_LEFT) != 0) &&
-                      ((location == Mek.LOC_RARM) || (location == Mek.LOC_RT) || (location == Mek.LOC_RLEG))) {
+                  ((location == Mek.LOC_RARM) || (location == Mek.LOC_RT) || (location == Mek.LOC_RLEG))) {
                 return true;
             }
         } else {
             if (((cover & LosEffects.COVER_LOWLEFT) != 0) &&
-                      ((location == Mek.LOC_LARM) || (location == Mek.LOC_LLEG))) {
+                  ((location == Mek.LOC_LARM) || (location == Mek.LOC_LLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_LOWRIGHT) != 0) &&
-                      ((location == Mek.LOC_RARM) || (location == Mek.LOC_RLEG))) {
+                  ((location == Mek.LOC_RARM) || (location == Mek.LOC_RLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_LEFT) != 0) &&
-                      ((location == Mek.LOC_LARM) || (location == Mek.LOC_LT) || (location == Mek.LOC_LLEG))) {
+                  ((location == Mek.LOC_LARM) || (location == Mek.LOC_LT) || (location == Mek.LOC_LLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_RIGHT) != 0) &&
-                      ((location == Mek.LOC_RARM) || (location == Mek.LOC_RT) || (location == Mek.LOC_RLEG))) {
+                  ((location == Mek.LOC_RARM) || (location == Mek.LOC_RT) || (location == Mek.LOC_RLEG))) {
                 return true;
             }
         }
@@ -834,7 +849,7 @@ public class QuadMek extends Mek {
     @Override
     public boolean hasMPReducingHardenedArmor() {
         return IntStream.of(LOC_LLEG, LOC_RLEG, LOC_LARM, LOC_RARM)
-                     .anyMatch(i -> (armorType[i] == EquipmentType.T_ARMOR_HARDENED));
+              .anyMatch(i -> (armorType[i] == EquipmentType.T_ARMOR_HARDENED));
     }
 
     @Override

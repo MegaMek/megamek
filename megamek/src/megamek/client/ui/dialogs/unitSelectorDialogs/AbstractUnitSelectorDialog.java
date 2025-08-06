@@ -90,10 +90,9 @@ import megamek.common.util.sorter.NaturalOrderComparator;
 import megamek.logging.MMLogger;
 
 /**
- * This is a heavily reworked version of the original MekSelectorDialog which
- * brings up a list of units for the player to select to add to their forces.
- * The original list has been changed to a sortable table and a text filter
- * is used for advanced searching.
+ * This is a heavily reworked version of the original MekSelectorDialog which brings up a list of units for the player
+ * to select to add to their forces. The original list has been changed to a sortable table and a text filter is used
+ * for advanced searching.
  */
 public abstract class AbstractUnitSelectorDialog extends JDialog implements Runnable, KeyListener,
                                                                             ActionListener, ListSelectionListener {
@@ -119,8 +118,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected JList<String> listTechLevel = new JList<>();
     private JLabel lblCount;
     /**
-     * We need to map the selected index of listTechLevel to the actual TL it
-     * belongs to
+     * We need to map the selected index of listTechLevel to the actual TL it belongs to
      */
     protected Map<Integer, Integer> techLevelListToIndex = new HashMap<>();
     protected JComboBox<String> comboUnitType = new JComboBox<>();
@@ -193,8 +191,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     public abstract void updateOptionValues();
 
     /**
-     * This has been set up to permit preference implementation in anything that
-     * extends this
+     * This has been set up to permit preference implementation in anything that extends this
      */
     private void setUserPreferences() {
         comboUnitType.setSelectedIndex(GUIP.getMekSelectorUnitType());
@@ -262,7 +259,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         tableUnits.getColumnModel().getColumn(MekTableModel.COL_LEVEL).setCellRenderer(centeredRenderer);
         tableUnits.getColumnModel().getColumn(MekTableModel.COL_VTL).setCellRenderer(centeredRenderer);
 
-        tableUnits.setSelectionMode(multiSelect ? ListSelectionModel.MULTIPLE_INTERVAL_SELECTION : ListSelectionModel.SINGLE_SELECTION);
+        tableUnits.setSelectionMode(multiSelect ?
+              ListSelectionModel.MULTIPLE_INTERVAL_SELECTION :
+              ListSelectionModel.SINGLE_SELECTION);
         sorter = new TableRowSorter<>(unitModel);
         sorter.setComparator(MekTableModel.COL_CHASSIS, new NaturalOrderComparator());
         sorter.setComparator(MekTableModel.COL_MODEL, new NaturalOrderComparator());
@@ -622,13 +621,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected abstract JPanel createButtonsPanel();
 
     /**
-     * This is the function to add a unit to the current interface. That could be a
-     * purchase (MekHQ),
-     * addition (MekHQ), or unit selection (MegaMek/MegaMekLab)
+     * This is the function to add a unit to the current interface. That could be a purchase (MekHQ), addition (MekHQ),
+     * or unit selection (MegaMek/MegaMekLab)
      *
-     * @param modifier a boolean to modify how the function will work. In MegaMek
-     *                 this is used to
-     *                 close the dialog, in MekHQ to GM add.
+     * @param modifier a boolean to modify how the function will work. In MegaMek this is used to close the dialog, in
+     *                 MekHQ to GM add.
      */
     protected abstract void select(boolean modifier);
 
@@ -785,7 +782,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     /**
-     *
      * @param visible whether or not to make the GUI visible
      */
     @Override
@@ -850,8 +846,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     /**
-     * Searches the table for any entity with a name that starts with the search
-     * string
+     * Searches the table for any entity with a name that starts with the search string
      *
      * @param search the search parameters
      */
@@ -877,8 +872,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     /**
-     * This handles the primary action events (any that can come from buttons in
-     * this class)
+     * This handles the primary action events (any that can come from buttons in this class)
      *
      * @param ev the event containing the performed action
      */
@@ -920,8 +914,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     /**
-     * This handles list selection events, which are only thrown by
-     * MegaMek/MegaMekLab
+     * This handles list selection events, which are only thrown by MegaMek/MegaMekLab
      *
      * @param evt the event to process
      */
@@ -987,15 +980,15 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         public String getColumnName(int column) {
             return switch (column) {
                 case COL_MODEL -> I18n.getTextAt("megamek.client.messages", "MekView.column.model");
-                case COL_CHASSIS -> I18n.getTextAt("megamek.client.messages","MekView.column.chassis");
-                case COL_WEIGHT -> I18n.getTextAt("megamek.client.messages","MekView.column.weight");
+                case COL_CHASSIS -> I18n.getTextAt("megamek.client.messages", "MekView.column.chassis");
+                case COL_WEIGHT -> I18n.getTextAt("megamek.client.messages", "MekView.column.weight");
                 case COL_BV -> I18n.getTextAt("megamek.client.messages", "MekView.column.bv");
                 case COL_PV -> I18n.getTextAt("megamek.client.messages", "MekView.column.pv");
                 case COL_YEAR -> I18n.getTextAt("megamek.client.messages", "MekView.column.year");
                 case COL_COST -> I18n.getTextAt("megamek.client.messages", "MekView.column.price");
                 case COL_LEVEL -> I18n.getTextAt("megamek.client.messages", "MekView.column.rulesLevel");
                 case COL_VTL -> I18n.getTextAt("megamek.client.messages", "MekView.column.variableTechLevel");
-                default -> "?" + column  + "?";
+                default -> "?" + column + "?";
             };
         }
 

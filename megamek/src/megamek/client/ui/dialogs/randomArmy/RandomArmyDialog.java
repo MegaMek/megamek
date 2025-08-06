@@ -1,16 +1,35 @@
 /*
- * MegaMek -
  * Copyright (C) 2006 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.randomArmy;
 
@@ -64,14 +83,14 @@ import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.Parameters;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.advancedsearch.AdvancedSearchDialog;
-import megamek.client.ui.dialogs.advancedsearch.MekSearchFilter;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.dialogs.advancedsearch.AdvancedSearchDialog;
+import megamek.client.ui.dialogs.advancedsearch.MekSearchFilter;
 import megamek.client.ui.dialogs.buttonDialogs.SkillGenerationDialog;
-import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
 import megamek.client.ui.models.UnitTableModel;
+import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Entity;
@@ -723,11 +742,11 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 }
                 client.sendAddEntity(entities);
                 String msg = m_clientgui.getClient().getLocalPlayer() +
-                            " loaded Units from Random Army for player: " +
-                            m_chPlayer.getSelectedItem() +
-                            " [" +
-                            entities.size() +
-                            " units]";
+                      " loaded Units from Random Army for player: " +
+                      m_chPlayer.getSelectedItem() +
+                      " [" +
+                      entities.size() +
+                      " units]";
                 m_clientgui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
                 armyModel.clearData();
                 unitsModel.clearData();
@@ -840,10 +859,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                                   Math.min(m_pFormationOptions.getIntegerOption("numOtherUnits"),
                                         m_pFormationOptions.getNumUnits()));
                             if (m_pFormationOptions.getNumUnits() >
-                                      m_pFormationOptions.getIntegerOption("numOtherUnits")) {
+                                  m_pFormationOptions.getIntegerOption("numOtherUnits")) {
                                 params.add(params.get(0).copy());
                                 numUnits.add(m_pFormationOptions.getNumUnits() -
-                                                   m_pFormationOptions.getIntegerOption("numOtherUnits"));
+                                      m_pFormationOptions.getIntegerOption("numOtherUnits"));
                             }
                             params.get(0).getRoles().add(MissionRole.MECHANIZED_BA);
                             // BA do not count for formation rules; add as a separate formation
@@ -875,7 +894,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                                       true);
                                 if (ba.isEmpty()) {
                                     ba = UnitTable.findTable(p)
-                                               .generateUnits(m_pFormationOptions.getIntegerOption("numOtherUnits"));
+                                          .generateUnits(m_pFormationOptions.getIntegerOption("numOtherUnits"));
                                 }
                                 unitList.addAll(ba);
                             } else if (m_pFormationOptions.getBooleanOption("airLance")) {
@@ -1049,8 +1068,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
     private void updateTechChoice() {
         final int gameTL = TechConstants.getSimpleLevel(m_client.getGame()
-                                                              .getOptions()
-                                                              .stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+              .getOptions()
+              .stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
         final int maxTech = switch (gameTL) {
             case TechConstants.T_SIMPLE_INTRO -> TechConstants.T_INTRO_BOXSET;
             case TechConstants.T_SIMPLE_ADVANCED -> TechConstants.T_CLAN_ADVANCED;
@@ -1179,9 +1198,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 e.getCrew().setGender(gender, i);
                 e.getCrew()
                       .setName(RandomNameGenerator.getInstance()
-                                     .generate(gender,
-                                           e.getCrew().isClanPilot(i),
-                                           (String) m_chPlayer.getSelectedItem()), i);
+                            .generate(gender,
+                                  e.getCrew().isClanPilot(i),
+                                  (String) m_chPlayer.getSelectedItem()), i);
             }
         }
     }

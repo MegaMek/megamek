@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.actions;
 
 import megamek.common.*;
@@ -31,7 +52,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
     private int arm;
 
     public BrushOffAttackAction(int entityId, int targetType, int targetId,
-            int arm) {
+          int arm) {
         super(entityId, targetType, targetId);
         this.arm = arm;
     }
@@ -45,27 +66,27 @@ public class BrushOffAttackAction extends AbstractAttackAction {
     }
 
     /**
-     * Damage that the specified mek does with a brush off attack. This equals
-     * the damage done by a punch from the same arm.
+     * Damage that the specified mek does with a brush off attack. This equals the damage done by a punch from the same
+     * arm.
      *
      * @param entity - the <code>Entity</code> brushing off the swarm.
-     * @param arm    - the <code>int</code> of the arm making the attack; this
-     *               value must be <code>BrushOffAttackAction.RIGHT</code> or
+     * @param arm    - the <code>int</code> of the arm making the attack; this value must be
+     *               <code>BrushOffAttackAction.RIGHT</code> or
      *               <code>BrushOffAttackAction.LEFT</code>.
-     * @return the <code>int</code> amount of damage caused by the attack. If
-     *         the attack hits, the swarming infantry takes the damage; if the
-     *         attack misses, the entity deals the damage to themself.
+     *
+     * @return the <code>int</code> amount of damage caused by the attack. If the attack hits, the swarming infantry
+     *       takes the damage; if the attack misses, the entity deals the damage to themself.
      */
     public static int getDamageFor(Entity entity, int arm) {
         return PunchAttackAction.getDamageFor(entity, arm, false, false);
     }
 
     /**
-     * To-hit number for the specified arm to brush off swarming infantry. If
-     * this attack misses, the Mek will suffer punch damage. This same action is
-     * used to remove iNARC pods.
+     * To-hit number for the specified arm to brush off swarming infantry. If this attack misses, the Mek will suffer
+     * punch damage. This same action is used to remove iNARC pods.
      *
      * @param game The current {@link Game} containing all entities.
+     *
      * @return the <code>ToHitData</code> containing the target roll.
      */
     public ToHitData toHit(Game game) {
@@ -73,21 +94,20 @@ public class BrushOffAttackAction extends AbstractAttackAction {
     }
 
     /**
-     * To-hit number for the specified arm to brush off swarming infantry. If
-     * this attack misses, the Mek will suffer punch damage. This same action is
-     * used to remove iNARC pods.
+     * To-hit number for the specified arm to brush off swarming infantry. If this attack misses, the Mek will suffer
+     * punch damage. This same action is used to remove iNARC pods.
      *
      * @param game       The current {@link Game} containing all entities.
      * @param attackerId the <code>int</code> ID of the attacking unit.
      * @param target     the <code>Targetable</code> object being targeted.
-     * @param arm        the <code>int</code> of the arm making the attack; this
-     *                   value must be
+     * @param arm        the <code>int</code> of the arm making the attack; this value must be
      *                   <code>BrushOffAttackAction.RIGHT</code> or
      *                   <code>BrushOffAttackAction.LEFT</code>.
+     *
      * @return the <code>ToHitData</code> containing the target roll.
      */
     public static ToHitData toHit(Game game, int attackerId,
-            Targetable target, int arm) {
+          Targetable target, int arm) {
         final Entity ae = game.getEntity(attackerId);
         int targetId = Entity.NONE;
         Entity te = null;
@@ -104,24 +124,24 @@ public class BrushOffAttackAction extends AbstractAttackAction {
             targetId = target.getId();
         }
         final int armLoc = (arm == BrushOffAttackAction.RIGHT) ? Mek.LOC_RARM
-                : Mek.LOC_LARM;
+              : Mek.LOC_LARM;
         ToHitData toHit;
 
         // non-meks can't BrushOff
         if (!(ae instanceof Mek)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Only meks can brush off swarming infantry or iNarc Pods");
+                  "Only meks can brush off swarming infantry or iNarc Pods");
         }
 
         // arguments legal?
         if ((arm != BrushOffAttackAction.RIGHT)
-                && (arm != BrushOffAttackAction.LEFT)) {
+              && (arm != BrushOffAttackAction.LEFT)) {
             throw new IllegalArgumentException("Arm must be LEFT or RIGHT");
         }
         if (((targetId != ae.getSwarmAttackerId()) || (te == null) || !(te instanceof Infantry))
-                && (target.getTargetType() != Targetable.TYPE_INARC_POD)) {
+              && (target.getTargetType() != Targetable.TYPE_INARC_POD)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Can only brush off swarming infantry or iNarc Pods");
+                  "Can only brush off swarming infantry or iNarc Pods");
         }
 
         // Quads can't brush off.
@@ -132,7 +152,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         // Can't brush off with flipped arms
         if (ae.getArmsFlipped()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Arms are flipped to the rear. Can not punch.");
+                  "Arms are flipped to the rear. Can not punch.");
         }
 
         // check if arm is present
@@ -153,13 +173,13 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         // check if attacker has fired arm-mounted weapons
         if (ae.weaponFiredFrom(armLoc)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Weapons fired from arm this turn");
+                  "Weapons fired from arm this turn");
         }
 
         // can't physically attack meks making dfa attacks
         if ((te != null) && te.isMakingDfa()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is making a DFA attack");
+                  "Target is making a DFA attack");
         }
 
         // Can't brush off while prone.
@@ -169,11 +189,11 @@ public class BrushOffAttackAction extends AbstractAttackAction {
 
         // Can't target woods or a building with a brush off attack.
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)
-                || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE)
-                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-                || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
+              || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
+              || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
+              || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE)
+              || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+              || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 
@@ -204,11 +224,11 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         // Missing hand actuator is not cumulative with missing actuator,
         // but critical damage is cumulative
         if (!hasClaws && !hasHandActuator &&
-                hasLowerArmActuator) {
+              hasLowerArmActuator) {
             toHit.addModifier(1, "Hand actuator missing");
             // Check for present but damaged hand actuator
         } else if (hasHandActuator && !hasClaws &&
-                !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc)) {
+              !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc)) {
             toHit.addModifier(1, "Hand actuator destroyed");
         } else if (hasClaws) {
             toHit.addModifier(1, "Using Claws");
@@ -219,15 +239,15 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         // It gets a =4 penalty for being blind!
         if (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
             int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+                  Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
             int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mek.SYSTEM_SENSORS, Mek.LOC_CT);
+                  Mek.SYSTEM_SENSORS, Mek.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                      "Sensors Completely Destroyed for Torso-Mounted Cockpit");
             } else if (sensorHits == 2) {
                 toHit.addModifier(4,
-                        "Head Sensors Destroyed for Torso-Mounted Cockpit");
+                      "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
         }
 

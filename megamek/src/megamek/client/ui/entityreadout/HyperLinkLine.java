@@ -32,9 +32,9 @@
  */
 package megamek.client.ui.entityreadout;
 
-import megamek.client.ui.util.DiscordFormat;
-
 import java.util.Objects;
+
+import megamek.client.ui.util.DiscordFormat;
 
 /**
  * Displays a hyperlink.

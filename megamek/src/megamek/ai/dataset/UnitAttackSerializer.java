@@ -37,6 +37,7 @@ import megamek.ai.dataset.UnitAttack.Field;
 /**
  * <p>Serializer for UnitAttack to TSV format.</p>
  * <p>Uses a flexible map-based approach with enum fields.</p>
+ *
  * @author Luana Coppio
  */
 public class UnitAttackSerializer extends EntityDataSerializer<UnitAttack.Field, UnitAttack> {

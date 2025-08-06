@@ -1,28 +1,50 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot.princess;
-
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+import megamek.common.Board;
+import megamek.common.Coords;
+import megamek.common.CubeCoords;
+import megamek.common.Entity;
+import megamek.common.Hex;
+import megamek.common.Terrains;
+import megamek.common.annotations.Nullable;
+
 /**
- * Context class to control the units as a swarm.
- * Contains information about the current state of the game
+ * Context class to control the units as a swarm. Contains information about the current state of the game
  */
 public class SwarmContext {
 
@@ -40,11 +62,13 @@ public class SwarmContext {
     private final Map<Integer, SwarmCluster> unitClusters = new HashMap<>();
     private final List<SwarmCluster> clusters = new ArrayList<>();
 
-    public SwarmContext() {;
+    public SwarmContext() {
+        ;
     }
 
     /**
      * Record an enemy target, incrementing the number of units targeting the enemy this turn
+     *
      * @param enemyId The enemy id
      */
     @SuppressWarnings("unused")
@@ -54,7 +78,9 @@ public class SwarmContext {
 
     /**
      * Get the number of times an enemy has been targeted
+     *
      * @param enemyId The enemy id
+     *
      * @return The number of times the enemy has been targeted
      */
     @SuppressWarnings("unused")
@@ -73,7 +99,8 @@ public class SwarmContext {
      * Add a strategic goal to the list of goals, a strategic goal is simply a coordinate which we want to move towards,
      * its mainly used for double blind games where we don't know the enemy positions, the strategic goals help
      * distribute the map evenly accross the units inside the swarm to cover more ground and find the enemy faster
-     * @param coords  The coordinates to add
+     *
+     * @param coords The coordinates to add
      */
     public void addStrategicGoal(Coords coords) {
         strategicGoals.add(coords);
@@ -81,6 +108,7 @@ public class SwarmContext {
 
     /**
      * Remove a strategic goal from the list of goals
+     *
      * @param coords The coordinates to remove
      */
     @SuppressWarnings("unused")
@@ -90,6 +118,7 @@ public class SwarmContext {
 
     /**
      * Remove strategic goals in a radius around the given coordinates
+     *
      * @param coords The center coordinates
      * @param radius The radius to remove goals
      */
@@ -102,7 +131,9 @@ public class SwarmContext {
 
     /**
      * Get the strategic goals on the quadrant of the given coordinates
+     *
      * @param coords The coordinates to check
+     *
      * @return A list of strategic goals on the quadrant
      */
     public List<Coords> getStrategicGoalsOnCoordsQuadrant(Coords coords) {
@@ -132,6 +163,7 @@ public class SwarmContext {
 
     /**
      * Set the current center of the swarm
+     *
      * @param adjustedCenter The new center
      */
     public void setCurrentCenter(Coords adjustedCenter) {
@@ -140,6 +172,7 @@ public class SwarmContext {
 
     /**
      * Get the current center of the swarm
+     *
      * @return The current center
      */
     public @Nullable Coords getCurrentCenter() {
@@ -161,6 +194,7 @@ public class SwarmContext {
 
     /**
      * Remove all strategic goals on the quadrant of the given coordinates
+     *
      * @param coords The coordinates to check
      */
     public void removeAllStrategicGoalsOnCoordsQuadrant(Coords coords) {
@@ -174,8 +208,9 @@ public class SwarmContext {
 
     /**
      * Initialize the strategic goals for the board
-     * @param board The board to initialize the goals on
-     * @param quadrantWidth The width of the quadrants
+     *
+     * @param board          The board to initialize the goals on
+     * @param quadrantWidth  The width of the quadrants
      * @param quadrantHeight The height of the quadrants
      */
     public void initializeStrategicGoals(Board board, int quadrantWidth, int quadrantHeight) {
@@ -214,16 +249,16 @@ public class SwarmContext {
     }
 
     private static final Set<Integer> HAZARDS = new HashSet<>(Arrays.asList(Terrains.FIRE,
-        Terrains.MAGMA,
-        Terrains.ICE,
-        Terrains.WATER,
-        Terrains.BUILDING,
-        Terrains.BRIDGE,
-        Terrains.BLACK_ICE,
-        Terrains.SNOW,
-        Terrains.SWAMP,
-        Terrains.MUD,
-        Terrains.TUNDRA));
+          Terrains.MAGMA,
+          Terrains.ICE,
+          Terrains.WATER,
+          Terrains.BUILDING,
+          Terrains.BRIDGE,
+          Terrains.BLACK_ICE,
+          Terrains.SNOW,
+          Terrains.SWAMP,
+          Terrains.MUD,
+          Terrains.TUNDRA));
 
     private boolean hasNoHazards(Hex hex) {
         var hazards = hex.getTerrainTypesSet();
@@ -234,7 +269,9 @@ public class SwarmContext {
 
     /**
      * Get the cluster for a unit
+     *
      * @param unit The unit to get the cluster for
+     *
      * @return The cluster for the unit, initializes a new cluster if it doesn't exist
      */
     public SwarmCluster getClusterFor(Entity unit) {
@@ -250,7 +287,9 @@ public class SwarmContext {
 
     /**
      * Get the cluster center for a unit
+     *
      * @param unitId The unit to get the cluster for
+     *
      * @return The cluster for the unit, initializes a new cluster if it doesn't exist
      */
     public Coords getCenterForUnit(int unitId) {
@@ -275,13 +314,13 @@ public class SwarmContext {
         }
 
         public void addMember(Entity unit) {
-            if (members.size() >= maxSize) return;
+            if (members.size() >= maxSize) {return;}
             members.add(unit);
             updateCentroid();
         }
 
         private void updateCentroid() {
-            if (members.isEmpty()) return;
+            if (members.isEmpty()) {return;}
             members.removeIf(Entity::isDoomed);
             members.removeIf(Entity::isDestroyed);
             centroid = calculateClusterCentroid(members);
@@ -289,9 +328,9 @@ public class SwarmContext {
 
         private Coords calculateClusterCentroid(List<Entity> members) {
             return CubeCoords.mean(members.stream().map(Entity::getPosition)
-                  .filter(Objects::nonNull)
-                  .map(Coords::toCube)
-                  .toList())
+                        .filter(Objects::nonNull)
+                        .map(Coords::toCube)
+                        .toList())
                   .map(CubeCoords::toOffset)
                   .orElseThrow();
         }
@@ -314,10 +353,11 @@ public class SwarmContext {
 
     /**
      * Assign units to clusters
+     *
      * @param allUnits The units to assign
      */
     public void assignClusters(List<Entity> allUnits) {
-        if (clusterUnitsSize >= allUnits.size()){
+        if (clusterUnitsSize >= allUnits.size()) {
             clusters.forEach(SwarmCluster::updateCentroid);
             return;
         }
@@ -328,8 +368,8 @@ public class SwarmContext {
 
         // Sort units by role for better distribution
         List<Entity> sortedUnits = allUnits.stream()
-                .sorted(Comparator.comparingInt(u -> u.getRole().ordinal()))
-                .collect(Collectors.toList());
+              .sorted(Comparator.comparingInt(u -> u.getRole().ordinal()))
+              .collect(Collectors.toList());
 
         // Create initial clusters
         while (!sortedUnits.isEmpty()) {

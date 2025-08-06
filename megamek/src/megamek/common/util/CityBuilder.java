@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.util;
 
 import java.util.ArrayList;
@@ -18,7 +39,13 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Board;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.Hex;
+import megamek.common.MapSettings;
+import megamek.common.Terrain;
+import megamek.common.Terrains;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.BuildingType;
 
@@ -50,11 +77,12 @@ public class CityBuilder {
     }
 
     /**
-     * This function will generate a city with a grid lay out. 4 rounds running
-     * North and South and 4 roads running east west
+     * This function will generate a city with a grid lay out. 4 rounds running North and South and 4 roads running east
+     * west
+     *
+     * @return
      *
      * @author Torren (Jason Tighe)
-     * @return
      */
     public ArrayList<BuildingTemplate> generateCity(boolean genericRoad) {
 
@@ -94,15 +122,15 @@ public class CityBuilder {
 
         Coords centre = new Coords(width / 2, height / 2);
         double falloff = (double) mapSettings.getCityDensity()
-                / (double) (radius * radius);
+              / (double) (radius * radius);
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 Coords coord = new Coords(x, y);
 
                 if (cityPlan.contains(coord) || buildingUsed.contains(coord)
-                        || !board.contains(coord)
-                        || !isHexBuildable(board.getHex(coord))) {
+                      || !board.contains(coord)
+                      || !isHexBuildable(board.getHex(coord))) {
                     continue;
                 }
 
@@ -110,7 +138,7 @@ public class CityBuilder {
                 if (radius > 0) {
                     int distance = coord.distance(centre);
                     localdensity = (int) (mapSettings.getCityDensity() - (falloff
-                            * distance * distance));
+                          * distance * distance));
                 }
 
                 if (Compute.randomInt(100) > localdensity) {
@@ -124,8 +152,8 @@ public class CityBuilder {
                     int dir = Compute.randomInt(6);
                     Coords next = coord.translated(dir);
                     if (cityPlan.contains(next) || buildingUsed.contains(next)
-                            || !board.contains(next)
-                            || !isHexBuildable(board.getHex(next))) {
+                          || !board.contains(next)
+                          || !isHexBuildable(board.getHex(next))) {
                         break; // oh well, can't expand here
                     }
                     coordList.add(next);
@@ -180,7 +208,7 @@ public class CityBuilder {
     }
 
     private ArrayList<BuildingTemplate> buildTown(int maxX, int maxY,
-            int roads, int size) {
+          int roads, int size) {
         buildHubCity(maxX, maxY, roads * size / 100);
         return placeBuildings(Math.min(maxX, maxY) * size / 200);
     }
@@ -241,7 +269,7 @@ public class CityBuilder {
 
             int nextDirection = baseDirection;
             while (coords.getX() >= -1 && coords.getX() <= maxX && coords.getY() >= -1
-                   && coords.getY() <= maxY) {
+                  && coords.getY() <= maxY) {
                 int choice = Compute.randomInt(10);
 
                 if (board.contains(coords)) {
@@ -262,7 +290,7 @@ public class CityBuilder {
 
                 coords = extendRoad(coords, nextDirection, roadStyle);
                 if (coords == null
-                        || (cityPlan.contains(coords) && x != midX && y != midY)) {
+                      || (cityPlan.contains(coords) && x != midX && y != midY)) {
                     break;
                 }
                 cityPlan.add(coords);
@@ -322,13 +350,14 @@ public class CityBuilder {
 
     /**
      * @param hex
+     *
      * @return true if it is reasonable to build on this hex
      */
     private boolean isHexBuildable(Hex hex) {
         if (hex.containsTerrain(Terrains.WATER)
-                || hex.containsTerrain(Terrains.IMPASSABLE)
-                || hex.containsTerrain(Terrains.MAGMA)
-                || hex.containsTerrain(Terrains.SWAMP)) {
+              || hex.containsTerrain(Terrains.IMPASSABLE)
+              || hex.containsTerrain(Terrains.MAGMA)
+              || hex.containsTerrain(Terrains.SWAMP)) {
             return false; // uneconomic to build here
         }
         if (hex.getLevel() >= 4) {
@@ -339,6 +368,7 @@ public class CityBuilder {
 
     /**
      * @param hex
+     *
      * @return true if the hex needs a bridge to cross
      */
     private boolean hexNeedsBridge(Hex hex) {
@@ -355,7 +385,7 @@ public class CityBuilder {
             type = 1;
         }
         hex.addTerrain(new Terrain(Terrains.ROAD, type, true,
-                (1 << exitDirection) & 63));
+              (1 << exitDirection) & 63));
     }
 
     private void addBridge(Hex hex, int exits, int altitude, int cf) {
@@ -385,10 +415,12 @@ public class CityBuilder {
     /**
      * Build a bridge across an obstacle
      *
-     * @todo: use a bridge not a road when bridges are working
      * @param start
      * @param direction
+     *
      * @return coordinates to resume roadbuilding
+     *
+     * @todo: use a bridge not a road when bridges are working
      */
     private @Nullable Coords tryToBuildBridge(Coords start, int direction) {
         if (!board.contains(start)) {
@@ -434,15 +466,15 @@ public class CityBuilder {
             // build the bridge
             int exits = (1 << direction) | (1 << ((direction + 3) % 6));
             int cf = mapSettings.getCityMinCF()
-                    + Compute.randomInt(1 + mapSettings.getCityMaxCF()
-                            - mapSettings.getCityMinCF());
+                  + Compute.randomInt(1 + mapSettings.getCityMaxCF()
+                  - mapSettings.getCityMinCF());
 
             if (cf == 0) {
                 // some city settings can lead to 0 CF bridges; use a default CF in this case
                 cf = 40;
             }
 
-            for (Enumeration<Coords> e = hexes.elements(); e.hasMoreElements();) {
+            for (Enumeration<Coords> e = hexes.elements(); e.hasMoreElements(); ) {
                 Coords c = e.nextElement();
                 addBridge(board.getHex(c), exits, elev1, cf);
             }
@@ -477,7 +509,7 @@ public class CityBuilder {
         Coords coords = start;
 
         while (coords != null && coords.getX() <= board.getWidth() && coords.getX() >= -1
-               && coords.getY() <= board.getHeight() && coords.getY() >= -1) {
+              && coords.getY() <= board.getHeight() && coords.getY() >= -1) {
             cityPlan.add(coords);
             Coords next = extendRoad(coords, direction, roadStyle);
             if (next == null) {
@@ -492,6 +524,7 @@ public class CityBuilder {
      * Utility function for setting building type from CF table
      *
      * @param cf
+     *
      * @return building type
      */
     public static BuildingType getBuildingTypeByCF(int cf) {
@@ -507,8 +540,7 @@ public class CityBuilder {
     }
 
     /**
-     * Adds an Road to the map. Goes from one border to another, and has one
-     * turn in it. Map must be at least 3x3.
+     * Adds an Road to the map. Goes from one border to another, and has one turn in it. Map must be at least 3x3.
      */
     private void addGenericRoad() {
         Coords c = new Coords(Compute.randomInt(board.getWidth()), Compute.randomInt(board.getHeight()));

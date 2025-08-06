@@ -1,18 +1,38 @@
 /*
-* MegaMek -
-* Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+
+ * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 
 package megamek.common;
 
@@ -30,7 +50,6 @@ import megamek.common.preference.PreferenceManager;
  * Stores and provides access to the configuration of the MegaMek library.
  *
  * @author Edward Cullen
- *
  */
 public final class Configuration {
     // **************************************************************************
@@ -72,8 +91,7 @@ public final class Configuration {
     private static final String DEFAULT_DIR_NAME_IMAGES = "images";
 
     /**
-     * The default file that maps image filenames to locations within an image
-     * atlas.
+     * The default file that maps image filenames to locations within an image atlas.
      */
     private static final String DEFAULT_FILE_NAME_IMG_FILE_ATLAS_MAP = "images/imgFileAtlasMap.yml";
 
@@ -174,7 +192,7 @@ public final class Configuration {
     public static void setConfigDir(final File config_dir_path) {
         lock.writeLock().lock();
         config_dir = (config_dir_path == null) ? new File(
-                DEFAULT_DIR_NAME_CONFIG) : config_dir_path;
+              DEFAULT_DIR_NAME_CONFIG) : config_dir_path;
         lock.writeLock().unlock();
     }
 
@@ -200,7 +218,7 @@ public final class Configuration {
     public static void setDataDir(final File data_dir_path) {
         lock.writeLock().lock();
         data_dir = (data_dir_path == null) ? new File(DEFAULT_DIR_NAME_DATA)
-                : data_dir_path;
+              : data_dir_path;
         lock.writeLock().unlock();
     }
 
@@ -226,7 +244,7 @@ public final class Configuration {
     public static void setDocsDir(final File docs_dir_path) {
         lock.writeLock().lock();
         docs_dir = (docs_dir_path == null) ? new File(DEFAULT_DIR_NAME_DOCS)
-                : docs_dir_path;
+              : docs_dir_path;
         lock.writeLock().unlock();
     }
 
@@ -252,13 +270,13 @@ public final class Configuration {
     public static void setSkinDir(final File skin_dir_path) {
         lock.writeLock().lock();
         skins_dir = (skin_dir_path == null) ? new File(DEFAULT_DIR_NAME_CONFIG,
-                DEFAULT_DIR_NAME_SKINS) : skin_dir_path;
+              DEFAULT_DIR_NAME_SKINS) : skin_dir_path;
         lock.writeLock().unlock();
     }
 
     /**
-     * Return the configured army tables directory, if set, otherwise return the
-     * default path, relative to the configured data directory.
+     * Return the configured army tables directory, if set, otherwise return the default path, relative to the
+     * configured data directory.
      *
      * @return {@link File} containing the path to the army tables directory.
      */
@@ -272,8 +290,7 @@ public final class Configuration {
     }
 
     /**
-     * Set the army tables directory to an arbitrary location (<b>not</b>
-     * relative to the data directory).
+     * Set the army tables directory to an arbitrary location (<b>not</b> relative to the data directory).
      *
      * @param army_tables_dir_path The path to the army tables directory.
      */
@@ -284,8 +301,8 @@ public final class Configuration {
     }
 
     /**
-     * Return the configured boards directory, if set, otherwise return the
-     * default path, relative to the configured data directory.
+     * Return the configured boards directory, if set, otherwise return the default path, relative to the configured
+     * data directory.
      *
      * @return {@link File} containing the path to the boards directory.
      */
@@ -299,8 +316,7 @@ public final class Configuration {
     }
 
     /**
-     * Set the boards directory to an arbitrary location (<b>not</b> relative to
-     * the data directory).
+     * Set the boards directory to an arbitrary location (<b>not</b> relative to the data directory).
      *
      * @param boards_dir_path dir path The path to the boards directory.
      */
@@ -329,8 +345,7 @@ public final class Configuration {
     }
 
     /**
-     * Return the minimap themes directory, which is relative to the hexes
-     * directory.
+     * Return the minimap themes directory, which is relative to the hexes directory.
      *
      * @return {@link File} containing the path to the minimap themes directory.
      */
@@ -339,30 +354,25 @@ public final class Configuration {
     }
 
     /**
-     * Return the orbital bombardment hexes directory, which is relative to the
-     * hexes directory.
+     * Return the orbital bombardment hexes directory, which is relative to the hexes directory.
      *
-     * @return {@link File} containing the path to the orbital bombardment hexes
-     *         directory.
+     * @return {@link File} containing the path to the orbital bombardment hexes directory.
      */
     public static File orbitalBombardmentHexesDir() {
         return new File(hexesDir(), DEFAULT_DIR_ORBITAL_BOMBARDMENT);
     }
 
     /**
-     * Return the nuke hit hexes directory, which is relative to the hexes
-     * directory.
+     * Return the nuke hit hexes directory, which is relative to the hexes directory.
      *
-     * @return {@link File} containing the path to the orbital bombardment hexes
-     *         directory.
+     * @return {@link File} containing the path to the orbital bombardment hexes directory.
      */
     public static File nukeHexesDir() {
         return new File(hexesDir(), DEFAULT_DIR_NUKE);
     }
 
     /**
-     * Get the fluff images directory, which is relative to the images
-     * directory.
+     * Get the fluff images directory, which is relative to the images directory.
      *
      * @return {@link File} containing the path to the fluff images directory.
      */
@@ -371,16 +381,15 @@ public final class Configuration {
     }
 
     /**
-     * @return {@link File} containing the path to the universe images directory
-     *         (having e.g. era, faction images).
+     * @return {@link File} containing the path to the universe images directory (having e.g. era, faction images).
      */
     public static File universeImagesDir() {
         return new File(imagesDir(), DEFAULT_DIR_NAME_IMG_UNIVERSE);
     }
 
     /**
-     * Return the configured images directory, if set, otherwise return the
-     * default path, relative to the configured data directory.
+     * Return the configured images directory, if set, otherwise return the default path, relative to the configured
+     * data directory.
      *
      * @return {@link File} containing the path to the images directory.
      */
@@ -394,8 +403,7 @@ public final class Configuration {
     }
 
     /**
-     * Set the images directory to an arbitrary location (<b>not</b> relative to
-     * the data directory).
+     * Set the images directory to an arbitrary location (<b>not</b> relative to the data directory).
      *
      * @param images_dir_path The path to the images directory.
      */
@@ -406,9 +414,8 @@ public final class Configuration {
     }
 
     /**
-     * Return the configured file that maps an image file to a location within
-     * an image atlas, if set, otherwise return the default path, relative to
-     * the configured data directory.
+     * Return the configured file that maps an image file to a location within an image atlas, if set, otherwise return
+     * the default path, relative to the configured data directory.
      *
      * @return {@link File} containing the path to the image file to atlas loc file.
      */
@@ -416,16 +423,14 @@ public final class Configuration {
         lock.readLock().lock();
         try {
             return (imgFileAtlasMapFile != null) ? imgFileAtlasMapFile
-                    : new File(dataDir(), DEFAULT_FILE_NAME_IMG_FILE_ATLAS_MAP);
+                  : new File(dataDir(), DEFAULT_FILE_NAME_IMG_FILE_ATLAS_MAP);
         } finally {
             lock.readLock().unlock();
         }
     }
 
     /**
-     * Set the image file to atlas loc file to an arbitrary location (<b>not</b>
-     * relative to
-     * the data directory).
+     * Set the image file to atlas loc file to an arbitrary location (<b>not</b> relative to the data directory).
      *
      * @param imgFileAtlasMapFilePath The path to the images directory.
      */
@@ -436,8 +441,8 @@ public final class Configuration {
     }
 
     /**
-     * Return the configured board backgrounds directory, if set, otherwise
-     * return the default path, relative to the configured images directory.
+     * Return the configured board backgrounds directory, if set, otherwise return the default path, relative to the
+     * configured images directory.
      *
      * @return {@link File} containing the path to the images directory.
      */
@@ -445,28 +450,27 @@ public final class Configuration {
         lock.readLock().lock();
         try {
             return (board_backgrounds_dir != null) ? board_backgrounds_dir
-                    : new File(imagesDir(), DEFAULT_DIR_NAME_BOARD_BACKGROUNDS);
+                  : new File(imagesDir(), DEFAULT_DIR_NAME_BOARD_BACKGROUNDS);
         } finally {
             lock.readLock().unlock();
         }
     }
 
     /**
-     * Set the board backgrounds directory to an arbitrary location (<b>not</b>
-     * relative to the images directory).
+     * Set the board backgrounds directory to an arbitrary location (<b>not</b> relative to the images directory).
      *
      * @param board_background_dir_path The path to the images directory.
      */
     public static void setboardBackgroundsDir(
-            final File board_background_dir_path) {
+          final File board_background_dir_path) {
         lock.writeLock().lock();
         board_backgrounds_dir = board_background_dir_path;
         lock.writeLock().unlock();
     }
 
     /**
-     * Return the configured units directory, if set, otherwise return the
-     * default path, relative to the configured data directory.
+     * Return the configured units directory, if set, otherwise return the default path, relative to the configured data
+     * directory.
      *
      * @return {@link File} containing the path to the units directory.
      */
@@ -488,8 +492,7 @@ public final class Configuration {
     }
 
     /**
-     * Set the units directory to an arbitrary location (<b>not</b> relative to
-     * the data directory).
+     * Set the units directory to an arbitrary location (<b>not</b> relative to the data directory).
      *
      * @param units_dir_path The path to the units directory.
      */
@@ -500,8 +503,7 @@ public final class Configuration {
     }
 
     /**
-     * Return the misc images directory, which is relative to the images
-     * directory.
+     * Return the misc images directory, which is relative to the images directory.
      *
      * @return {@link File} containing the path to the misc directory.
      */
@@ -510,8 +512,7 @@ public final class Configuration {
     }
 
     /**
-     * Return the portrait images directory, which is relative to the images
-     * directory.
+     * Return the portrait images directory, which is relative to the images directory.
      *
      * @return {@link File} containing the path to the portrait directory.
      */
@@ -529,8 +530,8 @@ public final class Configuration {
     }
 
     /**
-     * Return the configured scenarios directory, if set, otherwise return the
-     * default path, relative to the configured data directory.
+     * Return the configured scenarios directory, if set, otherwise return the default path, relative to the configured
+     * data directory.
      *
      * @return {@link File} containing the path to the scenarios directory.
      */
@@ -544,8 +545,7 @@ public final class Configuration {
     }
 
     /**
-     * Set the scenarios directory to an arbitrary location (<b>not</b> relative
-     * to the data directory).
+     * Set the scenarios directory to an arbitrary location (<b>not</b> relative to the data directory).
      *
      * @param scenarios_dir_path The path to the scenarios directory.
      */
@@ -556,8 +556,8 @@ public final class Configuration {
     }
 
     /**
-     * Return the configured sounds directory, if set, otherwise return the
-     * default path, relative to the configured data directory.
+     * Return the configured sounds directory, if set, otherwise return the default path, relative to the configured
+     * data directory.
      *
      * @return {@link File} containing the path to the sounds directory.
      */
@@ -571,8 +571,7 @@ public final class Configuration {
     }
 
     /**
-     * Set the sounds directory to an arbitrary location (<b>not</b> relative to
-     * the data directory).
+     * Set the sounds directory to an arbitrary location (<b>not</b> relative to the data directory).
      *
      * @param sounds_dir_path The path to the sounds directory.
      */
@@ -583,8 +582,8 @@ public final class Configuration {
     }
 
     /**
-     * Return the configured force generator data directory, if set, otherwise
-     * return the default path, relative to the configured data directory.
+     * Return the configured force generator data directory, if set, otherwise return the default path, relative to the
+     * configured data directory.
      *
      * @return {@link File} containing the path to the force generator directory.
      */
@@ -592,15 +591,14 @@ public final class Configuration {
         lock.readLock().lock();
         try {
             return (force_generator_dir != null) ? force_generator_dir
-                    : new File(dataDir(), DEFAULT_DIR_NAME_FORCE_GENERATOR);
+                  : new File(dataDir(), DEFAULT_DIR_NAME_FORCE_GENERATOR);
         } finally {
             lock.readLock().unlock();
         }
     }
 
     /**
-     * Set the force generator directory to an arbitrary location (<b>not</b>
-     * relative to the data directory).
+     * Set the force generator directory to an arbitrary location (<b>not</b> relative to the data directory).
      *
      * @param force_generator_dir_path The path to the force generator directory.
      */
@@ -611,8 +609,8 @@ public final class Configuration {
     }
 
     /**
-     * Return the configured fonts data directory, if set, otherwise return the
-     * default path, relative to the configured data directory.
+     * Return the configured fonts data directory, if set, otherwise return the default path, relative to the configured
+     * data directory.
      *
      * @return {@link File} containing the path to the force generator directory.
      */
@@ -626,8 +624,7 @@ public final class Configuration {
     }
 
     /**
-     * Set the force generator directory to an arbitrary location (<b>not</b>
-     * relative to the data directory).
+     * Set the force generator directory to an arbitrary location (<b>not</b> relative to the data directory).
      *
      * @param fontsDir The path to the force generator directory.
      */
@@ -660,7 +657,7 @@ public final class Configuration {
 
     /**
      * Read/write lock for the static data.
-     *
+     * <p>
      * This is a little paranoid, but at least I know it will work...
      */
     private static ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
@@ -679,7 +676,7 @@ public final class Configuration {
 
     /** The configured skins directory. */
     private static File skins_dir = new File(DEFAULT_DIR_NAME_CONFIG,
-            DEFAULT_DIR_NAME_SKINS);
+          DEFAULT_DIR_NAME_SKINS);
 
     /** The configured army tables directory. */
     private static File army_tables_dir = null;

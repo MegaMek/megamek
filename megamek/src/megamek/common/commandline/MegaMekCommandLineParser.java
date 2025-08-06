@@ -1,16 +1,36 @@
 /*
- * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.commandline;
 
 import java.io.BufferedWriter;
@@ -22,12 +42,12 @@ import java.util.Vector;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
+import megamek.client.ui.entityreadout.EntityReadout;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.MekFileParser;
 import megamek.common.MekSummary;
 import megamek.common.MekSummaryCache;
-import megamek.client.ui.entityreadout.EntityReadout;
 import megamek.common.TechConstants;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
@@ -100,7 +120,8 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
     }
 
     @Override
-    protected void start() throws ParseException {;
+    protected void start() throws ParseException {
+        ;
         if (getTokenType() == TOK_OPTION) {
             final String tokenVal = getTokenValue();
             nextToken();
@@ -273,7 +294,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
 
             if (ms == null) {
                 logger.error(filename + " not found. Try using \"chassis model\" for input.",
-                        new IOException());
+                      new IOException());
             } else {
                 try {
                     Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
@@ -306,9 +327,9 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
             if (!new File("./docs").exists()) {
                 if (!new File("./docs").mkdir()) {
                     logger.error(
-                            "Error in creating directory ./docs. We know this is annoying, and apologize. "
-                                    + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
-                                    + " and we will try to resolve your issue.");
+                          "Error in creating directory ./docs. We know this is annoying, and apologize. "
+                                + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
+                                + " and we will try to resolve your issue.");
                 }
             }
 
@@ -410,9 +431,9 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
             if (!new File("./docs").exists()) {
                 if (!new File("./docs").mkdir()) {
                     logger.error(
-                            "Error in creating directory ./docs. We know this is annoying, and apologize. "
-                                    + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
-                                    + " and we will try to resolve your issue.");
+                          "Error in creating directory ./docs. We know this is annoying, and apologize. "
+                                + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
+                                + " and we will try to resolve your issue.");
                 }
             }
             File file = new File("./docs/" + filename);
@@ -429,7 +450,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                     bw.write("This file can be regenerated with java -jar MegaMek.jar -export filename");
                     bw.newLine();
                     bw.write(
-                            "Type,SubType,Name,Model,BV,Cost (Loaded), Cost (Unloaded),Year,TechLevel,Tonnage,Tech,Canon,Walk,Run,Jump");
+                          "Type,SubType,Name,Model,BV,Cost (Loaded), Cost (Unloaded),Year,TechLevel,Tonnage,Tech,Canon,Walk,Run,Jump");
                 }
                 bw.newLine();
 
@@ -478,7 +499,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         bw.write(Integer.toString(unit.getJumpMp()));
                     } else {
                         bw.write(unit.getFullChassis()
-                                + (unit.getModel().isBlank() ? "|" : " " + unit.getModel() + "|"));
+                              + (unit.getModel().isBlank() ? "|" : " " + unit.getModel() + "|"));
                     }
                     bw.newLine();
                 }

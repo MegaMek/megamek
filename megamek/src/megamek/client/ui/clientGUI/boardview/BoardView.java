@@ -33,6 +33,29 @@
  */
 package megamek.client.ui.clientGUI.boardview;
 
+import static megamek.client.ui.tileset.HexTileset.HEX_H;
+import static megamek.client.ui.tileset.HexTileset.HEX_W;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.*;
+import java.util.List;
+import java.util.Queue;
+import java.util.stream.Collectors;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.plaf.metal.DefaultMetalTheme;
+import javax.swing.plaf.metal.MetalTheme;
+
 import megamek.MMConstants;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
@@ -86,29 +109,6 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.server.props.OrbitalBombardment;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.plaf.metal.DefaultMetalTheme;
-import javax.swing.plaf.metal.MetalTheme;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.*;
-import java.util.List;
-import java.util.Queue;
-import java.util.stream.Collectors;
-
-import static megamek.client.ui.tileset.HexTileset.HEX_H;
-import static megamek.client.ui.tileset.HexTileset.HEX_W;
-
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
@@ -128,15 +128,15 @@ public final class BoardView extends AbstractBoardView
     public static final int HEX_ELEV = 12;
 
     private static final float[] ZOOM_FACTORS = { 0.30f, 0.41f, 0.50f, 0.60f, 0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f,
-          1.3f, 1.6f, 2.0f, 3.0f };
+                                                  1.3f, 1.6f, 2.0f, 3.0f };
 
     private static final int[] ZOOM_SCALE_TYPES = { ImageUtil.IMAGE_SCALE_AVG_FILTER, ImageUtil.IMAGE_SCALE_AVG_FILTER,
-          ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
-          ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
-          ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
-          ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
-          ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
-          ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC };
+                                                    ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+                                                    ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+                                                    ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+                                                    ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+                                                    ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+                                                    ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC };
 
     public static final int[] allDirections = { 0, 1, 2, 3, 4, 5 };
 
@@ -474,9 +474,9 @@ public final class BoardView extends AbstractBoardView
 
                 // for units that have been blown up, damaged or ejected, force a reload
                 if ((gameEntityChangeEvent.getOldEntity() != null) && ((entity.getDamageLevel()
-                                                                              != gameEntityChangeEvent.getOldEntity()
+                      != gameEntityChangeEvent.getOldEntity()
                       .getDamageLevel()) || (entity.isDestroyed()
-                                                   != gameEntityChangeEvent.getOldEntity().isDestroyed()) || (
+                      != gameEntityChangeEvent.getOldEntity().isDestroyed()) || (
                       entity.getCrew().isEjected()
                             != gameEntityChangeEvent.getOldEntity().getCrew().isEjected()))) {
                     tileManager.reloadImage(entity);
@@ -535,10 +535,10 @@ public final class BoardView extends AbstractBoardView
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent gamePhaseChangeEvent) {
                 if (GUIP.getGameSummaryBoardView() && (gamePhaseChangeEvent.getOldPhase().isDeployment()
-                                                             || gamePhaseChangeEvent.getOldPhase().isMovement()
-                                                             || gamePhaseChangeEvent.getOldPhase().isTargeting()
-                                                             || gamePhaseChangeEvent.getOldPhase().isFiring()
-                                                             || gamePhaseChangeEvent.getOldPhase().isPhysical())) {
+                      || gamePhaseChangeEvent.getOldPhase().isMovement()
+                      || gamePhaseChangeEvent.getOldPhase().isTargeting()
+                      || gamePhaseChangeEvent.getOldPhase().isFiring()
+                      || gamePhaseChangeEvent.getOldPhase().isPhysical())) {
                     File dir = new File(Configuration.gameSummaryImagesBVDir(), game.getUUIDString());
 
                     if (!dir.exists() || dir.mkdirs()) {
@@ -588,7 +588,7 @@ public final class BoardView extends AbstractBoardView
                 }
                 for (Entity entity : game.getEntitiesVector()) {
                     if ((entity.getDamageLevel() != Entity.DMG_NONE) && ((entity.damageThisRound != 0)
-                                                                               || (entity instanceof GunEmplacement))) {
+                          || (entity instanceof GunEmplacement))) {
                         tileManager.reloadImage(entity);
                     }
                 }
@@ -660,12 +660,12 @@ public final class BoardView extends AbstractBoardView
                 // SCROLL
                 if (horizontalScroll) {
                     horizontalBar.setValue((int) (horizontalBar.getValue() + (HEX_H
-                                                                                    * scale
-                                                                                    * (mouseWheelEvent.getWheelRotation()))));
+                          * scale
+                          * (mouseWheelEvent.getWheelRotation()))));
                 } else {
                     verticalBar.setValue((int) (verticalBar.getValue() + (HEX_H
-                                                                                * scale
-                                                                                * (mouseWheelEvent.getWheelRotation()))));
+                          * scale
+                          * (mouseWheelEvent.getWheelRotation()))));
                 }
                 stopSoftCentering();
             }
@@ -1155,7 +1155,7 @@ public final class BoardView extends AbstractBoardView
         }
 
         if ((game.getPhase().isSetArtilleryAutohitHexes() && showAllDeployment) || ((game.getPhase().isLounge())
-                                                                                          && showLobbyPlayerDeployment)) {
+              && showLobbyPlayerDeployment)) {
             drawAllDeployment(graphics2D);
         }
 
@@ -1733,9 +1733,9 @@ public final class BoardView extends AbstractBoardView
             final Coords coords = new Coords(orbitalBombardment.getX(), orbitalBombardment.getY());
             // Is the Coord within the viewing area?
             boolean insideViewArea = ((coords.getX() >= drawX)
-                                            && (coords.getX() <= (drawX + drawWidth))
-                                            && (coords.getY() >= drawY)
-                                            && (coords.getY() <= (drawY + drawHeight)));
+                  && (coords.getX() <= (drawX + drawWidth))
+                  && (coords.getY() >= drawY)
+                  && (coords.getY() <= (drawY + drawHeight)));
             if (insideViewArea) {
                 Point hexLocation = getHexLocation(coords);
                 boardGraphics.drawImage(getScaledImage(orbitalBombardmentImage, true),
@@ -2816,8 +2816,8 @@ public final class BoardView extends AbstractBoardView
         int delta = elev - dest.getLevel();
         // Don't draw the elevation if there is no exposed edge for the player to see.
         if ((delta == 0) || (((direction == 0) || (direction == 1) || (direction == 5)) && (delta > 0)) || (((direction
-                                                                                                                    == 2)
-                                                                                                                   || (
+              == 2)
+              || (
               direction == 3) || (direction == 4)) && (delta < 0))) {
             return;
         }
@@ -2828,7 +2828,7 @@ public final class BoardView extends AbstractBoardView
 
             Polygon polygon = new Polygon(new int[] { point1.x, point2.x, point2.x, point1.x },
                   new int[] { point1.y + fudge, point2.y + fudge, point2.y + fudge + scaledDelta,
-                        point1.y + fudge + scaledDelta },
+                              point1.y + fudge + scaledDelta },
                   4);
 
             if ((point1.y + fudge) < 0) {
@@ -3325,7 +3325,7 @@ public final class BoardView extends AbstractBoardView
 
         // Remove C3 sprites
         c3Sprites.removeIf(c3sprite -> (c3sprite.getEntityId() == entity.getId()) || (c3sprite.getMasterId()
-                                                                                            == entity.getId()));
+              == entity.getId()));
 
         // Update C3 link, if necessary
         if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
@@ -3395,7 +3395,7 @@ public final class BoardView extends AbstractBoardView
         clearFlyOverPaths();
         for (Entity entity : game.getEntitiesVector()) {
             if ((boardId == entity.getPassedThroughBoardId()) && (entity.isAirborne()
-                                                                        || entity.isMakingVTOLGroundAttack()) && (
+                  || entity.isMakingVTOLGroundAttack()) && (
                   entity.getPassedThrough().size() > 1)) {
                 addFlyOverPath(entity);
             }
@@ -3682,11 +3682,11 @@ public final class BoardView extends AbstractBoardView
               i.hasMoreElements(); ) {
             final MoveStep step = i.nextElement();
             if ((null != previousStep) && ((step.getType() == MoveStepType.UP)
-                                                 || (step.getType() == MoveStepType.DOWN)
-                                                 || (step.getType() == MoveStepType.ACC)
-                                                 || (step.getType() == MoveStepType.DEC)
-                                                 || (step.getType() == MoveStepType.ACCN)
-                                                 || (step.getType() == MoveStepType.DECN))) {
+                  || (step.getType() == MoveStepType.DOWN)
+                  || (step.getType() == MoveStepType.ACC)
+                  || (step.getType() == MoveStepType.DEC)
+                  || (step.getType() == MoveStepType.ACCN)
+                  || (step.getType() == MoveStepType.DECN))) {
                 // Mark the previous elevation change sprite hidden so that we can draw a new one in its place
                 // without having overlap.
                 pathSprites.get(pathSprites.size() - 1).setHidden(true);
@@ -3696,11 +3696,11 @@ public final class BoardView extends AbstractBoardView
                   // for advanced movement, we always need to hide prior because costs will overlap, and we only
                   // want the current facing
                   && (game.useVectorMove()
-                            // A LAM converting from AirMek to Biped uses two convert steps, and we only want to
-                            // show the last.
-                            || (step.getType() == MoveStepType.CONVERT_MODE
-                                      && previousStep.getType() == MoveStepType.CONVERT_MODE)
-                            || step.getType() == MoveStepType.BOOTLEGGER)) {
+                  // A LAM converting from AirMek to Biped uses two convert steps, and we only want to
+                  // show the last.
+                  || (step.getType() == MoveStepType.CONVERT_MODE
+                  && previousStep.getType() == MoveStepType.CONVERT_MODE)
+                  || step.getType() == MoveStepType.BOOTLEGGER)) {
                 pathSprites.get(pathSprites.size() - 1).setHidden(true);
             }
 
@@ -4829,7 +4829,7 @@ public final class BoardView extends AbstractBoardView
 
                     // Check for allied ECCM or enemy ECM
                     if ((!ecmInfo.isOpposed(localPlayer) && ecmInfo.isECCM()) || (ecmInfo.isOpposed(localPlayer)
-                                                                                        && ecmInfo.isECCM())) {
+                          && ecmInfo.isECCM())) {
                         ECMEffects ecmEffects = eccmAffectedCoords.computeIfAbsent(coords, k -> new ECMEffects());
                         ecmEffects.addECM(ecmInfo);
                     } else {

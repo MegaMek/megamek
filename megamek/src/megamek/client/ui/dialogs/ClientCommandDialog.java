@@ -1,17 +1,44 @@
 /*
- * MegaMek - Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import javax.swing.*;
 
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.util.FlatLafStyleBuilder;
@@ -20,15 +47,9 @@ import megamek.common.annotations.Nullable;
 import megamek.server.commands.ClientServerCommand;
 import megamek.server.commands.arguments.*;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 /**
  * Dialog for executing a client command.
+ *
  * @author Luana Coppio
  */
 public class ClientCommandDialog extends JDialog {
@@ -40,9 +61,9 @@ public class ClientCommandDialog extends JDialog {
     /**
      * Constructor for the dialog for executing a client command.
      *
-     * @param parent    The parent frame.
-     * @param client    The client GUI.
-     * @param command   The command to render.
+     * @param parent  The parent frame.
+     * @param client  The client GUI.
+     * @param command The command to render.
      */
     public ClientCommandDialog(JFrame parent, ClientGUI client, ClientServerCommand command, @Nullable Coords coords) {
         super(parent, command.getLongName() + " /" + command.getName(), true);
@@ -110,6 +131,7 @@ public class ClientCommandDialog extends JDialog {
         }
         return argumentComponents;
     }
+
     private JComponent getArgumentComponent(Argument<?> argument) {
         JComponent component = null;
         if (argument instanceof CoordXArgument intArg) {
@@ -143,10 +165,16 @@ public class ClientCommandDialog extends JDialog {
             component = getJPasswordField(argument);
 
         } else if (argument instanceof StringArgument stringArg) {
-            component = getJTextField(argument.getName(), argument.getHelp(), stringArg.hasDefaultValue(), stringArg.getValue());
+            component = getJTextField(argument.getName(),
+                  argument.getHelp(),
+                  stringArg.hasDefaultValue(),
+                  stringArg.getValue());
 
         } else if (argument instanceof OptionalStringArgument stringArg) {
-            component = getJTextField(argument.getName(), argument.getHelp(), stringArg.getValue().isPresent(), stringArg.getValue().get());
+            component = getJTextField(argument.getName(),
+                  argument.getHelp(),
+                  stringArg.getValue().isPresent(),
+                  stringArg.getValue().get());
 
         } else if (argument instanceof BooleanArgument boolArg) {
             component = getJCheckBox(argument, boolArg);
@@ -214,7 +242,7 @@ public class ClientCommandDialog extends JDialog {
         add(label, labelConstraintBag);
 
         spinner.setToolTipText(argument.getHelp());
-        var gridBagConstraints = getGridBagConstraints(startingX+1, yPosition);
+        var gridBagConstraints = getGridBagConstraints(startingX + 1, yPosition);
         add(spinner, gridBagConstraints);
 
         return spinner;
@@ -233,34 +261,34 @@ public class ClientCommandDialog extends JDialog {
 
     private JSpinner createSpinner(OptionalIntegerArgument intArg) {
         return new JSpinner(new SpinnerNumberModel(
-            Math.max(intArg.getMinValue(), 0),
-            intArg.getMinValue(),
-            intArg.getMaxValue(),
-            1));
+              Math.max(intArg.getMinValue(), 0),
+              intArg.getMinValue(),
+              intArg.getMaxValue(),
+              1));
     }
 
     private JSpinner createSpinner(CoordXArgument coordX) {
         return new JSpinner(new SpinnerNumberModel(
-            coords.getX()+1,
-            0,
-            1_000_000,
-            1));
+              coords.getX() + 1,
+              0,
+              1_000_000,
+              1));
     }
 
     private JSpinner createSpinner(CoordYArgument coordY) {
         return new JSpinner(new SpinnerNumberModel(
-            coords.getY()+1,
-            0,
-            1_000_000,
-            1));
+              coords.getY() + 1,
+              0,
+              1_000_000,
+              1));
     }
 
     private JSpinner createSpinner(IntegerArgument intArg) {
         return new JSpinner(new SpinnerNumberModel(
-            intArg.hasDefaultValue() ? intArg.getValue() : 0,
-            intArg.getMinValue(),
-            intArg.getMaxValue(),
-            1));
+              intArg.hasDefaultValue() ? intArg.getValue() : 0,
+              intArg.getMinValue(),
+              intArg.getMaxValue(),
+              1));
     }
 
     private JComboBox<String> createPlayerComboBox(PlayerArgument playerArgument) {
@@ -338,10 +366,10 @@ public class ClientCommandDialog extends JDialog {
         JButton executeButton = new JButton("Execute");
         executeButton.addActionListener(e -> {
             int response = JOptionPane.showConfirmDialog(
-                this,
-                "Are you sure you want to execute this command?",
-                "Execute?",
-                JOptionPane.YES_NO_OPTION
+                  this,
+                  "Are you sure you want to execute this command?",
+                  "Execute?",
+                  JOptionPane.YES_NO_OPTION
             );
             if (response == JOptionPane.YES_OPTION) {
                 executeCommand(argumentComponents);
@@ -351,9 +379,8 @@ public class ClientCommandDialog extends JDialog {
     }
 
     /**
-     * Execute the command with the given arguments.
-     * It runs the command using the client chat, this way the command is sent to the server.
-     * All arguments are loaded as named variables in the form of "argumentName=argumentValue".
+     * Execute the command with the given arguments. It runs the command using the client chat, this way the command is
+     * sent to the server. All arguments are loaded as named variables in the form of "argumentName=argumentValue".
      *
      * @param argumentComponents The components that hold the arguments selected.
      */
@@ -384,9 +411,9 @@ public class ClientCommandDialog extends JDialog {
                     var selectedItemValue = selectedItem.split(":")[0].trim();
                     args[i] = argument.getName() + "=" + selectedItemValue;
                 } else if (
-                    (argument instanceof PlayerArgument) ||
-                    (argument instanceof UnitArgument) ||
-                    (argument instanceof TeamArgument)) {
+                      (argument instanceof PlayerArgument) ||
+                            (argument instanceof UnitArgument) ||
+                            (argument instanceof TeamArgument)) {
 
                     String selectedItem = (String) ((JComboBox<?>) component).getSelectedItem();
                     if (selectedItem == null || selectedItem.equals("-")) {
@@ -397,7 +424,9 @@ public class ClientCommandDialog extends JDialog {
                     var selectedItemValue = selectedItem.split(":")[0].trim();
                     args[i] = argument.getName() + "=" + selectedItemValue;
                 } else {
-                    args[i] = argument.getName() + "=" + Objects.requireNonNull(((JComboBox<?>) component).getSelectedItem());
+                    args[i] = argument.getName()
+                          + "="
+                          + Objects.requireNonNull(((JComboBox<?>) component).getSelectedItem());
                 }
             }
         }

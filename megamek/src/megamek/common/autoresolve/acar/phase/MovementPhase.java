@@ -1,17 +1,43 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.autoresolve.acar.phase;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -27,12 +53,6 @@ import megamek.common.autoresolve.acar.role.Role;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.component.FormationTurn;
 import megamek.common.enums.GamePhase;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class MovementPhase extends PhaseHandler {
 
@@ -54,10 +74,11 @@ public class MovementPhase extends PhaseHandler {
             if (turn instanceof FormationTurn formationTurn) {
                 var player = getSimulationManager().getGame().getPlayer(formationTurn.playerId());
                 getSimulationManager().getGame().getActiveFormations(player)
-                    .stream()
-                    .filter(f -> f.isEligibleForPhase(getSimulationManager().getGame().getPhase())) // only eligible formations
-                    .findAny()
-                    .ifPresent(this::engage);
+                      .stream()
+                      .filter(f -> f.isEligibleForPhase(getSimulationManager().getGame()
+                            .getPhase())) // only eligible formations
+                      .findAny()
+                      .ifPresent(this::engage);
             }
         }
     }
@@ -98,9 +119,9 @@ public class MovementPhase extends PhaseHandler {
 
         var destination = new Coords(activeFormation.getPosition().coords().getX() + (totalMP * direction), 0);
         return new MoveAction(
-            activeFormation.getId(),
-            -1,
-            destination);
+              activeFormation.getId(),
+              -1,
+              destination);
     }
 
     private Action normalMovement(Formation activeFormation, int totalMP) {
@@ -112,8 +133,8 @@ public class MovementPhase extends PhaseHandler {
             int boardMid = getContext().getBoardSize() / 2;
             int direction = (activeFormation.getPosition().coords().getX() > boardMid) ? -1 : 1;
             var destination = new Coords(
-                activeFormation.getPosition().coords().getX() + (totalMP * direction),
-                0
+                  activeFormation.getPosition().coords().getX() + (totalMP * direction),
+                  0
             );
             return new MoveAction(activeFormation.getId(), Entity.NONE, destination);
         }
@@ -125,25 +146,27 @@ public class MovementPhase extends PhaseHandler {
 
         // 4. Compute distance to target
         int distToTarget = activeFormation.getPosition().coords()
-            .distance(targetFormation.getPosition().coords());
+              .distance(targetFormation.getPosition().coords());
         var pastRound = getContext().getCurrentRound() - 1;
 
         var lastTurnItTookDamage = activeFormation.getMemory().getInt("wasDamagedAtRound").orElse(-1);
         var lastTurnItTookDamageTarget = activeFormation.getMemory().getInt("lastAttackerId").orElse(-1);
         // 5. If the formation is damaged and the role wants to disengage, consider running away
-        if (lastTurnItTookDamage == pastRound && role.disengageIfDamaged() && lastTurnItTookDamageTarget == targetFormation.getId()) {
+        if (lastTurnItTookDamage == pastRound
+              && role.disengageIfDamaged()
+              && lastTurnItTookDamageTarget == targetFormation.getId()) {
             // Move away from target
             int direction = (targetFormation.getPosition().coords().getX()
-                < activeFormation.getPosition().coords().getX()) ? 1 : -1;
+                  < activeFormation.getPosition().coords().getX()) ? 1 : -1;
 
             var destination = new Coords(
-                activeFormation.getPosition().coords().getX() + (totalMP * direction),
-                0
+                  activeFormation.getPosition().coords().getX() + (totalMP * direction),
+                  0
             );
             return new MoveAction(activeFormation.getId(), targetId, destination);
         }
 
-            // 6. Check if formation is damaged and role wants to drop to cover
+        // 6. Check if formation is damaged and role wants to drop to cover
         if (activeFormation.getMemory().getBoolean("wasDamagedAtRound").orElse(false) && role.dropToCoverIfDamaged()) {
             // Attempt to find a tile that provides cover within movement range
 
@@ -159,7 +182,7 @@ public class MovementPhase extends PhaseHandler {
 
         // If we are too far, move closer; if too close, move away, etc.
         int directionToTarget = (targetFormation.getPosition().coords().getX()
-            - activeFormation.getPosition().coords().getX()) > 0 ? 1 : -1;
+              - activeFormation.getPosition().coords().getX()) > 0 ? 1 : -1;
 
         // Basic example logic: try to "fix" distance to stay in the preferred bracket
         int moveDistance = 0;
@@ -184,10 +207,10 @@ public class MovementPhase extends PhaseHandler {
         if (!role.moveThroughCover(currentRange)) {
             // Pseudo-logic: attempt to find a path that does not cross cover
             var safePathCoords = calculatePathAvoidingCover(
-                activeFormation.getPosition().coords(),
-                directionToTarget,
-                moveDistance,
-                totalMP
+                  activeFormation.getPosition().coords(),
+                  directionToTarget,
+                  moveDistance,
+                  totalMP
             );
             if (safePathCoords != null) {
                 return new MoveToCoverAction(activeFormation.getId(), targetId, safePathCoords);
@@ -212,7 +235,7 @@ public class MovementPhase extends PhaseHandler {
         var coord = activeFormation.getEntity().getPosition();
         var direction = Compute.randomInt(2) == 0 ? -1 : 1;
         if (totalMP > 0) {
-            return new Coords(coord.getX() + ((int) (totalMP/3.0 * 2.0)) * direction, 0);
+            return new Coords(coord.getX() + ((int) (totalMP / 3.0 * 2.0)) * direction, 0);
         }
         return null;
     }
@@ -224,11 +247,11 @@ public class MovementPhase extends PhaseHandler {
 
         // Gather possible targets
         var canBeTargets = getSimulationManager().getGame().getActiveDeployedFormations().stream()
-            .filter(f -> (actingFormation.getTargetFormationId() == Entity.NONE)
-                || (role.tailTargets() && f.getId() == actingFormation.getTargetFormationId())
-                || !role.tailTargets())
-            .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
-            .collect(Collectors.toList());
+              .filter(f -> (actingFormation.getTargetFormationId() == Entity.NONE)
+                    || (role.tailTargets() && f.getId() == actingFormation.getTargetFormationId())
+                    || !role.tailTargets())
+              .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
+              .collect(Collectors.toList());
 
         if (canBeTargets.isEmpty()) {
             return Optional.empty();
@@ -270,13 +293,13 @@ public class MovementPhase extends PhaseHandler {
         // 5. Possibly factor in "previous target" from your existing logic
         var previousTargetId = actingFormation.getTargetFormationId();
         Optional<Formation> previousTarget = preferred.stream()
-            .filter(f -> f.getId() == previousTargetId)
-            .findFirst();
+              .filter(f -> f.getId() == previousTargetId)
+              .findFirst();
         if (previousTarget.isEmpty()) {
             // If not found among 'preferred', maybe look in 'normal'
             previousTarget = normal.stream()
-                .filter(f -> f.getId() == previousTargetId)
-                .findFirst();
+                  .filter(f -> f.getId() == previousTargetId)
+                  .findFirst();
         }
 
         // 6. Return in an order that prioritizes:
@@ -294,15 +317,19 @@ public class MovementPhase extends PhaseHandler {
         return Optional.empty();
     }
 
-    private static Optional<Formation> getLastAttacker(Formation actingFormation, Role role, List<Formation> canBeTargets) {
-        if (role.targetsLastAttacker() && actingFormation.getMemory().getInt("lastAttackerId").orElse(Entity.NONE) != Entity.NONE) {
+    private static Optional<Formation> getLastAttacker(Formation actingFormation, Role role,
+          List<Formation> canBeTargets) {
+        if (role.targetsLastAttacker()
+              && actingFormation.getMemory().getInt("lastAttackerId").orElse(Entity.NONE) != Entity.NONE) {
             var lastAttackerId = actingFormation.getMemory().getInt("lastAttackerId").orElse(Entity.NONE);
             var lastAttacker = canBeTargets.stream()
-                .filter(f -> f.getId() == lastAttackerId)
-                .findFirst();
+                  .filter(f -> f.getId() == lastAttackerId)
+                  .findFirst();
 
             if (lastAttacker.isPresent()) {
-                var distance = actingFormation.getPosition().coords().distance(lastAttacker.get().getPosition().coords());
+                var distance = actingFormation.getPosition()
+                      .coords()
+                      .distance(lastAttacker.get().getPosition().coords());
                 var myMove = actingFormation.getCurrentMovement();
                 var targetMove = lastAttacker.get().getCurrentMovement();
                 var maxDistance = distance - myMove + targetMove;

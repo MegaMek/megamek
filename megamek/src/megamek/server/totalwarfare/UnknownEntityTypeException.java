@@ -36,8 +36,7 @@ package megamek.server.totalwarfare;
 class UnknownEntityTypeException extends Exception {
     public UnknownEntityTypeException() {}
 
-    public UnknownEntityTypeException(String message)
-    {
+    public UnknownEntityTypeException(String message) {
         super(message);
     }
 }

@@ -1,21 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot;
 
@@ -24,7 +38,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -109,8 +131,8 @@ public abstract class BotClient extends Client {
                 // We want to ignore turns from other players and only listen to events we
                 // generated
                 boolean ignoreSimTurn = getGame().getPhase().isSimultaneous(getGame()) &&
-                                              (e.getPreviousPlayerId() != localPlayerNumber) &&
-                                              calculatedTurnThisPhase;
+                      (e.getPreviousPlayerId() != localPlayerNumber) &&
+                      calculatedTurnThisPhase;
 
                 if (isMyTurn() && !ignoreSimTurn) {
                     calculatedTurnThisPhase = true;
@@ -296,18 +318,18 @@ public abstract class BotClient extends Client {
         // unless doing so would kill it or be illegal due to stacking violation
         for (Entity currentEntity : getGame().getPlayerEntities(getLocalPlayer(), true)) {
             Entity transport = currentEntity.getTransportId() != Entity.NONE ?
-                                     getGame().getEntity(currentEntity.getTransportId()) :
-                                     null;
+                  getGame().getEntity(currentEntity.getTransportId()) :
+                  null;
 
             if (transport != null && transport.isPermanentlyImmobilized(true)) {
                 boolean stackingViolation = null !=
-                                                  Compute.stackingViolation(game,
-                                                        currentEntity.getId(),
-                                                        transport.getPosition(),
-                                                        currentEntity.climbMode());
+                      Compute.stackingViolation(game,
+                            currentEntity.getId(),
+                            transport.getPosition(),
+                            currentEntity.climbMode());
                 boolean unloadFatal = currentEntity.isBoardProhibited(getGame().getBoard(transport)) ||
-                                            currentEntity.isLocationProhibited(transport.getPosition()) ||
-                                            currentEntity.isLocationDeadly(transport.getPosition());
+                      currentEntity.isLocationProhibited(transport.getPosition()) ||
+                      currentEntity.isLocationDeadly(transport.getPosition());
 
                 if (!stackingViolation && !unloadFatal) {
                     entitiesToUnload.add(currentEntity.getId());
@@ -352,11 +374,11 @@ public abstract class BotClient extends Client {
             currentTurnEnemyEntities = new ArrayList<>();
             for (Entity entity : game.getEntitiesVector()) {
                 if (entity.getOwner().isEnemyOf(getLocalPlayer()) &&
-                          (entity.getPosition() != null) &&
-                          !entity.isOffBoard() &&
-                          (entity.getCrew() != null) &&
-                          !entity.getCrew().isDead() &&
-                          !entity.isHidden()) {
+                      (entity.getPosition() != null) &&
+                      !entity.isOffBoard() &&
+                      (entity.getCrew() != null) &&
+                      !entity.getCrew().isDead() &&
+                      !entity.isHidden()) {
                     currentTurnEnemyEntities.add(entity);
                 }
             }
@@ -374,8 +396,8 @@ public abstract class BotClient extends Client {
             currentTurnFriendlyEntities = new ArrayList<>();
             for (Entity entity : game.getEntitiesVector()) {
                 if (!entity.getOwner().isEnemyOf(getLocalPlayer()) &&
-                          (entity.getPosition() != null) &&
-                          !entity.isOffBoard()) {
+                      (entity.getPosition() != null) &&
+                      !entity.isOffBoard()) {
                     currentTurnFriendlyEntities.add(entity);
                 }
             }
@@ -412,7 +434,7 @@ public abstract class BotClient extends Client {
                     // if the game is not double blind and I can't see anyone
                     // else on the board I should kill myself.
                     if (!(game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) &&
-                              ((game.getEntitiesOwnedBy(getLocalPlayer()) - game.getNoOfEntities()) == 0)) {
+                          ((game.getEntitiesOwnedBy(getLocalPlayer()) - game.getNoOfEntities()) == 0)) {
                         die();
                     }
 
@@ -683,11 +705,11 @@ public abstract class BotClient extends Client {
             for (int y = 0; y <= board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
                 if (board.isLegalDeployment(c, deployed_ent) &&
-                          !deployed_ent.isLocationProhibited(c,
-                                ((deployed_ent.isAirborne() || deployed_ent.getMovementMode().isHoverVTOLOrWiGE()) ?
-                                       deployed_ent.getElevation() :
-                                       0)) &&
-                          !deployed_ent.isLocationDeadly(c)) {
+                      !deployed_ent.isLocationProhibited(c,
+                            ((deployed_ent.isAirborne() || deployed_ent.getMovementMode().isHoverVTOLOrWiGE()) ?
+                                  deployed_ent.getElevation() :
+                                  0)) &&
+                      !deployed_ent.isLocationDeadly(c)) {
                     validCoords.add(new RankedCoords(c, 0));
                 }
             }
@@ -719,9 +741,9 @@ public abstract class BotClient extends Client {
         for (Mounted<?> mounted : deployed_ent.getWeaponList()) {
             WeaponType weaponType = (WeaponType) mounted.getType();
             if ((!weaponType.getName().equals("ATM 3")) &&
-                      (!weaponType.getName().equals("ATM 6")) &&
-                      (!weaponType.getName().equals("ATM 9")) &&
-                      (!weaponType.getName().equals("ATM 12"))) {
+                  (!weaponType.getName().equals("ATM 6")) &&
+                  (!weaponType.getName().equals("ATM 9")) &&
+                  (!weaponType.getName().equals("ATM 12"))) {
                 if (deployed_ent.getC3Master() != null) {
                     av_range += weaponType.getLongRange() * 1.25;
                 } else {
@@ -834,7 +856,7 @@ public abstract class BotClient extends Client {
                 int x = coord.getX();
                 int y = coord.getY();
                 if (board.getHex(x, y).containsTerrain(Terrains.WOODS) &&
-                          board.getHex(x, y).terrainLevel(Terrains.FOLIAGE_ELEV) > 1) {
+                      board.getHex(x, y).terrainLevel(Terrains.FOLIAGE_ELEV) > 1) {
                     coord.fitness += 1;
                 }
                 if (board.getHex(x, y).containsTerrain(Terrains.WATER)) {
@@ -877,8 +899,8 @@ public abstract class BotClient extends Client {
                     highestHex = coord.getCoords().translated(x);
                     for (Entity test_ent : game.getEntitiesVector(highestHex, deployed_ent.getBoardId())) {
                         if ((owner.equals(test_ent.getOwner())) &&
-                                  !deployed_ent.equals(test_ent) &&
-                                  (test_ent instanceof Infantry)) {
+                              !deployed_ent.equals(test_ent) &&
+                              (test_ent instanceof Infantry)) {
 
                             coord.fitness += 1;
                             foundAdj = true;

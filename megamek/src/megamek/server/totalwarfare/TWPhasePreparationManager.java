@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server.totalwarfare;
 
 import java.util.Vector;
@@ -98,7 +113,7 @@ public class TWPhasePreparationManager {
                 gameManager.bvReports(true);
 
                 logger.info(
-                        "Round " + gameManager.getGame().getRoundCount() + " memory usage: " + MegaMek.getMemoryUsed());
+                      "Round " + gameManager.getGame().getRoundCount() + " memory usage: " + MegaMek.getMemoryUsed());
                 break;
             case DEPLOY_MINEFIELDS:
                 gameManager.checkForObservers();
@@ -108,9 +123,9 @@ public class TWPhasePreparationManager {
 
                 if (gameManager.getGame().getBoard().isGround()) {
                     gameManager.getGame().setTurnVector(gameManager.getGame().getPlayersList().stream()
-                            .filter(Player::hasMinefields)
-                            .map(p -> new GameTurn(p.getId()))
-                            .collect(Collectors.toList()));
+                          .filter(Player::hasMinefields)
+                          .map(p -> new GameTurn(p.getId()))
+                          .collect(Collectors.toList()));
                 }
 
                 gameManager.getGame().resetTurnIndex();
@@ -127,7 +142,7 @@ public class TWPhasePreparationManager {
                 for (Player player : gameManager.getGame().getPlayersList()) {
                     // Does the player have any artillery-equipped units?
                     EntitySelector playerArtySelector = entity -> player.equals(entity.getOwner())
-                            && entity.isEligibleForArtyAutoHitHexes();
+                          && entity.isEligibleForArtyAutoHitHexes();
 
                     if (gameManager.getGame().getSelectedEntities(playerArtySelector).hasNext()) {
                         artyTurns.addElement(new GameTurn(player.getId()));
@@ -248,7 +263,7 @@ public class TWPhasePreparationManager {
                     // fix the armor and SI of aeros if using aero sanity rules for
                     // the MUL
                     if (gameManager.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
-                            && (entity instanceof Aero)) {
+                          && (entity instanceof Aero)) {
                         // need to rescale SI and armor
                         int scale = 1;
                         if (entity.isCapitalScale()) {
@@ -286,7 +301,7 @@ public class TWPhasePreparationManager {
                     for (var player : mailer.getEmailablePlayers(gameManager.getGame())) {
                         try {
                             var message = mailer.newReportMessage(
-                                    gameManager.getGame(), gameManager.getMainPhaseReport(), player);
+                                  gameManager.getGame(), gameManager.getMainPhaseReport(), player);
                             mailer.send(message);
                         } catch (Exception ex) {
                             logger.error("Error sending email" + ex);

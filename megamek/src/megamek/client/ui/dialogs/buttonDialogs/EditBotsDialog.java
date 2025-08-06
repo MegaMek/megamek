@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
@@ -29,7 +43,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -45,8 +58,8 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;
 import megamek.client.ui.Messages;
-import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.enums.DialogResult;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.logging.MMLogger;
@@ -101,14 +114,14 @@ public class EditBotsDialog extends AbstractButtonDialog {
             finalizeInitialization();
         } catch (Exception ex) {
             logger.error(ex,
-                    "Error finalizing the EditBotsDialog. Returning the created dialog, but this is likely to cause some oddities.");
+                  "Error finalizing the EditBotsDialog. Returning the created dialog, but this is likely to cause some oddities.");
         }
     }
 
     protected void refreshPlayers() {
         ghostAndBotPlayers = game.getPlayersList().stream()
-                .filter(client -> client.isGhost() || client.isBot())
-                .sorted(Comparator.comparingInt(Player::getId)).collect(Collectors.toList());
+              .filter(client -> client.isGhost() || client.isBot())
+              .sorted(Comparator.comparingInt(Player::getId)).collect(Collectors.toList());
         ghostAndBotPlayers.forEach(player -> botConfigs.put(player, new BehaviorSettings()));
     }
 
@@ -222,8 +235,8 @@ public class EditBotsDialog extends AbstractButtonDialog {
                 gridPanel.add(new JLabel());
             } else {
                 gridPanel.add(new JLabel(
-                        (clientGui.getClient().getLocalPlayer().equals(player) ? LOCAL : REMOTE) + ' '
-                                + (player.isGameMaster() ? "GM" : player.isObserver() ? "Observer" : "Player")));
+                      (clientGui.getClient().getLocalPlayer().equals(player) ? LOCAL : REMOTE) + ' '
+                            + (player.isGameMaster() ? "GM" : player.isObserver() ? "Observer" : "Player")));
                 gridPanel.add(new JLabel());
                 gridPanel.add(new JLabel());
                 gridPanel.add(new JLabel());
@@ -263,8 +276,7 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Called from the config buttons. Opens a BotConfig Dialog and saves the
-     * result, if any.
+     * Called from the config buttons. Opens a BotConfig Dialog and saves the result, if any.
      */
     private void callConfig(Player botOrGhost) {
         var bcd = new BotConfigDialog(getFrame(), botOrGhost.getName(), botConfigs.get(botOrGhost), clientGui);
@@ -291,8 +303,7 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Updates the config button enabled states (only enabled when Princess bot is
-     * selected).
+     * Updates the config button enabled states (only enabled when Princess bot is selected).
      */
     private void updateButtonStates() {
         for (Player ghost : ghostChoosers.keySet()) {
@@ -307,14 +318,10 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * @return the result of the dialog with respect to ghost players to be replaced
-     *         by Princess bots.
-     *         The returned map links zero, one or more BehaviorSettings (a Princess
-     *         configuration)
-     *         to the ghost player name they were chosen for. The returned map only
-     *         includes entries for those ghost players that had a Princess Bot
-     *         replacement selected.
-     *         The result may be empty, but not null.
+     * @return the result of the dialog with respect to ghost players to be replaced by Princess bots. The returned map
+     *       links zero, one or more BehaviorSettings (a Princess configuration) to the ghost player name they were
+     *       chosen for. The returned map only includes entries for those ghost players that had a Princess Bot
+     *       replacement selected. The result may be empty, but not null.
      */
     public Map<String, BehaviorSettings> getNewBots() {
         var result = new HashMap<String, BehaviorSettings>();
@@ -328,15 +335,10 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * @return the result of the dialog with respect to Princess bots whose
-     *         configuration is to be changed
-     *         The returned map links zero, one or more BehaviorSettings (a Princess
-     *         configuration)
-     *         to the Princess player name they were chosen for. The returned map
-     *         only
-     *         includes entries for those Princess players that had the Edit option
-     *         selected.
-     *         The result may be empty, but not null.
+     * @return the result of the dialog with respect to Princess bots whose configuration is to be changed The returned
+     *       map links zero, one or more BehaviorSettings (a Princess configuration) to the Princess player name they
+     *       were chosen for. The returned map only includes entries for those Princess players that had the Edit option
+     *       selected. The result may be empty, but not null.
      */
     public Map<String, BehaviorSettings> getChangedBots() {
         // All local bots with edited configs option selected
@@ -351,9 +353,8 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Returns the result of the dialog with respect to selected princess bots to be
-     * kicked
-     * The result may be empty, but not null.
+     * Returns the result of the dialog with respect to selected princess bots to be kicked The result may be empty, but
+     * not null.
      *
      * @return a Set of bot player names to be kicked. May be empty but not null
      */

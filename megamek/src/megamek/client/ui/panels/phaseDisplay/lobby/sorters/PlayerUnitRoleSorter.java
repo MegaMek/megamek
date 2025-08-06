@@ -49,7 +49,8 @@ public class PlayerUnitRoleSorter extends MekTableSorter {
 
     /**
      * A Lobby Mek Table sorter that sorts by 1) player 2) unit role.
-     * @param client the client instance
+     *
+     * @param client  the client instance
      * @param sorting The sorting direction (ascending or descending).
      */
     public PlayerUnitRoleSorter(Client client, Sorting sorting) {

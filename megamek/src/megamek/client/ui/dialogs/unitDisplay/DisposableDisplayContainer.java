@@ -32,14 +32,15 @@
  */
 package megamek.client.ui.dialogs.unitDisplay;
 
+import java.awt.BorderLayout;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import java.awt.BorderLayout;
 
 /**
- * A UnitDisplayContainer implementation that creates a one-time use dialog and display.
- * This container creates a new UnitDisplayDialog and UnitDisplay instance with each instantiation.
- * The dialog will be automatically disposed when closed by the user.
+ * A UnitDisplayContainer implementation that creates a one-time use dialog and display. This container creates a new
+ * UnitDisplayDialog and UnitDisplay instance with each instantiation. The dialog will be automatically disposed when
+ * closed by the user.
+ *
  * @author Luana Coppio
  */
 public class DisposableDisplayContainer implements UnitDisplayContainer {

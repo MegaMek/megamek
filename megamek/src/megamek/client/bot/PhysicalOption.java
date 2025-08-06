@@ -1,21 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot;
 
@@ -36,7 +50,7 @@ import megamek.common.equipment.MiscMounted;
 
 /**
  * TODO: add more options, pushing, kick both for quad Meks, etc.
- *
+ * <p>
  * also, what
  * are the conditions for multiple physical attacks?
  */
@@ -48,12 +62,12 @@ public class PhysicalOption {
     public static final int KICK_LEFT = 4;
     public static final int KICK_RIGHT = 5;
     public static final int USE_CLUB = 6; // Includes sword, hatchet, mace,
-                                            // and found clubs
+    // and found clubs
     public static final int USE_CLAW = 7; // Level 3 rules, not incorporated
-                                            // yet
+    // yet
     public static final int PUSH_ATTACK = 8;
     public static final int TRIP_ATTACK = 9; // Level 3 rules, not
-                                                // incorporated yet
+    // incorporated yet
     public static final int BRUSH_LEFT = 10;
     public static final int BRUSH_RIGHT = 11;
     public static final int BRUSH_BOTH = 12;
@@ -72,7 +86,7 @@ public class PhysicalOption {
     }
 
     public PhysicalOption(Entity attacker, Targetable target, double dmg,
-            int type, MiscMounted club) {
+          int type, MiscMounted club) {
         this.attacker = attacker;
         this.target = target;
 
@@ -88,61 +102,61 @@ public class PhysicalOption {
         switch (type) {
             case PUNCH_LEFT:
                 return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
-                        PunchAttackAction.LEFT);
+                      PunchAttackAction.LEFT);
             case PUNCH_RIGHT:
                 return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
-                        PunchAttackAction.RIGHT);
+                      PunchAttackAction.RIGHT);
             case PUNCH_BOTH:
                 return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
-                        PunchAttackAction.BOTH);
+                      PunchAttackAction.BOTH);
             case KICK_LEFT:
                 return new KickAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
-                        KickAttackAction.LEFT);
+                      KickAttackAction.LEFT);
             case KICK_RIGHT:
                 return new KickAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
-                        KickAttackAction.RIGHT);
+                      KickAttackAction.RIGHT);
             case USE_CLUB:
                 if (club != null) {
                     return new ClubAttackAction(attacker.getId(), target.getTargetType(), target
-                            .getId(), club, ToHitData.HIT_NORMAL, false);
+                          .getId(), club, ToHitData.HIT_NORMAL, false);
                 }
                 return null;
             case PUSH_ATTACK:
                 return new PushAttackAction(attacker.getId(), target.getId(),
-                        target.getPosition());
+                      target.getPosition());
             case TRIP_ATTACK:
                 return null; // Trip attack not implemented yet
             case BRUSH_LEFT:
                 if (target == null) {
                     return new BrushOffAttackAction(attacker.getId(), i_target
-                            .getTargetType(), i_target.getId(),
-                            BrushOffAttackAction.LEFT);
+                          .getTargetType(), i_target.getId(),
+                          BrushOffAttackAction.LEFT);
                 }
                 return new BrushOffAttackAction(attacker.getId(), target
-                        .getTargetType(), target.getId(),
-                        BrushOffAttackAction.LEFT);
+                      .getTargetType(), target.getId(),
+                      BrushOffAttackAction.LEFT);
             case BRUSH_RIGHT:
                 if (target == null) {
                     return new BrushOffAttackAction(attacker.getId(), i_target
-                            .getTargetType(), i_target.getId(),
-                            BrushOffAttackAction.RIGHT);
+                          .getTargetType(), i_target.getId(),
+                          BrushOffAttackAction.RIGHT);
                 }
                 return new BrushOffAttackAction(attacker.getId(), target
-                        .getTargetType(), target.getId(),
-                        BrushOffAttackAction.RIGHT);
+                      .getTargetType(), target.getId(),
+                      BrushOffAttackAction.RIGHT);
             case BRUSH_BOTH:
                 if (target == null) {
                     return new BrushOffAttackAction(attacker.getId(), i_target
-                            .getTargetType(), i_target.getId(),
-                            BrushOffAttackAction.BOTH);
+                          .getTargetType(), i_target.getId(),
+                          BrushOffAttackAction.BOTH);
                 }
                 return new BrushOffAttackAction(attacker.getId(), target
-                        .getTargetType(), target.getId(),
-                        BrushOffAttackAction.BOTH);
-                /*
-                 * case THRASH_INF : return new
-                 * ThrashAttackAction(attacker.getId(), target.getId());
-                 */
+                      .getTargetType(), target.getId(),
+                      BrushOffAttackAction.BOTH);
+            /*
+             * case THRASH_INF : return new
+             * ThrashAttackAction(attacker.getId(), target.getId());
+             */
         }
         return null;
     }

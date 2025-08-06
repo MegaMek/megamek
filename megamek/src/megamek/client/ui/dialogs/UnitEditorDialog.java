@@ -1,5 +1,5 @@
 /*
- * MekEditor.java - Copyright (C) 2013 Jay Lawson
+ * Copyright (C) 2013 Jay Lawson
  * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -25,6 +25,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs;
 
@@ -328,8 +333,8 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         for (Mounted<?> mounted : entity.getEquipment()) {
             if ((mounted.getLocation() == Entity.LOC_NONE) ||
-                      !mounted.getType().isHittable() ||
-                      mounted.isWeaponGroup()) {
+                  !mounted.getType().isHittable() ||
+                  mounted.isWeaponGroup()) {
                 continue;
             }
             if (mounted.getType() instanceof InfantryAttack) {
@@ -359,10 +364,10 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.weighty = 0.0;
             gridBagConstraints.fill = GridBagConstraints.NONE;
             panEquip.add(new JLabel("<html><b>" +
-                                          mounted.getName() +
-                                          "</b><br>" +
-                                          entity.getLocationName(mounted.getLocation()) +
-                                          "</html>"), gridBagConstraints);
+                  mounted.getName() +
+                  "</b><br>" +
+                  entity.getLocationName(mounted.getLocation()) +
+                  "</html>"), gridBagConstraints);
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
             panEquip.add(crit, gridBagConstraints);
@@ -534,10 +539,10 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
                 panSystem.add(new JLabel("<html><b>" +
-                                               String.format(Messages.getString("UnitEditorDialog.critStringLocation"),
-                                                     critName,
-                                                     entity.getLocationAbbr(entry.getKey())) +
-                                               "</b><br></html>"), gridBagConstraints);
+                      String.format(Messages.getString("UnitEditorDialog.critStringLocation"),
+                            critName,
+                            entity.getLocationAbbr(entry.getKey())) +
+                      "</b><br></html>"), gridBagConstraints);
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.weightx = 1.0;
                 panSystem.add(entry.getValue(), gridBagConstraints);
@@ -577,10 +582,10 @@ public class UnitEditorDialog extends JDialog {
                     gridBagConstraints.weighty = 1.0;
                 }
                 panSystem.add(new JLabel("<html><b>" +
-                                               String.format(Messages.getString("UnitEditorDialog.critString"),
-                                                     entity.getLocationName(loc),
-                                                     ((Mek) entity).getSystemName(i)) +
-                                               "</b><br></html>"), gridBagConstraints);
+                      String.format(Messages.getString("UnitEditorDialog.critString"),
+                            entity.getLocationName(loc),
+                            ((Mek) entity).getSystemName(i)) +
+                      "</b><br></html>"), gridBagConstraints);
                 CheckCritPanel actuatorCrit = new CheckCritPanel(1,
                       entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, i, loc));
                 actuatorCrits[loc - Mek.LOC_RARM][i - start] = actuatorCrit;
@@ -597,10 +602,10 @@ public class UnitEditorDialog extends JDialog {
                     gridBagConstraints.weighty = 1.0;
                 }
                 panSystem.add(new JLabel("<html><b>" +
-                                               String.format(Messages.getString("UnitEditorDialog.critString"),
-                                                     entity.getLocationName(loc),
-                                                     ((Mek) entity).getSystemName(QuadVee.SYSTEM_CONVERSION_GEAR)) +
-                                               "</b><br></html>"), gridBagConstraints);
+                      String.format(Messages.getString("UnitEditorDialog.critString"),
+                            entity.getLocationName(loc),
+                            ((Mek) entity).getSystemName(QuadVee.SYSTEM_CONVERSION_GEAR)) +
+                      "</b><br></html>"), gridBagConstraints);
                 CheckCritPanel actuatorCrit = new CheckCritPanel(1,
                       entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, QuadVee.SYSTEM_CONVERSION_GEAR, loc));
                 actuatorCrits[loc - Mek.LOC_RARM][Mek.ACTUATOR_FOOT - Mek.ACTUATOR_HIP + 1] = actuatorCrit;
@@ -689,9 +694,9 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.weighty = 1.0;
             }
             panSystem.add(new JLabel("<html><b>" +
-                                           String.format(Messages.getString("UnitEditorDialog.locationStabilizer"),
-                                                 entity.getLocationName(loc)) +
-                                           "</b><br></html>"), gridBagConstraints);
+                  String.format(Messages.getString("UnitEditorDialog.locationStabilizer"),
+                        entity.getLocationName(loc)) +
+                  "</b><br></html>"), gridBagConstraints);
             int hits = 0;
             if (tank.isStabiliserHit(loc)) {
                 hits = 1;
@@ -724,9 +729,9 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.weighty = 1.0;
             }
             panSystem.add(new JLabel("<html><b>" +
-                                           String.format(Messages.getString("UnitEditorDialog.protoCritString"),
-                                                 entity.getLocationName(loc)) +
-                                           "</b><br></html>"), gridBagConstraints);
+                  String.format(Messages.getString("UnitEditorDialog.protoCritString"),
+                        entity.getLocationName(loc)) +
+                  "</b><br></html>"), gridBagConstraints);
             int hits = 0;
             if ((loc == ProtoMek.LOC_LARM) || (loc == ProtoMek.LOC_RARM)) {
                 hits = entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_ARMCRIT, loc);
@@ -764,8 +769,8 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" +
-                                       Messages.getString("UnitEditorDialog.flightStabilizer") +
-                                       "</b><br></html>"), gridBagConstraints);
+              Messages.getString("UnitEditorDialog.flightStabilizer") +
+              "</b><br></html>"), gridBagConstraints);
         int flightStabHit = 0;
         if (vtol.isStabiliserHit(VTOL.LOC_ROTOR)) {
             flightStabHit = 1;
@@ -810,9 +815,9 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.weighty = 1.0;
             }
             panSystem.add(new JLabel("<html><b>" +
-                                           String.format(Messages.getString("UnitEditorDialog.locationStabilizer"),
-                                                 entity.getLocationName(loc)) +
-                                           "</b><br></html>"), gridBagConstraints);
+                  String.format(Messages.getString("UnitEditorDialog.locationStabilizer"),
+                        entity.getLocationName(loc)) +
+                  "</b><br></html>"), gridBagConstraints);
             int hits = 0;
             if (vtol.isStabiliserHit(loc)) {
                 hits = 1;
@@ -896,8 +901,8 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" +
-                                           Messages.getString("UnitEditorDialog.landingGear") +
-                                           "</b><br></html>"), gridBagConstraints);
+                  Messages.getString("UnitEditorDialog.landingGear") +
+                  "</b><br></html>"), gridBagConstraints);
             int gearHits = 0;
             if (aero.isGearHit()) {
                 gearHits = 1;
@@ -927,8 +932,8 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" +
-                                           Messages.getString("UnitEditorDialog.leftThruster") +
-                                           "</b><br></html>"), gridBagConstraints);
+                  Messages.getString("UnitEditorDialog.leftThruster") +
+                  "</b><br></html>"), gridBagConstraints);
             leftThrusterCrit = new CheckCritPanel(4, aero.getLeftThrustHits());
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
@@ -938,8 +943,8 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" +
-                                           Messages.getString("UnitEditorDialog.rightThruster") +
-                                           "</b><br></html>"), gridBagConstraints);
+                  Messages.getString("UnitEditorDialog.rightThruster") +
+                  "</b><br></html>"), gridBagConstraints);
             rightThrusterCrit = new CheckCritPanel(4, aero.getRightThrustHits());
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
@@ -953,8 +958,8 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" +
-                                           Messages.getString("UnitEditorDialog.gravDecks") +
-                                           "</b><br></html>"), gridBagConstraints);
+                  Messages.getString("UnitEditorDialog.gravDecks") +
+                  "</b><br></html>"), gridBagConstraints);
             gravDeckCrit = new CheckCritPanel(js.getTotalGravDeck(), js.getTotalDamagedGravDeck());
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
@@ -967,8 +972,8 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" +
-                                           Messages.getString("UnitEditorDialog.dockingCollars") +
-                                           "</b><br></html>"), gridBagConstraints);
+                  Messages.getString("UnitEditorDialog.dockingCollars") +
+                  "</b><br></html>"), gridBagConstraints);
 
             int damagedCollars = 0;
             for (DockingCollar nextDC : aero.getDockingCollars()) {
@@ -988,8 +993,8 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" +
-                                           Messages.getString("UnitEditorDialog.kfIntegrity") +
-                                           "</b><br></html>"), gridBagConstraints);
+                  Messages.getString("UnitEditorDialog.kfIntegrity") +
+                  "</b><br></html>"), gridBagConstraints);
             kfDriveCrit = new JSpinner(new SpinnerNumberModel(js.getKFIntegrity(), 0, js.getOKFIntegrity(), 1.0));
             kfDamage = kfDriveCrit;
             gridBagConstraints.gridx = 1;
@@ -1003,8 +1008,8 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
                 panSystem.add(new JLabel("<html><b>" +
-                                               Messages.getString("UnitEditorDialog.driveCoil") +
-                                               "</b><br></html>"), gridBagConstraints);
+                      Messages.getString("UnitEditorDialog.driveCoil") +
+                      "</b><br></html>"), gridBagConstraints);
                 int driveCoilHits = 0;
                 if (js.getKFDriveCoilHit()) {
                     driveCoilHits = 1;
@@ -1019,8 +1024,8 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
                 panSystem.add(new JLabel("<html><b>" +
-                                               Messages.getString("UnitEditorDialog.chargingSystem") +
-                                               "</b><br></html>"), gridBagConstraints);
+                      Messages.getString("UnitEditorDialog.chargingSystem") +
+                      "</b><br></html>"), gridBagConstraints);
                 int chargingSystemHits = 0;
                 if (js.getKFChargingSystemHit()) {
                     chargingSystemHits = 1;
@@ -1035,8 +1040,8 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
                 panSystem.add(new JLabel("<html><b>" +
-                                               Messages.getString("UnitEditorDialog.fieldInitiator") +
-                                               "</b><br></html>"), gridBagConstraints);
+                      Messages.getString("UnitEditorDialog.fieldInitiator") +
+                      "</b><br></html>"), gridBagConstraints);
                 int fieldInitiatorHits = 0;
                 if (js.getKFFieldInitiatorHit()) {
                     fieldInitiatorHits = 1;
@@ -1051,8 +1056,8 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
                 panSystem.add(new JLabel("<html><b>" +
-                                               Messages.getString("UnitEditorDialog.driveController") +
-                                               "</b><br></html>"), gridBagConstraints);
+                      Messages.getString("UnitEditorDialog.driveController") +
+                      "</b><br></html>"), gridBagConstraints);
                 int driveControllerHits = 0;
                 if (js.getKFDriveControllerHit()) {
                     driveControllerHits = 1;
@@ -1067,8 +1072,8 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
                 panSystem.add(new JLabel("<html><b>" +
-                                               Messages.getString("UnitEditorDialog.heliumTank") +
-                                               "</b><br></html>"), gridBagConstraints);
+                      Messages.getString("UnitEditorDialog.heliumTank") +
+                      "</b><br></html>"), gridBagConstraints);
                 int heliumTankHits = 0;
                 if (js.getKFHeliumTankHit()) {
                     heliumTankHits = 1;
@@ -1084,8 +1089,8 @@ public class UnitEditorDialog extends JDialog {
                     gridBagConstraints.gridy++;
                     gridBagConstraints.weightx = 0.0;
                     panSystem.add(new JLabel("<html><b>" +
-                                                   Messages.getString("UnitEditorDialog.lfBattery") +
-                                                   "</b><br></html>"), gridBagConstraints);
+                          Messages.getString("UnitEditorDialog.lfBattery") +
+                          "</b><br></html>"), gridBagConstraints);
                     int lfBatteryHits = 0;
                     if (js.getLFBatteryHit()) {
                         lfBatteryHits = 1;
@@ -1103,8 +1108,8 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" +
-                                           Messages.getString("UnitEditorDialog.sailIntegrity") +
-                                           "</b><br></html>"), gridBagConstraints);
+                  Messages.getString("UnitEditorDialog.sailIntegrity") +
+                  "</b><br></html>"), gridBagConstraints);
             sailCrit = new JSpinner(new SpinnerNumberModel(js.getSailIntegrity(), 0, js.getOSailIntegrity(), 1.0));
             sailDamage = sailCrit;
             gridBagConstraints.gridx = 1;
@@ -1117,8 +1122,8 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" +
-                                           Messages.getString("UnitEditorDialog.dropshipCollar") +
-                                           "</b><br></html>"), gridBagConstraints);
+                  Messages.getString("UnitEditorDialog.dropshipCollar") +
+                  "</b><br></html>"), gridBagConstraints);
             int collarHits = 0;
             if (((Dropship) aero).isDockCollarDamaged()) {
                 collarHits = 1;
@@ -1154,10 +1159,10 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
                 panSystem.add(new JLabel("<html><b>" +
-                                               String.format(Messages.getString("UnitEditorDialog.bayCrit"),
-                                                     nextbay.getType(),
-                                                     nextbay.getBayNumber()) +
-                                               "</b><br></html>"), gridBagConstraints);
+                      String.format(Messages.getString("UnitEditorDialog.bayCrit"),
+                            nextbay.getType(),
+                            nextbay.getBayNumber()) +
+                      "</b><br></html>"), gridBagConstraints);
 
                 bayCrit = new JSpinner(new SpinnerNumberModel(nextbay.getCapacity() - nextbay.getBayDamage(),
                       0,
@@ -1172,9 +1177,9 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
                 panSystem.add(new JLabel("<html><b>" +
-                                               String.format(Messages.getString("UnitEditorDialog.bayDoorCrit"),
-                                                     nextbay.getBayNumber()) +
-                                               "</b><br></html>"), gridBagConstraints);
+                      String.format(Messages.getString("UnitEditorDialog.bayDoorCrit"),
+                            nextbay.getBayNumber()) +
+                      "</b><br></html>"), gridBagConstraints);
 
                 CheckCritPanel doorCrit = new CheckCritPanel(nextbay.getDoors(),
                       (nextbay.getDoors() - nextbay.getCurrentDoors()));
@@ -1197,8 +1202,8 @@ public class UnitEditorDialog extends JDialog {
             for (int i = 0; i < entity.getNumberOfCriticals(loc); i++) {
                 CriticalSlot cs = entity.getCritical(loc, i);
                 if ((cs == null) ||
-                          (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) ||
-                          ((m != cs.getMount()) && (m != cs.getMount2()))) {
+                      (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) ||
+                      ((m != cs.getMount()) && (m != cs.getMount2()))) {
                     continue;
                 }
 

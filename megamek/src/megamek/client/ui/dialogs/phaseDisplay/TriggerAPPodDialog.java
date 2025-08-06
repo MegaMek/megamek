@@ -1,15 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.client.ui.dialogs.phaseDisplay;
@@ -26,7 +46,6 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -42,8 +61,8 @@ import megamek.common.Mounted;
 import megamek.common.actions.TriggerAPPodAction;
 
 /**
- * A dialog displayed to the player when they have an opportunity to trigger an
- * Anti-Personell Pod on one of their units.
+ * A dialog displayed to the player when they have an opportunity to trigger an Anti-Personell Pod on one of their
+ * units.
  */
 public class TriggerAPPodDialog extends JDialog implements ActionListener {
     private static final long serialVersionUID = -9009039614015364943L;
@@ -103,8 +122,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Display a dialog that shows the AP Pods on the entity, and allows the
-     * player to fire any active pods.
+     * Display a dialog that shows the AP Pods on the entity, and allows the player to fire any active pods.
      *
      * @param parent the <code>Frame</code> parent of this dialog
      * @param entity the <code>Entity</code> that can fire AP Pods.
@@ -114,7 +132,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
         entityId = entity.getId();
 
         labMessage = new JTextArea(Messages.getString("TriggerAPPodDialog.selectPodsToTrigger",
-                entity.getDisplayName()));
+              entity.getDisplayName()));
         labMessage.setEditable(false);
         labMessage.setOpaque(false);
 
@@ -130,8 +148,8 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
                 // Create a checkbox for the pod, and add it to the panel.
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))
-                        .append(' ')
-                        .append(mount.getName());
+                      .append(' ')
+                      .append(mount.getName());
                 JCheckBox pod = new JCheckBox(message.toString());
                 panPods.add(pod);
 
@@ -139,7 +157,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
                 if (mount.canFire()) {
                     // Yup. Add a traker for this pod.
                     TriggerPodTracker tracker = new TriggerPodTracker(pod,
-                            entity.getEquipmentNum(mount));
+                          entity.getEquipmentNum(mount));
                     trackers.add(tracker);
                 } else {
                     // Nope. Disable the checkbox.
@@ -199,9 +217,9 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
         }
         setResizable(false);
         setLocation(parent.getLocation().x + parent.getSize().width / 2
-                - size.width / 2,
-                parent.getLocation().y
-                        + parent.getSize().height / 2 - size.height / 2);
+                    - size.width / 2,
+              parent.getLocation().y
+                    + parent.getSize().height / 2 - size.height / 2);
     }
 
     @Override
@@ -212,8 +230,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
     /**
      * Get the trigger actions that the user selected.
      *
-     * @return the <code>Enumeration</code> of <code>TriggerAPPodAction</code>
-     *         objects that match the user's selections.
+     * @return the <code>Enumeration</code> of <code>TriggerAPPodAction</code> objects that match the user's selections.
      */
     public Enumeration<TriggerAPPodAction> getActions() {
         Vector<TriggerAPPodAction> temp = new Vector<>();

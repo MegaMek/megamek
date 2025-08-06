@@ -1,15 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.client.ui.dialogs.phaseDisplay;
@@ -19,7 +39,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -49,9 +68,9 @@ public class AimedShotDialog extends JDialog {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     public AimedShotDialog(JFrame parent, String title, String message,
-                           String[] choices, boolean[] enabled, int selectedIndex,
-                           ClientGUI clientGUI, Targetable target,
-                           ItemListener il, ActionListener al) {
+          String[] choices, boolean[] enabled, int selectedIndex,
+          ClientGUI clientGUI, Targetable target,
+          ItemListener il, ActionListener al) {
         super(parent, title, false);
         super.setResizable(false);
 
@@ -70,7 +89,8 @@ public class AimedShotDialog extends JDialog {
         gridbag.setConstraints(labMessage, c);
         getContentPane().add(labMessage);
 
-        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + UnitToolTip.getTargetTipDetail(target, clientGUI.getClient()) + "</DIV>";
+        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + UnitToolTip.getTargetTipDetail(target,
+              clientGUI.getClient()) + "</DIV>";
         JLabel labTarget = new JLabel(UnitToolTip.wrapWithHTML(div), SwingConstants.LEFT);
 
         c.weightx = 1.0;
@@ -86,7 +106,7 @@ public class AimedShotDialog extends JDialog {
         for (int i = 0; i < choices.length; i++) {
             boolean even = (i & 1) == 0;
             checkboxes[i] = new IndexedRadioButton(choices[i], i == selectedIndex,
-                    radioGroup, i);
+                  radioGroup, i);
             checkboxes[i].addItemListener(il);
             checkboxes[i].setEnabled(enabled[i]);
             c.gridwidth = even ? 1 : GridBagConstraints.REMAINDER;
@@ -106,8 +126,8 @@ public class AimedShotDialog extends JDialog {
 
         pack();
         setLocation((parent.getLocation().x + (parent.getSize().width / 2))
-                - (getSize().width / 2), (parent.getLocation().y
-                + (parent.getSize().height / 2)) - (getSize().height / 2));
+              - (getSize().width / 2), (parent.getLocation().y
+              + (parent.getSize().height / 2)) - (getSize().height / 2));
     }
 
     public void setEnableAll(boolean enableAll) {

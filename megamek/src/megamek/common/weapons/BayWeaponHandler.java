@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -97,13 +118,10 @@ public class BayWeaponHandler extends WeaponHandler {
     }
 
     /**
-     * Sigh, according to the ruling linked below, when weapon bays are fired at
-     * ground targets, they should make one to-hit roll, but the AV of each
-     * weapon should be applied separately as damage - that needs a special
-     * handler
+     * Sigh, according to the ruling linked below, when weapon bays are fired at ground targets, they should make one
+     * to-hit roll, but the AV of each weapon should be applied separately as damage - that needs a special handler
      *
-     * @return a <code>boolean</code> value indicating whether this should be
-     *         kept or not
+     * @return a <code>boolean</code> value indicating whether this should be kept or not
      */
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
@@ -113,16 +131,16 @@ public class BayWeaponHandler extends WeaponHandler {
         }
 
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                : null;
+              : null;
 
         if ((((null == entityTarget) || entityTarget.isAirborne())
-                && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR
-                        && target.getTargetType() != Targetable.TYPE_HEX_IGNITE
-                        && target.getTargetType() != Targetable.TYPE_BUILDING))
-                || game.getBoard().isSpace()
-                // Capital missile launchers should return the root handler...
-                || (wtype.getAtClass() == (WeaponType.CLASS_CAPITAL_MISSILE))
-                || (wtype.getAtClass() == (WeaponType.CLASS_AR10))) {
+              && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR
+              && target.getTargetType() != Targetable.TYPE_HEX_IGNITE
+              && target.getTargetType() != Targetable.TYPE_BUILDING))
+              || game.getBoard().isSpace()
+              // Capital missile launchers should return the root handler...
+              || (wtype.getAtClass() == (WeaponType.CLASS_CAPITAL_MISSILE))
+              || (wtype.getAtClass() == (WeaponType.CLASS_AR10))) {
             return super.handle(phase, vPhaseReport);
         }
 
@@ -131,10 +149,10 @@ public class BayWeaponHandler extends WeaponHandler {
         insertAttacks(phase, vPhaseReport);
 
         final boolean targetInBuilding = Compute.isInBuilding(game,
-                entityTarget);
+              entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
-                && !(target instanceof Infantry)
-                && ae.getPosition().distance(target.getPosition()) <= 1;
+              && !(target instanceof Infantry)
+              && ae.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
@@ -203,7 +221,7 @@ public class BayWeaponHandler extends WeaponHandler {
         // Set Margin of Success/Failure.
         toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
-                && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
+              && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();
@@ -246,7 +264,7 @@ public class BayWeaponHandler extends WeaponHandler {
         } // End missed-target
 
         if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
-                || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
+              || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
             handleIgnitionDamage(vPhaseReport, bldg, 1);
             return false;
         }
@@ -291,14 +309,14 @@ public class BayWeaponHandler extends WeaponHandler {
             // Amount is based upon the building's CF at the phase's start.
             int bldgAbsorbs = 0;
             if (targetInBuilding && (bldg != null)
-                    && (toHit.getThruBldg() == null)) {
+                  && (toHit.getThruBldg() == null)) {
                 bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
             }
 
             // Attacking infantry in buildings from same building
             if (targetInBuilding && (bldg != null)
-                    && (toHit.getThruBldg() != null)
-                    && (entityTarget instanceof Infantry)) {
+                  && (toHit.getThruBldg() != null)
+                  && (entityTarget instanceof Infantry)) {
                 // If elevation is the same, building doesn't absorb
                 if (ae.getElevation() != entityTarget.getElevation()) {
                     int dmgClass = wtype.getInfantryDamageClass();
@@ -327,8 +345,8 @@ public class BayWeaponHandler extends WeaponHandler {
     }
 
     /**
-     * Calculate the starting armor value of a flight of Capital Missiles
-     * Used for Aero Sanity. This is done in calcAttackValue() otherwise
+     * Calculate the starting armor value of a flight of Capital Missiles Used for Aero Sanity. This is done in
+     * calcAttackValue() otherwise
      */
     protected int initializeCapMissileArmor() {
         return 0;
@@ -342,12 +360,12 @@ public class BayWeaponHandler extends WeaponHandler {
         insertAttacks(phase, vPhaseReport);
 
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                : null;
+              : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
-                entityTarget);
+              entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
-                && !(target instanceof Infantry)
-                && ae.getPosition().distance(target.getPosition()) <= 1;
+              && !(target instanceof Infantry)
+              && ae.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
@@ -451,7 +469,7 @@ public class BayWeaponHandler extends WeaponHandler {
         // Set Margin of Success/Failure.
         toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
-                && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
+              && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();
@@ -508,12 +526,12 @@ public class BayWeaponHandler extends WeaponHandler {
         double counterAVMod = getCounterAV();
         // Report a failure due to overheating
         if (pdOverheated
-                && (!(amsBayEngaged
-                        || amsBayEngagedCap
-                        || amsBayEngagedMissile
-                        || pdBayEngaged
-                        || pdBayEngagedCap
-                        || pdBayEngagedMissile))) {
+              && (!(amsBayEngaged
+              || amsBayEngagedCap
+              || amsBayEngagedMissile
+              || pdBayEngaged
+              || pdBayEngagedCap
+              || pdBayEngagedMissile))) {
             r = new Report(3359);
             r.subject = subjectId;
             r.indent();
@@ -551,9 +569,9 @@ public class BayWeaponHandler extends WeaponHandler {
                 if (bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();
                     WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(),
-                            waa.getTargetId(), m.getEquipmentNum());
+                          waa.getTargetId(), m.getEquipmentNum());
                     AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game,
-                            gameManager);
+                          gameManager);
                     bayWHandler.setAnnouncedEntityFiring(false);
                     // This should always be true
                     if (bayWHandler instanceof WeaponHandler) {
@@ -561,7 +579,7 @@ public class BayWeaponHandler extends WeaponHandler {
                         wHandler.setParentBayHandler(this);
                     } else {
                         logger.error("bayWHandler " + bayWHandler.getClass()
-                                + " is not a weapon handler! Cannot set parent bay handler.");
+                              + " is not a weapon handler! Cannot set parent bay handler.");
                         continue;
                     }
                     bayWHandler.handle(phase, vPhaseReport);

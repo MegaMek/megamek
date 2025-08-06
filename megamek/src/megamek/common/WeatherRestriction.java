@@ -1,23 +1,46 @@
 /*
- * MegaMek -
- * Copyright (C) 2023 The MegaMek Team
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 
 package megamek.common;
 
-import megamek.common.planetaryconditions.*;
-
 import java.util.HashMap;
+
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.Fog;
+import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryconditions.Weather;
+import megamek.common.planetaryconditions.Wind;
 
 /**
  * This class contains data and logic for temperature restrictions.
@@ -118,9 +141,15 @@ public class WeatherRestriction {
      * Currently validates fog, weather (precipitation) and wind strength
      */
     public static boolean IsRestricted(PlanetaryConditions conditions) {
-        return IsFogRestricted(conditions.getFog().ordinal(), conditions.getAtmosphere().ordinal(), conditions.getTemperature()) ||
-                IsWeatherRestricted(conditions.getWeather().ordinal(), conditions.getAtmosphere().ordinal(), conditions.getTemperature()) ||
-                IsWindRestricted(conditions.getWind().ordinal(), conditions.getAtmosphere().ordinal(), conditions.getTemperature());
+        return IsFogRestricted(conditions.getFog().ordinal(),
+              conditions.getAtmosphere().ordinal(),
+              conditions.getTemperature()) ||
+              IsWeatherRestricted(conditions.getWeather().ordinal(),
+                    conditions.getAtmosphere().ordinal(),
+                    conditions.getTemperature()) ||
+              IsWindRestricted(conditions.getWind().ordinal(),
+                    conditions.getAtmosphere().ordinal(),
+                    conditions.getTemperature());
     }
 
     /**
@@ -145,11 +174,11 @@ public class WeatherRestriction {
     }
 
     /**
-     * Given a condition type, current atmospheric level and temperature,
-     * determine if the condition type is allowed from the given restriction mapping.
+     * Given a condition type, current atmospheric level and temperature, determine if the condition type is allowed
+     * from the given restriction mapping.
      */
     private static boolean IsRestricted(int conditionType, int atmoLevel, int currentTemp,
-                                       HashMap<Integer, WeatherRestriction> restrictionMap) {
+          HashMap<Integer, WeatherRestriction> restrictionMap) {
         if (restrictionMap.containsKey(conditionType)) {
             WeatherRestriction restriction = restrictionMap.get(conditionType);
 
@@ -157,7 +186,7 @@ public class WeatherRestriction {
             // if there's a specified minimum atmo level and we're below it OR
             // if there's a specified max temp and we're at or above it
             return ((restriction.minAtmoLevel != null) && (atmoLevel < restriction.minAtmoLevel)) ||
-                    ((restriction.maxTemp != null) && (currentTemp >= restriction.maxTemp));
+                  ((restriction.maxTemp != null) && (currentTemp >= restriction.maxTemp));
         }
 
         return true;

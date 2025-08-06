@@ -58,7 +58,7 @@ public class MinimapDialog extends JDialog {
     /**
      * Creates a new MiniMapDialog.
      *
-     * @param frame     the parent frame for this dialog
+     * @param frame the parent frame for this dialog
      */
     public MinimapDialog(final JFrame frame) {
         super(frame, "", false);

@@ -1,17 +1,36 @@
 /*
-* MegaMek -
-* Copyright (C) 2020 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 package megamek.common.pathfinder;
 
 import java.util.ArrayList;
@@ -34,15 +53,13 @@ import megamek.common.Terrains;
 import megamek.common.util.BoardUtilities;
 
 /**
- * This class handles the tracking of "clusters" of movable areas for various
- * movement types,
- * either with or without destruction awareness.
+ * This class handles the tracking of "clusters" of movable areas for various movement types, either with or without
+ * destruction awareness.
  */
 public class BoardClusterTracker {
     /**
-     * Movement types that are relevant for "destruction-aware pathfinding"
-     * Have a close relationship but are not exactly one to one with entity movement
-     * modes.
+     * Movement types that are relevant for "destruction-aware pathfinding" Have a close relationship but are not
+     * exactly one to one with entity movement modes.
      */
     public static enum MovementType {
         Walker,
@@ -59,16 +76,14 @@ public class BoardClusterTracker {
 
         public static boolean canUseBridge(MovementType movementType) {
             return movementType != Jump &&
-                    movementType != Flyer &&
-                    movementType != Water &&
-                    movementType != None;
+                  movementType != Flyer &&
+                  movementType != Water &&
+                  movementType != None;
         }
 
         /**
-         * Figures out the relevant entity movement mode (for path caching) based on
-         * properties
-         * of the entity. Mostly just movement mode, but some complications exist for
-         * tracked/wheeled vehicles.
+         * Figures out the relevant entity movement mode (for path caching) based on properties of the entity. Mostly
+         * just movement mode, but some complications exist for tracked/wheeled vehicles.
          */
         public static MovementType getMovementType(Entity entity) {
             switch (entity.getMovementMode()) {
@@ -112,8 +127,8 @@ public class BoardClusterTracker {
     private Map<MovementType, Map<Coords, BoardCluster>> movableAreasBridgesWithTerrainReduction = new HashMap<>();
 
     /**
-     * Returns the size of the biggest terrain-reduced or non-terrain-reduced
-     * board cluster in which the given coordinates currently reside.
+     * Returns the size of the biggest terrain-reduced or non-terrain-reduced board cluster in which the given
+     * coordinates currently reside.
      */
     public int getBoardClusterSize(Entity entity, Coords actualCoords, boolean terrainReduction) {
         MovementType movementType = MovementType.getMovementType(entity);
@@ -140,42 +155,40 @@ public class BoardClusterTracker {
     }
 
     /**
-     * Determines whether, for the given entity, the two sets of coordinates share
-     * any cluster.
+     * Determines whether, for the given entity, the two sets of coordinates share any cluster.
      */
     public boolean coordinatesShareCluster(Entity mover, Coords first, Coords second, int firstElevation,
-            int secondElevation) {
+          int secondElevation) {
         updateMovableAreas(mover);
 
         MovementType movementType = MovementType.getMovementType(mover);
 
         return coordinatesShareCluster(first, second, firstElevation, secondElevation,
-                movableAreasBridges.get(movementType).get(first)) ||
-                coordinatesShareCluster(first, second, firstElevation, secondElevation,
-                        movableAreasBridgesWithTerrainReduction.get(movementType).get(first))
-                ||
-                coordinatesShareCluster(first, second, firstElevation, secondElevation,
-                        movableAreas.get(movementType).get(first))
-                ||
-                coordinatesShareCluster(first, second, firstElevation, secondElevation,
-                        movableAreasWithTerrainReduction.get(movementType).get(first));
+              movableAreasBridges.get(movementType).get(first)) ||
+              coordinatesShareCluster(first, second, firstElevation, secondElevation,
+                    movableAreasBridgesWithTerrainReduction.get(movementType).get(first))
+              ||
+              coordinatesShareCluster(first, second, firstElevation, secondElevation,
+                    movableAreas.get(movementType).get(first))
+              ||
+              coordinatesShareCluster(first, second, firstElevation, secondElevation,
+                    movableAreasWithTerrainReduction.get(movementType).get(first));
     }
 
     /**
      * Determines if the given cluster contains both the given sets of coordinates.
      */
     public boolean coordinatesShareCluster(Coords first, Coords second, int firstElevation, int secondElevation,
-            BoardCluster cluster) {
+          BoardCluster cluster) {
         // two coordinates are considered to share a cluster if they are both in it at
         // the precise elevations we're considering
         return (cluster != null) && cluster.contents.containsKey(first) && cluster.contents.containsKey(second) &&
-                cluster.contents.get(first) == firstElevation && cluster.contents.get(second) == secondElevation;
+              cluster.contents.get(first) == firstElevation && cluster.contents.get(second) == secondElevation;
     }
 
     /**
-     * Returns a set of coordinates on a given board edge that intersects with the
-     * cluster
-     * in which the given entity resides. May return an empty set.
+     * Returns a set of coordinates on a given board edge that intersects with the cluster in which the given entity
+     * resides. May return an empty set.
      */
     public Set<Coords> getDestinationCoords(Entity entity, CardinalEdge edge, boolean terrainReduction) {
         CardinalEdge actualEdge = edge;
@@ -219,11 +232,12 @@ public class BoardClusterTracker {
     }
 
     /**
-     * Returns a set of coordinates that intersect with the cluster in which the given
-     * entity resides.
+     * Returns a set of coordinates that intersect with the cluster in which the given entity resides.
+     *
      * @param entity
      * @param destination
      * @param terrainReduction
+     *
      * @return
      */
     public Set<Coords> getDestinationCoords(Entity entity, Coords destination, boolean terrainReduction) {
@@ -247,13 +261,14 @@ public class BoardClusterTracker {
         return retVal;
     }
 
-    private BoardCluster getEntityCluster(Entity entity, MovementType movementType, boolean terrainReduction, boolean useBridges) {
+    private BoardCluster getEntityCluster(Entity entity, MovementType movementType, boolean terrainReduction,
+          boolean useBridges) {
         if (terrainReduction) {
             return useBridges ? movableAreasBridgesWithTerrainReduction.get(movementType).get(entity.getPosition())
-                : movableAreasWithTerrainReduction.get(movementType).get(entity.getPosition());
+                  : movableAreasWithTerrainReduction.get(movementType).get(entity.getPosition());
         } else {
             return useBridges ? movableAreasBridges.get(movementType).get(entity.getPosition())
-                : movableAreas.get(movementType).get(entity.getPosition());
+                  : movableAreas.get(movementType).get(entity.getPosition());
         }
     }
 
@@ -268,8 +283,8 @@ public class BoardClusterTracker {
     }
 
     /**
-     * Updates and stores accessible clusters for the given entity,
-     * both for destruction and non-destruction-aware path finding.
+     * Updates and stores accessible clusters for the given entity, both for destruction and non-destruction-aware path
+     * finding.
      */
     public void updateMovableAreas(Entity entity) {
         MovementType movementType = MovementType.getMovementType(entity);
@@ -319,7 +334,7 @@ public class BoardClusterTracker {
         MovementType movementType = MovementType.getMovementType(entity);
         boolean isHovercraft = movementType == MovementType.Hover;
         boolean isAmphibious = movementType == MovementType.WheeledAmphi ||
-                movementType == MovementType.TrackedAmphi;
+              movementType == MovementType.TrackedAmphi;
 
         boolean canUseBridge = MovementType.canUseBridge(movementType);
 
@@ -330,18 +345,18 @@ public class BoardClusterTracker {
                 // hex is either inaccessible
                 // or it is inaccessible AND we can't level it, then we move on
                 if ((entity.isLocationProhibited(c) || buildingPlowThroughRequired(entity, movementType, c)) &&
-                        (!destructionAware || (destructionAware && !canLevel(entity, c)))) {
+                      (!destructionAware || (destructionAware && !canLevel(entity, c)))) {
                     continue;
                 }
 
                 int myElevation = 0;
 
                 if (useBridgeTop && board.getHex(c).containsTerrain(Terrains.BRIDGE) &&
-                        canUseBridge && (entity.getWeight() <= board.getBuildingAt(c).getCurrentCF(c))) {
+                      canUseBridge && (entity.getWeight() <= board.getBuildingAt(c).getCurrentCF(c))) {
                     myElevation = board.getHex(c).ceiling();
                 } else {
                     myElevation = BoardEdgePathFinder.calculateUnitElevationInHex(board.getHex(c), entity, isHovercraft,
-                            isAmphibious);
+                          isAmphibious);
                 }
 
                 List<Coords> neighborsToJoin = new ArrayList<>();
@@ -355,12 +370,12 @@ public class BoardClusterTracker {
                         int neighborElevation = 0;
 
                         if (useBridgeTop && board.getHex(neighbor).containsTerrain(Terrains.BRIDGE) &&
-                                canUseBridge
-                                && (entity.getWeight() <= board.getBuildingAt(neighbor).getCurrentCF(neighbor))) {
+                              canUseBridge
+                              && (entity.getWeight() <= board.getBuildingAt(neighbor).getCurrentCF(neighbor))) {
                             neighborElevation = board.getHex(neighbor).ceiling();
                         } else {
                             neighborElevation = BoardEdgePathFinder.calculateUnitElevationInHex(board.getHex(neighbor),
-                                    entity, isHovercraft, isAmphibious);
+                                  entity, isHovercraft, isAmphibious);
                         }
 
                         // if we can't reach from here to the neighbor due to elevation differences,
@@ -370,7 +385,7 @@ public class BoardClusterTracker {
                         // it is highly inadvisable and we will avoid it for now.
                         int elevationDiff = Math.abs(neighborElevation - myElevation);
                         if ((elevationDiff > entity.getMaxElevationChange())
-                                || buildingPlowThroughRequired(entity, movementType, neighbor)) {
+                              || buildingPlowThroughRequired(entity, movementType, neighbor)) {
                             continue;
                         }
 
@@ -379,7 +394,7 @@ public class BoardClusterTracker {
                         neighborsToJoin.add(neighbor);
 
                         if ((biggestNeighbor == null) ||
-                                (clusters.get(neighbor).contents.size() > biggestNeighbor.contents.size())) {
+                              (clusters.get(neighbor).contents.size() > biggestNeighbor.contents.size())) {
                             biggestNeighbor = clusters.get(neighbor);
                         }
                     }
@@ -418,8 +433,7 @@ public class BoardClusterTracker {
     }
 
     /**
-     * Whether or not we are required to plow through a building if we enter this
-     * hex.
+     * Whether or not we are required to plow through a building if we enter this hex.
      */
     private boolean buildingPlowThroughRequired(Entity entity, MovementType relevantMovementType, Coords coords) {
         // basic premise:
@@ -443,9 +457,9 @@ public class BoardClusterTracker {
 
             return entity.getWeight() > buildingCF;
         } else if ((relevantMovementType != MovementType.Flyer) &&
-                (relevantMovementType != MovementType.Jump) &&
-                (relevantMovementType != MovementType.None) &&
-                (relevantMovementType != MovementType.Water)) {
+              (relevantMovementType != MovementType.Jump) &&
+              (relevantMovementType != MovementType.None) &&
+              (relevantMovementType != MovementType.Water)) {
             return true;
         } else {
             return false;
@@ -453,17 +467,15 @@ public class BoardClusterTracker {
     }
 
     /**
-     * Indicates whether an entity would be able to pass through a given set of
-     * coordinates
-     * if it were to degrade the terrain there sufficiently.
+     * Indicates whether an entity would be able to pass through a given set of coordinates if it were to degrade the
+     * terrain there sufficiently.
      */
     private boolean canLevel(Entity entity, Coords c) {
         return BulldozerMovePath.calculateLevelingCost(c, entity) > BulldozerMovePath.CANNOT_LEVEL;
     }
 
     /**
-     * A data structure representing a set of coordinates to which an entity can
-     * move.
+     * A data structure representing a set of coordinates to which an entity can move.
      */
     public static class BoardCluster {
         public Map<Coords, Integer> contents = new HashMap<>();
@@ -474,8 +486,7 @@ public class BoardClusterTracker {
         }
 
         /**
-         * Returns a set of coordinates in the current cluster that intersect
-         * an arbitrary rectangle.
+         * Returns a set of coordinates in the current cluster that intersect an arbitrary rectangle.
          */
         public Set<Coords> getIntersectingHexes(Coords coords, int size) {
             Set<Coords> retVal = new HashSet<>();
@@ -491,8 +502,7 @@ public class BoardClusterTracker {
 
 
         /**
-         * Returns a set of coords in the current cluster that intersect the given board
-         * edge.
+         * Returns a set of coords in the current cluster that intersect the given board edge.
          */
         public Set<Coords> getIntersectingHexes(CardinalEdge edge, Board board) {
             int xStart, xEnd, yStart, yEnd;
@@ -529,8 +539,7 @@ public class BoardClusterTracker {
         }
 
         /**
-         * Returns a set of coordinates in the current cluster that intersect
-         * an arbitrary rectangle.
+         * Returns a set of coordinates in the current cluster that intersect an arbitrary rectangle.
          */
         public Set<Coords> getIntersectingHexes(int xStart, int xEnd, int yStart, int yEnd) {
             Set<Coords> retVal = new HashSet<>();

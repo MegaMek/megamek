@@ -53,8 +53,8 @@ public abstract class SuiteConstants {
      * A list containing all milestone release data objects, as loaded from the YAML configuration file at startup.
      *
      * <p>This list is initialized by the {@link MilestoneReleaseLoader} upon class loading, and provides read-only
-     * access to all known milestone releases available to the suite. Each {@link MilestoneData} represents details
-     * such as version number, release notes, and release date for a single milestone.</p>
+     * access to all known milestone releases available to the suite. Each {@link MilestoneData} represents details such
+     * as version number, release notes, and release date for a single milestone.</p>
      */
     public static final List<MilestoneData> ALL_MILESTONE_RELEASES = new MilestoneReleaseLoader().getMilestoneReleases();
     /**
@@ -62,8 +62,8 @@ public abstract class SuiteConstants {
      * {@link #ALL_MILESTONE_RELEASES}.
      *
      * <p>This constant is calculated by determining the highest version among all loaded milestones during class
-     * initialization. It provides a convenient way for code and UI to easily access/display the most recent
-     * milestone version. </p>
+     * initialization. It provides a convenient way for code and UI to easily access/display the most recent milestone
+     * version. </p>
      */
     public static final Version LAST_MILESTONE = MilestoneReleaseLoader.getLatestMilestoneReleaseVersion();
 

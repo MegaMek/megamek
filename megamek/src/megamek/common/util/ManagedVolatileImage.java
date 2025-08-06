@@ -41,8 +41,6 @@ import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.image.VolatileImage;
 
-import megamek.client.ui.util.UIUtil;
-
 /**
  * A wrapper around VolatileImage that handles validation and recreation automatically.
  */
@@ -53,15 +51,15 @@ public class ManagedVolatileImage {
     private final int height;
     private final int transparency;
     private final GraphicsConfiguration gc;
-    
+
     public ManagedVolatileImage(Image sourceImage) {
         this(sourceImage, Transparency.TRANSLUCENT);
     }
-    
+
     public ManagedVolatileImage(Image sourceImage, int transparency) {
         this(sourceImage, transparency, sourceImage.getWidth(null), sourceImage.getHeight(null));
     }
-    
+
     public ManagedVolatileImage(Image sourceImage, int transparency, int width, int height) {
         if (width <= 0 || height <= 0) {
             throw new IllegalArgumentException("Width and height must be positive.");
@@ -74,10 +72,10 @@ public class ManagedVolatileImage {
         this.height = height;
         this.transparency = transparency;
         this.gc = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                .getDefaultScreenDevice().getDefaultConfiguration();
+              .getDefaultScreenDevice().getDefaultConfiguration();
         createVolatileImage();
     }
-    
+
     private void createVolatileImage() {
         if (volatileImage != null) {
             volatileImage.flush();
@@ -85,7 +83,7 @@ public class ManagedVolatileImage {
         volatileImage = gc.createCompatibleVolatileImage(width, height, transparency);
         renderToVolatileImage();
     }
-    
+
     private void renderToVolatileImage() {
         Graphics2D g2d = volatileImage.createGraphics();
         try {
@@ -100,7 +98,7 @@ public class ManagedVolatileImage {
             g2d.dispose();
         }
     }
-    
+
     /**
      * Gets the VolatileImage, ensuring it's valid.
      */
@@ -115,7 +113,7 @@ public class ManagedVolatileImage {
         } while (volatileImage.contentsLost());
         return volatileImage;
     }
-    
+
     public void flush() {
         if (volatileImage != null) {
             volatileImage.flush();

@@ -32,6 +32,15 @@
  */
 package megamek.common.autoresolve.event;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import megamek.common.Entity;
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.IGame;
@@ -40,9 +49,6 @@ import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.event.PostGameResolution;
 import megamek.server.victory.VictoryResult;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import java.io.File;
-import java.util.*;
 
 /**
  * @author Luana Coppio
@@ -76,12 +82,16 @@ public class AutoResolveConcludedEvent implements PostGameResolution {
             }
         }
 
-        var salvageableConditions = Set.of(IEntityRemovalConditions.REMOVE_SALVAGEABLE, IEntityRemovalConditions.REMOVE_EJECTED);
-        var retreatedConditions = Set.of(IEntityRemovalConditions.REMOVE_NEVER_JOINED, IEntityRemovalConditions.REMOVE_IN_RETREAT,
-            IEntityRemovalConditions.REMOVE_PUSHED);
-        var lostUnitConditions = Set.of(IEntityRemovalConditions.REMOVE_DEVASTATED, IEntityRemovalConditions.REMOVE_CAPTURED);
-        var wreckedConditions = Set.of(IEntityRemovalConditions.REMOVE_DEVASTATED, IEntityRemovalConditions.REMOVE_EJECTED,
-            IEntityRemovalConditions.REMOVE_SALVAGEABLE);
+        var salvageableConditions = Set.of(IEntityRemovalConditions.REMOVE_SALVAGEABLE,
+              IEntityRemovalConditions.REMOVE_EJECTED);
+        var retreatedConditions = Set.of(IEntityRemovalConditions.REMOVE_NEVER_JOINED,
+              IEntityRemovalConditions.REMOVE_IN_RETREAT,
+              IEntityRemovalConditions.REMOVE_PUSHED);
+        var lostUnitConditions = Set.of(IEntityRemovalConditions.REMOVE_DEVASTATED,
+              IEntityRemovalConditions.REMOVE_CAPTURED);
+        var wreckedConditions = Set.of(IEntityRemovalConditions.REMOVE_DEVASTATED,
+              IEntityRemovalConditions.REMOVE_EJECTED,
+              IEntityRemovalConditions.REMOVE_SALVAGEABLE);
 
         for (var graveyardEntity : graveyardObjects) {
             if (graveyardEntity instanceof Entity entity) {
@@ -153,13 +163,13 @@ public class AutoResolveConcludedEvent implements PostGameResolution {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-            .append("game", game)
-            .append("controlledScenario", controlledScenario)
-            .append("survived", survived)
-            .append("retreated", retreated)
-            .append("graveyard", graveyard)
-            .append("devastated", devastated)
-            .append("wrecked", wrecked)
-            .toString();
+              .append("game", game)
+              .append("controlledScenario", controlledScenario)
+              .append("survived", survived)
+              .append("retreated", retreated)
+              .append("graveyard", graveyard)
+              .append("devastated", devastated)
+              .append("wrecked", wrecked)
+              .toString();
     }
 }

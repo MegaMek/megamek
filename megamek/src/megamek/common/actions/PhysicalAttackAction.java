@@ -1,26 +1,45 @@
 /*
-* MegaMek -
-* Copyright (C) 2001-2004 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2001-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 package megamek.common.actions;
+
+import static megamek.common.QuadVee.CONV_MODE_VEHICLE;
 
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
-
-import static megamek.common.QuadVee.CONV_MODE_VEHICLE;
 
 public class PhysicalAttackAction extends AbstractAttackAction {
     private static final long serialVersionUID = -4702357516725749181L;
@@ -39,10 +58,11 @@ public class PhysicalAttackAction extends AbstractAttackAction {
      * @param game   The current {@link Game}
      * @param ae     the attacking {@link Entity}, which may be null
      * @param target the attack's target
+     *
      * @return reason the attack is impossible, or null if it is possible
      */
     protected static @Nullable String toHitIsImpossible(Game game, @Nullable Entity ae,
-            Targetable target) {
+          Targetable target) {
         if (target == null) {
             return "target is null";
         }
@@ -50,10 +70,10 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+                  && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                  || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                  && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                  && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return "A friendly unit can never be the target of a direct attack.";
             }
         }
@@ -127,8 +147,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
         // Can't target woods or ignite a building with a physical.
         if ((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
-                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-                || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
+              || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+              || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
             return "Invalid attack";
         }
 
@@ -181,12 +201,12 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         // It gets a =4 penalty for being blind!
         if (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
             int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+                  Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
             int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mek.SYSTEM_SENSORS, Mek.LOC_CT);
+                  Mek.SYSTEM_SENSORS, Mek.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                      "Sensors Completely Destroyed for Torso-Mounted Cockpit");
                 return;
             } else if (sensorHits == 2) {
                 toHit.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
@@ -195,7 +215,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
         // if we're spotting for indirect fire, add +1
         if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()
-                && game.getTagInfo().stream().noneMatch(inf -> inf.attackerId == ae.getId())) {
+              && game.getTagInfo().stream().noneMatch(inf -> inf.attackerId == ae.getId())) {
             toHit.addModifier(+1, "attacker is spotting for indirect LRM fire");
         }
 
@@ -217,7 +237,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             }
 
             if ((te.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) && !te.isAirborne()
-                    && !te.isSpaceborne()) {
+                  && !te.isSpaceborne()) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TeLargeSupportUnit"));
             }
 
@@ -232,7 +252,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             Hex targHex = game.getHexOf(te);
             // water partial cover?
             if ((te.height() > 0) && (te.getElevation() == -1)
-                    && (targHex.terrainLevel(Terrains.WATER) == te.height())) {
+                  && (targHex.terrainLevel(Terrains.WATER) == te.height())) {
                 toHit.addModifier(1, "target has partial cover");
             }
 
@@ -265,8 +285,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
     //Returns true if QuadVee is in Vehicle mode.  QuadVees in this mode are treated as having 1 less height in
     // physical attacks
-    static protected boolean isConvertedQuadVee(Targetable target, Game game){
-        if(!target.isQuadMek()){
+    static protected boolean isConvertedQuadVee(Targetable target, Game game) {
+        if (!target.isQuadMek()) {
             return false;
         }
         return game.getEntityOrThrow(target.getId()).getConversionMode() == CONV_MODE_VEHICLE;

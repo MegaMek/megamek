@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -74,54 +74,39 @@ public class ConfirmDialog extends JDialog {
     JComponent firstFocusable;
 
     /**
-     * Creates a new dialog window that lets the user answer Yes or No, with the
-     * Yes button pre-focused
+     * Creates a new dialog window that lets the user answer Yes or No, with the Yes button pre-focused
      *
-     * @param title
-     *            a title for the dialog window
-     * @param question
-     *            the text of the dialog
+     * @param title    a title for the dialog window
+     * @param question the text of the dialog
      */
     public ConfirmDialog(JFrame p, String title, String question) {
         this(p, title, question, false);
     }
 
     /**
-     * Creates a new dialog window that lets the user answer Yes or No, with an
-     * optional checkbox to specify future behaviour, and the Yes button
-     * pre-focused
+     * Creates a new dialog window that lets the user answer Yes or No, with an optional checkbox to specify future
+     * behaviour, and the Yes button pre-focused
      *
-     * @param title
-     *            a title for the dialog window
-     * @param question
-     *            the text of the dialog
-     * @param includeCheckbox
-     *            whether the dialog includes a "bother me" checkbox for the
-     *            user to tick
+     * @param title           a title for the dialog window
+     * @param question        the text of the dialog
+     * @param includeCheckbox whether the dialog includes a "bother me" checkbox for the user to tick
      */
     public ConfirmDialog(JFrame p, String title, String question,
-            boolean includeCheckbox) {
+          boolean includeCheckbox) {
         this(p, title, question, includeCheckbox, 'y');
     }
 
     /**
-     * Creates a new dialog window that lets the user answer Yes or No, with an
-     * optional checkbox to specify future behaviour, and either the Yes or No
-     * button pre-focused
+     * Creates a new dialog window that lets the user answer Yes or No, with an optional checkbox to specify future
+     * behaviour, and either the Yes or No button pre-focused
      *
-     * @param title
-     *            a title for the dialog window
-     * @param question
-     *            the text of the dialog
-     * @param includeCheckbox
-     *            whether the dialog includes a "bother me" checkbox for the
-     *            user to tick
-     * @param defButton
-     *            set it to 'n' to make the No button pre-focused (Yes button is
-     *            focused by default)
+     * @param title           a title for the dialog window
+     * @param question        the text of the dialog
+     * @param includeCheckbox whether the dialog includes a "bother me" checkbox for the user to tick
+     * @param defButton       set it to 'n' to make the No button pre-focused (Yes button is focused by default)
      */
     private ConfirmDialog(JFrame p, String title, String question,
-            boolean includeCheckbox, char defButton) {
+          boolean includeCheckbox, char defButton) {
         super(p, title, true);
 
         super.setResizable(false);

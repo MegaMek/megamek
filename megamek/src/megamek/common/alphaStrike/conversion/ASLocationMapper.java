@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike.conversion;
 
 import static megamek.common.MiscType.F_HEAD_TURRET;
@@ -25,11 +40,8 @@ import static megamek.common.MiscType.F_SHOULDER_TURRET;
 import megamek.common.*;
 
 /**
- * This class provides AlphaStrike conversion utilities for converting all sorts
- * of locations
- * of TW units to the damage conversion location index. Not useful for anything
- * outside
- * of AlphaStrike conversion.
+ * This class provides AlphaStrike conversion utilities for converting all sorts of locations of TW units to the damage
+ * conversion location index. Not useful for anything outside of AlphaStrike conversion.
  */
 public class ASLocationMapper {
 
@@ -99,22 +111,16 @@ public class ASLocationMapper {
     }
 
     /**
-     * Returns the value multiplier for the given Mounted of the given entity in the
-     * AS conversion location loc.
-     * The AS conversion location is an
-     * {@link megamek.common.alphaStrike.ASSpecialAbilityCollection} assembling
-     * the specials for the unit, a TUR ability, REAR and the arcs of large units,
-     * not the
-     * mounted's location on the entity. This multiplier is only correct for
-     * weapon-based special abilities
-     * like MHQ, C3M, NARC or ART-x abilities.
+     * Returns the value multiplier for the given Mounted of the given entity in the AS conversion location loc. The AS
+     * conversion location is an {@link megamek.common.alphaStrike.ASSpecialAbilityCollection} assembling the specials
+     * for the unit, a TUR ability, REAR and the arcs of large units, not the mounted's location on the entity. This
+     * multiplier is only correct for weapon-based special abilities like MHQ, C3M, NARC or ART-x abilities.
      *
      * @param en    The entity
-     * @param loc   The conversion location index, see locations[] in
-     *              ASDamageConverter
+     * @param loc   The conversion location index, see locations[] in ASDamageConverter
      * @param mount the weapon
-     * @return The value multiplier, 1 meaning "counts for this location", 0 meaning
-     *         "doesnt count"
+     *
+     * @return The value multiplier, 1 meaning "counts for this location", 0 meaning "doesnt count"
      */
     public static double damageLocationMultiplierForSpecials(Entity en, int loc, Mounted<?> mount) {
         if (en.isFighter() || en.isProtoMek() || en.isMek()) {
@@ -225,7 +231,7 @@ public class ASLocationMapper {
                     return 1;
                 }
                 if (en.isSpheroid() && (location == SmallCraft.LOC_LWING || location == SmallCraft.LOC_RWING)
-                        && !rearMounted) {
+                      && !rearMounted) {
                     return 0.5;
                 }
                 break;
@@ -265,7 +271,7 @@ public class ASLocationMapper {
 
     private static double getAeroLocationMultiplier(int index, int location, boolean rearMounted) {
         if ((index == 0 && location != Aero.LOC_AFT && !rearMounted)
-                || (index == 1 && (location == Aero.LOC_AFT || rearMounted))) {
+              || (index == 1 && (location == Aero.LOC_AFT || rearMounted))) {
             return 1;
         }
         return 0;
@@ -273,8 +279,8 @@ public class ASLocationMapper {
 
     private static double getSupportTankLocationMultiplier(int index, int location) {
         if ((index == 0) && ((location == SupportTank.LOC_FRONT) || (location == SupportTank.LOC_LEFT)
-                || (location == SupportTank.LOC_RIGHT)
-                || (location == SupportTank.LOC_TURRET) || (location == SupportTank.LOC_TURRET_2))) {
+              || (location == SupportTank.LOC_RIGHT)
+              || (location == SupportTank.LOC_TURRET) || (location == SupportTank.LOC_TURRET_2))) {
             return 1;
         } else if (index == 1 && (location == SupportTank.LOC_REAR)) {
             return 1;
@@ -333,7 +339,7 @@ public class ASLocationMapper {
         } else if ((index == 1) && (location == SuperHeavyTank.LOC_REAR)) {
             return 1;
         } else if ((index == 2)
-                && ((location == SuperHeavyTank.LOC_TURRET) || (location == SuperHeavyTank.LOC_TURRET_2))) {
+              && ((location == SuperHeavyTank.LOC_TURRET) || (location == SuperHeavyTank.LOC_TURRET_2))) {
             return 1;
         }
         return 0;

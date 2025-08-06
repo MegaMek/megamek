@@ -37,6 +37,7 @@ import megamek.ai.dataset.UnitAction.Field;
 /**
  * <p>Serializer for UnitAction to TSV format.</p>
  * <p>Uses a flexible map-based approach with enum fields.</p>
+ *
  * @author Luana Coppio
  */
 public class UnitActionSerializer extends EntityDataSerializer<UnitAction.Field, UnitAction> {

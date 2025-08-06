@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.io.BufferedWriter;
@@ -29,8 +50,9 @@ import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
 /**
- * The GameDatasetLogger class is used to log game data to a file in the log directory
- * with TSV format. It contains every action taken by  every unit in the game and the result of the game state after those actions.
+ * The GameDatasetLogger class is used to log game data to a file in the log directory with TSV format. It contains
+ * every action taken by  every unit in the game and the result of the game state after those actions.
+ *
  * @author Luana Coppio
  */
 public class GameDatasetLogger {
@@ -71,14 +93,14 @@ public class GameDatasetLogger {
     }
 
     /**
-     * Creates a new log file.
-     * If there is already a logfile with the same name, it will delete it and create a new one.
+     * Creates a new log file. If there is already a logfile with the same name, it will delete it and create a new
+     * one.
      */
     private void newLogFile() {
         try {
             boolean timestampFilenames = PreferenceManager.getClientPreferences().stampFilenames();
             String filename = timestampFilenames ? StringUtil.addDateTimeStamp(prefix) : prefix + "_" + counter;
-            File logfile = new File(LOG_DIR + File.separator + filename  + ".tsv");
+            File logfile = new File(LOG_DIR + File.separator + filename + ".tsv");
             // if a file with the same name already exists, delete it.
             if (logfile.exists()) {
                 if (!logfile.delete()) {
@@ -101,8 +123,9 @@ public class GameDatasetLogger {
 
     /**
      * Append a planetary conditions to the log file
+     *
      * @param planetaryConditions the planetary conditions to log
-     * @param withHeader  whether to include the header in the log file
+     * @param withHeader          whether to include the header in the log file
      */
     public void append(PlanetaryConditions planetaryConditions, boolean withHeader) {
         try {
@@ -124,7 +147,8 @@ public class GameDatasetLogger {
 
     /**
      * Append a board to the log file
-     * @param board the board to log
+     *
+     * @param board      the board to log
      * @param withHeader whether to include the header in the log file
      */
     public void append(Board board, boolean withHeader) {
@@ -138,9 +162,9 @@ public class GameDatasetLogger {
             appendToFile(lines);
             // Write all lines from the board serializer
             // maybe its not necessary to split by new line
-//            for (String line : lines.split("\n")) {
-//                appendToFile(line);
-//            }
+            //            for (String line : lines.split("\n")) {
+            //                appendToFile(line);
+            //            }
 
         } catch (Exception ex) {
             logger.error("Error logging board", ex);
@@ -149,8 +173,9 @@ public class GameDatasetLogger {
 
     /**
      * Append a map settings to the log file
+     *
      * @param mapSettings the map settings to log
-     * @param withHeader whether to include the header in the log file
+     * @param withHeader  whether to include the header in the log file
      */
     public void append(MapSettings mapSettings, boolean withHeader) {
         try {
@@ -173,9 +198,10 @@ public class GameDatasetLogger {
 
     /**
      * Append an entity action to the log file
-     * @param game the game
+     *
+     * @param game         the game
      * @param entityAction the entity action to log
-     * @param withHeader whether to include the header in the log file
+     * @param withHeader   whether to include the header in the log file
      */
     public void append(Game game, EntityAction entityAction, boolean withHeader) {
         try {
@@ -189,9 +215,10 @@ public class GameDatasetLogger {
 
     /**
      * Append an attack action to the log file
-     * @param game the game
+     *
+     * @param game         the game
      * @param attackAction the attack action to log
-     * @param withHeader whether to include the header in the log file
+     * @param withHeader   whether to include the header in the log file
      */
     private void append(Game game, AbstractAttackAction attackAction, boolean withHeader) {
         // To be changed in the near future by a proper parser for the attack action
@@ -213,7 +240,8 @@ public class GameDatasetLogger {
 
     /**
      * Appends a game state to the log file.
-     * @param game The game
+     *
+     * @param game       The game
      * @param withHeader Whether to include the header in the log file
      */
     public void append(Game game, boolean withHeader) {
@@ -228,6 +256,7 @@ public class GameDatasetLogger {
 
     /**
      * Appends a move path to the log file
+     *
      * @param movePath the move path to log
      */
     public void append(MovePath movePath) {
@@ -236,7 +265,8 @@ public class GameDatasetLogger {
 
     /**
      * Appends a move path to the log file
-     * @param movePath the move path to log
+     *
+     * @param movePath   the move path to log
      * @param withHeader whether to include the header in the log file
      */
     public void append(MovePath movePath, boolean withHeader) {
@@ -253,6 +283,7 @@ public class GameDatasetLogger {
 
     /**
      * Appends the text to the log
+     *
      * @param toLog the text to log
      */
     private void appendToFile(String toLog) {
@@ -278,6 +309,7 @@ public class GameDatasetLogger {
 
     /**
      * Closes the log file
+     *
      * @throws IOException if an error occurs while closing the log file
      */
     public void close() throws IOException {

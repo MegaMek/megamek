@@ -1,18 +1,36 @@
 /*
-* MegaMek -
-* Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
 
 package megamek.client.ui.dialogs.phaseDisplay;
 
@@ -29,7 +47,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -53,8 +70,7 @@ import megamek.common.WeaponType;
 import megamek.common.actions.TriggerBPodAction;
 
 /**
- * A dialog displayed to the player when they have an opportunity to trigger an
- * Anti-BA Pod on one of their units.
+ * A dialog displayed to the player when they have an opportunity to trigger an Anti-BA Pod on one of their units.
  */
 public class TriggerBPodDialog extends JDialog implements ActionListener {
     private static final long serialVersionUID = -5882060083607984056L;
@@ -74,8 +90,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
     private ClientGUI clientgui;
 
     /**
-     * A helper class to track when a Anti-BA Pod has been selected to be
-     * triggered.
+     * A helper class to track when a Anti-BA Pod has been selected to be triggered.
      */
     private class TriggerPodTracker {
 
@@ -117,13 +132,10 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Display a dialog that shows the Anti-BA Pods on the entity, and allows
-     * the player to fire any active pods.
+     * Display a dialog that shows the Anti-BA Pods on the entity, and allows the player to fire any active pods.
      *
-     * @param clientgui
-     *                   the <code>ClientGUI</code> parent of this dialog
-     * @param entity
-     *                   the <code>Entity</code> that can fire AP Pods.
+     * @param clientgui  the <code>ClientGUI</code> parent of this dialog
+     * @param entity     the <code>Entity</code> that can fire AP Pods.
      * @param attackType
      */
     public TriggerBPodDialog(ClientGUI clientgui, Entity entity, String attackType) {
@@ -132,7 +144,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         this.clientgui = clientgui;
 
         labMessage = new JTextArea(Messages.getString("TriggerBPodDialog.selectPodsToTrigger",
-                entity.getDisplayName()));
+              entity.getDisplayName()));
         labMessage.setEditable(false);
         labMessage.setOpaque(false);
 
@@ -148,7 +160,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
                 // Create a checkbox for the pod, and add it to the panel.
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))
-                        .append(' ').append(mount.getName());
+                      .append(' ').append(mount.getName());
                 JCheckBox pod = new JCheckBox(message.toString());
                 panPods.add(pod);
 
@@ -156,30 +168,30 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
                 if (mount.canFire()) {
                     // Only Leg's and CT BPods can be used against Leg attacks
                     if (attackType.equals(Infantry.LEG_ATTACK)
-                            && (mount.getLocation() != Mek.LOC_CT)
-                            && (mount.getLocation() != Mek.LOC_LLEG)
-                            && (mount.getLocation() != Mek.LOC_RLEG)) {
+                          && (mount.getLocation() != Mek.LOC_CT)
+                          && (mount.getLocation() != Mek.LOC_LLEG)
+                          && (mount.getLocation() != Mek.LOC_RLEG)) {
                         if (entity instanceof QuadMek) {
                             if ((mount.getLocation() != Mek.LOC_LARM)
-                                    || (mount.getLocation() != Mek.LOC_RARM)) {
+                                  || (mount.getLocation() != Mek.LOC_RARM)) {
                                 pod.setEnabled(false);
                             }
                         } else {
                             pod.setEnabled(false);
                         }
                     } // Only Forward Mounted Arm and Side Torso B-Pod's can be
-                      // used against
-                      // Swarm attacks
+                    // used against
+                    // Swarm attacks
                     else if (attackType.equals(Infantry.SWARM_MEK)
-                            && (mount.isRearMounted()
-                                    || (mount.getLocation() == Mek.LOC_CT)
-                                    || (mount.getLocation() == Mek.LOC_LLEG) || (mount
-                                            .getLocation() == Mek.LOC_RLEG))) {
+                          && (mount.isRearMounted()
+                          || (mount.getLocation() == Mek.LOC_CT)
+                          || (mount.getLocation() == Mek.LOC_LLEG) || (mount
+                          .getLocation() == Mek.LOC_RLEG))) {
                         pod.setEnabled(false);
                     } else {
                         // Yup. Add a traker for this pod.
                         TriggerPodTracker tracker = new TriggerPodTracker(pod,
-                                entity.getEquipmentNum(mount));
+                              entity.getEquipmentNum(mount));
                         trackers.add(tracker);
 
                     }
@@ -241,10 +253,10 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         }
         setResizable(false);
         setLocation(clientgui.getFrame().getLocation().x
-                + clientgui.getFrame().getSize().width / 2 - size.width / 2,
-                clientgui.getFrame().getLocation().y
-                        + clientgui.getFrame().getSize().height / 2 - size.height
-                                / 2);
+                    + clientgui.getFrame().getSize().width / 2 - size.width / 2,
+              clientgui.getFrame().getLocation().y
+                    + clientgui.getFrame().getSize().height / 2 - size.height
+                    / 2);
     }
 
     @Override
@@ -255,8 +267,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
     /**
      * Get the trigger actions that the user selected.
      *
-     * @return the <code>Enumeration</code> of <code>TriggerAPPodAction</code>
-     *         objects that match the user's selections.
+     * @return the <code>Enumeration</code> of <code>TriggerAPPodAction</code> objects that match the user's selections.
      */
     public Enumeration<TriggerBPodAction> getActions() {
         Vector<TriggerBPodAction> temp = new Vector<>();
@@ -268,10 +279,10 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
             if (pod.isTriggered()) {
 
                 temp.addElement(new TriggerBPodAction(entityId, pod.getNum(),
-                        chooseTarget(
-                                clientgui.getClient().getGame().getEntity(entityId)
-                                        .getPosition())
-                                .getId()));
+                      chooseTarget(
+                            clientgui.getClient().getGame().getEntity(entityId)
+                                  .getPosition())
+                            .getId()));
             }
         }
 
@@ -281,8 +292,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
     /**
      * Have the player select a target from the entities at the given coords.
      *
-     * @param pos
-     *            - the <code>Coords</code> containing targets.
+     * @param pos - the <code>Coords</code> containing targets.
      */
     private Entity chooseTarget(Coords pos) {
         final Game game = clientgui.getClient().getGame();
@@ -295,7 +305,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         List<Targetable> targets = new ArrayList<>();
         for (Entity ent : game.getEntitiesVector(pos)) {
             if (!game.getEntity(entityId).equals(choice)
-                    && (choice instanceof Infantry)) {
+                  && (choice instanceof Infantry)) {
                 targets.add(ent);
             }
         }
@@ -311,9 +321,9 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         // If we have multiple choices, display a selection dialog.
         else if (targets.size() > 1) {
             String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-                    Messages.getString("TriggerBPodDialog.ChooseTargetDialog.message", pos.getBoardNum()),
-                    Messages.getString("TriggerBPodDialog.ChooseTargetDialog.title"),
-                    JOptionPane.QUESTION_MESSAGE, null, SharedUtility.getDisplayArray(targets), null);
+                  Messages.getString("TriggerBPodDialog.ChooseTargetDialog.message", pos.getBoardNum()),
+                  Messages.getString("TriggerBPodDialog.ChooseTargetDialog.title"),
+                  JOptionPane.QUESTION_MESSAGE, null, SharedUtility.getDisplayArray(targets), null);
             choice = (Infantry) SharedUtility.getTargetPicked(targets, input);
         } // End have-choices
 

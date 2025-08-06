@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.unitDisplay;
 
@@ -32,15 +46,14 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Enumeration;
 import java.util.Vector;
-
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.ChoiceDialog;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.dialogs.ChoiceDialog;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.PMUtil;
 import megamek.client.ui.widget.PicMap;
@@ -55,7 +68,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * This class shows the critical hits and systems for a mek
  */
 class SystemPanel extends PicMap
-        implements ItemListener, ActionListener, ListSelectionListener {
+      implements ItemListener, ActionListener, ListSelectionListener {
 
     private static int LOC_ALL_EQUIP = 0;
     private static int LOC_ALL_WEAPS = 1;
@@ -240,8 +253,8 @@ class SystemPanel extends PicMap
 
     private CriticalSlot getSelectedCritical() {
         if ((locList.getSelectedIndex() == LOC_ALL_EQUIP)
-                || (locList.getSelectedIndex() == LOC_ALL_WEAPS)
-                || (locList.getSelectedIndex() == LOC_SPACER)) {
+              || (locList.getSelectedIndex() == LOC_ALL_WEAPS)
+              || (locList.getSelectedIndex() == LOC_SPACER)) {
             return null;
         }
         int loc = locList.getSelectedIndex();
@@ -277,7 +290,7 @@ class SystemPanel extends PicMap
             return null;
         }
         if ((cs.getMount().getType() instanceof MiscType)
-                && cs.getMount().getType().hasFlag(MiscType.F_BOMB_BAY)) {
+              && cs.getMount().getType().hasFlag(MiscType.F_BOMB_BAY)) {
             Mounted<?> m = cs.getMount();
             while (m.getLinked() != null) {
                 m = m.getLinked();
@@ -286,11 +299,11 @@ class SystemPanel extends PicMap
         }
         if (cs.getMount2() != null) {
             ChoiceDialog choiceDialog = new ChoiceDialog(unitDisplayPanel.getClientGUI().getFrame(),
-                    Messages.getString("MekDisplay.SelectMulti.title"),
-                    Messages.getString("MekDisplay.SelectMulti.question"),
-                    new String[] { cs.getMount().getName(),
-                            cs.getMount2().getName() },
-                    true);
+                  Messages.getString("MekDisplay.SelectMulti.title"),
+                  Messages.getString("MekDisplay.SelectMulti.question"),
+                  new String[] { cs.getMount().getName(),
+                                 cs.getMount2().getName() },
+                  true);
             choiceDialog.setVisible(true);
             if (choiceDialog.getAnswer() == true) {
                 // load up the choices
@@ -322,12 +335,12 @@ class SystemPanel extends PicMap
         entities.add(newEntity);
         removeListeners();
         ((DefaultListModel<String>) unitList.getModel())
-                .removeAllElements();
+              .removeAllElements();
         ((DefaultListModel<String>) unitList.getModel())
-                .addElement(Messages.getString("MekDisplay.Ego"));
+              .addElement(Messages.getString("MekDisplay.Ego"));
         for (Entity loadee : newEntity.getLoadedUnits()) {
             ((DefaultListModel<String>) unitList.getModel())
-                    .addElement(loadee.getModel());
+                  .addElement(loadee.getModel());
             entities.add(loadee);
         }
         unitList.setSelectedIndex(0);
@@ -341,12 +354,12 @@ class SystemPanel extends PicMap
 
     private void displayLocations() {
         DefaultListModel<String> locModel = ((DefaultListModel<String>) locList
-                .getModel());
+              .getModel());
         locModel.removeAllElements();
         locModel.insertElementAt(
-                Messages.getString("MekDisplay.AllEquipment"), LOC_ALL_EQUIP);
+              Messages.getString("MekDisplay.AllEquipment"), LOC_ALL_EQUIP);
         locModel.insertElementAt(
-                Messages.getString("MekDisplay.AllWeapons"), LOC_ALL_WEAPS);
+              Messages.getString("MekDisplay.AllWeapons"), LOC_ALL_WEAPS);
         locModel.insertElementAt("-----", LOC_SPACER);
         for (int loc = 0; loc < en.locations(); loc++) {
             int idx = loc + LOC_OFFSET;
@@ -405,7 +418,7 @@ class SystemPanel extends PicMap
                             sb.append(ProtoMek.SYSTEM_NAMES[cs.getIndex()]);
                         } else {
                             sb.append(((Mek) en).getSystemName(cs
-                                    .getIndex()));
+                                  .getIndex()));
                         }
                         break;
                     case CriticalSlot.TYPE_EQUIPMENT:
@@ -456,7 +469,7 @@ class SystemPanel extends PicMap
 
             if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield()) {
                 sb.append(" ").append(((MiscMounted) m).getDamageAbsorption(en, m.getLocation())).append('/')
-                        .append(((MiscMounted) m).getCurrentDamageCapacity(en, m.getLocation())).append(')');
+                      .append(((MiscMounted) m).getCurrentDamageCapacity(en, m.getLocation())).append(')');
             }
         }
         return sb.toString();
@@ -474,20 +487,20 @@ class SystemPanel extends PicMap
                 return;
             }
             if (ev.getSource().equals(m_chMode)
-                    && (ev.getStateChange() == ItemEvent.SELECTED)) {
+                  && (ev.getStateChange() == ItemEvent.SELECTED)) {
                 Mounted<?> m = getSelectedEquipment();
                 CriticalSlot cs = getSelectedCritical();
                 if ((m != null) && m.hasModes()) {
                     int nMode = m_chMode.getSelectedIndex();
                     if (nMode >= 0) {
                         if ((m.getType() instanceof MiscType miscType) &&
-                                  miscType.isBoobyTrap()) {
+                              miscType.isBoobyTrap()) {
                             // Verify is it is in the correct phase to arm it
                             // This should be controlled by the equipment itself
                             // TODO: Refactor so the equipment knows the phase they can be armed/disarmed
 
                             if ((clientgui.getClient().getGame().getPhase().isFiring() ||
-                                       clientgui.getClient().getGame().getPhase().isPhysical())) {
+                                  clientgui.getClient().getGame().getPhase().isPhysical())) {
                                 if (nMode == 1) {
                                     if (!clientgui.doYesNoDialog(Messages.getString("MekDisplay.BoobyTrapWarningTitle"),
                                           Messages.getString("MekDisplay.BoobyTrapWarning"))) {
@@ -502,32 +515,32 @@ class SystemPanel extends PicMap
                         }
 
                         if ((m.getType() instanceof MiscType)
-                                && ((MiscType) m.getType()).isShield()
-                                && !clientgui.getClient().getGame().getPhase().isFiring()) {
+                              && ((MiscType) m.getType()).isShield()
+                              && !clientgui.getClient().getGame().getPhase().isFiring()) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.ShieldModePhase"));
                             return;
                         }
 
                         if ((m.getType() instanceof MiscType)
-                                && ((MiscType) m.getType()).isVibroblade()
-                                && !clientgui.getClient().getGame().getPhase().isPhysical()) {
+                              && ((MiscType) m.getType()).isVibroblade()
+                              && !clientgui.getClient().getGame().getPhase().isPhysical()) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.VibrobladeModePhase"));
                             return;
                         }
 
                         if ((m.getType() instanceof MiscType)
-                                && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                                && !clientgui.getClient().getGame().getPhase().isMovement()) {
+                              && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                              && !clientgui.getClient().getGame().getPhase().isMovement()) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.RetractableBladeModePhase"));
                             return;
                         }
 
                         // Can only charge a capacitor if the weapon has not been fired.
                         if ((m.getType() instanceof MiscType)
-                                && (m.getLinked() != null)
-                                && m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
-                                && m.getLinked().isUsedThisRound()
-                                && (nMode == 1)) {
+                              && (m.getLinked() != null)
+                              && m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
+                              && m.getLinked().isUsedThisRound()
+                              && (nMode == 1)) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.CapacitorCharging"));
                             return;
                         }
@@ -539,17 +552,17 @@ class SystemPanel extends PicMap
                         // notify the player
                         if (m.canInstantSwitch(nMode)) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.switched",
-                                    m.getName(), m.curMode().getDisplayableName()));
+                                  m.getName(), m.curMode().getDisplayableName()));
                             int weap = this.unitDisplayPanel.wPan.getSelectedWeaponNum();
                             this.unitDisplayPanel.wPan.displayMek(en);
                             this.unitDisplayPanel.wPan.selectWeapon(weap);
                         } else {
                             if (clientgui.getClient().getGame().getPhase().isDeployment()) {
                                 clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtStart",
-                                        m.getName(), m.pendingMode().getDisplayableName()));
+                                      m.getName(), m.pendingMode().getDisplayableName()));
                             } else {
                                 clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtEnd",
-                                        m.getName(), m.pendingMode().getDisplayableName()));
+                                      m.getName(), m.pendingMode().getDisplayableName()));
                             }
                         }
                         int loc = slotList.getSelectedIndex();
@@ -557,21 +570,21 @@ class SystemPanel extends PicMap
                         slotList.setSelectedIndex(loc);
                     }
                 } else if ((cs != null)
-                        && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                      && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     int nMode = m_chMode.getSelectedIndex();
                     if (nMode >= 0) {
                         if ((cs.getIndex() == Mek.SYSTEM_COCKPIT)
-                                && en.hasEiCockpit() && (en instanceof Mek)) {
+                              && en.hasEiCockpit() && (en instanceof Mek)) {
                             Mek mek = (Mek) en;
                             mek.setCockpitStatus(nMode);
                             clientgui.getClient().sendSystemModeChange(
-                                    en.getId(), Mek.SYSTEM_COCKPIT, nMode);
+                                  en.getId(), Mek.SYSTEM_COCKPIT, nMode);
                             if (mek.getCockpitStatus() == mek.getCockpitStatusNextRound()) {
                                 clientgui.systemMessage(Messages.getString("MekDisplay.switched",
-                                        "Cockpit", m_chMode.getSelectedItem()));
+                                      "Cockpit", m_chMode.getSelectedItem()));
                             } else {
                                 clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtEnd",
-                                        "Cockpit", m_chMode.getSelectedItem()));
+                                      "Cockpit", m_chMode.getSelectedItem()));
                             }
                         }
                     }
@@ -600,21 +613,21 @@ class SystemPanel extends PicMap
 
                 // Check for BA dumping SRM launchers
                 if ((en instanceof BattleArmor) && (!m.isMissing())
-                        && m.isBodyMounted()
-                        && m.getType().hasFlag(WeaponType.F_MISSILE)
-                        && (m.getLinked() != null)
-                        && (m.getLinked().getUsableShotsLeft() > 0)) {
+                      && m.isBodyMounted()
+                      && m.getType().hasFlag(WeaponType.F_MISSILE)
+                      && (m.getLinked() != null)
+                      && (m.getLinked().getUsableShotsLeft() > 0)) {
                     boolean isDumping = !m.isPendingDump();
                     m.setPendingDump(isDumping);
                     clientgui.getClient().sendModeChange(en.getId(),
-                            en.getEquipmentNum(m), isDumping ? -1 : 0);
+                          en.getEquipmentNum(m), isDumping ? -1 : 0);
                     int selIdx = slotList.getSelectedIndex();
                     displaySlots();
                     slotList.setSelectedIndex(selIdx);
                 }
 
                 if (((!(m.getType() instanceof AmmoType) || (m.getUsableShotsLeft() <= 0))
-                        && !m.isDWPMounted()) || (m.isDWPMounted() && m.isMissing())) {
+                      && !m.isDWPMounted()) || (m.isDWPMounted() && m.isMissing())) {
                     return;
                 }
 
@@ -648,7 +661,7 @@ class SystemPanel extends PicMap
                 if (bConfirmed) {
                     m.setPendingDump(bDumping);
                     clientgui.getClient().sendModeChange(en.getId(),
-                            en.getEquipmentNum(m), bDumping ? -1 : 0);
+                          en.getEquipmentNum(m), bDumping ? -1 : 0);
                     int selIdx = slotList.getSelectedIndex();
                     displaySlots();
                     slotList.setSelectedIndex(selIdx);
@@ -662,20 +675,20 @@ class SystemPanel extends PicMap
 
     private void setBackGround() {
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler
-                .getUnitDisplaySkin();
+              .getUnitDisplaySkin();
 
         Image tile = getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getBackgroundTile()).toString());
+              .getImage(
+                    new MegaMekFile(Configuration.widgetsDir(), udSpec
+                          .getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
-                        .toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
+                    .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
@@ -695,35 +708,35 @@ class SystemPanel extends PicMap
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_LEFT;
+              | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
-                        .toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
+                    .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_LEFT;
+              | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomLeftCorner()).toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec
+                    .getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_RIGHT;
+              | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getTopRightCorner()).toString());
+              .getImage(
+                    new MegaMekFile(Configuration.widgetsDir(), udSpec
+                          .getTopRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_RIGHT;
+              | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomRightCorner()).toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec
+                    .getBottomRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
@@ -740,17 +753,17 @@ class SystemPanel extends PicMap
                 if (null != getSelectedEntity()) {
                     en = getSelectedEntity();
                     ((DefaultComboBoxModel<String>) m_chMode.getModel())
-                            .removeAllElements();
+                          .removeAllElements();
                     m_chMode.setEnabled(false);
                     displayLocations();
                 }
             } else if (event.getSource().equals(locList)) {
                 ((DefaultComboBoxModel<String>) m_chMode.getModel())
-                        .removeAllElements();
+                      .removeAllElements();
                 m_chMode.setEnabled(false);
                 displaySlots();
             } else if (event.getSource().equals(slotList)
-                    && (unitDisplayPanel.getClientGUI() != null)) {
+                  && (unitDisplayPanel.getClientGUI() != null)) {
 
                 Client client = unitDisplayPanel.getClientGUI().getClient();
                 m_bDumpAmmo.setEnabled(false);
@@ -758,81 +771,81 @@ class SystemPanel extends PicMap
                 Mounted<?> m = getSelectedEquipment();
                 boolean carryingBAsOnBack = false;
                 if ((en instanceof Mek)
-                        && ((en.getExteriorUnitAt(Mek.LOC_CT, true) != null)
-                                || (en.getExteriorUnitAt(Mek.LOC_LT, true) != null) || (en
-                                        .getExteriorUnitAt(Mek.LOC_RT, true) != null))) {
+                      && ((en.getExteriorUnitAt(Mek.LOC_CT, true) != null)
+                      || (en.getExteriorUnitAt(Mek.LOC_LT, true) != null) || (en
+                      .getExteriorUnitAt(Mek.LOC_RT, true) != null))) {
                     carryingBAsOnBack = true;
                 }
 
                 boolean invalidEnvironment = false;
                 if ((en instanceof Mek)
-                        && (en.getLocationStatus(Mek.LOC_CT) > ILocationExposureStatus.NORMAL)) {
+                      && (en.getLocationStatus(Mek.LOC_CT) > ILocationExposureStatus.NORMAL)) {
                     invalidEnvironment = true;
                 }
 
                 if ((en instanceof Tank) && !(en instanceof GunEmplacement)
-                        && (en.getLocationStatus(Tank.LOC_REAR) > ILocationExposureStatus.NORMAL)) {
+                      && (en.getLocationStatus(Tank.LOC_REAR) > ILocationExposureStatus.NORMAL)) {
                     invalidEnvironment = true;
                 }
 
                 ((DefaultComboBoxModel<String>) m_chMode.getModel())
-                        .removeAllElements();
+                      .removeAllElements();
                 boolean bOwner = client.getLocalPlayer().equals(en.getOwner());
                 if ((m != null)
-                        && bOwner
-                        && (m.getType() instanceof AmmoType)
-                        && !client.getGame().getPhase().isDeployment()
-                        && !client.getGame().getPhase().isMovement()
-                        && (m.getUsableShotsLeft() > 0)
-                        && !m.isDumping()
-                        && en.isActive()
-                        && (client.getGame().getOptions().intOption(OptionsConstants.BASE_DUMPING_FROM_ROUND) <= client
-                                .getGame().getRoundCount())
-                        && !carryingBAsOnBack && !invalidEnvironment) {
+                      && bOwner
+                      && (m.getType() instanceof AmmoType)
+                      && !client.getGame().getPhase().isDeployment()
+                      && !client.getGame().getPhase().isMovement()
+                      && (m.getUsableShotsLeft() > 0)
+                      && !m.isDumping()
+                      && en.isActive()
+                      && (client.getGame().getOptions().intOption(OptionsConstants.BASE_DUMPING_FROM_ROUND) <= client
+                      .getGame().getRoundCount())
+                      && !carryingBAsOnBack && !invalidEnvironment) {
                     m_bDumpAmmo.setEnabled(true);
                 } else if ((m != null) && bOwner
-                        && (m.getType() instanceof WeaponType)
-                        && !m.isMissing() && m.isDWPMounted()) {
+                      && (m.getType() instanceof WeaponType)
+                      && !m.isMissing() && m.isDWPMounted()) {
                     m_bDumpAmmo.setEnabled(true);
                     // Allow dumping of body-mounted missile launchers on BA
                 } else if ((m != null) && bOwner
-                        && (en instanceof BattleArmor)
-                        && (m.getType() instanceof WeaponType)
-                        && !m.isMissing() && m.isBodyMounted()
-                        && m.getType().hasFlag(WeaponType.F_MISSILE)
-                        && (m.getLinked() != null)
-                        && (m.getLinked().getUsableShotsLeft() > 0)) {
+                      && (en instanceof BattleArmor)
+                      && (m.getType() instanceof WeaponType)
+                      && !m.isMissing() && m.isBodyMounted()
+                      && m.getType().hasFlag(WeaponType.F_MISSILE)
+                      && (m.getLinked() != null)
+                      && (m.getLinked().getUsableShotsLeft() > 0)) {
                     m_bDumpAmmo.setEnabled(true);
                 }
                 int round = client.getGame().getRoundCount();
                 boolean inSquadron = en.isPartOfFighterSquadron();
                 if ((m != null) && bOwner && m.hasModes()) {
                     if (!m.isInoperable() && !m.isDumping()
-                            && (en.isActive() || en.isActive(round) || inSquadron)
-                            && m.isModeSwitchable()) {
+                          && (en.isActive() || en.isActive(round) || inSquadron)
+                          && m.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
                     if (!m.isInoperable()
-                            && (m.getType() instanceof MiscType)
-                            && m.getType().hasFlag(MiscType.F_STEALTH)
-                            && m.isModeSwitchable()) {
+                          && (m.getType() instanceof MiscType)
+                          && m.getType().hasFlag(MiscType.F_STEALTH)
+                          && m.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     } // if the maxtech eccm option is not set then the ECM
-                      // should not show anything.
+                    // should not show anything.
                     if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_ECM)
-                            && !(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)
-                                    || client.getGame().getOptions()
-                                            .booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET))) {
+                          && !(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)
+                          || client.getGame().getOptions()
+                          .booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET))) {
                         return;
                     }
                     for (Enumeration<EquipmentMode> e = m.getType()
-                            .getModes(); e.hasMoreElements();) {
+                          .getModes(); e.hasMoreElements(); ) {
                         EquipmentMode em = e.nextElement();
                         // Hack to prevent showing an option that is disabled by the server, but would
                         // be overwritten by every entity update if made also in the client
                         if (em.equals("HotLoad") && en instanceof Mek
-                                && !client.getGame().getOptions()
-                                        .booleanOption(OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME)) {
+                              && !client.getGame().getOptions()
+                              .booleanOption(OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME)) {
                             continue;
                         }
                         m_chMode.addItem(em.getDisplayableName());
@@ -843,19 +856,19 @@ class SystemPanel extends PicMap
                     } else {
                         if (m.pendingMode().equals("None")) {
                             m_chMode.setSelectedItem(m.curMode()
-                                    .getDisplayableName());
+                                  .getDisplayableName());
                         } else {
                             m_chMode.setSelectedItem(m.pendingMode()
-                                    .getDisplayableName());
+                                  .getDisplayableName());
                         }
                     }
                 } else {
                     CriticalSlot cs = getSelectedCritical();
                     if ((cs != null)
-                            && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                          && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
                         if ((cs.getIndex() == Mek.SYSTEM_COCKPIT)
-                                && en.hasEiCockpit()
-                                && (en instanceof Mek)) {
+                              && en.hasEiCockpit()
+                              && (en instanceof Mek)) {
                             m_chMode.setEnabled(true);
                             m_chMode.addItem("EI Off");
                             m_chMode.addItem("EI On");

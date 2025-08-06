@@ -42,6 +42,7 @@ import megamek.common.options.IGameOptions;
 
 /**
  * Abstract Class for Mek Table Sorters.
+ *
  * @author Luana Coppio
  */
 public abstract class MekTableSorter implements Comparator<Entity> {
@@ -62,14 +63,14 @@ public abstract class MekTableSorter implements Comparator<Entity> {
     }
 
     /**
-     * Compares two entities. The comparison is done by first comparing the
-     * players, then the unit roles.
+     * Compares two entities. The comparison is done by first comparing the players, then the unit roles.
      *
      * @param client the client reference to access player information
-     * @param a the first entity
-     * @param b the second entity
-     * @return a negative integer, zero, or a positive integer as the first argument is less than, equal to, or
-     * greater than the second, or empty if there is no comparison possible
+     * @param a      the first entity
+     * @param b      the second entity
+     *
+     * @return a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater
+     *       than the second, or empty if there is no comparison possible
      */
     protected OptionalInt getPlayerTeamIndexPosition(Client client, Entity a, Entity b) {
         // entity.getOwner() does not work properly because teams are not necessarily updated correctly for entities
@@ -100,8 +101,7 @@ public abstract class MekTableSorter implements Comparator<Entity> {
 
 
     /**
-     * Returns the info that is displayed in the column header to show
-     * the sorting that is used, such as "Team / BV".
+     * Returns the info that is displayed in the column header to show the sorting that is used, such as "Team / BV".
      */
     public String getDisplayName() {
         return displayName;
@@ -115,8 +115,8 @@ public abstract class MekTableSorter implements Comparator<Entity> {
     }
 
     /**
-     * Returns true if this Sorter is currently allowed. Sorters might not be allowed
-     * e.g. when they would give away info in blind drops.
+     * Returns true if this Sorter is currently allowed. Sorters might not be allowed e.g. when they would give away
+     * info in blind drops.
      */
     public boolean isAllowed(IGameOptions opts) {
         return true;
@@ -129,6 +129,7 @@ public abstract class MekTableSorter implements Comparator<Entity> {
 
     /**
      * Returns the sorting direction as an int.
+     *
      * @return 1 if sorting is ascending, -1 if sorting is descending.
      */
     protected int getSortingDirectionInt() {
@@ -137,6 +138,7 @@ public abstract class MekTableSorter implements Comparator<Entity> {
 
     /**
      * Returns 1 if dir is ASCENDING, -1 otherwise.
+     *
      * @deprecated use {@link Sorting#getDirection()} instead
      */
     @Deprecated(forRemoval = true, since = "0.50.06")
@@ -146,6 +148,7 @@ public abstract class MekTableSorter implements Comparator<Entity> {
 
     /**
      * Returns -1 if dir is ASCENDING, 1 otherwise.
+     *
      * @deprecated use {@link Sorting#getDirection()} instead
      */
     @Deprecated(forRemoval = true, since = "0.50.06")

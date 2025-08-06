@@ -24,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.customMek;
 
@@ -75,7 +80,7 @@ public class MunitionChoicePanel extends JPanel {
     JCheckBox chHotLoad = new JCheckBox();
 
     public MunitionChoicePanel(AmmoMounted ammoMounted, ArrayList<AmmoType> vTypes,
-                               List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels, Entity entity, ClientGUI clientGUI) {
+          List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels, Entity entity, ClientGUI clientGUI) {
         this(ammoMounted, vTypes, weaponAmmoChoicePanels, entity, clientGUI.getClient().getGame());
     }
 
@@ -189,7 +194,7 @@ public class MunitionChoicePanel extends JPanel {
         }
 
         if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD) &&
-                  ammoType.hasFlag(AmmoType.F_HOTLOAD)) {
+              ammoType.hasFlag(AmmoType.F_HOTLOAD)) {
             add(labHotLoad, GBC.std());
             add(chHotLoad, GBC.eol());
         }
@@ -208,7 +213,7 @@ public class MunitionChoicePanel extends JPanel {
 
         // set # shots only for non-one shot weapons
         if (ammoMounted.getLocation() != Entity.LOC_NONE &&
-                  comboNumberOfShots.getSelectedItem() instanceof String value) {
+              comboNumberOfShots.getSelectedItem() instanceof String value) {
             ammoMounted.setShotsLeft(MathUtility.parseInt(value, 0));
         }
 

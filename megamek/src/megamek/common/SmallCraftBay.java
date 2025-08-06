@@ -1,26 +1,41 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.common;
 
 /**
- * Represents a Transport Bay (TM p.239) for carrying SmallCraft or Fighters/LAMs aboard large spacecraft or other units.
+ * Represents a Transport Bay (TM p.239) for carrying SmallCraft or Fighters/LAMs aboard large spacecraft or other
+ * units.
  */
 public final class SmallCraftBay extends AbstractSmallCraftASFBay {
     private static final long serialVersionUID = -8275147432497460821L;
@@ -28,8 +43,8 @@ public final class SmallCraftBay extends AbstractSmallCraftASFBay {
     /**
      * Create a space for the given number of small craft or fighters.
      *
-     * @param space The number of cubicles
-     * @param doors The number of bay doors
+     * @param space     The number of cubicles
+     * @param doors     The number of bay doors
      * @param bayNumber The id number for the bay
      */
     public SmallCraftBay(double space, int doors, int bayNumber) {
@@ -39,8 +54,8 @@ public final class SmallCraftBay extends AbstractSmallCraftASFBay {
     /**
      * Create a space for the given number of small craft or fighters.
      *
-     * @param space The number of cubicles
-     * @param doors The number of bay doors
+     * @param space     The number of cubicles
+     * @param doors     The number of bay doors
      * @param bayNumber The id number for the bay
      * @param arts      Whether the bay has the advanced robotic transport system
      */
@@ -58,7 +73,8 @@ public final class SmallCraftBay extends AbstractSmallCraftASFBay {
     @Override
     public boolean canLoad(Entity unit) {
         boolean loadableAero = (unit.isFighter() || unit.isSmallCraft()) && !(unit instanceof FighterSquadron);
-        boolean loadableLAM = (unit instanceof LandAirMek) && (unit.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER);
+        boolean loadableLAM = (unit instanceof LandAirMek) && (unit.getConversionMode()
+              == LandAirMek.CONV_MODE_FIGHTER);
         return (getUnused() >= 1) && (availableRecoverySlots() >= 1) && (loadableAero || loadableLAM);
     }
 
@@ -69,8 +85,8 @@ public final class SmallCraftBay extends AbstractSmallCraftASFBay {
             sb.append("ARTS ");
         }
         sb.append("Small Craft ").append(numDoorsString()).append(" - ")
-            .append(String.format("%1$,.0f", getUnused()))
-            .append(getUnused() > 1 ? " units" : " unit");
+              .append(String.format("%1$,.0f", getUnused()))
+              .append(getUnused() > 1 ? " units" : " unit");
         if (showRecovery) {
             sb.append(" (").append(availableRecoverySlots()).append(" recovery open)");
         }
@@ -96,19 +112,19 @@ public final class SmallCraftBay extends AbstractSmallCraftASFBay {
     public String toString() {
         String bayType = (hasARTS() ? "artssmallcraftbay" : "smallcraftbay");
         return this.bayString(
-                bayType,
-                totalSpace,
-                doors,
-                bayNumber
+              bayType,
+              totalSpace,
+              doors,
+              bayNumber
         );
     }
 
     public static TechAdvancement techAdvancement() {
         return new TechAdvancement(TechBase.ALL)
-                .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-                .setTechRating(TechRating.C)
-                .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+              .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     @Override

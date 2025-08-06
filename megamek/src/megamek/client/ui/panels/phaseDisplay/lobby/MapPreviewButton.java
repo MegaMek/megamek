@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
@@ -35,7 +49,6 @@ import java.awt.dnd.DnDConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -96,8 +109,7 @@ public class MapPreviewButton extends JButton {
     }
 
     /**
-     * Deletes the scaled minimap image for this button, making it rescale and
-     * redraw.
+     * Deletes the scaled minimap image for this button, making it rescale and redraw.
      */
     public void scheduleRescale() {
         scaledImage = null;
@@ -105,8 +117,7 @@ public class MapPreviewButton extends JButton {
     }
 
     /**
-     * Sets the minimap image of the button to the given base image and stores the
-     * name for DnD
+     * Sets the minimap image of the button to the given base image and stores the name for DnD
      */
     public void setImage(Image image, String name) {
         isExample = name.startsWith(MapSettings.BOARD_SURPRISE) || name.startsWith(MapSettings.BOARD_GENERATED);
@@ -127,8 +138,7 @@ public class MapPreviewButton extends JButton {
     }
 
     /**
-     * Returns true if this button has a base image stored, i.e. if a board file is
-     * set for it.
+     * Returns true if this button has a base image stored, i.e. if a board file is set for it.
      */
     public boolean hasBoard() {
         return baseImage != null;
@@ -158,14 +168,10 @@ public class MapPreviewButton extends JButton {
     }
 
     /**
-     * Scales the present baseImage so that it fits inside the maximum button size
-     * allowed by the dimensions of the preview panel while preserving the aspect
-     * ratio
-     * of the base image. Also, signals the lobby that all preview buttons should be
-     * redrawn
-     * with the same resulting size regardless of whether they have a board image or
-     * not.
-     * Adds the necessary labels to the image as well.
+     * Scales the present baseImage so that it fits inside the maximum button size allowed by the dimensions of the
+     * preview panel while preserving the aspect ratio of the base image. Also, signals the lobby that all preview
+     * buttons should be redrawn with the same resulting size regardless of whether they have a board image or not. Adds
+     * the necessary labels to the image as well.
      */
     private void scaleImage() {
         Dimension optSize = lobby.maxMapButtonSize();
@@ -234,10 +240,8 @@ public class MapPreviewButton extends JButton {
     }
 
     /**
-     * The TransferHandler manages drag-and-drop for the preview button.
-     * The preview buttons can import boards from other preview buttons and from
-     * the available bords list. They can also export boards (to other preview
-     * buttons).
+     * The TransferHandler manages drag-and-drop for the preview button. The preview buttons can import boards from
+     * other preview buttons and from the available bords list. They can also export boards (to other preview buttons).
      */
     private static class MapButtonTransferHandler extends TransferHandler {
         private static final long serialVersionUID = -1798418800717656572L;

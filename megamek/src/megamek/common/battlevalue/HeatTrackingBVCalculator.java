@@ -1,32 +1,59 @@
 /*
- * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
- * This file is part of Megaentity.
+ * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with Megaentity. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.common.battlevalue;
 
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.weapons.ppc.PPCWeapon;
-import megamek.common.weapons.prototypes.*;
+package megamek.common.battlevalue;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import megamek.common.AmmoType;
+import megamek.common.ConvFighter;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.Mek;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.WeaponType;
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.weapons.ppc.PPCWeapon;
+import megamek.common.weapons.prototypes.ISERLaserLargePrototype;
+import megamek.common.weapons.prototypes.ISPulseLaserLargePrototype;
+import megamek.common.weapons.prototypes.ISPulseLaserMediumPrototype;
+import megamek.common.weapons.prototypes.ISPulseLaserMediumRecovered;
+import megamek.common.weapons.prototypes.ISPulseLaserSmallPrototype;
 
 public abstract class HeatTrackingBVCalculator extends BVCalculator {
 
@@ -101,8 +128,7 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
     }
 
     /**
-     * The weapon sorter. Will place weapons without heat first, then in descending
-     * order of BV > heat.
+     * The weapon sorter. Will place weapons without heat first, then in descending order of BV > heat.
      */
     Comparator<WeaponBvHeatRecord> heatSorter = (obj1, obj2) -> {
         if ((obj1.heat == 0) && (obj2.heat > 0)) {
@@ -138,7 +164,7 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
             if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
                 Mounted<?> mounted = cs.getMount();
                 if ((mounted.getType() instanceof MiscType)
-                        && ((MiscType) mounted.getType()).isVibroblade()) {
+                      && ((MiscType) mounted.getType()).isVibroblade()) {
                     return mounted;
                 }
             }
@@ -154,7 +180,8 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
             weaponHeat /= 4;
         }
 
-        if ((wType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) || (wType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
+        if ((wType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) || (wType.getAmmoType()
+              == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
             weaponHeat *= 2;
         } else if (wType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY) {
             weaponHeat *= 6;
@@ -162,9 +189,9 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
 
         // 1d6 extra heat; add half for heat calculations (1d3/+2 for small pulse)
         if ((wType instanceof ISERLaserLargePrototype)
-                || (wType instanceof ISPulseLaserLargePrototype)
-                || (wType instanceof ISPulseLaserMediumPrototype)
-                || (wType instanceof ISPulseLaserMediumRecovered)) {
+              || (wType instanceof ISPulseLaserLargePrototype)
+              || (wType instanceof ISPulseLaserMediumPrototype)
+              || (wType instanceof ISPulseLaserMediumRecovered)) {
             weaponHeat += 3;
         } else if (wType instanceof ISPulseLaserSmallPrototype) {
             weaponHeat += 2;
@@ -172,24 +199,24 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
 
         // RISC laser pulse module adds 2 heat
         if ((wType.hasFlag(WeaponType.F_LASER)) && (weapon.getLinkedBy() != null)
-                && (weapon.getLinkedBy().getType() instanceof MiscType)
-                && (weapon.getLinkedBy().getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
+              && (weapon.getLinkedBy().getType() instanceof MiscType)
+              && (weapon.getLinkedBy().getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
             weaponHeat += 2;
         }
 
         // laser insulator reduce heat by 1, to a minimum of 1
         if (wType.hasFlag(WeaponType.F_LASER)
-                && (weapon.getLinkedBy() != null)
-                && !weapon.getLinkedBy().isInoperable()
-                && (weapon.getLinkedBy().getType() instanceof MiscType)
-                && weapon.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+              && (weapon.getLinkedBy() != null)
+              && !weapon.getLinkedBy().isInoperable()
+              && (weapon.getLinkedBy().getType() instanceof MiscType)
+              && weapon.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
             weaponHeat = Math.max(1, weaponHeat - 1);
         }
 
         // half heat for streaks
         if ((wType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_STREAK)
-                || (wType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_STREAK)
-                || (wType.getAmmoType() == AmmoType.AmmoTypeEnum.IATM)) {
+              || (wType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_STREAK)
+              || (wType.getAmmoType() == AmmoType.AmmoTypeEnum.IATM)) {
             weaponHeat *= 0.5;
         }
 
@@ -202,9 +229,9 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
 
     protected double totalWeaponHeat() {
         return entity.getWeaponList().stream()
-                .filter(this::countAsOffensiveWeapon)
-                .mapToDouble(this::weaponHeat)
-                .sum();
+              .filter(this::countAsOffensiveWeapon)
+              .mapToDouble(this::weaponHeat)
+              .sum();
     }
 
     /**
@@ -213,18 +240,19 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
     protected boolean countsAsExplosive(Mounted<?> mounted) {
         EquipmentType eType = mounted.getType();
         if (mounted.isWeaponGroup() || (mounted.getLocation() == Entity.LOC_NONE)
-                || !eType.isExplosive(mounted, true)) {
+              || !eType.isExplosive(mounted, true)) {
             return false;
         } else if ((eType instanceof AmmoType) && (mounted.getUsableShotsLeft() == 0)) {
             return false;
         } else if ((eType instanceof PPCWeapon) && (mounted.getLinkedBy() == null)) {
             return false;
-        } else if ((eType instanceof WeaponType) && ((((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY)
-                || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.AC)
-                || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP)
-                || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.AC_PRIMITIVE)
-                || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.PAC)
-                || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.LAC))) {
+        } else if ((eType instanceof WeaponType) && ((((WeaponType) eType).getAmmoType()
+              == AmmoType.AmmoTypeEnum.AC_ROTARY)
+              || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.AC)
+              || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP)
+              || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.AC_PRIMITIVE)
+              || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.PAC)
+              || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.LAC))) {
             return false;
         }
 

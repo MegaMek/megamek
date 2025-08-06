@@ -1,18 +1,38 @@
 /*
- * MegaMek -
  * Copyright (C) 2000-2008 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (C) 2013 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client.ui.widget;
 
 import java.awt.Color;
@@ -21,7 +41,6 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -32,8 +51,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
 /**
- * A subclass of JButton that supports specifying the look and feel of the
- * button via a SkinSpecification.
+ * A subclass of JButton that supports specifying the look and feel of the button via a SkinSpecification.
  *
  * @author arlith
  */
@@ -61,27 +79,26 @@ public class MegaMekButton extends JButton implements MouseListener {
     protected BufferedImage bgPressedBuffer = null;
 
     /**
-     * Keeps track of whether there are images to display for this button, or if
-     * the default rendering for JButtons should be used
+     * Keeps track of whether there are images to display for this button, or if the default rendering for JButtons
+     * should be used
      */
     boolean iconsLoaded = false;
 
     /**
-     * Keeps track of if the button is pressed or not. This is used for
-     * determining if which image icon should be displayed.
+     * Keeps track of if the button is pressed or not. This is used for determining if which image icon should be
+     * displayed.
      */
     boolean isPressed = false;
 
     /**
-     * Keeps track of whether the mouse cursor is currently over this button.
-     * Used to adjust the font of the button text.
+     * Keeps track of whether the mouse cursor is currently over this button. Used to adjust the font of the button
+     * text.
      */
     boolean isMousedOver = false;
 
     /**
-     * Determines if the background images should be tiled or not. If this is
-     * false and the background images are smaller than the button size, they
-     * will be scaled to the button size.
+     * Determines if the background images should be tiled or not. If this is false and the background images are
+     * smaller than the button size, they will be scaled to the button size.
      */
     boolean isBGTiled = true;
 
@@ -106,11 +123,8 @@ public class MegaMekButton extends JButton implements MouseListener {
     private Font specificFont;
 
     /**
-     *
-     * @param text
-     *                  The button text
-     * @param component
-     *                  The name of the SkinSpecification entry
+     * @param text      The button text
+     * @param component The name of the SkinSpecification entry
      */
     public MegaMekButton(String text, String component, boolean defaultToPlain) {
         super(text);
@@ -118,11 +132,8 @@ public class MegaMekButton extends JButton implements MouseListener {
     }
 
     /**
-     *
-     * @param text
-     *                  The button text
-     * @param component
-     *                  The name of the SkinSpecification entry
+     * @param text      The button text
+     * @param component The name of the SkinSpecification entry
      */
     public MegaMekButton(String text, String component) {
         super(text);
@@ -130,8 +141,7 @@ public class MegaMekButton extends JButton implements MouseListener {
     }
 
     /**
-     * Default text constructor, the button will use the DefaultButton
-     * SkinSpecification.
+     * Default text constructor, the button will use the DefaultButton SkinSpecification.
      *
      * @param text
      */
@@ -141,8 +151,7 @@ public class MegaMekButton extends JButton implements MouseListener {
     }
 
     /**
-     * Default constructor with no button text and DefaultButton
-     * SkinSpecification.
+     * Default constructor with no button text and DefaultButton SkinSpecification.
      */
     public MegaMekButton() {
         super();
@@ -150,22 +159,18 @@ public class MegaMekButton extends JButton implements MouseListener {
     }
 
     /**
-     * Initialize the state of the button, using the SkinSpecification linked to
-     * the given string.
+     * Initialize the state of the button, using the SkinSpecification linked to the given string.
      *
-     * @param component
-     *                  String key to get the SkinSpecification.
+     * @param component String key to get the SkinSpecification.
      */
     private void initialize(String component) {
         initialize(component, false);
     }
 
     /**
-     * Initialize the state of the button, using the SkinSpecification linked to
-     * the given string.
+     * Initialize the state of the button, using the SkinSpecification linked to the given string.
      *
-     * @param component
-     *                  String key to get the SkinSpecification.
+     * @param component String key to get the SkinSpecification.
      */
     private void initialize(String component, boolean defaultToPlain) {
         SkinSpecification skinSpec = SkinXMLHandler.getSkin(component, defaultToPlain, true);
@@ -216,14 +221,14 @@ public class MegaMekButton extends JButton implements MouseListener {
         try {
             if (spec.backgrounds.size() < 2) {
                 logger.error(
-                        "Skin specification for a MegamekButton does not contain at least 2 background images!");
+                      "Skin specification for a MegamekButton does not contain at least 2 background images!");
                 iconsLoaded = false;
             }
             java.net.URI imgURL = new MegaMekFile(Configuration.widgetsDir(),
-                    spec.backgrounds.get(0)).getFile().toURI();
+                  spec.backgrounds.get(0)).getFile().toURI();
             backgroundIcon = new ImageIcon(imgURL.toURL());
             imgURL = new MegaMekFile(Configuration.widgetsDir(),
-                    spec.backgrounds.get(1)).getFile().toURI();
+                  spec.backgrounds.get(1)).getFile().toURI();
             backgroundPressedIcon = new ImageIcon(imgURL.toURL());
         } catch (Exception ex) {
             logger.error("Loading background icons for a MegamekButton!", ex);
@@ -260,17 +265,17 @@ public class MegaMekButton extends JButton implements MouseListener {
             int w = getWidth();
             int h = getHeight();
             int iW = isPressed ? backgroundPressedIcon.getIconWidth()
-                    : backgroundIcon.getIconWidth();
+                  : backgroundIcon.getIconWidth();
             int iH = isPressed ? backgroundPressedIcon.getIconHeight()
-                    : backgroundIcon.getIconHeight();
+                  : backgroundIcon.getIconHeight();
             for (int x = 0; x < w; x += iW) {
                 for (int y = 0; y < h; y += iH) {
                     if (isPressed) {
                         g.drawImage(backgroundPressedIcon.getImage(), x, y,
-                                backgroundPressedIcon.getImageObserver());
+                              backgroundPressedIcon.getImageObserver());
                     } else {
                         g.drawImage(backgroundIcon.getImage(), x, y,
-                                backgroundIcon.getImageObserver());
+                              backgroundIcon.getImageObserver());
                     }
                 }
             }
@@ -279,20 +284,20 @@ public class MegaMekButton extends JButton implements MouseListener {
             int h = getHeight();
             if (isPressed) {
                 if (bgPressedBuffer == null || bgPressedBuffer.getWidth() != w
-                        || bgPressedBuffer.getHeight() != h) {
+                      || bgPressedBuffer.getHeight() != h) {
                     bgPressedBuffer = new BufferedImage(w, h,
-                            BufferedImage.TYPE_INT_ARGB);
+                          BufferedImage.TYPE_INT_ARGB);
                     bgPressedBuffer.getGraphics().drawImage(
-                            backgroundPressedIcon.getImage(), 0, 0, w, h, null);
+                          backgroundPressedIcon.getImage(), 0, 0, w, h, null);
                 }
                 g.drawImage(bgPressedBuffer, 0, 0, null);
             } else {
                 if (bgBuffer == null || bgBuffer.getWidth() != w
-                        || bgBuffer.getHeight() != h) {
+                      || bgBuffer.getHeight() != h) {
                     bgBuffer = new BufferedImage(w, h,
-                            BufferedImage.TYPE_INT_ARGB);
+                          BufferedImage.TYPE_INT_ARGB);
                     bgBuffer.getGraphics().drawImage(backgroundIcon.getImage(),
-                            0, 0, w, h, null);
+                          0, 0, w, h, null);
                 }
                 g.drawImage(bgBuffer, 0, 0, null);
             }
@@ -309,7 +314,7 @@ public class MegaMekButton extends JButton implements MouseListener {
                 if (shouldBold) {
                     // same font but bold
                     Font boldFont = new Font(font.getFontName(), Font.BOLD,
-                            font.getSize() + 2);
+                          font.getSize() + 2);
                     textLabel.setFont(boldFont);
                 }
                 textLabel.setForeground(activeColor);

@@ -1,82 +1,165 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.advancedsearch;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.List;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 
 import com.formdev.flatlaf.extras.components.FlatTriStateCheckBox;
 import megamek.client.ui.Messages;
 
-import java.util.List;
-import javax.swing.*;
-import java.awt.*;
-
 /**
- * This class is the unit type search panel of the (TW) advanced search, offering selection of e.g. Quad, Tripod, Doomed in Vacuum
- * and other filters beyond the standard unit types.
+ * This class is the unit type search panel of the (TW) advanced search, offering selection of e.g. Quad, Tripod, Doomed
+ * in Vacuum and other filters beyond the standard unit types.
  */
 class UnitTypeSearchTab extends JPanel {
 
     final JButton clearButton = new JButton(Messages.getString("MekSelectorDialog.ClearTab"));
 
-    final FlatTriStateCheckBox btnFilterProtoMek = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.ProtoMek"));
-    final FlatTriStateCheckBox btnFilterMek = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.Mek"));
-    final FlatTriStateCheckBox btnFilterBipedMek = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.BipedMek"));
-    final FlatTriStateCheckBox btnFilterLAM = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.LAM"));
-    final FlatTriStateCheckBox btnFilterTripod = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.Tripod"));
-    final FlatTriStateCheckBox btnFilterQuad = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.Quad"));
-    final FlatTriStateCheckBox btnFilterQuadVee = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.QuadVee"));
-    final FlatTriStateCheckBox btnFilterAero = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.Aero"));
-    final FlatTriStateCheckBox btnFilterAerospaceFighter = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.AerospaceFighter"));
-    final FlatTriStateCheckBox btnFilterFixedWingSupport = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.FixedWingSupport"));
-    final FlatTriStateCheckBox btnFilterConvFighter = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.ConvFighter"));
-    final FlatTriStateCheckBox btnFilterSmallCraft = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.SmallCraft"));
-    final FlatTriStateCheckBox btnFilterDropship = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.Dropship"));
-    final FlatTriStateCheckBox btnFilterJumpship = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.Jumpship"));
-    final FlatTriStateCheckBox btnFilterWarship = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.Warship"));
-    final FlatTriStateCheckBox btnFilterSpaceStation = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.SpaceStation"));
-    final FlatTriStateCheckBox btnFilterInfantry = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.Infantry"));
-    final FlatTriStateCheckBox btnFilterBattleArmor = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.BattleArmor"));
-    final FlatTriStateCheckBox btnFilterTank = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.Tank"));
-    final FlatTriStateCheckBox btnFilterVTOL = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.VTOL"));
-    final FlatTriStateCheckBox btnFilterSupportVTOL = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.SupportVTOL"));
-    final FlatTriStateCheckBox btnFilterGunEmplacement = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.GunEmplacement"));
-    final FlatTriStateCheckBox btnFilterSupportTank = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.SupportTank"));
-    final FlatTriStateCheckBox btnFilterLargeSupportTank = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.LargeSupportTank"));
-    final FlatTriStateCheckBox btnFilterSuperHeavyTank = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.SuperHeavyTank"));
-    final FlatTriStateCheckBox btnFilterOmni = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.Omni"));
-    final FlatTriStateCheckBox btnFilterMilitary = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.Military"));
-    final FlatTriStateCheckBox btnFilterIndustrial = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.Industrial"));
-    final FlatTriStateCheckBox btnFilterMountedInfantry = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.MountedInfantry"));
-    final FlatTriStateCheckBox btnFilterWaterOnly = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.WaterOnly"));
-    final FlatTriStateCheckBox btnFilterSupportVehicle = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.SupportVehicle"));
-    final FlatTriStateCheckBox btnFilterDoomedOnGround = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.DoomedOnGround"));
-    final FlatTriStateCheckBox btnFilterDoomedInAtmosphere = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.DoomedInAtmosphere"));
-    final FlatTriStateCheckBox btnFilterDoomedInSpace = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.DoomedInSpace"));
-    final FlatTriStateCheckBox btnFilterDoomedInExtremeTemp = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.DoomedInExtremeTemp"));
-    final FlatTriStateCheckBox btnFilterDoomedInVacuum = new SearchTriStateCheckBox(Messages.getString("MekSelectorDialog.Search.DoomedInVacuum"));
+    final FlatTriStateCheckBox btnFilterProtoMek = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.ProtoMek"));
+    final FlatTriStateCheckBox btnFilterMek = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.Mek"));
+    final FlatTriStateCheckBox btnFilterBipedMek = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.BipedMek"));
+    final FlatTriStateCheckBox btnFilterLAM = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.LAM"));
+    final FlatTriStateCheckBox btnFilterTripod = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.Tripod"));
+    final FlatTriStateCheckBox btnFilterQuad = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.Quad"));
+    final FlatTriStateCheckBox btnFilterQuadVee = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.QuadVee"));
+    final FlatTriStateCheckBox btnFilterAero = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.Aero"));
+    final FlatTriStateCheckBox btnFilterAerospaceFighter = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.AerospaceFighter"));
+    final FlatTriStateCheckBox btnFilterFixedWingSupport = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.FixedWingSupport"));
+    final FlatTriStateCheckBox btnFilterConvFighter = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.ConvFighter"));
+    final FlatTriStateCheckBox btnFilterSmallCraft = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.SmallCraft"));
+    final FlatTriStateCheckBox btnFilterDropship = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.Dropship"));
+    final FlatTriStateCheckBox btnFilterJumpship = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.Jumpship"));
+    final FlatTriStateCheckBox btnFilterWarship = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.Warship"));
+    final FlatTriStateCheckBox btnFilterSpaceStation = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.SpaceStation"));
+    final FlatTriStateCheckBox btnFilterInfantry = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.Infantry"));
+    final FlatTriStateCheckBox btnFilterBattleArmor = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.BattleArmor"));
+    final FlatTriStateCheckBox btnFilterTank = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.Tank"));
+    final FlatTriStateCheckBox btnFilterVTOL = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.VTOL"));
+    final FlatTriStateCheckBox btnFilterSupportVTOL = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.SupportVTOL"));
+    final FlatTriStateCheckBox btnFilterGunEmplacement = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.GunEmplacement"));
+    final FlatTriStateCheckBox btnFilterSupportTank = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.SupportTank"));
+    final FlatTriStateCheckBox btnFilterLargeSupportTank = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.LargeSupportTank"));
+    final FlatTriStateCheckBox btnFilterSuperHeavyTank = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.SuperHeavyTank"));
+    final FlatTriStateCheckBox btnFilterOmni = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.Omni"));
+    final FlatTriStateCheckBox btnFilterMilitary = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.Military"));
+    final FlatTriStateCheckBox btnFilterIndustrial = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.Industrial"));
+    final FlatTriStateCheckBox btnFilterMountedInfantry = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.MountedInfantry"));
+    final FlatTriStateCheckBox btnFilterWaterOnly = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.WaterOnly"));
+    final FlatTriStateCheckBox btnFilterSupportVehicle = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.SupportVehicle"));
+    final FlatTriStateCheckBox btnFilterDoomedOnGround = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.DoomedOnGround"));
+    final FlatTriStateCheckBox btnFilterDoomedInAtmosphere = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.DoomedInAtmosphere"));
+    final FlatTriStateCheckBox btnFilterDoomedInSpace = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.DoomedInSpace"));
+    final FlatTriStateCheckBox btnFilterDoomedInExtremeTemp = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.DoomedInExtremeTemp"));
+    final FlatTriStateCheckBox btnFilterDoomedInVacuum = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.DoomedInVacuum"));
 
-    final List<FlatTriStateCheckBox> checkBoxes = List.of(btnFilterProtoMek, btnFilterMek, btnFilterBipedMek, btnFilterLAM, btnFilterTripod,
-        btnFilterQuad, btnFilterQuadVee, btnFilterAero, btnFilterFixedWingSupport, btnFilterConvFighter, btnFilterSmallCraft,
-        btnFilterDropship, btnFilterJumpship, btnFilterWarship, btnFilterSpaceStation, btnFilterInfantry, btnFilterAerospaceFighter,
-        btnFilterBattleArmor, btnFilterBattleArmor, btnFilterTank, btnFilterVTOL, btnFilterGunEmplacement, btnFilterSupportTank,
-        btnFilterLargeSupportTank, btnFilterSuperHeavyTank, btnFilterOmni, btnFilterMilitary, btnFilterIndustrial,
-        btnFilterMountedInfantry, btnFilterWaterOnly, btnFilterSupportVehicle, btnFilterDoomedOnGround, btnFilterDoomedInAtmosphere,
-        btnFilterDoomedInSpace, btnFilterDoomedInExtremeTemp, btnFilterDoomedInVacuum);
+    final List<FlatTriStateCheckBox> checkBoxes = List.of(btnFilterProtoMek,
+          btnFilterMek,
+          btnFilterBipedMek,
+          btnFilterLAM,
+          btnFilterTripod,
+          btnFilterQuad,
+          btnFilterQuadVee,
+          btnFilterAero,
+          btnFilterFixedWingSupport,
+          btnFilterConvFighter,
+          btnFilterSmallCraft,
+          btnFilterDropship,
+          btnFilterJumpship,
+          btnFilterWarship,
+          btnFilterSpaceStation,
+          btnFilterInfantry,
+          btnFilterAerospaceFighter,
+          btnFilterBattleArmor,
+          btnFilterBattleArmor,
+          btnFilterTank,
+          btnFilterVTOL,
+          btnFilterGunEmplacement,
+          btnFilterSupportTank,
+          btnFilterLargeSupportTank,
+          btnFilterSuperHeavyTank,
+          btnFilterOmni,
+          btnFilterMilitary,
+          btnFilterIndustrial,
+          btnFilterMountedInfantry,
+          btnFilterWaterOnly,
+          btnFilterSupportVehicle,
+          btnFilterDoomedOnGround,
+          btnFilterDoomedInAtmosphere,
+          btnFilterDoomedInSpace,
+          btnFilterDoomedInExtremeTemp,
+          btnFilterDoomedInVacuum);
 
     UnitTypeSearchTab() {
         clearButton.addActionListener(e -> clear());
@@ -174,7 +257,7 @@ class UnitTypeSearchTab extends JPanel {
         gbc.gridy++;
         gbc.gridx = 0;
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridwidth  = 4;
+        gbc.gridwidth = 4;
         JPanel dotSep = new JPanel();
         dotSep.setLayout(new BoxLayout(dotSep, BoxLayout.PAGE_AXIS));
         dotSep.add(new ASAdvancedSearchPanel.DottedSeparator());
@@ -186,7 +269,7 @@ class UnitTypeSearchTab extends JPanel {
         gbc.gridx = -1;
         gbc.gridy++;
         gbc.fill = GridBagConstraints.NONE;
-        gbc.gridwidth  = 5;
+        gbc.gridwidth = 5;
         JPanel filter1Panel = new JPanel();
         filter1Panel.add(btnFilterOmni);
         filter1Panel.add(btnFilterMilitary);

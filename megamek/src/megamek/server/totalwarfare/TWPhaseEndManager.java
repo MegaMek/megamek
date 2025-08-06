@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server.totalwarfare;
 
 import megamek.common.Entity;
@@ -47,7 +62,10 @@ class TWPhaseEndManager {
             case SET_ARTILLERY_AUTOHIT_HEXES:
                 gameManager.sendSpecialHexDisplayPackets();
                 gameManager.getGame().addReports(gameManager.getMainPhaseReport());
-                boolean hasMinesToDeploy = gameManager.getGame().getPlayersList().stream().anyMatch(Player::hasMinefields);
+                boolean hasMinesToDeploy = gameManager.getGame()
+                      .getPlayersList()
+                      .stream()
+                      .anyMatch(Player::hasMinefields);
                 if (hasMinesToDeploy) {
                     gameManager.changePhase(GamePhase.DEPLOY_MINEFIELDS);
                 } else {
@@ -206,7 +224,7 @@ class TWPhaseEndManager {
 
                 gameManager.sendSpecialHexDisplayPackets();
                 gameManager.getGame().getPlayersList()
-                        .forEach(player -> gameManager.send(player.getId(), gameManager.createArtilleryPacket(player)));
+                      .forEach(player -> gameManager.send(player.getId(), gameManager.createArtilleryPacket(player)));
                 break;
             case OFFBOARD:
                 // write Offboard Attack Phase header
@@ -216,7 +234,7 @@ class TWPhaseEndManager {
                 gameManager.resolveOnlyWeaponAttacks(); // should only be TAG at this point
                 gameManager.handleAttacks();
                 gameManager.getGame().getPlayersList()
-                        .forEach(player -> gameManager.send(player.getId(), gameManager.createArtilleryPacket(player)));
+                      .forEach(player -> gameManager.send(player.getId(), gameManager.createArtilleryPacket(player)));
                 gameManager.applyBuildingDamage();
                 gameManager.checkForPSRFromDamage();
                 gameManager.addReport(gameManager.resolvePilotingRolls());
@@ -254,7 +272,7 @@ class TWPhaseEndManager {
                 // check phase report
                 // HACK: hardcoded message ID check
                 if ((gameManager.getMainPhaseReport().size() > 3) || ((gameManager.getMainPhaseReport().size() > 1)
-                        && (gameManager.getMainPhaseReport().elementAt(1).messageId != 1205))) {
+                      && (gameManager.getMainPhaseReport().elementAt(1).messageId != 1205))) {
                     gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                     gameManager.changePhase(GamePhase.END_REPORT);
                 } else {

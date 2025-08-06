@@ -1,19 +1,51 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.common.weapons;
+
+import static megamek.common.weapons.AreaEffectHelper.DamageFalloff;
+import static megamek.common.weapons.AreaEffectHelper.calculateDamageFallOff;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import megamek.client.Client;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -25,16 +57,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static megamek.common.weapons.AreaEffectHelper.calculateDamageFallOff;
-import static megamek.common.weapons.AreaEffectHelper.DamageFalloff;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class AreaEffectHelperTest {
 
@@ -91,11 +113,11 @@ class AreaEffectHelperTest {
 
     @Test
     void testShapeBlastRingR2ArtilleryAttackOnBoardNoAETerrainLevel0() {
-        game.setBoard(new Board(16,17));
-        Coords centerPoint = new Coords(7,7);
+        game.setBoard(new Board(16, 17));
+        Coords centerPoint = new Coords(7, 7);
         DamageFalloff falloff = calculateDamageFallOff(mockLTAmmoType, 0, false);
         HashMap<Map.Entry<Integer, Coords>, Integer> shape = AreaEffectHelper.shapeBlastRing(
-            centerPoint, falloff, 0, false
+              centerPoint, falloff, 0, false
         );
 
         // We expect a disk of 1 + 6 + 12 hexes centered around the centerPoint
@@ -104,7 +126,7 @@ class AreaEffectHelperTest {
 
         // Now create the disk minus the center point
         shape = AreaEffectHelper.shapeBlastRing(
-            centerPoint, falloff, 0,true
+              centerPoint, falloff, 0, true
         );
         // We expect a disk of 6 + 12 hexes centered around the centerPoint, but no centerPoint
         assertEquals(18, shape.size());
@@ -113,8 +135,8 @@ class AreaEffectHelperTest {
 
     @Test
     void testClusterBombCorrectDamageShape() {
-        game.setBoard(new Board(16,17));
-        Coords centerPoint = new Coords(7,7);
+        game.setBoard(new Board(16, 17));
+        Coords centerPoint = new Coords(7, 7);
 
         int height = 0;
 
@@ -132,8 +154,8 @@ class AreaEffectHelperTest {
 
     @Test
     void testClusterLongTomCorrectDamageShape() {
-        game.setBoard(new Board(16,17));
-        Coords centerPoint = new Coords(7,7);
+        game.setBoard(new Board(16, 17));
+        Coords centerPoint = new Coords(7, 7);
 
         // This a Cluster artillery attack.
         AmmoType ammo = mockLTClusterAmmoType;
@@ -151,8 +173,8 @@ class AreaEffectHelperTest {
 
     @Test
     void testClusterSniperCorrectDamageShape() {
-        game.setBoard(new Board(16,17));
-        Coords centerPoint = new Coords(7,7);
+        game.setBoard(new Board(16, 17));
+        Coords centerPoint = new Coords(7, 7);
 
         // This a Cluster artillery attack.
         AmmoType ammo = mockSniperClusterAmmoType;
@@ -170,8 +192,8 @@ class AreaEffectHelperTest {
 
     @Test
     void testClusterThumperCorrectDamageShape() {
-        game.setBoard(new Board(16,17));
-        Coords centerPoint = new Coords(7,7);
+        game.setBoard(new Board(16, 17));
+        Coords centerPoint = new Coords(7, 7);
 
         // This a Cluster artillery attack.
         AmmoType ammo = mockThumperClusterAmmoType;
@@ -190,12 +212,12 @@ class AreaEffectHelperTest {
 
     @Test
     void testShapeBlastR2ArtilleryAttackOnBoardNoAETerrainLevel0() {
-        game.setBoard(new Board(16,17));
-        Coords centerPoint = new Coords(7,7);
+        game.setBoard(new Board(16, 17));
+        Coords centerPoint = new Coords(7, 7);
         AmmoType ammo = mockLTAmmoType;
         DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
         HashMap<Map.Entry<Integer, Coords>, Integer> shape = AreaEffectHelper.shapeBlast(
-            ammo, centerPoint, falloff, 0, true, false, false, game, false
+              ammo, centerPoint, falloff, 0, true, false, false, game, false
         );
 
         // We expect a column of two levels above the target level, plus a disk of 1 + 6 + 12 hexes at level
@@ -204,11 +226,11 @@ class AreaEffectHelperTest {
 
     @Test
     void testShapeBlastR1ArtilleryAttackOnBoardNoAETerrainLevel0() {
-        game.setBoard(new Board(16,17));
-        Coords centerPoint = new Coords(7,7);
+        game.setBoard(new Board(16, 17));
+        Coords centerPoint = new Coords(7, 7);
         HashMap<Map.Entry<Integer, Coords>, Integer> shape = AreaEffectHelper.shapeBlast(
-            mockSniperAmmoType,
-            centerPoint, 0, true, false, false, game, false
+              mockSniperAmmoType,
+              centerPoint, 0, true, false, false, game, false
         );
 
         // We expect a column of one level above the target level, plus a disk of 1 + 6 hexes at level
@@ -217,12 +239,12 @@ class AreaEffectHelperTest {
 
     @Test
     void testShapeBlastR1ArtilleryAttackOnBoardNoAETerrainLevel2Flak() {
-        game.setBoard(new Board(16,17));
-        Coords centerPoint = new Coords(7,7);
+        game.setBoard(new Board(16, 17));
+        Coords centerPoint = new Coords(7, 7);
         int height = 2;
         HashMap<Map.Entry<Integer, Coords>, Integer> shape = AreaEffectHelper.shapeBlast(
-            mockSniperAmmoType,
-            centerPoint, height, true, true, false, game, false
+              mockSniperAmmoType,
+              centerPoint, height, true, true, false, game, false
         );
 
         // We expect a column of one level above and below the target level,
@@ -237,16 +259,16 @@ class AreaEffectHelperTest {
     void testShapeBlastR0BombAttackOnBoardAETerrainLevel2() {
         int height = 2;
         int expectedHalfDamage = (int) Math.ceil(mockBombHEAmmoType.getDamagePerShot() / 2.0);
-        game.setBoard(new Board(16,17));
-        Coords centerPoint = new Coords(7,7);
+        game.setBoard(new Board(16, 17));
+        Coords centerPoint = new Coords(7, 7);
         Hex hex = new Hex(0);
         hex.addTerrain(new Terrain(Terrains.BUILDING, height, true, 63));
         game.getBoard().setHex(centerPoint, hex);
 
         // This a non-artillery attack.
         HashMap<Map.Entry<Integer, Coords>, Integer> shape = AreaEffectHelper.shapeBlast(
-            mockBombHEAmmoType,
-            centerPoint, height, false, false, false, game, false
+              mockBombHEAmmoType,
+              centerPoint, height, false, false, false, game, false
         );
 
         // We expect a column of one level above and below the target level,
@@ -260,16 +282,16 @@ class AreaEffectHelperTest {
     void testShapeBlastR2BombAttackOnBoardAETerrainLevel2() {
         int height = 2;
         int expectedHalfDamage = (int) Math.ceil(mockBombFAEAmmoType.getDamagePerShot() / 2.0);
-        game.setBoard(new Board(16,17));
-        Coords centerPoint = new Coords(7,7);
+        game.setBoard(new Board(16, 17));
+        Coords centerPoint = new Coords(7, 7);
         Hex hex = new Hex(0);
         hex.addTerrain(new Terrain(Terrains.BUILDING, height, true, 63));
         game.getBoard().setHex(centerPoint, hex);
 
         // This a non-artillery attack.
         HashMap<Map.Entry<Integer, Coords>, Integer> shape = AreaEffectHelper.shapeBlast(
-            mockBombFAEAmmoType,
-            centerPoint, height, false, false, false, game, false
+              mockBombFAEAmmoType,
+              centerPoint, height, false, false, false, game, false
         );
 
         // We expect a column of two levels above and below the target level,
@@ -281,11 +303,11 @@ class AreaEffectHelperTest {
         assertEquals(mockBombFAEAmmoType.getDamagePerShot(), shape.get(Map.entry(2, centerPoint)));
         assertEquals(mockBombFAEAmmoType.getDamagePerShot(), shape.get(Map.entry(3, centerPoint)));
         assertEquals(expectedHalfDamage, shape.get(Map.entry(4, centerPoint)));
-        for (Coords c: centerPoint.allAtDistance(1)) {
+        for (Coords c : centerPoint.allAtDistance(1)) {
             assertEquals(expectedHalfDamage, shape.get(Map.entry(3, c)));
             assertEquals(expectedHalfDamage, shape.get(Map.entry(1, c)));
         }
-        for (Coords c: centerPoint.allAtDistance(2)) {
+        for (Coords c : centerPoint.allAtDistance(2)) {
             assertEquals(5, shape.get(Map.entry(2, c)));
         }
     }

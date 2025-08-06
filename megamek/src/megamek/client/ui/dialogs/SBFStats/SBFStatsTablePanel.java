@@ -46,8 +46,8 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SpringLayout;
 
-import megamek.client.ui.dialogs.abstractDialogs.ASConversionInfoDialog;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
+import megamek.client.ui.dialogs.abstractDialogs.ASConversionInfoDialog;
 import megamek.client.ui.panels.alphaStrike.ASStatsTablePanel;
 import megamek.client.ui.util.SpringUtilities;
 import megamek.client.ui.util.UIUtil;
@@ -90,8 +90,8 @@ public class SBFStatsTablePanel {
 
     private void addBetaInfo() {
         var betaLabel = new JLabel(UIUtil.WARNING_SIGN +
-                                         " Please note: SBF conversion is currently in development " +
-                                         "and results may change in future releases.");
+              " Please note: SBF conversion is currently in development " +
+              "and results may change in future releases.");
         betaLabel.setFont(UIUtil.getDefaultFont());
         betaLabel.setForeground(UIUtil.uiYellow());
         betaLabel.setAlignmentX(0.5f);

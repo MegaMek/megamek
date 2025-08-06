@@ -142,9 +142,9 @@ public class QuirkEntry {
         }
         final QuirkEntry other = (QuirkEntry) obj;
         return Objects.equals(location, other.location) &&
-                     Objects.equals(weaponName, other.weaponName) &&
-                     (slot == other.slot) &&
-                     Objects.equals(code, other.code);
+              Objects.equals(weaponName, other.weaponName) &&
+              (slot == other.slot) &&
+              Objects.equals(code, other.code);
     }
 
     @Override

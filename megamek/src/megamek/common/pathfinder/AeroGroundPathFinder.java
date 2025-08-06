@@ -1,33 +1,58 @@
 /*
-* MegaMek -
-* Copyright (C) 2017 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 package megamek.common.pathfinder;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.*;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.IAero;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.logging.MMLogger;
 
-import java.util.*;
-
 /**
- * This set of classes is intended for use for pathfinding by aerodyne units on
- * ground maps with an atmosphere
- * Usage anywhere else may result in "unpredictable" behavior
+ * This set of classes is intended for use for pathfinding by aerodyne units on ground maps with an atmosphere Usage
+ * anywhere else may result in "unpredictable" behavior
  *
  * @author NickAragua
  */
@@ -85,7 +110,7 @@ public class AeroGroundPathFinder {
             int maxVelocity = Math.min(getMaximumVelocity(aero), aero.getCurrentVelocity() + maxThrust);
             int minVelocity = Math.max(getMinimumVelocity(aero), aero.getCurrentVelocity() - maxThrust);
             Collection<MovePath> validAccelerations = AeroPathUtil.generateValidAccelerations(startingEdge, minVelocity,
-                    maxVelocity);
+                  maxVelocity);
 
             for (MovePath acceleratedPath : validAccelerations) {
                 aeroGroundPaths.addAll(getAltitudeAdjustedPaths(GenerateAllPaths(acceleratedPath)));
@@ -98,8 +123,8 @@ public class AeroGroundPathFinder {
              */
 
             final String memoryMessage = "Not enough memory to analyse all options."
-                    + " Try setting time limit to lower value, or "
-                    + "increase java memory limit.";
+                  + " Try setting time limit to lower value, or "
+                  + "increase java memory limit.";
 
             logger.error(memoryMessage, e);
         } catch (Exception e) {
@@ -112,8 +137,7 @@ public class AeroGroundPathFinder {
     }
 
     /**
-     * This class removes all off-board paths, but keeps track of the shortest of
-     * all the paths removed
+     * This class removes all off-board paths, but keeps track of the shortest of all the paths removed
      *
      * @author NickAragua
      */
@@ -126,10 +150,10 @@ public class AeroGroundPathFinder {
         }
 
         /**
-         * Returns filtered collection by removing those objects that fail
-         * {@link #shouldStay(MovePath)} test.
+         * Returns filtered collection by removing those objects that fail {@link #shouldStay(MovePath)} test.
          *
          * @param collection collection to be filtered
+         *
          * @return filtered collection
          */
         @Override
@@ -146,8 +170,8 @@ public class AeroGroundPathFinder {
                     // at the end of the process, we will add the shortest path off board to the
                     // list of moves
                     if (shortestPath == null ||
-                            (shortestPath.length() > e.length()) &&
-                                    AeroPathUtil.isSafePathOffBoard(e)) {
+                          (shortestPath.length() > e.length()) &&
+                                AeroPathUtil.isSafePathOffBoard(e)) {
                         shortestPath = e;
                     }
                 }
@@ -160,6 +184,7 @@ public class AeroGroundPathFinder {
          * Tests if the object should stay in the collection.
          *
          * @param path Path object is taking
+         *
          * @return true if the object should stay in the collection
          */
         @Override
@@ -174,10 +199,10 @@ public class AeroGroundPathFinder {
     Map<Coords, MovePath> visitedHexes;
 
     /**
-     * Given a list of MovePaths, applies adjustTowardsDesiredAltitude to each of
-     * them.
+     * Given a list of MovePaths, applies adjustTowardsDesiredAltitude to each of them.
      *
      * @param startingPaths The collection of paths to process
+     *
      * @return The new collection of resulting paths.
      */
     protected List<MovePath> getAltitudeAdjustedPaths(List<MovePath> startingPaths) {
@@ -211,6 +236,7 @@ public class AeroGroundPathFinder {
      *
      * @param startingPath    The path to adjust
      * @param desiredAltitude The desired altitude
+     *
      * @return New instance of movepath with as much altitude adjustment as possible
      */
     private MovePath adjustTowardsDesiredAltitude(MovePath startingPath, int desiredAltitude) {
@@ -221,10 +247,10 @@ public class AeroGroundPathFinder {
         while (altitudePath.getFinalAltitude() != desiredAltitude) {
             // up steps use thrust. Two points, to be exact
             if (altitudePath.getFinalAltitude() < desiredAltitude &&
-                    altitudePath.getMpUsed() < maxThrust - 1) {
+                  altitudePath.getMpUsed() < maxThrust - 1) {
                 altitudePath.addStep(MoveStepType.UP);
             } else if ((altitudePath.getFinalAltitude() > desiredAltitude) &&
-                    (altitudePath.getFinalAltitude() >= startingPath.getFinalAltitude() - 1)) {
+                  (altitudePath.getFinalAltitude() >= startingPath.getFinalAltitude() - 1)) {
                 // down steps don't use thrust, but if we take more than one, it changes the
                 // velocity,
                 // so just do one for now
@@ -301,7 +327,7 @@ public class AeroGroundPathFinder {
 
         boolean firstTurn = true;
         while (mp.length() < STACK_DEPTH && straightLine.getFinalVelocityLeft() > 0 &&
-                game.getBoard(mp.getFinalBoardId()).contains(straightLine.getFinalCoords())) {
+              game.getBoard(mp.getFinalBoardId()).contains(straightLine.getFinalCoords())) {
 
             // little dirty hack to get around the problem where if this is the first step
             // of a path
@@ -319,7 +345,7 @@ public class AeroGroundPathFinder {
             // thrust, it's an illegal move
             // and thus not worth evaluating further)
             if (currentStep.canAeroTurn(game) &&
-                    currentStep.getMpUsed() <= mp.getEntity().getRunMP() - turnCost) {
+                  currentStep.getMpUsed() <= mp.getEntity().getRunMP() - turnCost) {
                 MovePath tiltedPath = straightLine.clone();
                 tiltedPath.addStep(stepType);
 
@@ -364,7 +390,7 @@ public class AeroGroundPathFinder {
             // this slightly increases the area covered by the aero in cases where the path
             // takes it near the edge
             if (mp.nextForwardStepOffBoard()
-                    && (mp.getEntity().getDamageLevel() != Entity.DMG_CRIPPLED)) {
+                  && (mp.getEntity().getDamageLevel() != Entity.DMG_CRIPPLED)) {
                 final MoveStep lastStep = mp.getLastStep(); // using to prevent unnecessary computation
                 if ((lastStep != null) && lastStep.canAeroTurn(game)) {
                     // we want to generate a path that looks like this:
@@ -413,10 +439,11 @@ public class AeroGroundPathFinder {
     }
 
     /**
-     * Determines if the given move path is "redundant".
-     * In this case, it means that the path has not visited any new hexes.
+     * Determines if the given move path is "redundant". In this case, it means that the path has not visited any new
+     * hexes.
      *
      * @param mp The move path to examine.
+     *
      * @return Whether or not the move path is redundant.
      */
     // goes through a path.

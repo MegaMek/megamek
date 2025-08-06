@@ -35,12 +35,13 @@ package megamek.common;
 /**
  * Represents a set of cube coordinates in a hex grid. Cube Coordinate allows for more precise manipulation of
  * distances, movements, and other operations.
+ *
  * @author Luana Coppio
  */
 public enum CardinalDirection {
     NORTH(new CubeCoords(0, -1, 1), 0),
     NORTHEAST(new CubeCoords(1, -1, 0), 60),
-    SOUTHEAST(new CubeCoords(1, 0, -1),  120),
+    SOUTHEAST(new CubeCoords(1, 0, -1), 120),
     SOUTH(new CubeCoords(0, 1, -1), 180),
     SOUTHWEST(new CubeCoords(-1, 1, 0), 240),
     NORTHWEST(new CubeCoords(-1, 0, 1), 300);
@@ -55,6 +56,7 @@ public enum CardinalDirection {
 
     /**
      * Returns the direction of this CardinalDirection as CubeCoords.
+     *
      * @return the CubeCoords representing the direction
      */
     public CubeCoords getDirection() {
@@ -63,6 +65,7 @@ public enum CardinalDirection {
 
     /**
      * Returns the angle of this CardinalDirection in degrees.
+     *
      * @return the angle in degrees
      */
     public int getAngle() {

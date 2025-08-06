@@ -1,24 +1,40 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.List;
 
@@ -33,15 +49,13 @@ import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 
 /**
- * The Flight Path Indicator Sprite paints a path in front of an aerospace movement path
- * and indicates the turn status and remaining velocity by showing the length of path
- * the flight must follow and when the unit can turn.
- *
- * A green solid circle indicates the craft can make a free turn on that hex.
- * A yellow solid circle indicates the craft can make a turn with cost to thrust.
- * A red empty circle indicates the craft cannot turn on that hex.
- * A green flag indicates the craft has used all its remaining velocity on that hex.
- * A yellow two-way diamond indicates the craft will fly off the map with remaining velocity.
+ * The Flight Path Indicator Sprite paints a path in front of an aerospace movement path and indicates the turn status
+ * and remaining velocity by showing the length of path the flight must follow and when the unit can turn.
+ * <p>
+ * A green solid circle indicates the craft can make a free turn on that hex. A yellow solid circle indicates the craft
+ * can make a turn with cost to thrust. A red empty circle indicates the craft cannot turn on that hex. A green flag
+ * indicates the craft has used all its remaining velocity on that hex. A yellow two-way diamond indicates the craft
+ * will fly off the map with remaining velocity.
  */
 public class FlightPathIndicatorSprite extends HexSprite {
 
@@ -49,7 +63,7 @@ public class FlightPathIndicatorSprite extends HexSprite {
     private static final int TEXT_SIZE = 50;
     private static final int ARROW_X_OFFSET = 14;
     private static final int ARROW_Y_OFFSET = 4;
-    private static final Color COLOR_OUTLINE = new Color(40, 40,40,200);
+    private static final Color COLOR_OUTLINE = new Color(40, 40, 40, 200);
 
     private static final Color COLOR_CIRCLE = new Color(255, 255, 255, 128);
     private static final int CIRCLE_RADIUS = 60;
@@ -69,24 +83,24 @@ public class FlightPathIndicatorSprite extends HexSprite {
     private static final String LEFT_TURN = "\uEBA4";
 
     private final StringDrawer.StringDrawerConfig symbolConfig =
-            new StringDrawer.StringDrawerConfig().absoluteCenter().fontSize(TEXT_SIZE)
-                    .outline(COLOR_OUTLINE, 2.5f);
+          new StringDrawer.StringDrawerConfig().absoluteCenter().fontSize(TEXT_SIZE)
+                .outline(COLOR_OUTLINE, 2.5f);
 
     // Setup 'StringDrawers' to write special characters as icons.
     private final StringDrawer straight = new StringDrawer(STRAIGHT_ARROW)
-            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(symbolConfig);
+          .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(symbolConfig);
 
     private final StringDrawer right = new StringDrawer(RIGHT_TURN)
-            .at(HEX_CENTER_X + ARROW_X_OFFSET, HEX_CENTER_Y + ARROW_Y_OFFSET).useConfig(symbolConfig);
+          .at(HEX_CENTER_X + ARROW_X_OFFSET, HEX_CENTER_Y + ARROW_Y_OFFSET).useConfig(symbolConfig);
 
     private final StringDrawer left = new StringDrawer(LEFT_TURN)
-            .at(HEX_CENTER_X - ARROW_X_OFFSET, HEX_CENTER_Y + ARROW_Y_OFFSET).useConfig(symbolConfig);
+          .at(HEX_CENTER_X - ARROW_X_OFFSET, HEX_CENTER_Y + ARROW_Y_OFFSET).useConfig(symbolConfig);
 
     private final StringDrawer flag = new StringDrawer(FLAG)
-            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(symbolConfig);
+          .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(symbolConfig);
 
     private final StringDrawer flyOffIcon = new StringDrawer(FLY_OFF)
-            .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(symbolConfig);
+          .at(HEX_CENTER_X, HEX_CENTER_Y).useConfig(symbolConfig);
 
     public FlightPathIndicatorSprite(BoardView boardView, List<MoveStep> steps, int index, boolean last) {
         super(boardView, steps.get(index).getPosition());
@@ -165,7 +179,10 @@ public class FlightPathIndicatorSprite extends HexSprite {
 
     private void drawBackGroundCircle(Graphics2D graph) {
         graph.setColor(COLOR_CIRCLE);
-        graph.fillOval(HEX_CENTER_X - CIRCLE_RADIUS / 2, HEX_CENTER_Y - CIRCLE_RADIUS / 2, CIRCLE_RADIUS, CIRCLE_RADIUS);
+        graph.fillOval(HEX_CENTER_X - CIRCLE_RADIUS / 2,
+              HEX_CENTER_Y - CIRCLE_RADIUS / 2,
+              CIRCLE_RADIUS,
+              CIRCLE_RADIUS);
     }
 
     /*
@@ -215,8 +232,8 @@ public class FlightPathIndicatorSprite extends HexSprite {
 
     private boolean equalType(MoveStep otherStep) {
         return bothFreeTurn(otherStep)
-                || (!canTurnForFree() && bothTurnWithCost(otherStep))
-                || (bothOnlyStraight(otherStep));
+              || (!canTurnForFree() && bothTurnWithCost(otherStep))
+              || (bothOnlyStraight(otherStep));
     }
 
     private boolean bothFreeTurn(MoveStep otherStep) {
@@ -269,7 +286,7 @@ public class FlightPathIndicatorSprite extends HexSprite {
 
         int remainingDistance = velocity - moveStep.getDistance();
         new StringDrawer(Integer.toString(remainingDistance)).at(HEX_CENTER_X, HEX_CENTER_Y - TEXT_Y_OFFSET)
-                .font(new Font(GUIP.getMoveFontType(), GUIP.getMoveFontStyle(), 16)).outline(COLOR_OUTLINE, 2.5f)
-                .color(GUIP.getOkColor()).centerX().draw(graph);
+              .font(new Font(GUIP.getMoveFontType(), GUIP.getMoveFontStyle(), 16)).outline(COLOR_OUTLINE, 2.5f)
+              .color(GUIP.getOkColor()).centerX().draw(graph);
     }
 }

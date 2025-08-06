@@ -17,12 +17,12 @@
  * if not, see <https://www.gnu.org/licenses/>.
  *
  * NOTICE: The MegaMek organization is a non-profit group of volunteers
- * creating free software for the BattleTech community. 
+ * creating free software for the BattleTech community.
  *
- * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks 
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
  * of The Topps Company, Inc. All Rights Reserved.
- * 
- * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of 
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
  *
  * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
@@ -39,8 +39,8 @@ import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.common.weapons.srms.SRMWeapon;
 
 /**
- * This whole class is a utility to calculate the aerospace AV modification
- * for linked Artemis, Apollo, or PPC capacitor.
+ * This whole class is a utility to calculate the aerospace AV modification for linked Artemis, Apollo, or PPC
+ * capacitor.
  */
 public class AeroAVModCalculator {
     /**
@@ -49,11 +49,12 @@ public class AeroAVModCalculator {
      * @param weapon   The type of weapon
      * @param linkedBy The type of equipment the weapon is linked by
      * @param bay      Whether the weapon is part of a weapon bay
-     * @return         The AV modification, if any
+     *
+     * @return The AV modification, if any
      */
     public static int calculateBonus(WeaponType weapon, EquipmentType linkedBy, boolean bay) {
         if (linkedBy.hasFlag(MiscType.F_ARTEMIS)
-                || linkedBy.hasFlag(MiscType.F_ARTEMIS_V)) {
+              || linkedBy.hasFlag(MiscType.F_ARTEMIS_V)) {
             // The 9 and 10 rows of the cluster hits table is only different in the 3 column
             if (weapon.getAtClass() == WeaponType.CLASS_MML) {
                 if (weapon.getRackSize() >= 7) {

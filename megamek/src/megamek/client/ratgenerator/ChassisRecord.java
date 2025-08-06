@@ -1,27 +1,51 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ratgenerator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 import megamek.common.EntityMovementMode;
 import megamek.logging.MMLogger;
 
 /**
- * The ChassisRecord tracks all available variants and determines how much total
- * weight
- * is to be distributed among the various models.
+ * The ChassisRecord tracks all available variants and determines how much total weight is to be distributed among the
+ * various models.
  *
  * @author Neoancient
  */
@@ -54,18 +78,20 @@ public class ChassisRecord extends AbstractUnitRecord {
     }
 
     /**
-     * Generate a list of models for this chassis based on certain criteria.
-     * Early prototypes may be available one year before official introduction.
-     * @param exactYear     game year
+     * Generate a list of models for this chassis based on certain criteria. Early prototypes may be available one year
+     * before official introduction.
+     *
+     * @param exactYear          game year
      * @param validWeightClasses restrict weight class to one or more classes
-     * @param movementModes movement mode types, may be null or empty
-     * @param networkMask   specific C3 network equipment
-     * @return    set of models which pass the filter requirements, may be empty
+     * @param movementModes      movement mode types, may be null or empty
+     * @param networkMask        specific C3 network equipment
+     *
+     * @return set of models which pass the filter requirements, may be empty
      */
     public HashSet<ModelRecord> getFilteredModels(int exactYear,
-                                                  Collection<Integer> validWeightClasses,
-                                                  Collection<EntityMovementMode> movementModes,
-                                                  int networkMask) {
+          Collection<Integer> validWeightClasses,
+          Collection<EntityMovementMode> movementModes,
+          int networkMask) {
 
         HashSet<ModelRecord> filteredModels = new HashSet<>();
 
@@ -76,7 +102,9 @@ public class ChassisRecord extends AbstractUnitRecord {
             }
 
             // Weight class check
-            if (validWeightClasses != null && !validWeightClasses.isEmpty() && !validWeightClasses.contains(curModel.getWeightClass())) {
+            if (validWeightClasses != null
+                  && !validWeightClasses.isEmpty()
+                  && !validWeightClasses.contains(curModel.getWeightClass())) {
                 continue;
             }
 
@@ -99,30 +127,31 @@ public class ChassisRecord extends AbstractUnitRecord {
     }
 
     /**
-     * Total the weights of all models for this chassis, including modifiers for
-     * +/- dynamic adjustment, intro year adjustment, interpolation, and role
-     * modifications.
-     * @param validModels models to add up
-     * @param currentEra  year for current era
-     * @param exactYear   current year in game
-     * @param nextEra     start date of next era after the current one
-     * @param fRec        faction data
-     * @param roles       roles selected for generation, may be null or empty
-     * @param roleStrictness positive number, higher applies heavier role adjustments
-     * @param equipRating    equipment rating to generate for
+     * Total the weights of all models for this chassis, including modifiers for +/- dynamic adjustment, intro year
+     * adjustment, interpolation, and role modifications.
+     *
+     * @param validModels     models to add up
+     * @param currentEra      year for current era
+     * @param exactYear       current year in game
+     * @param nextEra         start date of next era after the current one
+     * @param fRec            faction data
+     * @param roles           roles selected for generation, may be null or empty
+     * @param roleStrictness  positive number, higher applies heavier role adjustments
+     * @param equipRating     equipment rating to generate for
      * @param numRatingLevels how many rating levels are present
-     * @return           sum of calculated weights of all models of this chassis
+     *
+     * @return sum of calculated weights of all models of this chassis
      */
     public double totalModelWeight(HashSet<ModelRecord> validModels,
-                                   int currentEra,
-                                   int exactYear,
-                                   int nextEra,
-                                   FactionRecord fRec,
-                                   Collection<MissionRole> roles,
-                                   int roleStrictness,
-                                   int equipRating,
-                                   int numRatingLevels,
-                                   HashMap<String,Double> weightData) {
+          int currentEra,
+          int exactYear,
+          int nextEra,
+          FactionRecord fRec,
+          Collection<MissionRole> roles,
+          int roleStrictness,
+          int equipRating,
+          int numRatingLevels,
+          HashMap<String, Double> weightData) {
 
         RATGenerator ratGen = RATGenerator.getInstance();
         AvailabilityRating avRating, nextAvRating;
@@ -153,22 +182,22 @@ public class ChassisRecord extends AbstractUnitRecord {
             // (whichever is later), and start of next era
             if (exactYear > currentEra && currentEra != nextEra) {
                 nextAvRating = ratGen.findModelAvailabilityRecord(nextEra,
-                    curModel.getKey(), fRec);
+                      curModel.getKey(), fRec);
 
                 int interpolationStart = Math.max(currentEra, Math.min(exactYear, curModel.introYear));
 
                 adjRating = curModel.calcAvailability(avRating,
-                    equipRating, numRatingLevels, interpolationStart);
+                      equipRating, numRatingLevels, interpolationStart);
 
                 nextRating = 0.0;
                 if (nextAvRating != null) {
                     nextRating = curModel.calcAvailability(nextAvRating,
-                        equipRating, numRatingLevels, nextEra);
+                          equipRating, numRatingLevels, nextEra);
                 }
 
                 if (adjRating != nextRating) {
                     adjRating = adjRating +
-                        (nextRating - adjRating) * (exactYear - interpolationStart) / (nextEra - interpolationStart);
+                          (nextRating - adjRating) * (exactYear - interpolationStart) / (nextEra - interpolationStart);
                 }
 
             } else {
@@ -182,7 +211,7 @@ public class ChassisRecord extends AbstractUnitRecord {
 
             // Adjust availability for roles. Method may return null as a filtering mechanism.
             roleRating = MissionRole.adjustAvailabilityByRole(adjRating,
-                roles, curModel, exactYear, roleStrictness);
+                  roles, curModel, exactYear, roleStrictness);
 
             if (roleRating == null || roleRating.doubleValue() <= 0) {
                 continue;
@@ -214,7 +243,7 @@ public class ChassisRecord extends AbstractUnitRecord {
 
         for (ModelRecord curModel : models) {
             AvailabilityRating avRating = ratGen.findModelAvailabilityRecord(era,
-                    curModel.getKey(), fRec);
+                  curModel.getKey(), fRec);
             if (avRating != null) {
                 retVal += AvailabilityRating.calcWeight(avRating.getAvailability());
             }

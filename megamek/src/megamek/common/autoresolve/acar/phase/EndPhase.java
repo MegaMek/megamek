@@ -1,17 +1,40 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.autoresolve.acar.phase;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.autoresolve.acar.SimulationManager;
@@ -28,9 +51,6 @@ import megamek.common.strategicBattleSystems.SBFElementType;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.util.weightedMaps.WeightedDoubleMap;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class EndPhase extends PhaseHandler {
 
@@ -55,8 +75,8 @@ public class EndPhase extends PhaseHandler {
         var allFormations = getContext().getActiveDeployedFormations();
         for (var formation : allFormations) {
             var destroyedUnits = formation.getUnits().stream()
-                .filter(u -> u.getCurrentArmor() <= 0)
-                .toList();
+                  .filter(u -> u.getCurrentArmor() <= 0)
+                  .toList();
             if (!destroyedUnits.isEmpty()) {
                 destroyUnits(formation, destroyedUnits);
             }
@@ -70,9 +90,9 @@ public class EndPhase extends PhaseHandler {
         }
 
         var forcedWithdrawingUnits = getSimulationManager().getGame().getActiveDeployedFormations().stream()
-            .filter(f -> f.moraleStatus() == Formation.MoraleStatus.ROUTED || f.isCrippled())
-            .filter(f -> !(f.isType(SBFElementType.BA) || f.isType(SBFElementType.CI)))
-            .collect(Collectors.toSet());
+              .filter(f -> f.moraleStatus() == Formation.MoraleStatus.ROUTED || f.isCrippled())
+              .filter(f -> !(f.isType(SBFElementType.BA) || f.isType(SBFElementType.CI)))
+              .collect(Collectors.toSet());
 
         for (var order : getContext().getOrders()) {
             if (order.isEligible(getContext())) {
@@ -99,8 +119,8 @@ public class EndPhase extends PhaseHandler {
 
     private void checkMorale() {
         var formationNeedsMoraleCheck = getSimulationManager().getGame().getActiveDeployedFormations().stream()
-            .filter(Formation::hadHighStressEpisode)
-            .toList();
+              .filter(Formation::hadHighStressEpisode)
+              .toList();
 
         for (var formation : formationNeedsMoraleCheck) {
             getSimulationManager().addMoraleCheck(new MoraleCheckAction(formation.getId()), formation);
@@ -109,9 +129,9 @@ public class EndPhase extends PhaseHandler {
 
     private void checkRecoveringNerves() {
         var recoveringNerves = getSimulationManager().getGame().getActiveDeployedFormations().stream()
-            .filter(SBFFormation::isDeployed)
-            .filter(f -> f.moraleStatus().ordinal() > Formation.MoraleStatus.NORMAL.ordinal())
-            .toList();
+              .filter(SBFFormation::isDeployed)
+              .filter(f -> f.moraleStatus().ordinal() > Formation.MoraleStatus.NORMAL.ordinal())
+              .toList();
 
         for (var formation : recoveringNerves) {
             getSimulationManager().addNerveRecovery(new RecoveringNerveAction(formation.getId()));
@@ -124,14 +144,14 @@ public class EndPhase extends PhaseHandler {
     }
 
     private static final WeightedDoubleMap<Integer> REMOVAL_CONDITIONS_TABLE = WeightedDoubleMap.of(
-        IEntityRemovalConditions.REMOVE_SALVAGEABLE, 2,
-        IEntityRemovalConditions.REMOVE_DEVASTATED, 5,
-        IEntityRemovalConditions.REMOVE_EJECTED, 10
+          IEntityRemovalConditions.REMOVE_SALVAGEABLE, 2,
+          IEntityRemovalConditions.REMOVE_DEVASTATED, 5,
+          IEntityRemovalConditions.REMOVE_EJECTED, 10
     );
 
     private static final WeightedDoubleMap<Integer> REMOVAL_CONDITIONS_TABLE_NO_EJECTION = WeightedDoubleMap.of(
-        IEntityRemovalConditions.REMOVE_SALVAGEABLE, 4,
-        IEntityRemovalConditions.REMOVE_DEVASTATED, 6
+          IEntityRemovalConditions.REMOVE_SALVAGEABLE, 4,
+          IEntityRemovalConditions.REMOVE_DEVASTATED, 6
     );
 
     private void destroyUnits(Formation formation, List<SBFUnit> destroyedUnits) {
@@ -144,14 +164,14 @@ public class EndPhase extends PhaseHandler {
                 if (entityOpt.isPresent()) {
                     var entity = entityOpt.get();
                     var removalConditionTable = entity.isEjectionPossible() ?
-                        REMOVAL_CONDITIONS_TABLE : REMOVAL_CONDITIONS_TABLE_NO_EJECTION;
+                          REMOVAL_CONDITIONS_TABLE : REMOVAL_CONDITIONS_TABLE_NO_EJECTION;
                     entity.setRemovalCondition(removalConditionTable.randomItem());
                     if (formation.isSingleEntity()) {
                         reporter.reportElementDestroyed(formation, unit, entity);
                     }
                     getContext().addUnitToGraveyard(entity);
                     getContext().applyDamageToEntityFromUnit(
-                        unit, entity, EntityFinalState.fromEntityRemovalState(entity.getRemovalCondition()));
+                          unit, entity, EntityFinalState.fromEntityRemovalState(entity.getRemovalCondition()));
                 }
             }
 

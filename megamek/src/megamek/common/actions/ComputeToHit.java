@@ -32,6 +32,9 @@
  */
 package megamek.common.actions;
 
+import java.util.EnumSet;
+import java.util.List;
+
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
@@ -48,9 +51,6 @@ import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
 import megamek.logging.MMLogger;
-
-import java.util.EnumSet;
-import java.util.List;
 
 class ComputeToHit {
 
@@ -125,56 +125,56 @@ class ComputeToHit {
         }
 
         boolean isFlakAttack = (te != null) &&
-                                     Compute.isFlakAttack(ae, te) &&
-                                     (wtype instanceof CLBALBX ||
-                                            ((atype != null) &&
-                                                   ((((atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX) ||
-                                                            (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX_THB) ||
-                                                            (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SBGAUSS)) &&
-                                                           (munition.contains(AmmoType.Munitions.M_CLUSTER))) ||
-                                                          munition.contains(AmmoType.Munitions.M_FLAK) ||
-                                                          (atype.getAmmoType() == AmmoType.AmmoTypeEnum.HAG) ||
-                                                          atype.countsAsFlak())));
+              Compute.isFlakAttack(ae, te) &&
+              (wtype instanceof CLBALBX ||
+                    ((atype != null) &&
+                          ((((atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX) ||
+                                (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX_THB) ||
+                                (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SBGAUSS)) &&
+                                (munition.contains(AmmoType.Munitions.M_CLUSTER))) ||
+                                munition.contains(AmmoType.Munitions.M_FLAK) ||
+                                (atype.getAmmoType() == AmmoType.AmmoTypeEnum.HAG) ||
+                                atype.countsAsFlak())));
 
         boolean isIndirect = weapon.hasModes() && (weapon.curMode().isIndirect());
 
         // BMM p. 31, semi-guided indirect missile attacks vs tagged targets ignore
         // terrain modifiers
         boolean semiGuidedIndirectVsTaggedTarget = isIndirect &&
-                                                         (atype != null) &&
-                                                         atype.getMunitionType()
-                                                               .contains(AmmoType.Munitions.M_SEMIGUIDED) &&
-                                                         Compute.isTargetTagged(target, game);
+              (atype != null) &&
+              atype.getMunitionType()
+                    .contains(AmmoType.Munitions.M_SEMIGUIDED) &&
+              Compute.isTargetTagged(target, game);
 
         boolean isInferno = ((atype != null) &&
-                                   ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
-                                          (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
-                                          (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) &&
-                                   (atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) ||
-                                   (isWeaponInfantry && (wtype.hasFlag(WeaponType.F_INFERNO))));
+              ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) &&
+              (atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) ||
+              (isWeaponInfantry && (wtype.hasFlag(WeaponType.F_INFERNO))));
 
         boolean isArtilleryDirect = (wtype.hasFlag(WeaponType.F_ARTILLERY) ||
-                                           (wtype instanceof CapitalMissileWeapon &&
-                                                  Compute.isGroundToGround(ae, target))) && game.getPhase().isFiring();
+              (wtype instanceof CapitalMissileWeapon &&
+                    Compute.isGroundToGround(ae, target))) && game.getPhase().isFiring();
 
         boolean isArtilleryIndirect = (wtype.hasFlag(WeaponType.F_ARTILLERY) ||
-                                             (wtype instanceof CapitalMissileWeapon &&
-                                                    Compute.isGroundToGround(ae, target))) &&
-                                            (game.getPhase().isTargeting() || game.getPhase().isOffboard());
+              (wtype instanceof CapitalMissileWeapon &&
+                    Compute.isGroundToGround(ae, target))) &&
+              (game.getPhase().isTargeting() || game.getPhase().isOffboard());
 
         boolean isBearingsOnlyMissile = (weapon.isInBearingsOnlyMode()) &&
-                                              (game.getPhase().isTargeting() || game.getPhase().isFiring());
+              (game.getPhase().isTargeting() || game.getPhase().isFiring());
 
         boolean isCruiseMissile = (weapon.getType().hasFlag(WeaponType.F_CRUISE_MISSILE) ||
-                                         (wtype instanceof CapitalMissileWeapon &&
-                                                Compute.isGroundToGround(ae, target)));
+              (wtype instanceof CapitalMissileWeapon &&
+                    Compute.isGroundToGround(ae, target)));
 
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect &&
-                                        (te != null) &&
-                                        Compute.isFlakAttack(ae, te) &&
-                                        (atype != null) &&
-                                        (usesAmmo && (atype.countsAsFlak()));
+              (te != null) &&
+              Compute.isFlakAttack(ae, te) &&
+              (atype != null) &&
+              (usesAmmo && (atype.countsAsFlak()));
 
         boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
 
@@ -196,41 +196,41 @@ class ComputeToHit {
         boolean isHoming = ammo != null && ammo.isHomingAmmoInHomingMode();
 
         boolean bHeatSeeking = (atype != null) &&
-                                     ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
-                                            (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
-                                            (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-                                            (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-                                            (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)) &&
-                                     (munition.contains(AmmoType.Munitions.M_HEAT_SEEKING));
+              ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)) &&
+              (munition.contains(AmmoType.Munitions.M_HEAT_SEEKING));
 
         boolean bFTL = (atype != null) &&
-                             ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-                                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-                                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)) &&
-                             (munition.contains(AmmoType.Munitions.M_FOLLOW_THE_LEADER) &&
-                                    !ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition()));
+              ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)) &&
+              (munition.contains(AmmoType.Munitions.M_FOLLOW_THE_LEADER) &&
+                    !ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition()));
 
         Mounted<?> mLinker = weapon.getLinkedBy();
 
         boolean bApollo = ((mLinker != null) &&
-                                 (mLinker.getType() instanceof MiscType) &&
-                                 !mLinker.isDestroyed() &&
-                                 !mLinker.isMissing() &&
-                                 !mLinker.isBreached() &&
-                                 mLinker.getType().hasFlag(MiscType.F_APOLLO)) &&
-                                (atype != null) &&
-                                (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
+              (mLinker.getType() instanceof MiscType) &&
+              !mLinker.isDestroyed() &&
+              !mLinker.isMissing() &&
+              !mLinker.isBreached() &&
+              mLinker.getType().hasFlag(MiscType.F_APOLLO)) &&
+              (atype != null) &&
+              (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
 
         boolean bArtemisV = ((mLinker != null) &&
-                                   (mLinker.getType() instanceof MiscType) &&
-                                   !mLinker.isDestroyed() &&
-                                   !mLinker.isMissing() &&
-                                   !mLinker.isBreached() &&
-                                   mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V) &&
-                                   !isECMAffected &&
-                                   !bMekTankStealthActive &&
-                                   (atype != null) &&
-                                   (munition.contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)));
+              (mLinker.getType() instanceof MiscType) &&
+              !mLinker.isDestroyed() &&
+              !mLinker.isMissing() &&
+              !mLinker.isBreached() &&
+              mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V) &&
+              !isECMAffected &&
+              !bMekTankStealthActive &&
+              (atype != null) &&
+              (munition.contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)));
 
         if (ae.usesWeaponBays()) {
             for (WeaponMounted bayW : weapon.getBayWeapons()) {
@@ -255,25 +255,25 @@ class ComputeToHit {
 
                 mLinker = bayW.getLinkedBy();
                 bApollo = ((mLinker != null) &&
-                                 (mLinker.getType() instanceof MiscType) &&
-                                 !mLinker.isDestroyed() &&
-                                 !mLinker.isMissing() &&
-                                 !mLinker.isBreached() &&
-                                 mLinker.getType().hasFlag(MiscType.F_APOLLO)) &&
-                                (bAmmo != null) &&
-                                (bAmmo.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
+                      (mLinker.getType() instanceof MiscType) &&
+                      !mLinker.isDestroyed() &&
+                      !mLinker.isMissing() &&
+                      !mLinker.isBreached() &&
+                      mLinker.getType().hasFlag(MiscType.F_APOLLO)) &&
+                      (bAmmo != null) &&
+                      (bAmmo.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
 
                 bArtemisV = ((mLinker != null) &&
-                                   (mLinker.getType() instanceof MiscType) &&
-                                   !mLinker.isDestroyed() &&
-                                   !mLinker.isMissing() &&
-                                   !mLinker.isBreached() &&
-                                   mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V) &&
-                                   !isECMAffected &&
-                                   !bMekTankStealthActive &&
-                                   (atype != null) &&
-                                   (bAmmo != null) &&
-                                   (bAmmo.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)));
+                      (mLinker.getType() instanceof MiscType) &&
+                      !mLinker.isDestroyed() &&
+                      !mLinker.isMissing() &&
+                      !mLinker.isBreached() &&
+                      mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V) &&
+                      !isECMAffected &&
+                      !bMekTankStealthActive &&
+                      (atype != null) &&
+                      (bAmmo != null) &&
+                      (bAmmo.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)));
             }
         }
 
@@ -295,20 +295,20 @@ class ComputeToHit {
         // from surface vessel, awaiting rules clarification
         // http://www.classicbattletech.com/forums/index.php/topic,48744.0.html
         boolean underWater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET) ||
-                                   (wtype instanceof SRTWeapon) ||
-                                   (wtype instanceof LRTWeapon);
+              (wtype instanceof SRTWeapon) ||
+              (wtype instanceof LRTWeapon);
 
         if (te != null) {
             if (!isTargetECMAffected &&
-                      te.isINarcedBy(ae.getOwner().getTeam()) &&
-                      (atype != null) &&
-                      ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM)) &&
-                      (munition.contains(AmmoType.Munitions.M_NARC_CAPABLE))) {
+                  te.isINarcedBy(ae.getOwner().getTeam()) &&
+                  (atype != null) &&
+                  ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                        (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                        (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                        (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                        (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+                        (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM)) &&
+                  (munition.contains(AmmoType.Munitions.M_NARC_CAPABLE))) {
                 isINarcGuided = true;
             }
         }
@@ -321,25 +321,25 @@ class ComputeToHit {
         boolean narcSpotter = false;
         if (isIndirect && !ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
             if ((target instanceof Entity) &&
-                      !isTargetECMAffected &&
-                      (te != null) &&
-                      (atype != null) &&
-                      usesAmmo &&
-                      (munition.contains(AmmoType.Munitions.M_NARC_CAPABLE) &&
-                             (te.isNarcedBy(ae.getOwner().getTeam()) || te.isINarcedBy(ae.getOwner().getTeam())))) {
+                  !isTargetECMAffected &&
+                  (te != null) &&
+                  (atype != null) &&
+                  usesAmmo &&
+                  (munition.contains(AmmoType.Munitions.M_NARC_CAPABLE) &&
+                        (te.isNarcedBy(ae.getOwner().getTeam()) || te.isINarcedBy(ae.getOwner().getTeam())))) {
                 spotter = te;
                 narcSpotter = true;
             } else {
                 spotter = Compute.findSpotter(game, ae, target);
             }
             if ((spotter == null) &&
-                      (atype != null) &&
-                      ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
-                      (munition.contains(AmmoType.Munitions.M_SEMIGUIDED))) {
+                  (atype != null) &&
+                  ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                        (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                        (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                        (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
+                        (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
+                  (munition.contains(AmmoType.Munitions.M_SEMIGUIDED))) {
                 for (TagInfo ti : game.getTagInfo()) {
                     if (target.getId() == ti.target.getId()) {
                         spotter = game.getEntity(ti.attackerId);
@@ -357,11 +357,12 @@ class ComputeToHit {
 
         boolean mpMelevationHack = false;
         if (usesAmmo &&
-                  ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)) &&
-                  (atype != null) &&
-                  (munition.contains(AmmoType.Munitions.M_MULTI_PURPOSE)) &&
-                  (ae.getElevation() == -1) &&
-                  (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)) {
+              ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) || (wtype.getAmmoType()
+                    == AmmoType.AmmoTypeEnum.LRM_IMP)) &&
+              (atype != null) &&
+              (munition.contains(AmmoType.Munitions.M_MULTI_PURPOSE)) &&
+              (ae.getElevation() == -1) &&
+              (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)) {
             mpMelevationHack = true;
             // surface to fire
             ae.setElevation(0);
@@ -528,7 +529,7 @@ class ComputeToHit {
             }
         }
         if (wtype.hasFlag(WeaponType.F_ARTILLERY) &&
-                  game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
+              game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
             toHit = new ToHitData(ae.getCrew().getArtillery(), Messages.getString("WeaponAttackAction.ArtySkill"));
         }
 
@@ -785,18 +786,19 @@ class ComputeToHit {
 
         // Armor Piercing ammo is a flat +1
         if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
-                   (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
-                   (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
-                   (atype.getAmmoType() == AmmoType.AmmoTypeEnum.PAC)) &&
-                  (munition.contains(AmmoType.Munitions.M_ARMOR_PIERCING))) {
+              (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
+              (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
+              (atype.getAmmoType() == AmmoType.AmmoTypeEnum.PAC)) &&
+              (munition.contains(AmmoType.Munitions.M_ARMOR_PIERCING))) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.ApAmmo"));
         }
 
         // Bombs
 
         // Air-to-air Arrow and Light Air-to-air missiles
-        if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.AAA_MISSILE) || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LAA_MISSILE)) &&
-                  Compute.isAirToGround(ae, target)) {
+        if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.AAA_MISSILE) || (atype.getAmmoType()
+              == AmmoType.AmmoTypeEnum.LAA_MISSILE)) &&
+              Compute.isAirToGround(ae, target)) {
             // +4 penalty if trying to use one against a ground target that is not flying
             // (Errata: https://bg.battletech.com/forums/index.php?topic=87401.msg2060972#msg2060972 )
             if (!target.isAirborneVTOLorWIGE()) {
@@ -873,13 +875,13 @@ class ComputeToHit {
 
         // Listen-Kill ammo from War of 3039 sourcebook?
         if (!isECMAffected &&
-                  ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-                         (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-                         (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-                         (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
-                         (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) &&
-                  (munition.contains(AmmoType.Munitions.M_LISTEN_KILL)) &&
-                  !((te != null) && te.isClan())) {
+              ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                    (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) &&
+              (munition.contains(AmmoType.Munitions.M_LISTEN_KILL)) &&
+              !((te != null) && te.isClan())) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.ListenKill"));
         }
 
@@ -907,21 +909,21 @@ class ComputeToHit {
 
         // Attacks against adjacent buildings automatically hit.
         if ((distance == 1) &&
-                  ((ttype == Targetable.TYPE_BUILDING) ||
-                         (ttype == Targetable.TYPE_BLDG_IGNITE) ||
-                         (ttype == Targetable.TYPE_FUEL_TANK) ||
-                         (ttype == Targetable.TYPE_FUEL_TANK_IGNITE) ||
-                         (target instanceof GunEmplacement))) {
+              ((ttype == Targetable.TYPE_BUILDING) ||
+                    (ttype == Targetable.TYPE_BLDG_IGNITE) ||
+                    (ttype == Targetable.TYPE_FUEL_TANK) ||
+                    (ttype == Targetable.TYPE_FUEL_TANK_IGNITE) ||
+                    (target instanceof GunEmplacement))) {
             return Messages.getString("WeaponAttackAction.AdjBuilding");
         }
 
         // Attacks against buildings from inside automatically hit.
         if ((null != los.getThruBldg()) &&
-                  ((ttype == Targetable.TYPE_BUILDING) ||
-                         (ttype == Targetable.TYPE_BLDG_IGNITE) ||
-                         (ttype == Targetable.TYPE_FUEL_TANK) ||
-                         (ttype == Targetable.TYPE_FUEL_TANK_IGNITE) ||
-                         (target instanceof GunEmplacement))) {
+              ((ttype == Targetable.TYPE_BUILDING) ||
+                    (ttype == Targetable.TYPE_BLDG_IGNITE) ||
+                    (ttype == Targetable.TYPE_FUEL_TANK) ||
+                    (ttype == Targetable.TYPE_FUEL_TANK_IGNITE) ||
+                    (target instanceof GunEmplacement))) {
             return Messages.getString("WeaponAttackAction.InsideBuilding");
         }
 
@@ -929,9 +931,9 @@ class ComputeToHit {
 
         // B-Pod firing at infantry in the same hex autohit
         if (wtype != null &&
-                  wtype.hasFlag(WeaponType.F_B_POD) &&
-                  (target instanceof Infantry) &&
-                  target.getPosition().equals(ae.getPosition())) {
+              wtype.hasFlag(WeaponType.F_B_POD) &&
+              (target instanceof Infantry) &&
+              target.getPosition().equals(ae.getPosition())) {
             return Messages.getString("WeaponAttackAction.BPodAtInf");
         }
 
@@ -944,8 +946,9 @@ class ComputeToHit {
 
         // Screen launchers target hexes and hit automatically (if in range)
         if (wtype != null &&
-                  ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SCREEN_LAUNCHER) || (wtype instanceof ScreenLauncherBayWeapon)) &&
-                  distance <= wtype.getExtremeRange()) {
+              ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SCREEN_LAUNCHER)
+                    || (wtype instanceof ScreenLauncherBayWeapon)) &&
+              distance <= wtype.getExtremeRange()) {
             return Messages.getString("WeaponAttackAction.ScreenAutoHit");
         }
 
@@ -1178,9 +1181,9 @@ class ComputeToHit {
                 partialWaterLevel = 2;
             }
             if (targHex.containsTerrain(Terrains.WATER) &&
-                      (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) &&
-                      (targEl == 0) &&
-                      (oldEnt.height() > 0)) {
+                  (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) &&
+                  (targEl == 0) &&
+                  (oldEnt.height() > 0)) {
                 toHit.setCover(toHit.getCover() | LosEffects.COVER_HORIZONTAL);
             }
             // Prone
@@ -1197,10 +1200,10 @@ class ComputeToHit {
             // I-Swarm bonus
             toHit.append(proneMod);
             if (!isECMAffected &&
-                      (atype != null) &&
-                      !oldEnt.isEnemyOf(ae) &&
-                      !(oldEnt.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD) > 0) &&
-                      (munition.contains(AmmoType.Munitions.M_SWARM_I))) {
+                  (atype != null) &&
+                  !oldEnt.isEnemyOf(ae) &&
+                  !(oldEnt.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD) > 0) &&
+                  (munition.contains(AmmoType.Munitions.M_SWARM_I))) {
                 toHit.addModifier(+2, Messages.getString("WeaponAttackAction.SwarmIFriendly"));
             }
         }
@@ -1256,11 +1259,11 @@ class ComputeToHit {
         if (wtype.hasFlag(WeaponType.F_EXTINGUISHER)) {
             toHit = new ToHitData(8, Messages.getString("WeaponAttackAction.FireExt"));
             if (((target instanceof Entity) && ((Entity) target).infernos.isStillBurning()) ||
-                      ((target instanceof Tank) && ((Tank) target).isInfernoFire())) {
+                  ((target instanceof Tank) && ((Tank) target).isInfernoFire())) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
             }
             if ((target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH) &&
-                      game.getBoard(target).isInfernoBurning(target.getPosition())) {
+                  game.getBoard(target).isInfernoBurning(target.getPosition())) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
             }
             srt.setSpecialResolution(true);
@@ -1321,16 +1324,16 @@ class ComputeToHit {
 
         // +4 for trying to fire ASEW or antiship missile at a target of < 500 tons
         if ((wtype.hasFlag(WeaponType.F_ANTI_SHIP) || wtype.getAmmoType() == AmmoType.AmmoTypeEnum.ASEW_MISSILE) &&
-                  (te != null) &&
-                  (te.getWeight() < 500)) {
+              (te != null) &&
+              (te.getWeight() < 500)) {
             toHit.addModifier(4, Messages.getString("WeaponAttackAction.TeTooSmallForASM"));
         }
 
         // AAA mode makes targeting large craft more difficult
         if (weapon.hasModes() &&
-                  weapon.curMode().equals(Weapon.MODE_CAP_LASER_AAA) &&
-                  te != null &&
-                  te.isLargeCraft()) {
+              weapon.curMode().equals(Weapon.MODE_CAP_LASER_AAA) &&
+              te != null &&
+              te.isLargeCraft()) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AAALaserAtShip"));
         }
 
@@ -1368,10 +1371,10 @@ class ComputeToHit {
 
         // Capital weapon (except missiles) penalties at small targets
         if (wtype.isCapital() &&
-                  (wtype.getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE) &&
-                  (wtype.getAtClass() != WeaponType.CLASS_AR10) &&
-                  te != null &&
-                  !te.isLargeCraft()) {
+              (wtype.getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE) &&
+              (wtype.getAtClass() != WeaponType.CLASS_AR10) &&
+              te != null &&
+              !te.isLargeCraft()) {
             // Capital Lasers have an AAA mode for shooting at small targets
             int aaaMod = 0;
             if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_CAP_LASER_AAA)) {
@@ -1427,12 +1430,12 @@ class ComputeToHit {
         if (isIndirect) {
             // semiguided ammo negates this modifier, if TAG succeeded
             if ((atype != null) &&
-                      ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
-                             (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
-                      (munition.contains(AmmoType.Munitions.M_SEMIGUIDED))) {
+                  ((atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                        (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                        (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                        (atype.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
+                        (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
+                  (munition.contains(AmmoType.Munitions.M_SEMIGUIDED))) {
 
                 if (Compute.isTargetTagged(target, game)) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SemiGuidedIndirect"));
@@ -1442,8 +1445,8 @@ class ComputeToHit {
                 // console
                 toHit.append(Compute.getSpotterMovementModifier(game, spotter.getId()));
                 if (spotter.isAttackingThisTurn() &&
-                          !spotter.getCrew().hasActiveCommandConsole() &&
-                          !Compute.isTargetTagged(target, game)) {
+                      !spotter.getCrew().hasActiveCommandConsole() &&
+                      !Compute.isTargetTagged(target, game)) {
                     toHit.addModifier(1, Messages.getString("WeaponAttackAction.SpotterAttacking"));
                 }
             }
@@ -1466,7 +1469,7 @@ class ComputeToHit {
         // Jams on a 2.
         // See TacOps Autocannons for the rest of the rules
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC) &&
-                  weapon.curMode().equals(Weapon.MODE_AC_RAPID)) {
+              weapon.curMode().equals(Weapon.MODE_AC_RAPID)) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.AcRapid"));
         }
 
@@ -1499,7 +1502,8 @@ class ComputeToHit {
           boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect, boolean isHoming,
           boolean usesAmmo, SpecialResolutionTracker srt) {
         if ((target instanceof HexTarget hexTarget) && !game.isOnGroundMap(hexTarget)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.ArtyCanOnlyHitGroundHexes"));
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                  Messages.getString("WeaponAttackAction.ArtyCanOnlyHitGroundHexes"));
         }
         Entity te = null;
         if (ttype == Targetable.TYPE_ENTITY) {
@@ -1515,7 +1519,7 @@ class ComputeToHit {
 
         // Don't bother adding up modifiers if the target hex has been hit before
         if (game.getEntity(ae.getId()).getOwner().getArtyAutoHitHexes().contains(target.getBoardLocation())
-                  && !isArtilleryFLAK) {
+              && !isArtilleryFLAK) {
             srt.setSpecialResolution(true);
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.ArtyDesTarget"));
         }
@@ -1726,5 +1730,5 @@ class ComputeToHit {
         return toHit;
     }
 
-    private ComputeToHit() { }
+    private ComputeToHit() {}
 }

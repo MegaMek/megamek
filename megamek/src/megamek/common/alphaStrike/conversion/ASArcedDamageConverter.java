@@ -1,36 +1,68 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike.conversion;
+
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
+import static megamek.common.alphaStrike.AlphaStrikeElement.EXTREME_RANGE;
+import static megamek.common.alphaStrike.AlphaStrikeElement.LONG_RANGE;
+import static megamek.common.alphaStrike.AlphaStrikeElement.MEDIUM_RANGE;
+import static megamek.common.alphaStrike.AlphaStrikeElement.SHORT_RANGE;
+import static megamek.common.alphaStrike.BattleForceSUA.CAP;
+import static megamek.common.alphaStrike.BattleForceSUA.FLK;
+import static megamek.common.alphaStrike.BattleForceSUA.MSL;
+import static megamek.common.alphaStrike.BattleForceSUA.PNT;
+import static megamek.common.alphaStrike.BattleForceSUA.SCAP;
+import static megamek.common.alphaStrike.BattleForceSUA.STD;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.Entity;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
-import megamek.common.alphaStrike.*;
+import megamek.common.alphaStrike.ASArcSummary;
+import megamek.common.alphaStrike.ASArcs;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.weapons.bayweapons.BayWeapon;
-
-import java.util.*;
-
-import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.alphaStrike.AlphaStrikeElement.*;
-import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 public class ASArcedDamageConverter extends ASAeroDamageConverter {
 
@@ -71,16 +103,15 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
     }
 
     /**
-     * @return True when the two weapons are equal for conversion purposes (same
-     *         type, location and links).
+     * @return True when the two weapons are equal for conversion purposes (same type, location and links).
      */
     private boolean areConversionEqual(Mounted<?> weapon1, Mounted<?> weapon2) {
         return weapon1.getType().equals(weapon2.getType())
-                && weapon1.getLocation() == weapon2.getLocation()
-                && weapon1.isRearMounted() == weapon2.isRearMounted()
-                && ((weapon1.getLinkedBy() == null && weapon2.getLinkedBy() == null)
-                        || (weapon1.getLinkedBy() != null
-                                && weapon1.getLinkedBy().getType().equals(weapon2.getLinkedBy().getType())));
+              && weapon1.getLocation() == weapon2.getLocation()
+              && weapon1.isRearMounted() == weapon2.isRearMounted()
+              && ((weapon1.getLinkedBy() == null && weapon2.getLinkedBy() == null)
+              || (weapon1.getLinkedBy() != null
+              && weapon1.getLinkedBy().getType().equals(weapon2.getLinkedBy().getType())));
     }
 
     @Override
@@ -100,7 +131,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
             needsHeatAdjustment = true;
             heatAdjustFactor = (double) heatCapacity / (totalHeat - 4);
             report.addLine("Adjustment factor", heatCapacity + " / (" + totalHeat + " - 4)",
-                    "= " + formatForReport(heatAdjustFactor));
+                  "= " + formatForReport(heatAdjustFactor));
         } else {
             report.addLine("", "No heat adjustment");
         }
@@ -128,17 +159,11 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
     }
 
     /**
-     * Processes damage values. The dmgType indicates the special ability for which
-     * this is (LRM, REAR, etc.).
-     * location indicates the target of this damage, i.e. if it is the unit's
-     * standard damage and
-     * standard ability block, the REAR ability or the TUR block, see
-     * ASLocationMapper.
-     * When the location is rearLocation, dmgType must be REAR (as REAR has no LRM
-     * damage or the like)
-     * When the location is turretLocation, TUR indicates it's the TUR's standard
-     * damage, LRM
-     * indicates it's the LRM damage within the TUR block.
+     * Processes damage values. The dmgType indicates the special ability for which this is (LRM, REAR, etc.). location
+     * indicates the target of this damage, i.e. if it is the unit's standard damage and standard ability block, the
+     * REAR ability or the TUR block, see ASLocationMapper. When the location is rearLocation, dmgType must be REAR (as
+     * REAR has no LRM damage or the like) When the location is turretLocation, TUR indicates it's the TUR's standard
+     * damage, LRM indicates it's the LRM damage within the TUR block.
      */
     protected void processArcSpecial(ASArcs arc, BattleForceSUA dmgType) {
         report.startTentativeSection();
@@ -169,8 +194,8 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
                     finalDamage = ASDamageVector.createNormRndDmg(damageList, rangesForSpecial(dmgType));
                 }
                 report.addLine(finalText,
-                        formatAsVector(damage[0], damage[1], damage[2], damage[3], dmgType) + ", " + rdUp,
-                        "" + dmgType + finalDamage);
+                      formatAsVector(damage[0], damage[1], damage[2], damage[3], dmgType) + ", " + rdUp,
+                      "" + dmgType + finalDamage);
                 locations[ASConverter.toInt(arc)].setSUA(dmgType, finalDamage);
             }
             report.endTentativeSection();
@@ -211,7 +236,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
                 rawDmg[2] += dmgL * dmgMultiplier * weaponCount * locationMultiplier;
                 rawDmg[3] += dmgE * dmgMultiplier * weaponCount * locationMultiplier;
                 report.addLine(weaponCount + " x " + getWeaponDesc(weapon), calculation,
-                        "= " + formatAsVector(rawDmg[0], rawDmg[1], rawDmg[2], rawDmg[3], dmgType));
+                      "= " + formatAsVector(rawDmg[0], rawDmg[1], rawDmg[2], rawDmg[3], dmgType));
             }
         }
         return rawDmg;

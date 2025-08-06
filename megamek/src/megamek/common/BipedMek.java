@@ -1,22 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org), Cord Awtry (kipsta@bs-interactive.com)
- * Copyright (c) 2024, 2025 - The MegaMek Team. All Rights Reserved.
+  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org), Cord Awtry (kipsta@bs-interactive.com)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.io.Serial;
@@ -85,7 +100,7 @@ public class BipedMek extends MekWithArms {
                         if (legHasHipCrit(i)) {
                             hipHits++;
                             if ((game == null) ||
-                                      !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                                  !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                                 continue;
                             }
                         }
@@ -102,7 +117,7 @@ public class BipedMek extends MekWithArms {
             } else {
                 if (hipHits > 0) {
                     if ((game != null) &&
-                              game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                          game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                         mp = mp - 2 * hipHits;
                     } else {
                         mp = (hipHits == 1) ? (int) Math.ceil(mp / 2.0) : 0;
@@ -148,9 +163,9 @@ public class BipedMek extends MekWithArms {
 
         // TSM negates some heat, but provides no benefit when using tracks.
         if (((heat >= 9) || mpCalculationSetting.forceTSM) &&
-                  hasTSM(false) &&
-                  (legsDestroyed == 0) &&
-                  !movementMode.isTracked()) {
+              hasTSM(false) &&
+              (legsDestroyed == 0) &&
+              !movementMode.isTracked()) {
             if (mpCalculationSetting.forceTSM && mpCalculationSetting.ignoreHeat) {
                 // When forcing TSM but ignoring heat we must assume heat to be 9 to activate TSM, this adds -1 MP!
                 mp += 1;
@@ -169,8 +184,8 @@ public class BipedMek extends MekWithArms {
             mp = Math.max(mp + weatherMod, 0);
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND) &&
-                      conditions.getWeather().isClear() &&
-                      conditions.getWind().isTornadoF1ToF3()) {
+                  conditions.getWeather().isClear() &&
+                  conditions.getWind().isTornadoF1ToF3()) {
                 mp += 1;
             }
         }
@@ -272,12 +287,12 @@ public class BipedMek extends MekWithArms {
     @Override
     public boolean canGoHullDown() {
         return (game != null) &&
-                     game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN) &&
-                     ((!isLocationBad(Mek.LOC_LLEG) &&
-                             !isLocationBad(Mek.LOC_RLEG) &&
-                             !isLocationDoomed(Mek.LOC_LLEG) &&
-                             !isLocationDoomed(Mek.LOC_RLEG))) &&
-                     !isGyroDestroyed();
+              game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN) &&
+              ((!isLocationBad(Mek.LOC_LLEG) &&
+                    !isLocationBad(Mek.LOC_RLEG) &&
+                    !isLocationDoomed(Mek.LOC_LLEG) &&
+                    !isLocationDoomed(Mek.LOC_RLEG))) &&
+              !isGyroDestroyed();
     }
 
     @Override
@@ -288,7 +303,7 @@ public class BipedMek extends MekWithArms {
     @Override
     public boolean hasMPReducingHardenedArmor() {
         return (armorType[LOC_LLEG] == EquipmentType.T_ARMOR_HARDENED) ||
-                     (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED);
+              (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED);
     }
 
     @Override
@@ -301,13 +316,13 @@ public class BipedMek extends MekWithArms {
      */
     public boolean canZweihander() {
         return (getCrew() != null) &&
-                     hasAbility(OptionsConstants.PILOT_ZWEIHANDER) &&
-                     hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) &&
-                     hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) &&
-                     !isLocationBad(Mek.LOC_RARM) &&
-                     !isLocationBad(Mek.LOC_LARM) &&
-                     !weaponFiredFrom(Mek.LOC_LARM) &&
-                     !weaponFiredFrom(Mek.LOC_RARM) &&
-                     !isProne();
+              hasAbility(OptionsConstants.PILOT_ZWEIHANDER) &&
+              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) &&
+              hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) &&
+              !isLocationBad(Mek.LOC_RARM) &&
+              !isLocationBad(Mek.LOC_LARM) &&
+              !weaponFiredFrom(Mek.LOC_LARM) &&
+              !weaponFiredFrom(Mek.LOC_RARM) &&
+              !isProne();
     }
 }

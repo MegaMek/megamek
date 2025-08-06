@@ -1,25 +1,38 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.iconChooser;
 
 import java.awt.Image;
-
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -71,13 +84,13 @@ public class EntityImagePanel extends JPanel {
         layout.setAutoCreateContainerGaps(true);
 
         layout.setVerticalGroup(
-                layout.createSequentialGroup()
-                        .addComponent(getImageLabel())
+              layout.createSequentialGroup()
+                    .addComponent(getImageLabel())
         );
 
         layout.setHorizontalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(getImageLabel())
+              layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(getImageLabel())
         );
     }
     //endregion Initialization
@@ -90,13 +103,13 @@ public class EntityImagePanel extends JPanel {
      */
     public void updateDisplayedEntity(final @Nullable Entity entity, final AbstractIcon camouflage) {
         if ((entity == null) || (MMStaticDirectoryManager.getMekTileset() == null)
-                || !(camouflage instanceof Camouflage)) {
+              || !(camouflage instanceof Camouflage)) {
             getImageLabel().setIcon(null);
             return;
         }
 
         final Image base = MMStaticDirectoryManager.getMekTileset().imageFor(entity);
         getImageLabel().setIcon(new ImageIcon(EntityImage.createLobbyIcon(base, (Camouflage) camouflage, entity)
-                .loadPreviewImage(false)));
+              .loadPreviewImage(false)));
     }
 }

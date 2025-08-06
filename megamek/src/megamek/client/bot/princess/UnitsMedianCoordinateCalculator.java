@@ -32,18 +32,18 @@
  */
 package megamek.client.bot.princess;
 
+import java.util.Comparator;
+import java.util.List;
+
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
 
-import java.util.Comparator;
-import java.util.List;
-
 /**
  * Calculates the median coordinate of enemy units for tactical decision-making.
  * <p>
- * This utility class provides methods to determine the central position of nearby enemy units. It's primarily used
- * by bot AI to determine which direction to face and prioritize threats.
+ * This utility class provides methods to determine the central position of nearby enemy units. It's primarily used by
+ * bot AI to determine which direction to face and prioritize threats.
  * <p>
  * The calculation:
  * <ul>
@@ -93,7 +93,8 @@ class UnitsMedianCoordinateCalculator {
      * @return The median coordinate of the closest enemies, representing the central threat position. Returns null if
      *       there are no enemies.
      */
-    @Nullable Coords getEnemiesMedianCoordinate(List<Entity> enemies, Coords position, int boardId) {
+    @Nullable
+    Coords getEnemiesMedianCoordinate(List<Entity> enemies, Coords position, int boardId) {
         Comparator<Entity> distanceSorter = getDistanceSorter(position);
         List<Coords> coords = enemies.stream()
               .filter(e -> e.getPosition() != null)

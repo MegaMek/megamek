@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.jacksonadapters;
 
 import static megamek.common.jacksonadapters.ASElementSerializer.AFT_ARC;
@@ -41,7 +56,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-
 import megamek.common.Entity;
 import megamek.common.MekFileParser;
 import megamek.common.MekSummary;
@@ -57,14 +71,14 @@ import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.loaders.EntityLoadingException;
 
 /**
- * This Jackson deserializer reads an AlphaStrikeElement from an MMU file. When the MMU file
- * has the "fullname:" field, the unit is assumed to be canon and converted from the cache.
- * Otherwise, the MMU file must list the stats; then the element will be constructed from the stats.
+ * This Jackson deserializer reads an AlphaStrikeElement from an MMU file. When the MMU file has the "fullname:" field,
+ * the unit is assumed to be canon and converted from the cache. Otherwise, the MMU file must list the stats; then the
+ * element will be constructed from the stats.
  */
 public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
 
     private static final List<String> movementModes = List.of("qt", "qw", "t", "w",
-            "h", "v", "n", "s", "m", "j", "f", "g", "a", "p", "k");
+          "h", "v", "n", "s", "m", "j", "f", "g", "a", "p", "k");
 
     public ASElementDeserializer() {
         this(null);
@@ -76,7 +90,7 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
 
     @Override
     public AlphaStrikeElement deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException {
+          throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
         if (!node.has(MMUReader.TYPE) || !node.get(MMUReader.TYPE).textValue().equalsIgnoreCase(AS_ELEMENT)) {
             throw new IllegalArgumentException("ASElementDeserializer: Wrong Deserializer chosen!");

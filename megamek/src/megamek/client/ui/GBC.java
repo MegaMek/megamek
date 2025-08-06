@@ -1,26 +1,45 @@
 /*
-* MegaMek -
-* Copyright (C) 2008 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2008 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 package megamek.client.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
 /**
- * A helper class for setting line-wise GridBagLayouts
- * Do not use this if you need a Component to span two rows
+ * A helper class for setting line-wise GridBagLayouts Do not use this if you need a Component to span two rows
+ *
  * @author beerockxs
  */
 public class GBC extends GridBagConstraints {
@@ -31,16 +50,15 @@ public class GBC extends GridBagConstraints {
     }
 
     /**
-     * @return a standard <code>GridBagConstraints</code>,
-     *         anchored to <code>GridBagConstraints.WEST</code>
+     * @return a standard <code>GridBagConstraints</code>, anchored to <code>GridBagConstraints.WEST</code>
      */
     public static GBC std() {
         return new GBC();
     }
 
     /**
-     * @return a <code>GridBagConstraints</code> that will have a component
-     *         fill a line
+     * @return a <code>GridBagConstraints</code> that will have a component fill a line
+     *
      * @see GridBagConstraints#REMAINDER
      */
     public static GBC eol() {
@@ -50,8 +68,8 @@ public class GBC extends GridBagConstraints {
     }
 
     /**
-     * @return a <code>GridBagConstraints</code> that will have a component fill
-     *         a line, and have a 10 pixel inset to the south (ie. a paragraph)
+     * @return a <code>GridBagConstraints</code> that will have a component fill a line, and have a 10 pixel inset to
+     *       the south (ie. a paragraph)
      */
     public static GBC eop() {
         return eol().insets(0, 0, 0, 10);
@@ -59,8 +77,11 @@ public class GBC extends GridBagConstraints {
 
     /**
      * change the anchor of this <code>GridBagConstraints</code>
+     *
      * @param a the <code>int</code> anchor to set
+     *
      * @return <code>this</code>
+     *
      * @see GridBagConstraints#anchor
      */
     public GBC anchor(int a) {
@@ -70,11 +91,14 @@ public class GBC extends GridBagConstraints {
 
     /**
      * change the insets of this <code>GridBagConstraints</code>
+     *
      * @param left
      * @param top
      * @param right
      * @param bottom
+     *
      * @return <code>this</code>
+     *
      * @see GridBagConstraints#insets
      */
     public GBC insets(int left, int top, int right, int bottom) {
@@ -83,8 +107,9 @@ public class GBC extends GridBagConstraints {
     }
 
     /**
-     * set this <code>GridBagConstraints</code> so that the corresponding
-     * Component will fill horizontally and vertically.
+     * set this <code>GridBagConstraints</code> so that the corresponding Component will fill horizontally and
+     * vertically.
+     *
      * @return <code>this</code>
      */
     public GBC fill() {
@@ -92,12 +117,12 @@ public class GBC extends GridBagConstraints {
     }
 
     /**
-     * set this <code>GridBagConstraints</code> so that the corresponding
-     * will fill according to the
-     * @param value
-     * either <code>GridBagConstraints.HORIZONTAL</code>,
-     * <code>GridBagConstraints.VERTICAL</code> or
-     * <code>GridBagConstraints.BOTH</code> and
+     * set this <code>GridBagConstraints</code> so that the corresponding will fill according to the
+     *
+     * @param value either <code>GridBagConstraints.HORIZONTAL</code>,
+     *              <code>GridBagConstraints.VERTICAL</code> or
+     *              <code>GridBagConstraints.BOTH</code> and
+     *
      * @return <code>this</code>
      */
     public GBC fill(int value) {
@@ -113,9 +138,12 @@ public class GBC extends GridBagConstraints {
 
     /**
      * Set the padding of this <code>GridBagConstraints</code>
+     *
      * @param padx the <code>int</code> ipadx to set
      * @param pady the <code>int</code> ipady to set
+     *
      * @return <code>this</code>
+     *
      * @see GridBagConstraints#ipadx
      * @see GridBagConstraints#ipady
      */
@@ -127,8 +155,11 @@ public class GBC extends GridBagConstraints {
 
     /**
      * Set the gridx of this <code>GridBagConstraints</code>
+     *
      * @param gridx the <code>int</code> gridx to set
+     *
      * @return <code>this</code>
+     *
      * @see GridBagConstraints#gridx
      */
     public GBC gridx(int gridx) {
@@ -138,8 +169,11 @@ public class GBC extends GridBagConstraints {
 
     /**
      * Set the gridy of this <code>GridBagConstraints</code>
+     *
      * @param gridy the <code>int</code> gridy to set
+     *
      * @return <code>this</code>
+     *
      * @see GridBagConstraints#gridy
      */
     public GBC gridy(int gridy) {
@@ -149,8 +183,11 @@ public class GBC extends GridBagConstraints {
 
     /**
      * Set the gridheight of  this <code>GridBagConstraints</code>
+     *
      * @param height the <code>int</code> gridheight to set
+     *
      * @return <code>this</code>
+     *
      * @see GridBagConstraints#gridheight
      */
     public GBC gridheight(int height) {
@@ -160,8 +197,11 @@ public class GBC extends GridBagConstraints {
 
     /**
      * Set the gridwidth of  this <code>GridBagConstraints</code>
+     *
      * @param width the <code>int</code> gridheight to set
+     *
      * @return <code>this</code>
+     *
      * @see GridBagConstraints#gridwidth
      */
     public GBC gridwidth(int width) {
@@ -171,8 +211,11 @@ public class GBC extends GridBagConstraints {
 
     /**
      * Set the weightx of this <code>GridBagConstraints</code>
+     *
      * @param weight the <code>double</code> weightx to set
+     *
      * @return <code>this</code>
+     *
      * @see GridBagConstraints#weightx
      */
     public GBC weightx(double weight) {
@@ -182,8 +225,11 @@ public class GBC extends GridBagConstraints {
 
     /**
      * Set the weighty of this <code>GridBagConstraints</code>
+     *
      * @param weight the <code>double</code> weighty to set
+     *
      * @return <code>this</code>
+     *
      * @see GridBagConstraints#weighty
      */
     public GBC weighty(double weight) {

@@ -32,6 +32,9 @@
  */
 package megamek.client.ui.entityreadout;
 
+import static megamek.client.ui.entityreadout.TableElement.JUSTIFIED_CENTER;
+import static megamek.client.ui.entityreadout.TableElement.JUSTIFIED_LEFT;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -47,8 +50,15 @@ import java.util.stream.Collectors;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.ViewFormatting;
-import megamek.common.*;
+import megamek.common.BombLoadout;
 import megamek.common.BombType.BombTypeEnum;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.IArmorState;
+import megamek.common.IBomber;
+import megamek.common.ITechnology;
+import megamek.common.Mek;
+import megamek.common.Mounted;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
@@ -56,8 +66,6 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.verifier.TestEntity;
-
-import static megamek.client.ui.entityreadout.TableElement.*;
 
 /**
  * The Entity information shown in the unit selector and many other places in MM, MML and MHQ.
@@ -114,7 +122,7 @@ class GeneralEntityReadout implements EntityReadout {
      * @param ignorePilotBV    If true then the BV calculation is done without including the pilot BV modifiers
      */
     protected GeneralEntityReadout(Entity entity, boolean showDetail, boolean useAlternateCost,
-                                   boolean ignorePilotBV) {
+          boolean ignorePilotBV) {
 
         this.entity = entity;
         this.showDetail = showDetail;
@@ -596,7 +604,7 @@ class GeneralEntityReadout implements EntityReadout {
 
     boolean hideAmmo(Mounted<?> mounted) {
         return ((mounted.getLinkedBy() != null) && mounted.getLinkedBy().isOneShot())
-                || (mounted.getSize() == 0) || (mounted.getLocation() == Entity.LOC_NONE);
+              || (mounted.getSize() == 0) || (mounted.getLocation() == Entity.LOC_NONE);
     }
 
     protected TableElement getAmmo() {
@@ -668,8 +676,8 @@ class GeneralEntityReadout implements EntityReadout {
                 name += Messages.getString("MekView.Clan");
             }
             ViewElement[] row = { new PlainElement(name),
-                             new PlainElement(entity.joinLocationAbbr(mounted.allLocations(), 3)),
-                             new EmptyElement() };
+                                  new PlainElement(entity.joinLocationAbbr(mounted.allLocations(), 3)),
+                                  new EmptyElement() };
             if (entity.isConventionalInfantry()) {
                 // don't display the location on CI
                 row[1] = new EmptyElement();
@@ -771,7 +779,7 @@ class GeneralEntityReadout implements EntityReadout {
             loadoutSection.addAll(createLoadoutBlock());
             quirksSection.addAll(createQuirksBlock());
             // legacy -- I dont know why these were not kept separate
-//            fluffSection.addAll(quirksSection);
+            //            fluffSection.addAll(quirksSection);
             fluffSection.addAll(createFluffBlock());
             invalidSection.addAll(createInvalidBlock());
         }

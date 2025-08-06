@@ -47,9 +47,8 @@ import megamek.common.Entity;
 /**
  * A dialog for displaying detailed unit information in MegaMek.
  * <p>
- *  This dialog serves as a container for the UnitDisplay component, which provides detailed information about game
- *  entities (meks, vehicles, infantry, etc.).
- *  The dialog can operate in two modes:
+ * This dialog serves as a container for the UnitDisplay component, which provides detailed information about game
+ * entities (meks, vehicles, infantry, etc.). The dialog can operate in two modes:
  * </p>
  * <ul>
  *   <li>As a persistent, reusable dialog that is hidden when closed</li>
@@ -66,13 +65,12 @@ public class UnitDisplayDialog extends JDialog {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     /**
-     * Shows an entity in a UnitDisplayDialog, either reusing the existing dialog instance
-     * or creating a new one.
+     * Shows an entity in a UnitDisplayDialog, either reusing the existing dialog instance or creating a new one.
      *
-     * @param frame the parent frame for the dialog
-     * @param entity the entity to display
-     * @param newInstance if true, creates a new dialog that will be disposed on close;
-     *                    if false, reuses or creates a persistent dialog instance
+     * @param frame       the parent frame for the dialog
+     * @param entity      the entity to display
+     * @param newInstance if true, creates a new dialog that will be disposed on close; if false, reuses or creates a
+     *                    persistent dialog instance
      */
     public static void showEntity(final JFrame frame, Entity entity, final boolean newInstance) {
         UnitDisplayContainer displayContainer = getDisplayContainer(frame, newInstance);
@@ -81,24 +79,24 @@ public class UnitDisplayDialog extends JDialog {
     }
 
     /**
-     * Factory method to get the appropriate UnitDisplayContainer based on whether
-     * a new instance is requested.
+     * Factory method to get the appropriate UnitDisplayContainer based on whether a new instance is requested.
      *
-     * @param frame the parent frame for the dialog
-     * @param newInstance if true, returns a DisposableDisplayContainer;
-     *                    if false, returns the shared container instance
+     * @param frame       the parent frame for the dialog
+     * @param newInstance if true, returns a DisposableDisplayContainer; if false, returns the shared container
+     *                    instance
+     *
      * @return a UnitDisplayContainer with the appropriate lifecycle management
      */
     private static UnitDisplayContainer getDisplayContainer(JFrame frame, boolean newInstance) {
         return newInstance ?
-                     new DisposableDisplayContainer(frame) :
-                     SharedDisplayContainer.getInstance(frame);
+              new DisposableDisplayContainer(frame) :
+              SharedDisplayContainer.getInstance(frame);
     }
 
     /**
      * Creates a new UnitDisplayDialog.
      *
-     * @param frame the parent frame for this dialog
+     * @param frame     the parent frame for this dialog
      * @param clientGUI the ClientGUI reference, which can be null for standalone usage
      */
     public UnitDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
@@ -109,8 +107,7 @@ public class UnitDisplayDialog extends JDialog {
         if (GUIP.getUnitDisplayStartTabbed()) {
             this.setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());
             this.setSize(GUIP.getUnitDisplaySizeWidth(), GUIP.getUnitDisplaySizeHeight());
-        }
-        else {
+        } else {
             this.setLocation(GUIP.getUnitDisplayNontabbedPosX(), GUIP.getUnitDisplayNontabbedPosY());
             this.setSize(GUIP.getUnitDisplayNonTabbedSizeWidth(), GUIP.getUnitDisplayNonTabbedSizeHeight());
         }
@@ -129,9 +126,8 @@ public class UnitDisplayDialog extends JDialog {
     //endregion Constructors
 
     /**
-     * Saves the current size and position of the dialog to preferences.
-     * Different settings are stored based on whether the display is in
-     * tabbed or non-tabbed mode.
+     * Saves the current size and position of the dialog to preferences. Different settings are stored based on whether
+     * the display is in tabbed or non-tabbed mode.
      */
     public void saveSettings() {
         if ((getSize().width * getSize().height) > 0) {
@@ -153,8 +149,7 @@ public class UnitDisplayDialog extends JDialog {
     }
 
     /**
-     * Overrides the default window event processing to save settings when
-     * the window is deactivated or closing.
+     * Overrides the default window event processing to save settings when the window is deactivated or closing.
      *
      * @param e the window event
      */
@@ -167,8 +162,8 @@ public class UnitDisplayDialog extends JDialog {
     }
 
     /**
-     * Processes key events and forwards them to the client GUI to enable
-     * hotkey functionality throughout the application.
+     * Processes key events and forwards them to the client GUI to enable hotkey functionality throughout the
+     * application.
      *
      * @param evt the key event to process
      */

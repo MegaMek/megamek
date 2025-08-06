@@ -30,18 +30,20 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
+
 package megamek.common.moves;
+
+import java.util.EnumSet;
+import java.util.Set;
 
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.pathfinder.CachedEntityState;
 
-import java.util.EnumSet;
-import java.util.Set;
-
 /**
- * This class handles the acceleration and deceleration of a unit.
- * It is used in the MoveStep compilation to calculate the movement of a unit.
+ * This class handles the acceleration and deceleration of a unit. It is used in the MoveStep compilation to calculate
+ * the movement of a unit.
+ *
  * @author Luana Coppio
  * @since 0.50.07
  */

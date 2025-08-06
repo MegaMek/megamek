@@ -1,17 +1,36 @@
 /*
-* MegaMek -
-* Copyright (C) 2020 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 
 package megamek.common;
 
@@ -27,9 +46,8 @@ import megamek.common.moves.MovePath;
 import megamek.common.pathfinder.BoardClusterTracker.MovementType;
 
 /**
- * An extension of the MovePath class that stores information about terrain that
- * needs
- * to be destroyed in order to move along the specified route.
+ * An extension of the MovePath class that stores information about terrain that needs to be destroyed in order to move
+ * along the specified route.
  *
  * @author NickAragua
  */
@@ -49,9 +67,8 @@ public class BulldozerMovePath extends MovePath {
     }
 
     /**
-     * Any additional costs of this move paths, such as stepping into water or
-     * other factors that would increase the number of turns to complete it without
-     * increasing the actual MP used.
+     * Any additional costs of this move paths, such as stepping into water or other factors that would increase the
+     * number of turns to complete it without increasing the actual MP used.
      */
     public int getAdditionalCost() {
         int totalCost = 0;
@@ -77,9 +94,8 @@ public class BulldozerMovePath extends MovePath {
     }
 
     /**
-     * Override of the MovePath.addStep method, calculates leveling and other extra
-     * costs
-     * associated with this bulldozer move path
+     * Override of the MovePath.addStep method, calculates leveling and other extra costs associated with this bulldozer
+     * move path
      */
     @Override
     public MovePath addStep(final MoveStepType type) {
@@ -105,7 +121,7 @@ public class BulldozerMovePath extends MovePath {
             if (hexWaterDepth > 0) {
                 MovementType mType = MovementType.getMovementType(mp.getEntity());
                 if (mType == MovementType.Walker || mType == MovementType.WheeledAmphi
-                        || mType == MovementType.TrackedAmphi) {
+                      || mType == MovementType.TrackedAmphi) {
                     additionalCosts.put(mp.getFinalCoords(), 1);
                 }
             }
@@ -123,7 +139,7 @@ public class BulldozerMovePath extends MovePath {
                 // mp cost wise
                 if (hexWaterDepth == 1) {
                     additionalCosts.put(mp.getFinalCoords(),
-                            mp.getCachedEntityState().getJumpMP() - mp.getCachedEntityState().getTorsoJumpJets());
+                          mp.getCachedEntityState().getJumpMP() - mp.getCachedEntityState().getTorsoJumpJets());
                     // jumping into water that submerges you entirely pretty much ruins jump MP for
                     // at least a turn while you clamber out
                 } else if (hexWaterDepth > 1) {
@@ -134,7 +150,7 @@ public class BulldozerMovePath extends MovePath {
 
         // we want to discourage running over minefields
         double minefieldFactor = MinefieldUtil.calcMinefieldHazardForHex(mp.getLastStep(), mp.getEntity(),
-                mp.isJumping(), false);
+              mp.isJumping(), false);
 
         if (minefieldFactor > 0) {
             additionalCosts.put(mp.getFinalCoords(), (int) Math.ceil(minefieldFactor));
@@ -144,8 +160,7 @@ public class BulldozerMovePath extends MovePath {
     }
 
     /**
-     * Removes the last step from the path and updates its internal data structures
-     * accordingly
+     * Removes the last step from the path and updates its internal data structures accordingly
      */
     @Override
     public void removeLastStep() {
@@ -163,8 +178,7 @@ public class BulldozerMovePath extends MovePath {
     }
 
     /**
-     * Clones this path, will contain a new clone of the steps so that the clone
-     * is independent from the original.
+     * Clones this path, will contain a new clone of the steps so that the clone is independent from the original.
      *
      * @return the cloned MovePath
      */
@@ -181,11 +195,8 @@ public class BulldozerMovePath extends MovePath {
     }
 
     /**
-     * Worker function that calculates the "MP cost" of moving into the given set of
-     * coords
-     * if we were to stand still for the number of turns required to reduce the
-     * terrain there
-     * to a form through which the current unit can move
+     * Worker function that calculates the "MP cost" of moving into the given set of coords if we were to stand still
+     * for the number of turns required to reduce the terrain there to a form through which the current unit can move
      */
     public static int calculateLevelingCost(Coords finalCoords, Entity entity) {
         Board board = entity.getGame().getBoard(entity);
@@ -200,7 +211,7 @@ public class BulldozerMovePath extends MovePath {
         boolean isTracked = movementMode == EntityMovementMode.TRACKED && !entity.hasETypeFlag(Entity.ETYPE_QUADVEE);
         boolean isHovercraft = movementMode == EntityMovementMode.HOVER;
         boolean isMek = movementMode == EntityMovementMode.BIPED || movementMode == EntityMovementMode.TRIPOD ||
-                movementMode == EntityMovementMode.QUAD;
+              movementMode == EntityMovementMode.QUAD;
 
         double damageNeeded = 0;
 
@@ -215,7 +226,7 @@ public class BulldozerMovePath extends MovePath {
             if (destHex.terrainLevel(Terrains.WOODS) > 1) {
                 // just what we need to reduce it to light woods
                 damageNeeded += Terrains.getTerrainFactor(Terrains.WOODS, destHex.terrainLevel(Terrains.WOODS)) -
-                        Terrains.getTerrainFactor(Terrains.WOODS, 1);
+                      Terrains.getTerrainFactor(Terrains.WOODS, 1);
             }
 
             if (destHex.containsTerrain(Terrains.BLDG_CF)) {
@@ -228,12 +239,12 @@ public class BulldozerMovePath extends MovePath {
         if (isMek) {
             if (destHex.terrainLevel(Terrains.JUNGLE) > 2) {
                 damageNeeded += Terrains.getTerrainFactor(Terrains.JUNGLE, destHex.terrainLevel(Terrains.JUNGLE)) -
-                        Terrains.getTerrainFactor(Terrains.JUNGLE, 2);
+                      Terrains.getTerrainFactor(Terrains.JUNGLE, 2);
             }
 
             if (destHex.terrainLevel(Terrains.WOODS) > 2) {
                 damageNeeded += Terrains.getTerrainFactor(Terrains.WOODS, destHex.terrainLevel(Terrains.WOODS)) -
-                        Terrains.getTerrainFactor(Terrains.WOODS, 2);
+                      Terrains.getTerrainFactor(Terrains.WOODS, 2);
             }
 
             if (destHex.containsTerrain(Terrains.BLDG_CF)) {
@@ -269,8 +280,7 @@ public class BulldozerMovePath extends MovePath {
     }
 
     /**
-     * Helper function that lazy-calculates an entity's max damage at point blank
-     * range.
+     * Helper function that lazy-calculates an entity's max damage at point blank range.
      */
     private static double getMaxPointBlankDamage(Entity entity) {
         return FireControl.getMaxDamageAtRange(entity, 1, false, false);
@@ -284,8 +294,7 @@ public class BulldozerMovePath extends MovePath {
     }
 
     /**
-     * The coordinates which need to be leveled for this path to be performed by its
-     * unit
+     * The coordinates which need to be leveled for this path to be performed by its unit
      */
     public List<Coords> getCoordsToLevel() {
         return coordsToLevel;
@@ -305,23 +314,20 @@ public class BulldozerMovePath extends MovePath {
     }
 
     /**
-     * Comparator implementation useful in comparing two bulldozer move paths by
-     * how many MP it'll take to accomplish that path, including time wasted
-     * leveling any obstacles
+     * Comparator implementation useful in comparing two bulldozer move paths by how many MP it'll take to accomplish
+     * that path, including time wasted leveling any obstacles
      *
      * @author NickAragua
-     *
      */
     public static class MPCostComparator implements Comparator<BulldozerMovePath> {
         /**
-         * compare the first move path to the second
-         * Favors paths that spend less mp total
-         * in case of tie, favors paths that use more hexes
+         * compare the first move path to the second Favors paths that spend less mp total in case of tie, favors paths
+         * that use more hexes
          */
         @Override
         public int compare(BulldozerMovePath first, BulldozerMovePath second) {
             int dd = (first.getMpUsed() + first.getLevelingCost() + first.getAdditionalCost()) -
-                    (second.getMpUsed() + second.getLevelingCost() + second.getAdditionalCost());
+                  (second.getMpUsed() + second.getLevelingCost() + second.getAdditionalCost());
 
             if (dd != 0) {
                 return dd;

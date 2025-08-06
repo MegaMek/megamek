@@ -1,39 +1,55 @@
 /*
- * Copyright (c) 2023-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client.ui.util;
 
-import megamek.MMConstants;
-import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
-import megamek.common.preference.PreferenceManager;
-import megamek.logging.MMLogger;
-
-import java.awt.*;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.MMConstants;
+import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
+import megamek.common.preference.PreferenceManager;
+import megamek.logging.MMLogger;
+
 /**
  * This singleton class reads in the available fonts when first called, including those in
- * {@link MMConstants#FONT_DIRECTORY}. Lists of available fonts can be obtained by
- * calling {@link #getAvailableNonSymbolFonts()} and {@link #getAvailableFonts()}.
+ * {@link MMConstants#FONT_DIRECTORY}. Lists of available fonts can be obtained by calling
+ * {@link #getAvailableNonSymbolFonts()} and {@link #getAvailableFonts()}.
  */
 public final class FontHandler {
 
@@ -47,9 +63,9 @@ public final class FontHandler {
     volatile boolean initialized = false;
 
     /**
-     * Returns a list of available font names excluding some symbol fonts (specifically, excluding fonts that
-     * cannot display any of the characters "abcdefgnzABCDEFGNZ1234567890/()[]"). This list is only
-     * read from the GraphicsEnvironment once and then not updated while the application is running.
+     * Returns a list of available font names excluding some symbol fonts (specifically, excluding fonts that cannot
+     * display any of the characters "abcdefgnzABCDEFGNZ1234567890/()[]"). This list is only read from the
+     * GraphicsEnvironment once and then not updated while the application is running.
      */
     public static List<String> getAvailableNonSymbolFonts() {
         ensureInitialization();
@@ -57,8 +73,8 @@ public final class FontHandler {
     }
 
     /**
-     * Returns a list of available font names. This list is only read from the GraphicsEnvironment once and
-     * then not updated while the application is running.
+     * Returns a list of available font names. This list is only read from the GraphicsEnvironment once and then not
+     * updated while the application is running.
      */
     public static List<String> getAvailableFonts() {
         ensureInitialization();
@@ -66,11 +82,11 @@ public final class FontHandler {
     }
 
     /**
-     * Initializes the FontHandler, reading in and storing the available fonts for retrieval. Also reads in any
-     * fonts in {@link MMConstants#FONT_DIRECTORY}.
+     * Initializes the FontHandler, reading in and storing the available fonts for retrieval. Also reads in any fonts in
+     * {@link MMConstants#FONT_DIRECTORY}.
      */
     public static void initialize() {
-        synchronized(instance) {
+        synchronized (instance) {
             if (!instance.initialized) {
                 instance.initializeFonts();
             }
@@ -78,10 +94,9 @@ public final class FontHandler {
     }
 
     /**
-     * @return A standardized symbols font ("Material Symbols"). This font has a load of useful
-     * icons. They are centered in a way that makes them less aesthetic to use within normal text, so
-     * their primary use is for standalone symbols like marking hexes. Look for the symbol unicodes on
-     * the linked website.
+     * @return A standardized symbols font ("Material Symbols"). This font has a load of useful icons. They are centered
+     *       in a way that makes them less aesthetic to use within normal text, so their primary use is for standalone
+     *       symbols like marking hexes. Look for the symbol unicodes on the linked website.
      *
      * @see <a href="https://fonts.google.com/icons">(Google) Material Symbols</a>
      */
@@ -91,8 +106,7 @@ public final class FontHandler {
     }
 
     /**
-     * @return The Noto Symbols 2 font. This font has icons that mesh well in inline text with the
-     * Noto Sans font.
+     * @return The Noto Symbols 2 font. This font has icons that mesh well in inline text with the Noto Sans font.
      */
     public static Font notoSymbol2Font() {
         ensureInitialization();
@@ -100,8 +114,8 @@ public final class FontHandler {
     }
 
     /**
-     * @return The Noto Sans font which is included with the distribution and can be safely used everywhere.
-     * It is advertised to have a wide language support.
+     * @return The Noto Sans font which is included with the distribution and can be safely used everywhere. It is
+     *       advertised to have a wide language support.
      *
      * @see <a href="https://fonts.google.com/icons">(Google) Material Symbols</a>
      */
@@ -135,8 +149,8 @@ public final class FontHandler {
     }
 
     /**
-     * Searches the provided directory and all subdirectories and registers any truetype
-     * fonts from .ttf files it finds.
+     * Searches the provided directory and all subdirectories and registers any truetype fonts from .ttf files it
+     * finds.
      *
      * @param directory the directory to parse
      */
@@ -145,8 +159,8 @@ public final class FontHandler {
     }
 
     /**
-     * Searches the provided directory and all subdirectories and registers any truetype
-     * fonts from .ttf files it finds.
+     * Searches the provided directory and all subdirectories and registers any truetype fonts from .ttf files it
+     * finds.
      *
      * @param directory the directory to parse
      */

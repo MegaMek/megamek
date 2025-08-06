@@ -34,6 +34,7 @@ package megamek.client.ui.panels.phaseDisplay.lobby.sorters;
 
 /**
  * Enum representing sorting directions.
+ *
  * @author Luana Coppio
  */
 public enum Sorting {

@@ -51,8 +51,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.buttons.MMToggleButton;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.dialogs.abstractDialogs.AbstractDialog;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
@@ -158,9 +158,9 @@ public class SBFStatsDialog extends AbstractDialog {
 
     private void setupTable() {
         formations = forceList.stream()
-                           .map(f -> new SBFFormationConverter(f, game).convert())
-                           .filter(Objects::nonNull)
-                           .collect(Collectors.toList());
+              .map(f -> new SBFFormationConverter(f, game).convert())
+              .filter(Objects::nonNull)
+              .collect(Collectors.toList());
         SBFStatsTablePanel statsPanel = new SBFStatsTablePanel(getFrame(), formations, elementsToggle.isSelected());
         scrollPane.setViewportView(statsPanel.getPanel());
     }

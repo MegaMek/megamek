@@ -1,15 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs;
 
@@ -22,7 +42,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -341,14 +360,14 @@ public class RulerDialog extends JDialog implements BoardViewListener {
         ToHitData thd;
         if (flip) {
             thd = LosEffects.calculateLos(game,
-                    buildAttackInfo(start, end, h1, h2, cboIsMek1.isSelected(),
-                            cboIsMek2.isSelected()))
-                    .losModifiers(game);
+                        buildAttackInfo(start, end, h1, h2, cboIsMek1.isSelected(),
+                              cboIsMek2.isSelected()))
+                  .losModifiers(game);
         } else {
             thd = LosEffects.calculateLos(game,
-                    buildAttackInfo(end, start, h2, h1, cboIsMek2.isSelected(),
-                            cboIsMek1.isSelected()))
-                    .losModifiers(game);
+                        buildAttackInfo(end, start, h2, h1, cboIsMek2.isSelected(),
+                              cboIsMek1.isSelected()))
+                  .losModifiers(game);
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit1 = thd.getValue() + " = ";
@@ -357,14 +376,14 @@ public class RulerDialog extends JDialog implements BoardViewListener {
 
         if (flip) {
             thd = LosEffects.calculateLos(game,
-                    buildAttackInfo(end, start, h2, h1, cboIsMek2.isSelected(),
-                            cboIsMek1.isSelected()))
-                    .losModifiers(game);
+                        buildAttackInfo(end, start, h2, h1, cboIsMek2.isSelected(),
+                              cboIsMek1.isSelected()))
+                  .losModifiers(game);
         } else {
             thd = LosEffects.calculateLos(game,
-                    buildAttackInfo(start, end, h1, h2, cboIsMek1.isSelected(),
-                            cboIsMek2.isSelected()))
-                    .losModifiers(game);
+                        buildAttackInfo(start, end, h1, h2, cboIsMek1.isSelected(),
+                              cboIsMek2.isSelected()))
+                  .losModifiers(game);
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit2 = thd.getValue() + " = ";
@@ -387,10 +406,11 @@ public class RulerDialog extends JDialog implements BoardViewListener {
      * @param c2
      * @param h1
      * @param h2
+     *
      * @return
      */
     private LosEffects.AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1,
-            int h2, boolean attackerIsMek, boolean targetIsMek) {
+          int h2, boolean attackerIsMek, boolean targetIsMek) {
         LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
         ai.attackPos = c1;
         ai.targetPos = c2;

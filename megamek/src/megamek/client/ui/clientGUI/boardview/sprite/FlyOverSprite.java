@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
@@ -33,8 +47,8 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 
 /**
- * Sprite and info for an aero flyover route. Does not actually use the image
- * buffer as this can be horribly inefficient for long diagonal lines.
+ * Sprite and info for an aero flyover route. Does not actually use the image buffer as this can be horribly inefficient
+ * for long diagonal lines.
  */
 public class FlyOverSprite extends Sprite {
 
@@ -59,7 +73,7 @@ public class FlyOverSprite extends Sprite {
     }
 
     private void addPolyPoint(Coords curr, Coords next, Coords prev,
-            boolean forward) {
+          boolean forward) {
         int newX, newY;
         int prevX, prevY, nextX, nextY;
         double nextAngle = curr.radian(next);
@@ -98,7 +112,7 @@ public class FlyOverSprite extends Sprite {
                 nextY = currPoint.y + (int) (Math.sin(nextAngle) * lw + 0.5);
                 int d = prevX - nextX;
                 if ((prevY < nextY && prevX < nextX)
-                        || (prevY > nextY && prevX > nextX)) {
+                      || (prevY > nextY && prevX > nextX)) {
                     d *= -1;
                 }
                 flyOverPoly.addPoint(nextX + d, nextY);
@@ -113,8 +127,7 @@ public class FlyOverSprite extends Sprite {
     }
 
     /**
-     * Creates the flyover polygon, which is essentially a wide line from the
-     * part of the fly path to the end.
+     * Creates the flyover polygon, which is essentially a wide line from the part of the fly path to the end.
      */
     private void makePoly() {
         // make polygon
@@ -143,7 +156,7 @@ public class FlyOverSprite extends Sprite {
         currPoint = bv.getCentreHexLocation(curr, true);
         angle = curr.radian(next);
         flyOverPoly.addPoint(currPoint.x + (int) (Math.cos(angle) * lw + 0.5),
-                currPoint.y + (int) (Math.sin(angle) * lw + 0.5));
+              currPoint.y + (int) (Math.sin(angle) * lw + 0.5));
 
         // Handle Middle Coords
         for (int i = 1; i < (numPassedThrough - 1); i++) {
@@ -172,7 +185,7 @@ public class FlyOverSprite extends Sprite {
         }
         angle = (curr.radian(next) + Math.PI) % (2 * Math.PI);
         flyOverPoly.addPoint(currPoint.x + (int) (Math.cos(angle) * lw + 0.5),
-                currPoint.y + (int) (Math.sin(angle) * lw + 0.5));
+              currPoint.y + (int) (Math.sin(angle) * lw + 0.5));
 
         // Now go in reverse order - to add second half of points
         // Handle Last Coords - only draw to the hex edge
@@ -194,7 +207,7 @@ public class FlyOverSprite extends Sprite {
         }
         angle = curr.radian(next);
         flyOverPoly.addPoint(currPoint.x + (int) (Math.cos(angle) * lw + 0.5),
-                currPoint.y + (int) (Math.sin(angle) * lw + 0.5));
+              currPoint.y + (int) (Math.sin(angle) * lw + 0.5));
 
         // Handle Middle Coords (in reverse)
         for (int i = (numPassedThrough - 2); i > 0; i--) {
@@ -210,7 +223,7 @@ public class FlyOverSprite extends Sprite {
         currPoint = bv.getCentreHexLocation(curr, true);
         angle = prev.radian(curr);
         flyOverPoly.addPoint(currPoint.x + (int) (Math.cos(angle) * lw + 0.5),
-                currPoint.y + (int) (Math.sin(angle) * lw + 0.5));
+              currPoint.y + (int) (Math.sin(angle) * lw + 0.5));
     }
 
     @Override
@@ -238,7 +251,7 @@ public class FlyOverSprite extends Sprite {
     @Override
     public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
         Polygon drawPoly = new Polygon(flyOverPoly.xpoints, flyOverPoly.ypoints,
-                flyOverPoly.npoints);
+              flyOverPoly.npoints);
 
         Graphics2D g2 = (Graphics2D) g;
         g.setColor(spriteColor);

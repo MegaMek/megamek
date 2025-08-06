@@ -44,6 +44,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Test class for EntityFeatureUtils.
+ *
  * @author Luana Coppio
  */
 public class EntityFeatureUtilsTest {
@@ -107,6 +108,7 @@ public class EntityFeatureUtilsTest {
 
     /**
      * Sanity test for healthy units. It evaluates 1.0f for all units.
+     *
      * @param unit the unit to test
      */
     @ParameterizedTest

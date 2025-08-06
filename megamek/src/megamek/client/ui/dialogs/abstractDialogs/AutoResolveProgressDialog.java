@@ -32,9 +32,32 @@
  */
 package megamek.client.ui.dialogs.abstractDialogs;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.SwingWorker;
+
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.RawImagePanel;
-import megamek.common.*;
+import megamek.common.Board;
+import megamek.common.Compute;
+import megamek.common.Configuration;
+import megamek.common.Entity;
+import megamek.common.Player;
 import megamek.common.autoresolve.Resolver;
 import megamek.common.autoresolve.acar.SimulationOptions;
 import megamek.common.autoresolve.converter.SetupForces;
@@ -43,16 +66,6 @@ import megamek.common.internationalization.I18n;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
 import org.apache.commons.lang3.time.StopWatch;
-
-import javax.swing.*;
-import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.concurrent.*;
 
 public class AutoResolveProgressDialog extends AbstractDialog implements PropertyChangeListener {
     private static final MMLogger logger = MMLogger.create(AutoResolveProgressDialog.class);
@@ -69,6 +82,7 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
     private final PlanetaryConditions planetaryConditions;
 
     private static final TreeMap<Integer, String> splashImages = new TreeMap<>();
+
     static {
         splashImages.put(0, Configuration.miscImagesDir() + "/acar_splash_hd.png");
     }
@@ -86,7 +100,7 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
 
     private AutoResolveProgressDialog(JFrame frame, SetupForces setupForces, Board board,
           PlanetaryConditions planetaryConditions) {
-        super(frame, true, "AutoResolveMethod.dialog.name","AutoResolveMethod.dialog.title");
+        super(frame, true, "AutoResolveMethod.dialog.name", "AutoResolveMethod.dialog.title");
         this.setupForces = setupForces;
         this.board = board;
         this.planetaryConditions = planetaryConditions;
@@ -194,39 +208,40 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
             var result = simulateScenario();
             if (result == null) {
                 JOptionPane.showMessageDialog(
-                    getFrame(),
-                    I18n.getText("AutoResolveDialog.messageScenarioError.text"),
-                    I18n.getText("AutoResolveDialog.messageScenarioError.title"),
-                    JOptionPane.INFORMATION_MESSAGE);
+                      getFrame(),
+                      I18n.getText("AutoResolveDialog.messageScenarioError.text"),
+                      I18n.getText("AutoResolveDialog.messageScenarioError.title"),
+                      JOptionPane.INFORMATION_MESSAGE);
                 return -1;
             }
             dialog.setEvent(result);
             stopWatch.stop();
 
             var messageKey = (result.getVictoryResult().getWinningTeam() != Entity.NONE) ?
-                "AutoResolveDialog.messageScenarioTeam" :
-                "AutoResolveDialog.messageScenarioPlayer";
+                  "AutoResolveDialog.messageScenarioTeam" :
+                  "AutoResolveDialog.messageScenarioPlayer";
             messageKey = ((result.getVictoryResult().getWinningTeam() == Player.TEAM_NONE)
-                && (result.getVictoryResult().getWinningPlayer() == Player.PLAYER_NONE)) ?
-                "AutoResolveDialog.messageScenarioDraw" :
-                messageKey;
+                  && (result.getVictoryResult().getWinningPlayer() == Player.PLAYER_NONE)) ?
+                  "AutoResolveDialog.messageScenarioDraw" :
+                  messageKey;
             var message = I18n.getFormattedText(messageKey,
-                result.getVictoryResult().getWinningTeam(),
-                result.getVictoryResult().getWinningPlayer());
+                  result.getVictoryResult().getWinningTeam(),
+                  result.getVictoryResult().getWinningPlayer());
             String title = I18n.getText("AutoResolveDialog.title");
 
             logger.info("AutoResolve simulation took: {} ms", stopWatch.getTime(TimeUnit.MILLISECONDS));
 
             JOptionPane.showMessageDialog(
-                getFrame(),
-                message, title,
-                JOptionPane.INFORMATION_MESSAGE);
+                  getFrame(),
+                  message, title,
+                  JOptionPane.INFORMATION_MESSAGE);
 
             return 0;
         }
 
         /**
-         * Calculates the victory chance for a given scenario and list of units by running multiple auto resolve scenarios in parallel.
+         * Calculates the victory chance for a given scenario and list of units by running multiple auto resolve
+         * scenarios in parallel.
          *
          * @return the calculated victory chance score
          */
@@ -242,7 +257,8 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
                     int i = 0;
                     while (countDownLatch.getCount() > 0) {
                         try {
-                            if (countDownLatch.await((long) (Compute.randomFloat() * 1500) + 750, TimeUnit.MILLISECONDS)) {
+                            if (countDownLatch.await((long) (Compute.randomFloat() * 1500) + 750,
+                                  TimeUnit.MILLISECONDS)) {
                                 return null;
                             } else {
                                 logger.info("Tick");
@@ -262,7 +278,7 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
                     try {
                         return Resolver.simulationRun(setupForces, SimulationOptions.empty(), board,
                                     new PlanetaryConditions(planetaryConditions))
-                            .resolveSimulation();
+                              .resolveSimulation();
                     } catch (Exception e) {
                         logger.error(e, e);
                     } finally {

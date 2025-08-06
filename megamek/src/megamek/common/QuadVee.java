@@ -45,15 +45,15 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 public class QuadVee extends QuadMek {
     private static final long serialVersionUID = 1283551018632228647L;
 
-    public static final int CONV_MODE_MEK    = 0;
+    public static final int CONV_MODE_MEK = 0;
     public static final int CONV_MODE_VEHICLE = 1;
 
     public static final int SYSTEM_CONVERSION_GEAR = 15;
 
     public static final String[] systemNames = { "Life Support", "Sensors",
-            "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
-            "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot",
-            "Conversion Gear"};
+                                                 "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
+                                                 "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot",
+                                                 "Conversion Gear" };
 
     public static final int MOTIVE_UNKNOWN = -1;
     public static final int MOTIVE_TRACK = 0;
@@ -130,14 +130,14 @@ public class QuadVee extends QuadMek {
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-    return new TechAdvancement(TechBase.CLAN)
-            .setTechRating(TechRating.F)
-            .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
-            .setClanAdvancement(3130, 3135, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true)
-            .setPrototypeFactions(Faction.CHH)
-            .setProductionFactions(Faction.CHH)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        return new TechAdvancement(TechBase.CLAN)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
+              .setClanAdvancement(3130, 3135, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setClanApproximate(true)
+              .setPrototypeFactions(Faction.CHH)
+              .setProductionFactions(Faction.CHH)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     /**
@@ -166,8 +166,8 @@ public class QuadVee extends QuadMek {
     }
 
     /**
-     * In vehicle mode the QuadVee ignores actuator and hip criticals, but is subject to track/wheel
-     * damage and various effects of vehicle motive damage.
+     * In vehicle mode the QuadVee ignores actuator and hip criticals, but is subject to track/wheel damage and various
+     * effects of vehicle motive damage.
      */
     public int getCruiseMP(MPCalculationSetting mpCalculationSetting) {
         int mp = getOriginalWalkMP();
@@ -219,9 +219,9 @@ public class QuadVee extends QuadMek {
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
 
-            if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && conditions.getWeather().isClear()
-                    && conditions.getWind().isTornadoF1ToF3()) {
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+                  && conditions.getWeather().isClear()
+                  && conditions.getWind().isTornadoF1ToF3()) {
                 mp += 1;
             }
         }
@@ -236,8 +236,8 @@ public class QuadVee extends QuadMek {
     @Override
     public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
         if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_VEHICLE)
-                && ((game == null) ||
-                !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))) {
+              && ((game == null) ||
+              !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))) {
             return getRunMP(mpCalculationSetting);
         } else {
             return super.getSprintMP(mpCalculationSetting);
@@ -250,7 +250,7 @@ public class QuadVee extends QuadMek {
     @Override
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
         if (!mpCalculationSetting.ignoreConversion
-                && ((getConversionMode() == CONV_MODE_VEHICLE) || convertingNow)) {
+              && ((getConversionMode() == CONV_MODE_VEHICLE) || convertingNow)) {
             return 0;
         } else {
             return super.getJumpMP(mpCalculationSetting);
@@ -286,7 +286,7 @@ public class QuadVee extends QuadMek {
     public MPBoosters getArmedMPBoosters() {
         MPBoosters mpBoosters = super.getArmedMPBoosters();
         if (getConversionMode() != CONV_MODE_VEHICLE) {
-            return  mpBoosters;
+            return mpBoosters;
         }
 
         return MPBoosters.NONE;
@@ -328,8 +328,7 @@ public class QuadVee extends QuadMek {
     }
 
     /**
-     * Overrides to return false in vehicle mode. Technically it still has a hip crit, but it has no
-     * effect.
+     * Overrides to return false in vehicle mode. Technically it still has a hip crit, but it has no effect.
      */
     @Override
     public boolean hasHipCrit() {
@@ -369,7 +368,7 @@ public class QuadVee extends QuadMek {
             super.setMovementMode(EntityMovementMode.QUAD);
         } else if (mode == CONV_MODE_VEHICLE) {
             super.setMovementMode(motiveType == MOTIVE_WHEEL
-                    ? EntityMovementMode.WHEELED : EntityMovementMode.TRACKED);
+                  ? EntityMovementMode.WHEELED : EntityMovementMode.TRACKED);
         } else {
             return;
         }
@@ -387,11 +386,12 @@ public class QuadVee extends QuadMek {
     public boolean canFall(boolean gyroLegDamage) {
         // QuadVees cannot fall due to failed PSR in vehicle mode.
         return (getConversionMode() == CONV_MODE_MEK && !isProne()) ||
-                     (convertingNow && game.getPhase().isMovement() && !isProne());
+              (convertingNow && game.getPhase().isMovement() && !isProne());
     }
 
     /**
      * Computes conversion cost.
+     *
      * @return The cost to convert between quad and vehicle modes.
      */
     public int conversionCost() {
@@ -480,7 +480,7 @@ public class QuadVee extends QuadMek {
         if (getConversionMode() == CONV_MODE_VEHICLE) {
             for (int loc = 0; loc < locations(); loc++) {
                 if (locationIsLeg(loc)
-                        && (isLocationBad(loc) || getCritical(loc, 5).isHit())) {
+                      && (isLocationBad(loc) || getCritical(loc, 5).isHit())) {
                     roll.addModifier(+3, "motive system damage");
                     break;
                 }
@@ -488,16 +488,16 @@ public class QuadVee extends QuadMek {
             // are we wheeled and in light snow?
             Hex hex = game.getHexOf(this);
             if ((null != hex) && getMovementMode().isWheeled()
-                    && (hex.terrainLevel(Terrains.SNOW) == 1)) {
+                  && (hex.terrainLevel(Terrains.SNOW) == 1)) {
                 roll.addModifier(1, "thin snow");
             }
             // VDNI bonus?
             if (hasAbility(OptionsConstants.MD_VDNI)
-                    && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                  && !hasAbility(OptionsConstants.MD_BVDNI)) {
                 roll.addModifier(-1, "VDNI");
             }
             if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
-                    && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
+                  && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
                 roll.addModifier(1, "cramped cockpit");
             }
 
@@ -517,28 +517,27 @@ public class QuadVee extends QuadMek {
     @Override
     public boolean usesTurnMode() {
         return getConversionMode() == CONV_MODE_VEHICLE && !convertingNow
-                && game != null && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TURN_MODE);
+              && game != null && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TURN_MODE);
     }
 
     /**
-     * If the QuadVee is in vehicle mode (or converting to it) then it follows
-     * the rules for tanks going hull-down, which requires a fortified hex.
+     * If the QuadVee is in vehicle mode (or converting to it) then it follows the rules for tanks going hull-down,
+     * which requires a fortified hex.
      *
-     *  @return True if hull-down is enabled and the QuadVee is in a fortified hex.
+     * @return True if hull-down is enabled and the QuadVee is in a fortified hex.
      */
     @Override
     public boolean canGoHullDown() {
         if (getConversionMode() == CONV_MODE_VEHICLE != convertingNow) {
             Hex occupiedHex = game.getHexOf(this);
             return occupiedHex.containsTerrain(Terrains.FORTIFIED)
-                    && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
+                  && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
         }
         return super.canGoHullDown();
     }
 
     /**
-     * Cannot make any physical attacks in vehicle mode except charging, which is
-     * handled in the movement phase.
+     * Cannot make any physical attacks in vehicle mode except charging, which is handled in the movement phase.
      */
     @Override
     public boolean isEligibleForPhysical() {

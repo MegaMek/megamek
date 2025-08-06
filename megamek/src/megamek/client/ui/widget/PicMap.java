@@ -1,38 +1,58 @@
 /*
  * Copyright (c) 2000-2004 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
- * This program is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the Free 
- * Software Foundation; either version 2 of the License, or (at your option) 
- * any later version.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- * for more details.
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client.ui.widget;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.AWTEvent;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 import java.util.Vector;
+import javax.swing.JComponent;
 
 /**
- * PicMap is a lightweight component, which area is composed by the set of custom
- * elements added to PicMap Engine. There are three main groups of custom
- * elements<br>
- * 1) BackgroundDrawers<br>
- * 2) Hot areas<br>
- * 3) Labels<br> * Hot areas and labels can be grouped handled together by
- * AreasGroup class. Content of PicMap - Areas group that includes all areas on
- * the stage. <p> Added Elements are placed into several layers within PicMap
- * engine.
+ * PicMap is a lightweight component, which area is composed by the set of custom elements added to PicMap Engine. There
+ * are three main groups of custom elements<br> 1) BackgroundDrawers<br> 2) Hot areas<br> 3) Labels<br> * Hot areas and
+ * labels can be grouped handled together by AreasGroup class. Content of PicMap - Areas group that includes all areas
+ * on the stage. <p> Added Elements are placed into several layers within PicMap engine.
  * <ul>
  * <li>Bottom layer is BackgroundDrawers.
  * <li>Next is layer of all elements that not implements PMHotArea or PMLAbel
@@ -76,30 +96,28 @@ public abstract class PicMap extends JComponent {
     private boolean bgIsOpaque = true;
 
     /**
-     * creates PicMap engine. If no areas, labels or Background-drawers added
-     * this is just transparent layer over container.
+     * creates PicMap engine. If no areas, labels or Background-drawers added this is just transparent layer over
+     * container.
      */
     public PicMap() {
         rootGroup.addArea(otherAreas);
         rootGroup.addArea(hotAreas);
         rootGroup.addArea(labels);
         enableEvents(AWTEvent.MOUSE_EVENT_MASK
-                | AWTEvent.MOUSE_MOTION_EVENT_MASK
-                | AWTEvent.COMPONENT_EVENT_MASK);
+              | AWTEvent.MOUSE_MOTION_EVENT_MASK
+              | AWTEvent.COMPONENT_EVENT_MASK);
     }
 
     /**
-     * onResize() function is calling every time PicMap is resized. Have to be
-     * implemented directly to manage composition of component on resizing.
+     * onResize() function is calling every time PicMap is resized. Have to be implemented directly to manage
+     * composition of component on resizing.
      */
     public abstract void onResize();
 
     /**
-     * Adds element to PicMap component. Please note, that all objects
-     * implementing PMLabel interface will be placed in the topmost layer. All
-     * objects implementing PMHotArea will be placed in the middle layer. All
-     * others are going to bottom layer. Within same layer objects are drawing
-     * by order they added to components.
+     * Adds element to PicMap component. Please note, that all objects implementing PMLabel interface will be placed in
+     * the topmost layer. All objects implementing PMHotArea will be placed in the middle layer. All others are going to
+     * bottom layer. Within same layer objects are drawing by order they added to components.
      */
     public void addElement(PMElement e) {
         if (e instanceof PMLabel) {
@@ -150,17 +168,15 @@ public abstract class PicMap extends JComponent {
     }
 
     /**
-     * Adds background drawer to the stage. Background drawers are drawn in
-     * order they added to the component.
+     * Adds background drawer to the stage. Background drawers are drawn in order they added to the component.
      */
     public void addBgDrawer(BackGroundDrawer bd) {
         bgDrawers.addElement(bd);
     }
 
     /**
-     * Sets margins in pixels around Content of component. Does not affect
-     * Background Drawers.
-     * 
+     * Sets margins in pixels around Content of component. Does not affect Background Drawers.
+     *
      * @param l Left margin
      * @param t Top margin
      * @param r Right margin
@@ -235,7 +251,7 @@ public abstract class PicMap extends JComponent {
         }
         Shape oldClip = g.getClip();
         g.setClip(new Rectangle(leftMargin, topMargin, w - leftMargin
-                - rightMargin, h - topMargin - bottomMargin));
+              - rightMargin, h - topMargin - bottomMargin));
 
         // Hot areas painting
         hotAreas.drawInto(g);
@@ -256,7 +272,7 @@ public abstract class PicMap extends JComponent {
         Rectangle r = rootGroup.getBounds();
         if (r != null) {
             return new Dimension(r.x + r.width + rightMargin, r.y + r.height
-                    + bottomMargin);
+                  + bottomMargin);
         }
         return new Dimension(minWidth, minHeight);
     }
@@ -288,12 +304,10 @@ public abstract class PicMap extends JComponent {
     }
 
     /**
-     * Sets background of PicMap to fully opaque or fully transparent. Notes:
-     * Setting Background opaque to "false" switch off buffering of PicMap.
-     * Please provide appropriate graphic buffering in container. Notes: Setting
-     * Background opaque to "false" does not prevent draw of BackgroundDrawers
-     * in PicMap component. Notes: It is required only for Java1.1. Under
-     * Java 1.3 and up offscreen will be transparent by default.
+     * Sets background of PicMap to fully opaque or fully transparent. Notes: Setting Background opaque to "false"
+     * switch off buffering of PicMap. Please provide appropriate graphic buffering in container. Notes: Setting
+     * Background opaque to "false" does not prevent draw of BackgroundDrawers in PicMap component. Notes: It is
+     * required only for Java1.1. Under Java 1.3 and up offscreen will be transparent by default.
      */
     public void setBackgroundOpaque(boolean v) {
         bgIsOpaque = v;
@@ -328,7 +342,7 @@ public abstract class PicMap extends JComponent {
             case MouseEvent.MOUSE_MOVED:
                 PMHotArea ha = getAreaUnder(e.getX(), e.getY());
                 if ((ha == null && activeHotArea != null)
-                        || (ha != null && !ha.equals(activeHotArea))) {
+                      || (ha != null && !ha.equals(activeHotArea))) {
                     if (activeHotArea != null) {
                         activeHotArea.onMouseExit(e);
                     }

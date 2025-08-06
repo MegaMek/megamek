@@ -32,15 +32,15 @@
  */
 package megamek.client.ui.entityreadout;
 
+import java.awt.Container;
+import javax.swing.JFrame;
+
 import megamek.client.ui.dialogs.abstractDialogs.AbstractDialog;
 import megamek.common.Game;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
- * A dialog showing the unit readout, TRO, AS Card and Faction info for a given unit. The Readout is kept
- * updated until the window is closed. This dialog is always non-modal.
+ * A dialog showing the unit readout, TRO, AS Card and Faction info for a given unit. The Readout is kept updated until
+ * the window is closed. This dialog is always non-modal.
  */
 public class LiveReadoutDialog extends AbstractDialog {
 

@@ -1,20 +1,44 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Set;
 
 import megamek.common.enums.HazardousLiquidPoolType;
 import megamek.server.SmokeCloud;
@@ -27,8 +51,8 @@ public class Terrains implements Serializable {
     public static final int WATER = 2; // level = depth
     public static final int ROUGH = 3; // 1: normal 2: ultra
     public static final int RUBBLE = 4; // 1: light bldg 2: medium bldg 3: heavy
-                                        // bldg 4: hardened bldg 5: wall 6:
-                                        // ultra
+    // bldg 4: hardened bldg 5: wall 6:
+    // ultra
     public static final int JUNGLE = 5; // 1: light 2: heavy 3: ultra
     public static final int SAND = 6;
     public static final int TUNDRA = 7;
@@ -47,7 +71,7 @@ public class Terrains implements Serializable {
     public static final int ROAD_LVL_GRAVEL = 4;
 
     public static final int SWAMP = 14; // 1: normal 2: just became quicksand 3:
-                                        // quicksand
+    // quicksand
     public static final int MUD = 15;
     public static final int RAPIDS = 16; // 1: rapids 2: torrent
     public static final int ICE = 17;
@@ -160,17 +184,23 @@ public class Terrains implements Serializable {
     public static final int[] exitableTerrains = { PAVEMENT, ROAD, BUILDING, FUEL_TANK, BRIDGE, WATER };
 
     private static final String[] names = { "none", "woods", "water", "rough", "rubble", "jungle", "sand", "tundra",
-            "magma", "planted_fields", "heavy_industrial", "space", "pavement", "road", "swamp", "mud", "rapids", "ice",
-            "snow", "fire", "smoke", "geyser", "building", "bldg_cf", "bldg_elev", "bldg_basement_type", "bldg_class",
-            "bldg_armor", "bridge", "bridge_cf", "bridge_elev", "fuel_tank", "fuel_tank_cf", "fuel_tank_elev",
-            "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff", "arms", "legs", "metal_deposit",
-            "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff", "water_fluff", "cliff_top", "cliff_bottom",
-            "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom", "foliage_elev", "black_ice", "sky",
-            "deployment_zone", "hazardous_liquid", "ultra_sublevel" };
+                                            "magma", "planted_fields", "heavy_industrial", "space", "pavement", "road",
+                                            "swamp", "mud", "rapids", "ice",
+                                            "snow", "fire", "smoke", "geyser", "building", "bldg_cf", "bldg_elev",
+                                            "bldg_basement_type", "bldg_class",
+                                            "bldg_armor", "bridge", "bridge_cf", "bridge_elev", "fuel_tank",
+                                            "fuel_tank_cf", "fuel_tank_elev",
+                                            "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff",
+                                            "arms", "legs", "metal_deposit",
+                                            "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff",
+                                            "water_fluff", "cliff_top", "cliff_bottom",
+                                            "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom",
+                                            "foliage_elev", "black_ice", "sky",
+                                            "deployment_zone", "hazardous_liquid", "ultra_sublevel" };
 
     /** Terrains in this set are hidden in the Editor, not saved to board files and handled internally. */
     public static final HashSet<Integer> AUTOMATIC = new HashSet<>(Arrays.asList(
-            INCLINE_TOP, INCLINE_BOTTOM, INCLINE_HIGH_TOP, INCLINE_HIGH_BOTTOM, CLIFF_BOTTOM, SKY));
+          INCLINE_TOP, INCLINE_BOTTOM, INCLINE_HIGH_TOP, INCLINE_HIGH_BOTTOM, CLIFF_BOTTOM, SKY));
 
     public static final int SIZE = names.length;
 
@@ -178,18 +208,41 @@ public class Terrains implements Serializable {
 
     // Set of all hazardous terrain types
     public static final Set<Integer> HAZARDS = Set.of(
-        Terrains.FIRE, Terrains.MAGMA, Terrains.ICE, Terrains.WATER, Terrains.BUILDING, Terrains.BRIDGE, Terrains.BLACK_ICE, Terrains.SNOW,
-        Terrains.SWAMP, Terrains.MUD, Terrains.TUNDRA, Terrains.HAZARDOUS_LIQUID, Terrains.ULTRA_SUBLEVEL);
+          Terrains.FIRE,
+          Terrains.MAGMA,
+          Terrains.ICE,
+          Terrains.WATER,
+          Terrains.BUILDING,
+          Terrains.BRIDGE,
+          Terrains.BLACK_ICE,
+          Terrains.SNOW,
+          Terrains.SWAMP,
+          Terrains.MUD,
+          Terrains.TUNDRA,
+          Terrains.HAZARDOUS_LIQUID,
+          Terrains.ULTRA_SUBLEVEL);
 
     // Set of all hazardous terrain types + black ice
-    public static final Set<Integer> HAZARDS_WITH_BLACK_ICE = Set.of(Terrains.PAVEMENT, Terrains.FIRE, Terrains.MAGMA, Terrains.ICE,
-        Terrains.WATER, Terrains.BUILDING, Terrains.BRIDGE, Terrains.BLACK_ICE, Terrains.SNOW, Terrains.SWAMP, Terrains.MUD,
-        Terrains.TUNDRA, Terrains.HAZARDOUS_LIQUID, Terrains.ULTRA_SUBLEVEL);
+    public static final Set<Integer> HAZARDS_WITH_BLACK_ICE = Set.of(Terrains.PAVEMENT,
+          Terrains.FIRE,
+          Terrains.MAGMA,
+          Terrains.ICE,
+          Terrains.WATER,
+          Terrains.BUILDING,
+          Terrains.BRIDGE,
+          Terrains.BLACK_ICE,
+          Terrains.SNOW,
+          Terrains.SWAMP,
+          Terrains.MUD,
+          Terrains.TUNDRA,
+          Terrains.HAZARDOUS_LIQUID,
+          Terrains.ULTRA_SUBLEVEL);
 
     /**
      * Checks to see if the given terrain type can have exits.
      *
      * @param terrType The terrain type to test
+     *
      * @return True if the input terrain type can have exits, else false.
      */
     public static boolean exitableTerrain(int terrType) {
@@ -202,6 +255,7 @@ public class Terrains implements Serializable {
 
     /**
      * @param type the type of terrain to get the name for
+     *
      * @return the name of the specified type of terrain
      */
     public static String getName(int type) {
@@ -210,6 +264,7 @@ public class Terrains implements Serializable {
 
     /**
      * @param type the type of terrain to get a localized name for
+     *
      * @return the localised name of the type of terrain
      */
     public static String getEditorName(int type) {
@@ -218,6 +273,7 @@ public class Terrains implements Serializable {
 
     /**
      * @param type the type of terrain to get a localized name for
+     *
      * @return the localised tool tip for the type of terrain
      */
     public static String getEditorTooltip(int type) {
@@ -230,12 +286,12 @@ public class Terrains implements Serializable {
     }
 
     /**
-     * Returns a name to be displayed in tooltips.
-     * Intentionally returns null for terrains that should be treated
-     * separately such as buildings and for terrains that should not be listed
-     * such as cliff-tops.
-     * @param type the type of terrain to get the name for
+     * Returns a name to be displayed in tooltips. Intentionally returns null for terrains that should be treated
+     * separately such as buildings and for terrains that should not be listed such as cliff-tops.
+     *
+     * @param type  the type of terrain to get the name for
      * @param level the level of the terrain to get the specific name
+     *
      * @return a displayable name for this terrain (for tooltips)
      */
     public static String getDisplayName(int type, int level) {
@@ -431,6 +487,7 @@ public class Terrains implements Serializable {
      * This function converts the name of a terrain into the constant.
      *
      * @param name the name of the terrain (from the names list above)
+     *
      * @return an integer corresponding to the terrain, or 0 if no match (terrain none)
      */
     public static int getType(String name) {
@@ -452,8 +509,9 @@ public class Terrains implements Serializable {
     }
 
     /**
-     * @param type the type of terrain specified
+     * @param type  the type of terrain specified
      * @param level the level of the specified terrain
+     *
      * @return the terrain factor for the given type and level - pg. 64, TacOps
      */
     public static int getTerrainFactor(int type, int level) {
@@ -514,16 +572,14 @@ public class Terrains implements Serializable {
     }
 
     /**
-     * Returns the number of elevations or altitudes above the hex level a given
-     * terrainType rises.  Has to be explicit about the *_ELEV values, because _everything else_
-     * that comes through here is a "level", a ranking of "denseness", not an elevation _or_ altitude.
+     * Returns the number of elevations or altitudes above the hex level a given terrainType rises.  Has to be explicit
+     * about the *_ELEV values, because _everything else_ that comes through here is a "level", a ranking of
+     * "denseness", not an elevation _or_ altitude.
      *
-     * @param terrainType this specifies the type of terrain to get the information for
-     * @param inAtmosphere
-     *            Flag that determines whether elevations or altitudes should be
-     *            returned.
-     * @return The number of altitudes or elevations the given terrain type
-     *         rises above the hex level.
+     * @param terrainType  this specifies the type of terrain to get the information for
+     * @param inAtmosphere Flag that determines whether elevations or altitudes should be returned.
+     *
+     * @return The number of altitudes or elevations the given terrain type rises above the hex level.
      */
     public static int getTerrainElevation(int terrainType, int terrainLevel, boolean inAtmosphere) {
         if (inAtmosphere) {
@@ -552,11 +608,13 @@ public class Terrains implements Serializable {
 
     /**
      * Modifier to control roll when the terrain is in the landing path.
-     * @param terrainType   Type of terrain
-     * @param terrainLevel  The level of the terrain
+     *
+     * @param terrainType  Type of terrain
+     * @param terrainLevel The level of the terrain
+     *
      * @return The control roll modifier
      */
-    public static int landingModifier(int terrainType, int  terrainLevel) {
+    public static int landingModifier(int terrainType, int terrainLevel) {
         switch (terrainType) {
             case WOODS:
             case JUNGLE:
@@ -597,13 +655,15 @@ public class Terrains implements Serializable {
 
     /**
      * Returns true if the terrain is a base terrain type, excluding "Clear"
+     *
      * @param terrainType
+     *
      * @return
      */
-    public static boolean isBaseTerrain(int terrainType){
+    public static boolean isBaseTerrain(int terrainType) {
         return terrainType == WOODS || terrainType == WATER || terrainType == ROUGH
-            || terrainType == RUBBLE || terrainType == JUNGLE || terrainType == SAND
-            || terrainType == TUNDRA || terrainType == MAGMA || terrainType == FIELDS
-            || terrainType == INDUSTRIAL || terrainType == SPACE || terrainType == BUILDING;
+              || terrainType == RUBBLE || terrainType == JUNGLE || terrainType == SAND
+              || terrainType == TUNDRA || terrainType == MAGMA || terrainType == FIELDS
+              || terrainType == INDUSTRIAL || terrainType == SPACE || terrainType == BUILDING;
     }
 }

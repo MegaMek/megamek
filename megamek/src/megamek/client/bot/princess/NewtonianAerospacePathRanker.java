@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.client.bot.princess;
@@ -56,9 +70,9 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
             // targets in the ignore list are ignored
             // therefore... a priority target in the ignore list is ignored
             if ((!priorityTargets.contains(enemy.getId()) &&
-                       getOwner().getHonorUtil()
-                             .isEnemyBroken(enemy.getId(), enemy.getOwnerId(), getOwner().getForcedWithdrawal())) ||
-                      ignoredTargets.contains(enemy.getId())) {
+                  getOwner().getHonorUtil()
+                        .isEnemyBroken(enemy.getId(), enemy.getOwnerId(), getOwner().getForcedWithdrawal())) ||
+                  ignoredTargets.contains(enemy.getId())) {
                 continue;
             }
 
@@ -169,7 +183,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
         double enemyDamageDiscount = Compute.oddsAbove(enemy.getCrew().getGunnery() + sensorShadowMod) / 100;
         //in general, if an enemy can end its position in range, it can hit me
         returnResponse.addToEstimatedEnemyDamage(getMaxDamageAtRange(enemy, range, useExtremeRange, useLOSRange) *
-                                                       enemyDamageDiscount);
+              enemyDamageDiscount);
 
         return returnResponse;
     }
@@ -197,9 +211,9 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
             while (potentialShadowIter.hasNext() && sensorShadowMod == 0) {
                 Entity potentialShadow = potentialShadowIter.next();
                 if (potentialShadow.isDone() &&
-                          potentialShadow.isLargeCraft() &&
-                          (potentialShadow.getWeight() - path.getEntity().getWeight() >=
-                                 -WeaponAttackAction.STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
+                      potentialShadow.isLargeCraft() &&
+                      (potentialShadow.getWeight() - path.getEntity().getWeight() >=
+                            -WeaponAttackAction.STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
                     sensorShadowMod = 1;
                 }
             }
@@ -236,8 +250,8 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
 
         // if we want to flee the board from the edge in question, we're ok
         if (getOwner().isFallingBack(path.getEntity()) &&
-                  (getOwner().getHomeEdge(path.getEntity()) ==
-                         CardinalEdge.getCardinalEdge(offBoardDirection.getValue()))) {
+              (getOwner().getHomeEdge(path.getEntity()) ==
+                    CardinalEdge.getCardinalEdge(offBoardDirection.getValue()))) {
             return 0.0;
         }
 

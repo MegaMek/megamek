@@ -1,24 +1,42 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.generator;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -432,10 +450,10 @@ class TeamLoadOutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         AmmoType aType = (AmmoType) EquipmentType.get("IS Arrow IV Ammo");
         AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType())
-                               .stream()
-                               .filter(m -> m.getSubMunitionName().contains("ADA"))
-                               .findFirst()
-                               .orElse(null);
+              .stream()
+              .filter(m -> m.getSubMunitionName().contains("ADA"))
+              .findFirst()
+              .orElse(null);
         // Set game tech level to Standard and update generator
         when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Standard");
         tlg.updateOptionValues();
@@ -462,10 +480,10 @@ class TeamLoadOutGeneratorTest {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
         AmmoType aType = (AmmoType) EquipmentType.get("IS Arrow IV Ammo");
         AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType())
-                               .stream()
-                               .filter(m -> m.getSubMunitionName().contains("ADA"))
-                               .findFirst()
-                               .orElse(null);
+              .stream()
+              .filter(m -> m.getSubMunitionName().contains("ADA"))
+              .findFirst()
+              .orElse(null);
         // Should be available by default in 3151, including to Clans (using MixTech)
         Assertions.assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
         Assertions.assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
@@ -648,27 +666,27 @@ class TeamLoadOutGeneratorTest {
 
     private void assertBombLoadoutEquals(BombLoadout expected, BombLoadout actual) {
         assertEquals(expected.size(), actual.size(), "BombLoadout sizes don't match");
-        
+
         for (Map.Entry<BombTypeEnum, Integer> entry : expected.entrySet()) {
             BombTypeEnum bombType = entry.getKey();
             int expectedCount = entry.getValue();
             int actualCount = actual.getCount(bombType);
-            
-            assertEquals(expectedCount, actualCount, 
-                String.format("Bomb count mismatch for %s: expected %d, got %d", 
-                    bombType.getDisplayName(), expectedCount, actualCount));
+
+            assertEquals(expectedCount, actualCount,
+                  String.format("Bomb count mismatch for %s: expected %d, got %d",
+                        bombType.getDisplayName(), expectedCount, actualCount));
         }
-        
+
         // Check for unexpected bomb types in actual
         for (BombTypeEnum bombType : actual.keySet()) {
             if (!expected.containsKey(bombType)) {
-                assertEquals(0, actual.getCount(bombType), 
-                    String.format("Unexpected bomb type %s with count %d", 
-                        bombType.getDisplayName(), actual.getCount(bombType)));
+                assertEquals(0, actual.getCount(bombType),
+                      String.format("Unexpected bomb type %s with count %d",
+                            bombType.getDisplayName(), actual.getCount(bombType)));
             }
         }
     }
-    
+
 
     /**
      * We expect CAP Pirate flights in the 3SW era to mount ordnance only RL-P pods.

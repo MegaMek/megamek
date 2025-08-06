@@ -1,15 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.forceDisplay;
 
@@ -229,13 +249,10 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
     }
 
     /**
-     * Returns a TreePath in the force tree for a possibly outdated entity
-     * or force. Outdated means a new object of the type was sent by the server
-     * and has replaced this object. Also works for the game's current objects
-     * though.
-     * Uses the force's/entity's id to get the
-     * game's real object with the same id. Used to reconstruct the selection
-     * and expansion state of the force tree after an update.
+     * Returns a TreePath in the force tree for a possibly outdated entity or force. Outdated means a new object of the
+     * type was sent by the server and has replaced this object. Also works for the game's current objects though. Uses
+     * the force's/entity's id to get the game's real object with the same id. Used to reconstruct the selection and
+     * expansion state of the force tree after an update.
      */
     private TreePath getPath(Object outdatedEntry) {
         Forces forces = game.getForces();
@@ -273,7 +290,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
 
     private JMenuItem viewReadoutJMenuItem(Entity en) {
         JMenuItem item = new JMenuItem(Messages.getString("ClientGUI.viewReadoutMenuItem")
-                + en.getDisplayName());
+              + en.getDisplayName());
 
         item.setActionCommand(Integer.toString(en.getId()));
         item.addActionListener(evt -> {
@@ -306,7 +323,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
                 TreePath path = forceTree.getPathForRow(row);
                 if (path != null && path.getLastPathComponent() instanceof Entity) {
                     Entity entity = (Entity) path.getLastPathComponent();
-                    if (clientgui != null) { 
+                    if (clientgui != null) {
                         clientgui.getUnitDisplay().displayEntity(entity);
                     } else {
                         JFrame frame = null;
@@ -318,7 +335,10 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
                     }
                     GUIP.setUnitDisplayEnabled(true);
 
-                    if (clientgui != null && entity.isDeployed() && !entity.isOffBoard() && entity.getPosition() != null) {
+                    if (clientgui != null
+                          && entity.isDeployed()
+                          && !entity.isOffBoard()
+                          && entity.getPosition() != null) {
                         clientgui.getBoardView().centerOnHex(entity.getPosition());
                     }
                 }

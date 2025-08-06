@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -30,7 +51,7 @@ import megamek.server.totalwarfare.TWGameManager;
  */
 public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = -2073773899108954657L;
-    
+
     String sSalvoType = " shell(s) ";
 
     /**
@@ -40,19 +61,19 @@ public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
      * @param m
      */
     public MekMortarAntiPersonnelHandler(ToHitData t, WeaponAttackAction w,
-            Game g, TWGameManager m) {
+          Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         boolean targetHex = (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-                || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE);
+              || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE);
         int missilesHit;
         int nMissilesModifier = getClusterModifiers(true);
 
@@ -60,7 +81,7 @@ public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
             missilesHit = wtype.getRackSize();
         } else {
             missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                    nMissilesModifier);
+                  nMissilesModifier);
         }
 
         if (missilesHit > 0) {
@@ -96,9 +117,8 @@ public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
 
     /**
      * Calculate the clustering of the hits
-     * 
-     * @return a <code>int</code> value saying how much hits are in each cluster
-     *         of damage.
+     *
+     * @return a <code>int</code> value saying how much hits are in each cluster of damage.
      */
     @Override
     protected int calcnCluster() {
@@ -107,7 +127,7 @@ public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -125,13 +145,13 @@ public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
         }
         return 1;
     }
-    
+
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
-                                      Building bldg, int hits, int nCluster, int bldgAbsorbs) {
+          Building bldg, int hits, int nCluster, int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                nCluster, bldgAbsorbs);
-        
+              nCluster, bldgAbsorbs);
+
         // We need to roll damage for each hit against infantry
         if (target.isConventionalInfantry()) {
             nDamPerHit = calcDamagePerHit();

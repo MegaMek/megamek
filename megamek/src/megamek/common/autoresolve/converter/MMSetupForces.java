@@ -66,6 +66,7 @@ public class MMSetupForces extends SetupForces {
 
     /**
      * Create the forces for the game object, using the campaign, units and scenario
+     *
      * @param simulation The game object to setup the forces in
      */
     @Override
@@ -95,9 +96,10 @@ public class MMSetupForces extends SetupForces {
     }
 
     /**
-     * Convert the forces in the game to formations, this is the most important step in the setup of the game,
-     * it converts every top level force into a single formation, and those formations are then added to the game
-     * and used in the auto resolve in place of the original entities
+     * Convert the forces in the game to formations, this is the most important step in the setup of the game, it
+     * converts every top level force into a single formation, and those formations are then added to the game and used
+     * in the auto resolve in place of the original entities
+     *
      * @param simulationContext The simulationContext which contains the forces to be converted
      */
     private void convertForcesIntoFormations(SimulationContext simulationContext) {
@@ -137,22 +139,24 @@ public class MMSetupForces extends SetupForces {
 
     /**
      * Setup the player, its forces and entities in the game, it also sets the player skill level.
+     *
      * @param simulation The game object to setup the player in
      */
     private void setupPlayer(Player player, List<InGameObject> inGameObjects, SimulationContext simulation) {
         var cleanPlayer = getCleanPlayer(player);
         simulation.addPlayer(player.getId(), cleanPlayer);
         var playerObjects = inGameObjects.stream()
-            .filter(Entity.class::isInstance)
-            .filter(entity -> entity.getOwnerId() == player.getId())
-            .map(Entity.class::cast)
-            .toList();
+              .filter(Entity.class::isInstance)
+              .filter(entity -> entity.getOwnerId() == player.getId())
+              .map(Entity.class::cast)
+              .toList();
         var entities = setupPlayerForces(playerObjects, cleanPlayer);
         sendEntities(entities, simulation);
     }
 
     /**
      * Create a player object from the campaign and scenario wichi doesnt have a reference to the original player
+     *
      * @return The clean player object
      */
     private Player getCleanPlayer(Player originalPlayer) {
@@ -177,7 +181,9 @@ public class MMSetupForces extends SetupForces {
 
     /**
      * Setup the player forces and entities for the game
+     *
      * @param player The player object to setup the forces for
+     *
      * @return A list of entities for the player
      */
     private List<Entity> setupPlayerForces(List<Entity> inGameObjects, Player player) {
@@ -207,7 +213,8 @@ public class MMSetupForces extends SetupForces {
 
     /**
      * Send the entities to the game object
-     * @param entities The entities to send
+     *
+     * @param entities   The entities to send
      * @param simulation the game object to send the entities to
      */
     private void sendEntities(List<Entity> entities, SimulationContext simulation) {
@@ -216,6 +223,7 @@ public class MMSetupForces extends SetupForces {
             if (entity instanceof ProtoMek) {
                 int numPlayerProtos = simulation.getSelectedEntityCount(new EntitySelector() {
                     private final int ownerId = entity.getOwnerId();
+
                     @Override
                     public boolean accept(Entity entity) {
                         return (entity instanceof ProtoMek) && (ownerId == entity.getOwnerId());
@@ -231,7 +239,7 @@ public class MMSetupForces extends SetupForces {
 
             // Give the unit a spotlight, if it has the spotlight quirk
             entity.setExternalSearchlight(entity.hasExternalSearchlight()
-                || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
+                  || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
 
             simulation.getPlayer(entity.getOwnerId()).changeInitialEntityCount(1);
 

@@ -32,17 +32,18 @@
  */
 package megamek.client.ui.dialogs.helpDialogs;
 
-import megamek.common.internationalization.I18n;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.io.File;
+import javax.swing.JFrame;
+
+import megamek.common.internationalization.I18n;
 
 public class AutoResolveSimulationLogDialog extends AbstractHelpDialog {
 
     public AutoResolveSimulationLogDialog(final JFrame frame, File logFile) {
         super(frame, I18n.getText("AutoResolveSimulationLogDialog.title"),
-            logFile.getAbsolutePath());
+              logFile.getAbsolutePath());
 
         setMinimumSize(new Dimension(800, 400));
         setModalExclusionType(ModalExclusionType.TOOLKIT_EXCLUDE);

@@ -1,15 +1,34 @@
 /*
- * MegaMek - Copyright (C) 2016 The MegaMek Team
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.randomArmy;
 
@@ -31,7 +50,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
-
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
@@ -63,11 +81,8 @@ import megamek.common.enums.SkillLevel;
 import megamek.logging.MMLogger;
 
 /**
- * Presents controls for selecting parameters of the force to generate and a
- * tree structure showing
- * the generated force. The left and right sides of the view are made available
- * separately for use by
- * RandomArmyDialog.
+ * Presents controls for selecting parameters of the force to generate and a tree structure showing the generated force.
+ * The left and right sides of the view are made available separately for use by RandomArmyDialog.
  *
  * @author Neoancient
  */
@@ -161,9 +176,9 @@ public class ForceGeneratorViewUi implements ActionListener {
             public void treeExpanded(TreeExpansionEvent evt) {
                 if (forceTree.getPreferredSize().getWidth() > paneForceTree.getSize().getWidth()) {
                     rightPanel.setMinimumSize(
-                            new Dimension(forceTree.getMinimumSize().width, rightPanel.getMinimumSize().height));
+                          new Dimension(forceTree.getMinimumSize().width, rightPanel.getMinimumSize().height));
                     rightPanel.setPreferredSize(
-                            new Dimension(forceTree.getPreferredSize().width, rightPanel.getPreferredSize().height));
+                          new Dimension(forceTree.getPreferredSize().width, rightPanel.getPreferredSize().height));
                 }
                 rightPanel.revalidate();
             }
@@ -245,7 +260,7 @@ public class ForceGeneratorViewUi implements ActionListener {
      */
     public void addChosenUnits(String playerName) {
         if ((null != forceTree.getModel().getRoot())
-                && (forceTree.getModel().getRoot() instanceof ForceDescriptor)) {
+              && (forceTree.getModel().getRoot() instanceof ForceDescriptor)) {
             configureNetworks((ForceDescriptor) forceTree.getModel().getRoot());
         }
 
@@ -272,7 +287,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         c.sendAddEntity(entities);
 
         String msg = clientGui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: " + playerName
-                + " [" + entities.size() + " units]";
+              + " [" + entities.size() + " units]";
         clientGui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
 
         modelChosen.clearData();
@@ -281,16 +296,16 @@ public class ForceGeneratorViewUi implements ActionListener {
     private void configureNetworks(ForceDescriptor fd) {
         if (fd.getFlags().contains("c3")) {
             Entity master = fd.getSubforces().stream().map(ForceDescriptor::getEntity)
-                    .filter(en -> modelChosen.hasEntity(en)
-                            && (en.hasC3M() || en.hasC3MM()))
-                    .findFirst().orElse(null);
+                  .filter(en -> modelChosen.hasEntity(en)
+                        && (en.hasC3M() || en.hasC3MM()))
+                  .findFirst().orElse(null);
             if (null != master) {
                 master.setC3UUID();
                 int c3s = 0;
                 for (ForceDescriptor sf : fd.getSubforces()) {
                     if (modelChosen.hasEntity(sf.getEntity())
-                            && !sf.getEntity().getExternalIdAsString().equals(master.getExternalIdAsString())
-                            && sf.getEntity().hasC3S()) {
+                          && !sf.getEntity().getExternalIdAsString().equals(master.getExternalIdAsString())
+                          && sf.getEntity().hasC3S()) {
                         sf.getEntity().setC3UUID();
                         sf.getEntity().setC3MasterIsUUIDAsString(master.getC3UUIDAsString());
                         c3s++;
@@ -308,7 +323,7 @@ public class ForceGeneratorViewUi implements ActionListener {
             int nodes = 0;
             for (ForceDescriptor sf : fd.getSubforces()) {
                 if (modelChosen.hasEntity(sf.getEntity())
-                        && sf.getEntity().hasC3i()) {
+                      && sf.getEntity().hasC3i()) {
                     sf.getEntity().setC3UUID();
                     if (null == netId) {
                         netId = sf.getEntity().getC3UUIDAsString();
@@ -335,11 +350,11 @@ public class ForceGeneratorViewUi implements ActionListener {
 
         if (null != fd) {
             lblOrganization.setText(Ruleset.findRuleset(fd).getEschelonNames(fd.getUnitType() == null
-                    ? ""
-                    : UnitType.getTypeName(fd.getUnitType())).get(fd.getEschelonCode()));
+                  ? ""
+                  : UnitType.getTypeName(fd.getUnitType())).get(fd.getEschelonCode()));
             lblFaction.setText(RATGenerator.getInstance().getFaction(fd.getFaction()).getName(fd.getYear()));
             lblRating.setText(SkillLevel.values()[fd.getExperience()].toString()
-                    + ((fd.getRating() == null) ? "" : "/" + fd.getRating()));
+                  + ((fd.getRating() == null) ? "" : "/" + fd.getRating()));
         } else {
             lblOrganization.setText("");
             lblFaction.setText("");
@@ -414,11 +429,11 @@ public class ForceGeneratorViewUi implements ActionListener {
                     String msg_viewcost = Messages.getString("RandomArmyDialog.ViewCost");
 
                     menu.add(
-                            UIUtil.menuItem(msg_view, FGV_VIEW + eIds, true, ForceGeneratorViewUi.this, KeyEvent.VK_V));
+                          UIUtil.menuItem(msg_view, FGV_VIEW + eIds, true, ForceGeneratorViewUi.this, KeyEvent.VK_V));
                     menu.add(
-                            UIUtil.menuItem(msg_viewbv, FGV_BV + eIds, true, ForceGeneratorViewUi.this, KeyEvent.VK_B));
+                          UIUtil.menuItem(msg_viewbv, FGV_BV + eIds, true, ForceGeneratorViewUi.this, KeyEvent.VK_B));
                     menu.add(UIUtil.menuItem(msg_viewcost, FGV_COST + eIds, true, ForceGeneratorViewUi.this,
-                            Integer.MIN_VALUE));
+                          Integer.MIN_VALUE));
 
                     menu.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
@@ -517,9 +532,9 @@ public class ForceGeneratorViewUi implements ActionListener {
         @Override
         public boolean isLeaf(Object node) {
             return (getChildCount(node) == 0)
-                    || ((node instanceof ForceDescriptor forceDescriptor)
-                            && (forceDescriptor.getEschelon() != null)
-                            && (forceDescriptor.getEschelon() == 0));
+                  || ((node instanceof ForceDescriptor forceDescriptor)
+                  && (forceDescriptor.getEschelon() != null)
+                  && (forceDescriptor.getEschelon() == 0));
         }
 
         @Override
@@ -542,8 +557,8 @@ public class ForceGeneratorViewUi implements ActionListener {
 
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
-                boolean expanded, boolean leaf, int row,
-                boolean hasFocus) {
+              boolean expanded, boolean leaf, int row,
+              boolean hasFocus) {
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
             setBackground(UIManager.getColor("Tree.textBackground"));
             setForeground(UIManager.getColor("Tree.textForeground"));
@@ -558,12 +573,12 @@ public class ForceGeneratorViewUi implements ActionListener {
                 String uname;
                 if (fd.getCo() == null) {
                     name.append("<font color='red'>")
-                            .append(Messages.getString("ForceGeneratorDialog.noCrew"))
-                            .append("</font>");
+                          .append(Messages.getString("ForceGeneratorDialog.noCrew"))
+                          .append("</font>");
                 } else {
                     name.append(fd.getCo().getName());
                     name.append(" (").append(fd.getCo().getGunnery()).append("/").append(fd.getCo().getPiloting())
-                            .append(")");
+                          .append(")");
                 }
                 uname = "<i>" + fd.getModelName() + "</i>";
                 if (fd.getFluffName() != null) {
@@ -630,7 +645,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                 }
             }
             entities = entities.stream().filter(e -> entityIds.contains(e.getExternalIdAsString()))
-                    .collect(Collectors.toList());
+                  .collect(Collectors.toList());
             fireTableDataChanged();
         }
 

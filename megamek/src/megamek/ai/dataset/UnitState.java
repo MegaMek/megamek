@@ -45,6 +45,7 @@ import megamek.common.UnitRole;
 
 /**
  * Flexible container for unit state data using a map-based approach with enum keys.
+ *
  * @author Luana Coppio
  */
 public class UnitState extends EntityDataMap<UnitState.Field> {
@@ -98,8 +99,10 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
 
     /**
      * Creates a UnitStateMap from an Entity.
+     *
      * @param entity The entity to extract state from
-     * @param game The game reference
+     * @param game   The game reference
+     *
      * @return A populated UnitStateMap
      */
     public static UnitState fromEntity(Entity entity, Game game) {

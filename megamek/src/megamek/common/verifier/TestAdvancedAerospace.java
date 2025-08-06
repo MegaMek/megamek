@@ -1,17 +1,36 @@
 /*
- * MegaMek -
- * Copyright (C) 2018 - The MegaMek Team
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.verifier;
 
 import java.util.Collections;
@@ -53,9 +72,9 @@ public class TestAdvancedAerospace extends TestAero {
             return Collections.singletonList(ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false));
         } else {
             return ArmorType.allArmorTypes()
-                         .stream()
-                         .filter(at -> at.hasFlag(MiscType.F_JS_EQUIPMENT) && techManager.isLegal(at))
-                         .collect(Collectors.toList());
+                  .stream()
+                  .filter(at -> at.hasFlag(MiscType.F_JS_EQUIPMENT) && techManager.isLegal(at))
+                  .collect(Collectors.toList());
         }
     }
 
@@ -66,7 +85,7 @@ public class TestAdvancedAerospace extends TestAero {
         // standard armor then rounded down, and the free SI armor is rounded down separately.
         if (vessel.isPrimitive()) {
             return (int) (Math.floor(ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false).getPointsPerTon(vessel) *
-                                           maxArmorWeight(vessel)) + Math.floor(freeSI * 0.66));
+                  maxArmorWeight(vessel)) + Math.floor(freeSI * 0.66));
         }
         return (int) Math.floor(ArmorType.forEntity(vessel).getPointsPerTon(vessel) * maxArmorWeight(vessel) + freeSI);
     }
@@ -171,8 +190,8 @@ public class TestAdvancedAerospace extends TestAero {
             return round(vessel.getWeight() * 0.012, Ceil.HALFTON);
         } else if (vessel.isPrimitive()) {
             return round(vessel.getWeight() *
-                               vessel.getOriginalWalkMP() *
-                               primitiveEngineMultiplier(vessel.getOriginalBuildYear()), Ceil.HALFTON);
+                  vessel.getOriginalWalkMP() *
+                  primitiveEngineMultiplier(vessel.getOriginalBuildYear()), Ceil.HALFTON);
         } else {
             return round(vessel.getWeight() * vessel.getOriginalWalkMP() * 0.06, Ceil.HALFTON);
         }
@@ -345,8 +364,8 @@ public class TestAdvancedAerospace extends TestAero {
     @Override
     public String printWeightEngine() {
         return StringUtil.makeLength("Engine: ", getPrintSize() - 5) +
-                     TestEntity.makeWeightString(getWeightEngine()) +
-                     "\n";
+              TestEntity.makeWeightString(getWeightEngine()) +
+              "\n";
     }
 
     public double getWeightKFDrive() {
@@ -355,8 +374,8 @@ public class TestAdvancedAerospace extends TestAero {
 
     public String printWeightKFDrive() {
         return StringUtil.makeLength("K/F Drive Core: ", getPrintSize() - 5) +
-                     TestEntity.makeWeightString(getWeightKFDrive()) +
-                     "\n";
+              TestEntity.makeWeightString(getWeightKFDrive()) +
+              "\n";
     }
 
     public double getWeightSail() {
@@ -383,8 +402,8 @@ public class TestAdvancedAerospace extends TestAero {
 
     public String printWeightSail() {
         return StringUtil.makeLength("Jump Sail: ", getPrintSize() - 5) +
-                     TestEntity.makeWeightString(getWeightSail()) +
-                     "\n";
+              TestEntity.makeWeightString(getWeightSail()) +
+              "\n";
     }
 
     @Override
@@ -431,8 +450,8 @@ public class TestAdvancedAerospace extends TestAero {
 
     public String printWeightGravDecks() {
         return StringUtil.makeLength("Gravity Decks: ", getPrintSize() - 5) +
-                     TestEntity.makeWeightString(getWeightGravDecks()) +
-                     "\n";
+              TestEntity.makeWeightString(getWeightGravDecks()) +
+              "\n";
     }
 
     /**
@@ -445,8 +464,8 @@ public class TestAdvancedAerospace extends TestAero {
 
     public String printWeightLifeBoats() {
         return StringUtil.makeLength("Life Boats/Escape Pods: ", getPrintSize() - 5) +
-                     TestEntity.makeWeightString(getWeightLifeBoats()) +
-                     "\n";
+              TestEntity.makeWeightString(getWeightLifeBoats()) +
+              "\n";
     }
 
     /**
@@ -462,8 +481,8 @@ public class TestAdvancedAerospace extends TestAero {
 
     public String printWeightFireControl() {
         return StringUtil.makeLength("Extra Fire Control: ", getPrintSize() - 5) +
-                     TestEntity.makeWeightString(getWeightFireControl()) +
-                     "\n";
+              TestEntity.makeWeightString(getWeightFireControl()) +
+              "\n";
     }
 
     /**
@@ -478,8 +497,8 @@ public class TestAdvancedAerospace extends TestAero {
 
     public String printWeightLFBattery() {
         return StringUtil.makeLength("LF Battery: ", getPrintSize() - 5) +
-                     TestEntity.makeWeightString(getWeightLFBattery()) +
-                     "\n";
+              TestEntity.makeWeightString(getWeightLFBattery()) +
+              "\n";
     }
 
     public double getWeightHardpoints() {
@@ -488,8 +507,8 @@ public class TestAdvancedAerospace extends TestAero {
 
     public String printWeightHardpoints() {
         return StringUtil.makeLength("Docking Hard points: ", getPrintSize() - 5) +
-                     TestEntity.makeWeightString(getWeightHardpoints()) +
-                     "\n";
+              TestEntity.makeWeightString(getWeightHardpoints()) +
+              "\n";
     }
 
     @Override
@@ -537,8 +556,8 @@ public class TestAdvancedAerospace extends TestAero {
     @Override
     public String printWeightControls() {
         return StringUtil.makeLength("Control Systems:", getPrintSize() - 5) +
-                     makeWeightString(getWeightControls()) +
-                     "\n";
+              makeWeightString(getWeightControls()) +
+              "\n";
     }
 
     @Override
@@ -591,10 +610,10 @@ public class TestAdvancedAerospace extends TestAero {
     public boolean correctHeatSinks(StringBuffer buff) {
         if ((vessel.getHeatType() != Aero.HEAT_SINGLE) && (vessel.getHeatType() != Aero.HEAT_DOUBLE)) {
             buff.append("Invalid heatsink type!  Valid types are " +
-                              Aero.HEAT_SINGLE +
-                              " and " +
-                              Aero.HEAT_DOUBLE +
-                              ".  Found ").append(vessel.getHeatType()).append(".");
+                  Aero.HEAT_SINGLE +
+                  " and " +
+                  Aero.HEAT_DOUBLE +
+                  ".  Found ").append(vessel.getHeatType()).append(".");
             return false;
         }
         return true;
@@ -634,7 +653,7 @@ public class TestAdvancedAerospace extends TestAero {
         correct &= correctBays(buff);
         correct &= correctCriticals(buff);
         if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) ||
-                  getEntity().canonUnitWithInvalidBuild()) {
+              getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
@@ -711,8 +730,8 @@ public class TestAdvancedAerospace extends TestAero {
                 }
             } else if (m.getType() instanceof WeaponType) {
                 if (m.getType().hasFlag(WeaponType.F_MASS_DRIVER) &&
-                          !vessel.hasETypeFlag(Entity.ETYPE_WARSHIP) &&
-                          !vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+                      !vessel.hasETypeFlag(Entity.ETYPE_WARSHIP) &&
+                      !vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
                     buff.append("A mass driver may not be mounted on a Jumpship.\n");
                     illegal = true;
                 }
@@ -822,8 +841,8 @@ public class TestAdvancedAerospace extends TestAero {
 
         for (Map.Entry<Integer, Integer> entry : massDriversPerArc.entrySet()) {
             if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP) &&
-                      (entry.getKey() != Warship.LOC_NOSE) &&
-                      (entry.getValue() > 0)) {
+                  (entry.getKey() != Warship.LOC_NOSE) &&
+                  (entry.getValue() > 0)) {
                 buff.append("A warship may only mount a mass driver in the nose firing arc.\n");
                 illegal = true;
             } else if (entry.getValue() > 1) {
@@ -1007,24 +1026,24 @@ public class TestAdvancedAerospace extends TestAero {
     @Override
     public String printWeightCalculation() {
         return printWeightStructure() +
-                     printWeightEngine() +
-                     printWeightKFDrive() +
-                     printWeightLFBattery() +
-                     printWeightSail() +
-                     printWeightControls() +
-                     printWeightFuel() +
-                     printWeightHeatSinks() +
-                     printWeightArmor() +
-                     printWeightFireControl() +
-                     printWeightCarryingSpace() +
-                     printWeightHardpoints() +
-                     printWeightQuarters() +
-                     printWeightGravDecks() +
-                     printWeightLifeBoats() +
-                     "Equipment:\n" +
-                     printMiscEquip() +
-                     printWeapon() +
-                     printAmmo();
+              printWeightEngine() +
+              printWeightKFDrive() +
+              printWeightLFBattery() +
+              printWeightSail() +
+              printWeightControls() +
+              printWeightFuel() +
+              printWeightHeatSinks() +
+              printWeightArmor() +
+              printWeightFireControl() +
+              printWeightCarryingSpace() +
+              printWeightHardpoints() +
+              printWeightQuarters() +
+              printWeightGravDecks() +
+              printWeightLifeBoats() +
+              "Equipment:\n" +
+              printMiscEquip() +
+              printWeapon() +
+              printAmmo();
     }
 
     @Override

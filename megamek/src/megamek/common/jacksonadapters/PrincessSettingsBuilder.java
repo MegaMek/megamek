@@ -1,38 +1,57 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.jacksonadapters;
 
-import com.fasterxml.jackson.annotation.*;
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
+
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.PrincessException;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
-import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.*;
-
 /**
- * This class is a builder for settings for a Princess bot (BehaviorSettings) and also supports parsing
- * such settings from a yaml MM scenario definition. The difference to BehaviorSettings itself is
- * that this builder can work with incomplete settings, such as only a change to herdmentality or
- * only a change to auto-flee. When building the final BehaviorSettings, either default values or
- * the values of a given other BehaviorSettings are used where the builder has no value.
+ * This class is a builder for settings for a Princess bot (BehaviorSettings) and also supports parsing such settings
+ * from a yaml MM scenario definition. The difference to BehaviorSettings itself is that this builder can work with
+ * incomplete settings, such as only a change to herdmentality or only a change to auto-flee. When building the final
+ * BehaviorSettings, either default values or the values of a given other BehaviorSettings are used where the builder
+ * has no value.
  *
  * @see BehaviorSettings
  * @see PrincessSettingsBuilder#build()
@@ -149,10 +168,11 @@ public class PrincessSettingsBuilder {
     }
 
     /**
-     * Returns new BehaviorSettings based on the given settings. Settings that are present in this builder
-     * overwrite the previous settings, otherwise the previous settings are left unchanged.
+     * Returns new BehaviorSettings based on the given settings. Settings that are present in this builder overwrite the
+     * previous settings, otherwise the previous settings are left unchanged.
      *
      * @param previousSettings Settings to base the new settings on
+     *
      * @return New BehaviorSettings that incorporate the settings of this builder
      */
     public BehaviorSettings build(@Nullable BehaviorSettings previousSettings) {
@@ -206,8 +226,8 @@ public class PrincessSettingsBuilder {
     }
 
     /**
-     * Returns new BehaviorSettings based on the Princess default settings. Settings that are present in this
-     * builder overwrite the default settings, others are left at their default values.
+     * Returns new BehaviorSettings based on the Princess default settings. Settings that are present in this builder
+     * overwrite the default settings, others are left at their default values.
      *
      * @return New BehaviorSettings that incorporate the settings of this builder
      */

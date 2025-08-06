@@ -38,14 +38,14 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
-import megamek.common.util.ManagedVolatileImage;
-
 import javax.swing.JComponent;
+
+import megamek.common.util.ManagedVolatileImage;
 
 /**
  * @author drake
- * 
- * A panel that displays a raw image, scaling it to fit the component's size.
+ *       <p>
+ *       A panel that displays a raw image, scaling it to fit the component's size.
  */
 public class RawImagePanel extends JComponent {
     private Image originalImage;
@@ -61,7 +61,7 @@ public class RawImagePanel extends JComponent {
     public void setImage(Image image) {
         this.originalImage = image;
         invalidateCache();
-        
+
         if (image != null) {
             setPreferredSize(new Dimension(image.getWidth(null), image.getHeight(null)));
         } else {
@@ -103,7 +103,7 @@ public class RawImagePanel extends JComponent {
             }
         }
     }
-    
+
     @Override
     public void removeNotify() {
         super.removeNotify();

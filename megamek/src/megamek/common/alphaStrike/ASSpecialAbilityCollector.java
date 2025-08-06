@@ -1,57 +1,72 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike;
 
-import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-import static megamek.common.alphaStrike.BattleForceSUA.*;
+import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
 
 /**
- * This interface is implemented by classes that represent anything that holds AlphaStrike Special
- * Unit Abilities. This is the AlphaStrike element itself (its central abilities such as MHQ, CK23-D2 or
- * ARM). It is also implemented by the ASSpecialAbilityCollection (and subclasses) that represent the
- * abilities inside the TUR special as well as the abilities and damage of a large aero's arcs.
- * The interface contains various methods to retrieve the abilities in a type-safe and convenient way.
- * The default methods should be correct and not be overridden in implementing classes.
+ * This interface is implemented by classes that represent anything that holds AlphaStrike Special Unit Abilities. This
+ * is the AlphaStrike element itself (its central abilities such as MHQ, CK23-D2 or ARM). It is also implemented by the
+ * ASSpecialAbilityCollection (and subclasses) that represent the abilities inside the TUR special as well as the
+ * abilities and damage of a large aero's arcs. The interface contains various methods to retrieve the abilities in a
+ * type-safe and convenient way. The default methods should be correct and not be overridden in implementing classes.
  */
 public interface ASSpecialAbilityCollector {
 
     /**
-     * Returns true when the element, turret or arc has the given Special Unit Ability. When it has
-     * and the SUA is associated with some value, this value can be assumed to be non-empty
-     * or greater than zero. For example, if an element has MHQ, then MHQ >= 1. If it has IF, then
-     * the IF damage is at least 0*.
+     * Returns true when the element, turret or arc has the given Special Unit Ability. When it has and the SUA is
+     * associated with some value, this value can be assumed to be non-empty or greater than zero. For example, if an
+     * element has MHQ, then MHQ >= 1. If it has IF, then the IF damage is at least 0*.
      *
      * @param sua The Special Unit Ability to check
+     *
      * @return True when the given Special Unit Ability is present
      */
     boolean hasSUA(BattleForceSUA sua);
 
     /**
-     * Returns true when this element, turret or arc has any of the given Special Unit Abilities.
-     * See {@link #hasSUA(BattleForceSUA)}
+     * Returns true when this element, turret or arc has any of the given Special Unit Abilities. See
+     * {@link #hasSUA(BattleForceSUA)}
      *
      * @param sua The Special Unit Ability to check
+     *
      * @return True when this AS element has the given Special Unit Ability
      */
     default boolean hasAnySUAOf(BattleForceSUA sua, BattleForceSUA... furtherSuas) {
@@ -59,15 +74,15 @@ public interface ASSpecialAbilityCollector {
     }
 
     /**
-     * @return The value associated with the given Special Unit Ability. Depending on the given sua, this
-     * value can be null or of different types. Preferably use the type-safe specific methods such as getLRM()
-     * instead of this method.
+     * @return The value associated with the given Special Unit Ability. Depending on the given sua, this value can be
+     *       null or of different types. Preferably use the type-safe specific methods such as getLRM() instead of this
+     *       method.
      */
     Object getSUA(BattleForceSUA sua);
 
     /**
-     * Returns a formatted SUA string for this AS element. The string is formatted in the way SUAs are
-     * printed on an AS element's card or summary with a ', ' between SUAs.
+     * Returns a formatted SUA string for this AS element. The string is formatted in the way SUAs are printed on an AS
+     * element's card or summary with a ', ' between SUAs.
      *
      * @return A formatted Special Unit Ability string
      */
@@ -76,8 +91,8 @@ public interface ASSpecialAbilityCollector {
     }
 
     /**
-     * Returns a formatted SUA string suitable for gameplay display such as on an AS Card.
-     * The given delimiter is inserted between SUAs.
+     * Returns a formatted SUA string suitable for gameplay display such as on an AS Card. The given delimiter is
+     * inserted between SUAs.
      *
      * @return A formatted Special Unit Ability string
      */

@@ -1,17 +1,38 @@
 /*
- * MegaMek -
+
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.io.Serial;
@@ -368,8 +389,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         String newModeName = type.getMode(newMode).getName();
         String curModeName = curMode().getName();
         return getType().hasInstantModeSwitch() &&
-                     !type.isNextTurnModeSwitch(newModeName) &&
-                     !type.isNextTurnModeSwitch(curModeName);
+              !type.isNextTurnModeSwitch(newModeName) &&
+              !type.isNextTurnModeSwitch(curModeName);
     }
 
     @Override
@@ -495,8 +516,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
 
         if (is(EquipmentTypeLookup.PINTLE_TURRET) &&
-                  entity instanceof Tank tank &&
-                  tank.getBaseChassisSponsonPintleWeight() >= 0) {
+              entity instanceof Tank tank &&
+              tank.getBaseChassisSponsonPintleWeight() >= 0) {
             desc.append(" (%d kg)".formatted((int) (getTonnage() * 1000)));
         }
         return desc.toString();
@@ -550,12 +571,12 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     public boolean isReady(boolean isStrafing, boolean evenIfAlreadyFired) {
         return (!usedThisRound || evenIfAlreadyFired || isStrafing) &&
-                     !destroyed &&
-                     !missing &&
-                     !jammed &&
-                     !useless &&
-                     !fired &&
-                     (!isDWPMounted || getLinkedBy() != null);
+              !destroyed &&
+              !missing &&
+              !jammed &&
+              !useless &&
+              !fired &&
+              (!isDWPMounted || getLinkedBy() != null);
     }
 
     public boolean isUsedThisRound() {
@@ -601,9 +622,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
         if ((entity != null) &&
-                  destroyed &&
-                  (this instanceof MiscMounted) &&
-                  getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+              destroyed &&
+              (this instanceof MiscMounted) &&
+              getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
             entity.setHasDamagedRHS(true);
         }
     }
@@ -658,9 +679,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public void setHit(boolean hit) {
         this.hit = hit;
         if ((entity != null) &&
-                  hit &&
-                  (this instanceof MiscMounted) &&
-                  getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+              hit &&
+              (this instanceof MiscMounted) &&
+              getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
             entity.setHasDamagedRHS(true);
         }
     }
@@ -766,20 +787,20 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public static int getNumShots(WeaponType weaponType, EquipmentMode mode, boolean ignoreMode) {
         // figure out # of shots for variable-shot weapons
         if (((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA) ||
-                   (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) &&
-                  (ignoreMode || ((mode != null) && mode.equals(Weapon.MODE_UAC_ULTRA)))) {
+              (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) &&
+              (ignoreMode || ((mode != null) && mode.equals(Weapon.MODE_UAC_ULTRA)))) {
             return 2;
         }
         // sets number of shots for AC rapid mode
         else if (((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
-                        (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
-                        (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
-                        (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.PAC)) &&
-                       weaponType.hasModes() &&
-                       (ignoreMode || ((mode != null) && mode.equals(Weapon.MODE_AC_RAPID)))) {
+              (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
+              (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
+              (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.PAC)) &&
+              weaponType.hasModes() &&
+              (ignoreMode || ((mode != null) && mode.equals(Weapon.MODE_AC_RAPID)))) {
             return 2;
         } else if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY) ||
-                         weaponType.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
+              weaponType.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
             if (ignoreMode || (mode == null) || mode.equals(Weapon.MODE_RAC_SIX_SHOT)) {
                 return 6;
             } else if (mode.equals(Weapon.MODE_RAC_TWO_SHOT)) {
@@ -921,8 +942,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public int hasChargedCapacitor() {
         if (getCrossLinkedBy() != null &&
-                  isWorkingCapacitor(getCrossLinkedBy()) &&
-                  getCrossLinkedBy().curMode().equals("Charge")) {
+              isWorkingCapacitor(getCrossLinkedBy()) &&
+              getCrossLinkedBy().curMode().equals("Charge")) {
             return 2;
         }
 
@@ -944,14 +965,14 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             // When it has been set to charge this turn,
             // pendingMode is set
             if (getCrossLinkedBy() != null &&
-                      isWorkingCapacitor(getCrossLinkedBy()) &&
-                      getCrossLinkedBy().pendingMode().equals("Charge")) {
+                  isWorkingCapacitor(getCrossLinkedBy()) &&
+                  getCrossLinkedBy().pendingMode().equals("Charge")) {
                 return 2;
             }
 
             if (getLinkedBy() != null &&
-                      isWorkingCapacitor(getLinkedBy()) &&
-                      getLinkedBy().pendingMode().equals("Charge")) {
+                  isWorkingCapacitor(getLinkedBy()) &&
+                  getLinkedBy().pendingMode().equals("Charge")) {
                 return 1;
             }
             return 0;
@@ -1088,7 +1109,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     public boolean isSplitable() {
         return (((getType() instanceof WeaponType) && ((WeaponType) getType()).isSplitable()) ||
-                      ((getType() instanceof MiscType) && getType().hasFlag(MiscType.F_SPLITABLE)));
+              ((getType() instanceof MiscType) && getType().hasFlag(MiscType.F_SPLITABLE)));
     }
 
     public void setSplit(boolean b) {
@@ -1109,8 +1130,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
                 return 5;
             }
             if (mtype.hasFlag(MiscType.F_JUMP_JET) &&
-                      mtype.hasSubType(MiscType.S_PROTOTYPE) &&
-                      mtype.hasSubType(MiscType.S_IMPROVED)) {
+                  mtype.hasSubType(MiscType.S_PROTOTYPE) &&
+                  mtype.hasSubType(MiscType.S_IMPROVED)) {
                 return 10;
             }
             if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
@@ -1337,8 +1358,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     public boolean hasQuirk(String name) {
         if ((null == entity) ||
-                  (null == entity.getGame()) ||
-                  !entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+              (null == entity.getGame()) ||
+              !entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return false;
         }
         return quirks.booleanOption(name);
@@ -1352,8 +1373,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public int countQuirks() {
         if ((entity != null) &&
-                  (entity.getGame() != null) &&
-                  !entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+              (entity.getGame() != null) &&
+              !entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return 0;
         } else {
             return quirks.count();
@@ -1365,8 +1386,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public String getQuirkList(String sep) {
         if ((null == entity) ||
-                  (null == entity.game) ||
-                  !entity.game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+              (null == entity.game) ||
+              !entity.game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return "";
         }
 
@@ -1445,13 +1466,13 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public boolean isInBearingsOnlyMode() {
         return (curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_EXT) ||
-                      curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_LONG) ||
-                      curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_MED) ||
-                      curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_SHORT) ||
-                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT) ||
-                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG) ||
-                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED) ||
-                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT)) && getEntity().isSpaceborne();
+              curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_LONG) ||
+              curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_MED) ||
+              curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_SHORT) ||
+              curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT) ||
+              curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG) ||
+              curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED) ||
+              curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT)) && getEntity().isSpaceborne();
     }
 
     /**
@@ -1459,10 +1480,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public boolean isInWaypointLaunchMode() {
         return (curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT) ||
-                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG) ||
-                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED) ||
-                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT) ||
-                      curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT)) && getEntity().isSpaceborne();
+              curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG) ||
+              curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED) ||
+              curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT) ||
+              curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT)) && getEntity().isSpaceborne();
     }
 
     /**
@@ -1611,29 +1632,29 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public String toString() {
         List<String> locations = allLocations().stream().map(entity::getLocationAbbr).collect(Collectors.toList());
         String intro = getType().toString() +
-                             " (" +
-                             String.join("/", locations) +
-                             (rearMounted ? "-R" : "") +
-                             (mekTurretMounted ? "-MTu" : "") +
-                             (sponsonTurretMounted ? "-STu" : "") +
-                             (pintleTurretMounted ? "-PTu" : "") +
-                             (isDWPMounted ? "-DWP" : "") +
-                             (isAPMMounted ? "-APM" : "") +
-                             (squadSupportWeapon ? "-SSW" : "") +
-                             (baMountLoc != -1 ? "-" + BattleArmor.MOUNT_LOC_NAMES[baMountLoc] : "") +
-                             (omniPodMounted ? "-Pod" : "")
+              " (" +
+              String.join("/", locations) +
+              (rearMounted ? "-R" : "") +
+              (mekTurretMounted ? "-MTu" : "") +
+              (sponsonTurretMounted ? "-STu" : "") +
+              (pintleTurretMounted ? "-PTu" : "") +
+              (isDWPMounted ? "-DWP" : "") +
+              (isAPMMounted ? "-APM" : "") +
+              (squadSupportWeapon ? "-SSW" : "") +
+              (baMountLoc != -1 ? "-" + BattleArmor.MOUNT_LOC_NAMES[baMountLoc] : "") +
+              (omniPodMounted ? "-Pod" : "")
 
-                             +
-                             ")";
+              +
+              ")";
 
         List<String> state = new ArrayList<>();
         if (linked != null) {
             if (linked.getEntity().getId() != entity.getId()) {
                 state.add("Linked: [" +
-                                linked.getEntity() +
-                                ":" +
-                                linked.getEntity().getEquipment().indexOf(linked) +
-                                "]");
+                      linked.getEntity() +
+                      ":" +
+                      linked.getEntity().getEquipment().indexOf(linked) +
+                      "]");
             } else {
                 state.add("Linked: [" + entity.getEquipment().indexOf(linked) + "]");
             }
@@ -1641,10 +1662,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (linkedBy != null) {
             if (linkedBy.getEntity().getId() != entity.getId()) {
                 state.add("LinkedBy: [" +
-                                linkedBy.getEntity() +
-                                ":" +
-                                linkedBy.getEntity().getEquipment().indexOf(linkedBy) +
-                                "]");
+                      linkedBy.getEntity() +
+                      ":" +
+                      linkedBy.getEntity().getEquipment().indexOf(linkedBy) +
+                      "]");
             } else {
                 state.add("LinkedBy: [" + entity.getEquipment().indexOf(linkedBy) + "]");
             }
@@ -1652,10 +1673,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (crossLinkedBy != null) {
             if (crossLinkedBy.getEntity().getId() != entity.getId()) {
                 state.add("CrossLinkedBy: [" +
-                                crossLinkedBy.getEntity() +
-                                ":" +
-                                crossLinkedBy.getEntity().getEquipment().indexOf(crossLinkedBy) +
-                                "]");
+                      crossLinkedBy.getEntity() +
+                      ":" +
+                      crossLinkedBy.getEntity().getEquipment().indexOf(crossLinkedBy) +
+                      "]");
             } else {
                 state.add("CrossLinkedBy: [" + entity.getEquipment().indexOf(crossLinkedBy) + "]");
             }

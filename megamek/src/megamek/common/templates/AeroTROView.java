@@ -1,17 +1,36 @@
 /*
- * MegaMek -
- * Copyright (C) 2018 The MegaMek Team
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.templates;
 
 import java.text.NumberFormat;
@@ -25,7 +44,6 @@ import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.EntityFluff;
-import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.Messages;
 import megamek.common.MiscType;
@@ -37,10 +55,8 @@ import megamek.common.util.AeroAVModCalculator;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 import megamek.common.weapons.CLIATMWeapon;
-import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
-import megamek.common.weapons.srms.SRMWeapon;
 
 /**
  * Creates a TRO template model for aerospace and conventional fighters.
@@ -149,8 +165,8 @@ public class AeroTROView extends TROView {
     protected int addWeaponBays(String[][] arcSets) {
         int nameWidth = 1;
         final Map<String, List<WeaponMounted>> baysByLoc = aero.getWeaponBayList()
-                                                                 .stream()
-                                                                 .collect(Collectors.groupingBy(this::getArcAbbr));
+              .stream()
+              .collect(Collectors.groupingBy(this::getArcAbbr));
         final List<String> bayArcs = new ArrayList<>();
         final Map<String, Integer> heatByLoc = new HashMap<>();
         final Map<String, List<Map<String, Object>>> bayDetails = new HashMap<>();
@@ -179,7 +195,6 @@ public class AeroTROView extends TROView {
         return nameWidth;
     }
 
-    
 
     private Map<String, Object> createBayRow(WeaponMounted bay) {
         final Map<EquipmentKey, Integer> weaponCount = new HashMap<>();
@@ -194,9 +209,9 @@ public class AeroTROView extends TROView {
         Mounted<?> linker = null;
         // FIXME: Consider new AmmoType::equals / BombType::equals
         final Map<AmmoType, Integer> shotsByAmmoType = bay.getBayAmmo()
-                                                             .stream()
-                                                             .collect(Collectors.groupingBy(AmmoMounted::getType,
-                                                                   Collectors.summingInt(Mounted::getBaseShotsLeft)));
+              .stream()
+              .collect(Collectors.groupingBy(AmmoMounted::getType,
+                    Collectors.summingInt(Mounted::getBaseShotsLeft)));
         for (final WeaponMounted wMount : bay.getBayWeapons()) {
             final WeaponType wtype = wMount.getType();
             if ((wMount.getLinkedBy() != null) && (wMount.getLinkedBy().getType() instanceof MiscType)) {
@@ -274,8 +289,8 @@ public class AeroTROView extends TROView {
      */
     protected void addAmmo() {
         final Map<String, List<AmmoMounted>> ammoByType = aero.getAmmo()
-                                                                .stream()
-                                                                .collect(Collectors.groupingBy(Mounted::getName));
+              .stream()
+              .collect(Collectors.groupingBy(Mounted::getName));
         final List<Map<String, Object>> ammo = new ArrayList<>();
         for (final List<AmmoMounted> aList : ammoByType.values()) {
             final Map<String, Object> ammoEntry = new HashMap<>();

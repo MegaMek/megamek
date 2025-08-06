@@ -32,15 +32,20 @@
  */
 package megamek.common.moves;
 
-import megamek.common.*;
-import megamek.common.pathfinder.CachedEntityState;
-
 import java.util.EnumSet;
 import java.util.Set;
 
+import megamek.common.Compute;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Infantry;
+import megamek.common.TripodMek;
+import megamek.common.pathfinder.CachedEntityState;
+
 /**
- * This class handles the turn step of a unit.
- * It is used in the MoveStep compilation to calculate the movement of a unit.
+ * This class handles the turn step of a unit. It is used in the MoveStep compilation to calculate the movement of a
+ * unit.
+ *
  * @author Luana Coppio
  * @since 0.50.07
  */
@@ -68,8 +73,8 @@ class TurnStep implements PhasePass {
 
         // Infantry can turn for free, except for field artillery
         moveStep.setMp((moveStep.isJumping() ||
-                          moveStep.isHasJustStood() ||
-                          (entity instanceof Infantry infantry && !infantry.hasActiveFieldArtillery())) ? 0 : 1);
+              moveStep.isHasJustStood() ||
+              (entity instanceof Infantry infantry && !infantry.hasActiveFieldArtillery())) ? 0 : 1);
         moveStep.setNStraight(0);
         if (entity.isAirborne() && (entity.isAero())) {
             moveStep.setMp(moveStep.asfTurnCost(game, moveStep.getType(), entity));
@@ -82,8 +87,8 @@ class TurnStep implements PhasePass {
 
         // tripods with all their legs only pay for their first facing change
         if ((entity instanceof TripodMek mek) &&
-                  mek.atLeastOneBadLeg() &&
-                  getTypesOfInterest().contains(prev.getType())) {
+              mek.atLeastOneBadLeg() &&
+              getTypesOfInterest().contains(prev.getType())) {
             moveStep.setMp(0);
         }
         if (entity.isDropping()) {

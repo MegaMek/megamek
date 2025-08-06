@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2017-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons.infantry;
 
 import megamek.common.EquipmentTypeLookup;
@@ -27,8 +42,8 @@ import megamek.common.weapons.TAGHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
- * TAG for conventional infantry. Rules not found in TacOps 2nd printing are in
- * this forum post: http://bg.battletech.com/forums/index.php?topic=5902.0
+ * TAG for conventional infantry. Rules not found in TacOps 2nd printing are in this forum post:
+ * http://bg.battletech.com/forums/index.php?topic=5902.0
  *
  * @author Neoancient
  */
@@ -51,16 +66,16 @@ public class InfantrySupportTAGWeapon extends InfantryWeapon {
         tonnage = .020;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2598, 2610, DATE_NONE, 2770, 3051)
-                .setISApproximate(true, true, false, false, false)
-                .setClanAdvancement(2598, 2610, DATE_NONE, DATE_NONE, 3051)
-                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.TH)
-                .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.DC).setTechRating(TechRating.E)
-                .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E);
+              .setISApproximate(true, true, false, false, false)
+              .setClanAdvancement(2598, 2610, DATE_NONE, DATE_NONE, 3051)
+              .setClanApproximate(true, true, false, false, false).setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.DC).setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E);
     }
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              TWGameManager manager) {
+          TWGameManager manager) {
         return new TAGHandler(toHit, waa, game, manager);
     }
 }

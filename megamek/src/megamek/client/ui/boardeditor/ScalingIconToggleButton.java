@@ -32,13 +32,14 @@
  */
 package megamek.client.ui.boardeditor;
 
+import java.awt.Image;
+import java.util.Objects;
+import javax.swing.ImageIcon;
+import javax.swing.JToggleButton;
+
 import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.Objects;
 
 /**
  * A specialized JToggleButton that only shows an icon but scales that icon according to the current GUI scaling when

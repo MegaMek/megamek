@@ -1,36 +1,42 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Crew;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Mek;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
@@ -58,11 +64,11 @@ public class LegAttackHandler extends WeaponHandler {
 
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
+          Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+          int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                toHit.getSideTable(), waa.getAimedLocation(),
-                waa.getAimingMode(), toHit.getCover());
+              toHit.getSideTable(), waa.getAimedLocation(),
+              waa.getAimingMode(), toHit.getCover());
         hit.setAttackerId(getAttackerId());
         // If a leg attacks hit a leg that isn't
         // there, then hit the other leg.
@@ -91,14 +97,14 @@ public class LegAttackHandler extends WeaponHandler {
 
         // ASSUMPTION: buildings CAN'T absorb *this* damage.
         vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, damage,
-                false, damageType, false, false, throughFront, underWater));
+              false, damageType, false, false, throughFront, underWater));
         Report.addNewline(vPhaseReport);
         // Do criticals.
         int critMod = 0;
         if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED) {
             critMod -= 2;
         }
-        if (ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO,Crew.HUMANTRO_MEK)) {
+        if (ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_MEK)) {
             critMod += 1;
         }
         vPhaseReport.addAll(gameManager.criticalEntity(entityTarget, hit.getLocation(), hit.isRear(), critMod, damage));

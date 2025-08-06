@@ -1,21 +1,41 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.io.Serial;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -294,7 +314,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     public int getAirMekCruiseMP(MPCalculationSetting mpCalculationSetting) {
         if (game != null && game.isOnAtmosphericMap(this) &&
-                  (isLocationBad(Mek.LOC_LT) || isLocationBad(Mek.LOC_RT))) {
+              (isLocationBad(Mek.LOC_LT) || isLocationBad(Mek.LOC_RT))) {
             return 0;
         }
         return getJumpMP(mpCalculationSetting) * 3;
@@ -302,7 +322,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     public int getAirMekFlankMP(MPCalculationSetting mpCalculationSetting) {
         if (game != null && game.isOnAtmosphericMap(this) &&
-                  (isLocationBad(Mek.LOC_LT) || isLocationBad(Mek.LOC_RT))) {
+              (isLocationBad(Mek.LOC_LT) || isLocationBad(Mek.LOC_RT))) {
             return 0;
         }
         return (int) Math.ceil(getAirMekCruiseMP(mpCalculationSetting) * 1.5);
@@ -364,8 +384,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND) &&
-                      conditions.getWeather().isClear() &&
-                      conditions.getWind().isTornadoF1ToF3()) {
+                  conditions.getWeather().isClear() &&
+                  conditions.getWind().isTornadoF1ToF3()) {
                 j += 1;
             }
 
@@ -389,8 +409,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             j = Math.max(j + weatherMod, 0);
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND) &&
-                      conditions.getWeather().isClear() &&
-                      conditions.getWind().isTornadoF1ToF3()) {
+                  conditions.getWeather().isClear() &&
+                  conditions.getWind().isTornadoF1ToF3()) {
                 j += 1;
             }
         }
@@ -579,8 +599,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             // terrain.
             Hex hex = game.getHex(c, testBoardId);
             return (hex.containsTerrain(Terrains.WOODS) ||
-                          hex.containsTerrain(Terrains.JUNGLE) ||
-                          hex.containsTerrain(Terrains.BLDG_ELEV)) && hex.ceiling() > testElevation;
+                  hex.containsTerrain(Terrains.JUNGLE) ||
+                  hex.containsTerrain(Terrains.BLDG_ELEV)) && hex.ceiling() > testElevation;
         } else {
             // Mek mode or AirMek mode using ground MP have the same restrictions as Biped Mek.
             return super.isLocationProhibited(c, testBoardId, testElevation);
@@ -706,8 +726,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
         // Small/torso-mounted cockpit penalty?
         if ((getCockpitType() == Mek.COCKPIT_SMALL) &&
-                  !hasAbility(OptionsConstants.MD_BVDNI) &&
-                  !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
+              !hasAbility(OptionsConstants.MD_BVDNI) &&
+              !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
             roll.addModifier(1, "Small Cockpit");
         }
 
@@ -891,7 +911,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public boolean canCharge() {
         if (getConversionMode() == CONV_MODE_FIGHTER ||
-                  ((getConversionMode() == CONV_MODE_AIRMEK) && isAirborneVTOLorWIGE())) {
+              ((getConversionMode() == CONV_MODE_AIRMEK) && isAirborneVTOLorWIGE())) {
             return false;
         } else {
             return super.canCharge();
@@ -957,23 +977,23 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
         // Cannot convert to or from mek mode with damage shoulder or arm actuators
         if ((toMode == CONV_MODE_MEK || fromMode == CONV_MODE_MEK) &&
-                  (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_SHOULDER, LOC_RARM) +
-                         getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, LOC_RARM) +
-                         getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, LOC_RARM) +
-                         getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_SHOULDER, LOC_LARM) +
-                         getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, LOC_LARM) +
-                         getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, LOC_LARM) > 0)) {
+              (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_SHOULDER, LOC_RARM) +
+                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, LOC_RARM) +
+                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, LOC_RARM) +
+                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_SHOULDER, LOC_LARM) +
+                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, LOC_LARM) +
+                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, LOC_LARM) > 0)) {
             return false;
         }
 
         // Cannot convert to or from fighter mode with damage hip or leg actuators
         if ((toMode == CONV_MODE_FIGHTER || fromMode == CONV_MODE_FIGHTER) &&
-                  (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, LOC_RLEG) +
-                         getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, LOC_RLEG) +
-                         getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, LOC_RLEG) +
-                         getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, LOC_LLEG) +
-                         getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, LOC_LLEG) +
-                         getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, LOC_LLEG) > 0)) {
+              (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, LOC_RLEG) +
+                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, LOC_RLEG) +
+                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, LOC_RLEG) +
+                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, LOC_LLEG) +
+                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_LEG, LOC_LLEG) +
+                    getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, LOC_LLEG) > 0)) {
             return false;
         }
 
@@ -1337,9 +1357,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 for (int i = 0; i < crits[loc].length; i++) {
                     final CriticalSlot slot = crits[loc][i];
                     if (slot != null &&
-                              slot.getType() == CriticalSlot.TYPE_SYSTEM &&
-                              slot.getIndex() == LAM_LANDING_GEAR &&
-                              !slot.isDestroyed()) {
+                          slot.getType() == CriticalSlot.TYPE_SYSTEM &&
+                          slot.getIndex() == LAM_LANDING_GEAR &&
+                          !slot.isDestroyed()) {
                         gearSlots.add(slot);
                     }
                 }
@@ -1413,8 +1433,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         }
         final Mounted<?> mounted = getEquipment(weaponNumber);
         if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) ||
-                  mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB) ||
-                  mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
+              mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB) ||
+              mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
             return Compute.ARC_360;
         }
         // We use Aero locations for weapon groups for fighter squadron compatibility
@@ -1607,7 +1627,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public int getFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit")) ||
-                  (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
+              (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
             return (int) (fuel * 0.9);
         } else {
             return fuel;
@@ -1617,7 +1637,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public int getCurrentFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit")) ||
-                  (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
+              (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
             return (int) (currentfuel * 0.9);
         } else {
             return currentfuel;
@@ -1903,9 +1923,9 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             while (engineHits < 3 && i < getNumberOfCriticals(LOC_CT)) {
                 final CriticalSlot slot = getCritical(LOC_CT, i);
                 if (slot != null &&
-                          slot.getType() == CriticalSlot.TYPE_SYSTEM &&
-                          slot.getIndex() == SYSTEM_ENGINE &&
-                          !slot.isDamaged()) {
+                      slot.getType() == CriticalSlot.TYPE_SYSTEM &&
+                      slot.getIndex() == SYSTEM_ENGINE &&
+                      !slot.isDamaged()) {
                     slot.setHit(true);
                     engineHits++;
                 }
@@ -1990,10 +2010,10 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         int bays = 0;
         for (CriticalSlot slot : crits[loc]) {
             if ((slot != null) &&
-                      (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) &&
-                      slot.getMount2() == null &&
-                      slot.getMount().getType() instanceof MiscType &&
-                      slot.getMount().getType().hasFlag(MiscType.F_BOMB_BAY)) {
+                  (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) &&
+                  slot.getMount2() == null &&
+                  slot.getMount().getType() instanceof MiscType &&
+                  slot.getMount().getType().hasFlag(MiscType.F_BOMB_BAY)) {
                 bays++;
             }
         }
@@ -2025,10 +2045,10 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         for (int i = 0; i < crits[loc].length; i++) {
             final CriticalSlot slot = crits[loc][i];
             if (slot != null &&
-                      slot.getType() == CriticalSlot.TYPE_EQUIPMENT &&
-                      (slot.getMount().getType() instanceof MiscType) &&
-                      slot.getMount().getType().hasFlag(MiscType.F_BOMB_BAY) &&
-                      (slot.getMount2() == null)) {
+                  slot.getType() == CriticalSlot.TYPE_EQUIPMENT &&
+                  (slot.getMount().getType() instanceof MiscType) &&
+                  slot.getMount().getType().hasFlag(MiscType.F_BOMB_BAY) &&
+                  (slot.getMount2() == null)) {
                 slot.setMount2(mounted);
                 slots--;
                 // Link the bay to the slot so we can find the bomb to explode when the slot is hit.
@@ -2089,12 +2109,12 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     public boolean canSpot() {
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER) &&
-                                         game.getPlanetaryConditions().getLight().isDayOrDusk();
+                  game.getPlanetaryConditions().getLight().isDayOrDusk();
             return !isAirborne() ||
-                         hasWorkingMisc(MiscType.F_RECON_CAMERA) ||
-                         hasWorkingMisc(MiscType.F_INFRARED_IMAGER) ||
-                         hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER) ||
-                         hiresLighted;
+                  hasWorkingMisc(MiscType.F_RECON_CAMERA) ||
+                  hasWorkingMisc(MiscType.F_INFRARED_IMAGER) ||
+                  hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER) ||
+                  hiresLighted;
         } else {
             return super.canSpot();
         }

@@ -1,15 +1,34 @@
 /*
- * MegaMek - Copyright (C) 2016 The MegaMek Team
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ratgenerator;
 
@@ -18,11 +37,10 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import org.w3c.dom.Node;
-
 import megamek.common.EntityMovementMode;
 import megamek.common.UnitType;
 import megamek.logging.MMLogger;
+import org.w3c.dom.Node;
 
 /**
  * Base class of all nodes in the Force Generator faction ruleset files.
@@ -90,9 +108,9 @@ public class RulesetNode {
                     break;
                 case "ifRole":
                     if (!collectionMatchesProperty(fd.getRoles().stream()
-                            .filter(Objects::nonNull)
-                            .map(MissionRole::toString)
-                            .collect(Collectors.toList()), predicates.getProperty((String) key))) {
+                          .filter(Objects::nonNull)
+                          .map(MissionRole::toString)
+                          .collect(Collectors.toList()), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
@@ -104,8 +122,8 @@ public class RulesetNode {
                 case "ifMotive":
                     // FIXME: EntityMovementType::toString does not match the property from the file
                     if (!collectionMatchesProperty(fd.getMovementModes().stream()
-                            .map(EntityMovementMode::toString)
-                            .collect(Collectors.toList()), predicates.getProperty((String) key))) {
+                          .map(EntityMovementMode::toString)
+                          .collect(Collectors.toList()), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
@@ -140,7 +158,7 @@ public class RulesetNode {
                     break;
                 case "ifEschelon":
                     if (fd.getEschelon() == null ||
-                            !matches(fd.getEschelonCode(), predicates.getProperty((String) key))) {
+                          !matches(fd.getEschelonCode(), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
@@ -192,7 +210,7 @@ public class RulesetNode {
                 if (or.contains(",")) {
                     String[] dates = or.split(",", 2);
                     if ((dates[0].isBlank() || year >= Integer.parseInt(dates[0]))
-                            && (dates[1].isBlank() || year <= Integer.parseInt(dates[1]))) {
+                          && (dates[1].isBlank() || year <= Integer.parseInt(dates[1]))) {
                         result = true;
                         break;
                     }
@@ -210,6 +228,7 @@ public class RulesetNode {
      *
      * @param list
      * @param property
+     *
      * @return
      */
     public boolean collectionMatchesProperty(Collection<String> list, String property) {

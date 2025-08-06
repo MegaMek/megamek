@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -40,6 +40,7 @@ import megamek.common.Board;
 
 /**
  * Utility class to load a board from a string representation.
+ *
  * @author Luana Coppio
  */
 public class BoardLoader {
@@ -50,6 +51,7 @@ public class BoardLoader {
 
     /**
      * Load a board from a string
+     *
      * @param data the board as a string
      */
     public static Board initializeBoard(String data) {
@@ -65,7 +67,9 @@ public class BoardLoader {
 
     /**
      * Parse the board size from the data string
+     *
      * @param data the data string
+     *
      * @return an array with the width and height of the board
      */
     private static int[] parseBoardSize(String data) {
@@ -74,7 +78,7 @@ public class BoardLoader {
             String[] size = lines[0].split(" ");
             int width = Integer.parseInt(size[1]);
             int height = Integer.parseInt(size[2]);
-            return new int[]{width, height};
+            return new int[] { width, height };
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid board size in data: " + data, e);
         }

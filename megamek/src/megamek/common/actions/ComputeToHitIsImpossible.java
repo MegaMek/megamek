@@ -32,6 +32,12 @@
  */
 package megamek.common.actions;
 
+import static megamek.common.AmmoType.AmmoTypeEnum.*;
+
+import java.util.EnumSet;
+import java.util.Enumeration;
+import java.util.Vector;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.*;
@@ -50,22 +56,16 @@ import megamek.common.weapons.bayweapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 
-import java.util.EnumSet;
-import java.util.Enumeration;
-import java.util.Vector;
-
-import static megamek.common.AmmoType.AmmoTypeEnum.*;
-
 class ComputeToHitIsImpossible {
 
     /**
      * Method that tests each attack to see if it's impossible. If so, a reason string will be returned. A null return
      * means we can continue processing the attack
-     *
+     * <p>
      * TODO: replace 40-ish parameters with an attack info record of some kind.
      *
      * @param game                  The current {@link Game}
-     * @param attacker                    The Entity making this attack
+     * @param attacker              The Entity making this attack
      * @param attackerId            The ID number of the attacking entity
      * @param target                The Targetable object being attacked
      * @param ttype                 The targetable object type
@@ -177,10 +177,10 @@ class ComputeToHitIsImpossible {
 
             // Some Mek mortar ammo types can only be aimed at a hex
             if (wtype != null &&
-                      wtype.hasFlag(WeaponType.F_MEK_MORTAR) &&
-                      ((atype.getMunitionType().contains(AmmoType.Munitions.M_AIRBURST)) ||
-                             (atype.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) ||
-                             (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)))) {
+                  wtype.hasFlag(WeaponType.F_MEK_MORTAR) &&
+                  ((atype.getMunitionType().contains(AmmoType.Munitions.M_AIRBURST)) ||
+                        (atype.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) ||
+                        (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)))) {
                 if (!(target instanceof HexTarget)) {
                     return String.format(Messages.getString("WeaponAttackAction.AmmoAtHexOnly"),
                           atype.getSubMunitionName());
@@ -193,13 +193,13 @@ class ComputeToHitIsImpossible {
             }
 
             // These ammo types can only target hexes for minefield delivery
-            if (atype.getAmmoType().isAnyOf(LRM,LRM_IMP,MML,MEK_MORTAR) &&
-                      ((atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER)) ||
-                             (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE)) ||
-                             (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO)) ||
-                             (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB)) ||
-                             (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_AUGMENTED))) &&
-                      (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER)) {
+            if (atype.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, MEK_MORTAR) &&
+                  ((atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER)) ||
+                        (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE)) ||
+                        (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO)) ||
+                        (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB)) ||
+                        (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_AUGMENTED))) &&
+                  (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER)) {
                 return Messages.getString("WeaponAttackAction.OnlyMinefields");
             }
         }
@@ -336,8 +336,8 @@ class ComputeToHitIsImpossible {
         // but we do allow vehicle flamers to cool. Also swarm missile secondary targets
         // and strafing are exempt.
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE) &&
-                  !isStrafing &&
-                  !exchangeSwarmTarget) {
+              !isStrafing &&
+              !exchangeSwarmTarget) {
             if (entityTarget != null && !entityTarget.getOwner().isEnemyOf(attacker.getOwner())) {
                 if (!(usesAmmo && atype != null && (atype.getMunitionType().contains(AmmoType.Munitions.M_COOLANT)))) {
                     return Messages.getString("WeaponAttackAction.NoFriendlyTarget");
@@ -362,11 +362,11 @@ class ComputeToHitIsImpossible {
         // Also, enforce options for keeping vehicles and protos safe
         // if those options are checked.
         if (isInferno &&
-                  (((entityTarget instanceof Tank) &&
-                          game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS)) ||
-                         ((entityTarget instanceof ProtoMek) &&
-                                game.getOptions()
-                                      .booleanOption(OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS)))) {
+              (((entityTarget instanceof Tank) &&
+                    game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS)) ||
+                    ((entityTarget instanceof ProtoMek) &&
+                          game.getOptions()
+                                .booleanOption(OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS)))) {
             return Messages.getString("WeaponAttackAction.CantShootWithInferno");
         }
 
@@ -377,25 +377,25 @@ class ComputeToHitIsImpossible {
 
         // Mine Clearance munitions can only target hexes for minefield clearance
         if (!(target instanceof HexTarget) &&
-                  (atype != null) &&
-                  atype.getMunitionType().contains(AmmoType.Munitions.M_MINE_CLEARANCE)) {
+              (atype != null) &&
+              atype.getMunitionType().contains(AmmoType.Munitions.M_MINE_CLEARANCE)) {
             return Messages.getString("WeaponAttackAction.MineClearHexOnly");
         }
 
         // Only screen launchers may target a hex for screen launch
         if (Targetable.TYPE_HEX_SCREEN == target.getTargetType()) {
             if (wtype != null &&
-                      (!((wtype.getAmmoType() == SCREEN_LAUNCHER) ||
-                               (wtype instanceof ScreenLauncherBayWeapon)))) {
+                  (!((wtype.getAmmoType() == SCREEN_LAUNCHER) ||
+                        (wtype instanceof ScreenLauncherBayWeapon)))) {
                 return Messages.getString("WeaponAttackAction.ScreenLauncherOnly");
             }
         }
 
         // Screen Launchers can only target hexes
         if ((Targetable.TYPE_HEX_SCREEN != target.getTargetType()) &&
-                  (wtype != null &&
-                         ((wtype.getAmmoType() == SCREEN_LAUNCHER) ||
-                                (wtype instanceof ScreenLauncherBayWeapon)))) {
+              (wtype != null &&
+                    ((wtype.getAmmoType() == SCREEN_LAUNCHER) ||
+                          (wtype instanceof ScreenLauncherBayWeapon)))) {
             return Messages.getString("WeaponAttackAction.ScreenHexOnly");
         }
 
@@ -434,22 +434,22 @@ class ComputeToHitIsImpossible {
         }
 
         if (game.getPhase().isFiring() && !game.onTheSameBoard(attacker, target)
-                  && !CrossBoardAttackHelper.isCrossBoardAttackPossible(attacker, target, game)) {
+              && !CrossBoardAttackHelper.isCrossBoardAttackPossible(attacker, target, game)) {
             return Messages.getString("WeaponAttackAction.CantAttackOtherBoard");
         }
 
         // if LOS is blocked, block the shot except in the case of artillery fire
         // fall through in the targeting phase to show a more specific reason than "no LOS"
         if ((losMods.getValue() == TargetRoll.IMPOSSIBLE) && !isArtilleryIndirect && !isArtilleryDirect
-                  && !game.getPhase().isTargeting()) {
+              && !game.getPhase().isTargeting()) {
             return losMods.getDesc();
         }
 
         // If using SO advanced sensors, the firing unit or one on its NC3 network must
         // have a valid firing solution
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS) &&
-                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
-                  attacker.isSpaceborne()) {
+              game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
+              attacker.isSpaceborne()) {
             boolean networkFiringSolution = false;
             // Check to see if the attacker has a firing solution. Naval C3 networks share targeting data
             if (attacker.hasNavalC3()) {
@@ -463,7 +463,7 @@ class ComputeToHitIsImpossible {
             if (!networkFiringSolution) {
                 // If we don't check for target type here, we can't fire screens and missiles at hexes...
                 if (target.getTargetType() == Targetable.TYPE_ENTITY &&
-                          (entityTarget != null && !attacker.hasFiringSolutionFor(entityTarget.getId()))) {
+                      (entityTarget != null && !attacker.hasFiringSolutionFor(entityTarget.getId()))) {
                     return Messages.getString("WeaponAttackAction.NoFiringSolution");
                 }
             }
@@ -473,16 +473,16 @@ class ComputeToHitIsImpossible {
         // anything outside of visual range requires a "sensor lock" in order to
         // direct fire. Note that this is for ground combat with tacops sensors rules
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
-                  !attacker.isSpaceborne() &&
-                  !Compute.inVisualRange(game, attacker, target) &&
-                  !(Compute.inSensorRange(game, attacker, target, null)
-                          // Can shoot at something in sensor range if it has been spotted by another unit
-                          && (entityTarget != null) && entityTarget.hasSeenEntity(attacker.getOwner())) &&
-                  !isArtilleryIndirect &&
-                  !isIndirect &&
-                  !isBearingsOnlyMissile &&
-                  !isStrafing &&
-                  !target.isHexBeingBombed()) {
+              !attacker.isSpaceborne() &&
+              !Compute.inVisualRange(game, attacker, target) &&
+              !(Compute.inSensorRange(game, attacker, target, null)
+                    // Can shoot at something in sensor range if it has been spotted by another unit
+                    && (entityTarget != null) && entityTarget.hasSeenEntity(attacker.getOwner())) &&
+              !isArtilleryIndirect &&
+              !isIndirect &&
+              !isBearingsOnlyMissile &&
+              !isStrafing &&
+              !target.isHexBeingBombed()) {
             boolean networkSee = false;
             if (attacker.hasC3() || attacker.hasC3i() || attacker.hasActiveNovaCEWS()) {
                 // c3 units can fire if any other unit in their network is in visual or sensor range
@@ -490,8 +490,8 @@ class ComputeToHitIsImpossible {
                     // We got here because ae can't see the target, so we need a C3 buddy that _can_
                     // or there's no shot.
                     if (!en.isEnemyOf(attacker) &&
-                              en.onSameC3NetworkAs(attacker) &&
-                              Compute.canSee(game, en, target, false, null, null)) {
+                          en.onSameC3NetworkAs(attacker) &&
+                          Compute.canSee(game, en, target, false, null, null)) {
                         networkSee = true;
                         break;
                     }
@@ -508,16 +508,16 @@ class ComputeToHitIsImpossible {
 
         // Torpedos must remain in the water over their whole path to the target
         if ((atype != null) &&
-                  ((atype.getAmmoType() == LRM_TORPEDO) ||
-                         (atype.getAmmoType() == SRM_TORPEDO) ||
-                         (((atype.getAmmoType() == SRM) ||
-                                 (atype.getAmmoType() == SRM_IMP) ||
-                                 (atype.getAmmoType() == MRM) ||
-                                 (atype.getAmmoType() == LRM) ||
-                                 (atype.getAmmoType() == LRM_IMP) ||
-                                 (atype.getAmmoType() == MML)) &&
-                                (atype.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)))) &&
-                  (los.getMinimumWaterDepth() < 1)) {
+              ((atype.getAmmoType() == LRM_TORPEDO) ||
+                    (atype.getAmmoType() == SRM_TORPEDO) ||
+                    (((atype.getAmmoType() == SRM) ||
+                          (atype.getAmmoType() == SRM_IMP) ||
+                          (atype.getAmmoType() == MRM) ||
+                          (atype.getAmmoType() == LRM) ||
+                          (atype.getAmmoType() == LRM_IMP) ||
+                          (atype.getAmmoType() == MML)) &&
+                          (atype.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)))) &&
+              (los.getMinimumWaterDepth() < 1)) {
             return Messages.getString("WeaponAttackAction.TorpOutOfWater");
         }
 
@@ -528,7 +528,9 @@ class ComputeToHitIsImpossible {
 
         // Is the weapon blocked by a tractor/trailer?
         if (weapon != null && (attacker.getTowing() != Entity.NONE || attacker.getTowedBy() != Entity.NONE)) {
-            if (attacker.isWeaponBlockedByTowing(weapon.getLocation(), attacker.getSecondaryFacing(), weapon.isRearMounted())) {
+            if (attacker.isWeaponBlockedByTowing(weapon.getLocation(),
+                  attacker.getSecondaryFacing(),
+                  weapon.isRearMounted())) {
                 return Messages.getString("WeaponAttackAction.TrailerBlock");
             }
         }
@@ -539,7 +541,7 @@ class ComputeToHitIsImpossible {
         // fire) can be fired in the targeting phase
         boolean isCapitalOrSubCapital = (wtype != null) && (wtype.isCapital() || wtype.isSubCapital());
         if (game.getPhase().isTargeting() && (isArtilleryFLAK
-                                                    || !(isArtilleryIndirect || isBearingsOnlyMissile || isCapitalOrSubCapital))) {
+              || !(isArtilleryIndirect || isBearingsOnlyMissile || isCapitalOrSubCapital))) {
             return Messages.getString("WeaponAttackAction.NotValidForTargPhase");
         }
         // Only TAG can be fired in the offboard phase
@@ -585,7 +587,7 @@ class ComputeToHitIsImpossible {
               && usesAmmo
               && (ammo != null)
               && !ammo.getType().canAeroUse(
-                    game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
+              game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
             return Messages.getString("WeaponAttackAction.InvalidAmmoForFighter");
         }
 
@@ -735,7 +737,7 @@ class ComputeToHitIsImpossible {
 
         if ((Compute.useSpheroidAtmosphere(game, attacker)
               || (attacker.isAero() && attacker.isSpheroid() && (attacker.getAltitude() == 0)
-                    && game.isOnGroundMap(attacker)))
+              && game.isOnGroundMap(attacker)))
               && (weapon != null)) {
             int range = Compute.effectiveDistance(game, attacker, target, false);
             // Only aft-mounted weapons can be fired at range 0 (targets directly underneath)
@@ -747,21 +749,21 @@ class ComputeToHitIsImpossible {
 
             // Nose-mounted weapons can only be fired at targets at least 1 altitude higher
             if ((weapon.getLocation() == Aero.LOC_NOSE) &&
-                      (altDif < 1) &&
-                      wtype != null
-                      // Unless the weapon is used as artillery
-                      &&
-                      (!(wtype instanceof ArtilleryWeapon ||
-                               wtype.hasFlag(WeaponType.F_ARTILLERY) ||
-                               (attacker.getAltitude() == 0 && wtype instanceof CapitalMissileWeapon) ||
-                               isIndirect))) {
+                  (altDif < 1) &&
+                  wtype != null
+                  // Unless the weapon is used as artillery
+                  &&
+                  (!(wtype instanceof ArtilleryWeapon ||
+                        wtype.hasFlag(WeaponType.F_ARTILLERY) ||
+                        (attacker.getAltitude() == 0 && wtype instanceof CapitalMissileWeapon) ||
+                        isIndirect))) {
                 return Messages.getString("WeaponAttackAction.TooLowForNose");
             }
             // Front-side-mounted weapons can only be fired at targets at the same altitude or higher
             if ((!weapon.isRearMounted() && (weapon.getLocation() != Aero.LOC_AFT)) &&
-                      (altDif < 0) &&
-                      wtype != null &&
-                      !((wtype instanceof ArtilleryWeapon) || wtype.hasFlag(WeaponType.F_ARTILLERY))) {
+                  (altDif < 0) &&
+                  wtype != null &&
+                  !((wtype instanceof ArtilleryWeapon) || wtype.hasFlag(WeaponType.F_ARTILLERY))) {
                 return Messages.getString("WeaponAttackAction.TooLowForFrontSide");
             }
             // Aft-mounted weapons can only be fired at targets at least 1 altitude lower
@@ -778,10 +780,10 @@ class ComputeToHitIsImpossible {
                 // dropships are implemented
                 if (!attacker.isAirborne() && !target.isAirborne()) {
                     boolean targetInAttackerHex = attacker.getOccupiedCoords().contains(target.getPosition()) ||
-                                                        attacker.getPosition().equals(target.getPosition());
+                          attacker.getPosition().equals(target.getPosition());
                     boolean targetBelowAttacker = game.getHexOf(attacker).getLevel() >
-                                                        game.getHexOf(target).getLevel() +
-                                                              target.getElevation();
+                          game.getHexOf(target).getLevel() +
+                                target.getElevation();
 
                     if (!targetInAttackerHex || !targetBelowAttacker) {
                         return Messages.getString("WeaponAttackAction.GroundedSpheroidDropshipAftWeaponRestriction");
@@ -826,7 +828,9 @@ class ComputeToHitIsImpossible {
 
             // Air-to-ground attacks
             if (Compute.isAirToGround(attacker, target) && !isArtilleryIndirect && !attacker.isDropping()) {
-                if (attacker.isBomber() && weapon.isInternalBomb() && ((IBomber) attacker).getUsedInternalBombs() >= 6) {
+                if (attacker.isBomber()
+                      && weapon.isInternalBomb()
+                      && ((IBomber) attacker).getUsedInternalBombs() >= 6) {
                     return Messages.getString("WeaponAttackAction.AlreadyUsedMaxInternalBombs");
                 }
                 // Can't strike from above altitude 5. Dive bombing uses a different test below
@@ -864,16 +868,16 @@ class ComputeToHitIsImpossible {
                 // Only direct-fire energy weapons can strafe
                 //FIXME we have different checks for this in FiringDisplay, here and in MML for some table
                 boolean isDirectFireEnergy = (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
-                                                    (wtype.hasFlag(WeaponType.F_LASER) ||
-                                                           wtype.hasFlag(WeaponType.F_PPC) ||
-                                                           wtype.hasFlag(WeaponType.F_PLASMA) ||
-                                                           wtype.hasFlag(WeaponType.F_PLASMA_MFUK))) ||
-                                                   wtype.hasFlag(WeaponType.F_FLAMER);
+                      (wtype.hasFlag(WeaponType.F_LASER) ||
+                            wtype.hasFlag(WeaponType.F_PPC) ||
+                            wtype.hasFlag(WeaponType.F_PLASMA) ||
+                            wtype.hasFlag(WeaponType.F_PLASMA_MFUK))) ||
+                      wtype.hasFlag(WeaponType.F_FLAMER);
                 // Note: flamers are direct fire energy, but don't have the flag,
                 // so they won't work with targeting computers
                 boolean isEnergyBay = (wtype instanceof LaserBayWeapon) ||
-                                            (wtype instanceof PPCBayWeapon) ||
-                                            (wtype instanceof PulseLaserBayWeapon);
+                      (wtype instanceof PPCBayWeapon) ||
+                      (wtype instanceof PulseLaserBayWeapon);
                 if (isStrafing && !isDirectFireEnergy && !isEnergyBay) {
                     return Messages.getString("WeaponAttackAction.StrafeDirectEnergyOnly");
                 }
@@ -893,8 +897,8 @@ class ComputeToHitIsImpossible {
                     } else if (attacker instanceof LandAirMek) {
                         // LAMs can't use leg or rear-mounted weapons
                         if ((weapon.getLocation() == Mek.LOC_LLEG) ||
-                                  (weapon.getLocation() == Mek.LOC_RLEG) ||
-                                  weapon.isRearMounted()) {
+                              (weapon.getLocation() == Mek.LOC_RLEG) ||
+                              weapon.isRearMounted()) {
                             return Messages.getString("WeaponAttackAction.InvalidAeroDSAtgArc");
                         }
 
@@ -957,8 +961,8 @@ class ComputeToHitIsImpossible {
                     return Messages.getString("WeaponAttackAction.StrafeDirectEnergyOnly");
                 }
                 if (weapon.getLocation() != VTOL.LOC_FRONT &&
-                          weapon.getLocation() != VTOL.LOC_TURRET &&
-                          weapon.getLocation() != VTOL.LOC_TURRET_2) {
+                      weapon.getLocation() != VTOL.LOC_TURRET &&
+                      weapon.getLocation() != VTOL.LOC_TURRET_2) {
                     return Messages.getString("WeaponAttackAction.InvalidStrafingArc");
                 }
             }
@@ -977,10 +981,10 @@ class ComputeToHitIsImpossible {
                 // Artillery only targets hexes unless making a direct fire flak shot or using
                 // homing ammo.
                 if ((ttype != Targetable.TYPE_HEX_ARTILLERY) &&
-                          (ttype != Targetable.TYPE_MINEFIELD_CLEAR) &&
-                          !(isArtilleryFLAK || (atype != null && atype.countsAsFlak())) &&
-                          !isHoming &&
-                          !target.isOffBoard()) {
+                      (ttype != Targetable.TYPE_MINEFIELD_CLEAR) &&
+                      !(isArtilleryFLAK || (atype != null && atype.countsAsFlak())) &&
+                      !isHoming &&
+                      !target.isOffBoard()) {
                     return Messages.getString("WeaponAttackAction.ArtyAttacksOnly");
                 }
                 // Airborne units can't make direct-fire artillery attacks
@@ -1004,14 +1008,14 @@ class ComputeToHitIsImpossible {
                                 }
                             }
                         } else if ((wtype.getAmmoType() != ARROW_IV) &&
-                                         (wtype.getAmmoType() != ARROW_IV_BOMB)) {
+                              (wtype.getAmmoType() != ARROW_IV_BOMB)) {
                             // For Fighters, LAMs, Small Craft and VTOLs
                             return Messages.getString("WeaponAttackAction.OnlyArrowArty");
                         }
                     }
                 } else if ((wtype.getAmmoType() == ARROW_IV) &&
-                                 atype != null &&
-                                 atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
+                      atype != null &&
+                      atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
                     // Air-Defense Arrow IV can only target airborne enemy units between 1 and 51 hexes away
                     // (same ground map/Low Altitude hex, 1 LAH, or 2 Low Altitude hexes away) and below altitude 8.
                     if (!(target.isAirborne() || target.isAirborneVTOLorWIGE())) {
@@ -1068,7 +1072,7 @@ class ComputeToHitIsImpossible {
                     }
                     // Artillery Flak targeting Aerospace ignores altitude when computing range
                     if (target.isAirborne() &&
-                              attacker.getPosition().distance(target.getPosition()) > Board.DEFAULT_BOARD_HEIGHT) {
+                          attacker.getPosition().distance(target.getPosition()) > Board.DEFAULT_BOARD_HEIGHT) {
                         return Messages.getString("WeaponAttackAction.TooLongForDirectArtyFlak");
                     }
                 }
@@ -1102,7 +1106,7 @@ class ComputeToHitIsImpossible {
 
                 // Apply gravity mod here, per TO: AR pg 155
                 maxRange = (int) (Math.floor((double) (maxRange * Board.DEFAULT_BOARD_HEIGHT) /
-                                                   game.getPlanetaryConditions().getGravity()) / 17f);
+                      game.getPlanetaryConditions().getGravity()) / 17f);
 
                 // Maximum range is measured in mapsheets
                 if (boardRange > maxRange) {
@@ -1124,8 +1128,8 @@ class ComputeToHitIsImpossible {
             // Ballistic and Missile weapons are subject to wind conditions
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             if (conditions.getWind().isTornadoF1ToF3() &&
-                      wtype.hasFlag(WeaponType.F_MISSILE) &&
-                      !attacker.isSpaceborne()) {
+                  wtype.hasFlag(WeaponType.F_MISSILE) &&
+                  !attacker.isSpaceborne()) {
                 return Messages.getString("WeaponAttackAction.NoMissileTornado");
             }
             boolean missleOrBallistic = wtype.hasFlag(WeaponType.F_MISSILE) || wtype.hasFlag(WeaponType.F_BALLISTIC);
@@ -1183,7 +1187,7 @@ class ComputeToHitIsImpossible {
 
             // BA NARCs and Tasers can only fire at one target in a round
             if ((attacker instanceof BattleArmor) &&
-                      (wtype.hasFlag(WeaponType.F_TASER) || wtype.getAmmoType() == NARC)) {
+                  (wtype.hasFlag(WeaponType.F_TASER) || wtype.getAmmoType() == NARC)) {
                 // Go through all of the current actions to see if a NARC or Taser
                 // has been fired
                 for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
@@ -1196,7 +1200,7 @@ class ComputeToHitIsImpossible {
                         Mounted<?> prevWeapon = attacker.getEquipment(prevAttack.getWeaponId());
                         WeaponType prevWtype = (WeaponType) prevWeapon.getType();
                         if (prevWeapon.getType().hasFlag(WeaponType.F_TASER) &&
-                                  weapon.getType().hasFlag(WeaponType.F_TASER)) {
+                              weapon.getType().hasFlag(WeaponType.F_TASER)) {
                             return Messages.getString("WeaponAttackAction.BATaserSameTarget");
                         }
                         if (prevWtype.getAmmoType() == NARC && wtype.getAmmoType() == NARC) {
@@ -1240,17 +1244,21 @@ class ComputeToHitIsImpossible {
                         // You also can't mix and match the 3 different types of bombing: Space, Dive
                         // and Altitude
                         if ((weaponId != prevAttack.getWeaponId()) &&
-                                  attacker.getEquipment(prevAttack.getWeaponId())
-                                        .getType()
-                                        .hasFlag(WeaponType.F_SPACE_BOMB)) {
+                              attacker.getEquipment(prevAttack.getWeaponId())
+                                    .getType()
+                                    .hasFlag(WeaponType.F_SPACE_BOMB)) {
                             return Messages.getString("WeaponAttackAction.BusySpaceBombing");
                         }
                         if ((weaponId != prevAttack.getWeaponId()) &&
-                                  attacker.getEquipment(prevAttack.getWeaponId()).getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+                              attacker.getEquipment(prevAttack.getWeaponId())
+                                    .getType()
+                                    .hasFlag(WeaponType.F_DIVE_BOMB)) {
                             return Messages.getString("WeaponAttackAction.BusyDiveBombing");
                         }
                         if ((weaponId != prevAttack.getWeaponId()) &&
-                                  attacker.getEquipment(prevAttack.getWeaponId()).getType().hasFlag(WeaponType.F_ALT_BOMB)) {
+                              attacker.getEquipment(prevAttack.getWeaponId())
+                                    .getType()
+                                    .hasFlag(WeaponType.F_ALT_BOMB)) {
                             if (!wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                                 return Messages.getString("WeaponAttackAction.BusyAltBombing");
                             }
@@ -1310,8 +1318,8 @@ class ComputeToHitIsImpossible {
 
             // Can't attack bomb hex targets with weapons other than alt/dive bombs
             if ((target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) &&
-                      !wtype.hasFlag(WeaponType.F_DIVE_BOMB) &&
-                      !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                  !wtype.hasFlag(WeaponType.F_DIVE_BOMB) &&
+                  !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                 return Messages.getString("WeaponAttackAction.InvalidForBombing");
             }
 
@@ -1330,7 +1338,7 @@ class ComputeToHitIsImpossible {
 
             // Can't attack a Micro Bomb hex target with other weapons
             if ((target.getTargetType() == Targetable.TYPE_HEX_BOMB) &&
-                      !(usesAmmo && atype != null && (atype.getAmmoType() == BA_MICRO_BOMB))) {
+                  !(usesAmmo && atype != null && (atype.getAmmoType() == BA_MICRO_BOMB))) {
                 return Messages.getString("WeaponAttackAction.InvalidForBombing");
             }
 
@@ -1359,9 +1367,9 @@ class ComputeToHitIsImpossible {
                     }
                 } else if (attacker instanceof QuadMek) {
                     if (!((weapon.getLocation() == Mek.LOC_LLEG) ||
-                                (weapon.getLocation() == Mek.LOC_RLEG) ||
-                                (weapon.getLocation() == Mek.LOC_LARM) ||
-                                (weapon.getLocation() == Mek.LOC_RARM))) {
+                          (weapon.getLocation() == Mek.LOC_RLEG) ||
+                          (weapon.getLocation() == Mek.LOC_LARM) ||
+                          (weapon.getLocation() == Mek.LOC_RARM))) {
                         return Messages.getString("WeaponAttackAction.OnlyLegBPod");
                     }
                 }
@@ -1405,8 +1413,8 @@ class ComputeToHitIsImpossible {
             if (wtype.isSubCapital() || wtype.isCapital()) {
                 // Can't fire any but capital/subcapital missiles surface to surface (but VTOL dive bombing is allowed)
                 if (Compute.isGroundToGround(attacker, target) &&
-                          !((attacker.getMovementMode() == EntityMovementMode.VTOL) && (wtype instanceof DiveBombAttack)) &&
-                          !(wtype instanceof CapitalMissileWeapon)) {
+                      !((attacker.getMovementMode() == EntityMovementMode.VTOL) && (wtype instanceof DiveBombAttack)) &&
+                      !(wtype instanceof CapitalMissileWeapon)) {
                     return Messages.getString("WeaponAttackAction.NoS2SCapWeapons");
                 }
             }
@@ -1415,7 +1423,7 @@ class ComputeToHitIsImpossible {
 
             // Some weapons can't cause fires, but Infernos always can.
             if ((vf_cool || (wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno)) &&
-                      (Targetable.TYPE_HEX_IGNITE == target.getTargetType())) {
+                  (Targetable.TYPE_HEX_IGNITE == target.getTargetType())) {
                 return Messages.getString("WeaponAttackAction.WeaponCantIgnite");
             }
 
@@ -1432,17 +1440,18 @@ class ComputeToHitIsImpossible {
             if (isAttackerInfantry && !(attacker instanceof BattleArmor)) {
                 // 0 MP infantry units: move or shoot, except for anti-mek attacks, those are handled above
                 if ((attacker.getMovementMode() == EntityMovementMode.INF_LEG) &&
-                          (attacker.getWalkMP() == 0) &&
-                          (attacker.moved != EntityMovementType.MOVE_NONE)) {
+                      (attacker.getWalkMP() == 0) &&
+                      (attacker.moved != EntityMovementType.MOVE_NONE)) {
                     return Messages.getString("WeaponAttackAction.0MPInf");
                 }
                 // Can't shoot if platoon used fast movement
                 if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE) &&
-                          (attacker.moved == EntityMovementType.MOVE_RUN)) {
+                      (attacker.moved == EntityMovementType.MOVE_RUN)) {
                     return Messages.getString("WeaponAttackAction.CantShootAndFastMove");
                 }
                 // check for trying to fire field gun after moving
-                if ((weapon.getLocation() == Infantry.LOC_FIELD_GUNS) && (attacker.moved != EntityMovementType.MOVE_NONE)) {
+                if ((weapon.getLocation() == Infantry.LOC_FIELD_GUNS) && (attacker.moved
+                      != EntityMovementType.MOVE_NONE)) {
                     return Messages.getString("WeaponAttackAction.CantMoveAndFieldGun");
                 }
                 // check for mixing infantry and field gun attacks
@@ -1454,9 +1463,9 @@ class ComputeToHitIsImpossible {
                     if (prevAttack.getEntityId() == attackerId) {
                         Mounted<?> prevWeapon = attacker.getEquipment(prevAttack.getWeaponId());
                         if ((prevWeapon.getType().hasFlag(WeaponType.F_INFANTRY) &&
-                                   (weapon.getLocation() == Infantry.LOC_FIELD_GUNS)) ||
-                                  (weapon.getType().hasFlag(WeaponType.F_INFANTRY) &&
-                                         (prevWeapon.getLocation() == Infantry.LOC_FIELD_GUNS))) {
+                              (weapon.getLocation() == Infantry.LOC_FIELD_GUNS)) ||
+                              (weapon.getType().hasFlag(WeaponType.F_INFANTRY) &&
+                                    (prevWeapon.getLocation() == Infantry.LOC_FIELD_GUNS))) {
                             return Messages.getString("WeaponAttackAction.FieldGunOrSAOnly");
                         }
                     }
@@ -1478,7 +1487,7 @@ class ComputeToHitIsImpossible {
                 }
             } else if (wtype.hasFlag(WeaponType.F_EXTINGUISHER)) {
                 if (!(((target instanceof Tank) && ((Tank) target).isOnFire()) ||
-                            ((target instanceof Entity) && (((Entity) target).infernos.getTurnsLeftToBurn() > 0)))) {
+                      ((target instanceof Entity) && (((Entity) target).infernos.getTurnsLeftToBurn() > 0)))) {
                     return Messages.getString("WeaponAttackAction.TargetNotBurning");
                 }
             }
@@ -1521,10 +1530,10 @@ class ComputeToHitIsImpossible {
             // or direct-fire artillery flak attacks
             boolean isWeaponFieldGuns = isAttackerInfantry && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS);
             if ((attacker instanceof Infantry) &&
-                      Compute.isGroundToAir(attacker, target) &&
-                      !wtype.hasFlag(WeaponType.F_INF_AA) &&
-                      !isArtilleryFLAK &&
-                      !isWeaponFieldGuns) {
+                  Compute.isGroundToAir(attacker, target) &&
+                  !wtype.hasFlag(WeaponType.F_INF_AA) &&
+                  !isArtilleryFLAK &&
+                  !isWeaponFieldGuns) {
                 return Messages.getString("WeaponAttackAction.NoInfantryGta");
             }
 
@@ -1546,9 +1555,9 @@ class ComputeToHitIsImpossible {
                         }
                         // Or split ground-to-air fire across multiple targets
                         if (prevAttack.isGroundToAir(game) &&
-                                  Compute.isGroundToAir(attacker, target) &&
-                                  (null != entityTarget) &&
-                                  (prevAttack.getTargetId() != entityTarget.getId())) {
+                              Compute.isGroundToAir(attacker, target) &&
+                              (null != entityTarget) &&
+                              (prevAttack.getTargetId() != entityTarget.getId())) {
                             return Messages.getString("WeaponAttackAction.OneTargetForGta");
                         }
                     }
@@ -1569,10 +1578,10 @@ class ComputeToHitIsImpossible {
 
             // Can't fire an MML indirectly when loaded with SRM munitions
             if (isIndirect &&
-                      usesAmmo &&
-                      atype != null &&
-                      (atype.getAmmoType() == MML) &&
-                      !atype.hasFlag(AmmoType.F_MML_LRM)) {
+                  usesAmmo &&
+                  atype != null &&
+                  (atype.getAmmoType() == MML) &&
+                  !atype.hasFlag(AmmoType.F_MML_LRM)) {
                 return Messages.getString("WeaponAttackAction.NoIndirectSRM");
             }
 
@@ -1664,8 +1673,8 @@ class ComputeToHitIsImpossible {
 
             // Protomek can fire MGA only into front arc, TW page 137
             if (!ComputeArc.isInArc(attacker.getPosition(), attacker.getFacing(), target, Compute.ARC_FORWARD) &&
-                      wtype.hasFlag(WeaponType.F_MGA) &&
-                      (attacker instanceof ProtoMek)) {
+                  wtype.hasFlag(WeaponType.F_MGA) &&
+                  (attacker instanceof ProtoMek)) {
                 return Messages.getString("WeaponAttackAction.ProtoMGAOnlyFront");
             }
 
@@ -1683,9 +1692,9 @@ class ComputeToHitIsImpossible {
 
             // PPCs linked to capacitors can't fire while charging
             if (weapon.getType().hasFlag(WeaponType.F_PPC) &&
-                      (weapon.getLinkedBy() != null) &&
-                      weapon.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR) &&
-                      weapon.getLinkedBy().pendingMode().equals(Weapon.MODE_PPC_CHARGE)) {
+                  (weapon.getLinkedBy() != null) &&
+                  weapon.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR) &&
+                  weapon.getLinkedBy().pendingMode().equals(Weapon.MODE_PPC_CHARGE)) {
                 return Messages.getString("WeaponAttackAction.PPCCharging");
             }
 
@@ -1702,7 +1711,7 @@ class ComputeToHitIsImpossible {
                         continue;
                     }
                     hasSoloAttack |= (otherWtype.hasFlag(WeaponType.F_SOLO_ATTACK) &&
-                                            otherWAA.getWeaponId() != weaponId);
+                          otherWAA.getWeaponId() != weaponId);
                     if (hasSoloAttack) {
                         soloWeaponName = otherWeapon.getName();
                         break;
@@ -1730,17 +1739,17 @@ class ComputeToHitIsImpossible {
 
             // Protomeks cannot fire arm weapons and main gun in the same turn
             if ((attacker instanceof ProtoMek) &&
-                      ((weapon.getLocation() == ProtoMek.LOC_MAINGUN) ||
-                             (weapon.getLocation() == ProtoMek.LOC_RARM) ||
-                             (weapon.getLocation() == ProtoMek.LOC_LARM))) {
+                  ((weapon.getLocation() == ProtoMek.LOC_MAINGUN) ||
+                        (weapon.getLocation() == ProtoMek.LOC_RARM) ||
+                        (weapon.getLocation() == ProtoMek.LOC_LARM))) {
                 final boolean firingMainGun = weapon.getLocation() == ProtoMek.LOC_MAINGUN;
                 for (EntityAction ea : game.getActionsVector()) {
                     if ((ea.getEntityId() == attackerId) && (ea instanceof WeaponAttackAction otherWAA)) {
                         final Mounted<?> otherWeapon = attacker.getEquipment(otherWAA.getWeaponId());
                         if ((firingMainGun &&
-                                   ((otherWeapon.getLocation() == ProtoMek.LOC_RARM) ||
-                                          (otherWeapon.getLocation() == ProtoMek.LOC_LARM))) ||
-                                  !firingMainGun && (otherWeapon.getLocation() == ProtoMek.LOC_MAINGUN)) {
+                              ((otherWeapon.getLocation() == ProtoMek.LOC_RARM) ||
+                                    (otherWeapon.getLocation() == ProtoMek.LOC_LARM))) ||
+                              !firingMainGun && (otherWeapon.getLocation() == ProtoMek.LOC_MAINGUN)) {
                             return Messages.getString("WeaponAttackAction.CantFireArmsAndMainGun");
                         }
                     }
@@ -1775,33 +1784,33 @@ class ComputeToHitIsImpossible {
 
             // Large Craft weapon bays cannot bracket small craft at short range
             if (weapon.hasModes() &&
-                      (weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_80) ||
-                             weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_60) ||
-                             weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_40)) &&
-                      target.isAero() &&
-                      entityTarget != null &&
-                      !entityTarget.isLargeCraft() &&
-                      (RangeType.rangeBracket(attacker.getPosition().distance(target.getPosition()),
-                            wtype.getRanges(weapon, ammo),
-                            true,
-                            false) == RangeType.RANGE_SHORT)) {
+                  (weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_80) ||
+                        weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_60) ||
+                        weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_40)) &&
+                  target.isAero() &&
+                  entityTarget != null &&
+                  !entityTarget.isLargeCraft() &&
+                  (RangeType.rangeBracket(attacker.getPosition().distance(target.getPosition()),
+                        wtype.getRanges(weapon, ammo),
+                        true,
+                        false) == RangeType.RANGE_SHORT)) {
                 return Messages.getString("WeaponAttackAction.TooCloseForSCBracket");
             }
 
             // you must have enough weapons in your bay to be able to use bracketing
             if (weapon.hasModes() &&
-                      weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_80) &&
-                      (weapon.getBayWeapons().size() < 2)) {
+                  weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_80) &&
+                  (weapon.getBayWeapons().size() < 2)) {
                 return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
             }
             if (weapon.hasModes() &&
-                      weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_60) &&
-                      (weapon.getBayWeapons().size() < 3)) {
+                  weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_60) &&
+                  (weapon.getBayWeapons().size() < 3)) {
                 return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
             }
             if (weapon.hasModes() &&
-                      weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_40) &&
-                      (weapon.getBayWeapons().size() < 4)) {
+                  weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_40) &&
+                  (weapon.getBayWeapons().size() < 4)) {
                 return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
             }
 
@@ -1814,9 +1823,9 @@ class ComputeToHitIsImpossible {
 
             // Weapon in arc?
             if (!ComputeArc.isInArc(game, attackerId, weaponId, target) &&
-                      (!Compute.isAirToGround(attacker, target) || isArtilleryIndirect) &&
-                      !attacker.isMakingVTOLGroundAttack() &&
-                      !attacker.isOffBoard()) {
+                  (!Compute.isAirToGround(attacker, target) || isArtilleryIndirect) &&
+                  !attacker.isMakingVTOLGroundAttack() &&
+                  !attacker.isOffBoard()) {
                 return Messages.getString("WeaponAttackAction.OutOfArc");
             }
 
@@ -1864,5 +1873,5 @@ class ComputeToHitIsImpossible {
         return true;
     }
 
-    private ComputeToHitIsImpossible() { }
+    private ComputeToHitIsImpossible() {}
 }

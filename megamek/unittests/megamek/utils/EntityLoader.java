@@ -52,7 +52,9 @@ public class EntityLoader {
     /**
      * Load the entity from the provided filename, the file must be present in the folder at
      * {@link EntityLoader#RESOURCE_PATH}.
+     *
      * @param filename name of the file with the file type extension
+     *
      * @return instantiated entity in the specified class of the unit
      */
     public static Entity loadFromFile(String filename) {
@@ -70,9 +72,11 @@ public class EntityLoader {
     /**
      * Load the entity from the provided filename, the file must be present in the folder at
      * {@link EntityLoader#RESOURCE_PATH}.
+     *
      * @param filename name of the file with the file type extension
+     * @param <UNIT>   the specific class of the unit
+     *
      * @return instantiated entity in the specified class of the unit
-     * @param <UNIT> the specific class of the unit
      */
     @SuppressWarnings("unchecked")
     public static <UNIT extends Entity> UNIT loadFromFile(String filename, Class<UNIT> classType) {

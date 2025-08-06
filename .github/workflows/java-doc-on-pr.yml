@@ -2,7 +2,7 @@ name: JavaDoc Generation on PR
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 env:
   GRADLE_OPTS: "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"

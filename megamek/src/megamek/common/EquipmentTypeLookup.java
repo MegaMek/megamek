@@ -143,7 +143,7 @@ public class EquipmentTypeLookup {
     public static final String MEK_TRACKS = "Tracks";
     @EquipmentName
     public static final String QUADVEE_WHEELS = "QuadVee Wheels";
-    // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
     @EquipmentName
     public static final String IM_EJECTION_SEAT = "Ejection Seat (Industrial Mech)";
     @EquipmentName
@@ -319,7 +319,7 @@ public class EquipmentTypeLookup {
     public static final String LADDER = "Ladder";
     @EquipmentName
     public static final String LIFT_HOIST = "Lift Hoist/Arresting Hoist";
-    // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
     @EquipmentName
     public static final String MANIPULATOR_INDUSTRIAL = "Manipulator (Non-Mech/Non-Battle Armor)";
     @EquipmentName
@@ -328,7 +328,7 @@ public class EquipmentTypeLookup {
     public static final String NAIL_RIVET_GUN = "Nail/Rivet Gun";
     @EquipmentName
     public static final String REFUELING_DROGUE = "RefuelingDrogue";
-    // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
     @EquipmentName
     public static final String FLUID_SUCTION_LIGHT_MEK = "Fluid Suction System (Light - Mech)";
     @EquipmentName

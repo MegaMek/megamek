@@ -133,7 +133,7 @@ tasks.register('stageDataFiles', Sync) {
     dependsOn gradle.includedBuild('mm-data').task(':stageMMFiles')
     description = "Syncs Data Files from MM Data"
     group = 'build'
-    from "../../mm-data/build/staging"
+    from "../../mm-data/build/staging/mm"
     into "${layout.projectDirectory.asFile}/data"
 
 }
@@ -242,7 +242,7 @@ tasks.register('officialUnitList', JavaExec) {
 tasks.register('stageFiles') {
     description = 'Process data files to be included in distribution'
     group = 'distribution'
-    dependsOn stageDataFiles
+    mustRunAfter(stageDataFiles)
     dependsOn officialUnitList
     dependsOn deleteAtlasedImages
 
@@ -308,6 +308,9 @@ launch4j {
     messagesJreVersionError = 'We require a Java Runtime of version 17 or higher installed. https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
     messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
 }
+
+project.tasks.createExe.dependsOn(stageDataFiles)
+project.tasks.createExe.mustRunAfter(stageDataFiles)
 
 tasks.register("packagePrepWork") {
     description = 'General Catch All for all distributions'

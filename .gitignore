@@ -112,4 +112,4 @@ equipment.txt
 /megamek/docs/LICENSE*
 
 # No need to re-commit this folder
-/megamek/megamek/data
+/megamek/data

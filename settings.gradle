@@ -1,3 +1,4 @@
 rootProject.name = 'MegaMekRoot'
+includeBuild('../mm-data')
 
 include 'megamek'

@@ -110,3 +110,6 @@ equipment.txt
 
 /megamek/docs/README.md
 /megamek/docs/LICENSE*
+
+# No need to re-commit this folder
+/megamek/data

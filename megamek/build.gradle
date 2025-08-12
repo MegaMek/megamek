@@ -97,20 +97,8 @@ ext {
             'java.base/java.util.concurrent=ALL-UNNAMED',
             '-Dsun.awt.disablegrab=true'
     ]
-    data = 'data'
-    unitFiles = "${data}/mekfiles"
-    rats = "${data}/rat"
-    docs = "docs"
-    lib = "lib"
-    log = "logs"
-    mmconf = "mmconf"
-    userdata = 'userdata'
     fileStagingDir = "${layout.buildDirectory.get()}/files"
     atlasedImages = "${fileStagingDir}/atlasedImages.txt"
-}
-
-run {
-    jvmArgs = mmJvmOptions
 }
 
 jar {
@@ -119,7 +107,7 @@ jar {
     manifest {
         attributes "Main-Class": application.mainClass
         attributes "Class-Path": project.sourceSets.main.runtimeClasspath.files
-                .findAll { it.name.endsWith(".jar") }.collect { "${lib}/${it.name}" }.join(' ')
+                .findAll { it.name.endsWith(".jar") }.collect { "lib/${it.name}" }.join(' ')
         attributes "Add-Opens": 'java.base/java.util java.base/java.util.concurrent'
         attributes "Build-Date": LocalDateTime.now()
         attributes "Sealed": true
@@ -139,6 +127,15 @@ checkstyle {
 tasks.withType(Checkstyle).configureEach {
     minHeapSize = "1g"
     maxHeapSize = "4g"
+}
+
+tasks.register('stageDataFiles', Sync) {
+    dependsOn gradle.includedBuild('mm-data').task(':stageMMFiles')
+    description = "Syncs Data Files from MM Data"
+    group = 'build'
+    from "../../mm-data/build/staging/mm"
+    into "${layout.projectDirectory.asFile}/data"
+
 }
 
 tasks.register('generateDynamicFiles') {
@@ -182,38 +179,36 @@ tasks.register('copyFiles', Copy) {
     description = 'Stages files that are to be copied into the distribution.'
     group = 'build'
 
+    mustRunAfter(stageDataFiles)
+
     dependsOn copyLicenseFiles
     dependsOn generateDynamicFiles
 
     from projectDir
-    include "${data}/**"
-    include "${docs}/**"
-    include "${mmconf}/**"
+    include "data/**"
+    include "docs/**"
+    include "mmconf/**"
     include "SubmitBug.html"
     include "sentry.properties"
     include "*.ini"
     exclude "**/*.psd"
 
-    // No need to copy the files that are going to be zipped
-    exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
-
     // User Config Files
-    exclude "${mmconf}/clientsettings.xml"
-    exclude "${mmconf}/gameoptions.xml"
-    exclude "${mmconf}/megameklab.properties"
-    exclude "${mmconf}/megameklab.properties.bak"
-    exclude "${mmconf}/mhq.preferences"
-    exclude "${mmconf}/mm.preferences"
-    exclude "${mmconf}/mml.preferences"
+    exclude "mmconf/clientsettings.xml"
+    exclude "mmconf/gameoptions.xml"
+    exclude "mmconf/megameklab.properties"
+    exclude "mmconf/megameklab.properties.bak"
+    exclude "mmconf/mhq.preferences"
+    exclude "mmconf/mm.preferences"
+    exclude "mmconf/mml.preferences"
 
-    exclude "${rats}/**"
-    exclude "${data}/mekfiles/units.cache"
-    include "${userdata}/"
+    include "userdata/"
 
     into fileStagingDir
 }
 
 tasks.register('createImageAtlases', JavaExec) {
+    mustRunAfter(stageDataFiles)
     dependsOn copyFiles
     description = 'Combines individual image files into a set of image atlases.'
     group = 'utility'
@@ -235,6 +230,7 @@ tasks.register('deleteAtlasedImages') {
 
 tasks.register('officialUnitList', JavaExec) {
     dependsOn jar
+    mustRunAfter(stageDataFiles)
     description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -242,39 +238,16 @@ tasks.register('officialUnitList', JavaExec) {
     args = ['-oul', "${projectDir}/docs/OfficialUnitList.txt"]
 }
 
-tasks.register('unitFilesZip', Zip) {
-    dependsOn copyFiles
-    description = 'Creates zip archives of all the unit file folders.'
-    from unitFiles
-    archiveFileName = "unit_files.zip"
-    destinationDirectory = file("${fileStagingDir}/${unitFiles}")
-
-    inputs.dir "${projectDir}/${unitFiles}"
-    outputs.dir "${fileStagingDir}/${unitFiles}"
-}
-
-tasks.register('ratZip', Zip) {
-    description = 'Creates a zip archive of all the random assignment tables.'
-    from rats
-    archiveFileName = "rat_default.zip"
-    destinationDirectory = file("${fileStagingDir}/${rats}")
-    doFirst {
-        mkdir "${fileStagingDir}/${rats}"
-    }
-    inputs.dir "${projectDir}/${rats}"
-    outputs.dir "${fileStagingDir}/${rats}"
-}
 
 tasks.register('stageFiles') {
     description = 'Process data files to be included in distribution'
     group = 'distribution'
+    mustRunAfter(stageDataFiles)
     dependsOn officialUnitList
-    dependsOn unitFilesZip
-    dependsOn ratZip
     dependsOn deleteAtlasedImages
 
     doLast {
-        mkdir "${fileStagingDir}/${log}"
+        mkdir "${fileStagingDir}/log"
     }
 }
 
@@ -296,7 +269,7 @@ distributions {
             }
 
             from(jar) {
-                into "${lib}"
+                into "lib"
             }
 
             from("${projectDir}/scripts") {
@@ -309,7 +282,7 @@ distributions {
 
             from(project.sourceSets.main.runtimeClasspath.files
                     .findAll { it.name.endsWith(".jar") }) {
-                into "${lib}"
+                into "lib"
             }
 
             duplicatesStrategy = 'exclude'
@@ -336,6 +309,9 @@ launch4j {
     messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
 }
 
+project.tasks.createExe.dependsOn(stageDataFiles)
+project.tasks.createExe.mustRunAfter(stageDataFiles)
+
 tasks.register("packagePrepWork") {
     description = 'General Catch All for all distributions'
     dependsOn stageFiles
@@ -343,7 +319,6 @@ tasks.register("packagePrepWork") {
     dependsOn createStartScripts
     dependsOn copyFiles
     dependsOn createImageAtlases
-    dependsOn ratZip
     dependsOn createAllExecutables
 }
 
@@ -358,6 +333,11 @@ distTar {
     dependsOn packagePrepWork
     archiveExtension = 'tar.gz'
     compression = Compression.GZIP
+}
+
+run {
+    dependsOn(stageDataFiles)
+    jvmArgs = mmJvmOptions
 }
 
 assemble {

@@ -17,8 +17,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Data Repo
+        uses: actions/checkout@v5
+        with:
+          repository: megamek/mm-data
+          path: mm-data
+
       - name: "Check out MegaMek"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: megamek
 

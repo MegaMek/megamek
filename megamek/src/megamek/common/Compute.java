@@ -4069,12 +4069,12 @@ public class Compute {
     }
 
     /**
-     * Checks to see if target entity has already appeared on @detector's sensors Used with Naval C3 to determine if
+     * Checks to see if target entity has already appeared on detector's sensors Used with Naval C3 to determine if
+     * detector can fire weapons at @target
      *
      * @param detector - the entity making a sensor scan
      * @param targetId - the entity id of the scan target
      *
-     * @detector can fire weapons at @target
      */
     public static boolean hasSensorContact(Entity detector, int targetId) {
         return detector.hasSensorContactFor(targetId);

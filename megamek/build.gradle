@@ -366,6 +366,13 @@ jacocoTestReport {
     }
 }
 
+tasks.register('cleanAll') {
+    description = 'Cleans all related projects to ensure a proper build.'
+    group = 'build'
+    dependsOn gradle.includedBuild('mm-data').task(':clean')
+    dependsOn clean
+}
+
 tasks.register('easyTest', Test) {
     useJUnitPlatform()
     jvmArgs = mmJvmOptions

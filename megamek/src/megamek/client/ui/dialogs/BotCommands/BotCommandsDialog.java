@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-22025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,16 +32,17 @@
  */
 package megamek.client.ui.dialogs.BotCommands;
 
-import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.util.UIUtil;
-
-import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+
+import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.util.UIUtil;
 
 /**
  * A dialog for displaying a bot commands for the given game.
@@ -61,7 +62,7 @@ public class BotCommandsDialog extends JDialog {
     /**
      * Creates a new BotCommandsDialog.
      *
-     * @param frame the parent frame for this dialog
+     * @param frame     the parent frame for this dialog
      * @param clientGUI the ClientGUI reference, which can be null for standalone usage
      */
     public BotCommandsDialog(final JFrame frame, final ClientGUI clientGUI) {
@@ -86,9 +87,8 @@ public class BotCommandsDialog extends JDialog {
     //endregion Constructors
 
     /**
-     * Saves the current size and position of the dialog to preferences.
-     * Different settings are stored based on whether the display is in
-     * tabbed or non-tabbed mode.
+     * Saves the current size and position of the dialog to preferences. Different settings are stored based on whether
+     * the display is in tabbed or non-tabbed mode.
      */
     public void saveSettings() {
         if ((getSize().width * getSize().height) > 0) {
@@ -98,8 +98,7 @@ public class BotCommandsDialog extends JDialog {
     }
 
     /**
-     * Overrides the default window event processing to save settings when
-     * the window is deactivated or closing.
+     * Overrides the default window event processing to save settings when the window is deactivated or closing.
      *
      * @param e the window event
      */
@@ -112,8 +111,8 @@ public class BotCommandsDialog extends JDialog {
     }
 
     /**
-     * Processes key events and forwards them to the client GUI to enable
-     * hotkey functionality throughout the application.
+     * Processes key events and forwards them to the client GUI to enable hotkey functionality throughout the
+     * application.
      *
      * @param evt the key event to process
      */

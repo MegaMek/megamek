@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2017 - The MegaMek Team
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.common;
 
-import megamek.common.eras.Era;
-import megamek.common.eras.Eras;
+package megamek.common;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -19,6 +40,8 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import megamek.common.eras.Eras;
 
 /**
  * Determines tech level dates based on tech progression of components.
@@ -48,13 +71,12 @@ public class CompositeTechLevel implements ITechnology, Serializable {
      * @param initialTA - the base tech advancement for the composite equipment
      * @param clan      - whether the equipment tech base is Clan
      * @param mixed     - whether the equipment contains a mix of Clan and IS equipment
-     * @param introYear - the year the composite equipment is first available
-     * - Prototype production common extinction reintroduction
-     *                  They want to use eras - this unit is prototype
-     *                  - new availability type - TN to find a prototype table
-     *                  -
+     * @param introYear - the year the composite equipment is first available - Prototype production common extinction
+     *                  reintroduction They want to use eras - this unit is prototype - new availability type - TN to
+     *                  find a prototype table -
      */
-    public CompositeTechLevel(TechAdvancement initialTA, boolean clan, boolean mixed, int introYear, Faction techFaction) {
+    public CompositeTechLevel(TechAdvancement initialTA, boolean clan, boolean mixed, int introYear,
+          Faction techFaction) {
         this.techFaction = techFaction;
         this.clan = clan;
         this.mixed = mixed;
@@ -75,8 +97,8 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             advanced = Math.max(prodDate, introYear);
         }
         if (protoDate == DATE_NONE ||
-                  (advanced != null && advanced <= introYear) ||
-                  (standard != null && standard <= introYear)) {
+              (advanced != null && advanced <= introYear) ||
+              (standard != null && standard <= introYear)) {
             experimental = null;
         } else {
             experimental = Math.max(protoDate, introYear);
@@ -267,10 +289,10 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         for (Era era : Era.values()) {
             AvailabilityValue av = tech.getBaseAvailability(era);
             // Clan mixed tech units cannot use IS tech introduced during SW until 3050.
-            if (clan &&  era == Era.SW && !tech.isClan()
-                && !techFaction.getAffiliation().equals(FactionAffiliation.CLAN)
-                && (techFaction != Faction.CS)
-                && ITechnology.getTechEra(tech.getIntroductionDate()).equals(Era.SW)) {
+            if (clan && era == Era.SW && !tech.isClan()
+                  && !techFaction.getAffiliation().equals(FactionAffiliation.CLAN)
+                  && (techFaction != Faction.CS)
+                  && ITechnology.getTechEra(tech.getIntroductionDate()).equals(Era.SW)) {
                 av = AvailabilityValue.X;
             }
             // IS base cannot include Clan tech before 3050; after 3050 av is +1.
@@ -428,6 +450,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
 
     /**
      * Returns the prototype/experimental date ranges, accounting for extinction periods
+     *
      * @return List of DateRange objects representing when the unit is in prototype phase
      */
     public String getPrototypeDateRange() {
@@ -447,6 +470,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
 
     /**
      * Returns the production/advanced date ranges, accounting for extinction periods
+     *
      * @return List of DateRange objects representing when the unit is in production phase
      */
     public String getProductionDateRange() {
@@ -464,6 +488,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
 
     /**
      * Returns the common/standard date ranges, accounting for extinction periods
+     *
      * @return List of DateRange objects representing when the unit is in common phase
      */
     public String getCommonDateRange() {
@@ -476,8 +501,10 @@ public class CompositeTechLevel implements ITechnology, Serializable {
 
     /**
      * Helper method to split a date range by extinction periods
+     *
      * @param startDate The start date of the range
-     * @param endDate The end date of the range (DATE_NONE for open-ended)
+     * @param endDate   The end date of the range (DATE_NONE for open-ended)
+     *
      * @return List of DateRange objects with extinction periods removed
      */
     private List<DateRange> splitRangeByExtinctions(int startDate, int endDate) {
@@ -535,7 +562,9 @@ public class CompositeTechLevel implements ITechnology, Serializable {
 
     /**
      * Formats a list of DateRange objects as a string for display, including era information
+     *
      * @param ranges List of DateRange objects
+     *
      * @return Formatted string representation with era metadata
      */
     public String formatDateRanges(List<DateRange> ranges) {
@@ -550,7 +579,9 @@ public class CompositeTechLevel implements ITechnology, Serializable {
 
     /**
      * Formats a single DateRange with era information
+     *
      * @param range The DateRange to format
+     *
      * @return Formatted string with era metadata
      */
     private String formatDateRangeWithEra(DateRange range) {

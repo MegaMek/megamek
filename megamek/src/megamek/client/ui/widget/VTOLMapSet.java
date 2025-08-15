@@ -1,17 +1,38 @@
 /*
- * MegaMek - Copyright (C) 2000-2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2000-2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client.ui.widget;
 
 import java.awt.Color;
@@ -20,7 +41,6 @@ import java.awt.FontMetrics;
 import java.awt.Image;
 import java.awt.Polygon;
 import java.util.Vector;
-
 import javax.swing.JComponent;
 
 import megamek.MMConstants;
@@ -34,95 +54,94 @@ import megamek.common.VTOL;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
- * Class which keeps set of all areas required to represent VTOL unit in
- * MekDisplay.ArmorPanel class.
+ * Class which keeps set of all areas required to represent VTOL unit in MekDisplay.ArmorPanel class.
  */
 public class VTOLMapSet implements DisplayMapSet {
 
-    public static final int LABEL_NONE          = 0;
+    public static final int LABEL_NONE = 0;
     public static final int LABEL_CHIN_TU_ARMOR = 1;
-    public static final int LABEL_FRONT_ARMOR   = 2;
+    public static final int LABEL_FRONT_ARMOR = 2;
     public static final int LABEL_RIGHT_ARMOR_1 = 3;
     public static final int LABEL_RIGHT_ARMOR_2 = 4;
-    public static final int LABEL_LEFT_ARMOR_1  = 5;
-    public static final int LABEL_LEFT_ARMOR_2  = 6;
-    public static final int LABEL_REAR_ARMOR    = 7;
+    public static final int LABEL_LEFT_ARMOR_1 = 5;
+    public static final int LABEL_LEFT_ARMOR_2 = 6;
+    public static final int LABEL_REAR_ARMOR = 7;
     public static final int LABEL_ROTOR_ARMOR_1 = 8;
     public static final int LABEL_ROTOR_ARMOR_2 = 9;
-    public static final int LABEL_NUM_ARMORS    = 10;
-    public static final int LABEL_CHIN_TU_IS    = 10;
-    public static final int LABEL_FRONT_IS      = 11;
-    public static final int LABEL_RIGHT_IS_1    = 12;
-    public static final int LABEL_RIGHT_IS_2    = 13;
-    public static final int LABEL_LEFT_IS_1     = 14;
-    public static final int LABEL_LEFT_IS_2     = 15;
-    public static final int LABEL_REAR_IS       = 16;
-    public static final int LABEL_ROTOR_IS      = 17;
-    public static final int LABEL_LOC_NUMBER    = 18;
-    public static final int LABEL_BAR_RATING    = 18;
+    public static final int LABEL_NUM_ARMORS = 10;
+    public static final int LABEL_CHIN_TU_IS = 10;
+    public static final int LABEL_FRONT_IS = 11;
+    public static final int LABEL_RIGHT_IS_1 = 12;
+    public static final int LABEL_RIGHT_IS_2 = 13;
+    public static final int LABEL_LEFT_IS_1 = 14;
+    public static final int LABEL_LEFT_IS_2 = 15;
+    public static final int LABEL_REAR_IS = 16;
+    public static final int LABEL_ROTOR_IS = 17;
+    public static final int LABEL_LOC_NUMBER = 18;
+    public static final int LABEL_BAR_RATING = 18;
 
     UnitDisplayPanel unitDisplayPanel;
 
     private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[LABEL_LOC_NUMBER];
     private PMSimpleLabel[] labels = new PMSimpleLabel[25];
-    private PMValueLabel[] vLabels = new PMValueLabel[LABEL_LOC_NUMBER+1];
+    private PMValueLabel[] vLabels = new PMValueLabel[LABEL_LOC_NUMBER + 1];
     private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private PMAreasGroup content = new PMAreasGroup();
 
     // Polygons for all areas
     // Chin Turret Armor
-    private Polygon chinTurretArmor = new Polygon( new int[] {50, 50, 100, 100},
-            new int[] {5, -50, -50, 5}, 4);
+    private Polygon chinTurretArmor = new Polygon(new int[] { 50, 50, 100, 100 },
+          new int[] { 5, -50, -50, 5 }, 4);
     // Chin Turret IS
-    private Polygon chinTurretIS = new Polygon( new int[] {60, 60, 90, 90},
-            new int[] {0, -25, -25, 0}, 4);
+    private Polygon chinTurretIS = new Polygon(new int[] { 60, 60, 90, 90 },
+          new int[] { 0, -25, -25, 0 }, 4);
     // front armor
     private Polygon frontArmor = new Polygon(new int[] { 30, 60, 90, 120 },
-            new int[] { 30, 0, 0, 30 }, 4);
+          new int[] { 30, 0, 0, 30 }, 4);
     // front internal structure
     private Polygon frontIS = new Polygon(new int[] { 30, 60, 90, 120 },
-            new int[] { 30, 45, 45, 30 }, 4);
+          new int[] { 30, 45, 45, 30 }, 4);
     // Left armor
     private Polygon leftArmor1 = new Polygon(new int[] { 30, 30, 60, 60 },
-            new int[] { 75, 30, 45, 75 }, 4);
+          new int[] { 75, 30, 45, 75 }, 4);
     private Polygon leftArmor2 = new Polygon(new int[] { 30, 30, 60, 60 },
-            new int[] { 135, 90, 90, 150 }, 4);
+          new int[] { 135, 90, 90, 150 }, 4);
     // Left internal structure
     private Polygon leftIS1 = new Polygon(new int[] { 60, 60, 75, 75 },
-            new int[] { 75, 45, 45, 75 }, 4);
+          new int[] { 75, 45, 45, 75 }, 4);
     private Polygon leftIS2 = new Polygon(new int[] { 60, 60, 75, 75 },
-            new int[] { 150, 90, 90, 150 }, 4);
+          new int[] { 150, 90, 90, 150 }, 4);
     // Right armor
     private Polygon rightArmor1 = new Polygon(new int[] { 90, 90, 120, 120 },
-            new int[] { 75, 45, 30, 75 }, 4);
+          new int[] { 75, 45, 30, 75 }, 4);
     private Polygon rightArmor2 = new Polygon(new int[] { 90, 90, 120, 120 },
-            new int[] { 150, 90, 90, 135 }, 4);
+          new int[] { 150, 90, 90, 135 }, 4);
     // Right internal structure
     private Polygon rightIS1 = new Polygon(new int[] { 75, 75, 90, 90 },
-            new int[] { 75, 45, 45, 75 }, 4);
+          new int[] { 75, 45, 45, 75 }, 4);
     private Polygon rightIS2 = new Polygon(new int[] { 75, 75, 90, 90 },
-            new int[] { 150, 90, 90, 150 }, 4);
+          new int[] { 150, 90, 90, 150 }, 4);
     // Rear armor
     private Polygon rearArmor = new Polygon(new int[] { 67, 67, 83, 83 },
-            new int[] { 240, 180, 180, 240 }, 4);
+          new int[] { 240, 180, 180, 240 }, 4);
     // Rear internal structure
     private Polygon rearIS = new Polygon(new int[] { 67, 67, 83, 83 },
-            new int[] { 180, 150, 150, 180 }, 4);
+          new int[] { 180, 150, 150, 180 }, 4);
     // Rotor armor
     private Polygon rotorArmor1 = new Polygon(new int[] { 0, 0, 45, 45 },
-            new int[] { 90, 75, 75, 90 }, 4);
+          new int[] { 90, 75, 75, 90 }, 4);
     private Polygon rotorArmor2 = new Polygon(new int[] { 105, 105, 150, 150 },
-            new int[] { 90, 75, 75, 90 }, 4);
+          new int[] { 90, 75, 75, 90 }, 4);
     // Rotor internal structure
     private Polygon rotorIS = new Polygon(new int[] { 45, 45, 105, 105 },
-            new int[] { 90, 75, 75, 90 }, 4);
+          new int[] { 90, 75, 75, 90 }, 4);
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMekArmorSmallFontSize());
+          GUIP.getUnitDisplayMekArmorSmallFontSize());
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMekArmorLargeFontSize());
+          GUIP.getUnitDisplayMekArmorLargeFontSize());
 
     public VTOLMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
         this.unitDisplayPanel = unitDisplayPanel;
@@ -155,7 +174,7 @@ public class VTOLMapSet implements DisplayMapSet {
         int location = 0;
 
         // Cycle through the labels
-        for (int i = LABEL_NONE+1; i < LABEL_LOC_NUMBER; i++) {
+        for (int i = LABEL_NONE + 1; i < LABEL_LOC_NUMBER; i++) {
             // Only draw Chin Turret if it is present
             if ((i == LABEL_CHIN_TU_ARMOR || i == LABEL_CHIN_TU_IS) && vtol.hasNoTurret()) {
                 continue;
@@ -202,20 +221,20 @@ public class VTOLMapSet implements DisplayMapSet {
                 vLabels[i].setValue(vtol.getInternalString(location));
             }
             WidgetUtils.setAreaColor(areas[i], vLabels[i],
-                    (double) armor / (double) originalArmor);
+                  (double) armor / (double) originalArmor);
         }
         if (vtol.hasNoTurret()) {
             vLabels[LABEL_CHIN_TU_ARMOR].setVisible(false);
             vLabels[LABEL_CHIN_TU_IS].setVisible(false);
             labels[LABEL_CHIN_TU_ARMOR].setVisible(false);
-            labels[LABEL_CHIN_TU_IS+1].setVisible(false);
+            labels[LABEL_CHIN_TU_IS + 1].setVisible(false);
             areas[LABEL_CHIN_TU_ARMOR].setVisible(false);
             areas[LABEL_CHIN_TU_IS].setVisible(false);
         }
         if ((vtol instanceof SupportVTOL) && !vtol.hasPatchworkArmor()) {
             vLabels[LABEL_BAR_RATING].setValue(String.valueOf(vtol.getBARRating(1)));
         } else {
-            labels[LABEL_BAR_RATING+6].setVisible(false);
+            labels[LABEL_BAR_RATING + 6].setVisible(false);
             vLabels[LABEL_BAR_RATING].setVisible(false);
         }
     }
@@ -256,56 +275,56 @@ public class VTOLMapSet implements DisplayMapSet {
 
         // Labels for Front view
         labels[LABEL_CHIN_TU_ARMOR] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.chinTurretArmor"),
-                fm, Color.black, 68, -37);
+              fm, Color.black, 68, -37);
         labels[LABEL_FRONT_ARMOR] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.FrontArmor"),
-                fm, Color.black, 68, 20);
+              fm, Color.black, 68, 20);
         labels[LABEL_RIGHT_ARMOR_1] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RS"),
-                fm, Color.black, 104, 50);
+              fm, Color.black, 104, 50);
         labels[LABEL_RIGHT_ARMOR_2] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RS"),
-                fm, Color.black, 104, 100);
+              fm, Color.black, 104, 100);
         labels[LABEL_LEFT_ARMOR_1] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LS"),
-                fm, Color.black, 44, 50);
+              fm, Color.black, 44, 50);
         labels[LABEL_LEFT_ARMOR_2] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LS"),
-                fm, Color.black, 44, 100);
+              fm, Color.black, 44, 100);
         labels[LABEL_REAR_ARMOR] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearArmor1"),
-                fm, Color.black, 76, 185);
-        labels[LABEL_REAR_ARMOR+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearArmor2"),
-                fm, Color.black, 76, 195);
-        labels[LABEL_ROTOR_ARMOR_1+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorArmor"),
-                fm, Color.black, 18, 82);
-        labels[LABEL_ROTOR_ARMOR_2+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorArmor"),
-                fm, Color.black, 123, 82);
-        labels[LABEL_CHIN_TU_IS+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.chinTurretIS"),
-                fm, Color.black, 75, -20);
-        labels[LABEL_FRONT_IS+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.FrontIS"),
-                fm, Color.black, 68, 35);
-        labels[LABEL_RIGHT_IS_1+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS1"),
-                fm, Color.black, 84, 48);
-        labels[LABEL_RIGHT_IS_2+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS2"),
-                fm, Color.black, 84, 57);
+              fm, Color.black, 76, 185);
+        labels[LABEL_REAR_ARMOR + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearArmor2"),
+              fm, Color.black, 76, 195);
+        labels[LABEL_ROTOR_ARMOR_1 + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorArmor"),
+              fm, Color.black, 18, 82);
+        labels[LABEL_ROTOR_ARMOR_2 + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorArmor"),
+              fm, Color.black, 123, 82);
+        labels[LABEL_CHIN_TU_IS + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.chinTurretIS"),
+              fm, Color.black, 75, -20);
+        labels[LABEL_FRONT_IS + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.FrontIS"),
+              fm, Color.black, 68, 35);
+        labels[LABEL_RIGHT_IS_1 + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS1"),
+              fm, Color.black, 84, 48);
+        labels[LABEL_RIGHT_IS_2 + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS2"),
+              fm, Color.black, 84, 57);
         mod += 2; // Increment modifier since we're continuing to shift, at +3 now
-        labels[LABEL_RIGHT_IS_1+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS1"),
-                fm, Color.black, 84, 100);
-        labels[LABEL_RIGHT_IS_2+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS2"),
-                fm, Color.black, 84, 110);
-        labels[LABEL_LEFT_IS_1+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS1"),
-                fm, Color.black, 68, 48);
-        labels[LABEL_LEFT_IS_2+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS2"),
-                fm, Color.black, 68, 57);
+        labels[LABEL_RIGHT_IS_1 + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS1"),
+              fm, Color.black, 84, 100);
+        labels[LABEL_RIGHT_IS_2 + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS2"),
+              fm, Color.black, 84, 110);
+        labels[LABEL_LEFT_IS_1 + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS1"),
+              fm, Color.black, 68, 48);
+        labels[LABEL_LEFT_IS_2 + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS2"),
+              fm, Color.black, 68, 57);
         mod += 2; // Increment modifier since we're continuing to shift, at +5 now
-        labels[LABEL_LEFT_IS_1+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS1"),
-                fm, Color.black, 68, 100);
-        labels[LABEL_LEFT_IS_2+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS2"),
-                fm, Color.black, 68, 110);
-        labels[LABEL_REAR_IS+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearIS1"),
-                fm, Color.black, 76, 152);
+        labels[LABEL_LEFT_IS_1 + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS1"),
+              fm, Color.black, 68, 100);
+        labels[LABEL_LEFT_IS_2 + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS2"),
+              fm, Color.black, 68, 110);
+        labels[LABEL_REAR_IS + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearIS1"),
+              fm, Color.black, 76, 152);
         mod++; // Increment modifier since we're continuing to shift, at +6 now
-        labels[LABEL_REAR_IS+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearIS2"),
-                fm, Color.black, 76, 161);
-        labels[LABEL_ROTOR_IS+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorIS"),
-                fm, Color.black, 73, 82);
-        labels[LABEL_BAR_RATING+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.BARRating"),
-                fm, Color.white, 65, 198);
+        labels[LABEL_REAR_IS + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearIS2"),
+              fm, Color.black, 76, 161);
+        labels[LABEL_ROTOR_IS + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorIS"),
+              fm, Color.black, 73, 82);
+        labels[LABEL_BAR_RATING + mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.BARRating"),
+              fm, Color.white, 65, 198);
 
         // Value labels for all parts of mek
         // front
@@ -334,71 +353,71 @@ public class VTOLMapSet implements DisplayMapSet {
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
         Image tile = comp.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getBackgroundTile()).toString());
+              .getImage(
+                    new MegaMekFile(Configuration.widgetsDir(), udSpec
+                          .getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
-                        .toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
+                    .toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
-                        .toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
+                    .toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
-                        .toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
+                    .toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
-                        .toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
+                    .toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_LEFT;
+              | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
-                        .toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
+                    .toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_LEFT;
+              | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomLeftCorner()).toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec
+                    .getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_RIGHT;
+              | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getTopRightCorner()).toString());
+              .getImage(
+                    new MegaMekFile(Configuration.widgetsDir(), udSpec
+                          .getTopRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_RIGHT;
+              | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomRightCorner()).toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec
+                    .getBottomRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }

@@ -1,19 +1,37 @@
 /*
-* MegaMek -
-* Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
 package megamek.client.ui.panels.skinEditor;
 
 import java.awt.Color;
@@ -22,7 +40,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -37,8 +54,7 @@ import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.common.Configuration;
 
 /**
- * Panel with elements for viewing and adjusting a specific
- * UnitDisplaySkinSpecification.
+ * Panel with elements for viewing and adjusting a specific UnitDisplaySkinSpecification.
  *
  * @author arlith
  */
@@ -56,16 +72,15 @@ public class UnitDisplaySpecPanel extends JPanel {
 
         JButton pathLbl;
 
-       JTextField path;
+        JTextField path;
 
         JFileChooser fileChooser = new JFileChooser(Configuration.widgetsDir());
 
         UnitDisplaySpecPanel udPanel;
 
         /**
-         * Constructor for BorderElements that only have one image (like
-         * corners). The option to tile the image is not present, nor are the
-         * add and remove buttons.
+         * Constructor for BorderElements that only have one image (like corners). The option to tile the image is not
+         * present, nor are the add and remove buttons.
          *
          * @param elementName
          * @param imgPath
@@ -74,13 +89,13 @@ public class UnitDisplaySpecPanel extends JPanel {
             super(new GridBagLayout());
             this.udPanel = udPanel;
             setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createEmptyBorder(), elementName,
-                    TitledBorder.LEFT, TitledBorder.TOP));
+                  BorderFactory.createEmptyBorder(), elementName,
+                  TitledBorder.LEFT, TitledBorder.TOP));
 
             pathLbl = new JButton(Messages.getString("SkinEditor.Path"));
             pathLbl.setMargin(new Insets(1, 1, 1, 1));
             pathLbl.setToolTipText(Messages.getString("SkinEditor.PathToolTip",
-                    Configuration.widgetsDir().getPath()));
+                  Configuration.widgetsDir().getPath()));
             pathLbl.addActionListener(this);
             path = new JTextField(imgPath, TEXTFIELD_COLS);
             path.getDocument().addDocumentListener(this);
@@ -128,20 +143,19 @@ public class UnitDisplaySpecPanel extends JPanel {
         }
 
         /**
-         * Handles the pressing of a pathLbl button: display the file chooser
-         * and update the path if a file is selected
+         * Handles the pressing of a pathLbl button: display the file chooser and update the path if a file is selected
          */
         private void chooseFile() {
             int returnVal = fileChooser.showOpenDialog(this);
             // Did the user choose valid input?
             if ((returnVal != JFileChooser.APPROVE_OPTION)
-                    || (fileChooser.getSelectedFile() == null)) {
+                  || (fileChooser.getSelectedFile() == null)) {
                 return;
             }
             // Get relative path
             String relativePath = Configuration.widgetsDir().toURI()
-                    .relativize(fileChooser.getSelectedFile().toURI())
-                    .getPath();
+                  .relativize(fileChooser.getSelectedFile().toURI())
+                  .getPath();
             // Set text
             path.setText(relativePath);
         }
@@ -197,8 +211,7 @@ public class UnitDisplaySpecPanel extends JPanel {
     }
 
     /**
-     * Update the given UnitDisplaySkinSpecification based on the state of the
-     * UI elements.
+     * Update the given UnitDisplaySkinSpecification based on the state of the UI elements.
      *
      * @param udSpec
      */
@@ -248,15 +261,19 @@ public class UnitDisplaySpecPanel extends JPanel {
         JPanel tabsPanel = new JPanel(new GridBagLayout());
         // borderPanel.setLayout(new BoxLayout(borderPanel, BoxLayout.Y_AXIS));
         tabsPanel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(Color.BLACK),
-                Messages.getString("SkinEditor.TabImages"), TitledBorder.TOP,
-                TitledBorder.DEFAULT_POSITION));
+              BorderFactory.createLineBorder(Color.BLACK),
+              Messages.getString("SkinEditor.TabImages"), TitledBorder.TOP,
+              TitledBorder.DEFAULT_POSITION));
 
         // General Tab
-        generalTabIdle = new BorderElement(this, Messages.getString("SkinEditor.generalTabIdle"), udSpec.getGeneralTabIdle());
+        generalTabIdle = new BorderElement(this,
+              Messages.getString("SkinEditor.generalTabIdle"),
+              udSpec.getGeneralTabIdle());
         tabsPanel.add(generalTabIdle, gbc);
         gbc.gridx++;
-        generalTabActive = new BorderElement(this, Messages.getString("SkinEditor.generalTabActive"), udSpec.getGeneralTabActive());
+        generalTabActive = new BorderElement(this,
+              Messages.getString("SkinEditor.generalTabActive"),
+              udSpec.getGeneralTabActive());
         tabsPanel.add(generalTabActive, gbc);
         gbc.gridx = 0;
         gbc.gridy++;
@@ -265,7 +282,9 @@ public class UnitDisplaySpecPanel extends JPanel {
         pilotTabIdle = new BorderElement(this, Messages.getString("SkinEditor.pilotTabIdle"), udSpec.getPilotTabIdle());
         tabsPanel.add(pilotTabIdle, gbc);
         gbc.gridx++;
-        pilotTabActive = new BorderElement(this, Messages.getString("SkinEditor.pilotTabActive"), udSpec.getPilotTabActive());
+        pilotTabActive = new BorderElement(this,
+              Messages.getString("SkinEditor.pilotTabActive"),
+              udSpec.getPilotTabActive());
         tabsPanel.add(pilotTabActive, gbc);
         gbc.gridx = 0;
         gbc.gridy++;
@@ -274,34 +293,48 @@ public class UnitDisplaySpecPanel extends JPanel {
         armorTabIdle = new BorderElement(this, Messages.getString("SkinEditor.armorTabIdle"), udSpec.getArmorTabIdle());
         tabsPanel.add(armorTabIdle, gbc);
         gbc.gridx++;
-        armorTabActive = new BorderElement(this, Messages.getString("SkinEditor.armorTabActive"), udSpec.getArmorTabActive());
+        armorTabActive = new BorderElement(this,
+              Messages.getString("SkinEditor.armorTabActive"),
+              udSpec.getArmorTabActive());
         tabsPanel.add(armorTabActive, gbc);
         gbc.gridx = 0;
         gbc.gridy++;
 
         // Systems Tab
-        systemsTabIdle = new BorderElement(this, Messages.getString("SkinEditor.systemsTabIdle"), udSpec.getSystemsTabIdle());
+        systemsTabIdle = new BorderElement(this,
+              Messages.getString("SkinEditor.systemsTabIdle"),
+              udSpec.getSystemsTabIdle());
         tabsPanel.add(systemsTabIdle, gbc);
         gbc.gridx++;
-        systemsTabActive = new BorderElement(this, Messages.getString("SkinEditor.systemsTabActive"), udSpec.getSystemsTabActive());
+        systemsTabActive = new BorderElement(this,
+              Messages.getString("SkinEditor.systemsTabActive"),
+              udSpec.getSystemsTabActive());
         tabsPanel.add(systemsTabActive, gbc);
         gbc.gridx = 0;
         gbc.gridy++;
 
         // Weapons Tab
-        weaponsTabIdle = new BorderElement(this, Messages.getString("SkinEditor.weaponsTabIdle"), udSpec.getWeaponsTabIdle());
+        weaponsTabIdle = new BorderElement(this,
+              Messages.getString("SkinEditor.weaponsTabIdle"),
+              udSpec.getWeaponsTabIdle());
         tabsPanel.add(weaponsTabIdle, gbc);
         gbc.gridx++;
-        weaponsTabActive = new BorderElement(this, Messages.getString("SkinEditor.weaponsTabActive"), udSpec.getWeaponsTabActive());
+        weaponsTabActive = new BorderElement(this,
+              Messages.getString("SkinEditor.weaponsTabActive"),
+              udSpec.getWeaponsTabActive());
         tabsPanel.add(weaponsTabActive, gbc);
         gbc.gridx = 0;
         gbc.gridy++;
 
         // Extras Tab
-        extrasTabIdle = new BorderElement(this, Messages.getString("SkinEditor.extrasTabIdle"), udSpec.getExtrasTabIdle());
+        extrasTabIdle = new BorderElement(this,
+              Messages.getString("SkinEditor.extrasTabIdle"),
+              udSpec.getExtrasTabIdle());
         tabsPanel.add(extrasTabIdle, gbc);
         gbc.gridx++;
-        extraTabActive = new BorderElement(this, Messages.getString("SkinEditor.extraTabActive"), udSpec.getExtraTabActive());
+        extraTabActive = new BorderElement(this,
+              Messages.getString("SkinEditor.extraTabActive"),
+              udSpec.getExtraTabActive());
         tabsPanel.add(extraTabActive, gbc);
         gbc.gridx = 0;
         gbc.gridy++;
@@ -318,26 +351,34 @@ public class UnitDisplaySpecPanel extends JPanel {
         // Border
         JPanel borderPanel = new JPanel(new GridBagLayout());
         borderPanel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(Color.BLACK),
-                Messages.getString("SkinEditor.Borders"), TitledBorder.TOP,
-                TitledBorder.DEFAULT_POSITION));
+              BorderFactory.createLineBorder(Color.BLACK),
+              Messages.getString("SkinEditor.Borders"), TitledBorder.TOP,
+              TitledBorder.DEFAULT_POSITION));
 
         gbc.gridx = gbc.gridy = 0;
 
         // Top Corners Tab
-        topLeftCorner = new BorderElement(this, Messages.getString("SkinEditor.topLeftCorner"), udSpec.getTopLeftCorner());
+        topLeftCorner = new BorderElement(this,
+              Messages.getString("SkinEditor.topLeftCorner"),
+              udSpec.getTopLeftCorner());
         borderPanel.add(topLeftCorner, gbc);
         gbc.gridx++;
-        topRightCorner = new BorderElement(this, Messages.getString("SkinEditor.topRightCorner"), udSpec.getTopRightCorner());
+        topRightCorner = new BorderElement(this,
+              Messages.getString("SkinEditor.topRightCorner"),
+              udSpec.getTopRightCorner());
         borderPanel.add(topRightCorner, gbc);
         gbc.gridx = 0;
         gbc.gridy++;
 
         // Bottom Corners Tab
-        bottomLeftCorner = new BorderElement(this, Messages.getString("SkinEditor.bottomLeftCorner"), udSpec.getBottomLeftCorner());
+        bottomLeftCorner = new BorderElement(this,
+              Messages.getString("SkinEditor.bottomLeftCorner"),
+              udSpec.getBottomLeftCorner());
         borderPanel.add(bottomLeftCorner, gbc);
         gbc.gridx++;
-        bottomRightCorner = new BorderElement(this, Messages.getString("SkinEditor.bottomRightCorner"), udSpec.getBottomRightCorner());
+        bottomRightCorner = new BorderElement(this,
+              Messages.getString("SkinEditor.bottomRightCorner"),
+              udSpec.getBottomRightCorner());
         borderPanel.add(bottomRightCorner, gbc);
         gbc.gridx = 0;
         gbc.gridy++;
@@ -362,7 +403,9 @@ public class UnitDisplaySpecPanel extends JPanel {
 
         // Background Image
         gbc.gridwidth = 2;
-        backgroundTile = new BorderElement(this, Messages.getString("SkinEditor.backgroundTile"), udSpec.getBackgroundTile());
+        backgroundTile = new BorderElement(this,
+              Messages.getString("SkinEditor.backgroundTile"),
+              udSpec.getBackgroundTile());
         borderPanel.add(backgroundTile, gbc);
         gbc.gridwidth = 1;
         gbc.gridy++;

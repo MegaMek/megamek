@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.util;
 
 import java.util.ArrayList;
@@ -32,16 +47,19 @@ public class C3Util {
 
     public static class MissingC3MException extends Exception {
     }
+
     public static class MismatchingC3MException extends Exception {
     }
+
     public static class C3CapacityException extends Exception {
     }
+
     /**
      * Adds C3 connections when new units are being added.
-     * 
-     * @param game   The Game the unit is being added to, the unit should already be
-     *               in the Game.
+     *
+     * @param game   The Game the unit is being added to, the unit should already be in the Game.
      * @param entity The entity being added.
+     *
      * @return A list of units affected
      */
     public static List<Entity> wireC3(Game game, Entity entity) {
@@ -57,11 +75,11 @@ public class C3Util {
             // C3 Checks
             if (entity.hasC3()) {
                 if ((entity.getC3MasterIsUUIDAsString() != null)
-                        && entity.getC3MasterIsUUIDAsString().equals(e.getC3UUIDAsString())) {
+                      && entity.getC3MasterIsUUIDAsString().equals(e.getC3UUIDAsString())) {
                     entity.setC3Master(e, false);
                     entity.setC3MasterIsUUIDAsString(null);
                 } else if ((e.getC3MasterIsUUIDAsString() != null)
-                        && e.getC3MasterIsUUIDAsString().equals(entity.getC3UUIDAsString())) {
+                      && e.getC3MasterIsUUIDAsString().equals(entity.getC3UUIDAsString())) {
                     e.setC3Master(entity, false);
                     e.setC3MasterIsUUIDAsString(null);
 
@@ -76,9 +94,9 @@ public class C3Util {
                 while (pos < Entity.MAX_C3i_NODES) {
                     // We've found a network, join it.
                     if ((entity.getC3iNextUUIDAsString(pos) != null)
-                            && (e.getC3UUIDAsString() != null)
-                            && entity.getC3iNextUUIDAsString(pos)
-                                    .equals(e.getC3UUIDAsString())) {
+                          && (e.getC3UUIDAsString() != null)
+                          && entity.getC3iNextUUIDAsString(pos)
+                          .equals(e.getC3UUIDAsString())) {
                         entity.setC3NetId(e);
                         C3iSet = true;
                         break;
@@ -95,9 +113,9 @@ public class C3Util {
                 while (pos < Entity.MAX_C3i_NODES) {
                     // We've found a network, join it.
                     if ((entity.getNC3NextUUIDAsString(pos) != null)
-                            && (e.getC3UUIDAsString() != null)
-                            && entity.getNC3NextUUIDAsString(pos)
-                                    .equals(e.getC3UUIDAsString())) {
+                          && (e.getC3UUIDAsString() != null)
+                          && entity.getNC3NextUUIDAsString(pos)
+                          .equals(e.getC3UUIDAsString())) {
                         entity.setC3NetId(e);
                         C3iSet = true;
                         break;
@@ -112,10 +130,8 @@ public class C3Util {
     }
 
     /**
-     * Disconnects the passed entities from their C3 network, if any.
-     * Due to the way C3 networks are represented in Entity, units
-     * cannot disconnect from a C3 network with an id that is the
-     * entity's own id.
+     * Disconnects the passed entities from their C3 network, if any. Due to the way C3 networks are represented in
+     * Entity, units cannot disconnect from a C3 network with an id that is the entity's own id.
      */
     public static Set<Entity> disconnectFromNetwork(Game game, Collection<Entity> entities) {
         final Set<Entity> updateCandidates = performDisconnect(game, entities);
@@ -123,9 +139,8 @@ public class C3Util {
     }
 
     /**
-     * Performs a disconnect from C3 networks for the given entities without sending
-     * an update.
-     * Returns a set of all affected units.
+     * Performs a disconnect from C3 networks for the given entities without sending an update. Returns a set of all
+     * affected units.
      */
     private static HashSet<Entity> performDisconnect(Game game, Collection<Entity> entities) {
         HashSet<Entity> updateCandidates = new HashSet<>();
@@ -176,10 +191,10 @@ public class C3Util {
     }
 
     /**
-     * Connects the passed entities to a nonhierarchic C3 (NC3, C3i or Nova CEWS)
-     * identified by masterID.
+     * Connects the passed entities to a nonhierarchic C3 (NC3, C3i or Nova CEWS) identified by masterID.
      */
-    public static void joinNh(Game game, Collection<Entity> entities, int masterID, boolean disconnectFirst) throws MismatchingC3MException, C3CapacityException {
+    public static void joinNh(Game game, Collection<Entity> entities, int masterID, boolean disconnectFirst)
+          throws MismatchingC3MException, C3CapacityException {
         Entity master = game.getEntity(masterID);
         if (!master.hasNhC3() || !entities.stream().allMatch(e -> sameNhC3System(master, e))) {
             throw new MismatchingC3MException();
@@ -196,10 +211,10 @@ public class C3Util {
     }
 
     /**
-     * Connects the passed entities to a standard C3M
-     * identified by masterID.
+     * Connects the passed entities to a standard C3M identified by masterID.
      */
-    public static Set<Entity> connect(Game game, Collection<Entity> entities, int masterID, boolean disconnectFirst) throws MismatchingC3MException, C3CapacityException {
+    public static Set<Entity> connect(Game game, Collection<Entity> entities, int masterID, boolean disconnectFirst)
+          throws MismatchingC3MException, C3CapacityException {
         Entity master = game.getEntity(masterID);
         // To make it possible to mark a C3S/C3S/C3S/C3M lance and connect it:
         entities.remove(master);
@@ -235,7 +250,7 @@ public class C3Util {
         }
         // Do we need to update the members of our C3 network?
         if (((c3master != null) && !c3master.equals(entity.getC3Master()))
-                || ((c3master == null) && (entity.getC3Master() != null))) {
+              || ((c3master == null) && (entity.getC3Master() != null))) {
             return c3members;
         }
         return List.of();

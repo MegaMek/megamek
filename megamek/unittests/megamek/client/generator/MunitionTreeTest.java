@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.generator;
 
@@ -33,9 +47,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.jupiter.api.Test;
-
 import megamek.common.containers.MunitionTree;
+import org.junit.jupiter.api.Test;
 
 class MunitionTreeTest {
 
@@ -146,10 +159,10 @@ class MunitionTreeTest {
     @Test
     void testADFFileFormatReading() throws IOException {
         StringReader sr = new StringReader(
-                String.join("\\\n",
-                        "Mauler:any:any::LRM:Smoke::AC/5:AP",
-                        "Catapult:CPLT-C1:any::LRM-15:Standard:Dead-Fire:inferno",
-                        "Shadow Hawk:any:any::SRM:Inferno::LRM:Dead-Fire::AC:Precision"));
+              String.join("\\\n",
+                    "Mauler:any:any::LRM:Smoke::AC/5:AP",
+                    "Catapult:CPLT-C1:any::LRM-15:Standard:Dead-Fire:inferno",
+                    "Shadow Hawk:any:any::SRM:Inferno::LRM:Dead-Fire::AC:Precision"));
 
         BufferedReader br = new BufferedReader(sr);
         MunitionTree mt = new MunitionTree();
@@ -182,10 +195,10 @@ class MunitionTreeTest {
         for (String line : lines) {
             if (line.startsWith("any:any:any::")) {
                 assertTrue(line.toLowerCase().contains(
-                        "any:any:any::AC:Standard:Precision::LRM:Standard:Heat-Seeking:Semi-Guided".toLowerCase()));
+                      "any:any:any::AC:Standard:Precision::LRM:Standard:Heat-Seeking:Semi-Guided".toLowerCase()));
             } else if (line.startsWith("Mauler:")) {
                 assertTrue(line.toLowerCase()
-                        .contains("Mauler:MAL-5X:Tsubaki Yonjuro::AC/5:Precision:Tracer:".toLowerCase()));
+                      .contains("Mauler:MAL-5X:Tsubaki Yonjuro::AC/5:Precision:Tracer:".toLowerCase()));
             } else if (line.startsWith("Shadow Hawk:")) {
                 assertTrue(line.toLowerCase().contains("Shadow Hawk:SHD-2D:any::".toLowerCase()));
             }

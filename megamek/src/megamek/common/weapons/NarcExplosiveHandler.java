@@ -1,21 +1,50 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
+import megamek.common.Compute;
+import megamek.common.Game;
+import megamek.common.Infantry;
+import megamek.common.Report;
+import megamek.common.Roll;
+import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -32,14 +61,14 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
      * @param m
      */
     public NarcExplosiveHandler(ToHitData t, WeaponAttackAction w, Game g,
-            TWGameManager m) {
+          TWGameManager m) {
         super(t, w, g, m);
         sSalvoType = " explosive pod ";
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -58,10 +87,10 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
         if (ae instanceof BattleArmor) {
             if (amsEngaged) {
                 return Compute.missilesHit(
-                        ((BattleArmor) ae).getShootingStrength(), -2);
+                      ((BattleArmor) ae).getShootingStrength(), -2);
             }
             return Compute
-                    .missilesHit(((BattleArmor) ae).getShootingStrength());
+                  .missilesHit(((BattleArmor) ae).getShootingStrength());
         }
 
         if (amsEngaged) {
@@ -93,7 +122,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -103,7 +132,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -117,13 +146,13 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
         }
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                    bDirect ? toHit.getMoS() / 3 : 0,
-                    WeaponType.WEAPON_DIRECT_FIRE,
-                    ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  bDirect ? toHit.getMoS() / 3 : 0,
+                  WeaponType.WEAPON_DIRECT_FIRE,
+                  ((Infantry) target).isMechanized(),
+                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             toReturn = Math.ceil(toReturn);
         }
-        
+
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
         return (int) toReturn;
     }

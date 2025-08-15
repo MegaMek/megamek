@@ -37,6 +37,7 @@ import javax.swing.JDialog;
 /**
  * Interface for classes that contain a UnitDisplay and a JDialog, this simplifies the access into the unitDisplayDialog
  * when needed.
+ *
  * @author Luana Coppio
  */
 public interface UnitDisplayContainer {

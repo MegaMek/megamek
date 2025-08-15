@@ -1,22 +1,41 @@
 /*
- * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.randomMap;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -118,8 +137,8 @@ public class RandomMapPanelBasicPanel extends JPanel {
 
     private void loadMapSettings() {
         lakesCombo.setSelectedItem(lakesToRange(this.mapSettings.getMinWaterSize(),
-                this.mapSettings.getMinWaterSpots(),
-                this.mapSettings.getProbDeep()));
+              this.mapSettings.getMinWaterSpots(),
+              this.mapSettings.getProbDeep()));
         lakesCombo.checkpoint();
 
         riversCombo.setSelectedItem(percentageToRange(this.mapSettings.getProbRiver()));
@@ -129,38 +148,38 @@ public class RandomMapPanelBasicPanel extends JPanel {
         iceCombo.checkpoint();
 
         roughsCombo.setSelectedItem(roughsToRange(this.mapSettings.getMinRoughSize(),
-                this.mapSettings.getMinRoughSpots()));
+              this.mapSettings.getMinRoughSpots()));
         roughsCombo.checkpoint();
 
         sandsCombo.setSelectedItem(sandsToRange(this.mapSettings.getMinSandSize(),
-                this.mapSettings.getMinSandSpots()));
+              this.mapSettings.getMinSandSpots()));
         sandsCombo.checkpoint();
 
         swampsCombo.setSelectedItem(swampsToRange(this.mapSettings.getMinSwampSize(),
-                this.mapSettings.getMinSwampSpots()));
+              this.mapSettings.getMinSwampSpots()));
         swampsCombo.checkpoint();
 
         woodsCombo.setSelectedItem(woodsToRange(this.mapSettings.getMinForestSize(),
-                this.mapSettings.getMinForestSpots(),
-                this.mapSettings.getProbHeavy()));
+              this.mapSettings.getMinForestSpots(),
+              this.mapSettings.getProbHeavy()));
         woodsCombo.checkpoint();
 
         jungleCombo.setSelectedItem(woodsToRange(this.mapSettings.getMinJungleSize(),
-                this.mapSettings.getMinJungleSpots(),
-                this.mapSettings.getProbHeavyJungle()));
+              this.mapSettings.getMinJungleSpots(),
+              this.mapSettings.getProbHeavyJungle()));
         jungleCombo.checkpoint();
 
         foliageCombo.setSelectedItem(woodsToRange(this.mapSettings.getMinFoliageSize(),
-                this.mapSettings.getMinFoliageSpots(),
-                this.mapSettings.getProbFoliageHeavy()));
+              this.mapSettings.getMinFoliageSpots(),
+              this.mapSettings.getProbFoliageHeavy()));
         foliageCombo.checkpoint();
 
         snowCombo.setSelectedItem(sandsToRange(this.mapSettings.getMinSnowSize(),
-                this.mapSettings.getMinSnowSpots()));
+              this.mapSettings.getMinSnowSpots()));
         snowCombo.checkpoint();
 
         tundraCombo.setSelectedItem(sandsToRange(this.mapSettings.getMinTundraSize(),
-                this.mapSettings.getMinTundraSpots()));
+              this.mapSettings.getMinTundraSpots()));
         tundraCombo.checkpoint();
 
         cliffsCombo.setSelectedItem(percentageToRange(this.mapSettings.getCliffs()));
@@ -173,31 +192,31 @@ public class RandomMapPanelBasicPanel extends JPanel {
         hillinessCombo.checkpoint();
 
         mountainCombo.setSelectedItem(convertMountain(this.mapSettings.getMountainPeaks(),
-                this.mapSettings.getMountainHeightMin(),
-                this.mapSettings.getMountainWidthMin(),
-                this.mapSettings.getMountainStyle()));
+              this.mapSettings.getMountainHeightMin(),
+              this.mapSettings.getMountainWidthMin(),
+              this.mapSettings.getMountainStyle()));
         mountainCombo.checkpoint();
 
         cityTypeCombo.setSelectedItem(this.mapSettings.getCityType());
         cityTypeCombo.checkpoint();
 
         fortifiedCombo.setSelectedItem(fortifiedToRange(this.mapSettings.getMinFortifiedSize(),
-                this.mapSettings.getMinFortifiedSpots()));
+              this.mapSettings.getMinFortifiedSpots()));
         fortifiedCombo.checkpoint();
 
         pavementCombo.setSelectedItem(pavementToRange(this.mapSettings.getMinPavementSize(),
-                this.mapSettings.getMinPavementSpots()));
+              this.mapSettings.getMinPavementSpots()));
         pavementCombo.checkpoint();
 
         plantedFieldsCombo.setSelectedItem(plantedFieldsToRange(this.mapSettings.getMinPlantedFieldSize(),
-                this.mapSettings.getMinPlantedFieldSpots()));
+              this.mapSettings.getMinPlantedFieldSpots()));
         plantedFieldsCombo.checkpoint();
 
         roadsCombo.setSelectedItem(percentageToRange(this.mapSettings.getProbRoad()));
         roadsCombo.checkpoint();
 
         rubbleCombo.setSelectedItem(rubbleToRange(this.mapSettings.getMinRubbleSize(),
-                this.mapSettings.getMinRubbleSpots()));
+              this.mapSettings.getMinRubbleSpots()));
         rubbleCombo.checkpoint();
     }
 
@@ -790,13 +809,10 @@ public class RandomMapPanelBasicPanel extends JPanel {
     /**
      * From
      * https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/SpringGridProject/src/layout/SpringUtilities.java
-     *
-     * Aligns the first <code>rows</code> * <code>cols</code>
-     * components of <code>parent</code> in
-     * a grid. Each component in a column is as wide as the maximum
-     * preferred width of the components in that column;
-     * height is similarly determined for each row.
-     * The parent is made just big enough to fit them all.
+     * <p>
+     * Aligns the first <code>rows</code> * <code>cols</code> components of <code>parent</code> in a grid. Each
+     * component in a column is as wide as the maximum preferred width of the components in that column; height is
+     * similarly determined for each row. The parent is made just big enough to fit them all.
      *
      * @param rows     number of rows
      * @param cols     number of columns
@@ -806,9 +822,9 @@ public class RandomMapPanelBasicPanel extends JPanel {
      * @param yPad     y padding between cells
      */
     public static void makeCompactGrid(Container parent,
-            int rows, int cols,
-            int initialX, int initialY,
-            int xPad, int yPad) {
+          int rows, int cols,
+          int initialX, int initialY,
+          int xPad, int yPad) {
         SpringLayout layout;
         try {
             layout = (SpringLayout) parent.getLayout();
@@ -823,7 +839,7 @@ public class RandomMapPanelBasicPanel extends JPanel {
             Spring width = Spring.constant(0);
             for (int r = 0; r < rows; r++) {
                 width = Spring.max(width,
-                        getConstraintsForCell(r, c, parent, cols).getWidth());
+                      getConstraintsForCell(r, c, parent, cols).getWidth());
             }
             for (int r = 0; r < rows; r++) {
                 SpringLayout.Constraints constraints = getConstraintsForCell(r, c, parent, cols);
@@ -839,7 +855,7 @@ public class RandomMapPanelBasicPanel extends JPanel {
             Spring height = Spring.constant(0);
             for (int c = 0; c < cols; c++) {
                 height = Spring.max(height,
-                        getConstraintsForCell(r, c, parent, cols).getHeight());
+                      getConstraintsForCell(r, c, parent, cols).getHeight());
             }
             for (int c = 0; c < cols; c++) {
                 SpringLayout.Constraints constraints = getConstraintsForCell(r, c, parent, cols);
@@ -856,9 +872,9 @@ public class RandomMapPanelBasicPanel extends JPanel {
     }
 
     private static SpringLayout.Constraints getConstraintsForCell(
-            int row, int col,
-            Container parent,
-            int cols) {
+          int row, int col,
+          Container parent,
+          int cols) {
         SpringLayout layout = (SpringLayout) parent.getLayout();
         Component c = parent.getComponent(row * cols + col);
         return layout.getConstraints(c);

@@ -1,18 +1,39 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot.princess;
+
+import java.util.List;
+import java.util.Vector;
 
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Board;
@@ -21,11 +42,9 @@ import megamek.common.CubeCoords;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
 
-import java.util.List;
-import java.util.Vector;
-
 /**
  * Manages the center of a swarm of friendly units.
+ *
  * @author Luana Coppio
  */
 public class SwarmCenterManager {
@@ -42,6 +61,7 @@ public class SwarmCenterManager {
 
     /**
      * Calculates the center of the swarm of friendly units.
+     *
      * @return Center coordinate
      */
     public Coords calculateCenter() {
@@ -51,8 +71,10 @@ public class SwarmCenterManager {
 
     /**
      * Calculates the center of the swarm of friendly units keeping the momentum and avoiding map borders.
+     *
      * @param friends List of friendly units
-     * @param board Game board
+     * @param board   Game board
+     *
      * @return Center coordinate adjusted for momentum and map borders
      */
     private Coords getAdjustedCenter(List<Entity> friends, Board board) {
@@ -68,14 +90,14 @@ public class SwarmCenterManager {
             int[] movementVector = calculateMovementTrend();
             // Convert XY vector to hex direction/distance
             HexTranslation translation = convertVectorToHexTranslation(
-                movementVector[0],
-                movementVector[1]
+                  movementVector[0],
+                  movementVector[1]
             );
 
             // Apply scaled translation
             rawCenter = rawCenter.translated(
-                translation.direction,
-                (int) Math.round(translation.distance * momentumScale)
+                  translation.direction,
+                  (int) Math.round(translation.distance * momentumScale)
             );
         }
         rawCenter = clipToMap(rawCenter, board);
@@ -109,17 +131,17 @@ public class SwarmCenterManager {
 
     private int[] calculateMovementTrend() {
         if (historicalCenters.size() < 2) {
-            return new int[] {0, 0};
+            return new int[] { 0, 0 };
         }
 
         // Get last 2 centers for direction
-        Coords current = historicalCenters.get(historicalCenters.size()-1);
-        Coords previous = historicalCenters.get(historicalCenters.size()-2);
+        Coords current = historicalCenters.get(historicalCenters.size() - 1);
+        Coords previous = historicalCenters.get(historicalCenters.size() - 2);
 
         // Calculate vector between last two centers
-        return new int[]{
-                current.getX() - previous.getX(),
-                current.getY() - previous.getY()
+        return new int[] {
+              current.getX() - previous.getX(),
+              current.getY() - previous.getY()
         };
     }
 
@@ -134,8 +156,8 @@ public class SwarmCenterManager {
         if (xDist < borderMargin || yDist < borderMargin) {
             // Push towards center
             return new Coords(
-                center.getX() + (center.getX() < borderMargin ? pushDistance : -pushDistance),
-                center.getY() + (center.getY() < borderMargin ? pushDistance : -pushDistance)
+                  center.getX() + (center.getX() < borderMargin ? pushDistance : -pushDistance),
+                  center.getY() + (center.getY() < borderMargin ? pushDistance : -pushDistance)
             );
         }
         return center;
@@ -164,9 +186,9 @@ public class SwarmCenterManager {
         }
 
         CubeCoords weightedCube = new CubeCoords(
-            qSum / totalWeight,
-            rSum / totalWeight,
-            sSum / totalWeight
+              qSum / totalWeight,
+              rSum / totalWeight,
+              sSum / totalWeight
         );
 
         return weightedCube.roundToNearestHex().toOffset();

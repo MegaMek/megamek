@@ -1,22 +1,51 @@
 /*
- * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons.infantry;
 
-import megamek.common.*;
+import megamek.common.AmmoType;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.Game;
+import megamek.common.InfantryWeaponMounted;
+import megamek.common.Mounted;
+import megamek.common.RangeType;
+import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
@@ -142,9 +171,8 @@ public abstract class InfantryWeapon extends Weapon {
     }
 
     /**
-     * The long range of this weapon type. Infantry weapons calculate ranges based
-     * on the "infantry range" value rather than
-     * explicit short/long/medium ranges
+     * The long range of this weapon type. Infantry weapons calculate ranges based on the "infantry range" value rather
+     * than explicit short/long/medium ranges
      */
     @Override
     public int getLongRange() {
@@ -155,9 +183,8 @@ public abstract class InfantryWeapon extends Weapon {
     }
 
     /**
-     * The extreme range of this weapon type. Infantry weapons calculate ranges
-     * based on the "infantry range" value rather than
-     * explicit short/long/medium ranges
+     * The extreme range of this weapon type. Infantry weapons calculate ranges based on the "infantry range" value
+     * rather than explicit short/long/medium ranges
      */
     @Override
     public int getExtremeRange() {
@@ -196,21 +223,19 @@ public abstract class InfantryWeapon extends Weapon {
     }
 
     /**
-     * Check for whether small support vehicles have an option of standard or
-     * inferno munitions for this weapon. Returns true for both the inferno and
-     * the standard variant.
+     * Check for whether small support vehicles have an option of standard or inferno munitions for this weapon. Returns
+     * true for both the inferno and the standard variant.
      *
      * @return Whether the weapon has alternate inferno ammo
      */
     public boolean hasInfernoAmmo() {
         return internalName.endsWith("Inferno")
-                || (EquipmentType.get(internalName + "Inferno") != null);
+              || (EquipmentType.get(internalName + "Inferno") != null);
     }
 
     /**
-     * For weapons that can use inferno ammo, returns the inferno version. If there
-     * is
-     * no inferno version or this is the inferno version, returns {@code this}.
+     * For weapons that can use inferno ammo, returns the inferno version. If there is no inferno version or this is the
+     * inferno version, returns {@code this}.
      *
      * @return The inferno ammo variant of this weapon
      */
@@ -227,9 +252,8 @@ public abstract class InfantryWeapon extends Weapon {
     }
 
     /**
-     * For weapons that can use inferno ammo, returns the standard ammo version. If
-     * there is
-     * no standard version or this is the standard version, returns {@code this}.
+     * For weapons that can use inferno ammo, returns the standard ammo version. If there is no standard version or this
+     * is the standard version, returns {@code this}.
      *
      * @return The standard ammo variant of this weapon
      */
@@ -257,18 +281,18 @@ public abstract class InfantryWeapon extends Weapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-            TWGameManager manager) {
+          TWGameManager manager) {
         Mounted<?> m = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         if (((null != m) && ((m.hasModes() && m.curMode().isHeat())
-                || (waa.getEntity(game).isSupportVehicle()
-                        && m.getLinked() != null
-                        && m.getLinked().getType() != null
-                        && (((AmmoType) m.getLinked().getType()).getMunitionType()
-                                .contains(AmmoType.Munitions.M_INFERNO)))))) {
+              || (waa.getEntity(game).isSupportVehicle()
+              && m.getLinked() != null
+              && m.getLinked().getType() != null
+              && (((AmmoType) m.getLinked().getType()).getMunitionType()
+              .contains(AmmoType.Munitions.M_INFERNO)))))) {
             return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
         } else if (game.getOptions().booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)
-                && (isFlameBased() || (m instanceof InfantryWeaponMounted)
-                        && ((InfantryWeaponMounted) m).getOtherWeapon().isFlameBased())) {
+              && (isFlameBased() || (m instanceof InfantryWeaponMounted)
+              && ((InfantryWeaponMounted) m).getOtherWeapon().isFlameBased())) {
             return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
         }
         return new InfantryWeaponHandler(toHit, waa, game, manager);
@@ -289,8 +313,8 @@ public abstract class InfantryWeapon extends Weapon {
 
     public boolean isFlameBased() {
         return hasFlag(WeaponType.F_FLAMER)
-                || hasFlag(WeaponType.F_INFERNO)
-                || hasFlag(WeaponType.F_INCENDIARY_NEEDLES)
-                || hasFlag(WeaponType.F_PLASMA);
+              || hasFlag(WeaponType.F_INFERNO)
+              || hasFlag(WeaponType.F_INCENDIARY_NEEDLES)
+              || hasFlag(WeaponType.F_PLASMA);
     }
 }

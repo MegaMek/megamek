@@ -54,8 +54,8 @@ import javax.swing.JSeparator;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 
-import megamek.client.ui.dialogs.abstractDialogs.ASConversionInfoDialog;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
+import megamek.client.ui.dialogs.abstractDialogs.ASConversionInfoDialog;
 import megamek.client.ui.util.SpringUtilities;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Entity;
@@ -226,8 +226,8 @@ public class ASStatsTablePanel implements ActionListener {
     /** returns the list of elements in the panel, sorted in the same way they are displayed */
     public List<AlphaStrikeElement> getSortedElements() {
         return groups.stream()
-                     .flatMap(group -> group.elements.stream().sorted(aseTableComparator))
-                     .collect(Collectors.toList());
+              .flatMap(group -> group.elements.stream().sorted(aseTableComparator))
+              .collect(Collectors.toList());
     }
 
     /** remove and rebuild the table grid */
@@ -248,8 +248,8 @@ public class ASStatsTablePanel implements ActionListener {
         addGroupHeaders(group);
 
         for (AlphaStrikeElement element : group.elements.stream()
-                                                .sorted(aseTableComparator)
-                                                .collect(Collectors.toList())) {
+              .sorted(aseTableComparator)
+              .collect(Collectors.toList())) {
             boolean oddRow = (rows++ % 2) == 1;
             addGridElementLeftAlign(element.getName(), oddRow);
             addGridElement(element.getASUnitType() + "", oddRow);
@@ -343,19 +343,19 @@ public class ASStatsTablePanel implements ActionListener {
 
     private String getArcedSpecials(AlphaStrikeElement element) {
         return "<HTML>" +
-                     element.getSpecialsDisplayString(element) +
-                     "<BR>FRONT(" +
-                     element.getFrontArc().getSpecialsExportString(", ", element) +
-                     ")" +
-                     "<BR>LEFT(" +
-                     element.getLeftArc().getSpecialsExportString(", ", element) +
-                     ")" +
-                     "<BR>RIGHT(" +
-                     element.getRightArc().getSpecialsExportString(", ", element) +
-                     ")" +
-                     "<BR>REAR(" +
-                     element.getRearArc().getSpecialsExportString(", ", element) +
-                     ")";
+              element.getSpecialsDisplayString(element) +
+              "<BR>FRONT(" +
+              element.getFrontArc().getSpecialsExportString(", ", element) +
+              ")" +
+              "<BR>LEFT(" +
+              element.getLeftArc().getSpecialsExportString(", ", element) +
+              ")" +
+              "<BR>RIGHT(" +
+              element.getRightArc().getSpecialsExportString(", ", element) +
+              ")" +
+              "<BR>REAR(" +
+              element.getRearArc().getSpecialsExportString(", ", element) +
+              ")";
     }
 
     private void addVerticalSpace() {

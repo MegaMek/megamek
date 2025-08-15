@@ -1,22 +1,36 @@
 /*
  * Copyright (c) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (c) 2023-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.tileset;
 
@@ -101,13 +115,12 @@ public class HexTileset implements BoardListener {
     /**
      * This assigns images to a hex based on the best matches it can find.
      * <p>
-     * First it assigns any images to be superimposed on a hex. These images must
-     * have a match value of 1.0 to be added, and any time a match of this level is
-     * achieved, any terrain involved in the match is removed from further
+     * First it assigns any images to be superimposed on a hex. These images must have a match value of 1.0 to be added,
+     * and any time a match of this level is achieved, any terrain involved in the match is removed from further
      * consideration.
      * <p>
-     * Any terrain left is used to match a base image for the hex. This time, a
-     * match can be any value, and the first, best image is used.
+     * Any terrain left is used to match a base image for the hex. This time, a match can be any value, and the first,
+     * best image is used.
      */
     public synchronized Object[] assignMatch(Hex hex) {
         Hex hexCopy = hex.duplicate();
@@ -153,10 +166,9 @@ public class HexTileset implements BoardListener {
     }
 
     /**
-     * Returns a list of orthographic images to be tiled above the hex. As noted
-     * above, all matches must be 1.0, and if such a match is achieved, all terrain
-     * elements from the tileset hex are removed from the hex. Thus you want to pass
-     * a copy of the original to this function.
+     * Returns a list of orthographic images to be tiled above the hex. As noted above, all matches must be 1.0, and if
+     * such a match is achieved, all terrain elements from the tileset hex are removed from the hex. Thus you want to
+     * pass a copy of the original to this function.
      */
     private List<Image> orthoFor(Hex hex) {
         ArrayList<Image> matches = new ArrayList<>();
@@ -182,10 +194,9 @@ public class HexTileset implements BoardListener {
     }
 
     /**
-     * Returns a list of images to be superimposed on the hex. As noted above, all
-     * matches must be 1.0, and if such a match is achieved, all terrain elements
-     * from the tileset hex are removed from the hex. Thus you want to pass a copy
-     * of the original to this function.
+     * Returns a list of images to be superimposed on the hex. As noted above, all matches must be 1.0, and if such a
+     * match is achieved, all terrain elements from the tileset hex are removed from the hex. Thus you want to pass a
+     * copy of the original to this function.
      */
     private List<Image> supersFor(Hex hex) {
         ArrayList<Image> matches = new ArrayList<>();
@@ -211,8 +222,8 @@ public class HexTileset implements BoardListener {
     }
 
     /**
-     * Returns the best matching base image for this hex. This works best if any
-     * terrain with a "super" image is removed.
+     * Returns the best matching base image for this hex. This works best if any terrain with a "super" image is
+     * removed.
      */
     private Image baseFor(Hex hex) {
         HexEntry bestMatch = null;
@@ -272,7 +283,7 @@ public class HexTileset implements BoardListener {
             String theme = null;
             String imageName = null;
             if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && (st.sval.equals("base") || st.sval.equals("super") || st.sval.equals("ortho"))) {
+                  && (st.sval.equals("base") || st.sval.equals("super") || st.sval.equals("ortho"))) {
                 boolean bas = st.sval.equals("base");
                 boolean sup = st.sval.equals("super");
                 boolean ort = st.sval.equals("ortho");
@@ -320,7 +331,7 @@ public class HexTileset implements BoardListener {
         long endTime = System.currentTimeMillis();
 
         String loadInfo = String.format("Loaded %o base images, %o super images and %o ortho images",
-                bases.size(), supers.size(), orthos.size());
+              bases.size(), supers.size(), orthos.size());
         logger.debug(loadInfo);
 
         if (incDepth == 0) {
@@ -334,22 +345,21 @@ public class HexTileset implements BoardListener {
     }
 
     /**
-     * Match the two hexes using the "ortho" super* formula. All matches must be
-     * exact, however the match only depends on the original hex matching all the
-     * elements of the comparison, not vice versa.
+     * Match the two hexes using the "ortho" super* formula. All matches must be exact, however the match only depends
+     * on the original hex matching all the elements of the comparison, not vice versa.
      * <p>
      * EXCEPTION: a themed original matches any unthemed comparison.
      */
     private double orthoMatch(Hex org, Hex com) {
         // exact elevation
         if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() < Terrain.ATLEAST)
-                && (org.getLevel() != com.getLevel())) {
+              && (org.getLevel() != com.getLevel())) {
             return 0;
         }
 
         // greater than elevation (e.g. >4), the "-100" to allow >-3
         if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() >= Terrain.ATLEAST - 100)
-                && (org.getLevel() < com.getLevel() - Terrain.ATLEAST)) {
+              && (org.getLevel() < com.getLevel() - Terrain.ATLEAST)) {
             return 0;
         }
 
@@ -372,8 +382,8 @@ public class HexTileset implements BoardListener {
             if (cTerr == null) {
                 continue;
             } else if ((oTerr == null)
-                    || ((cTerr.getLevel() != Terrain.WILDCARD) && (oTerr.getLevel() != cTerr.getLevel()))
-                    || (cTerr.hasExitsSpecified() && (oTerr.getExits() != cTerr.getExits()))) {
+                  || ((cTerr.getLevel() != Terrain.WILDCARD) && (oTerr.getLevel() != cTerr.getLevel()))
+                  || (cTerr.hasExitsSpecified() && (oTerr.getExits() != cTerr.getExits()))) {
                 return 0;
             }
         }
@@ -382,22 +392,21 @@ public class HexTileset implements BoardListener {
     }
 
     /**
-     * Match the two hexes using the "super" formula. All matches must be exact,
-     * however the match only depends on the original hex matching all the elements
-     * of the comparison, not vice versa.
+     * Match the two hexes using the "super" formula. All matches must be exact, however the match only depends on the
+     * original hex matching all the elements of the comparison, not vice versa.
      * <p>
      * EXCEPTION: a themed original matches any unthemed comparison.
      */
     private double superMatch(Hex org, Hex com) {
         // exact elevation
         if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() < Terrain.ATLEAST)
-                && (org.getLevel() != com.getLevel())) {
+              && (org.getLevel() != com.getLevel())) {
             return 0;
         }
 
         // greater than elevation (e.g. >4), the "-100" to allow >-3
         if ((com.getLevel() != Terrain.WILDCARD) && (com.getLevel() >= Terrain.ATLEAST - 100)
-                && (org.getLevel() < com.getLevel() - Terrain.ATLEAST)) {
+              && (org.getLevel() < com.getLevel() - Terrain.ATLEAST)) {
             return 0;
         }
 
@@ -420,8 +429,8 @@ public class HexTileset implements BoardListener {
             if (cTerr == null) {
                 continue;
             } else if ((oTerr == null)
-                    || ((cTerr.getLevel() != Terrain.WILDCARD) && (oTerr.getLevel() != cTerr.getLevel()))
-                    || (cTerr.hasExitsSpecified() && (oTerr.getExits() != cTerr.getExits()))) {
+                  || ((cTerr.getLevel() != Terrain.WILDCARD) && (oTerr.getLevel() != cTerr.getLevel()))
+                  || (cTerr.hasExitsSpecified() && (oTerr.getExits() != cTerr.getExits()))) {
                 return 0;
             }
         }
@@ -432,8 +441,8 @@ public class HexTileset implements BoardListener {
     /**
      * Match the two hexes using the "base" formula.
      *
-     * @return a value indicating how close of a match the original hex is to the
-     *         comparison hex. 0 means no match, 1 means perfect match.
+     * @return a value indicating how close of a match the original hex is to the comparison hex. 0 means no match, 1
+     *       means perfect match.
      */
     private double baseMatch(Hex org, Hex com) {
         double elevation;
@@ -495,7 +504,7 @@ public class HexTileset implements BoardListener {
 
         // check theme
         if ((com.getTheme() == org.getTheme())
-                || ((com.getTheme() != null) && com.getTheme().equalsIgnoreCase(org.getTheme()))) {
+              || ((com.getTheme() != null) && com.getTheme().equalsIgnoreCase(org.getTheme()))) {
             theme = 1.0;
         } else if ((org.getTheme() != null) && (com.getTheme() == null)) {
             // If no precise themed match, slightly favor unthemed comparisons

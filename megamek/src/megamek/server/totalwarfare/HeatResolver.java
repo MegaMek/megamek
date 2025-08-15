@@ -1,22 +1,40 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server.totalwarfare;
+
+import java.awt.Color;
+import java.util.Vector;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -25,9 +43,6 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
-
-import java.awt.Color;
-import java.util.Vector;
 
 class HeatResolver extends AbstractTWRuleHandler {
 
@@ -45,7 +60,7 @@ class HeatResolver extends AbstractTWRuleHandler {
         // Heat phase header
         addReport(new Report(5000, Report.PUBLIC));
         for (Entity entity : getGame().inGameTWEntities()) {
-            if (!getGame().hasBoardLocation(entity.getPosition(),entity.getBoardId()) && !entity.isAero()) {
+            if (!getGame().hasBoardLocation(entity.getPosition(), entity.getBoardId()) && !entity.isAero()) {
                 continue;
             }
 
@@ -108,12 +123,12 @@ class HeatResolver extends AbstractTWRuleHandler {
                     }
                     if (loc == Entity.LOC_NONE) {
                         throw new IllegalStateException("Server.resolveHeat(): " +
-                                                              "Could not find Radical Heat Sink mount on unit that used RHS!");
+                              "Could not find Radical Heat Sink mount on unit that used RHS!");
                     }
                     for (int s = 0; s < entity.getNumberOfCriticals(loc); s++) {
                         CriticalSlot slot = entity.getCritical(loc, s);
                         if ((slot.getType() == CriticalSlot.TYPE_EQUIPMENT) &&
-                                  slot.getMount().getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+                              slot.getMount().getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
                             slot.setHit(true);
                             break;
                         }
@@ -123,14 +138,14 @@ class HeatResolver extends AbstractTWRuleHandler {
 
             Hex entityHex = getGame().getHex(entity.getPosition(), entity.getBoardId());
             if (entity.tracksHeat() &&
-                      (entityHex != null) &&
-                      entityHex.containsTerrain(Terrains.FIRE) &&
-                      (entityHex.getFireTurn() > 0) &&
-                      (entity.getElevation() <= 1) &&
-                      (entity.getAltitude() == 0)) {
+                  (entityHex != null) &&
+                  entityHex.containsTerrain(Terrains.FIRE) &&
+                  (entityHex.getFireTurn() > 0) &&
+                  (entity.getElevation() <= 1) &&
+                  (entity.getAltitude() == 0)) {
                 int heatToAdd = 5;
                 boolean isMekWithHeatDissipatingArmor = (entity instanceof Mek) &&
-                                                              ((Mek) entity).hasIntactHeatDissipatingArmor();
+                      ((Mek) entity).hasIntactHeatDissipatingArmor();
                 if (isMekWithHeatDissipatingArmor) {
                     heatToAdd /= 2;
                 }
@@ -168,8 +183,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                 if (entity.getTaserShutdownRounds() == 0) {
                     entity.setBATaserShutdown(false);
                     if (entity.isShutDown() &&
-                              !entity.isManualShutdown() &&
-                              (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
+                          !entity.isManualShutdown() &&
+                          (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
                         entity.setShutDown(false);
                         r = new Report(5045);
                         r.subject = entity.getId();
@@ -354,7 +369,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             int toSink = entity.getHeatCapacityWithWater() + radicalHSBonus;
 
             if (getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE) &&
-                      entity.getCoolantFailureAmount() > 0) {
+                  entity.getCoolantFailureAmount() > 0) {
                 int failureAmount = entity.getCoolantFailureAmount();
                 r = new Report(5520);
                 r.subject = entity.getId();
@@ -417,10 +432,10 @@ class HeatResolver extends AbstractTWRuleHandler {
                 // Roll for possible inferno ammo explosion.
                 if (entity.heat >= 10) {
                     int boom = (4 +
-                                      (entity.heat >= 14 ? 2 : 0) +
-                                      (entity.heat >= 19 ? 2 : 0) +
-                                      (entity.heat >= 23 ? 2 : 0) +
-                                      (entity.heat >= 28 ? 2 : 0)) - hotDogMod;
+                          (entity.heat >= 14 ? 2 : 0) +
+                          (entity.heat >= 19 ? 2 : 0) +
+                          (entity.heat >= 23 ? 2 : 0) +
+                          (entity.heat >= 28 ? 2 : 0)) - hotDogMod;
                     Roll diceRoll = Compute.rollD6(2);
                     int rollValue = diceRoll.getIntValue();
                     r = new Report(5040);
@@ -459,7 +474,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             // heat effects: start up
             if ((entity.heat < autoShutDownHeat) && entity.isShutDown() && !entity.isStalled()) {
                 if ((entity.getTaserShutdownRounds() == 0) &&
-                          (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
+                      (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
                     if ((entity.heat < 14) && !(entity.isManualShutdown())) {
                         // automatically starts up again
                         entity.setShutDown(false);
@@ -637,9 +652,9 @@ class HeatResolver extends AbstractTWRuleHandler {
                             for (int j = 0; (j < 12) && (hits > 0); j++) {
                                 var crit = mek.getCritical(Mek.LOC_CT, j);
                                 if ((crit != null) &&
-                                          (crit.getType() == CriticalSlot.TYPE_SYSTEM) &&
-                                          (crit.getIndex() == Mek.SYSTEM_ENGINE) &&
-                                          crit.isHittable()) {
+                                      (crit.getType() == CriticalSlot.TYPE_SYSTEM) &&
+                                      (crit.getIndex() == Mek.SYSTEM_ENGINE) &&
+                                      crit.isHittable()) {
                                     addReport(gameManager.applyCriticalHit(entity, Mek.LOC_CT, crit, true, 0, false));
                                     hits--;
                                 }
@@ -712,10 +727,10 @@ class HeatResolver extends AbstractTWRuleHandler {
                 damageHeat += 5;
             }
             if ((lifeSupportCritCount > 0) &&
-                      ((damageHeat >= 15) || (torsoMountedCockpit && (damageHeat > 0))) &&
-                      !entity.getCrew().isDead() &&
-                      !entity.getCrew().isDoomed() &&
-                      !entity.getCrew().isEjected()) {
+                  ((damageHeat >= 15) || (torsoMountedCockpit && (damageHeat > 0))) &&
+                  !entity.getCrew().isDead() &&
+                  !entity.getCrew().isDoomed() &&
+                  !entity.getCrew().isEjected()) {
                 int heatLimitDesc = 1;
                 int damageToCrew = 0;
                 if ((damageHeat >= 47) && mtHeat) {
@@ -740,7 +755,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                     damageToCrew = 1;
                 }
                 if ((((Mek) entity).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) &&
-                          !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+                      !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     damageToCrew += 1;
                 }
                 r = new Report(5070);
@@ -751,10 +766,10 @@ class HeatResolver extends AbstractTWRuleHandler {
                 addReport(r);
                 addReport(gameManager.damageCrew(entity, damageToCrew));
             } else if (mtHeat &&
-                             (entity.heat >= 32) &&
-                             !entity.getCrew().isDead() &&
-                             !entity.getCrew().isDoomed() &&
-                             !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+                  (entity.heat >= 32) &&
+                  !entity.getCrew().isDead() &&
+                  !entity.getCrew().isDoomed() &&
+                  !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                 // Crew may take damage from heat if MaxTech option is set
                 Roll diceRoll = Compute.rollD6(2);
                 int avoidNumber;
@@ -829,9 +844,9 @@ class HeatResolver extends AbstractTWRuleHandler {
             // further
             // reductions in capacity will have no effect.
             if (getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE) &&
-                      (entity.heat >= 5) &&
-                      (entity.getCoolantFailureAmount() <
-                             ((Mek) entity).getNumberOfSinks() * (((Mek) entity).hasDoubleHeatSinks() ? 2 : 1))) {
+                  (entity.heat >= 5) &&
+                  (entity.getCoolantFailureAmount() <
+                        ((Mek) entity).getNumberOfSinks() * (((Mek) entity).hasDoubleHeatSinks() ? 2 : 1))) {
                 Roll diceRoll = Compute.rollD6(2);
                 int hitNumber = 10;
                 hitNumber -= Math.max(0, (int) Math.ceil(entity.heat / 5.0) - 2);
@@ -881,8 +896,8 @@ class HeatResolver extends AbstractTWRuleHandler {
 
         // should we even bother?
         if (entity.isDestroyed() || entity.isDoomed()
-                  || entity.getCrew().isDoomed()
-                  || entity.getCrew().isDead()) {
+              || entity.getCrew().isDoomed()
+              || entity.getCrew().isDead()) {
             return;
         }
 
@@ -953,7 +968,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                         break;
                     }
                     if (mode.equals("efficient")
-                              && ((entity.heat - tosink) >= possibleSinkage)) {
+                          && ((entity.heat - tosink) >= possibleSinkage)) {
                         r = new Report(5270);
                         r.subject = entity.getId();
                         vPhaseReport.add(r);
@@ -1013,7 +1028,7 @@ class HeatResolver extends AbstractTWRuleHandler {
         if ((entity.heat < autoShutDownHeat) && entity.isShutDown()) {
             // only start up if not shut down by taser or a TSEMP
             if ((entity.getTaserShutdownRounds() == 0)
-                      && (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
+                  && (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
                 if ((entity.heat < 14) && !entity.isManualShutdown()) {
                     // automatically starts up again
                     entity.setShutDown(false);
@@ -1142,11 +1157,11 @@ class HeatResolver extends AbstractTWRuleHandler {
         // heat effects: ammo explosion!
         if (entity.heat >= 19) {
             int boom = (4 + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0))
-                             - hotDogMod;
+                  - hotDogMod;
             if (mtHeat) {
                 boom += (entity.heat >= 35 ? 2 : 0)
-                              + (entity.heat >= 40 ? 2 : 0)
-                              + (entity.heat >= 45 ? 2 : 0);
+                      + (entity.heat >= 40 ? 2 : 0)
+                      + (entity.heat >= 45 ? 2 : 0);
                 // Last line is a crutch; 45 heat should be no roll
                 // but automatic explosion.
             }
@@ -1194,7 +1209,7 @@ class HeatResolver extends AbstractTWRuleHandler {
 
         // The pilot may have just expired.
         if ((entity.getCrew().isDead() || entity.getCrew().isDoomed())
-                  && !entity.getCrew().isEjected()) {
+              && !entity.getCrew().isEjected()) {
             r = new Report(5080);
             r.subject = entity.getId();
             r.addDesc(entity);

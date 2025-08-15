@@ -1,17 +1,47 @@
 /*
-* MegaMek - Copyright (C) 2020 - The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
 package megamek.client.ui.clientGUI.boardview.sprite;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
@@ -20,18 +50,19 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.HexDrawUtilities;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Compute;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EntityMovementType;
+import megamek.common.Game;
+import megamek.common.MiscType;
+import megamek.common.ToHitData;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-
 /**
- * Sprite for a step in a movement path. Only one sprite should exist for
- * any hex in a path. Contains a colored number, and arrows indicating
- * entering, exiting or turning.
+ * Sprite for a step in a movement path. Only one sprite should exist for any hex in a path. Contains a colored number,
+ * and arrows indicating entering, exiting or turning.
  */
 public class StepSprite extends Sprite {
 
@@ -39,6 +70,7 @@ public class StepSprite extends Sprite {
     private static AffineTransform shadowOffset = new AffineTransform();
     private static AffineTransform upDownOffset = new AffineTransform();
     private static AffineTransform stepOffset = new AffineTransform();
+
     static {
         shadowOffset.translate(-1, -1);
         upDownOffset.translate(-30, 0);
@@ -50,7 +82,7 @@ public class StepSprite extends Sprite {
     private Image baseScaleImage;
 
     public StepSprite(BoardView boardView1, final MoveStep step,
-                      boolean isLastStep) {
+          boolean isLastStep) {
         super(boardView1);
         this.step = step;
         this.isLastStep = isLastStep;
@@ -62,8 +94,7 @@ public class StepSprite extends Sprite {
     }
 
     /**
-     * Refreshes this StepSprite's image to handle changes in the zoom
-     * level.
+     * Refreshes this StepSprite's image to handle changes in the zoom level.
      */
     public void refreshZoomLevel() {
         if (baseScaleImage == null) {
@@ -77,7 +108,7 @@ public class StepSprite extends Sprite {
     public void prepare() {
         // create image for buffer
         Image tempImage = new BufferedImage(HexTileset.HEX_W, HexTileset.HEX_H,
-                BufferedImage.TYPE_INT_ARGB);
+              BufferedImage.TYPE_INT_ARGB);
         Graphics graph = tempImage.getGraphics();
         Graphics2D g2D = (Graphics2D) graph;
 
@@ -92,7 +123,7 @@ public class StepSprite extends Sprite {
         Shape facingArrow = bv.getFacingPolys()[step.getFacing()];
 
         boolean isLastLegalStep = isLastStep &&
-                (step.getMovementType(true) != EntityMovementType.MOVE_ILLEGAL);
+              (step.getMovementType(true) != EntityMovementType.MOVE_ILLEGAL);
 
         boolean jumped = false;
         boolean isMASCOrSuperCharger = false;
@@ -110,8 +141,8 @@ public class StepSprite extends Sprite {
                 break;
             default:
                 if ((step.getType() == MoveStepType.BACKWARDS)
-                        || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
-                        || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) {
+                      || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
+                      || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) {
                     isBackwards = true;
                 }
                 break;
@@ -209,13 +240,13 @@ public class StepSprite extends Sprite {
                 drawAnnouncement(g2D, load, step, col);
                 break;
             case PICKUP_CARGO:
-            	String pickup = Messages.getString("MovementDisplay.movePickupCargo");
-            	drawAnnouncement(g2D, pickup, step, col);
-            	break;
+                String pickup = Messages.getString("MovementDisplay.movePickupCargo");
+                drawAnnouncement(g2D, pickup, step, col);
+                break;
             case DROP_CARGO:
-            	String dropCargo = Messages.getString("MovementDisplay.moveDropCargo");
-            	drawAnnouncement(g2D, dropCargo, step, col);
-            	break;
+                String dropCargo = Messages.getString("MovementDisplay.moveDropCargo");
+                drawAnnouncement(g2D, dropCargo, step, col);
+                break;
             case TOW:
                 String tow = Messages.getString("BoardView1.Tow");
                 drawAnnouncement(g2D, tow, step, col);
@@ -265,7 +296,7 @@ public class StepSprite extends Sprite {
                 }
                 // show new movement mode
                 String mode = Messages.getString("BoardView1.ConversionMode."
-                        + step.getMovementMode());
+                      + step.getMovementMode());
                 graph.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12));
                 int modeX = 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(mode) / 2);
                 graph.setColor(Color.darkGray);
@@ -325,10 +356,8 @@ public class StepSprite extends Sprite {
     }
 
     /**
-     * Draws conditions separate from the step. Allows keeping
-     * conditions on Aeros even when that step is erased (advanced
-     * movement), such as evading, rolling, loading and
-     * unloading.
+     * Draws conditions separate from the step. Allows keeping conditions on Aeros even when that step is erased
+     * (advanced movement), such as evading, rolling, loading and unloading.
      */
     private void drawConditions(MoveStep step, Graphics graph, Color col) {
         if (step.isEvading()) {
@@ -361,8 +390,8 @@ public class StepSprite extends Sprite {
          * entities
          */
 
-        int[] activeXpos = {39, 59, 59, 40, 19, 19};
-        int[] activeYpos = {20, 28, 52, 59, 52, 28};
+        int[] activeXpos = { 39, 59, 59, 40, 19, 19 };
+        int[] activeYpos = { 20, 28, 52, 59, 52, 28 };
 
         int[] v = step.getVectors();
         for (int i = 0; i < 6; i++) {
@@ -393,7 +422,7 @@ public class StepSprite extends Sprite {
     }
 
     private void drawMovementCost(MoveStep step, boolean isLastStep,
-                                  Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
+          Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
         StringBuilder costStringBuf = new StringBuilder();
         costStringBuf.append(step.getMpUsed());
 
@@ -422,10 +451,10 @@ public class StepSprite extends Sprite {
 
         EntityMovementType moveType = step.getMovementType(isLastStep);
         if ((moveType == EntityMovementType.MOVE_VTOL_WALK)
-                || (moveType == EntityMovementType.MOVE_VTOL_RUN)
-                || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)
-                || (moveType == EntityMovementType.MOVE_SUBMARINE_WALK)
-                || (moveType == EntityMovementType.MOVE_SUBMARINE_RUN)) {
+              || (moveType == EntityMovementType.MOVE_VTOL_RUN)
+              || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)
+              || (moveType == EntityMovementType.MOVE_SUBMARINE_WALK)
+              || (moveType == EntityMovementType.MOVE_SUBMARINE_RUN)) {
             costStringBuf.append('{').append(step.getElevation()).append('}');
         }
 
@@ -447,16 +476,17 @@ public class StepSprite extends Sprite {
     }
 
     private void drawTMMAndRolls(MoveStep step, boolean jumped, Game game,
-                                 Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
+          Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
 
         StringBuilder subscriptStringBuf = new StringBuilder();
 
         int distance = step.getDistance();
         boolean airborneNonAerospace = (step.getMovementType(isLastStep) == EntityMovementType.MOVE_VTOL_RUN)
-            || (step.getMovementType(isLastStep) == EntityMovementType.MOVE_VTOL_WALK)
-            || ((step.getMovementMode() == EntityMovementMode.VTOL)
-                && ( ((step.getMovementType(isLastStep) != EntityMovementType.MOVE_NONE)  ||  step.getEntity().isAirborneVTOLorWIGE()))
-            || (step.getMovementType(isLastStep) == EntityMovementType.MOVE_VTOL_SPRINT));
+              || (step.getMovementType(isLastStep) == EntityMovementType.MOVE_VTOL_WALK)
+              || ((step.getMovementMode() == EntityMovementMode.VTOL)
+              && (((step.getMovementType(isLastStep) != EntityMovementType.MOVE_NONE) || step.getEntity()
+              .isAirborneVTOLorWIGE()))
+              || (step.getMovementType(isLastStep) == EntityMovementType.MOVE_VTOL_SPRINT));
 
         ToHitData toHitData = Compute.getTargetMovementModifier(distance, jumped, airborneNonAerospace, game);
         subscriptStringBuf.append((toHitData.getValue() < 0) ? '-' : '+');

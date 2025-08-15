@@ -1,24 +1,66 @@
 /*
- * MegaMek
  * Copyright (c) 2003-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021-2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.buttonDialogs;
+
+import static java.util.stream.Collectors.toList;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Stream;
+import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MouseInputAdapter;
 
 import com.formdev.flatlaf.icons.FlatHelpButtonIcon;
 import megamek.MMConstants;
@@ -58,35 +100,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
-
-import javax.swing.*;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MouseInputAdapter;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * The Client Settings Dialog offering GUI options concerning tooltips, map display, keybinds etc.
@@ -191,7 +204,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final JCheckBox nagForSprint = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForSprint"));
     private final JCheckBox nagForOddSizedBoard =
           new JCheckBox(Messages.getString(
-          "CommonSettingsDialog.nagForOddSizedBoard"));
+                "CommonSettingsDialog.nagForOddSizedBoard"));
     private final JCheckBox animateMove = new JCheckBox(Messages.getString("CommonSettingsDialog.animateMove"));
     private final JCheckBox showWrecks = new JCheckBox(Messages.getString("CommonSettingsDialog.showWrecks"));
     private final JCheckBox chkHighQualityGraphics = new JCheckBox(Messages.getString(
@@ -1672,7 +1685,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         traceOverlayTransparencyLabel = new JLabel(Messages.getString("CommonSettingsDialog.TraceOverlayTransparency"));
         traceOverlayTransparencyLabel.setToolTipText(
               Messages.getString(
-              "CommonSettingsDialog.TraceOverlayTransparency.tooltip"));
+                    "CommonSettingsDialog.TraceOverlayTransparency.tooltip"));
 
         row = new ArrayList<>();
         row.add(Box.createRigidArea(new Dimension(4, 0)));
@@ -1688,7 +1701,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         traceOverlayTransparencySlider.addChangeListener(this);
         traceOverlayTransparencySlider.setToolTipText(
               Messages.getString(
-              "CommonSettingsDialog.TraceOverlayTransparency.tooltip"));
+                    "CommonSettingsDialog.TraceOverlayTransparency.tooltip"));
         traceOverlayTransparencySlider.setValue(GUIP.getTraceOverlayTransparency());
 
         row = new ArrayList<>();
@@ -1776,7 +1789,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         JButton traceOverlayImageFileChooser = new JButton("...");
         traceOverlayImageFileChooser.addActionListener(
               e -> selectTraceOverlayImageFile(traceOverlayImageFile,
-              getFrame()));
+                    getFrame()));
 
         row = new ArrayList<>();
         row.add(traceOverlayImageFileLabel);
@@ -2933,43 +2946,43 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             int s = unitDisplayNonTabbed.getSize();
 
             if ((s > UnitDisplayPanel.NON_TABBED_ZERO_INDEX)
-                  &&(!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ZERO_INDEX)
-                        .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_A1)))) {
+                  && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ZERO_INDEX)
+                  .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_A1)))) {
                 unitDisplayNonTabbedChanged = true;
                 UDOP.setValue(UnitDisplayPanel.NON_TABBED_A1,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ZERO_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_ONE_INDEX)
-                  &&(!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ONE_INDEX)
-                        .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_B1)))) {
+                  && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ONE_INDEX)
+                  .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_B1)))) {
                 unitDisplayNonTabbedChanged = true;
                 UDOP.setValue(UnitDisplayPanel.NON_TABBED_B1,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ONE_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_TWO_INDEX)
-                  &&(!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_TWO_INDEX)
-                        .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_C1)))) {
+                  && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_TWO_INDEX)
+                  .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_C1)))) {
                 unitDisplayNonTabbedChanged = true;
                 UDOP.setValue(UnitDisplayPanel.NON_TABBED_C1,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_TWO_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_THREE_INDEX)
-                  &&(!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_THREE_INDEX)
-                        .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_A2)))) {
+                  && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_THREE_INDEX)
+                  .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_A2)))) {
                 unitDisplayNonTabbedChanged = true;
                 UDOP.setValue(UnitDisplayPanel.NON_TABBED_A2,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_THREE_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_FOUR_INDEX)
-                  &&(!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FOUR_INDEX)
-                        .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_B2)))) {
+                  && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FOUR_INDEX)
+                  .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_B2)))) {
                 unitDisplayNonTabbedChanged = true;
                 UDOP.setValue(UnitDisplayPanel.NON_TABBED_B2,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FOUR_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_FIVE_INDEX)
-                  &&(!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FIVE_INDEX)
-                        .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_C2)))) {
+                  && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FIVE_INDEX)
+                  .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_C2)))) {
                 unitDisplayNonTabbedChanged = true;
                 UDOP.setValue(UnitDisplayPanel.NON_TABBED_C2,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FIVE_INDEX));
@@ -3922,8 +3935,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         if ((returnVal == JFileChooser.APPROVE_OPTION) &&
               (userDirChooser.getSelectedFile() != null) &&
               (directories ?
-                     userDirChooser.getSelectedFile().isDirectory() :
-                     userDirChooser.getSelectedFile().isFile())) {
+                    userDirChooser.getSelectedFile().isDirectory() :
+                    userDirChooser.getSelectedFile().isFile())) {
             textField.setText(userDirChooser.getSelectedFile().toString());
         }
     }

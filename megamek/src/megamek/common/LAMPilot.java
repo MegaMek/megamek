@@ -1,16 +1,36 @@
 /*
- * MegaMek - Copyright (C) 2017 - The MegaMek Team
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.util.HashMap;
@@ -22,8 +42,8 @@ import megamek.common.enums.Gender;
 import megamek.common.util.CrewSkillSummaryUtil;
 
 /**
- * Crew class for LAMs which tracks separate skills for 'Mek and Fighter modes,
- * and chooses the correct one based on the LAM's current movement mode.
+ * Crew class for LAMs which tracks separate skills for 'Mek and Fighter modes, and chooses the correct one based on the
+ * LAM's current movement mode.
  *
  * @author Neoancient
  */
@@ -39,12 +59,12 @@ public class LAMPilot extends Crew {
 
     public LAMPilot(LandAirMek lam) {
         this(lam, RandomNameGenerator.UNNAMED_FULL_NAME, 4, 5,
-                4, 5, Gender.RANDOMIZE, false, null);
+              4, 5, Gender.RANDOMIZE, false, null);
     }
 
     public LAMPilot(LandAirMek lam, String name, int gunneryMek, int pilotingMek,
-                    int gunneryAero, int pilotingAero, Gender gender, boolean clanPilot,
-                    Map<Integer, Map<String, String>> extraData) {
+          int gunneryAero, int pilotingAero, Gender gender, boolean clanPilot,
+          Map<Integer, Map<String, String>> extraData) {
         super(CrewType.SINGLE, name, 1, gunneryMek, pilotingMek, gender, clanPilot, extraData);
         this.lam = lam;
         this.gunneryAero = gunneryAero;
@@ -55,21 +75,18 @@ public class LAMPilot extends Crew {
     }
 
     /**
-     * Used by LandAirMek.setCrew to convert a <code>Crew</code> instance into
-     * a <code>LAMPilot</code> instance.
+     * Used by LandAirMek.setCrew to convert a <code>Crew</code> instance into a <code>LAMPilot</code> instance.
      *
-     * @param lam
-     *            The LAM that is piloted by this crew.
-     * @param crew
-     *            The crew to convert to LAMPilot.
-     * @return An instance of <code>LAMPilot</code> that has the same values as
-     *         the crew argument.
+     * @param lam  The LAM that is piloted by this crew.
+     * @param crew The crew to convert to LAMPilot.
+     *
+     * @return An instance of <code>LAMPilot</code> that has the same values as the crew argument.
      */
     public static LAMPilot convertToLAMPilot(LandAirMek lam, Crew crew) {
         Map<Integer, Map<String, String>> extraData = new HashMap<>();
         extraData.put(0, crew.getExtraDataForCrewMember(0));
         LAMPilot pilot = new LAMPilot(lam, crew.getName(), crew.getGunnery(), crew.getPiloting(),
-                crew.getGunnery(), crew.getPiloting(), crew.getGender(), crew.isClanPilot(), extraData);
+              crew.getGunnery(), crew.getPiloting(), crew.getGender(), crew.isClanPilot(), extraData);
         pilot.setNickname(crew.getNickname(), 0);
         pilot.setPortrait(crew.getPortrait(0).clone(), 0);
         pilot.setGunneryL(crew.getGunneryL(), 0);
@@ -206,7 +223,7 @@ public class LAMPilot extends Crew {
     @Override
     public int getPiloting() {
         if (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER
-                || (lam.getConversionMode() == LandAirMek.CONV_MODE_AIRMEK && lam.isAirborneVTOLorWIGE())) {
+              || (lam.getConversionMode() == LandAirMek.CONV_MODE_AIRMEK && lam.isAirborneVTOLorWIGE())) {
             return pilotingAero;
         } else {
             return super.getPiloting();
@@ -216,8 +233,8 @@ public class LAMPilot extends Crew {
     @Override
     public int getPiloting(EntityMovementType moveType) {
         if (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER || (lam
-                .getConversionMode() == LandAirMek.CONV_MODE_AIRMEK
-                && (moveType == EntityMovementType.MOVE_VTOL_WALK || moveType == EntityMovementType.MOVE_VTOL_RUN))) {
+              .getConversionMode() == LandAirMek.CONV_MODE_AIRMEK
+              && (moveType == EntityMovementType.MOVE_VTOL_WALK || moveType == EntityMovementType.MOVE_VTOL_RUN))) {
             return pilotingAero;
         } else {
             return super.getPiloting();
@@ -230,43 +247,42 @@ public class LAMPilot extends Crew {
     }
 
     /**
-     * @return a String showing the overall skills in the format gunnery
-     *         (Mek)/piloting (Mek)/gunnery (Aero)/piloting (Aero)
+     * @return a String showing the overall skills in the format gunnery (Mek)/piloting (Mek)/gunnery (Aero)/piloting
+     *       (Aero)
      */
     @Override
     public String getSkillsAsString(int pos, boolean showPiloting, boolean rpgSkills) {
         if (showPiloting) {
             return CrewSkillSummaryUtil.getLAMPilotSkillSummary(
-                    getGunnery(pos),
-                    getGunneryL(pos),
-                    getGunneryM(pos),
-                    getGunneryB(pos),
-                    getPiloting(pos),
-                    getGunneryAero(),
-                    getGunneryAeroL(),
-                    getGunneryAeroM(),
-                    getGunneryAeroB(),
-                    getPilotingAero(),
-                    rpgSkills);
+                  getGunnery(pos),
+                  getGunneryL(pos),
+                  getGunneryM(pos),
+                  getGunneryB(pos),
+                  getPiloting(pos),
+                  getGunneryAero(),
+                  getGunneryAeroL(),
+                  getGunneryAeroM(),
+                  getGunneryAeroB(),
+                  getPilotingAero(),
+                  rpgSkills);
         } else {
             return CrewSkillSummaryUtil.getLAMGunnerySkillSummary(
-                    getGunnery(pos),
-                    getGunneryL(pos),
-                    getGunneryM(pos),
-                    getGunneryB(pos),
-                    getGunneryAero(),
-                    getGunneryAeroL(),
-                    getGunneryAeroM(),
-                    getGunneryAeroB(),
-                    rpgSkills);
+                  getGunnery(pos),
+                  getGunneryL(pos),
+                  getGunneryM(pos),
+                  getGunneryB(pos),
+                  getGunneryAero(),
+                  getGunneryAeroL(),
+                  getGunneryAeroM(),
+                  getGunneryAeroB(),
+                  rpgSkills);
         }
     }
 
     /**
      * Crew summary report used for victory phase.
      *
-     * @param gunneryOnly
-     *            Do not show the piloting skill
+     * @param gunneryOnly Do not show the piloting skill
      */
     @Override
     public Vector<Report> getDescVector(boolean gunneryOnly) {

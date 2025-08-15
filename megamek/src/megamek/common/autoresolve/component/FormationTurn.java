@@ -55,6 +55,6 @@ public class FormationTurn extends AcTurn {
     @Override
     public boolean isValidEntity(InGameObject unit, IGame game) {
         return (unit.getOwnerId() == playerId()) && unit instanceof Formation
-            && ((Formation) unit).isEligibleForPhase(game.getPhase());
+              && ((Formation) unit).isEligibleForPhase(game.getPhase());
     }
 }

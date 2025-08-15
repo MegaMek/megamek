@@ -24,7 +24,13 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek;
 
 import java.io.PrintWriter;
@@ -198,7 +204,7 @@ public final class Version implements Comparable<Version>, Serializable {
     public boolean isHigherThan(final Version other) {
         return compareTo(other) > 0;
     }
-    
+
     /**
      * Use this method to determine if this version is lower than the version passed
      *
@@ -280,9 +286,9 @@ public final class Version implements Comparable<Version>, Serializable {
     public boolean equals(Object obj) {
         if (obj instanceof Version other) {
             return (getMajor() == other.getMajor() &&
-                          getMinor() == other.getMinor() &&
-                          getPatch() == other.getPatch() &&
-                          getExtra().equals(other.getExtra()));
+                  getMinor() == other.getMinor() &&
+                  getPatch() == other.getPatch() &&
+                  getExtra().equals(other.getExtra()));
         }
 
         return false;

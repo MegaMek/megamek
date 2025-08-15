@@ -1,31 +1,56 @@
 /*
  * Copyright (c) 2000-2004 - Ben Mazur (bmazur@sev.org).
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.actions;
 
+import java.util.Enumeration;
+
 import megamek.client.Client;
-import megamek.common.*;
+import megamek.common.AmmoType;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Mek;
+import megamek.common.Mounted;
+import megamek.common.Targetable;
+import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.IlluminationLevel;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 
-import java.util.Enumeration;
-
 /**
- * Abstract superclass for any action where an entity is attacking another
- * entity.
+ * Abstract superclass for any action where an entity is attacking another entity.
  */
 public abstract class AbstractAttackAction extends AbstractEntityAction implements AttackAction {
     private static final long serialVersionUID = -897197664652217134L;
@@ -70,9 +95,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
     }
 
     /**
-     * Gets the entity associated with this attack action, using the passed-in game
-     * object.
-     * 
+     * Gets the entity associated with this attack action, using the passed-in game object.
+     *
      * @return the entity even if it was destroyed or fled.
      */
     public @Nullable Entity getEntity(Game g) {
@@ -81,7 +105,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
 
     /**
      * Gets an entity with the given ID, using the passed-in game object.
-     * 
+     *
      * @return the entity even if it was destroyed or fled.
      */
     public @Nullable Entity getEntity(Game g, int entityID) {
@@ -92,13 +116,12 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
     }
 
     /**
-     * used by the toHit of derived classes atype may be null if not using an
-     * ammo based weapon
+     * used by the toHit of derived classes atype may be null if not using an ammo based weapon
      *
      * @param game The current {@link Game}
      */
     public static ToHitData nightModifiers(Game game, Targetable target, AmmoType atype,
-            Entity attacker, boolean isWeapon) {
+          Entity attacker, boolean isWeapon) {
         Entity te = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target : null;
         ToHitData toHit = new ToHitData();
 
@@ -110,7 +133,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
 
         // The base night penalty
         final IlluminationLevel hexIllumLvl = IlluminationLevel.determineIlluminationLevel(game, target.getBoardId(),
-                target.getPosition());
+              target.getPosition());
         int night_modifier = conditions.getLightHitPenalty(isWeapon);
         toHit.addModifier(night_modifier, conditions.getLight().toString());
 
@@ -119,7 +142,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
             illuminated = te.isIlluminated();
             // hack for unresolved actions so client shows right BTH
             if (!illuminated) {
-                for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
+                for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements(); ) {
                     EntityAction a = actions.nextElement();
                     if (a instanceof SearchlightAttackAction) {
                         SearchlightAttackAction saa = (SearchlightAttackAction) a;
@@ -138,7 +161,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         boolean isUsingSearchlight = (te != null) && te.isUsingSearchlight();
         boolean lighted = isUsingSearchlight || illuminated;
         if (conditions.getLight().isFullMoonOrMoonlessOrPitchBack()
-                && lighted) {
+              && lighted) {
             if (isUsingSearchlight) {
                 toHit.addModifier(-searchlightMod, "target using searchlight");
                 night_modifier = night_modifier - searchlightMod;
@@ -160,11 +183,11 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         } else if (atype != null) {
             // Certain ammunitions reduce the penalty
             if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC)
-                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LAC)
-                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP)
-                    || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.PAC))
-                    && ((atype.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC))
-                            || (atype.getMunitionType().contains(AmmoType.Munitions.M_TRACER)))) {
+                  || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LAC)
+                  || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP)
+                  || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.PAC))
+                  && ((atype.getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC))
+                  || (atype.getMunitionType().contains(AmmoType.Munitions.M_TRACER)))) {
                 toHit.addModifier(-1, "incendiary/tracer ammo");
                 night_modifier--;
             }
@@ -182,7 +205,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
                 // Unfortunately, we can't just check weapons fired by the target
                 // because isUsedThisRound() is not valid if the attacker declared first.
                 // therefore, enumerate WeaponAttackActions...
-                for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
+                for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements(); ) {
                     EntityAction a = actions.nextElement();
                     if (a instanceof WeaponAttackAction) {
                         WeaponAttackAction waa = (WeaponAttackAction) a;
@@ -212,7 +235,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         }
 
         if ((toHit.getValue() > 0) && (null != attacker.getCrew())
-                && attacker.hasAbility(OptionsConstants.UNOFF_BLIND_FIGHTER)) {
+              && attacker.hasAbility(OptionsConstants.UNOFF_BLIND_FIGHTER)) {
             toHit.addModifier(-1, "blind fighter");
         }
 
@@ -223,7 +246,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
     public String toAccessibilityDescription(final Client client) {
         final Targetable target = getTarget(client.getGame());
         return (target == null) ? "Attacking Null Target with id " + getTargetId()
-                : "Attacking " + target.getDisplayName();
+              : "Attacking " + target.getDisplayName();
     }
 
     @Override

@@ -42,6 +42,7 @@ import megamek.ai.dataset.BoardData.HexRow;
 
 /**
  * <p>Serializer for BoardData to TSV format.</p>
+ *
  * @author Luana Coppio
  */
 public class BoardDataSerializer extends EntityDataSerializer<Field, BoardData> {
@@ -70,17 +71,20 @@ public class BoardDataSerializer extends EntityDataSerializer<Field, BoardData> 
             // Add the column header row (COL_0, COL_1, etc.)
             int width = ((Integer) data.get(Field.WIDTH));
             String colHeader = VERSION + TAB + IntStream.range(0, width)
-                                     .mapToObj(i -> "COL_" + i)
-                                     .collect(Collectors.joining("\t"));
+                  .mapToObj(i -> "COL_" + i)
+                  .collect(Collectors.joining("\t"));
             lines.add(colHeader);
 
             // Add each row of hex data
             for (HexRow row : hexRows) {
                 StringBuilder sb =
-                      new StringBuilder(data.getVersionedClassName()).append(TAB).append("ROW_").append(row.rowIndex()).append(TAB);
+                      new StringBuilder(data.getVersionedClassName()).append(TAB)
+                            .append("ROW_")
+                            .append(row.rowIndex())
+                            .append(TAB);
                 sb.append(row.hexes().stream()
-                                .map(hex -> hex == null ? "" : hex.toString())
-                                .collect(Collectors.joining(TAB)));
+                      .map(hex -> hex == null ? "" : hex.toString())
+                      .collect(Collectors.joining(TAB)));
                 lines.add(sb.toString());
             }
         }

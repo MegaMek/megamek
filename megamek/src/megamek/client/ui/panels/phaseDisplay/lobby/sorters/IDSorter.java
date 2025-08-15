@@ -43,7 +43,7 @@ public class IDSorter extends MekTableSorter {
     public IDSorter(Sorting sorting) {
         super(I18n.getTextAt(RESOURCE_BUNDLE, "IDSorter.DisplayName"), MekTableModel.COL_UNIT, sorting);
     }
-    
+
     @Override
     public int compare(final Entity a, final Entity b) {
         int aVal = a.getId();

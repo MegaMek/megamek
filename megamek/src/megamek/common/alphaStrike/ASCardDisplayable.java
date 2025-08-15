@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General  License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General  License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General  License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike;
 
 import static megamek.common.alphaStrike.ASUnitType.*;
@@ -32,14 +47,12 @@ import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
 
 /**
  * This interface is implemented by classes that can be displayed on an AlphaStrike card
- * {@link megamek.common.alphaStrike.cardDrawer.ASCard}. Implementing classes must be able to return
- * the AlphaStrike values printed on a card. Currently implemented by MekSummary and
- * AlphaStrikeElement.
- * This interface also offers some utility methods for unit information that can be directly derived from
- * the available data; those don't require any overriding (e.g. {@link #isLargeAerospace()}.
- * It also has methods that return current (= possibly damaged) values of an element.
- * These return an undamaged state by default and thus require overriding in AlphaStrikeElement
- * (e.g. {@link #getCurrentArmor()}.
+ * {@link megamek.common.alphaStrike.cardDrawer.ASCard}. Implementing classes must be able to return the AlphaStrike
+ * values printed on a card. Currently implemented by MekSummary and AlphaStrikeElement. This interface also offers some
+ * utility methods for unit information that can be directly derived from the available data; those don't require any
+ * overriding (e.g. {@link #isLargeAerospace()}. It also has methods that return current (= possibly damaged) values of
+ * an element. These return an undamaged state by default and thus require overriding in AlphaStrikeElement (e.g.
+ * {@link #getCurrentArmor()}.
  */
 public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject, CombatRole {
 
@@ -91,8 +104,7 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject, Co
     String getPrimaryMovementMode();
 
     /**
-     * @return The standard damage (SML or SMLE depending on type). This will be empty for
-     * elements that use arcs.
+     * @return The standard damage (SML or SMLE depending on type). This will be empty for elements that use arcs.
      */
     ASDamageVector getStandardDamage();
 
@@ -105,8 +117,8 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject, Co
     }
 
     /**
-     * @return True when this AS element is of a type that tracks heat levels and can have
-     * the OV and OVL abilities (BM, IM and AF).
+     * @return True when this AS element is of a type that tracks heat levels and can have the OV and OVL abilities (BM,
+     *       IM and AF).
      */
     default boolean usesOV() {
         return getASUnitType().isAnyOf(BM, IM, AF);
@@ -132,23 +144,23 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject, Co
         return isAerospace();
     }
 
-    /** @return The AS element's full (=undamaged) Armor (A).*/
+    /** @return The AS element's full (=undamaged) Armor (A). */
     int getFullArmor();
 
-    /** @return The AS element's current Armor (A).*/
+    /** @return The AS element's current Armor (A). */
     default int getCurrentArmor() {
         return getFullArmor();
     }
 
-    /** @return The AS element's full (=undamaged) Structure (S).*/
+    /** @return The AS element's full (=undamaged) Structure (S). */
     int getFullStructure();
 
-    /** @return The AS element's current Structure (S).*/
+    /** @return The AS element's current Structure (S). */
     default int getCurrentStructure() {
         return getFullStructure();
     }
 
-    /** @return The squad size (typically 4, 5 or 6), if this AS element is a BA.*/
+    /** @return The squad size (typically 4, 5 or 6), if this AS element is a BA. */
     int getSquadSize();
 
     /** @return The element's central special abilities (not those in arcs). */
@@ -206,15 +218,14 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject, Co
     }
 
     /**
-     * Returns true if this AS element is an aerospace SV, i.e. an SV with a movement mode of
-     * "a", "k", "i", and "p".
+     * Returns true if this AS element is an aerospace SV, i.e. an SV with a movement mode of "a", "k", "i", and "p".
      *
      * @return True if this AS element is an aerospace SV.
      */
     @Override
     default boolean isAerospaceSV() {
         return isSupportVehicle() && (hasMovementMode("a") || hasMovementMode("k")
-                || hasMovementMode("i") || hasMovementMode("p"));
+              || hasMovementMode("i") || hasMovementMode("p"));
     }
 
     /** @return True if this AS element is a support vehicle of any kind (SV). */
@@ -276,20 +287,20 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject, Co
 
     @Override
     default boolean isSpheroid() {
-        return isType(ASUnitType.DS) || (isType(ASUnitType.SC) && !getSpecialAbilities().hasSUA(BattleForceSUA.AERODYNESC));
+        return isType(ASUnitType.DS) || (isType(ASUnitType.SC)
+              && !getSpecialAbilities().hasSUA(BattleForceSUA.AERODYNESC));
     }
 
     /**
-     * Returns true if this unit uses the 4 firing arcs of Warships, Dropships and other units.
-     * When this is the case, {@link #getStandardDamage()} will return zero damage and the actual
-     * damage values are contained in the arcs.
+     * Returns true if this unit uses the 4 firing arcs of Warships, Dropships and other units. When this is the case,
+     * {@link #getStandardDamage()} will return zero damage and the actual damage values are contained in the arcs.
      *
      * @return True if this unit uses firing arcs
      */
     default boolean usesArcs() {
         return isLargeAerospace() || (isSupportVehicle() &&
-                (getSpecialAbilities().hasSUA(LG) || getSpecialAbilities().hasSUA(SLG)
-                || getSpecialAbilities().hasSUA(VLG)));
+              (getSpecialAbilities().hasSUA(LG) || getSpecialAbilities().hasSUA(SLG)
+                    || getSpecialAbilities().hasSUA(VLG)));
     }
 
     /** @return True if this AS element uses CAP weapons in its arcs, i.e. WS, SS or JS. */
@@ -303,16 +314,16 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject, Co
     }
 
     /**
-     * @return True when this AS element is jump-capable. This is the case when its movement modes
-     * contains the "j" movement mode.
+     * @return True when this AS element is jump-capable. This is the case when its movement modes contains the "j"
+     *       movement mode.
      */
     default boolean isJumpCapable() {
         return getMovement().containsKey("j");
     }
 
     /**
-     * Returns true when this AS element is a submarine. This checks if it is a combat vehicle
-     * and has the "s" primary movement type.
+     * Returns true when this AS element is a submarine. This checks if it is a combat vehicle and has the "s" primary
+     * movement type.
      *
      * @return True when this AS element is as a submarine
      */
@@ -327,34 +338,30 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject, Co
 
     /**
      * Returns true when this element has any water movement of any kind.
-     *
-     * movement type of (n, s, h, g)
-     * Mek
-     * ProtoMek
+     * <p>
+     * movement type of (n, s, h, g) Mek ProtoMek
      */
     default boolean hasWaterMovement() {
         return hasMovementMode("n") || hasMovementMode("s") || hasMovementMode("h") || hasMovementMode("g")
-                || isMek()
-                || isProtoMek();
+              || isMek()
+              || isProtoMek();
     }
 
     /**
      * Returns true when this element has ground movement of any kind.
-     *
-     * movement type of (w, t, h, g, f, m, j)
-     * Mek
-     * ProtoMek
+     * <p>
+     * movement type of (w, t, h, g, f, m, j) Mek ProtoMek
      */
     default boolean hasGroundMovement() {
         return hasMovementMode("w") || hasMovementMode("t") || hasMovementMode("h") || hasMovementMode("g")
-                || hasMovementMode("f") || hasMovementMode("m") || hasMovementMode("j")
-                || isMek()
-                || isProtoMek();
+              || hasMovementMode("f") || hasMovementMode("m") || hasMovementMode("j")
+              || isMek()
+              || isProtoMek();
     }
 
     /**
      * Returns true when this element has air movement of any kind.
-     *
+     * <p>
      * movement type of (v, g, a, p)
      */
     default boolean hasAirMovement() {

@@ -32,6 +32,21 @@
  */
 package megamek.common.universe;
 
+import java.awt.Color;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -41,15 +56,6 @@ import megamek.common.annotations.Nullable;
 import megamek.common.jacksonadapters.ColorDeserializer;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
-
-import java.awt.Color;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 /**
  * This class manages the unified Faction2 class that combines MHQ's Faction and the RATGenerator's FactionRecord and
@@ -114,8 +120,8 @@ public final class Factions2 {
     }
 
     /**
-     * This constructor is intended for unit testing only and will load factions *only* from the provided path. The
-     * path is used as it is.
+     * This constructor is intended for unit testing only and will load factions *only* from the provided path. The path
+     * is used as it is.
      *
      * @param factionsDataPath The path to load factions data from
      */
@@ -134,6 +140,7 @@ public final class Factions2 {
 
     /**
      * @param factionCode The faction's key such as LA, HL, CGS or LA.DG
+     *
      * @return The faction for the given faction code, if any.
      */
     public Optional<Faction2> getFaction(@Nullable String factionCode) {

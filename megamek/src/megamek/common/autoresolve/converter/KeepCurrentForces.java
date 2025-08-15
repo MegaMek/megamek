@@ -32,11 +32,15 @@
  */
 package megamek.common.autoresolve.converter;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+
 import megamek.common.IGame;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
-
-import java.util.*;
 
 public class KeepCurrentForces extends ForceConsolidation {
 
@@ -45,7 +49,10 @@ public class KeepCurrentForces extends ForceConsolidation {
         var newTopLevelForces = new ArrayList<Container>();
         var cycleFound = KeepCurrentForces.cycleFinder(game.getForces());
         if (cycleFound != null) {
-            throw new IllegalStateException("Cycle detected in forces " + cycleFound.getName() + " " + cycleFound.getId());
+            throw new IllegalStateException("Cycle detected in forces "
+                  + cycleFound.getName()
+                  + " "
+                  + cycleFound.getId());
         }
         var forcesInternalRepresentation = game.getForces().getForcesInternalRepresentation();
 
@@ -67,7 +74,13 @@ public class KeepCurrentForces extends ForceConsolidation {
             }
             var player = game.getPlayer(force.getOwnerId());
             var team = player.getTeam();
-            var container = new Container(forceId++, force.getName(), breadcrumb, team, force.getOwnerId(), new ArrayList<>(), new ArrayList<>());
+            var container = new Container(forceId++,
+                  force.getName(),
+                  breadcrumb,
+                  team,
+                  force.getOwnerId(),
+                  new ArrayList<>(),
+                  new ArrayList<>());
             newForceMap.put(force.getId(), container);
 
             for (var entityId : force.getEntities()) {

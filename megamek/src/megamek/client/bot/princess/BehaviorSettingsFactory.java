@@ -1,21 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.bot.princess;
 
@@ -29,20 +43,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -65,9 +77,8 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Initializes the {@link megamek.client.bot.princess.BehaviorSettings} cache.
-     * If the cache is empty, it will load from mmconf/princessBehaviors.xml. Also,
-     * if the "DEFAULT behavior is missing, it will be added.
+     * Initializes the {@link megamek.client.bot.princess.BehaviorSettings} cache. If the cache is empty, it will load
+     * from mmconf/princessBehaviors.xml. Also, if the "DEFAULT behavior is missing, it will be added.
      *
      * @param reinitialize Set TRUE to force the cache to be completely rebuilt.
      */
@@ -108,13 +119,10 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Adds a {@link megamek.client.bot.princess.BehaviorSettings} to the cache. If
-     * a behavior with the same name is already in the cache, it will be
-     * overwritten.
+     * Adds a {@link megamek.client.bot.princess.BehaviorSettings} to the cache. If a behavior with the same name is
+     * already in the cache, it will be overwritten.
      *
-     * @param behaviorSettings The
-     *                         {@link megamek.client.bot.princess.BehaviorSettings}
-     *                         to be added to the cache.
+     * @param behaviorSettings The {@link megamek.client.bot.princess.BehaviorSettings} to be added to the cache.
      */
     public void addBehavior(BehaviorSettings behaviorSettings) {
         synchronized (behaviorMap) {
@@ -123,9 +131,8 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Removes the behavior setting with the given name from the cache. Returns the
-     * BehaviorSettings that was removed (or null if there was no such
-     * BehaviorSettings).
+     * Removes the behavior setting with the given name from the cache. Returns the BehaviorSettings that was removed
+     * (or null if there was no such BehaviorSettings).
      */
     public BehaviorSettings removeBehavior(String settingName) {
         synchronized (behaviorMap) {
@@ -138,16 +145,19 @@ public class BehaviorSettingsFactory {
      *
      * @param desc The name of the behavior; matched to
      *             {@link megamek.client.bot.princess.BehaviorSettings#getDescription()}.
+     *
      * @return The named behavior or NULL if no match is found.
      */
     public BehaviorSettings getBehavior(String desc) {
         return behaviorMap.get(desc);
     }
+
     /**
      * Returns the named {@link megamek.client.bot.princess.BehaviorSettings}.
      *
      * @param desc The name of the behavior; matched to
      *             {@link megamek.client.bot.princess.BehaviorSettings#getDescription()}.
+     *
      * @return The named behavior or default if no match is found.
      */
     public BehaviorSettings getBehaviorOrDefault(String desc, BehaviorSettings defaultBehavior) {
@@ -173,8 +183,8 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Loads the contents of the mmconf/princessBehaviors.xml file into the cache.
-     * If the "DEFAULT" behavior is missing it will be automatically added.
+     * Loads the contents of the mmconf/princessBehaviors.xml file into the cache. If the "DEFAULT" behavior is missing
+     * it will be automatically added.
      *
      * @return TRUE if the load completes successfully.
      */
@@ -212,8 +222,8 @@ public class BehaviorSettingsFactory {
     /**
      * Saves the contents of the cache to the mmconf/princessBehaviors.xml file.
      *
-     * @param includeTargets Set TRUE to include the contents of the Strategic
-     *                       Targets list.
+     * @param includeTargets Set TRUE to include the contents of the Strategic Targets list.
+     *
      * @return TRUE if the save is successful.
      */
     public boolean saveBehaviorSettings(boolean includeTargets) {
@@ -264,8 +274,7 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * @return an array of the names of all the
-     *         {@link megamek.client.bot.princess.BehaviorSettings} in the cache.
+     * @return an array of the names of all the {@link megamek.client.bot.princess.BehaviorSettings} in the cache.
      */
     public String[] getBehaviorNames() {
         init(false);
@@ -294,18 +303,9 @@ public class BehaviorSettingsFactory {
     // DEFAULT BEHAVIORS
     // ******************
     /**
-     * Destination Edge: {@link CardinalEdge#NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NONE} <br>
-     * Forced Withdrawal: False <br>
-     * Go Home: False <br>
-     * Auto Flee: False <br>
-     * Fall Shame: 2 <br>
-     * Hyper Aggression: 10 <br>
-     * Self Preservation: 2 <br>
-     * Herd Mentality: 5 <br>
-     * Bravery: 9 <br>
-     * Anti-Crowding: 0 <br>
-     * Favor Higher TMM: 0 <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br> Retreat Edge: {@link CardinalEdge#NONE} <br> Forced Withdrawal:
+     * False <br> Go Home: False <br> Auto Flee: False <br> Fall Shame: 2 <br> Hyper Aggression: 10 <br> Self
+     * Preservation: 2 <br> Herd Mentality: 5 <br> Bravery: 9 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
      * Strategic Targets: None
      */
     // Used by MekHQ
@@ -338,18 +338,9 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Destination Edge: {@link CardinalEdge#NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
-     * Forced Withdrawal: True <br>
-     * Go Home: False <br>
-     * Auto Flee: False <br>
-     * Fall Shame: 8 <br>
-     * Hyper Aggression: 1 <br>
-     * Self Preservation: 10 <br>
-     * Herd Mentality: 8 <br>
-     * Bravery: 2 <br>
-     * Anti-Crowding: 0 <br>
-     * Favor Higher TMM: 0 <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br> Retreat Edge: {@link CardinalEdge#NEAREST} <br> Forced
+     * Withdrawal: True <br> Go Home: False <br> Auto Flee: False <br> Fall Shame: 8 <br> Hyper Aggression: 1 <br> Self
+     * Preservation: 10 <br> Herd Mentality: 8 <br> Bravery: 2 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
      * Strategic Targets: None
      */
     public final BehaviorSettings COWARDLY_BEHAVIOR = buildCowardlyBehavior();
@@ -381,18 +372,9 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Destination Edge: {@link CardinalEdge#NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
-     * Forced Withdrawal: True <br>
-     * Go Home: True <br>
-     * Auto Flee: True <br>
-     * Fall Shame: 7 <br>
-     * Hyper Aggression: 3 <br>
-     * Self Preservation: 10 <br>
-     * Herd Mentality: 5 <br>
-     * Bravery: 2 <br>
-     * Anti-Crowding: 0 <br>
-     * Favor Higher TMM: 0 <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br> Retreat Edge: {@link CardinalEdge#NEAREST} <br> Forced
+     * Withdrawal: True <br> Go Home: True <br> Auto Flee: True <br> Fall Shame: 7 <br> Hyper Aggression: 3 <br> Self
+     * Preservation: 10 <br> Herd Mentality: 5 <br> Bravery: 2 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
      * Strategic Targets: None
      */
     // Used by MekHQ
@@ -425,18 +407,9 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Destination Edge: {@link CardinalEdge#NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
-     * Forced Withdrawal: True <br>
-     * Go Home: True <br>
-     * Auto Flee: True <br>
-     * Fall Shame: 7 <br>
-     * Hyper Aggression: 3 <br>
-     * Self Preservation: 10 <br>
-     * Herd Mentality: 5 <br>
-     * Bravery: 2 <br>
-     * Anti-Crowding: 0 <br>
-     * Favor Higher TMM: 0 <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br> Retreat Edge: {@link CardinalEdge#NEAREST} <br> Forced
+     * Withdrawal: True <br> Go Home: True <br> Auto Flee: True <br> Fall Shame: 7 <br> Hyper Aggression: 3 <br> Self
+     * Preservation: 10 <br> Herd Mentality: 5 <br> Bravery: 2 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
      * Strategic Targets: None
      */
     // Used by MekHQ
@@ -469,18 +442,9 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Destination Edge: {@link CardinalEdge#NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
-     * Forced Withdrawal: True <br>
-     * Go Home: True <br>
-     * Auto Flee: True <br>
-     * Fall Shame: 7 <br>
-     * Hyper Aggression: 3 <br>
-     * Self Preservation: 10 <br>
-     * Herd Mentality: 5 <br>
-     * Bravery: 2 <br>
-     * Anti-Crowding: 0 <br>
-     * Favor Higher TMM: 0 <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br> Retreat Edge: {@link CardinalEdge#NEAREST} <br> Forced
+     * Withdrawal: True <br> Go Home: True <br> Auto Flee: True <br> Fall Shame: 7 <br> Hyper Aggression: 3 <br> Self
+     * Preservation: 10 <br> Herd Mentality: 5 <br> Bravery: 2 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
      * Strategic Targets: None
      */
     // Used by MekHQ
@@ -514,20 +478,10 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Destination Edge: {@link CardinalEdge#NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
-     * Forced Withdrawal: True <br>
-     * Go Home: True <br>
-     * Auto Flee: True <br>
-     * Fall Shame: 6 <br>
-     * Hyper Aggression: 3 <br>
-     * Self Preservation: 10 <br>
-     * Herd Mentality: 5 <br>
-     * Bravery: 2 <br>
-     * Anti-Crowding: 5 <br>
-     * Favor Higher TMM: 10 <br>
-     * Ignore Damage Output: True <br>
-     * Strategic Targets: None
+     * Destination Edge: {@link CardinalEdge#NONE} <br> Retreat Edge: {@link CardinalEdge#NEAREST} <br> Forced
+     * Withdrawal: True <br> Go Home: True <br> Auto Flee: True <br> Fall Shame: 6 <br> Hyper Aggression: 3 <br> Self
+     * Preservation: 10 <br> Herd Mentality: 5 <br> Bravery: 2 <br> Anti-Crowding: 5 <br> Favor Higher TMM: 10 <br>
+     * Ignore Damage Output: True <br> Strategic Targets: None
      */
     // Used by MekHQ
     public final BehaviorSettings CONVOY_BEHAVIOR = buildConvoyBehavior();
@@ -567,18 +521,9 @@ public class BehaviorSettingsFactory {
     // ******************
 
     /**
-     * Destination Edge: {@link CardinalEdge#NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
-     * Forced Withdrawal: True <br>
-     * Go Home: False <br>
-     * Auto Flee: False <br>
-     * Fall Shame: 5 <br>
-     * Hyper Aggression: 5 <br>
-     * Self Preservation: 5 <br>
-     * Herd Mentality: 5 <br>
-     * Bravery: 5 <br>
-     * Anti-Crowding: 0 <br>
-     * Favor Higher TMM: 0 <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br> Retreat Edge: {@link CardinalEdge#NEAREST} <br> Forced
+     * Withdrawal: True <br> Go Home: False <br> Auto Flee: False <br> Fall Shame: 5 <br> Hyper Aggression: 5 <br> Self
+     * Preservation: 5 <br> Herd Mentality: 5 <br> Bravery: 5 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
      * Strategic Targets: None <br>
      */
     public final BehaviorSettings DEFAULT_BEHAVIOR = buildDefaultBehavior();

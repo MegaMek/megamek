@@ -1,24 +1,41 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.scenario;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.nio.file.Path;
@@ -27,7 +44,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -43,11 +59,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.SuiteConstants;
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.buttons.ButtonEsc;
-import megamek.client.ui.clientGUI.CloseAction;
-import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.buttons.DialogButton;
+import megamek.client.ui.clientGUI.CloseAction;
+import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
+import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.util.ClickableLabel;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
@@ -57,15 +73,10 @@ import megamek.common.scenario.ScenarioLoader;
 import megamek.logging.MMLogger;
 
 /**
- * This dialog lists all scenarios found in MM's scenario directory as well as
- * the corresponding user directory.
- * The scenarios are grouped by subdirectory (only the one directly below
- * scenarios, further subdirectories
- * are scanned for scenarios but not used for grouping). After closing, a chosen
- * scenario can be retrieved
- * by calling {@link #getSelectedScenarioFilename()}. As a fallback, the dialog
- * also allows choosing a
- * scenario by file.
+ * This dialog lists all scenarios found in MM's scenario directory as well as the corresponding user directory. The
+ * scenarios are grouped by subdirectory (only the one directly below scenarios, further subdirectories are scanned for
+ * scenarios but not used for grouping). After closing, a chosen scenario can be retrieved by calling
+ * {@link #getSelectedScenarioFilename()}. As a fallback, the dialog also allows choosing a scenario by file.
  */
 public class ScenarioChooserDialog extends AbstractButtonDialog {
     private static final MMLogger logger = MMLogger.create(ScenarioChooserDialog.class);
@@ -78,12 +89,11 @@ public class ScenarioChooserDialog extends AbstractButtonDialog {
         super(parentFrame, "ScenarioChooser", "ScenarioChooser.title");
         initialize();
         setMinimumSize(
-                new Dimension(ScenarioInfoPanel.BASE_MINIMUM_WIDTH, ScenarioInfoPanel.BASE_MINIMUM_HEIGHT * 3));
+              new Dimension(ScenarioInfoPanel.BASE_MINIMUM_WIDTH, ScenarioInfoPanel.BASE_MINIMUM_HEIGHT * 3));
     }
 
     /**
-     * @return the selected preset, or null if the dialog was cancelled or no preset
-     *         was selected
+     * @return the selected preset, or null if the dialog was cancelled or no preset was selected
      */
     public @Nullable String getSelectedScenarioFilename() {
         if (scenarioFileName != null) {
@@ -122,8 +132,8 @@ public class ScenarioChooserDialog extends AbstractButtonDialog {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
         buttonPanel.setBorder(BorderFactory.createCompoundBorder(
-                new MatteBorder(1, 0, 0, 0, UIManager.getColor("Separator.foreground")),
-                new EmptyBorder(10, 0, 10, 0)));
+              new MatteBorder(1, 0, 0, 0, UIManager.getColor("Separator.foreground")),
+              new EmptyBorder(10, 0, 10, 0)));
 
         Box verticalBox = Box.createVerticalBox();
         verticalBox.add(Box.createVerticalGlue());
@@ -162,18 +172,17 @@ public class ScenarioChooserDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Searches the provided directory and all subdirectories for scenario files and
-     * returns a list of
-     * them.
+     * Searches the provided directory and all subdirectories for scenario files and returns a list of them.
      *
      * @param directory the directory to parse
+     *
      * @return a List of scenarios
      */
     private static List<Scenario> parseScenariosInDirectory(final File directory) {
         logger.info("Parsing scenarios from {}", directory);
         List<Scenario> scenarios = new ArrayList<>();
         for (String scenarioFile : CommonSettingsDialog.filteredFilesWithSubDirs(directory,
-                SuiteConstants.SCENARIO_EXT)) {
+              SuiteConstants.SCENARIO_EXT)) {
             try {
                 scenarios.add(new ScenarioLoader(scenarioFile).load());
             } catch (Exception ex) {
@@ -184,8 +193,7 @@ public class ScenarioChooserDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Groups the given scenarios by the first subdirectory under scenarios they're
-     * in (disregards any deeper dirs)
+     * Groups the given scenarios by the first subdirectory under scenarios they're in (disregards any deeper dirs)
      */
     private Map<String, List<Scenario>> sortScenarios(List<Scenario> scenarioInfos) {
         return scenarioInfos.stream().collect(Collectors.groupingBy(this::getSubDirectory, Collectors.toList()));
@@ -203,10 +211,8 @@ public class ScenarioChooserDialog extends AbstractButtonDialog {
     }
 
     /**
-     * @return The first subdirectory under the scenarios directory that the
-     *         scenario is in; a scenario
-     *         in scenarios/tukkayid/secondencounter/ would return "tukkayid". This
-     *         is used for grouping
+     * @return The first subdirectory under the scenarios directory that the scenario is in; a scenario in
+     *       scenarios/tukkayid/secondencounter/ would return "tukkayid". This is used for grouping
      */
     private String getSubDirectory(Scenario scenarioInfo) {
         String scenariosDir = Configuration.scenariosDir().toString();
@@ -218,8 +224,7 @@ public class ScenarioChooserDialog extends AbstractButtonDialog {
     }
 
     /**
-     * @return The directories (and filename) present in the given full fileName as
-     *         a list.
+     * @return The directories (and filename) present in the given full fileName as a list.
      */
     private static List<String> directoriesAsList(String fileName) {
         Path path = Paths.get(fileName);

@@ -1,22 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024-2025 - The MegaMek Team. All Rights Reserved.
+  Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.io.PrintWriter;
@@ -183,8 +198,8 @@ public class ProtoMek extends Entity {
         int index = torsoNum - SYSTEM_TORSO_WEAPON_A;
         // There are some non-weapons that take up weapon critical slots
         List<Mounted<?>> torsoEquipment = getEquipment().stream()
-                                                .filter(m -> (m.getLocation() == LOC_TORSO) && m.getType().isHittable())
-                                                .toList();
+              .filter(m -> (m.getLocation() == LOC_TORSO) && m.getType().isHittable())
+              .toList();
         if (index < torsoEquipment.size()) {
             return torsoEquipment.get(index);
         } else {
@@ -307,54 +322,54 @@ public class ProtoMek extends Entity {
                 3055,
                 3059,
                 3060)
-                                                                     .setClanApproximate(true, false, false)
-                                                                     .setPrototypeFactions(Faction.CSJ)
-                                                                     .setProductionFactions(Faction.CSJ)
-                                                                     .setTechRating(TechRating.F)
-                                                                     .setAvailability(AvailabilityValue.X,
-                                                                           AvailabilityValue.X,
-                                                                           AvailabilityValue.E,
-                                                                           AvailabilityValue.D)
-                                                                     .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setClanApproximate(true, false, false)
+          .setPrototypeFactions(Faction.CSJ)
+          .setProductionFactions(Faction.CSJ)
+          .setTechRating(TechRating.F)
+          .setAvailability(AvailabilityValue.X,
+                AvailabilityValue.X,
+                AvailabilityValue.E,
+                AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     public static final TechAdvancement TA_QUAD = new TechAdvancement(TechBase.CLAN).setClanAdvancement(3075,
                 3083,
                 3100)
-                                                        .setClanApproximate(false, true, false)
-                                                        .setPrototypeFactions(Faction.CLAN)
-                                                        .setProductionFactions(Faction.CCC)
-                                                        .setTechRating(TechRating.F)
-                                                        .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
-                                                        .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setClanApproximate(false, true, false)
+          .setPrototypeFactions(Faction.CLAN)
+          .setProductionFactions(Faction.CCC)
+          .setTechRating(TechRating.F)
+          .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     public static final TechAdvancement TA_ULTRA = new TechAdvancement(TechBase.CLAN).setClanAdvancement(3075,
                 3083,
                 3100)
-                                                         .setClanApproximate(false, true, false)
-                                                         .setPrototypeFactions(Faction.CLAN)
-                                                         .setProductionFactions(Faction.CCY)
-                                                         .setTechRating(TechRating.F)
-                                                         .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
-                                                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setClanApproximate(false, true, false)
+          .setPrototypeFactions(Faction.CLAN)
+          .setProductionFactions(Faction.CCY)
+          .setTechRating(TechRating.F)
+          .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     public static final TechAdvancement TA_GLIDER = new TechAdvancement(TechBase.CLAN).setClanAdvancement(3075,
                 3084,
                 3100)
-                                                          .setClanApproximate(false, true, false)
-                                                          .setPrototypeFactions(Faction.CLAN)
-                                                          .setProductionFactions(Faction.CSR)
-                                                          .setTechRating(TechRating.F)
-                                                          .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
-                                                          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setClanApproximate(false, true, false)
+          .setPrototypeFactions(Faction.CLAN)
+          .setProductionFactions(Faction.CSR)
+          .setTechRating(TechRating.F)
+          .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     public static final TechAdvancement TA_INTERFACE_COCKPIT = new TechAdvancement(TechBase.IS).setISAdvancement(3071,
                 DATE_NONE,
                 DATE_NONE,
                 3085)
-                                                                     .setISApproximate(true)
-                                                                     .setPrototypeFactions(Faction.WB)
-                                                                     .setTechRating(TechRating.E)
-                                                                     .setAvailability(AvailabilityValue.X,
-                                                                           AvailabilityValue.X,
-                                                                           AvailabilityValue.F,
-                                                                           AvailabilityValue.X)
-                                                                     .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+          .setISApproximate(true)
+          .setPrototypeFactions(Faction.WB)
+          .setTechRating(TechRating.E)
+          .setAvailability(AvailabilityValue.X,
+                AvailabilityValue.X,
+                AvailabilityValue.F,
+                AvailabilityValue.X)
+          .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -501,7 +516,7 @@ public class ProtoMek extends Entity {
     @Override
     public boolean canPickupGroundObject() {
         return !isLocationBad(ProtoMek.LOC_LARM) && (getCarriedObject(ProtoMek.LOC_LARM) == null) ||
-                     !isLocationBad(ProtoMek.LOC_RARM) && (getCarriedObject(ProtoMek.LOC_RARM) == null);
+              !isLocationBad(ProtoMek.LOC_RARM) && (getCarriedObject(ProtoMek.LOC_RARM) == null);
     }
 
     @Override
@@ -801,7 +816,7 @@ public class ProtoMek extends Entity {
                 mounted.setShotsLeft(shots);
                 mounted.setOriginalShots(shots);
                 ((AmmoMounted) mounted).setAmmoCapacity(shots * ((AmmoMounted) mounted).getType().getKgPerShot() /
-                                                              1000);
+                      1000);
                 super.addEquipment(mounted, loc, rearMounted);
                 return;
             }
@@ -811,22 +826,22 @@ public class ProtoMek extends Entity {
             int max = maxWeapons(loc);
             if (max == 0) {
                 throw new LocationFullException("Weapon " +
-                                                      mounted.getName() +
-                                                      " can't be mounted in " +
-                                                      getLocationAbbr(loc));
+                      mounted.getName() +
+                      " can't be mounted in " +
+                      getLocationAbbr(loc));
             }
             // EDP armor reduces the number of torso slots by one.
             if ((loc == LOC_TORSO) && (getArmorType(loc) == EquipmentType.T_ARMOR_EDP)) {
                 max--;
             }
             long current = getEquipment().stream()
-                                 .filter(m -> (m.getLocation() == loc) && m.getType().isHittable())
-                                 .count();
+                  .filter(m -> (m.getLocation() == loc) && m.getType().isHittable())
+                  .count();
             if (current >= max) {
                 throw new LocationFullException("Weapon " +
-                                                      mounted.getName() +
-                                                      " exceeds maximum for " +
-                                                      getLocationAbbr(loc));
+                      mounted.getName() +
+                      " exceeds maximum for " +
+                      getLocationAbbr(loc));
             }
         }
         super.addEquipment(mounted, loc, rearMounted);
@@ -1013,7 +1028,7 @@ public class ProtoMek extends Entity {
         if (isHidden()) {
             // Can't deploy in paved hexes
             if ((hex.containsTerrain(Terrains.PAVEMENT) || hex.containsTerrain(Terrains.ROAD)) &&
-                      (!hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.RUBBLE))) {
+                  (!hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.RUBBLE))) {
                 return true;
             }
             // Can't deploy on a bridge
@@ -1119,8 +1134,8 @@ public class ProtoMek extends Entity {
 
     public boolean isEDPCharging() {
         return getMisc().stream()
-                     .filter(m -> m.getType().hasFlag(MiscType.F_ELECTRIC_DISCHARGE_ARMOR))
-                     .anyMatch(m -> m.curMode().equals("charging"));
+              .filter(m -> m.getType().hasFlag(MiscType.F_ELECTRIC_DISCHARGE_ARMOR))
+              .anyMatch(m -> m.curMode().equals("charging"));
     }
 
     public boolean isQuad() {

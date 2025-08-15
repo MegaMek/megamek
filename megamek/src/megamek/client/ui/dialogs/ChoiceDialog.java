@@ -1,15 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
- * 
- * This program is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the Free 
- * Software Foundation; either version 2 of the License, or (at your option) 
- * any later version.
- * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- * for more details.
+ * Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs;
 
@@ -22,26 +42,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import javax.swing.AbstractButton;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.*;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 
 /**
- * A (somewhat primitive) dialog that asks a question and lets the player select
- * from the available choices. The question string is tokenised on "\n". <p>
- * Refactored from SingleChoiceDialog (which was based on Confirm)
- * 
+ * A (somewhat primitive) dialog that asks a question and lets the player select from the available choices. The
+ * question string is tokenised on "\n". <p> Refactored from SingleChoiceDialog (which was based on Confirm)
+ *
  * @author suvarov454@sourceforge.net
  */
 public class ChoiceDialog extends JDialog implements ActionListener {
@@ -62,22 +71,21 @@ public class ChoiceDialog extends JDialog implements ActionListener {
 
     //the maximum number of choices that can be made; -1 if no maximum
     private int maxChoices;
-    
+
     /**
      * Create and initialize the dialog.
-     * 
-     * @param parent - the <code>Frame</code> that is locked by this dialog.
-     * @param question - <code>String</code> displayed above the choices. The
-     *            question string is tokenised on "\n".
-     * @param choices - an array of <code>String</code>s to be displayed.
-     * @param isSingle - a <code>boolean</code> that identifies whether the
-     *            dialog is supposed to be a single choice dialog or support
+     *
+     * @param parent   - the <code>Frame</code> that is locked by this dialog.
+     * @param question - <code>String</code> displayed above the choices. The question string is tokenised on "\n".
+     * @param choices  - an array of <code>String</code>s to be displayed.
+     * @param isSingle - a <code>boolean</code> that identifies whether the dialog is supposed to be a single choice
+     *                 dialog or support
      */
     private void initialize(JFrame parent, String question, String[] choices, boolean isSingle, int max) {
         super.setResizable(false);
 
         this.maxChoices = max;
-        
+
         GridBagLayout gridbag = new GridBagLayout();
         getContentPane().setLayout(gridbag);
 
@@ -133,7 +141,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
                 ButtonGroup radioGroup = new ButtonGroup();
                 for (int loop = 0; loop < choices.length; loop++) {
                     checkboxes[loop] = new JRadioButton(choices[loop],
-                            loop == 0);
+                          loop == 0);
                     radioGroup.add(checkboxes[loop]);
                     choiceArea.add(checkboxes[loop]);
                 }
@@ -145,7 +153,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
                     checkboxes[loop].addActionListener(evt -> checkDisableChoices());
                     choiceArea.add(checkboxes[loop]);
                 }
-                
+
                 // If this is not a single-choice dialog, place the
                 // "select all" and "clear all" buttons in a row
                 // under the scrollable area.
@@ -162,7 +170,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
                 getContentPane().add(panAllButtons, center);
             }
         }
-        
+
         // Allow the player to confirm or abort the choice.
         setupButtons();
         c.gridy++;
@@ -191,8 +199,8 @@ public class ChoiceDialog extends JDialog implements ActionListener {
             size = getSize();
         }
         setLocation(parent.getLocation().x + parent.getSize().width / 2
-                - size.width / 2, parent.getLocation().y
-                + parent.getSize().height / 2 - size.height / 2);
+              - size.width / 2, parent.getLocation().y
+              + parent.getSize().height / 2 - size.height / 2);
     }
 
     private void setupButtons() {
@@ -229,65 +237,59 @@ public class ChoiceDialog extends JDialog implements ActionListener {
             for (int loop = 0; loop < checkboxes.length; loop++) {
                 if (!checkboxes[loop].isSelected()) {
                     checkboxes[loop].setEnabled(false);
-                }              
+                }
             }
         } else {
             for (int loop = 0; loop < checkboxes.length; loop++) {
-                checkboxes[loop].setEnabled(true);           
+                checkboxes[loop].setEnabled(true);
             }
         }
     }
-    
+
     /**
-     * Create a choice dialog. The player can choose any or all of the choices.
-     * If no choices are passed in, this will be a very boring dialog, but it
-     * will not suffer an exception.
-     * 
-     * @param parent - the <code>Frame</code> that is locked by this dialog.
-     * @param title - the title <code>String</code> for this dialog.
-     * @param question - <code>String</code> displayed above the choices. The
-     *            question string is tokenised on "\n".
-     * @param choices - an array of <code>String</code>s to be displayed.
+     * Create a choice dialog. The player can choose any or all of the choices. If no choices are passed in, this will
+     * be a very boring dialog, but it will not suffer an exception.
+     *
+     * @param parent   - the <code>Frame</code> that is locked by this dialog.
+     * @param title    - the title <code>String</code> for this dialog.
+     * @param question - <code>String</code> displayed above the choices. The question string is tokenised on "\n".
+     * @param choices  - an array of <code>String</code>s to be displayed.
      * @param isSingle - a <code>boolean</code> that identifies that
-     * @param max - the maximum number of choices that can be made
+     * @param max      - the maximum number of choices that can be made
      */
     public ChoiceDialog(JFrame parent, String title, String question,
-            String[] choices, boolean isSingle, int max) {
+          String[] choices, boolean isSingle, int max) {
         super(parent, title, true);
         initialize(parent, question, choices, isSingle, max);
     }
-    
+
     /**
-     * Create a choice dialog. The player can choose any or all of the choices.
-     * If no choices are passed in, this will be a very boring dialog, but it
-     * will not suffer an exception.
-     * 
-     * @param parent - the <code>Frame</code> that is locked by this dialog.
-     * @param title - the title <code>String</code> for this dialog.
-     * @param question - <code>String</code> displayed above the choices. The
-     *            question string is tokenised on "\n".
-     * @param choices - an array of <code>String</code>s to be displayed.
+     * Create a choice dialog. The player can choose any or all of the choices. If no choices are passed in, this will
+     * be a very boring dialog, but it will not suffer an exception.
+     *
+     * @param parent   - the <code>Frame</code> that is locked by this dialog.
+     * @param title    - the title <code>String</code> for this dialog.
+     * @param question - <code>String</code> displayed above the choices. The question string is tokenised on "\n".
+     * @param choices  - an array of <code>String</code>s to be displayed.
      * @param isSingle - a <code>boolean</code> that identifies that
      */
     public ChoiceDialog(JFrame parent, String title, String question,
-            String[] choices, boolean isSingle) {
+          String[] choices, boolean isSingle) {
         super(parent, title, true);
         initialize(parent, question, choices, isSingle, -1);
     }
 
     /**
-     * Create a choice dialog. The player can choose any or all of the choices.
-     * If no choices are passed in, this will be a very boring dialog, but it
-     * will not suffer an exception.
-     * 
-     * @param parent - the <code>Frame</code> that is locked by this dialog.
-     * @param title - the title <code>String</code> for this dialog.
-     * @param question - <code>String</code> displayed above the choices. The
-     *            question string is tokenised on "\n".
-     * @param choices - an array of <code>String</code>s to be displayed.
+     * Create a choice dialog. The player can choose any or all of the choices. If no choices are passed in, this will
+     * be a very boring dialog, but it will not suffer an exception.
+     *
+     * @param parent   - the <code>Frame</code> that is locked by this dialog.
+     * @param title    - the title <code>String</code> for this dialog.
+     * @param question - <code>String</code> displayed above the choices. The question string is tokenised on "\n".
+     * @param choices  - an array of <code>String</code>s to be displayed.
      */
     public ChoiceDialog(JFrame parent, String title, String question,
-            String[] choices) {
+          String[] choices) {
         super(parent, title, true);
         initialize(parent, question, choices, false, -1);
     }
@@ -310,7 +312,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
             confirm = true;
             setVisible(false);
         } else if (e.getSource().equals(checkboxes)) {
-            
+
         } else {
             confirm = false;
             setVisible(false);
@@ -319,10 +321,10 @@ public class ChoiceDialog extends JDialog implements ActionListener {
 
     /**
      * See if the player confirmed a choice.
-     * 
+     *
      * @return <code>true</code> if the player has confirmed a choice.
-     *         <code>false</code> if the player canceled, if the player did
-     *         not select a choice, or if no choices were available.
+     *       <code>false</code> if the player canceled, if the player did
+     *       not select a choice, or if no choices were available.
      */
     public boolean getAnswer() {
         return getChoices() != null;
@@ -330,12 +332,10 @@ public class ChoiceDialog extends JDialog implements ActionListener {
 
     /**
      * Which choices did the player select?
-     * 
-     * @return If no choices were available, if the player canceled, if the
-     *         player did not select a choice, or if the player canceled the
-     *         choice, a <code>null</code> value is returned, otherwise an
-     *         array of the <code>int</code> indexes from the input array that
-     *         match the selected choices is returned.
+     *
+     * @return If no choices were available, if the player canceled, if the player did not select a choice, or if the
+     *       player canceled the choice, a <code>null</code> value is returned, otherwise an array of the
+     *       <code>int</code> indexes from the input array that match the selected choices is returned.
      */
     public int[] getChoices() {
         int[] retval = null;
@@ -369,7 +369,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
 
         return retval;
     }
-    
+
     public int countChoices() {
         int index = 0;
         if (checkboxes != null) {
@@ -377,7 +377,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
                 if (checkboxes[loop].isSelected()) {
                     index++;
                 }
-            }   
+            }
         }
         return index;
     }

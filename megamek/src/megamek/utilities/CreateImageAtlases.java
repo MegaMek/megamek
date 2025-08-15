@@ -1,22 +1,37 @@
 /*
  * Copyright (c) 2000-2016 - Ben Mazur (bmazur@sev.org).
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.utilities;
 
 import java.awt.Graphics;
@@ -27,7 +42,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
 
 import megamek.client.ui.tileset.HexTileset;
@@ -36,9 +50,8 @@ import megamek.common.Configuration;
 import megamek.logging.MMLogger;
 
 /**
- * Program that will scan the data/images directory for images and take all of
- * the images in a subdirectory and store them in a single image atlas. All of
- * the files added to an atlas in this fashion will then be stored and then each
+ * Program that will scan the data/images directory for images and take all of the images in a subdirectory and store
+ * them in a single image atlas. All of the files added to an atlas in this fashion will then be stored and then each
  * tileset file will be scanned and updated to reflect the new image location.
  *
  * @author arlith
@@ -55,25 +68,23 @@ public class CreateImageAtlases {
     int hexHeight = HexTileset.HEX_H;
 
     /**
-     * Keep a map of image paths stored in an atlas (relative to the image
-     * directory), mapped to their location within the atlas. This can be
-     * written to a file which can later be used when loading images to see if a
-     * particular image can be loaded from an atlas instead.
+     * Keep a map of image paths stored in an atlas (relative to the image directory), mapped to their location within
+     * the atlas. This can be written to a file which can later be used when loading images to see if a particular image
+     * can be loaded from an atlas instead.
      */
     ImageAtlasMap imgFileToAtlasMap = new ImageAtlasMap();
 
     /**
-     * Keep track of what images have been written to an atlas. At the end, this
-     * map can be saved to a file and then used with an
+     * Keep track of what images have been written to an atlas. At the end, this map can be saved to a file and then
+     * used with an
      * <code>ImageLoader</code>, so that images packaged into an atlas can still
      * be loaded by using their original filename.
      */
     Path imageDirPath = Configuration.imagesDir().toPath();
 
     /**
-     * Keeps track of the paths to images (relative to the current directory)
-     * that have been stored in an atlas. This can be written to a file for
-     * later deletion.
+     * Keeps track of the paths to images (relative to the current directory) that have been stored in an atlas. This
+     * can be written to a file for later deletion.
      */
     ArrayList<String> imagesStored = new ArrayList<>();
 
@@ -103,9 +114,8 @@ public class CreateImageAtlases {
     }
 
     /**
-     * Find all of the image files in the given directory and generate an atlas
-     * large enough to hold them, then iterate through each image and draw it
-     * into the atlas. The atlas is then saved as "atlas-dirname.png".
+     * Find all of the image files in the given directory and generate an atlas large enough to hold them, then iterate
+     * through each image and draw it into the atlas. The atlas is then saved as "atlas-dirname.png".
      *
      * @param dir
      */
@@ -113,10 +123,10 @@ public class CreateImageAtlases {
         logger.info("Processing: {}", dir);
 
         File[] imageFiles = dir.listFiles((dir1, name) -> ((name.toLowerCase().endsWith(".png") ||
-                name.toLowerCase().endsWith(".gif") ||
-                name.toLowerCase().endsWith(".jpg") ||
-                name.toLowerCase().endsWith(".jpeg"))
-                && !name.endsWith("_atlas.png")));
+              name.toLowerCase().endsWith(".gif") ||
+              name.toLowerCase().endsWith(".jpg") ||
+              name.toLowerCase().endsWith(".jpeg"))
+              && !name.endsWith("_atlas.png")));
 
         int numRows = (int) Math.ceil(imageFiles.length / (imagesPerRow + 0.0));
 
@@ -126,7 +136,7 @@ public class CreateImageAtlases {
         }
 
         BufferedImage atlas = new BufferedImage(imagesPerRow * hexWidth, numRows * hexHeight,
-                BufferedImage.TYPE_INT_ARGB);
+              BufferedImage.TYPE_INT_ARGB);
         Graphics g = atlas.getGraphics();
         File atlasFile = new File(dir, dir.getName() + "_atlas.png");
         String atlasLoc;
@@ -153,12 +163,12 @@ public class CreateImageAtlases {
             // Error checking
             if (currentImg.getHeight() != hexHeight || currentImg.getWidth() != hexWidth) {
                 logger.info(
-                        "Skipping image {} because dimensions don't match expected size. Image is {} x {} ( expected {} x {} )",
-                        imgFile,
-                        currentImg.getWidth(),
-                        currentImg.getHeight(),
-                        hexWidth,
-                        hexHeight);
+                      "Skipping image {} because dimensions don't match expected size. Image is {} x {} ( expected {} x {} )",
+                      imgFile,
+                      currentImg.getWidth(),
+                      currentImg.getHeight(),
+                      hexWidth,
+                      hexHeight);
                 improperImgDimsCount++;
                 continue;
             }
@@ -203,15 +213,13 @@ public class CreateImageAtlases {
     }
 
     /**
-     * Main entrypoint for the Image Atlas creation system. Can be ran from gradle
-     * with
-     *
+     * Main entrypoint for the Image Atlas creation system. Can be ran from gradle with
+     * <p>
      * ./gradlew createImageAtlases
-     *
+     * <p>
      * or from the jar file with
-     *
-     * java -cp MegaMek.jar megamek.utilities.CreateImageAtlases %lt;optional
-     * filename%gt;
+     * <p>
+     * java -cp MegaMek.jar megamek.utilities.CreateImageAtlases %lt;optional filename%gt;
      *
      * @param args
      */
@@ -233,7 +241,7 @@ public class CreateImageAtlases {
         atlasCreator.writeImgFileToAtlasMap();
 
         try (FileWriter fw = new FileWriter(fileName);
-                BufferedWriter bw = new BufferedWriter(fw)) {
+              BufferedWriter bw = new BufferedWriter(fw)) {
             for (String imgFile : atlasCreator.imagesStored) {
                 bw.write(imgFile);
                 bw.write("\n");
@@ -243,6 +251,6 @@ public class CreateImageAtlases {
         }
 
         logger.info("Skipped {} images due to improper dimensions.",
-                atlasCreator.improperImgDimsCount);
+              atlasCreator.improperImgDimsCount);
     }
 }

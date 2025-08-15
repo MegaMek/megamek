@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay;
 
@@ -26,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -207,7 +220,10 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
         if (actingFormation().isEmpty() || !isMyTurn() || selectedTarget == null) {
             return;
         }
-        var attack = new SBFStandardUnitAttack(actingFormation().get().getId(), firingUnit, selectedTarget.getId(), ASRange.LONG);
+        var attack = new SBFStandardUnitAttack(actingFormation().get().getId(),
+              firingUnit,
+              selectedTarget.getId(),
+              ASRange.LONG);
         plannedActions.add(attack);
         updateButtonStatus();
         updateDonePanel();
@@ -246,7 +262,7 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
         if (GUIP.getAutoSelectNextUnit()) {
             clientgui.getClient().getGame().getNextEligibleFormation().ifPresent(this::selectFormation);
         }
-//            clientgui.bingMyTurn();
+        //            clientgui.bingMyTurn();
         startTimer();
     }
 
@@ -257,7 +273,8 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
     private void updateButtonStatus() {
         boolean myTurn = isMyTurn();
         boolean turnIsFormationTurn = game().getTurn() instanceof SBFFormationTurn;
-        boolean hasAvailableUnits = turnIsFormationTurn && game().hasEligibleFormation((SBFFormationTurn) game().getTurn());
+        boolean hasAvailableUnits = turnIsFormationTurn
+              && game().hasEligibleFormation((SBFFormationTurn) game().getTurn());
         boolean hasTarget = selectedTarget != null;
 
         buttons.get(FiringCommand.FIRE_NEXT).setEnabled(myTurn && hasAvailableUnits);
@@ -267,16 +284,16 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
 
     private boolean isFirePossible() {
         return actingFormation().isPresent()
-                && (firingUnit >= 0)
-                && (actingFormation().get().getUnits().size() > firingUnit)
-                && actingFormation().get().isEligibleForPhase(game().getPhase())
-                && !unitHasPlannedFire();
+              && (firingUnit >= 0)
+              && (actingFormation().get().getUnits().size() > firingUnit)
+              && actingFormation().get().isEligibleForPhase(game().getPhase())
+              && !unitHasPlannedFire();
     }
 
     private boolean unitHasPlannedFire() {
         return plannedActions.stream()
-                .filter(a -> a instanceof SBFStandardUnitAttack)
-                .anyMatch(a -> ((SBFStandardUnitAttack) a).getUnitNumber() == firingUnit);
+              .filter(a -> a instanceof SBFStandardUnitAttack)
+              .anyMatch(a -> ((SBFStandardUnitAttack) a).getUnitNumber() == firingUnit);
     }
 
     @Override
@@ -314,8 +331,8 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
     }
 
     /**
-     * Recalculates toHit from the current selections for attacker and target and updates the targeting
-     * dialog accordingly.
+     * Recalculates toHit from the current selections for attacker and target and updates the targeting dialog
+     * accordingly.
      */
     private void updateTargetingData() {
         SBFToHitData toHitData = new SBFToHitData();
@@ -331,7 +348,7 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
                 toHitData.addModifier(TargetRoll.IMPOSSIBLE, "Invalid Unit");
             } else {
                 toHitData = SBFToHitData.compiletoHit(game(),
-                        new SBFStandardUnitAttack(attacker.getId(), firingUnit, selectedTarget.getId(), ASRange.LONG));
+                      new SBFStandardUnitAttack(attacker.getId(), firingUnit, selectedTarget.getId(), ASRange.LONG));
             }
         }
         showTargetDialog();

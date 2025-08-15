@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -44,10 +65,10 @@ public class MGAWeaponHandler extends MGHandler {
         if (target.isConventionalInfantry()) {
             calcDmgPerHitReport.add(new Report(950));
             int damage = Compute.directBlowInfantryDamage(
-                    wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport, howManyShots);
+                  wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
+                  wtype.getInfantryDamageClass(),
+                  ((Infantry) target).isMechanized(),
+                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport, howManyShots);
             damage = applyGlancingBlowModifier(damage, true);
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
                 if (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
@@ -64,7 +85,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeatUseAmmo()
      */
     @Override
@@ -95,7 +116,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -107,7 +128,7 @@ public class MGAWeaponHandler extends MGHandler {
             shotsHit = 1;
         } else {
             shotsHit = allShotsHit() ? howManyShots : Compute.missilesHit(
-                    howManyShots, nMod);
+                  howManyShots, nMod);
             Report r = new Report(3325);
             r.subject = subjectId;
             r.add(shotsHit);
@@ -125,7 +146,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
     @Override
@@ -137,29 +158,29 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
      * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
      */
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
+          Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+          int bldgAbsorbs) {
         int nDamage;
         if (hit == null) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                    toHit.getSideTable(), waa.getAimedLocation(),
-                    waa.getAimingMode(), toHit.getCover());
+                  toHit.getSideTable(), waa.getAimedLocation(),
+                  waa.getAimingMode(), toHit.getCover());
             hit.setAttackerId(getAttackerId());
         }
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), ComputeSideTable.sideTable(ae, entityTarget, weapon
-                .getCalledShot().getCall()))) {
+              .getCover(), ComputeSideTable.sideTable(ae, entityTarget, weapon
+              .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
-                    nCluster, bldgAbsorbs);
+                  nCluster, bldgAbsorbs);
             return;
         }
 
@@ -192,9 +213,9 @@ public class MGAWeaponHandler extends MGHandler {
         // damage absorption by the partial cover, if it would have happened
         Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
-                
-        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
-                vPhaseReport, bldg, targetStickingOutOfBuilding);
+
+        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs,
+              vPhaseReport, bldg, targetStickingOutOfBuilding);
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
 
@@ -216,16 +237,16 @@ public class MGAWeaponHandler extends MGHandler {
             if (bGlancing) {
                 hit.makeGlancingBlow();
             }
-            
+
             if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
             }
             vPhaseReport
-                    .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
-                            false, ae.getSwarmTargetId() == entityTarget
-                                    .getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront,
-                            underWater));
+                  .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
+                        false, ae.getSwarmTargetId() == entityTarget
+                              .getId() ? DamageType.IGNORE_PASSENGER
+                              : damageType, false, false, throughFront,
+                        underWater));
         }
     }
 }

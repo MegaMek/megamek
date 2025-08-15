@@ -1,15 +1,34 @@
 /*
- * MegaMek - Copyright (C) 2025 The MegaMek Team
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.common.verifier;
@@ -117,10 +136,11 @@ public class TestHandheldWeapon extends TestEntity {
         }
         if (hhw.getMiscEquipment(MiscType.F_CLUB).isEmpty()) {
             var items = hhw.getEquipment().stream()
-                              // Ammo and weapon enhancements (artemis, ppc capacitors, etc) don't count towards the
-                              // item limit
-                .filter(m -> !(m.getType() instanceof AmmoType) && !(m instanceof MiscMounted && m.getType().hasFlag(MiscType.F_WEAPON_ENHANCEMENT)))
-                .count();
+                  // Ammo and weapon enhancements (artemis, ppc capacitors, etc) don't count towards the
+                  // item limit
+                  .filter(m -> !(m.getType() instanceof AmmoType) && !(m instanceof MiscMounted && m.getType()
+                        .hasFlag(MiscType.F_WEAPON_ENHANCEMENT)))
+                  .count();
             if (items > 6) {
                 buff.append("Handheld Weapon can only mount up to 6 items!\n");
                 correct = false;
@@ -144,7 +164,8 @@ public class TestHandheldWeapon extends TestEntity {
         if (hasIllegalEquipmentCombinations(buff)) {
             correct = false;
         }
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)
+              || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
@@ -160,7 +181,7 @@ public class TestHandheldWeapon extends TestEntity {
         buff.append(printSource());
         if (correctWeight(buff, true, true)) {
             buff.append("Weight: ").append(getWeight()).append(" (").append(
-                calculateWeight()).append(")\n");
+                  calculateWeight()).append(")\n");
         }
 
         buff.append(printWeightCalculation()).append("\n");
@@ -178,7 +199,8 @@ public class TestHandheldWeapon extends TestEntity {
             if (ammoKinds.contains(kind)) {
                 illegal = true;
                 buff.append("Handheld weapon can only mount a single ammo bin for a given kind of ammo.\n");
-                buff.append("        Hint: If you're designing this weapon, instead of adding more ammo bins,\n        you can edit the value in the Shots column of the equipment list.\n");
+                buff.append(
+                      "        Hint: If you're designing this weapon, instead of adding more ammo bins,\n        you can edit the value in the Shots column of the equipment list.\n");
                 break;
             }
             ammoKinds.add(kind);

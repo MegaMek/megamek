@@ -50,7 +50,8 @@ public class PlayerTonnageSorter extends MekTableSorter {
 
     /**
      * A Lobby Mek Table sorter that sorts by 1) player 2) tonnage.
-     * @param client the client instance
+     *
+     * @param client  the client instance
      * @param sorting The sorting direction (ascending or descending).
      */
     public PlayerTonnageSorter(Client client, Sorting sorting) {

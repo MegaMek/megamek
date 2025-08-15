@@ -1,15 +1,34 @@
 /*
- * MegaMek - Copyright (C) 2021-2025 - The MegaMek Team
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
@@ -23,7 +42,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -34,7 +52,6 @@ import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.BombLoadout;
-import megamek.common.BombType;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.IBomber;
@@ -74,7 +91,7 @@ public class LobbyMekPopupActions implements ActionListener {
                 }
                 break;
 
-                // Multi entity commands
+            // Multi entity commands
             case LMP_ALPHASTRIKE:
             case LMP_AUTOCONFIG:
             case LMP_SAVECONFIG:
@@ -125,7 +142,7 @@ public class LobbyMekPopupActions implements ActionListener {
                 multiEntityAction(command, entities, info);
                 break;
 
-                // Force commands
+            // Force commands
             case LMP_FCREATESUB:
             case LMP_FADDTO:
             case LMP_FRENAME:
@@ -264,7 +281,9 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_ASSIGN:
                 StringTokenizer st = new StringTokenizer(info, ":");
                 int newOwnerId = Integer.parseInt(st.nextToken());
-                lobby.lobbyActions.changeOwner(entities, LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
+                lobby.lobbyActions.changeOwner(entities,
+                      LobbyUtility.getForces(lobby.game(), st.nextToken()),
+                      newOwnerId);
                 break;
 
             case LMP_DETACH_TRAILER:
@@ -382,7 +401,8 @@ public class LobbyMekPopupActions implements ActionListener {
         }
     }
 
-    /** Run config command for a set of entities
+    /**
+     * Run config command for a set of entities
      *
      * @param entities
      * @param command
@@ -441,7 +461,7 @@ public class LobbyMekPopupActions implements ActionListener {
 
     public static void resetBombChoices(ClientGUI clientgui, Game game, ArrayList<Entity> el) {
         ArrayList<Entity> resetBombers = new ArrayList<>();
-        for (Entity entity: el) {
+        for (Entity entity : el) {
             if (entity.isBomber() && !entity.isVehicle()) {
                 IBomber bomber = (IBomber) entity;
                 // Clear existing bomb choices!
@@ -459,7 +479,7 @@ public class LobbyMekPopupActions implements ActionListener {
         //ignoreHotKeys = true;
         JFileChooser fc = new JFileChooser(Paths.get(MMConstants.USER_LOADOUTS_DIR).toAbsolutePath().toString());
         FileNameExtensionFilter adfFilter = new FileNameExtensionFilter(
-                "adf files (*.adf)", "adf");
+              "adf files (*.adf)", "adf");
         fc.addChoosableFileFilter(adfFilter);
         fc.setFileFilter(adfFilter);
         fc.setLocation(lobby.getLocation().x + 150, lobby.getLocation().y + 100);
@@ -483,7 +503,7 @@ public class LobbyMekPopupActions implements ActionListener {
         MunitionTree mt = null;
         JFileChooser fc = new JFileChooser(Paths.get(MMConstants.USER_LOADOUTS_DIR).toAbsolutePath().toString());
         FileNameExtensionFilter adfFilter = new FileNameExtensionFilter(
-                "adf files (*.adf)", "adf");
+              "adf files (*.adf)", "adf");
         fc.addChoosableFileFilter(adfFilter);
         fc.setFileFilter(adfFilter);
         fc.setLocation(lobby.getLocation().x + 150, lobby.getLocation().y + 100);

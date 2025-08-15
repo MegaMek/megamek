@@ -1,24 +1,38 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview.toolTip;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -26,7 +40,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -40,8 +53,6 @@ import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
-
-import javax.swing.JDialog;
 
 public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 
@@ -86,7 +97,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             if ((selectedEntity != null) && (selectedEntity.getPosition() != null) && !selectedEntity.isOffBoard()) {
                 int distance = selectedEntity.getPosition().distance(coords);
 
-                sTerrain += HexTooltip. getDistanceTip(GUIP, distance);
+                sTerrain += HexTooltip.getDistanceTip(GUIP, distance);
 
                 int maxSensorRange = 0;
                 int minSensorRange = 0;
@@ -95,7 +106,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                     LosEffects los = bv.getFovHighlighting().getCachedLosEffects(selectedEntity.getPosition(),
                           coords, bv.getBoardId());
                     int bracket = Compute.getSensorRangeBracket(selectedEntity, null,
-                        bv.getFovHighlighting().getCachedECMInfo());
+                          bv.getFovHighlighting().getCachedECMInfo());
                     int range = Compute.getSensorRangeByBracket(game, selectedEntity, null, los);
 
                     maxSensorRange = bracket * range;
@@ -113,14 +124,21 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                     isMovement = true;
                 }
 
-                sTerrain += HexTooltip.getSensorRangeTip(GUIP, distance, minSensorRange, maxSensorRange, disPM, isMovement);
+                sTerrain += HexTooltip.getSensorRangeTip(GUIP,
+                      distance,
+                      minSensorRange,
+                      maxSensorRange,
+                      disPM,
+                      isMovement);
             }
-            String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainFGColor()));
-            sTerrain = UIUtil.tag("FONT", attr,  sTerrain);
+            String attr = String.format("FACE=Dialog  COLOR=%s",
+                  UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainFGColor()));
+            sTerrain = UIUtil.tag("FONT", attr, sTerrain);
             String col = UIUtil.tag("TD", "", sTerrain);
             String row = UIUtil.tag("TR", "", col);
-            attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipTerrainBGColor()));
-            String table = UIUtil.tag("TABLE", attr,  row);
+            attr = String.format("BORDER=0 BGCOLOR=%s width=100%%",
+                  GUIPreferences.hexColor(GUIP.getUnitToolTipTerrainBGColor()));
+            String table = UIUtil.tag("TABLE", attr, row);
             result += table;
 
             StringBuffer sbBuildings = new StringBuffer();
@@ -133,13 +151,15 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                     String sInvalidHex = Messages.getString("BoardView1.invalidHex");
                     sInvalidHex += "<BR>";
                     sInvalidHex += String.join("<BR>", errors);
-                    attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getUnitToolTipTerrainFGColor())));
+                    attr = String.format("FACE=Dialog COLOR=%s",
+                          UIUtil.toColorHexString((GUIP.getUnitToolTipTerrainFGColor())));
                     sInvalidHex += UIUtil.tag("FONT", attr, sInvalidHex);
                     sInvalidHex = UIUtil.tag("span", fontSizeAttr, sInvalidHex);
                     col = UIUtil.tag("TD", "", sInvalidHex);
                     row = UIUtil.tag("TR", "", col);
-                    attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipTerrainBGColor()));
-                    result += UIUtil.tag("TABLE", attr,  row);
+                    attr = String.format("BORDER=0 BGCOLOR=%s width=100%%",
+                          GUIPreferences.hexColor(GUIP.getUnitToolTipTerrainBGColor()));
+                    result += UIUtil.tag("TABLE", attr, row);
                 }
             }
         }
@@ -187,13 +207,15 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             }
             sUnitsInfo += " in this hex...";
 
-            String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipBlockFGColor()));
-            sUnitsInfo = UIUtil.tag("FONT", attr,  sUnitsInfo);
+            String attr = String.format("FACE=Dialog  COLOR=%s",
+                  UIUtil.toColorHexString(GUIP.getUnitToolTipBlockFGColor()));
+            sUnitsInfo = UIUtil.tag("FONT", attr, sUnitsInfo);
             sUnitsInfo = UIUtil.tag("span", fontSizeAttr, sUnitsInfo);
             String col = UIUtil.tag("TD", "", sUnitsInfo);
             String row = UIUtil.tag("TR", "", col);
-            attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBlockBGColor()));
-            String table = UIUtil.tag("TABLE", attr,  row);
+            attr = String.format("BORDER=0 BGCOLOR=%s width=100%%",
+                  GUIPreferences.hexColor(GUIP.getUnitToolTipBlockBGColor()));
+            String table = UIUtil.tag("TABLE", attr, row);
             result += table;
         }
 
@@ -202,13 +224,15 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             if (aSprite.isInside(coords)) {
                 String sAttackSprite = aSprite.getTooltip().toString();
 
-                String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipAltFGColor()));
-                sAttackSprite = UIUtil.tag("FONT", attr,  sAttackSprite);
+                String attr = String.format("FACE=Dialog  COLOR=%s",
+                      UIUtil.toColorHexString(GUIP.getUnitToolTipAltFGColor()));
+                sAttackSprite = UIUtil.tag("FONT", attr, sAttackSprite);
                 sAttackSprite = UIUtil.tag("span", fontSizeAttr, sAttackSprite);
                 String col = UIUtil.tag("TD", "", sAttackSprite);
                 String row = UIUtil.tag("TR", "", col);
-                attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipAltBGColor()));
-                String table = UIUtil.tag("TABLE", attr,  row);
+                attr = String.format("BORDER=0 BGCOLOR=%s width=100%%",
+                      GUIPreferences.hexColor(GUIP.getUnitToolTipAltBGColor()));
+                String table = UIUtil.tag("TABLE", attr, row);
                 result += table;
             }
         }
@@ -241,18 +265,20 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 msg_artilleryatack += Messages.getString("BoardView1.Tooltip.ArtilleryAttackOne2", ammoName);
             } else {
                 msg_artilleryatack = Messages.getString("BoardView1.Tooltip.ArtilleryAttackN1",
-                        wpName, aaa.getTurnsTilHit());
+                      wpName, aaa.getTurnsTilHit());
                 msg_artilleryatack += "<BR>&nbsp;&nbsp;";
                 msg_artilleryatack += Messages.getString("BoardView1.Tooltip.ArtilleryAttackN2", ammoName);
             }
 
-            String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipBlockFGColor()));
-            msg_artilleryatack = UIUtil.tag("FONT", attr,  msg_artilleryatack);
+            String attr = String.format("FACE=Dialog  COLOR=%s",
+                  UIUtil.toColorHexString(GUIP.getUnitToolTipBlockFGColor()));
+            msg_artilleryatack = UIUtil.tag("FONT", attr, msg_artilleryatack);
             msg_artilleryatack = UIUtil.tag("span", fontSizeAttr, msg_artilleryatack);
             String col = UIUtil.tag("TD", "", msg_artilleryatack);
             String row = UIUtil.tag("TR", "", col);
-            attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBlockBGColor()));
-            String table = UIUtil.tag("TABLE", attr,  row);
+            attr = String.format("BORDER=0 BGCOLOR=%s width=100%%",
+                  GUIPreferences.hexColor(GUIP.getUnitToolTipBlockBGColor()));
+            String table = UIUtil.tag("TABLE", attr, row);
             result += table;
         }
 
@@ -277,13 +303,14 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             }
 
             String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
-            msg_artilleryautohit = UIUtil.tag("FONT", attr,  msg_artilleryautohit);
+            msg_artilleryautohit = UIUtil.tag("FONT", attr, msg_artilleryautohit);
 
             msg_artilleryautohit = UIUtil.tag("span", fontSizeAttr, msg_artilleryautohit);
             String col = UIUtil.tag("TD", "", msg_artilleryautohit);
             String row = UIUtil.tag("TR", "", col);
-            attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor()));
-            result += UIUtil.tag("TABLE", attr,  row);
+            attr = String.format("BORDER=0 BGCOLOR=%s width=100%%",
+                  GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor()));
+            result += UIUtil.tag("TABLE", attr, row);
         }
 
         final Collection<SpecialHexDisplay> shdList = bv.getBoard().getSpecialHexDisplay(coords);
@@ -296,7 +323,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 // don't show tooltips for SHDs that aren't drawn. The exception is auto hits.  There will be an icon
                 // for auto hits, so we need to draw a tooltip
                 if (!shd.isObscured(localPlayer)
-                        && (shd.drawNow(game.getPhase(), round, localPlayer, GUIP) && isTypeAutoHit)) {
+                      && (shd.drawNow(game.getPhase(), round, localPlayer, GUIP) && isTypeAutoHit)) {
                     if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE) {
                         if (Objects.equals(localPlayer, shd.getOwner())) {
                             sSpecialHex += "Note: ";
@@ -307,8 +334,9 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                     String buf = shd.getInfo();
                     buf = buf.replaceAll("\\n", "<BR>");
                     sSpecialHex += buf;
-                    String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
-                    sSpecialHex = UIUtil.tag("FONT", attr,  sSpecialHex);
+                    String attr = String.format("FACE=Dialog  COLOR=%s",
+                          UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
+                    sSpecialHex = UIUtil.tag("FONT", attr, sSpecialHex);
                     sSpecialHex += "<BR>";
                 }
             }
@@ -316,13 +344,14 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             sSpecialHex = UIUtil.tag("span", fontSizeAttr, sSpecialHex);
             String col = UIUtil.tag("TD", "", sSpecialHex);
             String row = UIUtil.tag("TR", "", col);
-            String attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor()));
-            result += UIUtil.tag("TABLE", attr,  row);
+            String attr = String.format("BORDER=0 BGCOLOR=%s width=100%%",
+                  GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor()));
+            result += UIUtil.tag("TABLE", attr, row);
         }
 
         StringBuilder txt = new StringBuilder();
         String attr = String.format("WIDTH=%s", UIUtil.scaleForGUI(500));
-        String div = UIUtil.tag("DIV", attr,  result);
+        String div = UIUtil.tag("DIV", attr, result);
         txt.append(UnitToolTip.wrapWithHTML(div));
 
         // Check to see if the tool tip is completely empty
@@ -362,6 +391,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         // LEGACY replace with board Id version
         appendBuildingsTooltip(txt, mhex, 0);
     }
+
     /**
      * Appends HTML describing the buildings and minefields in a given hex
      */
@@ -380,7 +410,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             return;
         }
 
-        String result =  "<HR STYLE=WIDTH:90% />";
+        String result = "<HR STYLE=WIDTH:90% />";
         String entityTip = UnitToolTip.getEntityTipGame(entity, localPlayer()).toString();
         result += entityTip;
 
@@ -393,8 +423,8 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
     }
 
     /**
-     * @return The weapon selected in the unit display if that weapon is an artillery
-     * weapon and the unit itself is owned by the local player - null otherwise
+     * @return The weapon selected in the unit display if that weapon is an artillery weapon and the unit itself is
+     *       owned by the local player - null otherwise
      */
     @Nullable
     private Mounted<?> getSelectedArtilleryWeapon() {
@@ -406,10 +436,10 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             // the artyautohithexes phase. These could be displayed if the player
             // uses the /reset command in some situations
             if ((selectedUnit != null)
-                    && !game.getPhase().isSetArtilleryAutohitHexes()
-                    && Objects.equals(localPlayer(), selectedUnit.getOwner())
-                    && (selectedWeapon.getType() instanceof WeaponType)
-                    && selectedWeapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+                  && !game.getPhase().isSetArtilleryAutohitHexes()
+                  && Objects.equals(localPlayer(), selectedUnit.getOwner())
+                  && (selectedWeapon.getType() instanceof WeaponType)
+                  && selectedWeapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 return selectedWeapon;
             }
         }

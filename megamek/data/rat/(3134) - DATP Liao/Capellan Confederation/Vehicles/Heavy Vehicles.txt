@@ -1,7 +1,0 @@
-Capellan Confederation Heavy Vehicles, DATP:Liao
-Po II Heavy Tank (Standard), 1
-Zhukov Heavy Tank (Standard), 1
-LRM Carrier (Standard), 1
-Manticore Heavy Tank (Standard), 1
-Bulldog Medium Tank (Standard), 1
-SRM Carrier (Standard), 1

@@ -108,7 +108,8 @@ public class ScenarioLoaderTest {
         return errorAccumulator;
     }
 
-    private void checkScenarioFile(File file, List<String> errorAccumulator) throws ScenarioLoaderException, IOException {
+    private void checkScenarioFile(File file, List<String> errorAccumulator)
+          throws ScenarioLoaderException, IOException {
         int port = 7770;
         if (null == file) {
             return;

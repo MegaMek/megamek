@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2012 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2012 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.util.ArrayList;
@@ -38,13 +59,14 @@ public class SuperHeavyTank extends Tank {
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25, 25, 25 };
 
     private static final String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
-            "RRRS", "RRLS", "RR", "TU", "FT" };
+                                                     "RRRS", "RRLS", "RR", "TU", "FT" };
 
     private static final String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
-            "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
+                                                     "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
 
     private static final String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
-            "Front Left", "Rear Right", "Rear Left", "Rear", "Rear Turret", "Front Turret" };
+                                                                 "Front Left", "Rear Right", "Rear Left", "Rear",
+                                                                 "Rear Turret", "Front Turret" };
 
     @Override
     public String[] getLocationAbbrs() {
@@ -71,11 +93,11 @@ public class SuperHeavyTank extends Tank {
 
     // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     private static final TechAdvancement TA_SUPERHEAVY_TANK = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(2470, DATE_NONE, 3075)
-            .setApproximate(true, false, true).setPrototypeFactions(Faction.LC)
-            .setTechRating(TechRating.C)
-            .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(2470, DATE_NONE, 3075)
+          .setApproximate(true, false, true).setPrototypeFactions(Faction.LC)
+          .setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -84,7 +106,7 @@ public class SuperHeavyTank extends Tank {
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-            int cover) {
+          int cover) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRearSide = false;
@@ -125,7 +147,7 @@ public class SuperHeavyTank extends Tank {
 
             if ((5 < roll) && (roll < 9)) {
                 rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
-                        true);
+                      true);
                 bHitAimed = true;
             }
         }
@@ -192,10 +214,10 @@ public class SuperHeavyTank extends Tank {
                     break;
                 case 8:
                     if ((bSide || bRearSide)
-                            && !game.getOptions().booleanOption(
-                                    OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
+                          && !game.getOptions().booleanOption(
+                          OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
                         if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
+                              OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                             setPotCrit(HitData.EFFECT_CRITICAL);
                         } else {
                             rv.setEffect(HitData.EFFECT_CRITICAL);
@@ -204,9 +226,9 @@ public class SuperHeavyTank extends Tank {
                     break;
                 case 9:
                     if (!game.getOptions()
-                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
+                          .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
                         if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
+                              OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                             setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         } else {
                             rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
@@ -292,9 +314,9 @@ public class SuperHeavyTank extends Tank {
             Hex curHex = board.getHex(getPosition());
             if ((srcHex != null) && (curHex != null)) {
                 LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src, getPosition(), getBoardId(),
-                        1, getElevation(), srcHex.floor(), curHex.floor());
+                      1, getElevation(), srcHex.floor(), curHex.floor());
                 ArrayList<Coords> in = Coords.intervening(ai.attackPos, ai.targetPos,
-                        true);
+                      true);
                 leftBetter = LosEffects.dividedLeftBetter(in, game, ai, isInBuilding(), new LosEffects());
             }
         }
@@ -355,7 +377,7 @@ public class SuperHeavyTank extends Tank {
 
         // B-Pods need to be special-cased, the have 360 firing arc
         if ((mounted.getType() instanceof WeaponType)
-                && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
+              && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
         }
         // VGLs base arc on their facing

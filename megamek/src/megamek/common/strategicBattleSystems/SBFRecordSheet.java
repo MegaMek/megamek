@@ -1,22 +1,48 @@
 /*
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.strategicBattleSystems;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import javax.swing.ImageIcon;
 
 import megamek.MMConstants;
 import megamek.client.ui.util.StringDrawer;
@@ -27,18 +53,11 @@ import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
-
 /**
  * This class represents a Strategic BattleForce Record Sheet. It can be drawn to a Graphics2D context using
- * {@link #drawSheet(Graphics)} and supports printing using {@link Printable}. The font for the headers and
- * other fixed texts can be set using {@link #setFont(Font)}; the font for the formation values can be
- * set independently using {@link #setValueFont(Font)}. The color of the lines under values can be set
- * using {@link #setLineColor(Color)}.
+ * {@link #drawSheet(Graphics)} and supports printing using {@link Printable}. The font for the headers and other fixed
+ * texts can be set using {@link #setFont(Font)}; the font for the formation values can be set independently using
+ * {@link #setValueFont(Font)}. The color of the lines under values can be set using {@link #setLineColor(Color)}.
  */
 public class SBFRecordSheet implements Printable {
 
@@ -48,15 +67,15 @@ public class SBFRecordSheet implements Printable {
     private static final String FILENAME_BT_LOGO = "BT_Logo_BW.png";
     private static final String FILENAME_CGL_LOGO = "CGL_Logo.png";
     private final static Image BT_LOGO = ImageUtil.loadImageFromFile(
-            new MegaMekFile(Configuration.miscImagesDir(), FILENAME_BT_LOGO).toString());
+          new MegaMekFile(Configuration.miscImagesDir(), FILENAME_BT_LOGO).toString());
     private final static Image CGL_LOGO = ImageUtil.loadImageFromFile(
-            new MegaMekFile(Configuration.miscImagesDir(), FILENAME_CGL_LOGO).toString());
+          new MegaMekFile(Configuration.miscImagesDir(), FILENAME_CGL_LOGO).toString());
     // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
     private static final String COPYRIGHT1 = "(C) 2024 The Topps Company, Inc. BattleTech, 'Mech and BattleMech "
-            + "are trademarks of the Topps Company, Inc. All rights reserved.";
+          + "are trademarks of the Topps Company, Inc. All rights reserved.";
 
     private static final String COPYRIGHT2 = "Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of "
-            + "InMediaRes Production, LLC. Permission to photocopy for personal use.";
+          + "InMediaRes Production, LLC. Permission to photocopy for personal use.";
     private static final double MINIMUM_BORDER_X = 1.0 * 72; // 0.7" in print units of 1/72"
     private static final double MINIMUM_BORDER_Y = 0.2 * 72; // 0.2" in print units of 1/72"
     private static final int VALUE_FONT_SIZE = 21;
@@ -72,8 +91,8 @@ public class SBFRecordSheet implements Printable {
     private Font unitValueFont;
 
     /**
-     * Constructs and initializes a Strategic BattleForce Record Sheet for the given formation.
-     * When formation is null, an empty record sheet will be drawn.
+     * Constructs and initializes a Strategic BattleForce Record Sheet for the given formation. When formation is null,
+     * an empty record sheet will be drawn.
      */
     public SBFRecordSheet(@Nullable SBFFormation formation) {
         this.formation = formation;
@@ -102,7 +121,10 @@ public class SBFRecordSheet implements Printable {
         }
     }
 
-    /** Sets the font used for all headers written in the sheet to the given newFont. The size of newFont doesn't matter. */
+    /**
+     * Sets the font used for all headers written in the sheet to the given newFont. The size of newFont doesn't
+     * matter.
+     */
     public void setFont(Font newFont) {
         headerFont = newFont.deriveFont(Font.BOLD).deriveFont((float) HEADER_FONT_SIZE);
     }
@@ -138,20 +160,20 @@ public class SBFRecordSheet implements Printable {
         int[] pointsY = new int[] { 60, 55, 32, 32, 55, 107, 130, 130, 107, 60 };
         g.drawPolyline(pointsX, pointsY, 10);
         new StringDrawer("STRATEGIC BATTLEFORCE").at(1019, 63).maxWidth(440)
-                .font(headerFont.deriveFont(28f)).center().draw(g);
+              .font(headerFont.deriveFont(28f)).center().draw(g);
         new StringDrawer("FORMATION RECORD SHEET").at(1019, 100).maxWidth(440)
-                .font(headerFont.deriveFont(28f)).center().draw(g);
+              .font(headerFont.deriveFont(28f)).center().draw(g);
 
         // Formation frame
         g.setColor(SHADOW_COLOR);
         pointsX = new int[] { 1425, 1435, 1435, 1410, 30, 19, 1402, 1424 };
-        pointsY = new int[] { 189, 199, 285, 312, 312, 301, 301, 276};
+        pointsY = new int[] { 189, 199, 285, 312, 312, 301, 301, 276 };
         g.fillPolygon(pointsX, pointsY, 8);
         g.setColor(Color.BLACK);
-        pointsX = new int[] { 104, 1401, 1424, 1424, 1401, 24, 0, 0, 24, 104};
-        pointsY = new int[] { 167, 167, 193, 276, 302, 302, 276, 193, 167, 167};
+        pointsX = new int[] { 104, 1401, 1424, 1424, 1401, 24, 0, 0, 24, 104 };
+        pointsY = new int[] { 167, 167, 193, 276, 302, 302, 276, 193, 167, 167 };
         g.drawPolyline(pointsX, pointsY, 10);
-        pointsX = new int[] { 11, 30, 214, 233, 214, 30, 11};
+        pointsX = new int[] { 11, 30, 214, 233, 214, 30, 11 };
         pointsY = new int[] { 198, 179, 179, 198, 217, 217, 198 };
         g.fillPolygon(pointsX, pointsY, 7);
 
@@ -170,7 +192,7 @@ public class SBFRecordSheet implements Printable {
 
         g.setColor(underlineColor);
         g.setStroke(new BasicStroke(3f));
-        g.drawLine(21,  278, 425 ,278);
+        g.drawLine(21, 278, 425, 278);
         g.drawLine(446, 278, 494, 278);
         g.drawLine(511, 278, 559, 278);
         g.drawLine(575, 278, 633, 278);
@@ -178,10 +200,10 @@ public class SBFRecordSheet implements Printable {
         g.drawLine(727, 278, 797, 278);
         g.drawLine(812, 278, 867, 278);
         g.drawLine(884, 278, 955, 278);
-        g.drawLine(972, 278, 1052,278);
-        g.drawLine(1064,278, 1113,278);
-        g.drawLine(1125,278, 1175,278);
-        g.drawLine(1188,278, 1403,278);
+        g.drawLine(972, 278, 1052, 278);
+        g.drawLine(1064, 278, 1113, 278);
+        g.drawLine(1125, 278, 1175, 278);
+        g.drawLine(1188, 278, 1403, 278);
 
         g.setColor(Color.WHITE);
         new StringDrawer("FORMATION:").at(122, 198).maxWidth(176).font(headerFont.deriveFont(32f)).center().draw(g);
@@ -194,15 +216,15 @@ public class SBFRecordSheet implements Printable {
 
         g.setColor(SHADOW_COLOR);
         int[] pointsX = new int[] { 1425, 1435, 1435, 1410, 443, 431, 1402, 1424 };
-        int[] pointsY = new int[] { 22,   32,   245,  269,  269, 259, 259,  235 };
+        int[] pointsY = new int[] { 22, 32, 245, 269, 269, 259, 259, 235 };
         g.fillPolygon(pointsX, pointsY, 8);
-        pointsX = new int[] { 30,  20,  390, 400 };
+        pointsX = new int[] { 30, 20, 390, 400 };
         pointsY = new int[] { 232, 222, 222, 232 };
         g.fillPolygon(pointsX, pointsY, 4);
         g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke(5f));
-        pointsX = new int[] { 104, 1401, 1424, 1424, 1401, 435, 388, 24,  0,   0,  24, 104 };
-        pointsY = new int[] { 0,   0,    26,   235,  259,  259, 222, 222, 196, 26, 0,  0 };
+        pointsX = new int[] { 104, 1401, 1424, 1424, 1401, 435, 388, 24, 0, 0, 24, 104 };
+        pointsY = new int[] { 0, 0, 26, 235, 259, 259, 222, 222, 196, 26, 0, 0 };
         g.drawPolyline(pointsX, pointsY, 12);
 
         new StringDrawer("Type").at(388, 35).maxWidth(57).font(headerFont).center().draw(g);
@@ -248,15 +270,15 @@ public class SBFRecordSheet implements Printable {
 
         g.setColor(SHADOW_COLOR);
         int[] pointsX = new int[] { 1425, 1435, 1435, 1410, 407, 397, 1402, 1424 };
-        int[] pointsY = new int[] { 61,   71,   317,  341,  341, 331, 331,  307 };
+        int[] pointsY = new int[] { 61, 71, 317, 341, 341, 331, 331, 307 };
         g.fillPolygon(pointsX, pointsY, 8);
-        pointsX = new int[] { 30,  20,  376, 386 };
+        pointsX = new int[] { 30, 20, 376, 386 };
         pointsY = new int[] { 320, 310, 310, 320 };
         g.fillPolygon(pointsX, pointsY, 4);
         g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke(5f));
-        pointsX = new int[] { 104, 333, 379, 1401, 1424, 1424, 1401, 401, 376, 24,  0,   0,  24, 104 };
-        pointsY = new int[] { 0,   0,   39,  39,   65,   307,  331,  331, 310, 310, 286, 26, 0,  0 };
+        pointsX = new int[] { 104, 333, 379, 1401, 1424, 1424, 1401, 401, 376, 24, 0, 0, 24, 104 };
+        pointsY = new int[] { 0, 0, 39, 39, 65, 307, 331, 331, 310, 310, 286, 26, 0, 0 };
         g.drawPolyline(pointsX, pointsY, 14);
 
         new StringDrawer("Alpha Strike Elements:").at(21, 77).maxWidth(320).font(headerFont).centerY().draw(g);
@@ -284,7 +306,7 @@ public class SBFRecordSheet implements Printable {
 
         g.setColor(Color.BLACK);
         new StringDrawer("Unit " + indexString(unitIndex) + ":").at(20, 37).maxWidth(90)
-                .font(headerFont.deriveFont(26f)).draw(g);
+              .font(headerFont.deriveFont(26f)).draw(g);
         g.setColor(underlineColor);
         g.drawLine(116, 41, 340, 41);
         g.dispose();
@@ -317,13 +339,13 @@ public class SBFRecordSheet implements Printable {
         g.drawLine(801, y, 911, y);
         g.drawLine(923, y, 973, y);
         g.drawLine(985, y, 1035, y);
-        g.drawLine(1047,y, 1404, y);
+        g.drawLine(1047, y, 1404, y);
     }
 
     private void drawElementLines(Graphics2D g, Color color, int y) {
         g.setColor(color);
         g.setStroke(new BasicStroke(3f));
-        g.drawLine(26 , y, 351, y);
+        g.drawLine(26, y, 351, y);
         g.drawLine(363, y, 414, y);
         g.drawLine(426, y, 476, y);
         g.drawLine(489, y, 570, y);
@@ -333,7 +355,7 @@ public class SBFRecordSheet implements Printable {
         g.drawLine(828, y, 878, y);
         g.drawLine(890, y, 940, y);
         g.drawLine(952, y, 1002, y);
-        g.drawLine(1014,y, 1404, y);
+        g.drawLine(1014, y, 1404, y);
     }
 
     private void writeFormationValues(Graphics2D g) {
@@ -341,17 +363,53 @@ public class SBFRecordSheet implements Printable {
         new StringDrawer(formation.getName()).at(24, 260).maxWidth(390).font(formationValueFont).centerY().draw(g);
         new StringDrawer(formation.getType() + "").at(470, 260).maxWidth(52).font(formationValueFont).center().draw(g);
         new StringDrawer(formation.getSize() + "").at(535, 260).maxWidth(52).font(formationValueFont).center().draw(g);
-        new StringDrawer(formation.getMovement() + "").at(604, 260).maxWidth(62).font(formationValueFont).center().draw(g);
-        new StringDrawer(formation.getJumpMove() + "").at(683, 260).maxWidth(62).font(formationValueFont).center().draw(g);
-        new StringDrawer(formation.getTrspMovement() + "").at(762, 260).maxWidth(80).font(formationValueFont).center().draw(g);
+        new StringDrawer(formation.getMovement() + "").at(604, 260)
+              .maxWidth(62)
+              .font(formationValueFont)
+              .center()
+              .draw(g);
+        new StringDrawer(formation.getJumpMove() + "").at(683, 260)
+              .maxWidth(62)
+              .font(formationValueFont)
+              .center()
+              .draw(g);
+        new StringDrawer(formation.getTrspMovement() + "").at(762, 260)
+              .maxWidth(80)
+              .font(formationValueFont)
+              .center()
+              .draw(g);
         if (!formation.isAerospace()) {
-            new StringDrawer(formation.getTmm() + "").at(839, 260).maxWidth(58).font(formationValueFont).center().draw(g);
+            new StringDrawer(formation.getTmm() + "").at(839, 260)
+                  .maxWidth(58)
+                  .font(formationValueFont)
+                  .center()
+                  .draw(g);
         }
-        new StringDrawer(formation.getTactics() + "").at(919, 260).maxWidth(72).font(formationValueFont).center().draw(g);
-        new StringDrawer(formation.getMorale() + "").at(1012, 260).maxWidth(80).font(formationValueFont).center().draw(g);
-        new StringDrawer(formation.getSkill() + "").at(1088, 260).maxWidth(52).font(formationValueFont).center().draw(g);
-        new StringDrawer(formation.getPointValue() + "").at(1150, 260).maxWidth(58).font(formationValueFont).center().draw(g);
-        new StringDrawer(formation.getSpecialsDisplayString(formation)).at(1196, 260).maxWidth(210).font(formationValueFont).centerY().draw(g);
+        new StringDrawer(formation.getTactics() + "").at(919, 260)
+              .maxWidth(72)
+              .font(formationValueFont)
+              .center()
+              .draw(g);
+        new StringDrawer(formation.getMorale() + "").at(1012, 260)
+              .maxWidth(80)
+              .font(formationValueFont)
+              .center()
+              .draw(g);
+        new StringDrawer(formation.getSkill() + "").at(1088, 260)
+              .maxWidth(52)
+              .font(formationValueFont)
+              .center()
+              .draw(g);
+        new StringDrawer(formation.getPointValue() + "").at(1150, 260)
+              .maxWidth(58)
+              .font(formationValueFont)
+              .center()
+              .draw(g);
+        new StringDrawer(formation.getSpecialsDisplayString(formation)).at(1196, 260)
+              .maxWidth(210)
+              .font(formationValueFont)
+              .centerY()
+              .draw(g);
     }
 
     private void writeUnitOverviewValues(Graphics2D g2D) {
@@ -388,14 +446,29 @@ public class SBFRecordSheet implements Printable {
             new StringDrawer(element.getName()).at(34, y).maxWidth(315).font(valueFont).draw(g);
             new StringDrawer(element.getASUnitType() + "").at(388, y).maxWidth(52).font(valueFont).centerX().draw(g);
             new StringDrawer(element.getSize() + "").at(451, y).maxWidth(52).font(valueFont).centerX().draw(g);
-            new StringDrawer(element.getMovementAsString() + "").at(529, y).maxWidth(74).font(valueFont).centerX().draw(g);
+            new StringDrawer(element.getMovementAsString() + "").at(529, y)
+                  .maxWidth(74)
+                  .font(valueFont)
+                  .centerX()
+                  .draw(g);
             new StringDrawer(element.getCurrentArmor() + "").at(607, y).maxWidth(52).font(valueFont).centerX().draw(g);
-            new StringDrawer(element.getCurrentStructure() + "").at(669, y).maxWidth(52).font(valueFont).centerX().draw(g);
-            new StringDrawer(element.getStandardDamage() + "").at(761, y).maxWidth(100).font(valueFont).centerX().draw(g);
+            new StringDrawer(element.getCurrentStructure() + "").at(669, y)
+                  .maxWidth(52)
+                  .font(valueFont)
+                  .centerX()
+                  .draw(g);
+            new StringDrawer(element.getStandardDamage() + "").at(761, y)
+                  .maxWidth(100)
+                  .font(valueFont)
+                  .centerX()
+                  .draw(g);
             new StringDrawer(element.getOV() + "").at(853, y).maxWidth(52).font(valueFont).centerX().draw(g);
             new StringDrawer(element.getSkill() + "").at(915, y).maxWidth(52).font(valueFont).centerX().draw(g);
             new StringDrawer(element.getPointValue() + "").at(977, y).maxWidth(52).font(valueFont).centerX().draw(g);
-            new StringDrawer(element.getSpecialsDisplayString(element)).at(1019, y).maxWidth(380).font(valueFont).draw(g);
+            new StringDrawer(element.getSpecialsDisplayString(element)).at(1019, y)
+                  .maxWidth(380)
+                  .font(valueFont)
+                  .draw(g);
             y += 32;
         }
         new StringDrawer(unit.getName()).at(119, 37).maxWidth(215).font(formationValueFont).draw(g);
@@ -416,8 +489,12 @@ public class SBFRecordSheet implements Printable {
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
         if (pageIndex == 0) {
             Graphics2D g = (Graphics2D) graphics;
-            double addedXBorder = MINIMUM_BORDER_X > pageFormat.getImageableX() ? MINIMUM_BORDER_X - pageFormat.getImageableX() : 0;
-            double addedYBorder = MINIMUM_BORDER_Y > pageFormat.getImageableY() ? MINIMUM_BORDER_Y - pageFormat.getImageableY() : 0;
+            double addedXBorder = MINIMUM_BORDER_X > pageFormat.getImageableX() ?
+                  MINIMUM_BORDER_X - pageFormat.getImageableX() :
+                  0;
+            double addedYBorder = MINIMUM_BORDER_Y > pageFormat.getImageableY() ?
+                  MINIMUM_BORDER_Y - pageFormat.getImageableY() :
+                  0;
             double printWidth = pageFormat.getImageableWidth() - addedXBorder;
             double printHeight = pageFormat.getImageableHeight() - addedYBorder;
             double xScale = printWidth / WIDTH;

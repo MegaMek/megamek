@@ -32,11 +32,11 @@
  */
 package megamek.client.ui.clientGUI.boardview;
 
+import java.awt.Graphics2D;
+
 import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Hex;
-
-import java.awt.Graphics2D;
 
 /**
  * HexDrawPlugins can be given to a BoardView and will be called whenever the BoardView draws any of its hexes to the

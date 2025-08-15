@@ -143,6 +143,6 @@ public record FactionLeaderData(
      */
     public boolean isValidInYear(int year) {
         return (startYear == NO_YEAR || year >= startYear)
-                     && (endYear == NO_YEAR || year < endYear);
+              && (endYear == NO_YEAR || year < endYear);
     }
 }

@@ -1,35 +1,62 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.alphaStrike.cardDrawer;
 
-import megamek.client.ui.util.StringDrawer;
-import megamek.client.ui.util.UIUtil;
-import megamek.common.alphaStrike.*;
-import megamek.common.util.ImageUtil;
+import static megamek.common.alphaStrike.ASUnitType.DA;
+import static megamek.common.alphaStrike.ASUnitType.DS;
+import static megamek.common.alphaStrike.ASUnitType.JS;
+import static megamek.common.alphaStrike.ASUnitType.SC;
+import static megamek.common.alphaStrike.ASUnitType.SS;
+import static megamek.common.alphaStrike.ASUnitType.WS;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 
-import static megamek.common.alphaStrike.ASUnitType.*;
+import megamek.client.ui.util.StringDrawer;
+import megamek.client.ui.util.UIUtil;
+import megamek.common.alphaStrike.ASArcs;
+import megamek.common.alphaStrike.ASCardDisplayable;
+import megamek.common.alphaStrike.ASSpecialAbilityCollection;
+import megamek.common.alphaStrike.AlphaStrikeHelper;
+import megamek.common.util.ImageUtil;
 
 
 public class ASLargeAeroCard extends ASCard {
@@ -85,13 +112,13 @@ public class ASLargeAeroCard extends ASCard {
         arcSpecialsFont = lightFont.deriveFont(28f);
 
         valueConfig = new StringDrawer.StringDrawerConfig().centerY().scaleX(0.9f)
-                .color(Color.BLACK).font(largeAeroValueFont).outline(Color.BLACK, 0.5f);
+              .color(Color.BLACK).font(largeAeroValueFont).outline(Color.BLACK, 0.5f);
 
         specialsHeaderConfig = new StringDrawer.StringDrawerConfig().color(Color.BLACK)
-                .font(blackFont.deriveFont((float)largeAeroSpecialFont.getSize()));
+              .font(blackFont.deriveFont((float) largeAeroSpecialFont.getSize()));
 
         damageValueConfig = new StringDrawer.StringDrawerConfig().centerX()
-                .scaleX(0.9f).color(Color.BLACK).font(damageFont);
+              .scaleX(0.9f).color(Color.BLACK).font(damageFont);
     }
 
     @Override
@@ -107,12 +134,12 @@ public class ASLargeAeroCard extends ASCard {
         UIUtil.setHighQualityRendering(g);
         paintCardBackground(g, true);
         new StringDrawer("WEAPON CRITICALS").at(33, 629).font(arcTitleFont).maxWidth(220)
-                .outline(Color.BLACK, 0.4f).centerY().draw(g);
+              .outline(Color.BLACK, 0.4f).centerY().draw(g);
         new StringDrawer("Damage Value Reduced by 25% per hit. -- Randomly determine an appropriate")
-                .at(260, 629).font(critTextFont).maxWidth(750).centerY().draw(g);
+              .at(260, 629).font(critTextFont).maxWidth(750).centerY().draw(g);
         String columns = element.getASUnitType().isAnyOf(SC, DS, DA) ? "STD/SCAP/MSL" : "STD/CAP/SCAP/MSL";
         new StringDrawer(columns + " column.")
-                .at(697, 660).font(critTextFont).maxWidth(318).centerY().draw(g);
+              .at(697, 660).font(critTextFont).maxWidth(318).centerY().draw(g);
         AffineTransform baseTransform = g.getTransform();
         g.translate(0, -7);
         drawModelChassis(g);
@@ -155,7 +182,7 @@ public class ASLargeAeroCard extends ASCard {
 
     private void paintArcBox(Graphics2D g, String arcTitle, ASArcs arc) {
         drawBox(g, 0, 0, 477, 259, BACKGROUND_GRAY, BOX_STROKE);
-        new StringDrawer(arcTitle).at(19, 130).maxWidth(200).font(arcTitleFont).rotate(-Math.PI/2).center().draw(g);
+        new StringDrawer(arcTitle).at(19, 130).maxWidth(200).font(arcTitleFont).rotate(-Math.PI / 2).center().draw(g);
 
         int titleY = 32;
         int lineDelta = 35;
@@ -188,25 +215,68 @@ public class ASLargeAeroCard extends ASCard {
             int delta = 122;
             new StringDrawer("STD").at(stdX, titleY).maxWidth(93).centerX().font(headerFont).draw(g);
             new StringDrawer("SCAP").at(stdX + delta, titleY).maxWidth(delta - 10).centerX().font(headerFont).draw(g);
-            new StringDrawer("MSL").at(stdX + 2 * delta, titleY).maxWidth(delta - 10).centerX().font(headerFont).draw(g);
+            new StringDrawer("MSL").at(stdX + 2 * delta, titleY)
+                  .maxWidth(delta - 10)
+                  .centerX()
+                  .font(headerFont)
+                  .draw(g);
 
-            new StringDrawer(getArc(arc).getStdDamage().S.toString()).at(stdX, lineS).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getSCAP().S.toString()).at(stdX + delta, lineS).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getMSL().S.toString()).at(stdX + 2 * delta, lineS).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer(getArc(arc).getStdDamage().S.toString()).at(stdX, lineS)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getSCAP().S.toString()).at(stdX + delta, lineS)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getMSL().S.toString()).at(stdX + 2 * delta, lineS)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
 
-            new StringDrawer(getArc(arc).getStdDamage().M.toString()).at(stdX, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getSCAP().M.toString()).at(stdX + delta, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getMSL().M.toString()).at(stdX + 2 * delta, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer(getArc(arc).getStdDamage().M.toString()).at(stdX, lineM)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getSCAP().M.toString()).at(stdX + delta, lineM)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getMSL().M.toString()).at(stdX + 2 * delta, lineM)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
 
-            new StringDrawer(getArc(arc).getStdDamage().L.toString()).at(stdX, lineL).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getSCAP().L.toString()).at(stdX + delta, lineL).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getMSL().L.toString()).at(stdX + 2 * delta, lineL).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer(getArc(arc).getStdDamage().L.toString()).at(stdX, lineL)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getSCAP().L.toString()).at(stdX + delta, lineL)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getMSL().L.toString()).at(stdX + 2 * delta, lineL)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
 
-            new StringDrawer(getArc(arc).getStdDamage().E.toString()).at(stdX, lineE).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getSCAP().E.toString()).at(stdX + delta, lineE).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getMSL().E.toString()).at(stdX + 2 * delta, lineE).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer(getArc(arc).getStdDamage().E.toString()).at(stdX, lineE)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getSCAP().E.toString()).at(stdX + delta, lineE)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getMSL().E.toString()).at(stdX + 2 * delta, lineE)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
 
-            new StringDrawer(getArc(arc).getSpecialsDisplayString(", ", element)).at(146, lineSPE).maxWidth(310).font(arcSpecialsFont).draw(g);
+            new StringDrawer(getArc(arc).getSpecialsDisplayString(", ", element)).at(146, lineSPE)
+                  .maxWidth(310)
+                  .font(arcSpecialsFont)
+                  .draw(g);
 
             for (int i = 0; i < 4; i++) {
                 drawDamagePip(g, stdX + (i - 2) * (DAMAGE_PIP_SIZE + 2) + 1, 236);
@@ -224,30 +294,85 @@ public class ASLargeAeroCard extends ASCard {
             int delta = 82;
             new StringDrawer("STD").at(stdX, titleY).maxWidth(delta - 6).centerX().font(headerFont).draw(g);
             new StringDrawer("CAP").at(stdX + delta, titleY).maxWidth(delta - 6).centerX().font(headerFont).draw(g);
-            new StringDrawer("SCAP").at(stdX + 2 * delta, titleY).maxWidth(delta - 6).centerX().font(headerFont).draw(g);
+            new StringDrawer("SCAP").at(stdX + 2 * delta, titleY)
+                  .maxWidth(delta - 6)
+                  .centerX()
+                  .font(headerFont)
+                  .draw(g);
             new StringDrawer("MSL").at(stdX + 3 * delta, titleY).maxWidth(delta - 6).centerX().font(headerFont).draw(g);
 
-            new StringDrawer(getArc(arc).getStdDamage().S.toString()).at(stdX, lineS).maxWidth(delta - 16).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getCAP().S.toString()).at(stdX + delta, lineS).maxWidth(delta - 16).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getSCAP().S.toString()).at(stdX + 2 * delta, lineS).maxWidth(delta - 16).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getMSL().S.toString()).at(stdX + 3 * delta, lineS).maxWidth(delta - 16).useConfig(damageValueConfig).draw(g);
+            new StringDrawer(getArc(arc).getStdDamage().S.toString()).at(stdX, lineS)
+                  .maxWidth(delta - 16)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getCAP().S.toString()).at(stdX + delta, lineS)
+                  .maxWidth(delta - 16)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getSCAP().S.toString()).at(stdX + 2 * delta, lineS)
+                  .maxWidth(delta - 16)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getMSL().S.toString()).at(stdX + 3 * delta, lineS)
+                  .maxWidth(delta - 16)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
 
-            new StringDrawer(getArc(arc).getStdDamage().M.toString()).at(stdX, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getCAP().M.toString()).at(stdX + delta, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getSCAP().M.toString()).at(stdX + 2 * delta, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getMSL().M.toString()).at(stdX + 3 * delta, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer(getArc(arc).getStdDamage().M.toString()).at(stdX, lineM)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getCAP().M.toString()).at(stdX + delta, lineM)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getSCAP().M.toString()).at(stdX + 2 * delta, lineM)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getMSL().M.toString()).at(stdX + 3 * delta, lineM)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
 
-            new StringDrawer(getArc(arc).getStdDamage().L.toString()).at(stdX, lineL).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getCAP().L.toString()).at(stdX + delta, lineL).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getSCAP().L.toString()).at(stdX + 2 * delta, lineL).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getMSL().L.toString()).at(stdX + 3 * delta, lineL).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer(getArc(arc).getStdDamage().L.toString()).at(stdX, lineL)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getCAP().L.toString()).at(stdX + delta, lineL)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getSCAP().L.toString()).at(stdX + 2 * delta, lineL)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getMSL().L.toString()).at(stdX + 3 * delta, lineL)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
 
-            new StringDrawer(getArc(arc).getStdDamage().E.toString()).at(stdX, lineE).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getCAP().E.toString()).at(stdX + delta, lineE).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getSCAP().E.toString()).at(stdX + 2 * delta, lineE).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer(getArc(arc).getMSL().E.toString()).at(stdX + 3 * delta, lineE).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer(getArc(arc).getStdDamage().E.toString()).at(stdX, lineE)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getCAP().E.toString()).at(stdX + delta, lineE)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getSCAP().E.toString()).at(stdX + 2 * delta, lineE)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
+            new StringDrawer(getArc(arc).getMSL().E.toString()).at(stdX + 3 * delta, lineE)
+                  .maxWidth(delta - 10)
+                  .useConfig(damageValueConfig)
+                  .draw(g);
 
-            new StringDrawer(getArc(arc).getSpecialsDisplayString(", ", element)).at(146, lineSPE).maxWidth(310).font(arcSpecialsFont).draw(g);
+            new StringDrawer(getArc(arc).getSpecialsDisplayString(", ", element)).at(146, lineSPE)
+                  .maxWidth(310)
+                  .font(arcSpecialsFont)
+                  .draw(g);
 
             for (int i = 0; i < 4; i++) {
                 drawDamagePip(g, stdX + (i - 2) * (DAMAGE_PIP_SIZE + 2) + 1, 236);
@@ -269,7 +394,11 @@ public class ASLargeAeroCard extends ASCard {
 
     @Override
     protected void drawModelChassis(Graphics2D g) {
-        int width = new StringDrawer(element.getChassis()).at(36, 77).font(largeAeroChassisFont).scaleX(0.8f).maxWidth(600).draw(g).width;
+        int width = new StringDrawer(element.getChassis()).at(36, 77)
+              .font(largeAeroChassisFont)
+              .scaleX(0.8f)
+              .maxWidth(600)
+              .draw(g).width;
         new StringDrawer(element.getModel()).at(56 + width, 77).font(largeAeroModelFont).maxWidth(750 - width).draw(g);
     }
 
@@ -279,16 +408,32 @@ public class ASLargeAeroCard extends ASCard {
 
         int centerY = 129;
         new StringDrawer("TP: ").at(44, centerY).centerY().font(headerFont).maxWidth(47).draw(g);
-        new StringDrawer(element.getASUnitType().toString()).at(130, centerY - 2).useConfig(valueConfig).centerX().maxWidth(70).draw(g);
+        new StringDrawer(element.getASUnitType().toString()).at(130, centerY - 2)
+              .useConfig(valueConfig)
+              .centerX()
+              .maxWidth(70)
+              .draw(g);
 
         new StringDrawer("SZ: ").at(185, centerY).centerY().font(headerFont).maxWidth(51).draw(g);
-        new StringDrawer(element.getSize() + "").at(272, centerY - 2).useConfig(valueConfig).centerX().maxWidth(70).draw(g);
+        new StringDrawer(element.getSize() + "").at(272, centerY - 2)
+              .useConfig(valueConfig)
+              .centerX()
+              .maxWidth(70)
+              .draw(g);
 
         new StringDrawer("THR: ").at(323, centerY).centerY().font(headerFont).maxWidth(74).draw(g);
-        new StringDrawer(AlphaStrikeHelper.getMovementAsString(element)).at(444, centerY - 2).useConfig(valueConfig).centerX().maxWidth(70).draw(g);
+        new StringDrawer(AlphaStrikeHelper.getMovementAsString(element)).at(444, centerY - 2)
+              .useConfig(valueConfig)
+              .centerX()
+              .maxWidth(70)
+              .draw(g);
 
         new StringDrawer("SKILL: ").at(485, centerY).centerY().font(headerFont).maxWidth(87).draw(g);
-        new StringDrawer(element.getSkill() + "").at(610, centerY - 2).useConfig(valueConfig).centerX().maxWidth(70).draw(g);
+        new StringDrawer(element.getSkill() + "").at(610, centerY - 2)
+              .useConfig(valueConfig)
+              .centerX()
+              .maxWidth(70)
+              .draw(g);
     }
 
     @Override
@@ -326,12 +471,28 @@ public class ASLargeAeroCard extends ASCard {
         new StringDrawer("STRUCTURE").at(128, structureY).center().maxWidth(170).draw(g);
         new StringDrawer("DAMAGE").at(363, structureY).center().maxWidth(290).draw(g);
 
-        new StringDrawer(element.getFullArmor() + "").at(128, 245).font(largeAeroValueFont).center().maxWidth(140).draw(g);
-        new StringDrawer(element.getFullStructure() + "").at(128, 354).font(largeAeroValueFont).center().maxWidth(140).draw(g);
+        new StringDrawer(element.getFullArmor() + "").at(128, 245)
+              .font(largeAeroValueFont)
+              .center()
+              .maxWidth(140)
+              .draw(g);
+        new StringDrawer(element.getFullStructure() + "").at(128, 354)
+              .font(largeAeroValueFont)
+              .center()
+              .maxWidth(140)
+              .draw(g);
 
         int thresholdY = 206;
-        new StringDrawer("DAMAGE THRESHOLD").at(628, thresholdY).font(largeAeroHeaderFont).centerY().maxWidth(310).draw(g);
-        new StringDrawer(element.getThreshold() + "").at(580, thresholdY).useConfig(valueConfig).center().maxWidth(79).draw(g);
+        new StringDrawer("DAMAGE THRESHOLD").at(628, thresholdY)
+              .font(largeAeroHeaderFont)
+              .centerY()
+              .maxWidth(310)
+              .draw(g);
+        new StringDrawer(element.getThreshold() + "").at(580, thresholdY)
+              .useConfig(valueConfig)
+              .center()
+              .maxWidth(79)
+              .draw(g);
     }
 
     @Override
@@ -345,7 +506,7 @@ public class ASLargeAeroCard extends ASCard {
         if (element != null) {
             new StringDrawer("PV: ").at(853, 70).maxWidth(70).font(pointValueHeaderFont).scaleX(0.9f).draw(g);
             new StringDrawer(element.getPointValue() + "").at(980, 70).outline(Color.BLACK, 0.3f)
-                    .scaleX(0.85f).maxWidth(86).centerX().font(pointValueFont).draw(g);
+                  .scaleX(0.85f).maxWidth(86).centerX().font(pointValueFont).draw(g);
         }
     }
 
@@ -411,11 +572,19 @@ public class ASLargeAeroCard extends ASCard {
             drawDamagePip(g, 254, 520);
 
             new StringDrawer("KF BOOM").at(168, 547).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
-            new StringDrawer("Cannot transport via JumpShip").at(199, 547).centerY().font(specialsFont).maxWidth(313).draw(g);
+            new StringDrawer("Cannot transport via JumpShip").at(199, 547)
+                  .centerY()
+                  .font(specialsFont)
+                  .maxWidth(313)
+                  .draw(g);
             drawDamagePip(g, 173, 547);
 
             new StringDrawer("DOCK COLLAR").at(168, 572).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
-            new StringDrawer("DropShip only; cannot dock").at(199, 572).centerY().font(specialsFont).maxWidth(313).draw(g);
+            new StringDrawer("DropShip only; cannot dock").at(199, 572)
+                  .centerY()
+                  .font(specialsFont)
+                  .maxWidth(313)
+                  .draw(g);
             drawDamagePip(g, 173, 572);
 
             new StringDrawer("THRUSTER").at(168, 598).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
@@ -445,5 +614,5 @@ public class ASLargeAeroCard extends ASCard {
     }
 
     @Override
-    protected void paintDamage(Graphics2D g) { }
+    protected void paintDamage(Graphics2D g) {}
 }

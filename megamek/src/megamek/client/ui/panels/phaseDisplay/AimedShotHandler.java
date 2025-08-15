@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay;
 
@@ -24,8 +38,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.phaseDisplay.AimedShotDialog;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.dialogs.phaseDisplay.AimedShotDialog;
 import megamek.client.ui.widget.IndexedRadioButton;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
@@ -94,8 +108,8 @@ public class AimedShotHandler implements ActionListener, ItemListener {
                 }
                 if (side == ToHitData.SIDE_REAR) {
                     aimingAt = (this.firingDisplay.getTarget() instanceof LargeSupportTank) ? LargeSupportTank.LOC_REAR
-                            : this.firingDisplay.getTarget() instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
-                                    : Tank.LOC_REAR;
+                          : this.firingDisplay.getTarget() instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
+                          : Tank.LOC_REAR;
                 }
                 if (side == ToHitData.SIDE_FRONT) {
                     aimingAt = Tank.LOC_FRONT;
@@ -110,12 +124,12 @@ public class AimedShotHandler implements ActionListener, ItemListener {
             }
 
             asd = new AimedShotDialog(
-                    this.firingDisplay.getClientgui().getFrame(),
-                    Messages.getString("FiringDisplay.AimedShotDialog.title"),
-                    Messages.getString("FiringDisplay.AimedShotDialog.message"),
-                    options, enabled, aimingAt,
-                    (ClientGUI) this.firingDisplay.getClientgui(), this.firingDisplay.getTarget(),
-                    this, this);
+                  this.firingDisplay.getClientgui().getFrame(),
+                  Messages.getString("FiringDisplay.AimedShotDialog.title"),
+                  Messages.getString("FiringDisplay.AimedShotDialog.message"),
+                  options, enabled, aimingAt,
+                  (ClientGUI) this.firingDisplay.getClientgui(), this.firingDisplay.getTarget(),
+                  this, this);
 
             asd.setVisible(true);
             this.firingDisplay.updateTarget();
@@ -324,7 +338,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
      */
     public String getAimingLocation() {
         if ((this.firingDisplay.getTarget() != null) && (aimingAt != Entity.LOC_NONE)
-                && !getAimingMode().isNone()) {
+              && !getAimingMode().isNone()) {
             if (this.firingDisplay.getTarget() instanceof GunEmplacement) {
                 return GunEmplacement.HIT_LOCATION_NAMES[aimingAt];
             } else if (this.firingDisplay.getTarget() instanceof Entity) {
@@ -335,10 +349,9 @@ public class AimedShotHandler implements ActionListener, ItemListener {
     }
 
     /**
-     * Sets the aiming mode, depending on the target and the attacker.
-     * Against immobile meks, targeting computer aiming mode will be used
-     * if turned on. (This is a hack, but it's the resolution suggested by
-     * the bug submitter, and I don't think it's half bad.
+     * Sets the aiming mode, depending on the target and the attacker. Against immobile meks, targeting computer aiming
+     * mode will be used if turned on. (This is a hack, but it's the resolution suggested by the bug submitter, and I
+     * don't think it's half bad.
      */
 
     public void setAimingMode() {
@@ -346,20 +359,20 @@ public class AimedShotHandler implements ActionListener, ItemListener {
 
         // TC against a mek
         allowAim = ((this.firingDisplay.getTarget() != null) && (this.firingDisplay.ce() != null)
-                && this.firingDisplay.ce().hasAimModeTargComp() && ((this.firingDisplay.getTarget() instanceof Mek)
-                        || (this.firingDisplay.getTarget() instanceof Tank)
-                        || (this.firingDisplay.getTarget() instanceof BattleArmor)
-                        || (this.firingDisplay.getTarget() instanceof ProtoMek)));
+              && this.firingDisplay.ce().hasAimModeTargComp() && ((this.firingDisplay.getTarget() instanceof Mek)
+              || (this.firingDisplay.getTarget() instanceof Tank)
+              || (this.firingDisplay.getTarget() instanceof BattleArmor)
+              || (this.firingDisplay.getTarget() instanceof ProtoMek)));
         if (allowAim) {
             aimingMode = AimingMode.TARGETING_COMPUTER;
             return;
         }
         // immobile mek or gun emplacement
         allowAim = ((this.firingDisplay.getTarget() != null)
-                && ((this.firingDisplay.getTarget().isImmobile()
-                        && ((this.firingDisplay.getTarget() instanceof Mek)
-                                || (this.firingDisplay.getTarget() instanceof Tank)))
-                        || (this.firingDisplay.getTarget() instanceof GunEmplacement)));
+              && ((this.firingDisplay.getTarget().isImmobile()
+              && ((this.firingDisplay.getTarget() instanceof Mek)
+              || (this.firingDisplay.getTarget() instanceof Tank)))
+              || (this.firingDisplay.getTarget() instanceof GunEmplacement)));
         if (allowAim) {
             aimingMode = AimingMode.IMMOBILE;
             return;
@@ -379,6 +392,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
      * should aimned shoots be allowed with the passed weapon
      *
      * @param weapon
+     *
      * @return
      */
     public boolean allowAimedShotWith(WeaponMounted weapon) {

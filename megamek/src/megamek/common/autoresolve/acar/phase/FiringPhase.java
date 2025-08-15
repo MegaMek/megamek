@@ -1,19 +1,46 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.autoresolve.acar.phase;
 
-import megamek.common.Compute;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import megamek.common.alphaStrike.ASRange;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.Action;
@@ -21,8 +48,6 @@ import megamek.common.autoresolve.acar.action.StandardUnitAttack;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.component.FormationTurn;
 import megamek.common.enums.GamePhase;
-
-import java.util.*;
 
 public class FiringPhase extends PhaseHandler {
 
@@ -84,7 +109,7 @@ public class FiringPhase extends PhaseHandler {
         }
     }
 
-    private record AttackRecord(Formation actingFormation, Formation target, List<Integer> attackingUnits) { }
+    private record AttackRecord(Formation actingFormation, Formation target, List<Integer> attackingUnits) {}
 
     private List<AttackRecord> attack(Formation actingFormation) {
         var target = this.selectTarget(actingFormation);
@@ -119,27 +144,29 @@ public class FiringPhase extends PhaseHandler {
                             target.ifPresent(canBeTargets::add);
                         }
                     }
-                    case ATTACK_TARGET_NOT_WITHDRAWING -> getSimulationManager().getGame().getActiveDeployedFormations().stream()
-                        .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
-                        .filter(f -> !f.isWithdrawing())
-                        .forEach(canBeTargets::add);
+                    case ATTACK_TARGET_NOT_WITHDRAWING ->
+                          getSimulationManager().getGame().getActiveDeployedFormations().stream()
+                                .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
+                                .filter(f -> !f.isWithdrawing())
+                                .forEach(canBeTargets::add);
 
-                    case ATTACK_TARGET_WITHDRAWING -> getSimulationManager().getGame().getActiveDeployedFormations().stream()
-                        .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
-                        .filter(Formation::isWithdrawing)
-                        .forEach(canBeTargets::add);
+                    case ATTACK_TARGET_WITHDRAWING ->
+                          getSimulationManager().getGame().getActiveDeployedFormations().stream()
+                                .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
+                                .filter(Formation::isWithdrawing)
+                                .forEach(canBeTargets::add);
                 }
             }
         }
 
         // sticky target
         game.getFormation(actingFormation.getTargetFormationId())
-            .ifPresent(canBeTargets::add);
+              .ifPresent(canBeTargets::add);
 
         if (canBeTargets.size() < 4) {
             getSimulationManager().getGame().getActiveDeployedFormations().stream()
-                .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
-                .forEach(canBeTargets::add);
+                  .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
+                  .forEach(canBeTargets::add);
         }
 
         if (canBeTargets.isEmpty()) {

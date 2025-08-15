@@ -408,6 +408,7 @@ public class Faction2 {
      * Writes this faction as YAML to the given file.
      *
      * @param file The file to write to.
+     *
      * @throws IOException When an error occurs
      */
     public void saveToFile(File file) throws IOException {
@@ -435,11 +436,12 @@ public class Faction2 {
     }
 
     /**
-     * Writes this faction with updates from a changed FactionRecord as YAML to the given file. This method is
-     * hopefully temporary; it is used for RatGeneratorEditor changes while FactionRecord stays a separate class.
-     * Note that this method applies the changes to the "real" faction and keeps the change for the present runtime.
+     * Writes this faction with updates from a changed FactionRecord as YAML to the given file. This method is hopefully
+     * temporary; it is used for RatGeneratorEditor changes while FactionRecord stays a separate class. Note that this
+     * method applies the changes to the "real" faction and keeps the change for the present runtime.
      *
      * @param updatedRecord A FactionRecord with changes to apply to the present faction and save to file
+     *
      * @throws IOException When an error occurs
      */
     public void saveToFile(FactionRecord updatedRecord) throws IOException {

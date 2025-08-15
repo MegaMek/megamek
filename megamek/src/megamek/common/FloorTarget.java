@@ -37,8 +37,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class represents a single, targetable hex and floor of a building. The building itself may occupy
- * multiple hexes.
+ * This class represents a single, targetable hex and floor of a building. The building itself may occupy multiple
+ * hexes.
  *
  * @author Luana Coppio
  */
@@ -58,11 +58,11 @@ public class FloorTarget implements Targetable {
     /**
      * Target a single hex of a building.
      *
-     * @param coords - the <code>Coords</code> of the hext being targeted.
-     * @param board  - the game's <code>Board</code> object.
-     * @param targetElevation  - Kind where in the building you want to aim at.
-     * @throws IllegalArgumentException will be thrown if
-     *            the given coordinates do not contain a building.
+     * @param coords          - the <code>Coords</code> of the hext being targeted.
+     * @param board           - the game's <code>Board</code> object.
+     * @param targetElevation - Kind where in the building you want to aim at.
+     *
+     * @throws IllegalArgumentException will be thrown if the given coordinates do not contain a building.
      */
     public FloorTarget(Coords coords, Board board, int targetElevation) {
         position = coords;
@@ -70,7 +70,7 @@ public class FloorTarget implements Targetable {
         Building bldg = board.getBuildingAt(position);
         if (bldg == null) {
             throw new IllegalArgumentException("The coordinates, " + position.getBoardNum()
-                                                     + ", do not contain a building.");
+                  + ", do not contain a building.");
         }
         // Save the building's ID.
         id = FloorTarget.coordsToId(coords);
@@ -106,7 +106,7 @@ public class FloorTarget implements Targetable {
     }
 
     @Override
-    public void setOwnerId(int newOwnerId) { }
+    public void setOwnerId(int newOwnerId) {}
 
     @Override
     public int getStrength() {
@@ -149,12 +149,10 @@ public class FloorTarget implements Targetable {
     }
 
     /**
-     * Creates an id for this building based on its location as well as a
-     * building code.
-     * The transformation encodes the y value in the top 5 decimal digits and
-     * the x value in the bottom 5. Could more efficiently encode this by
-     * partitioning the binary representation, but this is more human readable
-     * and still allows for a 99999x99999 hex map.
+     * Creates an id for this building based on its location as well as a building code. The transformation encodes the
+     * y value in the top 5 decimal digits and the x value in the bottom 5. Could more efficiently encode this by
+     * partitioning the binary representation, but this is more human readable and still allows for a 99999x99999 hex
+     * map.
      */
     public static int coordsToId(Coords c) {
         return Targetable.TYPE_BUILDING * 1000000 + c.getY() * 1000 + c.getX();

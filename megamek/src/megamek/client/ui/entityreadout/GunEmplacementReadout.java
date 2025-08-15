@@ -32,10 +32,10 @@
  */
 package megamek.client.ui.entityreadout;
 
-import megamek.common.GunEmplacement;
-
 import java.util.Collections;
 import java.util.List;
+
+import megamek.common.GunEmplacement;
 
 class GunEmplacementReadout extends TankReadout {
 

@@ -32,17 +32,17 @@
  */
 package megamek.common.util.milestoneReleaseInformation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import megamek.SuiteConstants;
-import megamek.Version;
+import static megamek.SuiteConstants.ALL_MILESTONE_RELEASES;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import static megamek.SuiteConstants.ALL_MILESTONE_RELEASES;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import megamek.SuiteConstants;
+import megamek.Version;
 
 /**
  * Loads and provides access to milestone release information from a YAML configuration file.

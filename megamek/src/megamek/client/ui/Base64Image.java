@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client.ui;
 
 import java.awt.Image;
@@ -25,7 +40,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Base64;
 import java.util.Objects;
-
 import javax.imageio.ImageIO;
 
 import megamek.common.annotations.Nullable;
@@ -33,14 +47,12 @@ import megamek.common.util.ImageUtil;
 import megamek.logging.MMLogger;
 
 /**
- * This is a form of an Image that is based on a base64-encoded form, e.g.
- * loaded from file. The base64 is retained and the actual image only created
- * when {@link #getImage()} is called. This class is serializable; the internal
- * Image object is transient and the base64 String is used for serialization.
- * Decoding the base64 image uses {@link ImageIO#read(InputStream)}.
- *
- * Thread-safe; Immutable. The displayable Image is created only when
- * needed and uses synchronized access
+ * This is a form of an Image that is based on a base64-encoded form, e.g. loaded from file. The base64 is retained and
+ * the actual image only created when {@link #getImage()} is called. This class is serializable; the internal Image
+ * object is transient and the base64 String is used for serialization. Decoding the base64 image uses
+ * {@link ImageIO#read(InputStream)}.
+ * <p>
+ * Thread-safe; Immutable. The displayable Image is created only when needed and uses synchronized access
  */
 public class Base64Image implements Serializable {
     private static final MMLogger logger = MMLogger.create(Base64Image.class);
@@ -66,8 +78,7 @@ public class Base64Image implements Serializable {
     }
 
     /**
-     * Creates a Base64Image from the given image. The given image itself is not
-     * stored.
+     * Creates a Base64Image from the given image. The given image itself is not stored.
      */
     public Base64Image(@Nullable Image image) {
         this.base64encodedImage = ImageUtil.base64TextEncodeImage(image);
@@ -86,11 +97,9 @@ public class Base64Image implements Serializable {
     }
 
     /**
-     * Returns the image in displayable form. When first called, the base64
-     * representation is converted to an Image.
-     * When conversion fails, returns {@link ImageUtil#failStandardImage()}. When
-     * the base64 representation is
-     * blank, returns null.
+     * Returns the image in displayable form. When first called, the base64 representation is converted to an Image.
+     * When conversion fails, returns {@link ImageUtil#failStandardImage()}. When the base64 representation is blank,
+     * returns null.
      *
      * @return The image in displayable form
      */

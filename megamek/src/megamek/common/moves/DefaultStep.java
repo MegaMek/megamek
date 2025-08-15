@@ -32,16 +32,17 @@
  */
 package megamek.common.moves;
 
+import java.util.Collections;
+import java.util.Set;
+
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.pathfinder.CachedEntityState;
 
-import java.util.Collections;
-import java.util.Set;
-
 /**
  * All other move steps that are not covered by a specific case are instead covered by the Default Step. DefaultStep
  * treats EVERY step as a step it is interested on.
+ *
  * @author Luana Coppio
  * @since 0.50.07
  */

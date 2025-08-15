@@ -1,16 +1,36 @@
 /*
- * MegaMek - Copyright (C) 2018 - The MegaMek Team
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.templates;
 
 import java.util.ArrayList;
@@ -35,7 +55,6 @@ import megamek.common.weapons.InfantryAttack;
  * Creates a TRO template model for BattleArmor.
  *
  * @author Neoancient
- *
  */
 public class BattleArmorTROView extends TROView {
 
@@ -58,7 +77,7 @@ public class BattleArmorTROView extends TROView {
         addBasicData(ba);
         addEntityFluff(ba);
         setModelData("formatBasicDataRow", new FormatTableRowMethod(new int[] { 25, 20, 8, 8 }, new Justification[] {
-                Justification.LEFT, Justification.LEFT, Justification.CENTER, Justification.RIGHT }));
+              Justification.LEFT, Justification.LEFT, Justification.CENTER, Justification.RIGHT }));
         final TestBattleArmor testBA = new TestBattleArmor(ba, verifier.baOption, null);
         if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
             setModelData("chassisType", Messages.getString("TROView.chassisQuad"));
@@ -66,12 +85,12 @@ public class BattleArmorTROView extends TROView {
             setModelData("chassisType", Messages.getString("TROView.chassisBiped"));
         }
         setModelData("weightClass",
-                EntityWeightClass.getClassName(EntityWeightClass.getWeightClass(ba.getTrooperWeight(), ba)));
+              EntityWeightClass.getClassName(EntityWeightClass.getWeightClass(ba.getTrooperWeight(), ba)));
         setModelData("weight", ba.getTrooperWeight() * 1000);
         setModelData("swarmAttack", ba.canMakeAntiMekAttacks() ? "Yes" : "No");
         // We need to allow it for UMU that otherwise qualifies
         setModelData("legAttack",
-                (ba.canDoMechanizedBA() && (ba.getWeightClass() < EntityWeightClass.WEIGHT_HEAVY)) ? "Yes" : "No");
+              (ba.canDoMechanizedBA() && (ba.getWeightClass() < EntityWeightClass.WEIGHT_HEAVY)) ? "Yes" : "No");
         setModelData("mechanized", ba.canDoMechanizedBA() ? "Yes" : "No");
         setModelData("antiPersonnel", ba.getEquipment().stream().anyMatch(Mounted::isAPMMounted) ? "Yes" : "No");
 
@@ -93,7 +112,7 @@ public class BattleArmorTROView extends TROView {
         manipulators.add(formatManipulatorRow(BattleArmor.MOUNT_LOC_RARM, ba.getRightManipulator()));
         setModelData("manipulators", manipulators);
         final String armorName = EquipmentType.getArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1),
-                TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
+              TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
         final EquipmentType armor = EquipmentType.get(armorName);
         setModelData("armorType", armor == null ? "Unknown" : armor.getName().replaceAll("^BA\\s+", ""));
         setModelData("armorSlots", armor == null ? 0 : armor.getCriticals(ba));
@@ -102,12 +121,14 @@ public class BattleArmorTROView extends TROView {
         setModelData("internal", ba.getOInternal(BattleArmor.LOC_TROOPER_1));
         final int nameWidth = addBAEquipment();
         setModelData("formatEquipmentRow",
-                new FormatTableRowMethod(new int[] { nameWidth, 8, 12, 8 }, new Justification[] { Justification.LEFT,
-                        Justification.CENTER, Justification.CENTER, Justification.CENTER }));
+              new FormatTableRowMethod(new int[] { nameWidth, 8, 12, 8 }, new Justification[] { Justification.LEFT,
+                                                                                                Justification.CENTER,
+                                                                                                Justification.CENTER,
+                                                                                                Justification.CENTER }));
         if (ba.getEquipment().stream().anyMatch(m -> m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET)) {
             final Map<String, Object> modularMount = new HashMap<>();
             modularMount.put("name", ba.hasModularTurretMount() ? Messages.getString("TROView.BAModularTurret")
-                    : Messages.getString("TROView.BATurret"));
+                  : Messages.getString("TROView.BATurret"));
             modularMount.put("location", BattleArmor.getBaMountLocAbbr(BattleArmor.MOUNT_LOC_TURRET));
             int turretSlots = ba.getTurretCapacity();
             if (ba.hasModularTurretMount()) {
@@ -140,13 +161,13 @@ public class BattleArmorTROView extends TROView {
         final List<Map<String, Object>> equipment = new ArrayList<>();
         final List<Map<String, Object>> modularEquipment = new ArrayList<>();
         final String at = EquipmentType.getArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1),
-                TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
+              TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
         final EquipmentType armor = EquipmentType.get(at);
         Map<String, Object> row;
         int nameWidth = 30;
         for (final Mounted<?> m : ba.getEquipment()) {
             if (m.isAPMMounted() || (m.getType() instanceof InfantryAttack)
-                    || (m.getType() == armor) || (m.getLocation() == BattleArmor.LOC_NONE)) {
+                  || (m.getType() == armor) || (m.getLocation() == BattleArmor.LOC_NONE)) {
                 continue;
             }
             if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {

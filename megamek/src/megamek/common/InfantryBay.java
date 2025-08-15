@@ -1,22 +1,42 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org).
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
-import megamek.common.InfantryTransporter.PlatoonType;
 
 /**
- * Represents a volume of space set aside for carrying infantry platoons aboard large spacecraft
- * and mobile structures. Marines count as crew and should have at least steerage quarters.
+ * Represents a volume of space set aside for carrying infantry platoons aboard large spacecraft and mobile structures.
+ * Marines count as crew and should have at least steerage quarters.
  */
 public final class InfantryBay extends Bay implements InfantryTransporter {
     private static final long serialVersionUID = 946578184870030662L;
@@ -35,12 +55,10 @@ public final class InfantryBay extends Bay implements InfantryTransporter {
     }
 
     /**
-     * Create a space for the given tonnage of troops. This is the total tonnage of the bay;
-     * the amount of space taken up by a given unit depends on the PlatoonType.
+     * Create a space for the given tonnage of troops. This is the total tonnage of the bay; the amount of space taken
+     * up by a given unit depends on the PlatoonType.
      *
-     * @param space
-     *            - The number of platoons (or squads for mechanized) of the designated type this
-     *              bay can carry.
+     * @param space     - The number of platoons (or squads for mechanized) of the designated type this bay can carry.
      * @param bayNumber
      */
     public InfantryBay(double space, int doors, int bayNumber, PlatoonType bayType) {
@@ -59,8 +77,8 @@ public final class InfantryBay extends Bay implements InfantryTransporter {
     public String getUnusedString(boolean showRecovery) {
         StringBuilder sb = new StringBuilder();
         sb.append("Infantry Bay ").append(numDoorsString()).append(" - ")
-                .append(getUnusedSlots())
-            .append(" ").append(platoonType.toString());
+              .append(getUnusedSlots())
+              .append(" ").append(platoonType.toString());
         if (platoonType != PlatoonType.MECHANIZED) {
             sb.append(" platoon");
         } else {
@@ -73,15 +91,16 @@ public final class InfantryBay extends Bay implements InfantryTransporter {
     }
 
     /**
-     * Determines if this object can accept the given unit. The unit may not be
-     * of the appropriate type or there may be no room for the unit.
+     * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
+     * no room for the unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
+     * @param unit - the <code>Entity</code> to be loaded.
+     *
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
+     *       otherwise.
      */
-    @Override public boolean canLoad(Entity unit) {
+    @Override
+    public boolean canLoad(Entity unit) {
         // Only infantry
         boolean result = unit.hasETypeFlag(Entity.ETYPE_INFANTRY);
 
@@ -99,8 +118,8 @@ public final class InfantryBay extends Bay implements InfantryTransporter {
     public boolean canUnloadUnits() {
         // Infantry is only restricted by adjacency requirements (TW pp. 223 - 225)
         return super.canUnloadUnits() || troops.stream()
-            .map(unit -> game.getEntity(unit))
-            .anyMatch(e -> (e != null && e.isInfantry()));
+              .map(unit -> game.getEntity(unit))
+              .anyMatch(e -> (e != null && e.isInfantry()));
     }
 
     @Override
@@ -121,7 +140,7 @@ public final class InfantryBay extends Bay implements InfantryTransporter {
     @Override
     public int getPersonnel(boolean clan) {
         return (int) (totalSpace / platoonType.getWeight())
-                * (clan ? platoonType.getClanPersonnel() : platoonType.getISPersonnel());
+              * (clan ? platoonType.getClanPersonnel() : platoonType.getISPersonnel());
     }
 
     @Override
@@ -138,13 +157,13 @@ public final class InfantryBay extends Bay implements InfantryTransporter {
     public String toString() {
         String bayType = "infantrybay";
         return this.bayString(
-                bayType,
-                (totalSpace / platoonType.getWeight()),
-                doors,
-                bayNumber,
-                platoonType.toString(),
-                Entity.LOC_NONE,
-                0
+              bayType,
+              (totalSpace / platoonType.getWeight()),
+              doors,
+              bayNumber,
+              platoonType.toString(),
+              Entity.LOC_NONE,
+              0
         );
     }
 

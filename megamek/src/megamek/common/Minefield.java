@@ -1,17 +1,38 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+  Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.io.Serializable;
@@ -50,9 +71,9 @@ public class Minefield implements Serializable, Cloneable {
     public static final String FILENAME_IMAGE = "minefieldsign.gif";
 
     private static String[] names = { "Conventional", "Command-detonated",
-            "Vibrabomb", "Active", "EMP", "Inferno"};
-            //"Thunder", "Thunder-Inferno", "Thunder-Active",
-            //"Thunder-Vibrabomb" };
+                                      "Vibrabomb", "Active", "EMP", "Inferno" };
+    //"Thunder", "Thunder-Inferno", "Thunder-Active",
+    //"Thunder-Vibrabomb" };
 
     public static int TYPE_SIZE = names.length;
 
@@ -77,7 +98,8 @@ public class Minefield implements Serializable, Cloneable {
         return createMinefield(coords, playerId, type, density, 0);
     }
 
-    public static Minefield createMinefield(Coords coords, int playerId, int type, int density, boolean sea, int depth) {
+    public static Minefield createMinefield(Coords coords, int playerId, int type, int density, boolean sea,
+          int depth) {
         return createMinefield(coords, playerId, type, density, 0, sea, depth);
     }
 
@@ -85,7 +107,8 @@ public class Minefield implements Serializable, Cloneable {
         return createMinefield(coords, playerId, type, density, setting, false, 0);
     }
 
-    public static Minefield createMinefield(Coords coords, int playerId, int type, int density, int setting, boolean sea, int depth) {
+    public static Minefield createMinefield(Coords coords, int playerId, int type, int density, int setting,
+          boolean sea, int depth) {
         Minefield mf = new Minefield();
 
         mf.type = type;
@@ -101,18 +124,18 @@ public class Minefield implements Serializable, Cloneable {
     @Override
     public String toString() {
         return "Minefield{'" +
-            getDisplayableName(type) +
-            "', coords=" + coords +
-            ", playerId=" + playerId +
-            ", density=" + density +
-            ", type=" + type +
-            ", setting=" + setting +
-            ", oneUse=" + oneUse +
-            ", sea=" + sea +
-            ", depth=" + depth +
-            ", detonated=" + detonated +
-            ", weaponDelivered=" + weaponDelivered +
-            '}';
+              getDisplayableName(type) +
+              "', coords=" + coords +
+              ", playerId=" + playerId +
+              ", density=" + density +
+              ", type=" + type +
+              ", setting=" + setting +
+              ", oneUse=" + oneUse +
+              ", sea=" + sea +
+              ", depth=" + depth +
+              ", detonated=" + detonated +
+              ", weaponDelivered=" + weaponDelivered +
+              '}';
     }
 
     public static String getDisplayableName(int type) {
@@ -148,7 +171,7 @@ public class Minefield implements Serializable, Cloneable {
         }
         final Minefield other = (Minefield) obj;
         return (playerId == other.playerId) && Objects.equals(coords, other.coords) &&
-                (type == other.type);
+              (type == other.type);
     }
 
     @Override
@@ -170,6 +193,7 @@ public class Minefield implements Serializable, Cloneable {
 
     /**
      * what do we need to roll to trigger this mine
+     *
      * @return
      */
     public int getTrigger() {
@@ -228,19 +252,22 @@ public class Minefield implements Serializable, Cloneable {
 
     /**
      * check for a reduction in density
-     * @param bonus - an <code>int</code> indicating the modifier to the target roll for reduction
-     * @param direct - a <code>boolean</code> indicating whether this reduction was due to a direct explosion or
-     *                 a result of another minefield in the same hex exploding
+     *
+     * @param bonus  - an <code>int</code> indicating the modifier to the target roll for reduction
+     * @param direct - a <code>boolean</code> indicating whether this reduction was due to a direct explosion or a
+     *               result of another minefield in the same hex exploding
      */
     public void checkReduction(int bonus, boolean direct) {
         // per TacOps:AR page 176, non-conventional minefields automatically reduce
         if ((getType() != Minefield.TYPE_CONVENTIONAL) &&
-                (getType() != Minefield.TYPE_INFERNO)) {
+              (getType() != Minefield.TYPE_INFERNO)) {
             setDensity(getDensity() - 5);
             return;
         }
 
-        boolean isReduced = ((Compute.d6(2) + bonus) >= getTrigger()) || (direct && getType() != Minefield.TYPE_CONVENTIONAL && getType() != Minefield.TYPE_INFERNO);
+        boolean isReduced = ((Compute.d6(2) + bonus) >= getTrigger()) || (direct
+              && getType() != Minefield.TYPE_CONVENTIONAL
+              && getType() != Minefield.TYPE_INFERNO);
         if (getType() == Minefield.TYPE_CONVENTIONAL && getDensity() < 10) {
             isReduced = false;
         }

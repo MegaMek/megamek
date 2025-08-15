@@ -1,36 +1,53 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.client.ui.dialogs.minimap;
 
-import megamek.MMConstants;
-import megamek.client.Client;
-import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.clientGUI.overlay.IFF;
-import megamek.client.ui.clientGUI.overlay.OverlayPainter;
-import megamek.client.ui.clientGUI.overlay.OverlayPanel;
-import megamek.common.*;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.event.*;
-import megamek.common.options.OptionsConstants;
-import megamek.common.preference.ClientPreferences;
-import megamek.common.preference.PreferenceManager;
+import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.FACING_ARROW;
+import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_BASERECT;
+import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_CX;
+import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_SYMBOLSIZE;
+import static megamek.common.Terrains.BUILDING;
+import static megamek.common.Terrains.FUEL_TANK;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -43,10 +60,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
 
-import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.*;
-import static megamek.common.Terrains.BUILDING;
-import static megamek.common.Terrains.FUEL_TANK;
+import megamek.MMConstants;
+import megamek.client.Client;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.overlay.IFF;
+import megamek.client.ui.clientGUI.overlay.OverlayPainter;
+import megamek.client.ui.clientGUI.overlay.OverlayPanel;
+import megamek.common.*;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.event.GameBoardChangeEvent;
+import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.event.GameEntityRemoveEvent;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GameNewActionEvent;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.options.OptionsConstants;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.PreferenceManager;
 
 /**
  * This class is WIP, commiting just to have an artifact.
@@ -59,8 +94,14 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
     private final List<Line> attackActions;
     private final List<OverlayPanel> overlays;
     private final static int unitSize = 10;
-    private record Blip(int x, int y, String code, IFF iff , Color color, int round) {};
-    private record Line(int x1, int y1, int x2, int y2, Color color, int round) {};
+
+    private record Blip(int x, int y, String code, IFF iff, Color color, int round) {}
+
+    ;
+
+    private record Line(int x1, int y1, int x2, int y2, Color color, int round) {}
+
+    ;
 
     // add listener for mouse click and drag, so it changes the value of the xOffset and yOffset  for painting the map
     private int initialClickX;
@@ -120,7 +161,7 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
                     return;
                 }
                 removedUnits.add(
-                    new Blip(coords.getX(),
+                      new Blip(coords.getX(),
                             coords.getY(),
                             e.getEntity().getDisplayName() + " ID:" + e.getEntity().getId(),
                             IFF.getIFFStatus(e.getEntity(), client.getLocalPlayer()),
@@ -147,8 +188,9 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
             public void gameNewAction(GameNewActionEvent e) {
                 EntityAction entityAction = e.getAction();
                 if (entityAction instanceof AttackAction attackAction) {
-                    Entity source = ((Game)game).getEntity(attackAction.getEntityId());
-                    Targetable target = ((Game)game).getTarget(attackAction.getTargetType(), attackAction.getTargetId());
+                    Entity source = ((Game) game).getEntity(attackAction.getEntityId());
+                    Targetable target = ((Game) game).getTarget(attackAction.getTargetType(),
+                          attackAction.getTargetId());
                     // sanity check...
                     if ((null == source) || (null == target)) {
                         return;
@@ -159,9 +201,9 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
                         return;
                     }
                     attackActions.add(new Line(source.getPosition().getX(), source.getPosition().getY(),
-                        target.getPosition().getX(), target.getPosition().getY(),
-                        source.getOwner().getColour().getColour(),
-                        game.getCurrentRound()));
+                          target.getPosition().getX(), target.getPosition().getY(),
+                          source.getOwner().getColour().getColour(),
+                          game.getCurrentRound()));
                 }
 
             }
@@ -200,13 +242,13 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
     }
 
     static public void drawArrowHead(Graphics g, int x0, int y0, int x1,
-                                     int y1, int headLength, int headAngle) {
+          int y1, int headLength, int headAngle) {
         double offs = headAngle * Math.PI / 180.0;
         double angle = Math.atan2(y0 - y1, x0 - x1);
-        int[] xs = {x1 + (int) (headLength * Math.cos(angle + offs)), x1,
-            x1 + (int) (headLength * Math.cos(angle - offs))};
-        int[] ys = {y1 + (int) (headLength * Math.sin(angle + offs)), y1,
-            y1 + (int) (headLength * Math.sin(angle - offs))};
+        int[] xs = { x1 + (int) (headLength * Math.cos(angle + offs)), x1,
+                     x1 + (int) (headLength * Math.cos(angle - offs)) };
+        int[] ys = { y1 + (int) (headLength * Math.sin(angle + offs)), y1,
+                     y1 + (int) (headLength * Math.sin(angle - offs)) };
         g.drawPolyline(xs, ys, 3);
     }
 
@@ -225,8 +267,8 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
 
         // 1) Create or re-create the cached board image if needed
         if (boardImage == null
-            || boardNeedsRedraw
-            || size == -1) {
+              || boardNeedsRedraw
+              || size == -1) {
             if (game.getBoard().getHeight() == 0 || game.getBoard().getWidth() == 0) {
                 return;
             }
@@ -234,8 +276,8 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
 
             boardImage = MinimapPanel.getMinimapImageMaxZoom(board, CLIENT_PREFERENCES.getStrategicViewTheme());
             size = Math.min(
-                boardImage.getHeight() / game.getBoard().getHeight(),
-                boardImage.getWidth() / game.getBoard().getWidth());
+                  boardImage.getHeight() / game.getBoard().getHeight(),
+                  boardImage.getWidth() / game.getBoard().getWidth());
         }
 
         // 2) Draw the pre-rendered board image
@@ -251,7 +293,7 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
         // 3) Movement lines
         Graphics2D g2d = (Graphics2D) g.create();
         Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
-            0, new float[]{6}, 3);
+              0, new float[] { 6 }, 3);
         g2d.setStroke(dashed);
         for (var line : lines) {
             var delta = Math.max(1, (game.getCurrentRound() + 1 - line.round) * 2);
@@ -265,22 +307,21 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
         lines.removeIf(line -> line.round < currentRound - 4);
         // 4) Draw attack lines
 
-//        for (var line : attackLines) {
-//            var delta = Math.max(1, (game.getCurrentRound() + 1 - line.round) * 2);
-//            var newColor = new Color(line.color.getRed(),
-//                line.color.getGreen(),
-//                line.color.getBlue(),
-//                (int) (line.color.getAlpha() / (double) delta));
-//            if (!g2d.getColor().equals(newColor)) {
-//                g2d.setColor(newColor);
-//            }
-//            var p1 = this.projectToView(line.x1, line.y1);
-//            var p2 = this.projectToView(line.x2, line.y2);
-//            g2d.drawLine(p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset);
-//            drawArrowHead(g2d, p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset, size, 30);
-//        }
+        //        for (var line : attackLines) {
+        //            var delta = Math.max(1, (game.getCurrentRound() + 1 - line.round) * 2);
+        //            var newColor = new Color(line.color.getRed(),
+        //                line.color.getGreen(),
+        //                line.color.getBlue(),
+        //                (int) (line.color.getAlpha() / (double) delta));
+        //            if (!g2d.getColor().equals(newColor)) {
+        //                g2d.setColor(newColor);
+        //            }
+        //            var p1 = this.projectToView(line.x1, line.y1);
+        //            var p2 = this.projectToView(line.x2, line.y2);
+        //            g2d.drawLine(p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset);
+        //            drawArrowHead(g2d, p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset, size, 30);
+        //        }
         g2d.dispose();
-
 
 
         for (var attackAction : attackActions) {
@@ -343,22 +384,23 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
             g.drawString(sHeight, baseX + 5 + xOffset, baseY + 5 + yOffset);
         }
     }
+
     private void paintAttack(Graphics g, Line attackAction) {
         int[] xPoints = new int[4];
         int[] yPoints = new int[4];
 
         xPoints[0] = ((attackAction.x1 * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]))
-            + leftMargin + ((int) (1.5 * HEX_SIDE[zoom]))) - 2 +xOffset;
+              + leftMargin + ((int) (1.5 * HEX_SIDE[zoom]))) - 2 + xOffset;
         yPoints[0] = (((2 * attackAction.y1) + 1 + (attackAction.x1 % 2))
-            * HEX_SIDE_BY_COS30[zoom]) + topMargin + yOffset;
+              * HEX_SIDE_BY_COS30[zoom]) + topMargin + yOffset;
         xPoints[1] = ((attackAction.x2 * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]))
-            + leftMargin + ((int) (1.5 * HEX_SIDE[zoom]))) - 2 + xOffset;
+              + leftMargin + ((int) (1.5 * HEX_SIDE[zoom]))) - 2 + xOffset;
         yPoints[1] = (((2 * attackAction.y2) + 1 + (attackAction.x2 % 2))
-            * HEX_SIDE_BY_COS30[zoom]) + topMargin + yOffset;
+              * HEX_SIDE_BY_COS30[zoom]) + topMargin + yOffset;
         xPoints[2] = xPoints[1] + 2;
         xPoints[3] = xPoints[0] + 2;
         if (((attackAction.x1 > attackAction.x2) && (attackAction.y1 < attackAction.y2))
-            || ((attackAction.x1 < attackAction.x2) && (attackAction.y1 > attackAction.y2))) {
+              || ((attackAction.x1 < attackAction.x2) && (attackAction.y1 > attackAction.y2))) {
             yPoints[3] = yPoints[0] + 2;
             yPoints[2] = yPoints[1] + 2;
         } else {
@@ -374,9 +416,9 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
 
     private static Color fadeColor(Color color, double alphaDivisor) {
         return new Color(color.getRed(),
-            color.getGreen(),
-            color.getBlue(),
-            (int) (color.getAlpha() / alphaDivisor));
+              color.getGreen(),
+              color.getBlue(),
+              (int) (color.getAlpha() / alphaDivisor));
     }
 
     /** Draws a red crosshair for artillery autohit hexes (predesignated only). */
@@ -410,7 +452,9 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
             g.setColor(Color.RED);
             g.drawString(sensorReturn, baseX - width, baseY + height);
             return;
-        } else if (game instanceof Game twGame && !EntityVisibilityUtils.detectedOrHasVisual(client.getLocalPlayer(), twGame, entity)) {
+        } else if (game instanceof Game twGame && !EntityVisibilityUtils.detectedOrHasVisual(client.getLocalPlayer(),
+              twGame,
+              entity)) {
             // This unit is not visible, don't draw it
             return;
         }
@@ -431,7 +475,7 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
                 iconColor = GUIP.getEnemyUnitColor();
             }
         }
-        
+
 
         // Transform for placement and scaling
         var placement = AffineTransform.getTranslateInstance(baseX, baseY);
@@ -464,7 +508,7 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
 
         // Set a thin brush for filled areas (leave a thick brush for line symbols
         if ((entity instanceof Mek) || (entity instanceof ProtoMek)
-                || (entity instanceof VTOL) || (entity.isAero())) {
+              || (entity instanceof VTOL) || (entity.isAero())) {
             g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         } else {
             g2.setStroke(new BasicStroke(formStrokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
@@ -492,7 +536,7 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
                 int stringWidth = currentMetrics.stringWidth(s);
                 GlyphVector gv = font.createGlyphVector(fontContext, s);
                 g2.fill(gv.getOutline((int) STRAT_CX - (float) stringWidth / 2,
-                        (float) STRAT_SYMBOLSIZE.getHeight() / 3.0f));
+                      (float) STRAT_SYMBOLSIZE.getHeight() / 3.0f));
             }
         } else if (entity instanceof MekWarrior) {
             g2.setColor(fontColor);
@@ -526,7 +570,9 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
         if (EntityVisibilityUtils.onlyDetectedBySensors(client.getLocalPlayer(), entity)) {
             // This unit is visible only as a sensor Return
             return;
-        } else if (game instanceof Game twGame && !EntityVisibilityUtils.detectedOrHasVisual(client.getLocalPlayer(), twGame, entity)) {
+        } else if (game instanceof Game twGame && !EntityVisibilityUtils.detectedOrHasVisual(client.getLocalPlayer(),
+              twGame,
+              entity)) {
             // This unit is not visible, don't draw it
             return;
         }
@@ -582,9 +628,9 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
                 xo = coordsXToPixel(movingCoord.getX());
                 yo = coordsYtoPixel(movingCoord.getY(), movingCoord.getX());
                 if (i == 0) {
-                    sensor.moveTo(xo+xOffset, yo+yOffset);
+                    sensor.moveTo(xo + xOffset, yo + yOffset);
                 } else {
-                    sensor.lineTo(xo+xOffset, yo+yOffset);
+                    sensor.lineTo(xo + xOffset, yo + yOffset);
                 }
             }
             sensor.closePath();
@@ -609,7 +655,7 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
     private int[] projectToView(int x, int y) {
         int baseX = x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) + leftMargin + HEX_SIDE[zoom];
         int baseY = (2 * y + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom] + topMargin;
-        return new int[]{baseX, baseY};
+        return new int[] { baseX, baseY };
     }
 
     public void addMovePath(List<UnitLocation> unitLocations, Entity entity) {
@@ -617,9 +663,9 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
         for (var unitLocation : unitLocations) {
             var coords = unitLocation.coords();
             lines.add(new Line(previousCoords.getX(), previousCoords.getY(),
-                coords.getX(), coords.getY(),
-                Color.GREEN,
-                game.getCurrentRound()));
+                  coords.getX(), coords.getY(),
+                  Color.GREEN,
+                  game.getCurrentRound()));
             previousCoords = coords;
         }
     }

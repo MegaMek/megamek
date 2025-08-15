@@ -1,25 +1,45 @@
 /*
- * MegaMek - Copyright (C) 2002-2007 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
+  Copyright (C) 2002-2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.util.List;
 
+import megamek.common.AmmoType.AmmoTypeEnum;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.AmmoType.AmmoTypeEnum;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
 import megamek.common.weapons.DiveBombAttack;
@@ -73,8 +93,7 @@ import megamek.common.weapons.unofficial.*;
 import megamek.logging.MMLogger;
 
 /**
- * A type of mek or vehicle weapon. There is only one instance of this weapon
- * for all weapons of this type.
+ * A type of mek or vehicle weapon. There is only one instance of this weapon for all weapons of this type.
  */
 public class WeaponType extends EquipmentType {
 
@@ -213,8 +232,7 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_ARTEMIS_COMPATIBLE = WeaponTypeFlag.F_ARTEMIS_COMPATIBLE;
 
     /**
-     * This flag is used by mortar-type weapons that allow indirect fire without a
-     * spotter and/or with LOS.
+     * This flag is used by mortar-type weapons that allow indirect fire without a spotter and/or with LOS.
      */
     public static final WeaponTypeFlag F_MORTARTYPE_INDIRECT = WeaponTypeFlag.F_MORTARTYPE_INDIRECT;
 
@@ -319,9 +337,8 @@ public class WeaponType extends EquipmentType {
     public int infDamageClass = WEAPON_DIRECT_FIRE;
 
     /**
-     * Used for the BA vs BA damage rules on TO pg 109. Determines how much
-     * damage a weapon will inflict on BA, where the default WEAPON_DIRECT_FIRE
-     * indicates normal weapon damage.
+     * Used for the BA vs BA damage rules on TO pg 109. Determines how much damage a weapon will inflict on BA, where
+     * the default WEAPON_DIRECT_FIRE indicates normal weapon damage.
      */
     protected int baDamageClass = WEAPON_DIRECT_FIRE;
 
@@ -374,7 +391,7 @@ public class WeaponType extends EquipmentType {
             LOGGER.warn("Incorrect flag check: tested {} instead of WeaponTypeFlag",
                   flag.getClass().getSimpleName(),
                   new Throwable("Incorrect flag tested " + flag.getClass().getSimpleName() + " instead of " +
-                                      "WeaponTypeFlag"));
+                        "WeaponTypeFlag"));
             return false;
         }
     }
@@ -431,14 +448,14 @@ public class WeaponType extends EquipmentType {
         if ((getAmmoType() == AmmoTypeEnum.ATM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
             if ((ammoType.getAmmoType() == AmmoTypeEnum.ATM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
+                  && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
                 sRange = 9;
                 mRange = 18;
                 lRange = 27;
                 eRange = 36;
             } else if ((ammoType.getAmmoType() == AmmoTypeEnum.ATM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
+                  && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
                 minRange = 0;
                 sRange = 3;
                 mRange = 6;
@@ -449,15 +466,15 @@ public class WeaponType extends EquipmentType {
         if ((getAmmoType() == AmmoTypeEnum.IATM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
             if ((ammoType.getAmmoType() == AmmoTypeEnum.IATM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
+                  && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
                 sRange = 9;
                 mRange = 18;
                 lRange = 27;
                 eRange = 36;
             } else if ((ammoType.getAmmoType() == AmmoTypeEnum.IATM)
-                    && ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))
-                            || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)))) {
+                  && ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))
+                  || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)))) {
                 minRange = 0;
                 sRange = 3;
                 mRange = 6;
@@ -499,7 +516,7 @@ public class WeaponType extends EquipmentType {
         if ((getAmmoType() == AmmoTypeEnum.LRM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
             if ((ammoType.getAmmoType() == AmmoTypeEnum.LRM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
+                  && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 4;
                 sRange = 5;
                 mRange = 10;
@@ -510,7 +527,7 @@ public class WeaponType extends EquipmentType {
         if ((getAmmoType() == AmmoTypeEnum.SRM) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
             if ((ammoType.getAmmoType() == AmmoTypeEnum.SRM)
-                    && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
+                  && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 0;
                 sRange = 2;
                 mRange = 4;
@@ -554,11 +571,11 @@ public class WeaponType extends EquipmentType {
 
     public int[] getWRanges() {
         return new int[] {
-                minimumRange,
-                waterShortRange,
-                waterMediumRange,
-                waterLongRange,
-                waterExtremeRange
+              minimumRange,
+              waterShortRange,
+              waterMediumRange,
+              waterLongRange,
+              waterExtremeRange
         };
     }
 
@@ -682,9 +699,10 @@ public class WeaponType extends EquipmentType {
     }
 
     // Probably not the best place for this
+
     /**
-     * @param capitalOnly If true, this will return the equivalent capital bay for
-     *                    subcapital weapons.
+     * @param capitalOnly If true, this will return the equivalent capital bay for subcapital weapons.
+     *
      * @return The type of weapon bay this weapon goes in
      */
     public EquipmentType getBayType(boolean capitalOnly) {
@@ -728,6 +746,7 @@ public class WeaponType extends EquipmentType {
      * Damage calculation for BattleForce and AlphaStrike
      *
      * @param range The range in hexes
+     *
      * @return Damage in BattleForce scale
      */
     // TODO : the calculations are superseded by the ASC table but correct most of
@@ -738,8 +757,8 @@ public class WeaponType extends EquipmentType {
             // Variable damage weapons that cannot reach into the BF long range band use LR
             // damage for the MR band
             if (getDamage() == DAMAGE_VARIABLE
-                    && range == AlphaStrikeElement.MEDIUM_RANGE
-                    && getLongRange() < AlphaStrikeElement.LONG_RANGE) {
+                  && range == AlphaStrikeElement.MEDIUM_RANGE
+                  && getLongRange() < AlphaStrikeElement.LONG_RANGE) {
                 damage = getDamage(AlphaStrikeElement.LONG_RANGE);
             } else {
                 damage = getDamage(range);
@@ -758,11 +777,11 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * Damage calculation for BattleForce and AlphaStrike for missile weapons that
-     * may have advanced fire control
+     * Damage calculation for BattleForce and AlphaStrike for missile weapons that may have advanced fire control
      *
      * @param range - the range in hexes
      * @param fcs   - linked Artemis or Apollo FCS (null for none)
+     *
      * @return - damage in BattleForce scale
      */
     public double getBattleForceDamage(int range, Mounted<?> fcs) {
@@ -774,12 +793,12 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * BattleForce-scale damage for BattleArmor, using cluster hits table based on
-     * squad size.
-     * AlphaStrike uses a different method.
+     * BattleForce-scale damage for BattleArmor, using cluster hits table based on squad size. AlphaStrike uses a
+     * different method.
      *
      * @param range       - the range in hexes
      * @param baSquadSize - the number of suits in the squad/point/level i
+     *
      * @return - damage in BattleForce scale
      */
     public double getBattleForceDamage(int range, int baSquadSize) {
@@ -787,49 +806,44 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * @return The class of weapons for those that are tracked separately from
-     *         standard damage (AlphaStrike)
+     * @return The class of weapons for those that are tracked separately from standard damage (AlphaStrike)
      */
     public int getBattleForceClass() {
         return BFCLASS_STANDARD;
     }
 
     /**
-     * Returns the weapon's heat for AlphaStrike conversion. Overridden where it
-     * differs from TW heat.
+     * Returns the weapon's heat for AlphaStrike conversion. Overridden where it differs from TW heat.
      */
     public int getAlphaStrikeHeat() {
         return getHeat();
     }
 
     /**
-     * Returns the weapon's AlphaStrike heat damage for AlphaStrike conversion. ASC
-     * p.124.
+     * Returns the weapon's AlphaStrike heat damage for AlphaStrike conversion. ASC p.124.
      */
     public int getAlphaStrikeHeatDamage(int rangeBand) {
         return 0;
     }
 
     /**
-     * Returns true if this weapon type can be used for Total War LRM-type indirect
-     * fire.
+     * Returns true if this weapon type can be used for Total War LRM-type indirect fire.
      */
     public boolean hasIndirectFire() {
         return false;
     }
 
     /**
-     * Returns true if this weapon type contributes to the AlphaStrike IF ability.
-     * This is identical to TW indirect fire for most but not all weapons (see e.g.
-     * IATMs)
+     * Returns true if this weapon type contributes to the AlphaStrike IF ability. This is identical to TW indirect fire
+     * for most but not all weapons (see e.g. IATMs)
      */
     public boolean isAlphaStrikeIndirectFire() {
         return hasIndirectFire();
     }
 
     /**
-     * Returns true if this weapon type contributes to the AlphaStrike PNT ability.
-     * This is not identical to TW point defense, therefore implemented separately.
+     * Returns true if this weapon type contributes to the AlphaStrike PNT ability. This is not identical to TW point
+     * defense, therefore implemented separately.
      */
     public boolean isAlphaStrikePointDefense() {
         return false;
@@ -837,10 +851,9 @@ public class WeaponType extends EquipmentType {
 
     /**
      * Add all the types of weapons we can create to the list
-     *
-     * When a weapon class extends another, the subclass must be listed first to
-     * avoid clobbering the name lookup when calling the constructor of the
-     * superclass.
+     * <p>
+     * When a weapon class extends another, the subclass must be listed first to avoid clobbering the name lookup when
+     * calling the constructor of the superclass.
      */
     public static void initializeTypes() {
         // Laser types

@@ -1,17 +1,38 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client.ui.widget;
 
 import java.awt.Color;
@@ -20,7 +41,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.util.Vector;
-
 import javax.swing.JComponent;
 
 import megamek.MMConstants;
@@ -32,8 +52,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
- * Class which keeps set of all areas required to represent Capital Fighter unit
- * in MekDisplay.ArmorPanel class.
+ * Class which keeps set of all areas required to represent Capital Fighter unit in MekDisplay.ArmorPanel class.
  */
 public class CapitalFighterMapSet implements DisplayMapSet {
 
@@ -72,7 +91,7 @@ public class CapitalFighterMapSet implements DisplayMapSet {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMekArmorSmallFontSize());
+          GUIP.getUnitDisplayMekArmorSmallFontSize());
 
     public CapitalFighterMapSet(JComponent c) {
         comp = c;
@@ -165,7 +184,7 @@ public class CapitalFighterMapSet implements DisplayMapSet {
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
         Image tile = comp.getToolkit()
-                .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
+              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
@@ -176,7 +195,8 @@ public class CapitalFighterMapSet implements DisplayMapSet {
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
+        tile = comp.getToolkit()
+              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
@@ -186,29 +206,32 @@ public class CapitalFighterMapSet implements DisplayMapSet {
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
+        tile = comp.getToolkit()
+              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP | BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
+        tile = comp.getToolkit()
+              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit()
-                .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
+              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
+        tile = comp.getToolkit()
+              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit()
-                .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
+              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }
@@ -226,10 +249,10 @@ public class CapitalFighterMapSet implements DisplayMapSet {
 
         avCritArea.translate(10 + pilotCritLabel.width + armorCols * (squareSize + 1), stepY - (squareSize + 1));
         engineCritArea.translate(10 + pilotCritLabel.width + armorCols * (squareSize + 1),
-                2 * stepY - (squareSize + 1));
+              2 * stepY - (squareSize + 1));
         fcsCritArea.translate(10 + pilotCritLabel.width + armorCols * (squareSize + 1), 3 * stepY - (squareSize + 1));
         sensorCritArea.translate(10 + pilotCritLabel.width + armorCols * (squareSize + 1),
-                4 * stepY - (squareSize + 1));
+              4 * stepY - (squareSize + 1));
         pilotCritArea.translate(10 + pilotCritLabel.width + armorCols * (squareSize + 1), 5 * stepY - (squareSize + 1));
     }
 

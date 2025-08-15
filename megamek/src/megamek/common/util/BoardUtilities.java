@@ -1,19 +1,46 @@
 /*
-* MegaMek -
-* Copyright (c) 2005 Ben Mazur (bmazur@sev.org)
-* Copyright (c) 2018 - The MegaMek Team. All Rights Reserved.
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (c) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 package megamek.common.util;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.codeUtilities.MathUtility;
@@ -24,10 +51,9 @@ import megamek.common.planetaryconditions.Wind;
 import megamek.common.util.generator.ElevationGenerator;
 import megamek.common.util.generator.SimplexGenerator;
 
-import java.util.*;
-
 public class BoardUtilities {
     private static final List<ElevationGenerator> elevationGenerators = new ArrayList<>();
+
     static {
         // TODO: make this externally accessible via registerElevationGenerator()
         elevationGenerators.add(new SimplexGenerator());
@@ -41,30 +67,31 @@ public class BoardUtilities {
     /**
      * Combines one or more boards into one huge megaboard!
      *
-     * @param width the width of each individual board, before the combine
-     * @param height the height of each individual board, before the combine
-     * @param sheetWidth how many sheets wide the combined map is
+     * @param width       the width of each individual board, before the combine
+     * @param height      the height of each individual board, before the combine
+     * @param sheetWidth  how many sheets wide the combined map is
      * @param sheetHeight how many sheets tall the combined map is
-     * @param boards a list of the boards to be combined
-     * @param isRotated Flag that determines if any of the maps are rotated
-     * @param medium Sets the medium the map is in (ie., ground, atmo, space)
+     * @param boards      a list of the boards to be combined
+     * @param isRotated   Flag that determines if any of the maps are rotated
+     * @param medium      Sets the medium the map is in (ie., ground, atmo, space)
+     *
      * @deprecated Use the {{@link #combine(int, int, int, int, Board[], int)}
      */
-    @Deprecated(since="0.50.06", forRemoval = true)
+    @Deprecated(since = "0.50.06", forRemoval = true)
     public static Board combine(int width, int height, int sheetWidth, int sheetHeight,
-                                List<Board> boards, List<Boolean> isRotated, int medium) {
+          List<Board> boards, List<Boolean> isRotated, int medium) {
         return combine(width, height, sheetWidth, sheetHeight, boards.toArray(new Board[0]), medium);
     }
 
     /**
      * Combines one or more boards into one huge megaboard!
      *
-     * @param width the width of each individual board, before the combine
-     * @param height the height of each individual board, before the combine
-     * @param sheetWidth how many sheets wide the combined map is
+     * @param width       the width of each individual board, before the combine
+     * @param height      the height of each individual board, before the combine
+     * @param sheetWidth  how many sheets wide the combined map is
      * @param sheetHeight how many sheets tall the combined map is
-     * @param boards an array of the boards to be combined
-     * @param medium Sets the medium the map is in (ie., ground, atmo, space)
+     * @param boards      an array of the boards to be combined
+     * @param medium      Sets the medium the map is in (ie., ground, atmo, space)
      */
     public static Board combine(int width, int height, int sheetWidth, int sheetHeight,
           Board[] boards, int medium) {
@@ -74,32 +101,35 @@ public class BoardUtilities {
     /**
      * Combines one or more boards into one huge megaboard!
      *
-     * @param width the width of each individual board, before the combine
-     * @param height the height of each individual board, before the combine
-     * @param sheetWidth how many sheets wide the combined map is
+     * @param width       the width of each individual board, before the combine
+     * @param height      the height of each individual board, before the combine
+     * @param sheetWidth  how many sheets wide the combined map is
      * @param sheetHeight how many sheets tall the combined map is
-     * @param boards an array of the boards to be combined
-     * @param isRotated Flag that determines if any of the maps are rotated
-     * @param medium Sets the medium the map is in (ie., ground, atmo, space)
+     * @param boards      an array of the boards to be combined
+     * @param isRotated   Flag that determines if any of the maps are rotated
+     * @param medium      Sets the medium the map is in (ie., ground, atmo, space)
+     *
      * @deprecated Use the {{@link #combine(int, int, int, int, Board[], int)}}
      */
-    @Deprecated(since="0.50.06", forRemoval = true)
+    @Deprecated(since = "0.50.06", forRemoval = true)
     public static Board combine(int width, int height, int sheetWidth, int sheetHeight, Board[] boards,
           List<Boolean> isRotated, int medium) {
         return combine(width, height, sheetWidth, sheetHeight, boards, medium, 1);
     }
 
-    private record PaddingArea(int startX, int startY, int columnPadding, int height){};
+    private record PaddingArea(int startX, int startY, int columnPadding, int height) {}
+
+    ;
 
     /**
      * Combines one or more boards into one huge megaboard!
      *
-     * @param width the width of each individual board, before the combine
-     * @param height the height of each individual board, before the combine
-     * @param sheetWidth how many sheets wide the combined map is
-     * @param sheetHeight how many sheets tall the combined map is
-     * @param boards an array of the boards to be combined
-     * @param medium Sets the medium the map is in (ie., ground, atmo, space)
+     * @param width              the width of each individual board, before the combine
+     * @param height             the height of each individual board, before the combine
+     * @param sheetWidth         how many sheets wide the combined map is
+     * @param sheetHeight        how many sheets tall the combined map is
+     * @param boards             an array of the boards to be combined
+     * @param medium             Sets the medium the map is in (ie., ground, atmo, space)
      * @param columnPaddingWidth Sets the padding width for the combined map
      */
     public static Board combine(int width, int height, int sheetWidth, int sheetHeight,
@@ -113,7 +143,7 @@ public class BoardUtilities {
 
         // If width is odd, make sure padding is odd to maintain even starting positions
         final int columnPadding = widthIsOdd ?
-                                        (columnPaddingWidth % 2 == 0 ? columnPaddingWidth + 1 : columnPaddingWidth) : 0;
+              (columnPaddingWidth % 2 == 0 ? columnPaddingWidth + 1 : columnPaddingWidth) : 0;
 
         // Calculate the total width with padding between boards
         int paddingColumns = widthIsOdd ? (sheetWidth - 1) * columnPadding : 0;
@@ -150,7 +180,7 @@ public class BoardUtilities {
                 }
                 // Fill the padding area with generated terrain if needed
                 if (widthIsOdd && j < sheetWidth - 1) {
-                    paddingAreas.add(new PaddingArea(xOffset + width, i*height, columnPadding, height));
+                    paddingAreas.add(new PaddingArea(xOffset + width, i * height, columnPadding, height));
                 }
             }
         }
@@ -174,12 +204,12 @@ public class BoardUtilities {
     /**
      * Fills the padding area between boards with generated terrain.
      *
-     * @param resultData The combined board data array
-     * @param resultWidth The width of the combined board
-     * @param startX The starting X coordinate of the padding area
-     * @param startY The starting Y coordinate of the padding area
+     * @param resultData   The combined board data array
+     * @param resultWidth  The width of the combined board
+     * @param startX       The starting X coordinate of the padding area
+     * @param startY       The starting Y coordinate of the padding area
      * @param paddingWidth The width of the padding area
-     * @param height The height of the padding area
+     * @param height       The height of the padding area
      */
     private static void fillPaddingArea(Hex[] resultData, int resultWidth, int startX, int startY,
           int paddingWidth, int height) {
@@ -252,7 +282,8 @@ public class BoardUtilities {
                     hex.addTerrain(new Terrain(Terrains.WATER, adjustedDepth));
                 } else if (rightHasWater) {
                     // Extend water from right side with decreasing depth
-                    int adjustedDepth = Math.max(1, rightWaterDepth - (int) Math.round(rightWaterDepth * (1 - lerpFactor)));
+                    int adjustedDepth = Math.max(1,
+                          rightWaterDepth - (int) Math.round(rightWaterDepth * (1 - lerpFactor)));
                     hex.addTerrain(new Terrain(Terrains.WATER, adjustedDepth));
                 } else {
                     // Add some standard terrain types based on available terrains from adjacent boards
@@ -313,8 +344,7 @@ public class BoardUtilities {
     }
 
     /**
-     * Copies the data of another board into given array of Hexes, offset by the
-     * specified x and y.
+     * Copies the data of another board into given array of Hexes, offset by the specified x and y.
      */
     protected static void copyBoardInto(Hex[] dest, int destWidth, int x, int y, Board copied) {
         for (int i = 0; i < copied.getHeight(); i++) {
@@ -332,13 +362,13 @@ public class BoardUtilities {
     public static Board generateRandom(MapSettings mapSettings) {
         int[][] elevationMap = new int[mapSettings.getBoardWidth()][mapSettings.getBoardHeight()];
         double sizeScale = (double) (mapSettings.getBoardWidth() * mapSettings.getBoardHeight())
-                / (16d * 17d);
+              / (16d * 17d);
 
         generateElevation(mapSettings.getHilliness(), mapSettings
-                .getBoardWidth(), mapSettings.getBoardHeight(), mapSettings
-                .getRange() + 1, mapSettings.getProbInvert(), mapSettings
-                .getInvertNegativeTerrain(), elevationMap, mapSettings
-                .getAlgorithmToUse());
+              .getBoardWidth(), mapSettings.getBoardHeight(), mapSettings
+              .getRange() + 1, mapSettings.getProbInvert(), mapSettings
+              .getInvertNegativeTerrain(), elevationMap, mapSettings
+              .getAlgorithmToUse());
 
         Hex[] nb = new Hex[mapSettings.getBoardWidth() * mapSettings.getBoardHeight()];
         int index = 0;
@@ -361,7 +391,7 @@ public class BoardUtilities {
 
         // initialize reverseHex
         HashMap<Hex, Point> reverseHex = new HashMap<>(2
-                * mapSettings.getBoardWidth() * mapSettings.getBoardHeight());
+              * mapSettings.getBoardWidth() * mapSettings.getBoardHeight());
         for (int y = 0; y < mapSettings.getBoardHeight(); y++) {
             for (int x = 0; x < mapSettings.getBoardWidth(); x++) {
                 reverseHex.put(result.getHex(x, y), new Point(x, y));
@@ -372,21 +402,21 @@ public class BoardUtilities {
         while (peaks > 0) {
             peaks--;
             int mountainHeight = mapSettings.getMountainHeightMin()
-                    + Compute.randomInt(1 + mapSettings.getMountainHeightMax()
-                            - mapSettings.getMountainHeightMin());
+                  + Compute.randomInt(1 + mapSettings.getMountainHeightMax()
+                  - mapSettings.getMountainHeightMin());
             int mountainWidth = mapSettings.getMountainWidthMin()
-                    + Compute.randomInt(1 + mapSettings.getMountainWidthMax()
-                            - mapSettings.getMountainWidthMin());
+                  + Compute.randomInt(1 + mapSettings.getMountainWidthMax()
+                  - mapSettings.getMountainWidthMin());
             int mapWidth = result.getWidth();
             int mapHeight = result.getHeight();
 
             // put the peak somewhere in the middle of the map...
             Coords peak = new Coords(mapWidth / 4
-                    + Compute.randomInt((mapWidth + 1) / 2), mapHeight / 4
-                    + Compute.randomInt((mapHeight + 1) / 2));
+                  + Compute.randomInt((mapWidth + 1) / 2), mapHeight / 4
+                  + Compute.randomInt((mapHeight + 1) / 2));
 
             generateMountain(result, mountainWidth, peak, mountainHeight,
-                    mapSettings.getMountainStyle());
+                  mapSettings.getMountainStyle());
         }
 
         if (mapSettings.getCliffs() > 0) {
@@ -401,9 +431,9 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.WOODS,
-                    mapSettings.getProbHeavy(), mapSettings.getProbUltra(),
-                    mapSettings.getMinForestSize(),
-                    mapSettings.getMaxForestSize(), reverseHex, true);
+                  mapSettings.getProbHeavy(), mapSettings.getProbUltra(),
+                  mapSettings.getMinForestSize(),
+                  mapSettings.getMaxForestSize(), reverseHex, true);
         }
 
         // Add foliage (1 elevation high woods)
@@ -414,8 +444,8 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeFoliage(result, Terrains.WOODS,
-                    mapSettings.getProbFoliageHeavy(), mapSettings.getMinFoliageSize(),
-                    mapSettings.getMaxFoliageSize(), reverseHex, true);
+                  mapSettings.getProbFoliageHeavy(), mapSettings.getMinFoliageSize(),
+                  mapSettings.getMaxFoliageSize(), reverseHex, true);
         }
 
         // Add the jungle
@@ -426,9 +456,9 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.JUNGLE,
-                    mapSettings.getProbHeavyJungle(), mapSettings.getProbUltraJungle(),
-                    mapSettings.getMinJungleSize(),
-                    mapSettings.getMaxJungleSize(), reverseHex, true);
+                  mapSettings.getProbHeavyJungle(), mapSettings.getProbUltraJungle(),
+                  mapSettings.getMinJungleSize(),
+                  mapSettings.getMaxJungleSize(), reverseHex, true);
         }
 
         // Add the rough
@@ -439,8 +469,8 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.ROUGH, mapSettings.getProbUltraRough(), mapSettings
-                    .getMinRoughSize(), mapSettings.getMaxRoughSize(),
-                    reverseHex, true);
+                        .getMinRoughSize(), mapSettings.getMaxRoughSize(),
+                  reverseHex, true);
         }
 
         // Add the sand
@@ -451,8 +481,8 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.SAND, 0, mapSettings
-                    .getMinSandSize(), mapSettings.getMaxSandSize(),
-                    reverseHex, true);
+                        .getMinSandSize(), mapSettings.getMaxSandSize(),
+                  reverseHex, true);
         }
 
         // Add the snow
@@ -463,8 +493,8 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.SNOW, 0, mapSettings
-                            .getMinSnowSize(), mapSettings.getMaxSnowSize(),
-                    reverseHex, true);
+                        .getMinSnowSize(), mapSettings.getMaxSnowSize(),
+                  reverseHex, true);
         }
 
         // Add the tundra
@@ -475,8 +505,8 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.TUNDRA, 0, mapSettings
-                            .getMinTundraSize(), mapSettings.getMaxTundraSize(),
-                    reverseHex, true);
+                        .getMinTundraSize(), mapSettings.getMaxTundraSize(),
+                  reverseHex, true);
         }
 
         // Add the planted field
@@ -487,8 +517,8 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.FIELDS, 0, mapSettings
-                    .getMinPlantedFieldSize(), mapSettings.getMaxPlantedFieldSize(),
-                    reverseHex, true);
+                        .getMinPlantedFieldSize(), mapSettings.getMaxPlantedFieldSize(),
+                  reverseHex, true);
         }
 
         // Add the swamp
@@ -499,8 +529,8 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.SWAMP, 0, mapSettings
-                    .getMinSwampSize(), mapSettings.getMaxSwampSize(),
-                    reverseHex, false); // can stack with woods or roughs
+                        .getMinSwampSize(), mapSettings.getMaxSwampSize(),
+                  reverseHex, false); // can stack with woods or roughs
         }
 
         // Add the Fortified hexes
@@ -511,8 +541,8 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.FORTIFIED, 0, mapSettings
-                    .getMinFortifiedSize(), mapSettings.getMaxFortifiedSize(),
-                    reverseHex, false);
+                        .getMinFortifiedSize(), mapSettings.getMaxFortifiedSize(),
+                  reverseHex, false);
         }
 
         // Add the rubble
@@ -523,8 +553,8 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.RUBBLE, mapSettings.getProbUltraRubble(), mapSettings
-                    .getMinRubbleSize(), mapSettings.getMaxRubbleSize(),
-                    reverseHex, true);
+                        .getMinRubbleSize(), mapSettings.getMaxRubbleSize(),
+                  reverseHex, true);
         }
 
         // Add the water
@@ -535,7 +565,7 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.WATER, mapSettings.getProbDeep(),
-                    mapSettings.getMinWaterSize(), mapSettings.getMaxWaterSize(), reverseHex, true);
+                  mapSettings.getMinWaterSize(), mapSettings.getMaxWaterSize(), reverseHex, true);
         }
 
         // Add the pavements
@@ -546,7 +576,7 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.PAVEMENT, 0, mapSettings.getMinPavementSize(),
-                    mapSettings.getMaxPavementSize(), reverseHex, true);
+                  mapSettings.getMaxPavementSize(), reverseHex, true);
         }
 
         // Add the ice
@@ -557,14 +587,14 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.ICE, 0, mapSettings.getMinIceSize(),
-                    mapSettings.getMaxIceSize(), reverseHex, true);
+                  mapSettings.getMaxIceSize(), reverseHex, true);
         }
 
         // Add the craters
         if (Compute.randomInt(100) < mapSettings.getProbCrater()) {
             addCraters(result, mapSettings.getMinRadius(), mapSettings.getMaxRadius(),
-                    (int) (mapSettings.getMinCraters() * sizeScale),
-                    (int) (mapSettings.getMaxCraters() * sizeScale));
+                  (int) (mapSettings.getMinCraters() * sizeScale),
+                  (int) (mapSettings.getMaxCraters() * sizeScale));
         }
 
         // Add the river
@@ -611,7 +641,7 @@ public class BoardUtilities {
         int height = building.getHeight();
         ArrayList<Hex> hexes = new ArrayList<>();
         int level = 0;
-        for (Iterator<Coords> i = building.getCoords(); i.hasNext();) {
+        for (Iterator<Coords> i = building.getCoords(); i.hasNext(); ) {
             Coords c = i.next();
             Hex hex = board.getHex(c);
             // work out exits...
@@ -641,22 +671,22 @@ public class BoardUtilities {
      * Overload that places some connected terrain with no chance of "ultra" version
      */
     protected static void placeSomeTerrain(Board board, int terrainType, int probMore, int minHexes,
-                                           int maxHexes, Map<Hex, Point> reverseHex, boolean exclusive) {
+          int maxHexes, Map<Hex, Point> reverseHex, boolean exclusive) {
         placeSomeTerrain(board, terrainType, probMore, 0, minHexes, maxHexes, reverseHex, exclusive);
     }
 
     /**
      * Places randomly some connected terrain.
      *
-     * @param board The board the terrain goes on.
+     * @param board       The board the terrain goes on.
      * @param terrainType The type of terrain to place {@link Terrains}.
      * @param probMore
-     * @param maxHexes Maximum number of hexes this terrain can cover.
+     * @param maxHexes    Maximum number of hexes this terrain can cover.
      * @param reverseHex
-     * @param exclusive Set TRUE if this terrain cannot be combined with any other terrain types.
+     * @param exclusive   Set TRUE if this terrain cannot be combined with any other terrain types.
      */
     protected static void placeSomeTerrain(Board board, int terrainType, int probMore, int probUltra, int minHexes,
-                                           int maxHexes, Map<Hex, Point> reverseHex, boolean exclusive) {
+          int maxHexes, Map<Hex, Point> reverseHex, boolean exclusive) {
         Point p = new Point(Compute.randomInt(board.getWidth()), Compute.randomInt(board.getHeight()));
         int count = minHexes;
         if ((maxHexes - minHexes) > 0) {
@@ -717,8 +747,8 @@ public class BoardUtilities {
     }
 
     /**
-     * Worker function that picks a terrain density (light, heavy, ultra) based on the passed-in weights.
-     * Likelyhood of light is 100 - probHeavy.
+     * Worker function that picks a terrain density (light, heavy, ultra) based on the passed-in weights. Likelyhood of
+     * light is 100 - probHeavy.
      */
     private static int pickTerrainDensity(int terrainType, int probHeavy, int probUltra) {
         int heavyThreshold = 100 - probHeavy;
@@ -762,9 +792,9 @@ public class BoardUtilities {
     private static void growTreesIfNecessary(Hex field, int terrainType, int terrainDensity) {
         // light/heavy woods and jungle go up two levels
         if (((terrainType == Terrains.WOODS) || (terrainType == Terrains.JUNGLE))
-                && ((terrainDensity == 1) || (terrainDensity == 2))) {
+              && ((terrainDensity == 1) || (terrainDensity == 2))) {
             field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
-        // ultra woods and jungle go up three levels
+            // ultra woods and jungle go up three levels
         } else if ((terrainType == Terrains.WOODS) && (terrainDensity == 3)) {
             field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 3));
         }
@@ -773,15 +803,15 @@ public class BoardUtilities {
     /**
      * Places randomly some connected foliage.
      *
-     * @param board The board the terrain goes on.
+     * @param board       The board the terrain goes on.
      * @param terrainType The type of terrain to place {@link Terrains}.
      * @param probMore
-     * @param maxHexes Maximum number of hexes this terrain can cover.
+     * @param maxHexes    Maximum number of hexes this terrain can cover.
      * @param reverseHex
-     * @param exclusive Set TRUE if this terrain cannot be combined with any other terrain types.
+     * @param exclusive   Set TRUE if this terrain cannot be combined with any other terrain types.
      */
     protected static void placeFoliage(Board board, int terrainType, int probMore, int minHexes,
-                                       int maxHexes, Map<Hex, Point> reverseHex, boolean exclusive) {
+          int maxHexes, Map<Hex, Point> reverseHex, boolean exclusive) {
         Point p = new Point(Compute.randomInt(board.getWidth()), Compute.randomInt(board.getHeight()));
         int count = minHexes;
         if ((maxHexes - minHexes) > 0) {
@@ -823,18 +853,17 @@ public class BoardUtilities {
     }
 
     /**
-     * Searching starting from one Hex, all Terrains not matching terrainType,
-     * next to one of terrainType.
+     * Searching starting from one Hex, all Terrains not matching terrainType, next to one of terrainType.
      *
      * @param terrainType The terrainType which the searching hexes should not have.
-     * @param alreadyUsed The hexes which should not looked at (because they are already supposed
-     *                    to visited in some way)
-     * @param unUsed In this set the resulting hexes are stored. They are stored in addition to all
-     *               previously stored.
-     * @param searchFrom The Hex where to start
+     * @param alreadyUsed The hexes which should not looked at (because they are already supposed to visited in some
+     *                    way)
+     * @param unUsed      In this set the resulting hexes are stored. They are stored in addition to all previously
+     *                    stored.
+     * @param searchFrom  The Hex where to start
      */
     private static void findAllUnused(Board board, int terrainType, Set<Hex> alreadyUsed,
-                                      Set<Hex> unUsed, Hex searchFrom, Map<Hex, Point> reverseHex) {
+          Set<Hex> unUsed, Hex searchFrom, Map<Hex, Point> reverseHex) {
         Hex field;
         Set<Hex> notYetUsed = new HashSet<>();
 
@@ -849,8 +878,8 @@ public class BoardUtilities {
                 Point loc = reverseHex.get(field);
                 Hex newHex = board.getHexInDir(loc.x, loc.y, dir);
                 if ((newHex != null) && (!alreadyUsed.contains(newHex))
-                        && (!notYetUsed.contains(newHex))
-                        && (!unUsed.contains(newHex))) {
+                      && (!notYetUsed.contains(newHex))
+                      && (!unUsed.contains(newHex))) {
                     ((newHex.containsTerrain(terrainType)) ? notYetUsed : unUsed).add(newHex);
                 }
             }
@@ -863,7 +892,7 @@ public class BoardUtilities {
      * add a crater to the board
      */
     public static void addCraters(Board board, int minRadius, int maxRadius, int minCraters,
-                                  int maxCraters) {
+          int maxCraters) {
         // Calculate number of craters to generate.
         int numberCraters = minCraters;
         if (maxCraters > minCraters) {
@@ -966,14 +995,14 @@ public class BoardUtilities {
      *         the results are between -0.5 and 1 (that means, if no scale is
      *         applied -1, 0 or 1).
      */
-//    public static int craterProfile(double x, int scale) {
-//        double result = 0;
-//
-//        result = (x < 0.75) ? ((Math.exp(x * 5.0 / 0.75 - 3) - 0.04979) * 1.5 / 7.33926) - 0.5
-//                : ((Math.cos((x - 0.75) * 4.0) + 1.0) / 2.0);
-//
-//        return (int) (result * scale);
-//    }
+    //    public static int craterProfile(double x, int scale) {
+    //        double result = 0;
+    //
+    //        result = (x < 0.75) ? ((Math.exp(x * 5.0 / 0.75 - 3) - 0.04979) * 1.5 / 7.33926) - 0.5
+    //                : ((Math.cos((x - 0.75) * 4.0) + 1.0) / 2.0);
+    //
+    //        return (int) (result * scale);
+    //    }
 
     /**
      * calculate the distance between two points
@@ -988,9 +1017,8 @@ public class BoardUtilities {
     }
 
     /**
-     * Adds an River to the map (if the map is at least 5x5 hexes big). The
-     * river has an width of 1-3 hexes (everything else is no more a river). The
-     * river goes from one border to another. Nor Params, no results.
+     * Adds an River to the map (if the map is at least 5x5 hexes big). The river has an width of 1-3 hexes (everything
+     * else is no more a river). The river goes from one border to another. Nor Params, no results.
      */
     public static void addRiver(Board board, Map<Hex, Point> reverseHex) {
         int minElevation = Integer.MAX_VALUE;
@@ -1041,9 +1069,9 @@ public class BoardUtilities {
             p = reverseHex.get(field);
             /* then maybe the left and right neighbours */
             riverHexes.addAll(extendRiverToSide(board, p, Compute.randomInt(3),
-                    nextLeft, reverseHex));
+                  nextLeft, reverseHex));
             riverHexes.addAll(extendRiverToSide(board, p, Compute.randomInt(3),
-                    nextRight, reverseHex));
+                  nextRight, reverseHex));
             switch (Compute.randomInt(4)) {
                 case 0:
                     field = board.getHexInDir(p.x, p.y, (direction + 5) % 6);
@@ -1089,14 +1117,15 @@ public class BoardUtilities {
     /**
      * Extends a river hex to left and right sides.
      *
-     * @param hexloc The location of the river hex, from which it should get started.
-     * @param width The width to which the river should extend in the direction.
-     *            So the actual width of the river is 2*width+1.
+     * @param hexloc    The location of the river hex, from which it should get started.
+     * @param width     The width to which the river should extend in the direction. So the actual width of the river is
+     *                  2*width+1.
      * @param direction Direction to which the river hexes should be extended.
+     *
      * @return Hashset with the hexes from the side.
      */
     private static Set<Hex> extendRiverToSide(Board board, Point hexloc, int width, int direction,
-                                              Map<Hex, Point> reverseHex) {
+          Map<Hex, Point> reverseHex) {
         Point current = new Point(hexloc);
         Set<Hex> result = new HashSet<>();
         Hex hex;
@@ -1113,8 +1142,7 @@ public class BoardUtilities {
     }
 
     /**
-     * Flood negative hex levels Shoreline / salt marshes effect Works best with
-     * more elevation
+     * Flood negative hex levels Shoreline / salt marshes effect Works best with more elevation
      */
     protected static void postProcessFlood(Hex[] hexSet, int modifier) {
         int n;
@@ -1124,7 +1152,7 @@ public class BoardUtilities {
             field = hexSet[n];
             int elev = field.getLevel() - modifier;
             if ((elev == 0) && !(field.containsTerrain(Terrains.WATER))
-                    && !(field.containsTerrain(Terrains.PAVEMENT))) {
+                  && !(field.containsTerrain(Terrains.PAVEMENT))) {
                 field.addTerrain(new Terrain(Terrains.SWAMP, 1));
             } else if (elev < 0) {
                 if (elev < -4) {
@@ -1202,8 +1230,7 @@ public class BoardUtilities {
     }
 
     /**
-     * Dries up all bodies of water by 1-3 levels. dried up water becomes swamp
-     * then rough
+     * Dries up all bodies of water by 1-3 levels. dried up water becomes swamp then rough
      */
     protected static void postProcessDrought(Hex[] hexSet, int modifier) {
         int n;
@@ -1218,7 +1245,7 @@ public class BoardUtilities {
             field = hexSet[n];
             if (field.containsTerrain(Terrains.SWAMP)) {
                 field.removeTerrain(Terrains.SWAMP); // any swamps are dried
-                                                        // up to hardened mud
+                // up to hardened mud
                 if ((field.terrainsPresent() == 0) && (Compute.randomInt(100) < 30)) {
                     // if no other terrains present, 30% chance to change to
                     // rough
@@ -1267,7 +1294,7 @@ public class BoardUtilities {
     }
 
     private static void findCliffNeighbours(Board board, Coords c, List<Coords> candidate,
-                                            Set<Coords> ignore) {
+          Set<Coords> ignore) {
         candidate.add(c);
         ignore.add(c);
         int elevation = board.getHex(c).getLevel();
@@ -1311,7 +1338,7 @@ public class BoardUtilities {
                         elevation++;
                     }
 
-                    for (Iterator<Coords> e = candidate.iterator(); e.hasNext();) {
+                    for (Iterator<Coords> e = candidate.iterator(); e.hasNext(); ) {
                         c = e.next();
                         Hex hex = board.getHex(c);
                         hex.setLevel(elevation);
@@ -1334,8 +1361,9 @@ public class BoardUtilities {
                 //moderate rain - mud in clear hexes, depth 0 water, and dirt roads
                 if (weatherCond.isModerateRainOrLightningStorm()) {
                     if ((hex.terrainsPresent() == 0)
-                            || (hex.containsTerrain(Terrains.WATER) && (hex.depth() == 0))
-                            || (hex.containsTerrain(Terrains.ROAD) && hex.terrainLevel(Terrains.ROAD) == Terrains.ROAD_LVL_DIRT)) {
+                          || (hex.containsTerrain(Terrains.WATER) && (hex.depth() == 0))
+                          || (hex.containsTerrain(Terrains.ROAD)
+                          && hex.terrainLevel(Terrains.ROAD) == Terrains.ROAD_LVL_DIRT)) {
                         hex.addTerrain(new Terrain(Terrains.MUD, 1));
                         if (hex.containsTerrain(Terrains.WATER)) {
                             hex.removeTerrain(Terrains.WATER);
@@ -1346,13 +1374,14 @@ public class BoardUtilities {
                 //heavy rain - mud in all hexes except buildings, depth 1+ water, pavement, and standard roads
                 //rapids in all depth 1+ water
                 if (weatherCond.isHeavyRainOrGustingRain()) {
-                    if (hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.RAPIDS) && (hex.depth() > 0)) {
+                    if (hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.RAPIDS) && (hex.depth()
+                          > 0)) {
                         hex.addTerrain(new Terrain(Terrains.RAPIDS, 1));
                     } else if (!hex.containsTerrain(Terrains.BUILDING)
-                            && !hex.containsTerrain(Terrains.PAVEMENT)
-                            && ( !hex.containsTerrain(Terrains.ROAD)
-                                || hex.terrainLevel(Terrains.ROAD) == Terrains.ROAD_LVL_GRAVEL
-                                || hex.terrainLevel(Terrains.ROAD) == Terrains.ROAD_LVL_DIRT)) {
+                          && !hex.containsTerrain(Terrains.PAVEMENT)
+                          && (!hex.containsTerrain(Terrains.ROAD)
+                          || hex.terrainLevel(Terrains.ROAD) == Terrains.ROAD_LVL_GRAVEL
+                          || hex.terrainLevel(Terrains.ROAD) == Terrains.ROAD_LVL_DIRT)) {
                         hex.addTerrain(new Terrain(Terrains.MUD, 1));
                         if (hex.containsTerrain(Terrains.WATER)) {
                             hex.removeTerrain(Terrains.WATER);
@@ -1363,24 +1392,25 @@ public class BoardUtilities {
                 //torrential downpour - mud in all hexes except buildings, depth 1+ water, and non-dirt roads
                 //torrent in all depth 1+ water, swamps in all depth 0 water hexes
                 if (weatherCond.isDownpour()) {
-                    if (hex.containsTerrain(Terrains.WATER) && !(hex.terrainLevel(Terrains.RAPIDS) > 1) && (hex.depth() > 0)) {
+                    if (hex.containsTerrain(Terrains.WATER) && !(hex.terrainLevel(Terrains.RAPIDS) > 1) && (hex.depth()
+                          > 0)) {
                         hex.addTerrain(new Terrain(Terrains.RAPIDS, 2));
                     } else if (hex.containsTerrain(Terrains.WATER)) {
                         hex.addTerrain(new Terrain(Terrains.SWAMP, 1));
                         hex.removeTerrain(Terrains.WATER);
                     } else if (!hex.containsTerrain(Terrains.BUILDING)
-                            && !hex.containsTerrain(Terrains.PAVEMENT)
-                            && ( !hex.containsTerrain(Terrains.ROAD)
-                                || hex.terrainLevel(Terrains.ROAD) == Terrains.ROAD_LVL_GRAVEL
-                                || hex.terrainLevel(Terrains.ROAD) == Terrains.ROAD_LVL_DIRT)) {
+                          && !hex.containsTerrain(Terrains.PAVEMENT)
+                          && (!hex.containsTerrain(Terrains.ROAD)
+                          || hex.terrainLevel(Terrains.ROAD) == Terrains.ROAD_LVL_GRAVEL
+                          || hex.terrainLevel(Terrains.ROAD) == Terrains.ROAD_LVL_DIRT)) {
                         hex.addTerrain(new Terrain(Terrains.MUD, 1));
                     }
                 }
 
                 // check for rapids/torrents created by wind
                 if (windCond.isStrongerThan(Wind.MOD_GALE)
-                        && hex.containsTerrain(Terrains.WATER)
-                        && (hex.depth() > 0)) {
+                      && hex.containsTerrain(Terrains.WATER)
+                      && (hex.depth() > 0)) {
                     if (windCond.isStorm()) {
                         if (!(hex.terrainLevel(Terrains.RAPIDS) > 1)) {
                             hex.addTerrain(new Terrain(Terrains.RAPIDS, 2));
@@ -1398,17 +1428,17 @@ public class BoardUtilities {
     /**
      * Generates the elevations
      *
-     * @param hilliness The Hilliness
-     * @param width The Width of the map.
-     * @param height The Height of the map.
-     * @param range Max difference between highest and lowest level.
-     * @param invertProb Probability for the invertion of the map (0..100)
+     * @param hilliness      The Hilliness
+     * @param width          The Width of the map.
+     * @param height         The Height of the map.
+     * @param range          Max difference between highest and lowest level.
+     * @param invertProb     Probability for the invertion of the map (0..100)
      * @param invertNegative If 1, invert negative hexes, else do nothing
-     * @param elevationMap here is the result stored
+     * @param elevationMap   here is the result stored
      */
     public static void generateElevation(int hilliness, int width, int height, int range,
-                                         int invertProb, int invertNegative, int[][] elevationMap,
-                                         int algorithm) {
+          int invertProb, int invertNegative, int[][] elevationMap,
+          int algorithm) {
         int minLevel = 0;
         boolean invert = (Compute.randomInt(100) < invertProb);
 
@@ -1488,7 +1518,7 @@ public class BoardUtilities {
     }
 
     public static void generateMountain(Board board, int width, Coords centre, int height,
-                                        int capStyle) {
+          int capStyle) {
         final int mapW = board.getWidth();
         final int mapH = board.getHeight();
 
@@ -1498,7 +1528,7 @@ public class BoardUtilities {
                 int distance = c.distance(centre);
                 int elev = (100 * height * (width - distance)) / width;
                 elev = (elev / 100)
-                        + (Compute.randomInt(100) < (elev % 100) ? 1 : 0);
+                      + (Compute.randomInt(100) < (elev % 100) ? 1 : 0);
 
                 Hex hex = board.getHex(c);
 
@@ -1552,14 +1582,13 @@ public class BoardUtilities {
     }
 
     /**
-     * Flips the board around the vertical axis (North-for-South) and/or the
-     * horizontal axis (East-for-West). The dimensions of the board will remain
-     * the same, but the terrain of the hexes will be switched.
+     * Flips the board around the vertical axis (North-for-South) and/or the horizontal axis (East-for-West). The
+     * dimensions of the board will remain the same, but the terrain of the hexes will be switched.
      *
-     * @param horiz - a <code>boolean</code> value that, if <code>true</code>,
-     *            indicates that the board is being flipped North-for-South.
-     * @param vert - a <code>boolean</code> value that, if <code>true</code>,
-     *            indicates that the board is being flipped East-for-West.
+     * @param horiz - a <code>boolean</code> value that, if <code>true</code>, indicates that the board is being flipped
+     *              North-for-South.
+     * @param vert  - a <code>boolean</code> value that, if <code>true</code>, indicates that the board is being flipped
+     *              East-for-West.
      */
     public static void flip(Board board, boolean horiz, boolean vert) {
         // If we're not flipping around *some* axis, do nothing.
@@ -1733,11 +1762,10 @@ public class BoardUtilities {
     }
 
     /**
-     * Helper function for map generator increases all of one side and decreased
-     * on other side
+     * Helper function for map generator increases all of one side and decreased on other side
      */
     protected static void markSides(Point p1, Point p2, int upperInc, int lowerInc,
-                                    int[][] elevationMap, int height) {
+          int[][] elevationMap, int height) {
         for (int x = p1.x; x < p2.x; x++) {
             for (int y = 0; y < height; y++) {
                 int point = (p2.y - p1.y) / (p2.x - p1.x) * (x - p1.x) + p1.y;
@@ -1789,7 +1817,7 @@ public class BoardUtilities {
      * Helper function for landscape generation
      */
     protected static void midPointStep(double fracdim, int size, int delta, int[][] elevationMap,
-                                       int step, boolean newBorder) {
+          int step, boolean newBorder) {
         int d1, d2;
         int delta5;
         int x, y;
@@ -1804,8 +1832,8 @@ public class BoardUtilities {
             y = d2;
             do {
                 elevationMap[x][y] = middleValue(elevationMap[x + d2][y + d2],
-                        elevationMap[x + d2][y - d2], elevationMap[x - d2][y
-                                + d2], elevationMap[x - d2][y - d2], delta5);
+                      elevationMap[x + d2][y - d2], elevationMap[x - d2][y
+                            + d2], elevationMap[x - d2][y - d2], delta5);
                 y += d1;
             } while (y < size - d2);
             x += d1;
@@ -1818,17 +1846,17 @@ public class BoardUtilities {
             do {
                 y = x;
                 elevationMap[0][x] = middleValue(elevationMap[0][x + d2],
-                        elevationMap[0][x - d2], elevationMap[d2][x], delta5);
+                      elevationMap[0][x - d2], elevationMap[d2][x], delta5);
                 elevationMap[size][x] = middleValue(elevationMap[size - 1][x
-                        + d2], elevationMap[size - 1][x - d2],
-                        elevationMap[size - d2 - 1][x], delta5);
+                            + d2], elevationMap[size - 1][x - d2],
+                      elevationMap[size - d2 - 1][x], delta5);
                 y = 0;
                 elevationMap[x][0] = middleValue(elevationMap[x + d2][0],
-                        elevationMap[x - d2][0], elevationMap[x][d2], delta5);
+                      elevationMap[x - d2][0], elevationMap[x][d2], delta5);
                 elevationMap[x][size] = middleValue(
-                        elevationMap[x + d2][size - 1],
-                        elevationMap[x - d2][size - 1], elevationMap[x][size
-                                - d2 - 1], delta5);
+                      elevationMap[x + d2][size - 1],
+                      elevationMap[x - d2][size - 1], elevationMap[x][size
+                            - d2 - 1], delta5);
                 x += d1;
             } while (x < size - d2);
         }
@@ -1852,8 +1880,8 @@ public class BoardUtilities {
             hy = y + d2;
             while ((y < size - d2) && (hy < size)) {
                 elevationMap[x][y] = middleValue(elevationMap[x][hy],
-                        elevationMap[x][y - d2], elevationMap[hx][y],
-                        elevationMap[x - d2][y], delta);
+                      elevationMap[x][y - d2], elevationMap[hx][y],
+                      elevationMap[x - d2][y], delta);
                 y += d1;
                 hy = y + d2;
             }
@@ -1863,38 +1891,38 @@ public class BoardUtilities {
     }
 
     /**
-     * calculates the arithmetic medium of 3 values and add random value in
-     * range of delta.
+     * calculates the arithmetic medium of 3 values and add random value in range of delta.
      */
     protected static int middleValue(int a, int b, int c, int delta) {
         return (((a + b + c) / 3) + normRNG(delta));
     }
 
     /**
-     * calculates the arithmetic medium of 4 values and add random value in
-     * range of delta.
+     * calculates the arithmetic medium of 4 values and add random value in range of delta.
      */
     protected static int middleValue(int a, int b, int c, int d, int delta) {
         return (((a + b + c + d) / 4) + normRNG(delta));
     }
 
     /**
-     * Gives a normal distributed Randomvalue, with mediumvalue from 0 and a
-     * Varianz of factor.
+     * Gives a normal distributed Randomvalue, with mediumvalue from 0 and a Varianz of factor.
      *
      * @param factor varianz of of the distribution.
-     * @return Random number, most times in the range -factor .. +factor, at
-     *         most in the range of -3*factor .. +3*factor.
+     *
+     * @return Random number, most times in the range -factor .. +factor, at most in the range of -3*factor ..
+     *       +3*factor.
      */
     private static int normRNG(int factor) {
         factor++;
         return (2 * (Compute.randomInt(factor) + Compute.randomInt(factor) + Compute
-                .randomInt(factor)) - 3 * (factor - 1)) / 32;
+              .randomInt(factor)) - 3 * (factor - 1)) / 32;
     }
 
     /**
      * Figures out the "closest" edge for the given entity on the entity's game board
+     *
      * @param entity Entity to evaluate
+     *
      * @return the Board.START_ constant representing the "closest" edge
      */
     public static CardinalEdge getClosestEdge(Entity entity) {
@@ -1918,7 +1946,9 @@ public class BoardUtilities {
 
     /**
      * Figures out the "opposite" edge for the given entity.
+     *
      * @param entity Entity to evaluate
+     *
      * @return the Board.START_ constant representing the "opposite" edge
      */
     public static CardinalEdge determineOppositeEdge(Entity entity) {

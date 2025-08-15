@@ -1,16 +1,37 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+/*
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -18,8 +39,8 @@ import java.util.Vector;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
-import megamek.common.HitData;
 import megamek.common.Game;
+import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
@@ -33,7 +54,7 @@ import megamek.server.totalwarfare.TWGameManager;
 public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
 
     /**
-     * 
+     *
      */
 
     private static final long serialVersionUID = -1618484541772117621L;
@@ -45,15 +66,14 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
      * @param m
      */
     public ScreenLauncherBayHandler(ToHitData t, WeaponAttackAction w, Game g,
-            TWGameManager m) {
+          TWGameManager m) {
         super(t, w, g, m);
     }
 
     /**
      * handle this weapons firing
-     * 
-     * @return a <code>boolean</code> value indicating wether this should be
-     *         kept or not
+     *
+     * @return a <code>boolean</code> value indicating wether this should be kept or not
      */
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
@@ -106,14 +126,14 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
                 // if fighter squadron all fighters are damaged
                 if (entity instanceof FighterSquadron) {
                     entity.getSubEntities().forEach(
-                    ent -> {
-                        ToHitData squadronToHit = new ToHitData();
-                        squadronToHit.setHitTable(ToHitData.HIT_NORMAL);
-                        HitData hit = ent.rollHitLocation(squadronToHit.getHitTable(), ToHitData.SIDE_FRONT);
-                        hit.setCapital(false);
-                        vPhaseReport.addAll(gameManager.damageEntity(ent, hit, attackValue));
-                        gameManager.creditKill(ent, ae);
-                    });
+                          ent -> {
+                              ToHitData squadronToHit = new ToHitData();
+                              squadronToHit.setHitTable(ToHitData.HIT_NORMAL);
+                              HitData hit = ent.rollHitLocation(squadronToHit.getHitTable(), ToHitData.SIDE_FRONT);
+                              hit.setCapital(false);
+                              vPhaseReport.addAll(gameManager.damageEntity(ent, hit, attackValue));
+                              gameManager.creditKill(ent, ae);
+                          });
                 } else {
                     ToHitData hexToHit = new ToHitData();
                     hexToHit.setHitTable(ToHitData.HIT_NORMAL);

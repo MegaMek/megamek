@@ -1,16 +1,36 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview.overlay;
 
@@ -70,7 +90,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
     private static final String FILENAME_BUTTON_MAXIMISE = "maxbutton.gif";
     private static final String FILENAME_BUTTON_RESIZE = "resizebutton.gif";
     private Font FONT_CHAT = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD,
-            UIUtil.FONT_SCALE1);
+          UIUtil.FONT_SCALE1);
     private static final Color COLOR_TEXT_BACK = Color.BLACK;
     private static final Color COLOR_TEXT_FRONT = Color.WHITE;
     private static final Color COLOR_BACKGROUND;
@@ -139,7 +159,8 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
     private boolean cursorVisible = true;
     private Timer cursorBlinkTimer;
 
-    public ChatterBoxOverlay(ClientGUI clientGUI, BoardView boardview, MegaMekController controller, ChatterBox chatterBox) {
+    public ChatterBoxOverlay(ClientGUI clientGUI, BoardView boardview, MegaMekController controller,
+          ChatterBox chatterBox) {
         client = clientGUI.getClient();
         bv = boardview;
         cb = chatterBox;
@@ -161,7 +182,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
             public void gameEntityNew(GameEntityNewEvent e) {
                 if (PreferenceManager.getClientPreferences().getPrintEntityChange()) {
                     addChatMessage("MegaMek: " + e.getNumberOfEntities() +
-                            " Entities added.");
+                          " Entities added.");
                 }
             }
 
@@ -177,19 +198,19 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
 
         Toolkit toolkit = bv.getPanel().getToolkit();
         upbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(),
-                FILENAME_BUTTON_UP).toString());
+              FILENAME_BUTTON_UP).toString());
         PMUtil.setImage(upbutton, clientGUI.getMainPanel());
         downbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(),
-                FILENAME_BUTTON_DOWN).toString());
+              FILENAME_BUTTON_DOWN).toString());
         PMUtil.setImage(downbutton, clientGUI.getMainPanel());
         minbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(),
-                FILENAME_BUTTON_MINIMISE).toString());
+              FILENAME_BUTTON_MINIMISE).toString());
         PMUtil.setImage(minbutton, clientGUI.getMainPanel());
         maxbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(),
-                FILENAME_BUTTON_MAXIMISE).toString());
+              FILENAME_BUTTON_MAXIMISE).toString());
         PMUtil.setImage(maxbutton, clientGUI.getMainPanel());
         resizebutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(),
-                FILENAME_BUTTON_RESIZE).toString());
+              FILENAME_BUTTON_RESIZE).toString());
         PMUtil.setImage(resizebutton, clientGUI.getMainPanel());
 
         registerKeyboardCommands(controller);
@@ -344,7 +365,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
         int yMax = yMin + height;
 
         boolean mouseOver = (p.x > xMin) && (p.x < xMax) && (p.y > yMin)
-                && (p.y < yMax);
+              && (p.y < yMax);
         return mouseOver;
     }
 
@@ -361,7 +382,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
         int yMax = yMin + height;
 
         boolean mouseOver = (p.x > xMin) && (p.x < xMax) && (p.y > yMin)
-                && (p.y < yMax);
+              && (p.y < yMax);
 
         // Don't open on mouse over, it is annoying.
         /*
@@ -396,14 +417,14 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
         int yOffset = ((size.height) - height - DIST_BOTTOM) + slideOffset;
 
         if ((x < DIST_SIDE) || (x > (DIST_SIDE + width)) || (y < yOffset)
-                || (y > (yOffset + height))) {
+              || (y > (yOffset + height))) {
             bv.setChatterBoxActive(false);
             return false;
         }
         isHit = true;
         // Hide button
         if ((x > 9) && (x < 25) && (y > (yOffset + 2)) && (y < (yOffset + 18))
-                && !isDown()) {
+              && !isDown()) {
             slideDown();
             return true;
         }
@@ -415,14 +436,14 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
 
         // Scroll up
         if ((x > (width - 17)) && (x < (width - 1)) && (y > (yOffset + 2 + 14))
-                && (y < (yOffset + 32))) {
+              && (y < (yOffset + 32))) {
             scrollUp();
             bv.refreshDisplayables();
             return true;
         }
         // resize
         if ((x > (width - 17)) && (x < (width - 1)) && (y > (yOffset + 2))
-                && (y < (yOffset + 18))) {
+              && (y < (yOffset + 18))) {
             if (isUp()) {
                 resizing = true;
                 lockOpen = true;
@@ -431,37 +452,37 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
         }
         // Above scrollbar
         if ((x > (width - 17)) && (x < (width - 1)) && (y > (yOffset + 31))
-                && (y < ((yOffset + 18 + scrollBarOffset) - 1))) {
+              && (y < ((yOffset + 18 + scrollBarOffset) - 1))) {
             pageUp();
             bv.refreshDisplayables();
             return true;
         }
         // Scroll bar
         if ((x > (width - 15)) && (x < (width - 5))
-                && (y > ((yOffset + 18 + scrollBarOffset) - 1))
-                && (y < (yOffset + 18 + scrollBarOffset + scrollBarHeight))) {
+              && (y > ((yOffset + 18 + scrollBarOffset) - 1))
+              && (y < (yOffset + 18 + scrollBarOffset + scrollBarHeight))) {
             lastScrollPoint = p;
             scrolling = true;
             return true;
         }
         // Below scrollbar
         if ((x > (width - 17)) && (x < (width - 2))
-                && (y > (yOffset + 18 + scrollBarOffset + scrollBarHeight))
-                && (y < (yOffset + 18 + getScrollbarOuterHeight()))) {
+              && (y > (yOffset + 18 + scrollBarOffset + scrollBarHeight))
+              && (y < (yOffset + 18 + getScrollbarOuterHeight()))) {
             pageDown();
             bv.refreshDisplayables();
             return true;
         }
         // Scroll down
         if ((x > (width - 17)) && (x < (width - 1)) && (y > ((size.height) - 25))
-                && (y < ((size.height) - 11))) {
+              && (y < ((size.height) - 11))) {
             scrollDown();
             bv.refreshDisplayables();
             return true;
         }
         // Message box
         if ((x > 10) && (x < (width - 40)) && (y > ((size.height) - 25))
-                && (y < ((size.height) - 11))) {
+              && (y < ((size.height) - 11))) {
             bv.refreshDisplayables();
             return true;
         }
@@ -533,16 +554,16 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
         if (rows <= max_nbr_rows) {
             for (int i = 0; i < messages.size(); i++) {
                 printLine(graph, messages.get(i), 10 + clipBounds.x, yOffset
-                        + h + ((i + 1) * h));
+                      + h + ((i + 1) * h));
             }
         } else {
             int row = 1;
             for (int i = rows - max_nbr_rows - chatScroll; i < (messages
-                    .size()
-                    - chatScroll); i++) {
+                  .size()
+                  - chatScroll); i++) {
                 if (i > -1) {
                     printLine(graph, messages.get(i), 10 + clipBounds.x, yOffset
-                            + h + (row * h));
+                          + h + (row * h));
                     row++;
                 }
             }
@@ -560,8 +581,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
     }
 
     /**
-     * Adds a line to the chat, and performs line breaking if
-     * necessary
+     * Adds a line to the chat, and performs line breaking if necessary
      *
      * @param line
      */
@@ -679,7 +699,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
             if (Math.abs(scrollBarDragPos) >= ((scrollBarStep) / 2.0f)) {
                 if (scrollBarDragPos < 0) {
                     if (!increasedChatScroll
-                            && !(chatScroll >= (messages.size() - 6))) {
+                          && !(chatScroll >= (messages.size() - 6))) {
                         chatScroll++;
                         decreasedChatScroll = false;
                         increasedChatScroll = true;
@@ -705,7 +725,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
         if (Math.abs(scrollBarDragPos) >= ((scrollBarStep) / 2.0f)) {
             if (scrollBarDragPos < 0) {
                 if (!increasedChatScroll
-                        && !(chatScroll >= (messages.size() - 6))) {
+                      && !(chatScroll >= (messages.size() - 6))) {
                     chatScroll++;
                     decreasedChatScroll = false;
                     increasedChatScroll = true;
@@ -725,8 +745,8 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
             scrollBarOffset = 0;
         } else {
             scrollBarOffset = (int) (((getMaxScrollbarHeight() - scrollBarHeight))
-                    * (1.0f - (chatScroll / ((float) (messages
-                            .size() - max_nbr_rows)))));
+                  * (1.0f - (chatScroll / ((float) (messages
+                  .size() - max_nbr_rows)))));
         }
     }
 
@@ -736,10 +756,10 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
             scrollBarStep = 1;
         } else {
             scrollBarHeight = Math
-                    .max(3, (int) (((float) max_nbr_rows / messages
-                            .size()) * getMaxScrollbarHeight()));
+                  .max(3, (int) (((float) max_nbr_rows / messages
+                        .size()) * getMaxScrollbarHeight()));
             scrollBarStep = ((getMaxScrollbarHeight() - scrollBarHeight) / (float) (messages
-                    .size() - max_nbr_rows));
+                  .size() - max_nbr_rows));
         }
         computeScrollBarOffset();
     }
@@ -756,7 +776,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
         if (ke.isControlDown() && (ke.getKeyCode() == KeyEvent.VK_V)) {
             Transferable content = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
             boolean hasTransferableText = (content != null) &&
-                    content.isDataFlavorSupported(DataFlavor.stringFlavor);
+                  content.isDataFlavorSupported(DataFlavor.stringFlavor);
             if (hasTransferableText) {
                 try {
                     addChatMessage((String) content.getTransferData(DataFlavor.stringFlavor));
@@ -815,8 +835,8 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
         }
 
         if ((isDown() || isSliding()) && (ke.getKeyCode() != KeyEvent.VK_ENTER)
-                && (ke.getKeyCode() != KeyEvent.VK_BACK_SPACE)
-                && (ke.getKeyCode() != KeyEvent.VK_ESCAPE)) {
+              && (ke.getKeyCode() != KeyEvent.VK_BACK_SPACE)
+              && (ke.getKeyCode() != KeyEvent.VK_ESCAPE)) {
             if (!slidingUp) {
                 slideUp();
             }
@@ -933,7 +953,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
         max_nbr_rows = (height / fm.getHeight()) - 2;
         bv.refreshDisplayables();
     }
-    
+
     private void stopCursorBlinking() {
         if (cursorBlinkTimer != null) {
             cursorBlinkTimer.stop();

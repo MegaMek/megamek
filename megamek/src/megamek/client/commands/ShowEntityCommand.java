@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.commands;
 
@@ -23,15 +37,17 @@ import megamek.common.Entity;
 import megamek.common.options.OptionsConstants;
 
 /**
- * This command exists to print entity information to the chat
- * window, it's primarily intended for visually impaired users.
+ * This command exists to print entity information to the chat window, it's primarily intended for visually impaired
+ * users.
+ *
  * @author dirk
  */
 public class ShowEntityCommand extends ClientCommand {
 
     public ShowEntityCommand(ClientGUI clientGUI) {
-        super(clientGUI, "entity",
-                "Print the information about a entity into the chat window. Usage: #entity 5 which would show the details for the entity numbered 5. Also #entity 5 0 would show location 0 of entity 5.");
+        super(clientGUI,
+              "entity",
+              "Print the information about a entity into the chat window. Usage: #entity 5 which would show the details for the entity numbered 5. Also #entity 5 0 would show location 0 of entity 5.");
         // to be extended by adding /entity unit# loc# to list details on locations.
     }
 
@@ -50,7 +66,7 @@ public class ShowEntityCommand extends ClientCommand {
             String list = "List of all entities.\n";
             for (Entity ent : getClient().getEntitiesVector()) {
                 list += ent.getId() + " " + ent.getOwner().getName() + "'s "
-                        + ent.getDisplayName() + "\n";
+                      + ent.getDisplayName() + "\n";
             }
             return list;
         }

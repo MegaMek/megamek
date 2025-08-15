@@ -1,16 +1,36 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.utilities;
 
 import static megamek.common.Configuration.gameSummaryImagesMMDir;
@@ -32,8 +52,8 @@ import com.squareup.gifencoder.ImageOptions;
 import megamek.logging.MMLogger;
 
 /**
- * GifWriter
- * Utility class to create a gif from a series of images of a game summary.
+ * GifWriter Utility class to create a gif from a series of images of a game summary.
+ *
  * @author Luana Coppio
  */
 public class GifWriter {
@@ -50,7 +70,10 @@ public class GifWriter {
 
     /**
      * Creates a gif from a series of images of a game summary.
-     * @param gameSummary the game summary to create the gif from, its commonly a UUID inside the /logs/gameSummary/minimap folder
+     *
+     * @param gameSummary the game summary to create the gif from, its commonly a UUID inside the
+     *                    /logs/gameSummary/minimap folder
+     *
      * @throws IOException if an I/O error occurs
      */
     public static void createGifFromGameSummary(String gameSummary) throws IOException {
@@ -59,6 +82,7 @@ public class GifWriter {
 
     /**
      * Creates a new GifWriter.
+     *
      * @param gameSummary the game summary to create the gif from
      */
     public GifWriter(String gameSummary) {
@@ -70,8 +94,10 @@ public class GifWriter {
 
     /**
      * Appends a frame to the gif.
-     * @param image the frame image
+     *
+     * @param image    the frame image
      * @param duration the frame duration in milliseconds
+     *
      * @throws IOException if an I/O error occurs
      */
     public void appendFrame(BufferedImage image, long duration) throws IOException {
@@ -149,14 +175,15 @@ public class GifWriter {
 
     private void run() throws IOException {
         List<File> files = new ArrayList<>(
-            List.of(
-                Objects.requireNonNull(
-                    folder.listFiles(
-                        // grab all .png files, but only the Movement and Firing images, otherwise it takes too long
-                        (dir, name) -> name.endsWith(".png") && (name.contains("_12_M") || name.contains("_18_F"))
+              List.of(
+                    Objects.requireNonNull(
+                          folder.listFiles(
+                                // grab all .png files, but only the Movement and Firing images, otherwise it takes too long
+                                (dir, name) -> name.endsWith(".png") && (name.contains("_12_M")
+                                      || name.contains("_18_F"))
+                          )
                     )
-                )
-            )
+              )
         );
 
         files.sort((o1, o2) -> {
@@ -199,6 +226,7 @@ public class GifWriter {
 
     /**
      * Returns whether the gif writer is live.
+     *
      * @return true if the gif writer is live
      */
     public boolean isLive() {

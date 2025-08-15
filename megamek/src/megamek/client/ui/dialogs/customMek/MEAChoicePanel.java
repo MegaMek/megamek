@@ -24,6 +24,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.customMek;
 
@@ -93,7 +98,7 @@ public class MEAChoicePanel extends JPanel {
             String manipulatorName = manipulator.getName() + " (" + manipulator.getTonnage(this.entity) + "kg)";
             comboChoices.addItem(manipulatorName);
             if (equipmentType != null &&
-                      Objects.equals(manipulator.getInternalName(), equipmentType.getInternalName())) {
+                  Objects.equals(manipulator.getInternalName(), equipmentType.getInternalName())) {
                 comboChoices.setSelectedIndex(x);
             }
         }

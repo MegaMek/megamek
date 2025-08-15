@@ -44,6 +44,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for BattleArmor.
+ *
  * @author Luana Coppio
  */
 public class BattleArmorTest extends GameBoardTestCase {
@@ -52,33 +53,33 @@ public class BattleArmorTest extends GameBoardTestCase {
     class AntiMekSkillRollNag {
         static {
             initializeBoard("ROLL_ANTI_MEK_TO_ENTER", """
-size 1 6
-hex 0101 0 "" ""
-hex 0102 0 "bldg_elev:6;building:2:8;bldg_cf:100" ""
-hex 0103 0 "bldg_elev:6;building:2:9;bldg_cf:100" ""
-hex 0104 0 "bldg_elev:6;building:2:9;bldg_cf:100" ""
-hex 0105 0 "bldg_elev:6;building:2:9;bldg_cf:100" ""
-hex 0106 0 "bldg_elev:6;building:2:1;bldg_cf:100" ""
-end""");
+                  size 1 6
+                  hex 0101 0 "" ""
+                  hex 0102 0 "bldg_elev:6;building:2:8;bldg_cf:100" ""
+                  hex 0103 0 "bldg_elev:6;building:2:9;bldg_cf:100" ""
+                  hex 0104 0 "bldg_elev:6;building:2:9;bldg_cf:100" ""
+                  hex 0105 0 "bldg_elev:6;building:2:9;bldg_cf:100" ""
+                  hex 0106 0 "bldg_elev:6;building:2:1;bldg_cf:100" ""
+                  end""");
             initializeBoard("ROLL_ANTI_MEK_TO_ENTER_TALL_BUILDINGS", """
-size 1 6
-hex 0101 0 "" ""
-hex 0102 0 "bldg_elev:60;building:2:8;bldg_cf:100" ""
-hex 0103 0 "bldg_elev:60;building:2:9;bldg_cf:100" ""
-hex 0104 0 "bldg_elev:60;building:2:9;bldg_cf:100" ""
-hex 0105 0 "bldg_elev:60;building:2:9;bldg_cf:100" ""
-hex 0106 0 "bldg_elev:60;building:2:1;bldg_cf:100" ""
-end""");
+                  size 1 6
+                  hex 0101 0 "" ""
+                  hex 0102 0 "bldg_elev:60;building:2:8;bldg_cf:100" ""
+                  hex 0103 0 "bldg_elev:60;building:2:9;bldg_cf:100" ""
+                  hex 0104 0 "bldg_elev:60;building:2:9;bldg_cf:100" ""
+                  hex 0105 0 "bldg_elev:60;building:2:9;bldg_cf:100" ""
+                  hex 0106 0 "bldg_elev:60;building:2:1;bldg_cf:100" ""
+                  end""");
 
             initializeBoard("ROLL_ANTI_MEK_TO_ENTER_LOWER_BUILDINGS", """
-size 1 6
-hex 0101 10 "" ""
-hex 0102 0 "" ""
-hex 0103 0 "bldg_elev:6;building:2:8;bldg_cf:100" ""
-hex 0104 0 "bldg_elev:6;building:2:9;bldg_cf:100" ""
-hex 0105 0 "bldg_elev:6;building:2:9;bldg_cf:100" ""
-hex 0106 0 "bldg_elev:6;building:2:1;bldg_cf:100" ""
-end""");
+                  size 1 6
+                  hex 0101 10 "" ""
+                  hex 0102 0 "" ""
+                  hex 0103 0 "bldg_elev:6;building:2:8;bldg_cf:100" ""
+                  hex 0104 0 "bldg_elev:6;building:2:9;bldg_cf:100" ""
+                  hex 0105 0 "bldg_elev:6;building:2:9;bldg_cf:100" ""
+                  hex 0106 0 "bldg_elev:6;building:2:1;bldg_cf:100" ""
+                  end""");
         }
 
         @Test
@@ -95,7 +96,7 @@ end""");
 
             assertTrue(movePath.isMoveLegal(),
                   "A BA or infantry can only jump from inside a building to outside of it, or from out to in");
-            assertMovePathElevations(movePath,0, 6, 5, 4, 3);
+            assertMovePathElevations(movePath, 0, 6, 5, 4, 3);
 
             String check = SharedUtility.doPSRCheck(movePath);
             assertFalse(check.isBlank(), "it should require a roll to jump into the building through the window");

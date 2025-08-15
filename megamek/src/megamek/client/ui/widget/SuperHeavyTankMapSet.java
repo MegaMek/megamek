@@ -1,17 +1,38 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client.ui.widget;
 
 import java.awt.Color;
@@ -20,7 +41,6 @@ import java.awt.FontMetrics;
 import java.awt.Image;
 import java.awt.Polygon;
 import java.util.Vector;
-
 import javax.swing.JComponent;
 
 import megamek.MMConstants;
@@ -33,8 +53,7 @@ import megamek.common.SuperHeavyTank;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
- * Class which keeps set of all areas required to represent Tank unit in
- * MekDisplay.ArmorPanel class.
+ * Class which keeps set of all areas required to represent Tank unit in MekDisplay.ArmorPanel class.
  */
 public class SuperHeavyTankMapSet implements DisplayMapSet {
 
@@ -51,79 +70,79 @@ public class SuperHeavyTankMapSet implements DisplayMapSet {
 
     // front armor
     private Polygon frontArmor = new Polygon(
-            new int[] { 0, 23, 157, 180, 157, 118, 62, 23 },
-            new int[] { 30, 7, 7,   30,  41,  25,  25, 41 }, 8);
+          new int[] { 0, 23, 157, 180, 157, 118, 62, 23 },
+          new int[] { 30, 7, 7, 30, 41, 25, 25, 41 }, 8);
 
     // front internal structure
     private Polygon frontIS = new Polygon(
-            new int[] { 23, 62, 118, 157, 93, 93, 87, 87 },
-            new int[] { 41, 25, 25,  41,  73, 42, 42, 73 }, 8);
+          new int[] { 23, 62, 118, 157, 93, 93, 87, 87 },
+          new int[] { 41, 25, 25, 41, 73, 42, 42, 73 }, 8);
     // Left Front armor
     private Polygon leftFrontArmor = new Polygon(
-            new int[] { 0,  0,   23,  23 },
-            new int[] { 30, 109, 109, 41 }, 4);
+          new int[] { 0, 0, 23, 23 },
+          new int[] { 30, 109, 109, 41 }, 4);
 
     // Left Front internal structure
     private Polygon leftFrontIS = new Polygon(
-            new int[] {23, 87, 87, 84, 80, 71, 59,  23},
-            new int[] {41, 73, 80, 80, 87, 87, 109, 109}, 8);
+          new int[] { 23, 87, 87, 84, 80, 71, 59, 23 },
+          new int[] { 41, 73, 80, 80, 87, 87, 109, 109 }, 8);
 
     // Left rear armor
     private Polygon leftRearArmor = new Polygon(
-            new int[] { 0,   0,   23,  23 },
-            new int[] { 109, 187, 175, 109 }, 4);
+          new int[] { 0, 0, 23, 23 },
+          new int[] { 109, 187, 175, 109 }, 4);
 
     // Left rear internal structure
     private Polygon leftRearIS = new Polygon(
-            new int[] {23, 23,   66,  59,  59},
-            new int[] {109, 175, 161, 149, 109}, 5);
+          new int[] { 23, 23, 66, 59, 59 },
+          new int[] { 109, 175, 161, 149, 109 }, 5);
 
     // Right front armor
     private Polygon rightFrontArmor = new Polygon(
-            new int[] { 157, 180, 180, 157 },
-            new int[] { 41,  30,  109, 109 }, 4);
+          new int[] { 157, 180, 180, 157 },
+          new int[] { 41, 30, 109, 109 }, 4);
 
     // Right front internal structure
     private Polygon rightFrontIS = new Polygon(
-            new int[] { 93, 157, 157, 121, 109, 100, 96, 93 },
-            new int[] { 73, 41,  109, 109, 87,  87,  80, 80 }, 8);
+          new int[] { 93, 157, 157, 121, 109, 100, 96, 93 },
+          new int[] { 73, 41, 109, 109, 87, 87, 80, 80 }, 8);
 
     // Right rear armor
     private Polygon rightRearArmor = new Polygon(
-            new int[] { 157, 180, 180, 157 },
-            new int[] { 109, 109, 187, 175 }, 4);
+          new int[] { 157, 180, 180, 157 },
+          new int[] { 109, 109, 187, 175 }, 4);
 
     // Right rear internal structure
     private Polygon rightRearIS = new Polygon(
-            new int[] { 121, 157, 157, 114, 121, 121 },
-            new int[] { 109, 109, 175, 161, 149, 109 }, 6);
+          new int[] { 121, 157, 157, 114, 121, 121 },
+          new int[] { 109, 109, 175, 161, 149, 109 }, 6);
 
     // Rear armor
     private Polygon rearArmor = new Polygon(
-            new int[] { 180, 152, 26,  0,   23,  59,  121, 157 },
-            new int[] { 187, 208, 208, 187, 175, 192, 192, 175 }, 8);
+          new int[] { 180, 152, 26, 0, 23, 59, 121, 157 },
+          new int[] { 187, 208, 208, 187, 175, 192, 192, 175 }, 8);
 
     // Rear internal structure
     private Polygon rearIS = new Polygon(
-            new int[] { 157, 121, 59,  23,  66,  76,  105, 114 },
-            new int[] { 175, 192, 192, 175, 161, 177, 177, 161 }, 8);
+          new int[] { 157, 121, 59, 23, 66, 76, 105, 114 },
+          new int[] { 175, 192, 192, 175, 161, 177, 177, 161 }, 8);
 
     // Turret armor
     private Polygon turretArmor = new Polygon(
-            new int[] { 87, 87, 84, 80, 71, 59,  59,  75,  90,  90,  80,  65,
-            65,  115, 115, 100, 90,  90,  105, 121, 121, 109, 100, 96, 93, 93 },
-            new int[] { 42, 80, 80, 87, 87, 109, 149, 177, 177, 165, 165, 142,
-            125, 125, 142, 165, 165, 177, 177, 149, 109, 87,  87, 80, 80, 42 }, 26);
+          new int[] { 87, 87, 84, 80, 71, 59, 59, 75, 90, 90, 80, 65,
+                      65, 115, 115, 100, 90, 90, 105, 121, 121, 109, 100, 96, 93, 93 },
+          new int[] { 42, 80, 80, 87, 87, 109, 149, 177, 177, 165, 165, 142,
+                      125, 125, 142, 165, 165, 177, 177, 149, 109, 87, 87, 80, 80, 42 }, 26);
     // Turret internal structure
     private Polygon turretIS = new Polygon(
-            new int[] { 65,  65,  80,  100, 115, 115 },
-            new int[] { 125, 142, 165, 165, 142, 125 }, 6);
+          new int[] { 65, 65, 80, 100, 115, 115 },
+          new int[] { 125, 142, 165, 165, 142, 125 }, 6);
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMekArmorSmallFontSize());
+          GUIP.getUnitDisplayMekArmorSmallFontSize());
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMekArmorLargeFontSize());
+          GUIP.getUnitDisplayMekArmorLargeFontSize());
 
     public SuperHeavyTankMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
         this.unitDisplayPanel = unitDisplayPanel;
@@ -158,14 +177,14 @@ public class SuperHeavyTankMapSet implements DisplayMapSet {
             a0 = t.getOArmor(i);
             vLabels[i].setValue(t.getArmorString(i));
             WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a
-                    / (double) a0);
+                  / (double) a0);
         }
         for (int i = 8; i < 15; i++) {
             a = t.getInternal(i - 8);
             a0 = t.getOInternal(i - 8);
             vLabels[i].setValue(t.getInternalString(i - 8));
             WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a
-                    / (double) a0);
+                  / (double) a0);
         }
     }
 
@@ -201,33 +220,33 @@ public class SuperHeavyTankMapSet implements DisplayMapSet {
 
         // Labels for Front view
         labels[1] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.FrontArmor"),
-                fm, Color.black, 85, 15);
+              fm, Color.black, 85, 15);
         labels[2] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.FRS"),
-                fm, Color.black, 170, 80);
+              fm, Color.black, 170, 80);
         labels[3] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.FLS"),
-                fm, Color.black, 10, 80);
+              fm, Color.black, 10, 80);
         labels[4] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.RRS"),
-                fm, Color.black, 170, 155);
+              fm, Color.black, 170, 155);
         labels[5] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.RLS"),
-                fm, Color.black, 10, 155);
+              fm, Color.black, 10, 155);
         labels[6] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.RearArmor"),
-                fm, Color.black, 85, 200);
+              fm, Color.black, 85, 200);
         labels[7] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.TurretArmor"),
-                fm, Color.black, 90, 104);
+              fm, Color.black, 90, 104);
         labels[8] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.FrontIS"),
-                fm, Color.black, 80, 30);
+              fm, Color.black, 80, 30);
         labels[9] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.FRIS"),
-                fm, Color.black, 120, 80);
+              fm, Color.black, 120, 80);
         labels[10] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.FLIS"),
-                fm, Color.black, 43, 80);
+              fm, Color.black, 43, 80);
         labels[11] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.RRIS"),
-                fm, Color.black, 140, 155);
+              fm, Color.black, 140, 155);
         labels[12] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.RLIS"),
-                fm, Color.black, 43, 155);
+              fm, Color.black, 43, 155);
         labels[13] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.RearIS"),
-                fm, Color.black, 85, 185);
+              fm, Color.black, 85, 185);
         labels[14] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.TurretIS"),
-                fm, Color.black, 90, 140);
+              fm, Color.black, 90, 140);
 
         // Value labels for all parts of mek
         // front
@@ -252,71 +271,71 @@ public class SuperHeavyTankMapSet implements DisplayMapSet {
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
         Image tile = comp.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getBackgroundTile()).toString());
+              .getImage(
+                    new MegaMekFile(Configuration.widgetsDir(), udSpec
+                          .getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
-                        .toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
+                    .toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
-                        .toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
+                    .toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
-                        .toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
+                    .toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
-                        .toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
+                    .toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_LEFT;
+              | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
-                        .toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
+                    .toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_LEFT;
+              | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomLeftCorner()).toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec
+                    .getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_RIGHT;
+              | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getTopRightCorner()).toString());
+              .getImage(
+                    new MegaMekFile(Configuration.widgetsDir(), udSpec
+                          .getTopRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_RIGHT;
+              | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomRightCorner()).toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec
+                    .getBottomRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }

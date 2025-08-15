@@ -1,22 +1,37 @@
 /*
  * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2018-2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import static java.util.stream.Collectors.toList;
@@ -71,11 +86,11 @@ public class Infantry extends Entity {
     public static int SCUBA = 1 << 12;
     public static int NUM_SPECIALIZATIONS = 13;
     public static int COMBAT_ENGINEERS = BRIDGE_ENGINEERS |
-                                               DEMO_ENGINEERS |
-                                               FIRE_ENGINEERS |
-                                               MINE_ENGINEERS |
-                                               SENSOR_ENGINEERS |
-                                               TRENCH_ENGINEERS;
+          DEMO_ENGINEERS |
+          FIRE_ENGINEERS |
+          MINE_ENGINEERS |
+          SENSOR_ENGINEERS |
+          TRENCH_ENGINEERS;
 
     protected int squadCount = 1;
     private int squadSize = 1;
@@ -204,63 +219,93 @@ public class Infantry extends Entity {
      */
     public static TechAdvancement getMotiveTechAdvancement(EntityMovementMode movementMode) {
         TechAdvancement techAdvancement = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                                                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
         switch (movementMode) {
             case INF_MOTORIZED:
                 techAdvancement.setTechRating(TechRating.B)
-                      .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+                      .setAvailability(AvailabilityValue.A,
+                            AvailabilityValue.A,
+                            AvailabilityValue.A,
+                            AvailabilityValue.A)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
             case INF_JUMP:
                 techAdvancement.setAdvancement(DATE_ES, DATE_ES, DATE_ES)
                       .setTechRating(TechRating.D)
-                      .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
+                      .setAvailability(AvailabilityValue.B,
+                            AvailabilityValue.B,
+                            AvailabilityValue.B,
+                            AvailabilityValue.B)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
             case INF_UMU:
                 techAdvancement.setAdvancement(DATE_PS, DATE_PS)
                       .setTechRating(TechRating.B)
-                      .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
+                      .setAvailability(AvailabilityValue.D,
+                            AvailabilityValue.D,
+                            AvailabilityValue.D,
+                            AvailabilityValue.D)
                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
                 break;
             case WHEELED:
                 techAdvancement.setTechRating(TechRating.A)
-                      .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
+                      .setAvailability(AvailabilityValue.A,
+                            AvailabilityValue.B,
+                            AvailabilityValue.A,
+                            AvailabilityValue.A)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
             case TRACKED:
                 techAdvancement.setTechRating(TechRating.B)
-                      .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
+                      .setAvailability(AvailabilityValue.B,
+                            AvailabilityValue.C,
+                            AvailabilityValue.B,
+                            AvailabilityValue.B)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
             case HOVER:
                 techAdvancement.setTechRating(TechRating.C)
-                      .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.B)
+                      .setAvailability(AvailabilityValue.A,
+                            AvailabilityValue.B,
+                            AvailabilityValue.A,
+                            AvailabilityValue.B)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
             case VTOL:
                 techAdvancement.setAdvancement(DATE_ES, DATE_ES)
                       .setTechRating(TechRating.C)
-                      .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
+                      .setAvailability(AvailabilityValue.C,
+                            AvailabilityValue.D,
+                            AvailabilityValue.D,
+                            AvailabilityValue.C)
                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
                 break;
             case SUBMARINE:
                 techAdvancement.setAdvancement(DATE_PS, DATE_PS)
                       .setTechRating(TechRating.C)
-                      .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
+                      .setAvailability(AvailabilityValue.D,
+                            AvailabilityValue.D,
+                            AvailabilityValue.D,
+                            AvailabilityValue.D)
                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
                 break;
             case NONE:
                 // Beast-mounted
                 techAdvancement.setAdvancement(DATE_PS, DATE_PS)
                       .setTechRating(TechRating.A)
-                      .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+                      .setAvailability(AvailabilityValue.A,
+                            AvailabilityValue.A,
+                            AvailabilityValue.A,
+                            AvailabilityValue.A)
                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
                 break;
             case INF_LEG:
             default:
                 techAdvancement.setTechRating(TechRating.A)
-                      .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+                      .setAvailability(AvailabilityValue.A,
+                            AvailabilityValue.A,
+                            AvailabilityValue.A,
+                            AvailabilityValue.A)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
         }
@@ -270,54 +315,54 @@ public class Infantry extends Entity {
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                     .setStaticTechLevel(SimpleTechLevel.STANDARD);
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     public static TechAdvancement getCombatEngineerTA() {
         return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                     .setTechRating(TechRating.C)
-                     .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
-                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getMarineTA() {
         return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                     .setTechRating(TechRating.C)
-                     .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
-                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getMountainTA() {
         return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                     .setTechRating(TechRating.B)
-                     .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
-                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getParatrooperTA() {
         return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                     .setTechRating(TechRating.B)
-                     .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
-                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getParamedicTA() {
         return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                     .setTechRating(TechRating.B)
-                     .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
-                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getTAGTroopsTA() {
         return new TechAdvancement(TechBase.ALL).setISAdvancement(2585, 2600, DATE_NONE, 2535, 3037)
-                     .setClanAdvancement(2585, 2600)
-                     .setApproximate(true, false, false, false, false)
-                     .setTechRating(TechRating.E)
-                     .setPrototypeFactions(Faction.TH)
-                     .setProductionFactions(Faction.TH)
-                     .setReintroductionFactions(Faction.FS)
-                     .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
-                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+              .setClanAdvancement(2585, 2600)
+              .setApproximate(true, false, false, false, false)
+              .setTechRating(TechRating.E)
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.FS)
+              .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     @Override
@@ -385,25 +430,25 @@ public class Infantry extends Entity {
                 mp = Math.max(mp - 1, 1);
             }
             if ((getSecondaryWeaponsPerSquad() > 1) &&
-                      !hasAbility(OptionsConstants.MD_TSM_IMPLANT) &&
-                      !hasAbility(OptionsConstants.MD_DERMAL_ARMOR) &&
-                      (null != secondaryWeapon) &&
-                      secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT) &&
-                      !getMovementMode().isTracked() &&
-                      !getMovementMode().isJumpInfantry()) {
+                  !hasAbility(OptionsConstants.MD_TSM_IMPLANT) &&
+                  !hasAbility(OptionsConstants.MD_DERMAL_ARMOR) &&
+                  (null != secondaryWeapon) &&
+                  secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT) &&
+                  !getMovementMode().isTracked() &&
+                  !getMovementMode().isJumpInfantry()) {
                 mp = Math.max(mp - 1, 0);
             }
             // PL-MASC IntOps p.84
             if ((null != getCrew()) &&
-                      hasAbility(OptionsConstants.MD_PL_MASC) &&
-                      getMovementMode().isLegInfantry() &&
-                      isConventionalInfantry()) {
+                  hasAbility(OptionsConstants.MD_PL_MASC) &&
+                  getMovementMode().isLegInfantry() &&
+                  isConventionalInfantry()) {
                 mp += 1;
             }
 
             if ((null != getCrew()) &&
-                      hasAbility(OptionsConstants.INFANTRY_FOOT_CAV) &&
-                      getMovementMode().isJumpOrLegInfantry()) {
+                  hasAbility(OptionsConstants.INFANTRY_FOOT_CAV) &&
+                  getMovementMode().isJumpOrLegInfantry()) {
                 mp += 1;
             }
 
@@ -418,9 +463,9 @@ public class Infantry extends Entity {
             mp = Math.max(mp + weatherMod, 0);
 
             if (conditions.getWeather().isGustingRain() &&
-                      getCrew().getOptions()
-                            .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                            .equals(Crew.ENVSPC_RAIN)) {
+                  getCrew().getOptions()
+                        .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                        .equals(Crew.ENVSPC_RAIN)) {
                 if ((mp != 0) || getMovementMode().isMotorizedInfantry()) {
                     mp += 1;
                 }
@@ -433,7 +478,7 @@ public class Infantry extends Entity {
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND) &&
-                      conditions.getWeather().isClear()) {
+                  conditions.getWeather().isClear()) {
                 if (conditions.getWind().isModerateGale()) {
                     mp += 1;
                 }
@@ -455,8 +500,8 @@ public class Infantry extends Entity {
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
         int walkMP = getWalkMP(mpCalculationSetting);
         if (!mpCalculationSetting.ignoreOptionalRules &&
-                  (game != null) &&
-                  game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE)) {
+              (game != null) &&
+              game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE)) {
             return (walkMP > 0) ? walkMP + 1 : walkMP + 2;
         } else {
             return walkMP;
@@ -468,11 +513,11 @@ public class Infantry extends Entity {
         int mp = hasUMU() ? 0 : getOriginalJumpMP();
         if (mount == null) {
             if ((getSecondaryWeaponsPerSquad() > 1) &&
-                      !hasAbility(OptionsConstants.MD_TSM_IMPLANT) &&
-                      !hasAbility(OptionsConstants.MD_DERMAL_ARMOR) &&
-                      !getMovementMode().isSubmarine() &&
-                      (null != secondaryWeapon) &&
-                      secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)) {
+                  !hasAbility(OptionsConstants.MD_TSM_IMPLANT) &&
+                  !hasAbility(OptionsConstants.MD_DERMAL_ARMOR) &&
+                  !getMovementMode().isSubmarine() &&
+                  (null != secondaryWeapon) &&
+                  secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)) {
                 mp = Math.max(mp - 1, 0);
             } else if (movementMode.isVTOL() && getSecondaryWeaponsPerSquad() > 0) {
                 mp = Math.max(mp - 1, 0);
@@ -488,9 +533,9 @@ public class Infantry extends Entity {
             if (conditions.getWind().isStrongerThan(Wind.MOD_GALE)) {
                 return 0;
             } else if (conditions.getWind().isModerateGale() &&
-                             !getCrew().getOptions()
-                                    .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
-                                    .equals(Crew.ENVSPC_WIND)) {
+                  !getCrew().getOptions()
+                        .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
+                        .equals(Crew.ENVSPC_WIND)) {
                 mp--;
             }
 
@@ -530,7 +575,7 @@ public class Infantry extends Entity {
         }
         EquipmentType armorKit = getArmorKit();
         return (armorKit == null) ||
-                     !armorKit.hasSubType(MiscType.S_SPACE_SUIT | MiscType.S_XCT_VACUUM | MiscType.S_TOXIC_ATMO);
+              !armorKit.hasSubType(MiscType.S_SPACE_SUIT | MiscType.S_XCT_VACUUM | MiscType.S_TOXIC_ATMO);
     }
 
     @Override
@@ -555,7 +600,7 @@ public class Infantry extends Entity {
 
         if (isHidden()) {
             if ((hex.containsTerrain(Terrains.PAVEMENT) || hex.containsTerrain(Terrains.ROAD)) &&
-                      (!hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.RUBBLE))) {
+                  (!hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.RUBBLE))) {
                 return true;
             }
             if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation) && hex.containsTerrain(Terrains.BRIDGE)) {
@@ -568,36 +613,36 @@ public class Infantry extends Entity {
 
         if (getMovementMode().isWheeled()) {
             if (hex.containsTerrain(Terrains.WOODS) ||
-                      hex.containsTerrain(Terrains.ROUGH) ||
-                      hex.containsTerrain(Terrains.RUBBLE) ||
-                      hex.containsTerrain(Terrains.JUNGLE) ||
-                      (hex.terrainLevel(Terrains.SNOW) > 1) ||
-                      (hex.terrainLevel(Terrains.GEYSER) == 2)) {
+                  hex.containsTerrain(Terrains.ROUGH) ||
+                  hex.containsTerrain(Terrains.RUBBLE) ||
+                  hex.containsTerrain(Terrains.JUNGLE) ||
+                  (hex.terrainLevel(Terrains.SNOW) > 1) ||
+                  (hex.terrainLevel(Terrains.GEYSER) == 2)) {
                 return true;
             }
         }
 
         if (getMovementMode().isTracked()) {
             if ((hex.terrainLevel(Terrains.WOODS) > 1) ||
-                      hex.containsTerrain(Terrains.JUNGLE) ||
-                      (hex.terrainLevel(Terrains.ROUGH) > 1) ||
-                      (hex.terrainLevel(Terrains.RUBBLE) > 5)) {
+                  hex.containsTerrain(Terrains.JUNGLE) ||
+                  (hex.terrainLevel(Terrains.ROUGH) > 1) ||
+                  (hex.terrainLevel(Terrains.RUBBLE) > 5)) {
                 return true;
             }
         }
 
         if (getMovementMode().isHover()) {
             if (hex.containsTerrain(Terrains.WOODS) ||
-                      hex.containsTerrain(Terrains.JUNGLE) ||
-                      (hex.terrainLevel(Terrains.ROUGH) > 1) ||
-                      (hex.terrainLevel(Terrains.RUBBLE) > 5)) {
+                  hex.containsTerrain(Terrains.JUNGLE) ||
+                  (hex.terrainLevel(Terrains.ROUGH) > 1) ||
+                  (hex.terrainLevel(Terrains.RUBBLE) > 5)) {
                 return true;
             }
         }
 
         if ((hex.terrainLevel(Terrains.WATER) <= 0) &&
-                  getMovementMode().isSubmarine() &&
-                  ((mount == null) || (mount.getSecondaryGroundMP() == 0))) {
+              getMovementMode().isSubmarine() &&
+              ((mount == null) || (mount.getSecondaryGroundMP() == 0))) {
             return true;
         }
 
@@ -616,9 +661,9 @@ public class Infantry extends Entity {
         if (hex.hasDepth1WaterOrDeeper() && !hex.containsTerrain(Terrains.ICE)) {
             if (mount == null) {
                 return !getMovementMode().isHover() &&
-                             !getMovementMode().isUMUInfantry() &&
-                             !getMovementMode().isSubmarine() &&
-                             !getMovementMode().isVTOL();
+                      !getMovementMode().isUMUInfantry() &&
+                      !getMovementMode().isSubmarine() &&
+                      !getMovementMode().isVTOL();
             } else {
                 return hex.terrainLevel(Terrains.WATER) > mount.getMaxWaterDepth();
             }
@@ -736,8 +781,8 @@ public class Infantry extends Entity {
     }
 
     /**
-     * @return The full original strength of this infantry unit; for conventional infantry, this is the original
-     * trooper count, for BA the original squad size.
+     * @return The full original strength of this infantry unit; for conventional infantry, this is the original trooper
+     *       count, for BA the original squad size.
      */
     public int getOriginalTrooperCount() {
         return originalTrooperCount;
@@ -963,16 +1008,16 @@ public class Infantry extends Entity {
         PilotingRollData roll = new PilotingRollData(getId(), 4, "entering boggy terrain");
         int bgMod = curHex.getBogDownModifier(getMovementMode(), false);
         final boolean onBridge = (curHex.terrainLevel(Terrains.BRIDGE) > 0) &&
-                                       (getElevation() == curHex.terrainLevel(Terrains.BRIDGE_ELEV));
+              (getElevation() == curHex.terrainLevel(Terrains.BRIDGE_ELEV));
         if (!lastPos.equals(curPos) &&
-                  (bgMod != TargetRoll.AUTOMATIC_SUCCESS) &&
-                  (step.getMovementType(false) != EntityMovementType.MOVE_JUMP) &&
-                  (getMovementMode() != EntityMovementMode.HOVER) &&
-                  (getMovementMode() != EntityMovementMode.VTOL) &&
-                  (getMovementMode() != EntityMovementMode.WIGE) &&
-                  (step.getElevation() == 0) &&
-                  !isPavementStep &&
-                  !onBridge) {
+              (bgMod != TargetRoll.AUTOMATIC_SUCCESS) &&
+              (step.getMovementType(false) != EntityMovementType.MOVE_JUMP) &&
+              (getMovementMode() != EntityMovementMode.HOVER) &&
+              (getMovementMode() != EntityMovementMode.VTOL) &&
+              (getMovementMode() != EntityMovementMode.WIGE) &&
+              (step.getElevation() == 0) &&
+              !isPavementStep &&
+              !onBridge) {
             roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
@@ -1105,10 +1150,10 @@ public class Infantry extends Entity {
             if (getArmorKit().hasSubType(MiscType.S_XCT_VACUUM)) {
                 return false;
             } else if (getArmorKit().hasSubType(MiscType.S_COLD_WEATHER) &&
-                             ((game == null) || game.getPlanetaryConditions().getTemperature() < -30)) {
+                  ((game == null) || game.getPlanetaryConditions().getTemperature() < -30)) {
                 return false;
             } else if (getArmorKit().hasSubType(MiscType.S_HOT_WEATHER) &&
-                             ((game == null) || game.getPlanetaryConditions().getTemperature() > 50)) {
+                  ((game == null) || game.getPlanetaryConditions().getTemperature() > 50)) {
                 return false;
             } else {
                 return true;
@@ -1133,7 +1178,7 @@ public class Infantry extends Entity {
         ;
         EntityMovementMode moveMode = getMovementMode();
         return (List.of(EntityMovementMode.INF_JUMP, EntityMovementMode.HOVER, EntityMovementMode.VTOL)
-                      .contains(moveMode) || hasSpecialization(PARATROOPS));
+              .contains(moveMode) || hasSpecialization(PARATROOPS));
     }
 
     @Override
@@ -1150,7 +1195,7 @@ public class Infantry extends Entity {
     @Override
     public boolean isEligibleForFiring() {
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE) &&
-                  (moved == EntityMovementType.MOVE_RUN)) {
+              (moved == EntityMovementType.MOVE_RUN)) {
             return false;
         }
         return super.isEligibleForFiring();
@@ -1235,10 +1280,10 @@ public class Infantry extends Entity {
 
     public EquipmentType getArmorKit() {
         return getMisc().stream()
-                     .filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
-                     .findFirst()
-                     .map(Mounted::getType)
-                     .orElse(null);
+              .filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
+              .findFirst()
+              .map(Mounted::getType)
+              .orElse(null);
     }
 
     public void setArmorKit(EquipmentType armorKit) {
@@ -1261,18 +1306,18 @@ public class Infantry extends Entity {
 
     private void removeArmorKits() {
         List<MiscMounted> toRemove = getEquipment().stream()
-                                           .filter(m -> m instanceof MiscMounted)
-                                           .map(m -> (MiscMounted) m)
-                                           .filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
-                                           .collect(toList());
+              .filter(m -> m instanceof MiscMounted)
+              .map(m -> (MiscMounted) m)
+              .filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
+              .collect(toList());
 
         getEquipment().removeAll(toRemove);
         getMisc().removeAll(toRemove);
 
         for (CriticalSlot slot : getCriticalSlots(Infantry.LOC_INFANTRY)) {
             if ((slot != null) &&
-                      (slot.getMount() instanceof MiscMounted) &&
-                      toRemove.contains((MiscMounted) slot.getMount())) {
+                  (slot.getMount() instanceof MiscMounted) &&
+                  toRemove.contains((MiscMounted) slot.getMount())) {
                 removeCriticals(Infantry.LOC_INFANTRY, slot);
             }
         }
@@ -1303,8 +1348,9 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Gets the damage divisor of this entity's custom armor kit.
-     * Meaningless when the infantry possesses a normal, non-custom armor kit, so check for one first.
+     * Gets the damage divisor of this entity's custom armor kit. Meaningless when the infantry possesses a normal,
+     * non-custom armor kit, so check for one first.
+     *
      * @return The damage divisor of the custom armor kit, or 1.0 for no armor.
      */
     public double getCustomArmorDamageDivisor() {
@@ -1312,9 +1358,9 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Creates a custom armor kit for this entity.
-     * Should not be set for anything other than a custom armor kit, see {@link #calcDamageDivisor()}
-     *  to add any other source of damage divisor.
+     * Creates a custom armor kit for this entity. Should not be set for anything other than a custom armor kit, see
+     * {@link #calcDamageDivisor()} to add any other source of damage divisor.
+     *
      * @param d The damage divisor of the custom armor kit. Set it to 1.0 for no armor.
      */
     public void setCustomArmorDamageDivisor(double d) {
@@ -1626,9 +1672,9 @@ public class Infantry extends Entity {
     public boolean isEligibleForPavementOrRoadBonus() {
         if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_INF_PAVE_BONUS)) {
             return movementMode == EntityMovementMode.TRACKED ||
-                         movementMode == EntityMovementMode.WHEELED ||
-                         movementMode == EntityMovementMode.INF_MOTORIZED ||
-                         movementMode == EntityMovementMode.HOVER;
+                  movementMode == EntityMovementMode.WHEELED ||
+                  movementMode == EntityMovementMode.INF_MOTORIZED ||
+                  movementMode == EntityMovementMode.HOVER;
         } else {
             return false;
         }
@@ -1793,9 +1839,9 @@ public class Infantry extends Entity {
         double activeTroopPercent = (double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY);
         if (activeTroopPercent < 0.25) {
             logger.debug(getDisplayName() +
-                               " CRIPPLED: Only " +
-                               NumberFormat.getPercentInstance().format(activeTroopPercent) +
-                               " troops remaining.");
+                  " CRIPPLED: Only " +
+                  NumberFormat.getPercentInstance().format(activeTroopPercent) +
+                  " troops remaining.");
             return true;
         } else {
             return false;

@@ -45,6 +45,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for MovePath executing JUMP the Jump movement type.
+ *
  * @author Luana Coppio
  */
 public class JumpTest extends GameBoardTestCase {
@@ -54,40 +55,40 @@ public class JumpTest extends GameBoardTestCase {
 
         static {
             initializeBoard("BOARD_1x6_START_LOW", """
-size 1 6
-hex 0101 -1 "" ""
-hex 0102 0 "" ""
-hex 0103 0 "bldg_elev:2;building:2:8;bldg_cf:50" ""
-hex 0104 0 "bldg_elev:4;building:2:8;bldg_cf:100" ""
-hex 0105 0 "bldg_elev:4;building:2:9;bldg_cf:100" ""
-hex 0106 0 "bldg_elev:4;building:2:1;bldg_cf:100" ""
-end""");
+                  size 1 6
+                  hex 0101 -1 "" ""
+                  hex 0102 0 "" ""
+                  hex 0103 0 "bldg_elev:2;building:2:8;bldg_cf:50" ""
+                  hex 0104 0 "bldg_elev:4;building:2:8;bldg_cf:100" ""
+                  hex 0105 0 "bldg_elev:4;building:2:9;bldg_cf:100" ""
+                  hex 0106 0 "bldg_elev:4;building:2:1;bldg_cf:100" ""
+                  end""");
 
             initializeBoard("BOARD_MORE_FORGIVING", """
-size 1 6
-hex 0101 0 "" ""
-hex 0102 0 "" ""
-hex 0103 0 "bldg_elev:2;building:2:8;bldg_cf:50" ""
-hex 0104 0 "bldg_elev:4;building:2:8;bldg_cf:100" ""
-hex 0105 0 "bldg_elev:4;building:2:9;bldg_cf:100" ""
-hex 0106 0 "bldg_elev:4;building:2:1;bldg_cf:100" ""
-end""");
+                  size 1 6
+                  hex 0101 0 "" ""
+                  hex 0102 0 "" ""
+                  hex 0103 0 "bldg_elev:2;building:2:8;bldg_cf:50" ""
+                  hex 0104 0 "bldg_elev:4;building:2:8;bldg_cf:100" ""
+                  hex 0105 0 "bldg_elev:4;building:2:9;bldg_cf:100" ""
+                  hex 0106 0 "bldg_elev:4;building:2:1;bldg_cf:100" ""
+                  end""");
 
             initializeBoard("BOARD_INSIDE_BUILDING", """
-size 1 4
-hex 0101 0 "bldg_elev:90;building:2:8;bldg_cf:100" ""
-hex 0102 0 "bldg_elev:90;building:2:9;bldg_cf:100" ""
-hex 0103 0 "bldg_elev:90;building:2:9;bldg_cf:100" ""
-hex 0104 0 "bldg_elev:90;building:2:1;bldg_cf:100" ""
-end""");
+                  size 1 4
+                  hex 0101 0 "bldg_elev:90;building:2:8;bldg_cf:100" ""
+                  hex 0102 0 "bldg_elev:90;building:2:9;bldg_cf:100" ""
+                  hex 0103 0 "bldg_elev:90;building:2:9;bldg_cf:100" ""
+                  hex 0104 0 "bldg_elev:90;building:2:1;bldg_cf:100" ""
+                  end""");
 
             initializeBoard("BOARD_JUMP_OUT_OF_BUILDING", """
-size 1 4
-hex 0101 0 "bldg_elev:90;building:2:1;bldg_cf:100" ""
-hex 0102 0 "" ""
-hex 0103 0 "bldg_elev:90;building:2:8;bldg_cf:100" ""
-hex 0104 0 "bldg_elev:90;building:2:9;bldg_cf:100" ""
-end""");
+                  size 1 4
+                  hex 0101 0 "bldg_elev:90;building:2:1;bldg_cf:100" ""
+                  hex 0102 0 "" ""
+                  hex 0103 0 "bldg_elev:90;building:2:8;bldg_cf:100" ""
+                  hex 0104 0 "bldg_elev:90;building:2:9;bldg_cf:100" ""
+                  end""");
         }
 
         @Test
@@ -113,7 +114,7 @@ end""");
             assertTrue(movePath.isMoveLegal(),
                   "A BA or infantry can only jump from inside a building to outside of it, or from out to in");
 
-            assertMovePathElevations(movePath,5, 0, 13, 12, 11, 10, 9, 8, 7, 6, 5);
+            assertMovePathElevations(movePath, 5, 0, 13, 12, 11, 10, 9, 8, 7, 6, 5);
         }
 
         @Test
@@ -130,7 +131,7 @@ end""");
             assertTrue(movePath.isMoveLegal(),
                   "A BA or infantry can only jump from inside a building to outside of it, or from out to in");
 
-            assertMovePathElevations(movePath,5, 0);
+            assertMovePathElevations(movePath, 5, 0);
         }
 
 
@@ -150,7 +151,7 @@ end""");
             assertFalse(movePath.isMoveLegal(),
                   "A BA or infantry can only jump from inside a building to outside of it, or from out to in");
 
-            assertMovePathElevations(movePath,2, 2, 2, 2);
+            assertMovePathElevations(movePath, 2, 2, 2, 2);
         }
 
         @Test
@@ -168,7 +169,7 @@ end""");
             assertFalse(movePath.isMoveLegal(),
                   "A BA or infantry can only jump from inside a building to outside of it, or from out to in");
 
-            assertMovePathElevations(movePath,2, 2, 3);
+            assertMovePathElevations(movePath, 2, 2, 3);
         }
 
         @Test
@@ -186,7 +187,7 @@ end""");
             assertTrue(movePath.isMoveLegal(),
                   "A BA cannot jump into a building lower floors comming from a connected side and not on LOS");
 
-            assertMovePathElevations(movePath,0, 0, 2, 4, 3);
+            assertMovePathElevations(movePath, 0, 0, 2, 4, 3);
         }
 
         @Test
@@ -220,7 +221,7 @@ end""");
             );
 
             assertFalse(movePath.isMoveLegal(), "A BA can jump into a building lower floors coming from an exit side" +
-                                                     " and if the LOS is unblocked");
+                  " and if the LOS is unblocked");
             assertMovePathElevations(movePath, 0, 0, 2, 4, 3);
         }
 
@@ -237,7 +238,7 @@ end""");
             );
 
             assertFalse(movePath.isMoveLegal(), "A BA cant jump into a building lower floors coming from a side " +
-                                                      "which is covered by another building of same height");
+                  "which is covered by another building of same height");
 
             assertMovePathElevations(movePath, 0, 0, 2, 4, 3, 2);
         }
@@ -322,16 +323,16 @@ end""");
 
         static {
             initializeBoard("BOARD_JUMP_INTO_BUILDING", """
-size 1 5
-hex 0101 0 "" ""
-hex 0102 0 "building:4;bldg_cf:100;bldg_elev:4;bldg_basement_type:2" ""
-hex 0103 0 "building:4;bldg_cf:100;bldg_elev:4;bldg_basement_type:2" ""
-hex 0104 0 "ultra_sublevel:0" ""
-hex 0105 0 "water:2" ""
-end"""
+                  size 1 5
+                  hex 0101 0 "" ""
+                  hex 0102 0 "building:4;bldg_cf:100;bldg_elev:4;bldg_basement_type:2" ""
+                  hex 0103 0 "building:4;bldg_cf:100;bldg_elev:4;bldg_basement_type:2" ""
+                  hex 0104 0 "ultra_sublevel:0" ""
+                  hex 0105 0 "water:2" ""
+                  end"""
             );
         }
-        
+
         @Test
         void bipedMekJumpPath() {
             setBoard("BOARD_JUMP_INTO_BUILDING");
@@ -342,11 +343,11 @@ end"""
                   MovePath.MoveStepType.FORWARDS,
                   MovePath.MoveStepType.FORWARDS);
             assertMovePathElevations(movePath,
-                    ExpectedElevation.of(0, "Jumping from the ground, level 0"),
-                    ExpectedElevation.of(4, "Jumping from the ground, level 0 with height 4"),
-                    ExpectedElevation.of(4, "Jumping over a building, level 0 with height 4"),
-                    ExpectedElevation.of(0, "Jumping over ultra sublevel, level 0"),
-                    ExpectedElevation.of(-2, "Jumping into a water hex, level 0 with depth 2"));
+                  ExpectedElevation.of(0, "Jumping from the ground, level 0"),
+                  ExpectedElevation.of(4, "Jumping from the ground, level 0 with height 4"),
+                  ExpectedElevation.of(4, "Jumping over a building, level 0 with height 4"),
+                  ExpectedElevation.of(0, "Jumping over ultra sublevel, level 0"),
+                  ExpectedElevation.of(-2, "Jumping into a water hex, level 0 with depth 2"));
         }
 
         @Test
@@ -364,7 +365,7 @@ end"""
                   ExpectedElevation.of(5, "Jumping over a building, level 0 with height 4, wige +1 elevation"),
                   ExpectedElevation.of(1, "Jumping over ultra sublevel, level 0, wige +1 elevation"),
                   ExpectedElevation.of(1, "Jumping into a water hex, level 0 with depth 2, wige stay above water " +
-                                                "with 1 elevation"));
+                        "with 1 elevation"));
         }
 
         @Test
@@ -390,13 +391,13 @@ end"""
 
         static {
             initializeBoard("BOARD_MISC_TILES", """
-size 1 5
-hex 0101 0 "bridge:1;bridge_cf:100;bridge_elev:4" ""
-hex 0102 0 "bldg_elev:4;building:2:0;bldg_cf:100;bldg_basement_type:2" ""
-hex 0103 0 "ultra_sublevel:0;bridge:1;bridge_cf:100;bridge_elev:2" ""
-hex 0104 0 "water:2" ""
-hex 0105 0 "water:2;bridge:1;bridge_cf:100;bridge_elev:1" ""
-end"""
+                  size 1 5
+                  hex 0101 0 "bridge:1;bridge_cf:100;bridge_elev:4" ""
+                  hex 0102 0 "bldg_elev:4;building:2:0;bldg_cf:100;bldg_basement_type:2" ""
+                  hex 0103 0 "ultra_sublevel:0;bridge:1;bridge_cf:100;bridge_elev:2" ""
+                  hex 0104 0 "water:2" ""
+                  hex 0105 0 "water:2;bridge:1;bridge_cf:100;bridge_elev:1" ""
+                  end"""
             );
         }
 

@@ -574,8 +574,8 @@ public class Server implements Runnable {
      */
     public int getFreeConnectionId() {
         while ((getPendingConnection(connectionCounter) != null) ||
-                     (getConnection(connectionCounter) != null) ||
-                     (getPlayer(connectionCounter) != null)) {
+              (getConnection(connectionCounter) != null) ||
+              (getPlayer(connectionCounter) != null)) {
             connectionCounter++;
         }
         return connectionCounter;
@@ -612,12 +612,12 @@ public class Server implements Runnable {
             gamePlayer.setNbrMFInferno(player.getNbrMFInferno());
             if (gamePlayer.getConstantInitBonus() != player.getConstantInitBonus()) {
                 sendServerChat("Player " +
-                                     gamePlayer.getName() +
-                                     " changed their initiative bonus from " +
-                                     gamePlayer.getConstantInitBonus() +
-                                     " to " +
-                                     player.getConstantInitBonus() +
-                                     '.');
+                      gamePlayer.getName() +
+                      " changed their initiative bonus from " +
+                      gamePlayer.getConstantInitBonus() +
+                      " to " +
+                      player.getConstantInitBonus() +
+                      '.');
             }
             gamePlayer.setConstantInitBonus(player.getConstantInitBonus());
             gamePlayer.setEmail(player.getEmail());
@@ -1404,8 +1404,8 @@ public class Server implements Runnable {
             OutputStream os = conn.getOutputStream();
             DataOutputStream dos = new DataOutputStream(os);
             StringBuilder content = new StringBuilder("port=" +
-                                                            URLEncoder.encode(Integer.toString(serverSocket.getLocalPort()),
-                                                                  StandardCharsets.UTF_8));
+                  URLEncoder.encode(Integer.toString(serverSocket.getLocalPort()),
+                        StandardCharsets.UTF_8));
             if (register) {
                 for (AbstractConnection abstractConnection : connections) {
                     content.append("&players[]=").append(getPlayer(abstractConnection.getId()).getName());

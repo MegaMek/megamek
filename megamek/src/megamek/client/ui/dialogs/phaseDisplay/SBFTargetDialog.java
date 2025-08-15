@@ -1,28 +1,50 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.phaseDisplay;
 
+import java.awt.Container;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionListener;
+
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip;
 import megamek.client.ui.dialogs.abstractDialogs.AbstractDialog;
 import megamek.client.ui.sbf.SBFTargetingToHitDisplay;
 import megamek.client.ui.sbf.SBFUnitAttackSelector;
-import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.InGameObject;
 import megamek.common.annotations.Nullable;
@@ -31,11 +53,6 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.common.strategicBattleSystems.SBFToHitData;
-
-import javax.swing.*;
-import javax.swing.border.LineBorder;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
 
 public class SBFTargetDialog extends AbstractDialog implements IPreferenceChangeListener {
 
@@ -63,7 +80,8 @@ public class SBFTargetDialog extends AbstractDialog implements IPreferenceChange
         initialize();
     }
 
-    public void setContent(@Nullable InGameObject attacker, @Nullable InGameObject target, @Nullable SBFToHitData data) {
+    public void setContent(@Nullable InGameObject attacker, @Nullable InGameObject target,
+          @Nullable SBFToHitData data) {
         if (this.attacker != attacker) {
             this.attacker = attacker;
             unitAttackSelector.setFormation((SBFFormation) attacker);
@@ -96,10 +114,10 @@ public class SBFTargetDialog extends AbstractDialog implements IPreferenceChange
             attackerDisplay.setText(noTargetLabel());
         } else {
             String tooltip = "<HTML><HEAD><STYLE>" +
-                    SBFInGameObjectTooltip.styles() +
-                    "</STYLE></HEAD><BODY>" +
-                    SBFInGameObjectTooltip.getBaseTooltip(attacker, game) +
-                    "</BODY></HTML>";
+                  SBFInGameObjectTooltip.styles() +
+                  "</STYLE></HEAD><BODY>" +
+                  SBFInGameObjectTooltip.getBaseTooltip(attacker, game) +
+                  "</BODY></HTML>";
             attackerDisplay.setText(tooltip);
         }
         attackerBox.setBorder(new LineBorder(SBFInGameObjectTooltip.ownerColor(attacker, game), 2));
@@ -108,18 +126,18 @@ public class SBFTargetDialog extends AbstractDialog implements IPreferenceChange
             targetDisplay.setText(noTargetLabel());
         } else {
             String tooltip = "<HTML><HEAD><STYLE>" +
-                    SBFInGameObjectTooltip.styles() +
-                    "</STYLE></HEAD><BODY>" +
-                    SBFInGameObjectTooltip.getTooltip(target, game) +
-                    "</BODY></HTML>";
+                  SBFInGameObjectTooltip.styles() +
+                  "</STYLE></HEAD><BODY>" +
+                  SBFInGameObjectTooltip.getTooltip(target, game) +
+                  "</BODY></HTML>";
             targetDisplay.setText(tooltip);
         }
 
         attackingLabel.setText("<HTML><HEAD><STYLE>" + labelStyle() + "</STYLE></HEAD><BODY>"
-                + UIUtil.divCSS("label", "Attacking") + "</BODY></HTML>");
+              + UIUtil.divCSS("label", "Attacking") + "</BODY></HTML>");
 
         resultLabel.setText("<HTML><HEAD><STYLE>" + labelStyle() + "</STYLE></HEAD><BODY>"
-                + UIUtil.divCSS("label", "Attack Result:") + "</BODY></HTML>");
+              + UIUtil.divCSS("label", "Attack Result:") + "</BODY></HTML>");
         pack();
     }
 
@@ -143,14 +161,14 @@ public class SBFTargetDialog extends AbstractDialog implements IPreferenceChange
         int width = UIUtil.scaleForGUI(SBFInGameObjectTooltip.TOOLTIP_BASE_WIDTH);
         int fontSize = (int) (1.4 * UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         return "<HTML><BODY><div style='width:" + width + "; padding:50 10; border:2; margin: 5 0; " +
-                "border-style:solid; border-color: #888; font-family:Noto Sans; font-size:" + fontSize + "; '>"
-                + NO_TARGET + "</div></BODY></HTML>";
+              "border-style:solid; border-color: #888; font-family:Noto Sans; font-size:" + fontSize + "; '>"
+              + NO_TARGET + "</div></BODY></HTML>";
     }
 
     private String labelStyle() {
         int fontSize = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
         return ".label { font-family:Noto Sans; font-size:" + fontSize + "; text-align:center; padding: 5; " +
-                "background: #888; color: #000; }";
+              "background: #888; color: #000; }";
     }
 
     @Override

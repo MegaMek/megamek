@@ -1,15 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay;
 
@@ -17,8 +37,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
-
-import javax.swing.*;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -28,12 +47,12 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
-import megamek.client.ui.panels.phaseDisplay.FiringDisplay.FiringCommand;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TeleMissileSettingDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TriggerAPPodDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TriggerBPodDialog;
 import megamek.client.ui.dialogs.phaseDisplay.VibrabombSettingDialog;
+import megamek.client.ui.panels.phaseDisplay.FiringDisplay.FiringCommand;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.MegaMekButton;
@@ -53,9 +72,8 @@ import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.logging.MMLogger;
 
 /**
- * Targeting Phase Display. Breaks naming convention because TargetingDisplay is
- * too easy to confuse
- * with something else
+ * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse with something
+ * else
  */
 public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSelectionListener {
     private static final MMLogger logger = MMLogger.create(TargetingPhaseDisplay.class);
@@ -63,10 +81,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     private static final long serialVersionUID = 3441669419807288865L;
 
     /**
-     * This enumeration lists all of the possible ActionCommands that can be
-     * carried out during the deploy minefield phase. Each command has a string
-     * for the command plus a flag that determines what unit type it is
-     * appropriate for.
+     * This enumeration lists all of the possible ActionCommands that can be carried out during the deploy minefield
+     * phase. Each command has a string for the command plus a flag that determines what unit type it is appropriate
+     * for.
      *
      * @author arlith
      */
@@ -145,19 +162,19 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                     result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET);
                     result += "<BR>";
                     result += "&nbsp;&nbsp;" + msg_valid + " " + msg_next + ": "
-                            + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_VALID);
+                          + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_VALID);
                     result += "&nbsp;&nbsp;" + msg_previous + ": "
-                            + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_VALID);
+                          + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_VALID);
                     result += "<BR>";
                     result += "&nbsp;&nbsp;" + msg_noallies + " " + msg_next + ": "
-                            + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_NOALLIES);
+                          + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_NOALLIES);
                     result += "&nbsp;&nbsp;" + msg_previous + ": "
-                            + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_NOALLIES);
+                          + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_NOALLIES);
                     result += "<BR>";
                     result += "&nbsp;&nbsp;" + msg_valid + " (" + msg_noallies + ") " + msg_next + ": "
-                            + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES);
+                          + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES);
                     result += "&nbsp;&nbsp;" + msg_previous + ": "
-                            + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_VALID_NO_ALLIES);
+                          + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_VALID_NO_ALLIES);
                     break;
                 case FIRE_SKIP:
                     result = "<BR>";
@@ -198,8 +215,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     private int lastTargetID = -1;
 
     /**
-     * Creates and lays out a new targeting phase display for the specified
-     * clientgui.getClient().
+     * Creates and lays out a new targeting phase display for the specified clientgui.getClient().
      */
     public TargetingPhaseDisplay(final ClientGUI clientgui, boolean offboard) {
         super(clientgui);
@@ -226,7 +242,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     @Override
     protected void setButtons() {
         buttons = new HashMap<>(
-                (int) (TargetingCommand.values().length * 1.25 + 0.5));
+              (int) (TargetingCommand.values().length * 1.25 + 0.5));
         for (TargetingCommand cmd : TargetingCommand.values()) {
             buttons.put(cmd, createButton(cmd.getCmd(), "TargetingPhaseDisplay."));
         }
@@ -273,9 +289,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         controller.registerCommandAction(KeyCommandBind.PREV_WEAPON, this, this::prevWeapon);
 
         controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this,
-                () -> selectEntity(clientgui.getClient().getNextEntityNum(currentEntity)));
+              () -> selectEntity(clientgui.getClient().getNextEntityNum(currentEntity)));
         controller.registerCommandAction(KeyCommandBind.PREV_UNIT, this,
-                () -> selectEntity(clientgui.getClient().getPrevEntityNum(currentEntity)));
+              () -> selectEntity(clientgui.getClient().getPrevEntityNum(currentEntity)));
 
         controller.registerCommandAction(KeyCommandBind.NEXT_TARGET, this, this::jumpToNextTarget);
         controller.registerCommandAction(KeyCommandBind.PREV_TARGET, this, this::jumpToPrevTarget);
@@ -287,12 +303,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     /**
      * Have the panel register itself as a listener wherever it's needed.
      * <p>
-     * According to
-     * http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a
-     * major bad no-no to perform these registrations before the constructor
-     * finishes, so this function has to be called after the panel is created.
-     * Please note, this restriction only applies to listeners for objects that
-     * aren't on the panel itself.
+     * According to http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a major bad no-no to perform
+     * these registrations before the constructor finishes, so this function has to be called after the panel is
+     * created. Please note, this restriction only applies to listeners for objects that aren't on the panel itself.
      */
     public void initializeListeners() {
         game.addGameListener(this);
@@ -422,7 +435,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             selectEntity(clientgui.getClient().getFirstEntityNum());
             disableButtons();
             TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, ce(),
-                    ((TriggerBPodTurn) turn).getAttackType());
+                  ((TriggerBPodTurn) turn).getAttackType());
             dialog.setVisible(true);
             removeAllAttacks();
             Enumeration<TriggerBPodAction> actions = dialog.getActions();
@@ -449,8 +462,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         // end my turn, then.
         Entity next = game.getNextEntity(game.getTurnIndex());
         if ((phase == game.getPhase())
-                && (null != next) && (null != ce())
-                && (next.getOwnerId() != ce().getOwnerId())) {
+              && (null != next) && (null != ce())
+              && (next.getOwnerId() != ce().getOwnerId())) {
             clientgui.maybeShowUnitDisplay();
         }
         currentEntity = Entity.NONE;
@@ -510,10 +523,10 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         // notify the player
         if (m.canInstantSwitch(nMode)) {
             clientgui.systemMessage(Messages.getString(
-                    "FiringDisplay.switched", m.getName(), m.curMode().getDisplayableName()));
+                  "FiringDisplay.switched", m.getName(), m.curMode().getDisplayableName()));
         } else {
             clientgui.systemMessage(Messages.getString(
-                    "FiringDisplay.willSwitch", m.getName(), m.pendingMode().getDisplayableName()));
+                  "FiringDisplay.willSwitch", m.getName(), m.pendingMode().getDisplayableName()));
         }
 
         updateTarget();
@@ -589,8 +602,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     }
 
     /**
-     * Adds a weapon attack with the currently selected weapon to the attack
-     * queue.
+     * Adds a weapon attack with the currently selected weapon to the attack queue.
      */
     private void fire() {
         // get the selected weaponnum
@@ -599,7 +611,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         // validate
         if ((ce() == null) || (target == null) || (mounted == null)
-                || !(mounted.getType() instanceof WeaponType)) {
+              || !(mounted.getType() instanceof WeaponType)) {
             throw new IllegalArgumentException("current fire parameters are invalid");
         }
 
@@ -609,20 +621,20 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         WeaponAttackAction waa = new WeaponAttackAction(currentEntity, target.getTargetType(),
-                target.getId(), weaponNum);
+              target.getId(), weaponNum);
         int distance = Compute.effectiveDistance(game, waa.getEntity(game), waa.getTarget(game));
         if ((mounted.getType().hasFlag(WeaponType.F_ARTILLERY))
-                || (mounted.isInBearingsOnlyMode()
-                        && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)
+              || (mounted.isInBearingsOnlyMode()
+              && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)
               || (CrossBoardAttackHelper.isOrbitToSurface(game, ce(), target))
-                || (mounted.getType() instanceof CapitalMissileWeapon
-                        && Compute.isGroundToGround(ce(), target))) {
+              || (mounted.getType() instanceof CapitalMissileWeapon
+              && Compute.isGroundToGround(ce(), target))) {
             waa = new ArtilleryAttackAction(currentEntity, target.getTargetType(),
-                    target.getId(), weaponNum, game);
+                  target.getId(), weaponNum, game);
             // Get the launch velocity for bearings-only telemissiles
             if (mounted.getType() instanceof TeleOperatedMissileBayWeapon) {
                 TeleMissileSettingDialog tsd = new TeleMissileSettingDialog(clientgui.getFrame(),
-                        game);
+                      game);
                 tsd.setVisible(true);
                 waa.setLaunchVelocity(tsd.getSetting());
                 waa.updateTurnsTilHit(game);
@@ -635,15 +647,14 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     }
 
     /**
-     * Worker function that handles setting associated ammo and other bookkeeping/UI
-     * updates
-     * for a pending weapon attack action.
+     * Worker function that handles setting associated ammo and other bookkeeping/UI updates for a pending weapon attack
+     * action.
      */
     public void updateDisplayForPendingAttack(Mounted<?> mounted, WeaponAttackAction waa) {
         // put this and the rest of the method into a separate function for access
         // externally.
         if ((null != mounted.getLinked())
-                && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.AmmoTypeEnum.NA)) {
+              && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.AmmoTypeEnum.NA)) {
             Mounted<?> ammoMount = mounted.getLinked();
             waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
             EnumSet<AmmoType.Munitions> ammoMunitionType = ((AmmoType) ammoMount.getType()).getMunitionType();
@@ -812,7 +823,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
         Entity attacker = ce();
         if ((attacker != null) && attacker.equals(clientgui.getUnitDisplay().getCurrentEntity())
-                && (target != null) && (weaponId != -1) && (attacker.getPosition() != null)) {
+              && (target != null) && (weaponId != -1) && (attacker.getPosition() != null)) {
             clientgui.getUnitDisplay().wPan.setTarget(target, null);
 
             Mounted<?> weapon = attacker.getEquipment(weaponId);
@@ -831,20 +842,20 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             clientgui.getUnitDisplay().wPan.wRangeR.setText(distanceText);
 
             ToHitData toHit = WeaponAttackAction.toHit(game,
-                    currentEntity, target, weaponId, Entity.LOC_NONE, AimingMode.NONE, false);
+                  currentEntity, target, weaponId, Entity.LOC_NONE, AimingMode.NONE, false);
 
             if (weapon.isUsedThisRound()) {
                 clientgui.getUnitDisplay().wPan.setToHit(
-                        Messages.getString("TargetingPhaseDisplay.alreadyFired"));
+                      Messages.getString("TargetingPhaseDisplay.alreadyFired"));
                 setFireEnabled(false);
             } else if (weapon.isInBearingsOnlyMode() && effectiveDistance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
                 clientgui.getUnitDisplay().wPan.setToHit(
-                        Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
+                      Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
                 setFireEnabled(false);
             } else if ((weapon.getType().hasFlag(WeaponType.F_AUTO_TARGET)
-                    && !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
+                  && !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 clientgui.getUnitDisplay().wPan.setToHit(
-                        Messages.getString("TargetingPhaseDisplay.autoFiringWeapon"));
+                      Messages.getString("TargetingPhaseDisplay.autoFiringWeapon"));
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 clientgui.getUnitDisplay().wPan.setToHit(toHit);
@@ -868,7 +879,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
     private boolean showDistanceAsMapsheets(Entity attacker, Targetable target, Mounted<?> weapon) {
         return (!game.onTheSameBoard(attacker, target) && game.isOnGroundMap(attacker) && game.isOnGroundMap(target))
-                     || attacker.isOffBoard() || isArtilleryAttack(weapon);
+              || attacker.isOffBoard() || isArtilleryAttack(weapon);
     }
 
     private boolean isArtilleryAttack(Mounted<?> weapon) {
@@ -876,8 +887,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     }
 
     /**
-     * Cache the list of visible targets. This is used for the 'next target'
-     * button.
+     * Cache the list of visible targets. This is used for the 'next target' button.
      * <p>
      * We'll sort it by range to us.
      */
@@ -1002,8 +1012,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     /**
      * Torso twist to the left or right
      *
-     * @param twistDir An <code>int</code> specifying whether we're twisting left or
-     *                 right, 0 if we're twisting to the left, 1 if to the right.
+     * @param twistDir An <code>int</code> specifying whether we're twisting left or right, 0 if we're twisting to the
+     *                 left, 1 if to the right.
      */
 
     void torsoTwist(int twistDir) {
@@ -1035,13 +1045,13 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn()
-                || ((b.getButton() != MouseEvent.BUTTON1))) {
+              || ((b.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
         if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
-                || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
+              || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
         // check for shifty goodness
@@ -1075,7 +1085,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         final Client client = clientgui.getClient();
 
         if (client.isMyTurn() && (b.getCoords() != null)
-                && (ce() != null) && !b.getCoords().equals(ce().getPosition())) {
+              && (ce() != null) && !b.getCoords().equals(ce().getPosition())) {
             if (shiftheld && !ce().getAlreadyTwisted()) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
@@ -1123,10 +1133,10 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         // Is there a building in the hex?
         Building bldg = game.getBoard()
-                .getBuildingAt(location.coords());
+              .getBuildingAt(location.coords());
         if (bldg != null) {
             targets.add(new BuildingTarget(location.coords(), game
-                    .getBoard(), Targetable.TYPE_BLDG_TAG));
+                  .getBoard(), Targetable.TYPE_BLDG_TAG));
         }
 
         targets.add(new HexTarget(location.coords(), location.boardId(), Targetable.TYPE_HEX_TAG));
@@ -1138,9 +1148,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         } else if (targets.size() > 1) {
             // If we have multiple choices, display a selection dialog.
             choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
-                    "FiringDisplay.ChooseTargetDialog.title",
-                    Messages.getString("FiringDisplay.ChooseTargetDialog.message", location.getBoardNum()),
-                    targets, clientgui, ce());
+                  "FiringDisplay.ChooseTargetDialog.title",
+                  Messages.getString("FiringDisplay.ChooseTargetDialog.message", location.getBoardNum()),
+                  targets, clientgui, ce());
         }
 
         // Return the chosen unit.
@@ -1162,8 +1172,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         // generated
         // Except on the first turn
         if (game.getPhase().isSimultaneous(game)
-                && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
-                && (game.getTurnIndex() != 0)) {
+              && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
+              && (game.getTurnIndex() != 0)) {
             return;
         }
 
@@ -1180,14 +1190,14 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                     beginMyTurn();
                 }
                 String t = (phase.isTargeting()) ? Messages.getString("TargetingPhaseDisplay.its_your_turn")
-                        : Messages.getString("TargetingPhaseDisplay.its_your_tag_turn");
+                      : Messages.getString("TargetingPhaseDisplay.its_your_tag_turn");
                 setStatusBarText(t + s);
                 clientgui.bingOthersTurn();
             } else {
                 endMyTurn();
                 if (e.getPlayer() != null) {
                     setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_others_turn",
-                            e.getPlayer().getName()) + s);
+                          e.getPlayer().getName()) + s);
                     clientgui.bingOthersTurn();
                 }
             }
@@ -1202,7 +1212,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         if (clientgui.getClient().isMyTurn()
-                && (game.getPhase() != phase)) {
+              && (game.getPhase() != phase)) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
@@ -1244,12 +1254,12 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_SEARCHLIGHT.getCmd())) {
             doSearchlight();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_DISENGAGE.getCmd())
-                && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.EscapeDialog.title"),
-                        Messages.getString("MovementDisplay.EscapeDialog.message"))) {
+              && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.EscapeDialog.title"),
+              Messages.getString("MovementDisplay.EscapeDialog.message"))) {
             clear();
             addAttack(new DisengageAction(currentEntity));
             ready();
-        } else if(ev.getActionCommand().equals(TargetingCommand.FIRE_CLEAR_WEAPON.getCmd())) {
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_CLEAR_WEAPON.getCmd())) {
             doClearWeaponJam();
         }
     }
@@ -1264,15 +1274,15 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             names[loop] = weapons.get(loop).getDesc();
         }
         String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-            Messages.getString("FiringDisplay.ClearWeaponJam.question"),
-            Messages.getString("FiringDisplay.ClearWeaponJam.title"),
-            JOptionPane.QUESTION_MESSAGE, null, names, null);
+              Messages.getString("FiringDisplay.ClearWeaponJam.question"),
+              Messages.getString("FiringDisplay.ClearWeaponJam.title"),
+              JOptionPane.QUESTION_MESSAGE, null, names, null);
 
         if (input != null) {
             for (int loop = 0; loop < names.length; loop++) {
                 if (input.equals(names[loop])) {
                     RepairWeaponMalfunctionAction rwma = new RepairWeaponMalfunctionAction(
-                        ce().getId(), ce().getEquipmentNum(weapons.get(loop)));
+                          ce().getId(), ce().getEquipmentNum(weapons.get(loop)));
                     addAttack(rwma);
                     ready();
                 }
@@ -1298,15 +1308,15 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
     private void updateSearchlight() {
         setSearchlightEnabled((ce() != null)
-                && (target != null)
-                && ce().isUsingSearchlight()
-                && ce().getCrew().isActive()
-                && SearchlightAttackAction.isPossible(game, currentEntity, target, null));
+              && (target != null)
+              && ce().isUsingSearchlight()
+              && ce().getCrew().isActive()
+              && SearchlightAttackAction.isPossible(game, currentEntity, target, null));
     }
 
-    private void updateClearWeaponJam(){
+    private void updateClearWeaponJam() {
         setFireClearWeaponJamEnabled((ce() instanceof Tank) && ((Tank) ce()).canUnjamWeapon()
-            && attacks.isEmpty());
+              && attacks.isEmpty());
     }
 
     private void setFireEnabled(boolean enabled) {
@@ -1395,7 +1405,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         Entity e = game.getEntity(b.getEntityId());
         if (clientgui.getClient().isMyTurn()) {
             if (clientgui.getClient().getMyTurn()
-                    .isValidEntity(e, game)) {
+                  .isValidEntity(e, game)) {
                 selectEntity(e.getId());
             }
         } else {
@@ -1420,7 +1430,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         if ((game.getPhase().isTargeting()) &&
-                (event.getSource().equals(clientgui.getUnitDisplay().wPan.weaponList))) {
+              (event.getSource().equals(clientgui.getUnitDisplay().wPan.weaponList))) {
             // update target data in weapon display
             updateTarget();
         }

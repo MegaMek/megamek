@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -23,8 +44,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
- * @author Sebastian Brocks
- * Created on Oct 15, 2004
+ * @author Sebastian Brocks Created on Oct 15, 2004
  */
 public class PrototypeLBXHandler extends LBXHandler {
     private static final long serialVersionUID = -5200908977142584431L;
@@ -36,13 +56,13 @@ public class PrototypeLBXHandler extends LBXHandler {
      * @param m
      */
     public PrototypeLBXHandler(ToHitData t, WeaponAttackAction w, Game g,
-            TWGameManager m) {
+          TWGameManager m) {
         super(t, w, g, m);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
      * vPhaseReport)
      */
@@ -57,7 +77,7 @@ public class PrototypeLBXHandler extends LBXHandler {
 
         shotMod -= 1;
         int shotsHit = allShotsHit() ? wtype.getRackSize() : Compute
-                .missilesHit(wtype.getRackSize(), shotMod);
+              .missilesHit(wtype.getRackSize(), shotMod);
 
         Report r = new Report(3325);
         r.subject = subjectId;
@@ -75,7 +95,7 @@ public class PrototypeLBXHandler extends LBXHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -83,7 +103,7 @@ public class PrototypeLBXHandler extends LBXHandler {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
         }
-        
+
         if ((roll.getIntValue() == 2) && !ae.isConventionalInfantry()) {
             Report r = new Report(3165);
             r.subject = subjectId;

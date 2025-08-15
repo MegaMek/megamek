@@ -1,14 +1,35 @@
-/* MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.common;
@@ -20,8 +41,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 
 /**
- * This class will hold all the information about a particular active sensor,
- * including its rolls
+ * This class will hold all the information about a particular active sensor, including its rolls
  */
 public class Sensor implements Serializable {
 
@@ -68,12 +88,15 @@ public class Sensor implements Serializable {
     public static final String EW_EQUIPMENT = "ISElectronicWarfareEquipment";
 
     private static String[] sensorNames = { "Mek Radar", "Vehicle Radar",
-            "Beagle Active Probe", "Clan AP", "Bloodhound AP", "Watchdog",
-            "Light AP", "Mek IR", "Vehicle IR", "Mek Magscan",
-            "Vehicle Magscan", "Heat Sensors", "Improved Sensors",
-            "Mek Seismic", "Vehicle Seismic", "EW Equipment", "Nova CEWS", "Beagle Active Probe Prototype",
-            "Aero Sensor Suite (Active)", "Spacecraft Radar (Active)", "Spacecraft Electronic Support Measures (Passive)",
-            "Spacecraft Thermal/Optical Sensors (Passive)", "Aero Thermal/Optical Sensors (Passive)"};
+                                            "Beagle Active Probe", "Clan AP", "Bloodhound AP", "Watchdog",
+                                            "Light AP", "Mek IR", "Vehicle IR", "Mek Magscan",
+                                            "Vehicle Magscan", "Heat Sensors", "Improved Sensors",
+                                            "Mek Seismic", "Vehicle Seismic", "EW Equipment", "Nova CEWS",
+                                            "Beagle Active Probe Prototype",
+                                            "Aero Sensor Suite (Active)", "Spacecraft Radar (Active)",
+                                            "Spacecraft Electronic Support Measures (Passive)",
+                                            "Spacecraft Thermal/Optical Sensors (Passive)",
+                                            "Aero Thermal/Optical Sensors (Passive)" };
     public static final int SIZE = sensorNames.length;
 
     //Constants for space automatic visual detection ranges
@@ -105,9 +128,9 @@ public class Sensor implements Serializable {
 
     public boolean isBAP() {
         return (type == TYPE_BAP) || (type == TYPE_BLOODHOUND)
-                || (type == TYPE_CLAN_AP) || (type == TYPE_WATCHDOG)
-                || (type == TYPE_LIGHT_AP) || (type == TYPE_EW_EQUIPMENT)
-                || (type == TYPE_NOVA) || (type == TYPE_BAPP);
+              || (type == TYPE_CLAN_AP) || (type == TYPE_WATCHDOG)
+              || (type == TYPE_LIGHT_AP) || (type == TYPE_EW_EQUIPMENT)
+              || (type == TYPE_NOVA) || (type == TYPE_BAPP);
     }
 
     public int getRangeByBracket() {
@@ -165,18 +188,18 @@ public class Sensor implements Serializable {
     public int adjustRange(int range, Game game, LosEffects los) {
 
         if (((type == TYPE_MEK_RADAR) || (type == TYPE_VEE_RADAR)
-                || (type == TYPE_VEE_MAGSCAN) || (type == TYPE_MEK_MAGSCAN))
-                && ((los.getHardBuildings() + los.getSoftBuildings()) > 0)) {
+              || (type == TYPE_VEE_MAGSCAN) || (type == TYPE_MEK_MAGSCAN))
+              && ((los.getHardBuildings() + los.getSoftBuildings()) > 0)) {
             return 0;
         }
 
         if (los.isBlockedByHill()
-                && (type != TYPE_MEK_SEISMIC)
-                && (type != TYPE_VEE_SEISMIC)
-                && ((type != TYPE_MEK_MAGSCAN) || game.getOptions()
-                        .booleanOption(OptionsConstants.ADVANCED_MAGSCAN_NOHILLS))
-                && ((type != TYPE_VEE_MAGSCAN) || game.getOptions()
-                        .booleanOption(OptionsConstants.ADVANCED_MAGSCAN_NOHILLS)) && !isBAP()) {
+              && (type != TYPE_MEK_SEISMIC)
+              && (type != TYPE_VEE_SEISMIC)
+              && ((type != TYPE_MEK_MAGSCAN) || game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_MAGSCAN_NOHILLS))
+              && ((type != TYPE_VEE_MAGSCAN) || game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_MAGSCAN_NOHILLS)) && !isBAP()) {
             return 0;
         }
 
@@ -192,22 +215,22 @@ public class Sensor implements Serializable {
         }
 
         if ((type == TYPE_MEK_RADAR) || (type == TYPE_VEE_RADAR)
-                || (type == TYPE_VEE_IR) || (type == TYPE_MEK_IR)
-                || (type == TYPE_BA_HEAT)) {
+              || (type == TYPE_VEE_IR) || (type == TYPE_MEK_IR)
+              || (type == TYPE_BA_HEAT)) {
             range -= los.getHeavyWoods() + los.getSoftBuildings();
             range -= 2 * (los.getUltraWoods() + los.getHardBuildings());
         }
 
         if ((type == TYPE_MEK_IR) || (type == TYPE_VEE_IR)) {
             range -= game.getPlanetaryConditions().getTemperatureDifference(50,
-                    -30);
+                  -30);
         }
 
         //Most spacecraft sensors only work in space...
         if (!game.getBoard().isSpace() &&
-                (type == TYPE_SPACECRAFT_ESM
-                || type == TYPE_SPACECRAFT_THERMAL
-                || type == TYPE_AERO_THERMAL)) {
+              (type == TYPE_SPACECRAFT_ESM
+                    || type == TYPE_SPACECRAFT_THERMAL
+                    || type == TYPE_AERO_THERMAL)) {
             range = 0;
         }
 
@@ -230,14 +253,14 @@ public class Sensor implements Serializable {
 
         // first if we have seismic/magscan/IR we don't have to mod anything
         if ((type == TYPE_MEK_SEISMIC) || (type == TYPE_VEE_SEISMIC)
-                || (type == TYPE_VEE_IR) || (type == TYPE_MEK_IR)
-                || (type == TYPE_BA_HEAT) || (type == TYPE_MEK_MAGSCAN)
-                || (type == TYPE_VEE_MAGSCAN)) {
+              || (type == TYPE_VEE_IR) || (type == TYPE_MEK_IR)
+              || (type == TYPE_BA_HEAT) || (type == TYPE_MEK_MAGSCAN)
+              || (type == TYPE_VEE_MAGSCAN)) {
             return mod;
         }
 
         boolean hasSneak = te.isConventionalInfantry() && (((Infantry) te).hasSneakCamo()
-                || ((Infantry) te).hasSneakIR() || ((Infantry) te).hasDEST());
+              || ((Infantry) te).hasSneakIR() || ((Infantry) te).hasDEST());
         boolean hasSneakECM = te.isConventionalInfantry() && ((Infantry) te).hasSneakECM();
 
         // these are cumulative, so lets just plow through the table on pg. 224 (ick)
@@ -427,17 +450,16 @@ public class Sensor implements Serializable {
      * Computes the sensor check modifier for ECM.
      *
      * @param en
-     * @param allECMInfo  A collection of ECMInfo for all entities, this value
-     *                    can be null and it will be computed when it's
-     *                    needed, however passing in the pre-computed
-     *                    collection is much faster
+     * @param allECMInfo A collection of ECMInfo for all entities, this value can be null and it will be computed when
+     *                   it's needed, however passing in the pre-computed collection is much faster
+     *
      * @return
      */
     public int getModForECM(Entity en, List<ECMInfo> allECMInfo) {
         // how many ECM fields are affecting the entity?
         Coords pos = en.getPosition();
         ECMInfo ecmInfo = ComputeECM.getECMEffects(en, pos, pos, true,
-                allECMInfo);
+              allECMInfo);
         return getECMSensorRangeModifier(ecmInfo);
     }
 
@@ -445,10 +467,9 @@ public class Sensor implements Serializable {
      * Computes the sensor check modifier for ECM.
      *
      * @param targetEntity
-     * @param allECMInfo  A collection of ECMInfo for all entities, this value
-     *                    can be null and it will be computed when it's
-     *                    needed, however passing in the pre-computed
-     *                    collection is much faster
+     * @param allECMInfo   A collection of ECMInfo for all entities, this value can be null and it will be computed when
+     *                     it's needed, however passing in the pre-computed collection is much faster
+     *
      * @return
      */
     public int getModForTargetECM(Entity targetEntity, List<ECMInfo> allECMInfo) {
@@ -457,7 +478,7 @@ public class Sensor implements Serializable {
         return getECMSensorRangeModifier(ecmInfo);
     }
 
-    public int getECMSensorRangeModifier(ECMInfo ecmInfo){
+    public int getECMSensorRangeModifier(ECMInfo ecmInfo) {
         double ecm, ecmAngel;
         ecm = ecmAngel = 0;
         if (ecmInfo != null) {
@@ -503,7 +524,7 @@ public class Sensor implements Serializable {
     public int entityAdjustments(int range, Entity target, Game game) {
         // You need to have moved to be detected by seismic and be on the ground
         if (((type == TYPE_MEK_SEISMIC) || (type == TYPE_VEE_SEISMIC))
-                && ((target.mpUsed == 0) || (target.getElevation() > 0))) {
+              && ((target.mpUsed == 0) || (target.getElevation() > 0))) {
             return 0;
         }
 
@@ -518,7 +539,7 @@ public class Sensor implements Serializable {
             range += target.heat / 5;
 
             if ((null != game.getBoard().getHex(target.getPosition()))
-                    && game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.FIRE)) {
+                  && game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.FIRE)) {
                 range += 1;
             }
         }
@@ -535,7 +556,7 @@ public class Sensor implements Serializable {
             }
 
             if ((null != game.getBoard().getHex(target.getPosition()))
-                    && game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.INDUSTRIAL)) {
+                  && game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.INDUSTRIAL)) {
                 return 0;
             }
         }

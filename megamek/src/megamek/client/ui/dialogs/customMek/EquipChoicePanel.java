@@ -25,6 +25,11 @@
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
  * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.customMek;
 
@@ -140,7 +145,7 @@ public class EquipChoicePanel extends JPanel {
 
             // Conditional Ejections
             if (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                      mek.hasEjectSeat()) {
+                  mek.hasEjectSeat()) {
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
                 chCondEjectAmmo.setSelected(mek.isCondEjectAmmo());
@@ -172,7 +177,7 @@ public class EquipChoicePanel extends JPanel {
 
             // Conditional Ejections
             if (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                      aero.hasEjectSeat()) {
+                  aero.hasEjectSeat()) {
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
                 chCondEjectAmmo.setSelected(aero.isCondEjectAmmo());
@@ -224,9 +229,9 @@ public class EquipChoicePanel extends JPanel {
                 }
             }
             String freeWeight = Messages.getString("CustomMekDialog.freeWeight") +
-                                      String.format(": %1$.3f/%2$.3f",
-                                            maxTrooperWeight,
-                                            battleArmor.getTrooperWeight());
+                  String.format(": %1$.3f/%2$.3f",
+                        maxTrooperWeight,
+                        battleArmor.getTrooperWeight());
 
             setupMEAdaptors(freeWeight);
             add(panMEAdaptors, GBC.eop().anchor(GridBagConstraints.CENTER));
@@ -234,7 +239,7 @@ public class EquipChoicePanel extends JPanel {
 
         // Can't set up munitions on infantry.
         if (!((entity instanceof Infantry) && !((Infantry) entity).hasFieldWeapon()) ||
-                  (entity instanceof BattleArmor)) {
+              (entity instanceof BattleArmor)) {
             setupMunitions();
             panMunitions.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
                   Messages.getString("CustomMekDialog.MunitionsPanelTitle"),
@@ -260,7 +265,7 @@ public class EquipChoicePanel extends JPanel {
 
         // Set up rapid fire mg; per errata infantry of any kind cannot use them
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST) &&
-                  !(entity instanceof Infantry)) {
+              !(entity instanceof Infantry)) {
             setupRapidFireMGs();
             add(panRapidFireMGs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
@@ -273,13 +278,13 @@ public class EquipChoicePanel extends JPanel {
 
         // Set up searchlight
         if (!entity.getsAutoExternalSearchlight() &&
-                  client.getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
+              client.getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
             JLabel labSearchlight = new JLabel(Messages.getString("CustomMekDialog.labSearchlight"),
                   SwingConstants.RIGHT);
             add(labSearchlight, GBC.std());
             add(chSearchlight, GBC.eol());
             chSearchlight.setSelected(entity.hasSearchlight() ||
-                                            entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
+                  entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
             chSearchlight.setEnabled(!entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
         }
 
@@ -435,15 +440,15 @@ public class EquipChoicePanel extends JPanel {
 
             // Check to see if we've got a valid infantry weapon
             if (infantryWeapon.hasFlag(WeaponType.F_INFANTRY) &&
-                      !infantryWeapon.hasFlag(WeaponType.F_INF_POINT_BLANK) &&
-                      !infantryWeapon.hasFlag(WeaponType.F_INF_ARCHAIC) &&
-                      !infantryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)) {
+                  !infantryWeapon.hasFlag(WeaponType.F_INF_POINT_BLANK) &&
+                  !infantryWeapon.hasFlag(WeaponType.F_INF_ARCHAIC) &&
+                  !infantryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)) {
                 apWeaponTypes.add(infantryWeapon);
             }
             if (infantryWeapon.hasFlag(WeaponType.F_INFANTRY) &&
-                      !infantryWeapon.hasFlag(WeaponType.F_INF_POINT_BLANK) &&
-                      !infantryWeapon.hasFlag(WeaponType.F_INF_ARCHAIC) &&
-                      (infantryWeapon.getCrew() < 2)) {
+                  !infantryWeapon.hasFlag(WeaponType.F_INF_POINT_BLANK) &&
+                  !infantryWeapon.hasFlag(WeaponType.F_INF_ARCHAIC) &&
+                  (infantryWeapon.getCrew() < 2)) {
                 agWeaponTypes.add(infantryWeapon);
             }
         }
@@ -562,12 +567,12 @@ public class EquipChoicePanel extends JPanel {
             // don't allow ammo switching of most things for Aerospace allow only MML, ATM, and NARC. LRM/SRM can
             // switch between Artemis and standard, but not other munitions. Same with MRM.
             if ((entity instanceof Aero) &&
-                      !((at.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-                              (at.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
-                              (at.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-                              (at.getAmmoType() == AmmoType.AmmoTypeEnum.MRM) ||
-                              (at.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) ||
-                              (at.getAmmoType() == AmmoType.AmmoTypeEnum.IATM))) {
+                  !((at.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                        (at.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+                        (at.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                        (at.getAmmoType() == AmmoType.AmmoTypeEnum.MRM) ||
+                        (at.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) ||
+                        (at.getAmmoType() == AmmoType.AmmoTypeEnum.IATM))) {
                 continue;
             }
 
@@ -579,8 +584,8 @@ public class EquipChoicePanel extends JPanel {
 
             for (AmmoType atCheck : vAllTypes) {
                 if (entity.hasETypeFlag(Entity.ETYPE_AERO) &&
-                          !atCheck.canAeroUse(game.getOptions()
-                                                    .booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
+                      !atCheck.canAeroUse(game.getOptions()
+                            .booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
                     continue;
                 }
                 SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(game);
@@ -595,7 +600,8 @@ public class EquipChoicePanel extends JPanel {
                     // This is the way MegaMek is intended to use tech levels.
                     boolean isClanAccessibleTech = atCheck.isClan() || atCheck.isMixedTech();
                     boolean isIsAccessibleTech = !atCheck.isClan() || atCheck.isMixedTech();
-                    boolean canUseThisAmmo = (canUseISAmmo && isIsAccessibleTech) || (canUseClanAmmo && isClanAccessibleTech);
+                    boolean canUseThisAmmo = (canUseISAmmo && isIsAccessibleTech) || (canUseClanAmmo
+                          && isClanAccessibleTech);
                     bTechMatch = atCheck.getStaticTechLevel().ordinal() <= legalLevel.ordinal() && canUseThisAmmo;
                 }
 
@@ -604,24 +610,24 @@ public class EquipChoicePanel extends JPanel {
                 EnumSet<AmmoType.Munitions> munitionsTypes = atCheck.getMunitionType();
                 munitionsTypes.remove(AmmoType.Munitions.M_INCENDIARY_LRM);
                 if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH) &&
-                          entity.isClan() &&
-                          atCheck.notAllowedByClanRules()) {
+                      entity.isClan() &&
+                      atCheck.notAllowedByClanRules()) {
                     bTechMatch = false;
                 }
 
                 if ((munitionsTypes.contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) &&
-                          !entity.hasWorkingMisc(MiscType.F_ARTEMIS) &&
-                          !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
+                      !entity.hasWorkingMisc(MiscType.F_ARTEMIS) &&
+                      !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
                     continue;
                 }
                 if ((munitionsTypes.contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)) &&
-                          !entity.hasWorkingMisc(MiscType.F_ARTEMIS_V) &&
-                          !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
+                      !entity.hasWorkingMisc(MiscType.F_ARTEMIS_V) &&
+                      !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
                     continue;
                 }
 
                 if (!gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS) &&
-                          AmmoType.canDeliverMinefield(atCheck)) {
+                      AmmoType.canDeliverMinefield(atCheck)) {
                     continue;
                 }
 
@@ -632,29 +638,29 @@ public class EquipChoicePanel extends JPanel {
 
                 // When dealing with machine guns, ProtoMeks can only use proto-specific machine gun ammo
                 if ((entity instanceof ProtoMek) &&
-                          atCheck.hasFlag(AmmoType.F_MG) &&
-                          !atCheck.hasFlag(AmmoType.F_PROTOMEK)) {
+                      atCheck.hasFlag(AmmoType.F_MG) &&
+                      !atCheck.hasFlag(AmmoType.F_PROTOMEK)) {
                     continue;
                 }
 
                 if (Set.of(AmmoType.AmmoTypeEnum.LRM, AmmoType.AmmoTypeEnum.SRM).contains(atCheck.getAmmoType()) &&
-                          entity.isBattleArmor() &&
-                          !atCheck.hasFlag(AmmoTypeFlag.F_BATTLEARMOR)) {
+                      entity.isBattleArmor() &&
+                      !atCheck.hasFlag(AmmoTypeFlag.F_BATTLEARMOR)) {
                     continue;
                 }
 
                 // Battle Armor ammo can't be selected at all. All other ammo types need to match on rack size and tech.
                 if (bTechMatch &&
-                          (atCheck.getRackSize() == at.getRackSize()) &&
-                          (atCheck.hasFlag(AmmoType.F_BATTLEARMOR) == at.hasFlag(AmmoType.F_BATTLEARMOR)) &&
-                          (atCheck.hasFlag(AmmoType.F_ENCUMBERING) == at.hasFlag(AmmoType.F_ENCUMBERING)) &&
-                          (atCheck.getTonnage(entity) == at.getTonnage(entity))) {
+                      (atCheck.getRackSize() == at.getRackSize()) &&
+                      (atCheck.hasFlag(AmmoType.F_BATTLEARMOR) == at.hasFlag(AmmoType.F_BATTLEARMOR)) &&
+                      (atCheck.hasFlag(AmmoType.F_ENCUMBERING) == at.hasFlag(AmmoType.F_ENCUMBERING)) &&
+                      (atCheck.getTonnage(entity) == at.getTonnage(entity))) {
                     vTypes.add(atCheck);
                 }
             }
             if ((vTypes.isEmpty()) &&
-                      !client.getGame().getOptions().booleanOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP) &&
-                      !client.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
+                  !client.getGame().getOptions().booleanOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP) &&
+                  !client.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
                 continue;
             }
             MunitionChoicePanel munitionChoicePanel = new MunitionChoicePanel(ammoMounted,
@@ -722,7 +728,7 @@ public class EquipChoicePanel extends JPanel {
         int row = 0;
         for (MiscMounted miscMounted : entity.getMisc()) {
             if (!miscMounted.getType().hasFlag((MiscType.F_MINE)) &&
-                      !miscMounted.getType().hasFlag((MiscType.F_VEHICLE_MINE_DISPENSER))) {
+                  !miscMounted.getType().hasFlag((MiscType.F_VEHICLE_MINE_DISPENSER))) {
                 continue;
             }
 
@@ -873,7 +879,7 @@ public class EquipChoicePanel extends JPanel {
             int choC3nodeCount = client.getGame().getC3NetworkMembers(chosen).size();
 
             if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES &&
-                      ((chosen == null) || entity.getC3MasterId() != chosen.getId())) {
+                  ((chosen == null) || entity.getC3MasterId() != chosen.getId())) {
                 entity.setC3Master(chosen, true);
             } else if ((chosen != null) && entity.getC3MasterId() != chosen.getId()) {
                 String message = Messages.getString("CustomMekDialog.NetworkTooBig.message",
@@ -883,7 +889,10 @@ public class EquipChoicePanel extends JPanel {
                       choC3nodeCount,
                       Entity.MAX_C3_NODES);
                 if (clientgui == null) {
-                    JOptionPane.showMessageDialog(this, Messages.getString("CustomMekDialog.NetworkTooBig.title"), message, JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(this,
+                          Messages.getString("CustomMekDialog.NetworkTooBig.title"),
+                          message,
+                          JOptionPane.WARNING_MESSAGE);
                 } else {
                     clientgui.doAlertDialog(Messages.getString("CustomMekDialog.NetworkTooBig.title"), message);
                 }

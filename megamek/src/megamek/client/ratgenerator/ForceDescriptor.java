@@ -1,16 +1,34 @@
 /*
- * MegaMek -
- * Copyright (C) 2016 The MegaMek Team
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ratgenerator;
 
@@ -204,14 +222,14 @@ public class ForceDescriptor {
                     // aero/vehicle Point) or we are generating uniform sub forces such as companies in SL line units
                     try {
                         Map<String, List<ForceDescriptor>> byGenRule = subforces.stream()
-                                                                             .collect(Collectors.groupingBy(
-                                                                                   ForceDescriptor::getGenerationRule));
+                              .collect(Collectors.groupingBy(
+                                    ForceDescriptor::getGenerationRule));
                         if (byGenRule.containsKey("group")) {
                             if (!generateAndAssignFormation(byGenRule.get("group")
-                                                                  .stream()
-                                                                  .map(ForceDescriptor::getSubforces)
-                                                                  .flatMap(Collection::stream)
-                                                                  .collect(Collectors.toList()),
+                                        .stream()
+                                        .map(ForceDescriptor::getSubforces)
+                                        .flatMap(Collection::stream)
+                                        .collect(Collectors.toList()),
                                   false,
                                   byGenRule.get("group").size())) {
                                 formationType = null;
@@ -271,15 +289,15 @@ public class ForceDescriptor {
      */
     private boolean generateAndAssignFormation(List<ForceDescriptor> subs, boolean chassis, int numGroups) {
         Map<Boolean, List<ForceDescriptor>> eligibleSubs = subs.stream()
-                                                                 .collect(Collectors.groupingBy(fd -> null !=
-                                                                                                            fd.getUnitType() &&
-                                                                                                            (formationType.isAllowedUnitType(
-                                                                                                                  fd.getUnitType())) ||
-                                                                                                            (augmented &&
-                                                                                                                   (fd.getUnitType() ==
-                                                                                                                          UnitType.BATTLE_ARMOR) ||
-                                                                                                                   fd.getUnitType() ==
-                                                                                                                         UnitType.INFANTRY)));
+              .collect(Collectors.groupingBy(fd -> null !=
+                    fd.getUnitType() &&
+                    (formationType.isAllowedUnitType(
+                          fd.getUnitType())) ||
+                    (augmented &&
+                          (fd.getUnitType() ==
+                                UnitType.BATTLE_ARMOR) ||
+                          fd.getUnitType() ==
+                                UnitType.INFANTRY)));
         if (eligibleSubs.containsKey(true)) {
             if (eligibleSubs.get(true).isEmpty()) {
                 return false;
@@ -297,8 +315,8 @@ public class ForceDescriptor {
                         // The formation requirements do not apply to the infantry part of a nova, and
                         // those units have already been generated by generateNovaFormation.
                         if (augmented &&
-                                  (eligibleSubs.get(true).get(i).getUnitType() == UnitType.BATTLE_ARMOR ||
-                                         eligibleSubs.get(true).get(i).getUnitType() == UnitType.INFANTRY)) {
+                              (eligibleSubs.get(true).get(i).getUnitType() == UnitType.BATTLE_ARMOR ||
+                                    eligibleSubs.get(true).get(i).getUnitType() == UnitType.INFANTRY)) {
                             continue;
                         }
                         if (eligibleSubs.get(true).get(i).getSubforces().isEmpty()) {
@@ -424,8 +442,8 @@ public class ForceDescriptor {
             }
         }
         return unitList.stream()
-                     .map(ms -> RATGenerator.getInstance().getModelRecord(ms.getName()))
-                     .collect(Collectors.toList());
+              .map(ms -> RATGenerator.getInstance().getModelRecord(ms.getName()))
+              .collect(Collectors.toList());
     }
 
     /**
@@ -468,8 +486,8 @@ public class ForceDescriptor {
         if (!infSubs.isEmpty()) {
             generateLance(infSubs);
             int footCount = (int) infSubs.stream()
-                                        .filter(fd -> fd.getMovementModes().contains(EntityMovementMode.INF_LEG))
-                                        .count();
+                  .filter(fd -> fd.getMovementModes().contains(EntityMovementMode.INF_LEG))
+                  .count();
             for (ForceDescriptor baseSub : baseSubs) {
                 if (baseSub.getUnitType() == UnitType.TANK || baseSub.getUnitType() == UnitType.VTOL) {
                     if (footCount > 0) {
@@ -489,10 +507,10 @@ public class ForceDescriptor {
         if (null == baseUnitList) {
             generateLance(baseSubs);
             baseUnitList = baseSubs.stream()
-                                 .map(ForceDescriptor::getModelName)
-                                 .map(m -> RATGenerator.getInstance().getModelRecord(m))
-                                 .filter(Objects::nonNull)
-                                 .collect(Collectors.toList());
+                  .map(ForceDescriptor::getModelName)
+                  .map(m -> RATGenerator.getInstance().getModelRecord(m))
+                  .filter(Objects::nonNull)
+                  .collect(Collectors.toList());
         }
 
         // Any BA in excess of the number of omni base units will require mag clamps, up to the number of base units.
@@ -617,14 +635,14 @@ public class ForceDescriptor {
                         if (av == null) {
                             for (String alt : RATGenerator.getInstance().getFaction(faction).getParentFactions()) {
                                 av = RATGenerator.getInstance()
-                                           .findChassisAvailabilityRecord(era, model, alt, getYear());
+                                      .findChassisAvailabilityRecord(era, model, alt, getYear());
                                 if (av != null) {
                                     break;
                                 }
                             }
                         }
                         if (Compute.d6(2) >=
-                                  target - ((av == null) ? 0 : av.adjustForRating(ratingLevel, totalLevels))) {
+                              target - ((av == null) ? 0 : av.adjustForRating(ratingLevel, totalLevels))) {
                             sub.getChassis().clear();
                             sub.getChassis().add(model);
                             int oldWt = sub.getWeightClass();
@@ -644,24 +662,24 @@ public class ForceDescriptor {
                     } else {
                         ModelRecord mRec = RATGenerator.getInstance().getModelRecord(model);
                         if (mRec != null &&
-                                  weights.contains(mRec.getWeightClass()) &&
-                                  RATGenerator.getInstance().findModelAvailabilityRecord(era, model, faction) != null) {
+                              weights.contains(mRec.getWeightClass()) &&
+                              RATGenerator.getInstance().findModelAvailabilityRecord(era, model, faction) != null) {
                             av = RATGenerator.getInstance()
-                                       .findChassisAvailabilityRecord(era, mRec.getChassisKey(), faction, getYear());
+                                  .findChassisAvailabilityRecord(era, mRec.getChassisKey(), faction, getYear());
                             if (av == null) {
                                 for (String alt : RATGenerator.getInstance().getFaction(faction).getParentFactions()) {
                                     av = RATGenerator.getInstance()
-                                               .findChassisAvailabilityRecord(era,
-                                                     mRec.getChassisKey(),
-                                                     alt,
-                                                     getYear());
+                                          .findChassisAvailabilityRecord(era,
+                                                mRec.getChassisKey(),
+                                                alt,
+                                                getYear());
                                     if (av != null) {
                                         break;
                                     }
                                 }
                             }
                             if (Compute.d6(2) >=
-                                      target - ((av == null) ? 0 : av.adjustForRating(ratingLevel, totalLevels))) {
+                                  target - ((av == null) ? 0 : av.adjustForRating(ratingLevel, totalLevels))) {
                                 sub.setUnit(mRec);
                                 if (useWeights) {
                                     weights.remove((Object) mRec.getWeightClass());
@@ -674,11 +692,11 @@ public class ForceDescriptor {
                 }
                 if (!foundUnit && weights.contains(baseModel.getWeightClass())) {
                     av = RATGenerator.getInstance()
-                               .findChassisAvailabilityRecord(era, baseModel.getChassisKey(), faction, getYear());
+                          .findChassisAvailabilityRecord(era, baseModel.getChassisKey(), faction, getYear());
                     if (av == null) {
                         for (String alt : RATGenerator.getInstance().getFaction(faction).getParentFactions()) {
                             av = RATGenerator.getInstance()
-                                       .findChassisAvailabilityRecord(era, baseModel.getChassisKey(), alt, getYear());
+                                  .findChassisAvailabilityRecord(era, baseModel.getChassisKey(), alt, getYear());
                             if (av != null) {
                                 break;
                             }
@@ -760,8 +778,8 @@ public class ForceDescriptor {
                 unitType = unit.getUnitType();
             }
             if (((unitType == UnitType.MEK) ||
-                       (unitType == UnitType.AEROSPACEFIGHTER) ||
-                       (unitType == UnitType.TANK)) && unit.isOmni()) {
+                  (unitType == UnitType.AEROSPACEFIGHTER) ||
+                  (unitType == UnitType.TANK)) && unit.isOmni()) {
                 flags.add("omni");
             }
             if (unit.getRoles().contains(MissionRole.ARTILLERY)) {
@@ -847,10 +865,10 @@ public class ForceDescriptor {
                     fd.getMovementModes().clear();
                 } else {
                     if (useWeightClass() &&
-                              null != weightClass &&
-                              weightClass != -1 &&
-                              weightClass < altWeights.length &&
-                              wtIndex < altWeights[weightClass].length) {
+                          null != weightClass &&
+                          weightClass != -1 &&
+                          weightClass < altWeights.length &&
+                          wtIndex < altWeights[weightClass].length) {
                         fd.setWeightClass(altWeights[weightClass][wtIndex]);
                     }
                     wtIndex++;
@@ -994,16 +1012,16 @@ public class ForceDescriptor {
             for (ForceDescriptor fd : subforces) {
                 movementModes.addAll(fd.getMovementModes());
                 if ((fd.getUnitType() == null ||
-                           !((UnitType.MEK == fd.getUnitType()) ||
-                                   (UnitType.AEROSPACEFIGHTER == fd.getUnitType()) ||
-                                   (UnitType.TANK == fd.getUnitType()))) || !fd.getFlags().contains("omni")) {
+                      !((UnitType.MEK == fd.getUnitType()) ||
+                            (UnitType.AEROSPACEFIGHTER == fd.getUnitType()) ||
+                            (UnitType.TANK == fd.getUnitType()))) || !fd.getFlags().contains("omni")) {
                     isOmni = false;
                 }
                 if (!fd.getRoles().contains(MissionRole.MISSILE_ARTILLERY)) {
                     isMissileArtillery = false;
                 }
                 if (!fd.getRoles().contains(MissionRole.ARTILLERY) &&
-                          !fd.getRoles().contains(MissionRole.MISSILE_ARTILLERY)) {
+                      !fd.getRoles().contains(MissionRole.MISSILE_ARTILLERY)) {
                     isArtillery = false;
                 }
                 if (!fd.getRoles().contains(MissionRole.FIELD_GUN)) {
@@ -1055,11 +1073,11 @@ public class ForceDescriptor {
             if (xoNode.getUnitType() != null) {
                 for (int i = coPos; i < subforces.size(); i++) {
                     if (subforces.get(i).getUnitType() != null &&
-                              (xoNode.getUnitType().equals(subforces.get(i).getUnitTypeName()) ||
-                                     (xoNode.getUnitType().equals("other") &&
-                                            !subforces.get(i)
-                                                   .getUnitType()
-                                                   .equals(co.getAssignment().getUnitType())))) {
+                          (xoNode.getUnitType().equals(subforces.get(i).getUnitTypeName()) ||
+                                (xoNode.getUnitType().equals("other") &&
+                                      !subforces.get(i)
+                                            .getUnitType()
+                                            .equals(co.getAssignment().getUnitType())))) {
                         xoFound = subforces.get(i);
                         break;
                     }
@@ -1228,11 +1246,11 @@ public class ForceDescriptor {
 
     private boolean useWeightClass(Integer ut) {
         return ut != null &&
-                     !(roles.contains(MissionRole.ARTILLERY) || roles.contains(MissionRole.MISSILE_ARTILLERY)) &&
-                     (ut == UnitType.MEK ||
-                            ut == UnitType.AEROSPACEFIGHTER ||
-                            ut == UnitType.TANK ||
-                            ut == UnitType.BATTLE_ARMOR);
+              !(roles.contains(MissionRole.ARTILLERY) || roles.contains(MissionRole.MISSILE_ARTILLERY)) &&
+              (ut == UnitType.MEK ||
+                    ut == UnitType.AEROSPACEFIGHTER ||
+                    ut == UnitType.TANK ||
+                    ut == UnitType.BATTLE_ARMOR);
     }
 
     /**
@@ -1484,9 +1502,9 @@ public class ForceDescriptor {
     public String ratGeneratorRating() {
         FactionRecord fRec = getFactionRec();
         if ((null != fRec) &&
-                  !fRec.getRatingLevels().contains(rating) &&
-                  (getRatingLevel() >= 0) &&
-                  !fRec.getRatingLevels().isEmpty()) {
+              !fRec.getRatingLevels().contains(rating) &&
+              (getRatingLevel() >= 0) &&
+              !fRec.getRatingLevels().isEmpty()) {
             return fRec.getRatingLevels().get(Math.min(getRatingLevel(), fRec.getRatingLevels().size() - 1));
         }
         return rating;

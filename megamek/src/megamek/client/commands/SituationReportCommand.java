@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.commands;
 
@@ -27,16 +41,17 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.Entity;
 
 /**
- * A command that displays unit or terrain information
- * given an entity ID, parameters and maximum distance
- * @author NickAragua
+ * A command that displays unit or terrain information given an entity ID, parameters and maximum distance
  *
+ * @author NickAragua
  */
 public class SituationReportCommand extends ClientCommand {
     private static final int DEFAULT_HEX_RANGE = -1;
 
     public SituationReportCommand(ClientGUI clientGUI) {
-        super(clientGUI, "sitrep", "Display visible board state relative to this entity. Use #sitrep HELP for more information.");
+        super(clientGUI,
+              "sitrep",
+              "Display visible board state relative to this entity. Use #sitrep HELP for more information.");
     }
 
     @Override
@@ -48,10 +63,13 @@ public class SituationReportCommand extends ClientCommand {
 
         if (args.length > 1) {
             if (args[1].equalsIgnoreCase("HELP")) {
-                return "#sitrep [entityID] [friendly|hostile|all] [x] = Print out friendly, " +
-                        "hostile or all units relative to the entity with the specified ID, optionally within [x] hexes only. " +
-                        "By default, [x] is the entity's maximum weapons range. " +
-                        "Degrees is the direction of the unit, with 0 being directly north.";
+                return "#sitrep [entityID] [friendly|hostile|all] [x] = Print out friendly, "
+                      +
+                      "hostile or all units relative to the entity with the specified ID, optionally within [x] hexes only. "
+                      +
+                      "By default, [x] is the entity's maximum weapons range. "
+                      +
+                      "Degrees is the direction of the unit, with 0 being directly north.";
             } else {
                 entityID = Integer.parseInt(args[1]);
 
@@ -73,10 +91,12 @@ public class SituationReportCommand extends ClientCommand {
 
     /**
      * Worker function that generates a list of entities that are
-     * @param entityID ID of the entity needing a SitRep
+     *
+     * @param entityID     ID of the entity needing a SitRep
      * @param showFriendly Whether to show friendly units
-     * @param showHostile Whether to show hostile units
-     * @param maxHexRange Maximum distance
+     * @param showHostile  Whether to show hostile units
+     * @param maxHexRange  Maximum distance
+     *
      * @return SitRep string
      */
     private String buildUnitSituationReport(int entityID, boolean showFriendly, boolean showHostile, int maxHexRange) {
@@ -90,14 +110,14 @@ public class SituationReportCommand extends ClientCommand {
         }
 
         StringBuilder retVal = new StringBuilder();
-        Map <Integer, List<Entity>> distanceBuckets = new HashMap<>();
+        Map<Integer, List<Entity>> distanceBuckets = new HashMap<>();
         int maxDistance = -1;
 
         // first we assemble the qualifying entities into buckets, sorted by distance
         for (Entity entity : getClient().getEntitiesVector()) {
             boolean hostileEntity = entity.getOwner().isEnemyOf(getClient().getLocalPlayer());
             boolean displayEntity = (showFriendly && !hostileEntity) ||
-                                    (showHostile && hostileEntity);
+                  (showHostile && hostileEntity);
 
             if (displayEntity && (entity.getId() != currentEntity.getId())) {
                 if (entity.isOffBoard() || !entity.isDeployed()) {
@@ -132,9 +152,9 @@ public class SituationReportCommand extends ClientCommand {
 
                 // entity name, id, status, distance, direction
                 retVal.append(String.format("%s | %d hexes | %d degrees\n",
-                        entity.getDisplayName(),
-                        distance,
-                        direction));
+                      entity.getDisplayName(),
+                      distance,
+                      direction));
             }
         }
 

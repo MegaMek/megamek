@@ -1,18 +1,36 @@
 /*
-* MegaMek -
-* Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
 package megamek.client.ui.dialogs.phaseDisplay;
 
 import java.awt.Dimension;
@@ -35,16 +53,14 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import megamek.client.ui.Messages;
-import megamek.common.Board;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.Game;
+import megamek.common.Board;
 import megamek.common.ManeuverType;
 import megamek.common.moves.MovePath;
 
 /**
- * A (somewhat primitive) dialog that asks a question and lets the player select
- * from the available choices. The question string is tokenised on "\n". <p>
- * Refactored from SingleChoiceDialog (which was based on Confirm)
+ * A (somewhat primitive) dialog that asks a question and lets the player select from the available choices. The
+ * question string is tokenised on "\n". <p> Refactored from SingleChoiceDialog (which was based on Confirm)
  *
  * @author suvarov454@sourceforge.net
  */
@@ -66,7 +82,7 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
     /**
      * Create and initialize the dialog.
      *
-     * @param parent - the <code>Frame</code> that is locked by this dialog.
+     * @param parent  - the <code>Frame</code> that is locked by this dialog.
      * @param choices - an array of <code>String</code>s to be displayed.
      */
     private void initialize(JFrame parent, String[] choices) {
@@ -117,7 +133,7 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
             ButtonGroup radioGroup = new ButtonGroup();
             for (int loop = 0; loop < choices.length; loop++) {
                 checkboxes[loop] = new JRadioButton(choices[loop],
-                        loop == 0);
+                      loop == 0);
                 radioGroup.add(checkboxes[loop]);
                 choiceArea.add(checkboxes[loop]);
             }
@@ -147,8 +163,8 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
             size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
         }
         setLocation(parent.getLocation().x + parent.getSize().width / 2
-                - size.width / 2, parent.getLocation().y
-                + parent.getSize().height / 2 - size.height / 2);
+              - size.width / 2, parent.getLocation().y
+              + parent.getSize().height / 2 - size.height / 2);
     }
 
     private void setupButtons() {
@@ -178,12 +194,11 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Create a choice dialog. The player can choose any or all of the choices.
-     * If no choices are passed in, this will be a very boring dialog, but it
-     * will not suffer an exception.
+     * Create a choice dialog. The player can choose any or all of the choices. If no choices are passed in, this will
+     * be a very boring dialog, but it will not suffer an exception.
      *
      * @param parent - the <code>Frame</code> that is locked by this dialog.
-     * @param title - the title <code>String</code> for this dialog.
+     * @param title  - the title <code>String</code> for this dialog.
      */
     public ManeuverChoiceDialog(JFrame parent, String title) {
         super(parent, title, true);
@@ -195,14 +210,13 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Create a choice dialog. The player can choose any or all of the choices.
-     * If no choices are passed in, this will be a very boring dialog, but it
-     * will not suffer an exception.
+     * Create a choice dialog. The player can choose any or all of the choices. If no choices are passed in, this will
+     * be a very boring dialog, but it will not suffer an exception.
      *
-     * @param parent - the <code>Frame</code> that is locked by this dialog.
-     * @param title - the title <code>String</code> for this dialog.
-     * @param question - <code>String</code> displayed above the choices. The
-     *            question string is tokenised on "\n".
+     * @param parent   - the <code>Frame</code> that is locked by this dialog.
+     * @param title    - the title <code>String</code> for this dialog.
+     * @param question - <code>String</code> displayed above the choices. The question string is tokenised on "\n".
+     *
      * @deprecated question is never used, use the other constructor instead.
      */
     @Deprecated(since = "0.50.07", forRemoval = true)
@@ -234,8 +248,8 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
      * See if the player confirmed a choice.
      *
      * @return <code>true</code> if the player has confirmed a choice.
-     *         <code>false</code> if the player canceled, if the player did
-     *         not select a choice, or if no choices were available.
+     *       <code>false</code> if the player canceled, if the player did
+     *       not select a choice, or if no choices were available.
      */
     public boolean getAnswer() {
         return (-1 != getChoice());
@@ -244,14 +258,12 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
     /**
      * Which choices did the player select?
      *
-     * @return If no choices were available, if the player canceled, if the
-     *         player did not select a choice, or if the player canceled the
-     *         choice, a <code>null</code> value is returned, otherwise an
-     *         array of the <code>int</code> indexes from the input array that
-     *         match the selected choices is returned.
+     * @return If no choices were available, if the player canceled, if the player did not select a choice, or if the
+     *       player canceled the choice, a <code>null</code> value is returned, otherwise an array of the
+     *       <code>int</code> indexes from the input array that match the selected choices is returned.
      */
     public int getChoice() {
-        int[] retval = {-1};
+        int[] retval = { -1 };
 
         // Did the player make a choice?
         if (checkboxes != null && confirm) {
@@ -284,10 +296,10 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
     }
 
     public void checkPerformability(int velocity, int altitude, int ceiling,
-            boolean isVTOL, int distance, Board board, MovePath mp) {
+          boolean isVTOL, int distance, Board board, MovePath mp) {
         for (int type = 0; type < ManeuverType.MAN_SIZE; type++) {
             checkboxes[type].setEnabled(
-                    ManeuverType.canPerform(type, velocity, altitude, ceiling, isVTOL, distance, board, mp));
+                  ManeuverType.canPerform(type, velocity, altitude, ceiling, isVTOL, distance, board, mp));
         }
     }
 }

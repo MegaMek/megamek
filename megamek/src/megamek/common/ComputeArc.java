@@ -1,27 +1,44 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import megamek.common.enums.FacingArc;
 import megamek.logging.MMLogger;
-
-import java.util.*;
 
 public class ComputeArc {
 
@@ -98,9 +115,11 @@ public class ComputeArc {
         } else if (CrossBoardAttackHelper.isOrbitToSurface(game, attacker, target)) {
             // For this attack, the ground row hex enclosing the ground map target must be in arc; replace position
             Board targetAtmoBoard = game.getEnclosingBoard(game.getBoard(target.getBoardId()));
-            targetPosition = UnitPosition.of(game.getBoard(attacker).embeddedBoardPosition(targetAtmoBoard.getBoardId()));
+            targetPosition = UnitPosition.of(game.getBoard(attacker)
+                  .embeddedBoardPosition(targetAtmoBoard.getBoardId()));
         } else if (Compute.isAirToAir(game, attacker, target) && !game.onTheSameBoard(attacker, target)
-              && (game.onDirectlyConnectedBoards(attacker, target) || CrossBoardAttackHelper.onGroundMapsWithinOneAtmoMap(game, attacker, target))) {
+              && (game.onDirectlyConnectedBoards(attacker, target)
+              || CrossBoardAttackHelper.onGroundMapsWithinOneAtmoMap(game, attacker, target))) {
             // In A2A attacks between different maps (only ground/ground, ground/atmo or atmo/ground), replace the
             // position of the unit on the ground map with the position of the ground map itself in the atmo map
             if (game.isOnGroundMap(attacker) && game.isOnAtmosphericMap(target)) {
@@ -141,7 +160,6 @@ public class ComputeArc {
 
     /**
      * Checks to see if a target is in arc of the specified weapon, on the specified entity
-     *
      */
     @Deprecated(forRemoval = true, since = "0.50.07")
     public static boolean isInArcOld(Game game, int attackerId, int weaponId, Targetable target) {
@@ -169,7 +187,7 @@ public class ComputeArc {
         // aeros in the same hex in space may still be able to fire at one another. Translate
         // their positions to see who was further back
         if (attacker.isSpaceborne() && (target instanceof Entity targetEntity) && aPos.equals(tPos)
-                && attacker.isAero() && target.isAero()) {
+              && attacker.isAero() && target.isAero()) {
             if (Compute.shouldMoveBackHex(attacker, targetEntity) < 0) {
                 aPos = attacker.getPriorPosition();
             } else {
@@ -179,7 +197,7 @@ public class ComputeArc {
 
         // Allow dive-bombing VTOLs to attack the hex they are in, if they didn't select one for bombing while moving
         if ((attacker.getMovementMode() == EntityMovementMode.VTOL) && aPos.equals(tPos)
-                && game.onTheSameBoard(attacker, target)) {
+              && game.onTheSameBoard(attacker, target)) {
             if (attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
                 return true;
             }
@@ -193,8 +211,8 @@ public class ComputeArc {
         // AMS defending against Ground to Air fire needs to calculate arc based on the closest flight path
         // Technically it's an AirToGround attack since the AMS is on the aircraft
         if (Compute.isAirToGround(attacker, target)
-                && (attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS)
-                || attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMSBAY))) {
+              && (attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS)
+              || attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMSBAY))) {
             aPos = Compute.getClosestFlightPath(target.getId(), target.getPosition(), attacker);
         }
 
@@ -228,7 +246,8 @@ public class ComputeArc {
         }
 
         if (Compute.isAirToAir(game, attacker, target) && !game.onTheSameBoard(attacker, target)
-                && (game.onDirectlyConnectedBoards(attacker, target) || CrossBoardAttackHelper.onGroundMapsWithinOneAtmoMap(game, attacker, target))) {
+              && (game.onDirectlyConnectedBoards(attacker, target)
+              || CrossBoardAttackHelper.onGroundMapsWithinOneAtmoMap(game, attacker, target))) {
             // In A2A attacks between different maps (only ground/ground, ground/atmo or atmo/ground), replace the
             // position of the unit on the ground map with the position of the ground map itself in the atmo map
             if (game.isOnGroundMap(attacker) && game.isOnAtmosphericMap(target)) {
@@ -245,10 +264,10 @@ public class ComputeArc {
         }
 
         // When the above methods all deliver BoardLocations, matching boardIds can be checked:
-//        final int attackerBoardId = attacker.getBoardId();
-//        if (targetPositions.stream().anyMatch(bl -> !bl.isOnBoard(attackerBoardId))) {
-//            LOGGER.error("Target Coords must be on the same board as the attacker!");
-//        }
+        //        final int attackerBoardId = attacker.getBoardId();
+        //        if (targetPositions.stream().anyMatch(bl -> !bl.isOnBoard(attackerBoardId))) {
+        //            LOGGER.error("Target Coords must be on the same board as the attacker!");
+        //        }
 
         return isInArcOld(aPos, facing, targetPositions, attacker.getWeaponArc(weaponId));
     }
@@ -288,7 +307,7 @@ public class ComputeArc {
      */
     @Deprecated(forRemoval = true, since = "0.50.07")
     public static boolean isInArcOld(Coords src, int facing, List<Coords> destV,
-                                  int arc) {
+          int arc) {
         if ((src == null) || (destV == null)) {
             return true;
         }

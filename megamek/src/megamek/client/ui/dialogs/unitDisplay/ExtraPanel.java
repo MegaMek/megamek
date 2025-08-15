@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.unitDisplay;
 
@@ -27,12 +41,12 @@ import javax.swing.*;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
-import megamek.client.ui.comboBoxes.MMComboBox;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
+import megamek.client.ui.comboBoxes.MMComboBox;
 import megamek.client.ui.dialogs.SliderDialog;
 import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
-import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.PMUtil;
 import megamek.client.ui.widget.PicMap;
@@ -111,8 +125,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         carrysR.setForeground(Color.WHITE);
 
         sinksL = new JLabel(
-                Messages.getString("MekDisplay.activeSinksLabel"),
-                SwingConstants.CENTER);
+              Messages.getString("MekDisplay.activeSinksLabel"),
+              SwingConstants.CENTER);
         sinksL.setOpaque(false);
         sinksL.setForeground(Color.WHITE);
         sinksR = new JTextArea("", 1, 25);
@@ -121,7 +135,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         sinksR.setForeground(Color.WHITE);
 
         sinks2B = new JButton(
-                Messages.getString("MekDisplay.configureActiveSinksLabel"));
+              Messages.getString("MekDisplay.configureActiveSinksLabel"));
         sinks2B.setActionCommand("changeSinks");
         sinks2B.addActionListener(this);
 
@@ -138,7 +152,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         heatR.setForeground(Color.WHITE);
 
         lblLastTarget = new JLabel(Messages.getString("MekDisplay.LastTarget"),
-                SwingConstants.CENTER);
+              SwingConstants.CENTER);
         lblLastTarget.setForeground(Color.WHITE);
         lblLastTarget.setOpaque(false);
         lastTargetR = new JTextArea("", 4, 25);
@@ -149,7 +163,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         lastTargetR.setForeground(Color.WHITE);
 
         curSensorsL = new JLabel(Messages.getString("MekDisplay.CurrentSensors").concat(" "),
-                SwingConstants.CENTER);
+              SwingConstants.CENTER);
         curSensorsL.setForeground(Color.WHITE);
         curSensorsL.setOpaque(false);
 
@@ -166,12 +180,12 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         comboActivateHiddenPhase.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                    boolean cellHasFocus) {
+                  boolean cellHasFocus) {
                 return super.getListCellRendererComponent(list,
-                        (((value instanceof GamePhase) && ((GamePhase) value).isUnknown())
-                                ? Messages.getString("MekDisplay.ActivateHidden.StopActivating")
-                                : value),
-                        index, isSelected, cellHasFocus);
+                      (((value instanceof GamePhase) && ((GamePhase) value).isUnknown())
+                            ? Messages.getString("MekDisplay.ActivateHidden.StopActivating")
+                            : value),
+                      index, isSelected, cellHasFocus);
             }
         });
 
@@ -279,56 +293,56 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
         Image tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine()).toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
+              new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
@@ -367,16 +381,16 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                 if (en.isNarcedBy(team) && !player.isObserver()) {
                     buff = new StringBuffer(Messages.getString("MekDisplay.NARCedBy"));
                     buff.append(player.getName())
-                            .append(" [").append(Player.TEAM_NAMES[team]).append(']');
+                          .append(" [").append(Player.TEAM_NAMES[team]).append(']');
                     ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
                 }
 
                 if (en.isINarcedBy(team) && !player.isObserver()) {
                     buff = new StringBuffer(Messages.getString("MekDisplay.INarcHoming"));
                     buff.append(player.getName()).append(" [")
-                            .append(Player.TEAM_NAMES[team]).append("] ")
-                            .append(Messages.getString("MekDisplay.attached"))
-                            .append('.');
+                          .append(Player.TEAM_NAMES[team]).append("] ")
+                          .append(Messages.getString("MekDisplay.attached"))
+                          .append('.');
                     ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
                 }
             }
@@ -405,68 +419,68 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
             if ((en instanceof Tank) && ((Tank) en).isOnFire()) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MekDisplay.OnFire"));
+                      .addElement(Messages.getString("MekDisplay.OnFire"));
             }
 
             // Show electromagnic interference.
             if (en.isSufferingEMI()) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MekDisplay.IsEMId"));
+                      .addElement(Messages.getString("MekDisplay.IsEMId"));
             }
 
             // Show ECM affect.
             Coords pos = en.getPosition();
             if (ComputeECM.isAffectedByAngelECM(en, pos, pos)) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MekDisplay.InEnemyAngelECMField"));
+                      .addElement(Messages.getString("MekDisplay.InEnemyAngelECMField"));
             } else if (ComputeECM.isAffectedByECM(en, pos, pos)) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MekDisplay.InEnemyECMField"));
+                      .addElement(Messages.getString("MekDisplay.InEnemyECMField"));
             }
 
             // Active Stealth Armor? If yes, we're under ECM
             if (en.isStealthActive()
-                    && ((en instanceof Mek) || (en instanceof Tank))) {
+                  && ((en instanceof Mek) || (en instanceof Tank))) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MekDisplay.UnderStealth"));
+                      .addElement(Messages.getString("MekDisplay.UnderStealth"));
             }
 
             // burdened due to unjettisoned body-mounted missiles on BA?
             if ((en instanceof BattleArmor) && ((BattleArmor) en).isBurdened()) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MekDisplay.Burdened"));
+                      .addElement(Messages.getString("MekDisplay.Burdened"));
             }
 
             // suffering from taser feedback?
             if (en.getTaserFeedBackRounds() > 0) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(en.getTaserFeedBackRounds()
-                                + " " + Messages.getString("MekDisplay.TaserFeedBack"));
+                      .addElement(en.getTaserFeedBackRounds()
+                            + " " + Messages.getString("MekDisplay.TaserFeedBack"));
             }
 
             // taser interference?
             if (en.getTaserInterference() > 0) {
                 ((DefaultListModel<String>) narcList.getModel()).addElement("+"
-                        + en.getTaserInterference() + " "
-                        + Messages.getString("MekDisplay.TaserInterference"));
+                      + en.getTaserInterference() + " "
+                      + Messages.getString("MekDisplay.TaserInterference"));
             }
 
             // suffering from TSEMP Interference?
             if (en.getTsempEffect() == MMConstants.TSEMP_EFFECT_INTERFERENCE) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MekDisplay.TSEMPInterference"));
+                      .addElement(Messages.getString("MekDisplay.TSEMPInterference"));
             }
 
             if (en.hasDamagedRHS()) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MekDisplay.RHSDamaged"));
+                      .addElement(Messages.getString("MekDisplay.RHSDamaged"));
             }
 
             // Show Turret Locked.
             if ((en instanceof Tank) && !((Tank) en).hasNoTurret()
-                    && !en.canChangeSecondaryFacing()) {
+                  && !en.canChangeSecondaryFacing()) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MekDisplay.Turretlocked"));
+                      .addElement(Messages.getString("MekDisplay.Turretlocked"));
             }
 
             // Show jammed weapons.
@@ -536,7 +550,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                 sinks = m.getActiveSinksNextRound();
                 if (m.hasDoubleHeatSinks()) {
                     sinksR.append(Messages.getString("MekDisplay.activeSinksTextDouble",
-                            sinks, sinks * 2));
+                          sinks, sinks * 2));
                 } else {
                     sinksR.append(Messages.getString("MekDisplay.activeSinksTextSingle", sinks));
                 }
@@ -568,8 +582,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             if (null != en.getActiveSensor()) {
                 String sensorDesc = "";
                 if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
-                        || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS))
-                                && en.isSpaceborne()) {
+                      || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS))
+                      && en.isSpaceborne()) {
                     sensorDesc = UnitToolTip.getSensorDesc(en);
                 }
                 String tmpStr = Messages.getString("MekDisplay.CurrentSensors") + " " + sensorDesc;
@@ -626,7 +640,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             en.setNextSensor(s);
             refreshSensorChoices(en);
             String sensorMsg = Messages.getString("MekDisplay.willSwitchAtEnd",
-                    "Active Sensors", s.getDisplayName());
+                  "Active Sensors", s.getDisplayName());
             clientgui.systemMessage(sensorMsg);
             clientgui.getClient().sendSensorChange(myMekId, sensorIdx);
         }
@@ -640,9 +654,9 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         }
         if ("changeSinks".equals(ae.getActionCommand()) && !dontChange) {
             prompt = new SliderDialog(clientgui.getFrame(),
-                    Messages.getString("MekDisplay.changeSinks"),
-                    Messages.getString("MekDisplay.changeSinks"), sinks,
-                    0, ((Mek) clientgui.getClient().getGame().getEntity(myMekId)).getNumberOfSinks());
+                  Messages.getString("MekDisplay.changeSinks"),
+                  Messages.getString("MekDisplay.changeSinks"), sinks,
+                  0, ((Mek) clientgui.getClient().getGame().getEntity(myMekId)).getNumberOfSinks());
             if (!prompt.showDialog()) {
                 return;
             }
@@ -650,7 +664,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             int numActiveSinks = prompt.getValue();
 
             ((Mek) clientgui.getClient().getGame().getEntity(myMekId))
-                    .setActiveSinksNextRound(numActiveSinks);
+                  .setActiveSinksNextRound(numActiveSinks);
             clientgui.getClient().sendSinksChange(myMekId, numActiveSinks);
             displayMek(clientgui.getClient().getGame().getEntity(myMekId));
         } else if (activateHidden.equals(ae.getSource()) && !dontChange) {

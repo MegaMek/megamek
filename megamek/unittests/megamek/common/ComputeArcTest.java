@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -44,9 +44,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 /**
- * This is a temporary test class to compare the results of ComputeArc.isInArcOld and FacingArc.
- * It will be removed once the ComputeArc.isInArcOld is removed, and will receive a different implementation which
- * properly tests the FacingArc.isInsideArc method instead of just comparing the results with the old method.
+ * This is a temporary test class to compare the results of ComputeArc.isInArcOld and FacingArc. It will be removed once
+ * the ComputeArc.isInArcOld is removed, and will receive a different implementation which properly tests the
+ * FacingArc.isInsideArc method instead of just comparing the results with the old method.
+ *
  * @author Luana Coppio
  */
 public class ComputeArcTest {
@@ -62,12 +63,13 @@ public class ComputeArcTest {
                     .map(
                           arcData -> (Executable) () -> assertEquals(
                                 computeArcIsInArcOld(arcData), facingArcIsInsideArc(arcData),
-                            "Arc calculation mismatch for source: " + arcData.source() +
-                                  ", facing: " + arcData.facing() +
-                                  ", arc: " + arcData.arc() +
-                                  ", target: " + arcData.target() +
-                                  ", angle: " + arcData.source.dotProduct(arcData.target()) +
-                                  ", arcAngles: " + arcData.arc().getStartAngle() + "-" + arcData.arc().getEndAngle()))
+                                "Arc calculation mismatch for source: " + arcData.source() +
+                                      ", facing: " + arcData.facing() +
+                                      ", arc: " + arcData.arc() +
+                                      ", target: " + arcData.target() +
+                                      ", angle: " + arcData.source.dotProduct(arcData.target()) +
+                                      ", arcAngles: " + arcData.arc().getStartAngle() + "-" + arcData.arc()
+                                      .getEndAngle()))
                     .toList()
         );
     }
@@ -86,6 +88,7 @@ public class ComputeArcTest {
 
     /**
      * Generates a list of test cases for the arc calculations.
+     *
      * @return a list of ArcData objects representing various source, target, facing, and arc combinations
      */
     private static List<ArcData> generateTestCases() {

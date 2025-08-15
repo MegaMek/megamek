@@ -40,6 +40,7 @@ import megamek.common.UnitPosition;
 
 /**
  * All the different possible facing arcs
+ *
  * @author Luana Coppio
  */
 public enum FacingArc {
@@ -103,8 +104,9 @@ public enum FacingArc {
 
     /**
      * Parameter record for calculating if the target is inside the arc
-     * @param start start angle
-     * @param end end angle
+     *
+     * @param start  start angle
+     * @param end    end angle
      * @param target target angle
      */
     private record ArcTarget(int start, int end, int target) {}
@@ -157,7 +159,9 @@ public enum FacingArc {
     /**
      * Returns the enum constant of this type with the legacy specified arcCode. The arcCode must match exactly an
      * arcCode used to declare an enum constant in this type.
+     *
      * @return the enum constant with the specified legacy arcCode
+     *
      * @throws IllegalArgumentException – if this enum type has no constant with the specified arcCode
      */
     public static FacingArc valueOf(int arcCode) {

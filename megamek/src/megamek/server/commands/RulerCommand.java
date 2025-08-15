@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.server.commands;
 
 import megamek.common.Coords;
@@ -28,7 +43,7 @@ import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * This is the ruler for LOS stuff implemented in command line.
- * 
+ *
  * @author dirk
  */
 public class RulerCommand extends ServerCommand {
@@ -36,8 +51,9 @@ public class RulerCommand extends ServerCommand {
     private final TWGameManager gameManager;
 
     public RulerCommand(Server server, TWGameManager gameManager) {
-        super(server, "ruler",
-                "Show Line of Sight (LOS) information between two points of the map. Usage: /ruler x1 y1 x2 y2 [elev1 [elev2]]. Where x1, y1 and x2, y2 are the coordinates of the tiles, and the optional elev numbers are the elevations of the targets over the terrain. If elev is not given 1 is assumed which is for standing meks. Prone meks and most other units are at elevation 0.");
+        super(server,
+              "ruler",
+              "Show Line of Sight (LOS) information between two points of the map. Usage: /ruler x1 y1 x2 y2 [elev1 [elev2]]. Where x1, y1 and x2, y2 are the coordinates of the tiles, and the optional elev numbers are the elevations of the targets over the terrain. If elev is not given 1 is assumed which is for standing meks. Prone meks and most other units are at elevation 0.");
         this.gameManager = gameManager;
     }
 
@@ -71,36 +87,43 @@ public class RulerCommand extends ServerCommand {
             }
 
             ToHitData thd = LosEffects.calculateLos(gameManager.getGame(), buildAttackInfo(start, end, elev1, elev2))
-                    .losModifiers(gameManager.getGame());
+                  .losModifiers(gameManager.getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                 toHit1 = thd.getValue() + " because ";
             }
             toHit1 += thd.getDesc();
 
             thd = LosEffects.calculateLos(gameManager.getGame(), buildAttackInfo(end, start, elev2, elev1))
-                    .losModifiers(gameManager.getGame());
+                  .losModifiers(gameManager.getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                 toHit2 = thd.getValue() + " because ";
             }
             toHit2 += thd.getDesc();
 
             server.sendServerChat(connId, String.format(
-                    "The ToHit from hex (%d, %d) at elevation %d to (%d, %d) at elevation %d has a range of %d, a modifier of %s, and a return fire modifier of %s.",
-                    (start.getX() + 1), (start.getY() + 1), elev1, (end.getX() + 1),
-                    (end.getY() + 1), elev2, start.distance(end), toHit1, toHit2));
+                  "The ToHit from hex (%d, %d) at elevation %d to (%d, %d) at elevation %d has a range of %d, a modifier of %s, and a return fire modifier of %s.",
+                  (start.getX() + 1),
+                  (start.getY() + 1),
+                  elev1,
+                  (end.getX() + 1),
+                  (end.getY() + 1),
+                  elev2,
+                  start.distance(end),
+                  toHit1,
+                  toHit2));
         } catch (Exception ignored) {
 
         }
     }
 
     /**
-     * Build line of sight effects between coordinates c1 and c2 at height h1
-     * and h2 respectively.
+     * Build line of sight effects between coordinates c1 and c2 at height h1 and h2 respectively.
      *
      * @param c1 the source coordinates.
      * @param c2 the target coordinates.
      * @param h1 the height in the source tile that is being shot from.
      * @param h2 the height of the target tile to shoot for.
+     *
      * @return an attackInfo object that describes the applicable modifiers.
      */
     private AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1, int h2) {

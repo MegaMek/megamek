@@ -1,20 +1,41 @@
 /*
- * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons.lasers;
 
-import megamek.common.*;
 import megamek.common.Game;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -37,7 +58,7 @@ public class ISBombastLaser extends LaserWeapon {
         addLookupName("IS Bombast Laser");
         addLookupName("ISBombastLaser");
         String[] modeStrings = { "Damage 12", "Damage 11", "Damage 10",
-                "Damage 9", "Damage 8", "Damage 7" };
+                                 "Damage 9", "Damage 8", "Damage 7" };
         setModes(modeStrings);
         heat = 12;
         damage = 12;
@@ -60,10 +81,10 @@ public class ISBombastLaser extends LaserWeapon {
         rulesRefs = "319, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.D)
-                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
-                .setISAdvancement(3064, 3085).setPrototypeFactions(Faction.LC)
-                .setProductionFactions(Faction.LC)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
+              .setISAdvancement(3064, 3085).setPrototypeFactions(Faction.LC)
+              .setProductionFactions(Faction.LC)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     /*
@@ -76,7 +97,7 @@ public class ISBombastLaser extends LaserWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-            TWGameManager manager) {
+          TWGameManager manager) {
         return new BombastLaserWeaponHandler(toHit, waa, game, manager);
     }
 

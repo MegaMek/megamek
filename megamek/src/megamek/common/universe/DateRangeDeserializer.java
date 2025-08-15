@@ -32,13 +32,13 @@
  */
 package megamek.common.universe;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import megamek.client.ratgenerator.FactionRecord;
-
-import java.io.IOException;
 
 public class DateRangeDeserializer extends StdDeserializer<FactionRecord.DateRange> {
 

@@ -1,16 +1,37 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -62,7 +83,7 @@ public class AR10Handler extends AmmoWeaponHandler {
         int numAttacks = 1;
 
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                : null;
+              : null;
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
@@ -80,8 +101,8 @@ public class AR10Handler extends AmmoWeaponHandler {
             r.add(wtype.getName() + number);
             if (entityTarget != null) {
                 if ((wtype.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
-                        && (weapon.getLinked() != null)
-                        && (weapon.getLinked().getType() instanceof AmmoType)) {
+                      && (weapon.getLinked() != null)
+                      && (weapon.getLinked().getType() instanceof AmmoType)) {
                     AmmoType atype = (AmmoType) weapon.getLinked().getType();
                     if (!atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
                         r.messageId = 3116;
@@ -103,7 +124,7 @@ public class AR10Handler extends AmmoWeaponHandler {
             // Set Margin of Success/Failure and check for Direct Blows
             toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
             bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
-                    && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
+                  && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
             //This has to be up here so that we don't screw up glancing/direct blow reports
             attackValue = calcAttackValue();
@@ -135,7 +156,7 @@ public class AR10Handler extends AmmoWeaponHandler {
             }
 
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                r = new Report (3135);
+                r = new Report(3135);
                 r.subject = subjectId;
                 r.add(" " + target.getPosition(), true);
                 vPhaseReport.addElement(r);
@@ -153,12 +174,12 @@ public class AR10Handler extends AmmoWeaponHandler {
                 r.add(toHit.getDesc());
                 vPhaseReport.addElement(r);
             } else {
-            // roll to hit
-            r = new Report(3150);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit);
-            vPhaseReport.addElement(r);
+                // roll to hit
+                r = new Report(3150);
+                r.newlines = 0;
+                r.subject = subjectId;
+                r.add(toHit);
+                vPhaseReport.addElement(r);
             }
 
             // dice have been rolled, thanks
@@ -250,7 +271,7 @@ public class AR10Handler extends AmmoWeaponHandler {
             }
             if (!bMissed && (entityTarget != null)) {
                 handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                        nCluster, bldgAbsorbs);
+                      nCluster, bldgAbsorbs);
                 gameManager.creditKill(entityTarget, ae);
             } else if (!bMissed) { // Hex is targeted, need to report a hit
                 r = new Report(3390);

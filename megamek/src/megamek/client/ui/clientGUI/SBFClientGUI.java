@@ -1,26 +1,55 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+
 import megamek.client.SBFClient;
 import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.boardview.*;
+import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.KeyBindingsOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.PlanetaryConditionsOverlay;
 import megamek.client.ui.clientGUI.boardview.spriteHandler.BoardViewSpriteHandler;
@@ -33,10 +62,10 @@ import megamek.client.ui.panels.StartingScenarioPanel;
 import megamek.client.ui.panels.UnderConstructionPanel;
 import megamek.client.ui.panels.WaitingForServerPanel;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
-import megamek.client.ui.panels.phaseDisplay.SBFReportDisplay;
-import megamek.client.ui.panels.phaseDisplay.StatusBarPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.SBFFiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.SBFMovementDisplay;
+import megamek.client.ui.panels.phaseDisplay.SBFReportDisplay;
+import megamek.client.ui.panels.phaseDisplay.StatusBarPhaseDisplay;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.SBFReportPanel;
 import megamek.common.Coords;
@@ -48,13 +77,6 @@ import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.util.Distractable;
 import megamek.logging.MMLogger;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     private static final MMLogger logger = MMLogger.create(SBFClientGUI.class);
@@ -497,16 +519,15 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     }
 
     /**
-     * Shows the movement envelope in the BoardView for the given entity. The
-     * movement envelope data is
-     * a map of move end Coords to movement points used.
+     * Shows the movement envelope in the BoardView for the given entity. The movement envelope data is a map of move
+     * end Coords to movement points used.
      *
      * @param formation The entity for which the movement envelope is
      * @param mvEnvData The movement envelope data
      */
     public void showMovementEnvelope(SBFFormation formation, Map<Coords, Integer> mvEnvData) {
         movementEnvelopeHandler.setMovementEnvelope(mvEnvData, 0, formation.getMovement(),
-                formation.getMovement(), formation.getMovement(), MovementDisplay.GEAR_JUMP);
+              formation.getMovement(), formation.getMovement(), MovementDisplay.GEAR_JUMP);
     }
 
     public void clearMovementEnvelope() {

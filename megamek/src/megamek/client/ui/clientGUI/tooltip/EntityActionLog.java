@@ -1,35 +1,58 @@
 /*
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.client.ui.clientGUI.tooltip;
 
-import megamek.client.ui.Messages;
-import megamek.common.*;
-import megamek.common.actions.*;
-import megamek.common.equipment.AmmoMounted;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Vector;
 import java.util.stream.Stream;
 
+import megamek.client.ui.Messages;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.ToHitData;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoMounted;
+
 /**
- * An ordered List-like collection of EntityActions with a cached description of each action,
- * created as the action is added.
+ * An ordered List-like collection of EntityActions with a cached description of each action, created as the action is
+ * added.
  */
 public class EntityActionLog implements Collection<EntityAction> {
     private final Game game;
@@ -42,8 +65,9 @@ public class EntityActionLog implements Collection<EntityAction> {
         this.game = game;
     }
 
-    /** @return a list of description strings. Note that there may be fewer than the number of actions
-     * as similar actions are summarized in a single entry
+    /**
+     * @return a list of description strings. Note that there may be fewer than the number of actions as similar actions
+     *       are summarized in a single entry
      */
     public List<String> getDescriptions() {
         return descriptions;
@@ -137,7 +161,7 @@ public class EntityActionLog implements Collection<EntityAction> {
     }
 
     public EntityAction lastElement() {
-        return actions.isEmpty() ? null : actions.get(actions.size()-1);
+        return actions.isEmpty() ? null : actions.get(actions.size() - 1);
     }
 
     @Override
@@ -220,7 +244,7 @@ public class EntityActionLog implements Collection<EntityAction> {
         }
 
         if (!found) {
-            descriptions.add( weaponName + ammoName + Messages.getString("BoardView1.needs") + ' ' + toHitDesc);
+            descriptions.add(weaponName + ammoName + Messages.getString("BoardView1.needs") + ' ' + toHitDesc);
         }
     }
 }

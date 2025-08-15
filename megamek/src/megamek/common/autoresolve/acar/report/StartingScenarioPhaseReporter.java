@@ -1,17 +1,44 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.autoresolve.acar.report;
+
+import static megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip.ownerColor;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.function.Consumer;
 
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Entity;
@@ -20,13 +47,6 @@ import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.function.Consumer;
-
-import static megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip.ownerColor;
 
 public class StartingScenarioPhaseReporter implements IStartingScenarioPhaseReporter {
 
@@ -80,39 +100,41 @@ public class StartingScenarioPhaseReporter implements IStartingScenarioPhaseRepo
         var formations = ((SimulationContext) game).getActiveFormations(player);
 
         reportConsumer.accept(new PublicReportEntry("acar.header.teamFormations")
-            .add(new PlayerNameReportEntry(player).reportText())
-            .add(formations.size()).indent());
+              .add(new PlayerNameReportEntry(player).reportText())
+              .add(formations.size()).indent());
 
         for (var formation : formations) {
             var color = ownerColor(formation, game);
             if (!formation.isSingleEntity()) {
                 reportConsumer.accept(new PublicReportEntry("acar.startingScenario.formation.numberOfUnits")
-                    .add(new FormationReportEntry(
-                        formation.getName(), "", UIUtil.hexColor(color)).reportText())
-                    .add(formation.getUnits().size())
-                    .indent(1));
+                      .add(new FormationReportEntry(
+                            formation.getName(), "", UIUtil.hexColor(color)).reportText())
+                      .add(formation.getUnits().size())
+                      .indent(1));
             }
 
             for (var unit : formation.getUnits()) {
                 if (!formation.isSingleEntity()) {
                     reportConsumer.accept(new PublicReportEntry("acar.startingScenario.unit.numberOfElements")
-                        .add(new UnitReportEntry(unit, ownerColor(formation, game)).reportText())
-                        .add(unit.getElements().size())
-                        .indent(2));
+                          .add(new UnitReportEntry(unit, ownerColor(formation, game)).reportText())
+                          .add(unit.getElements().size())
+                          .indent(2));
                 }
                 for (var element : unit.getElements()) {
                     var entity = (Entity) game.getInGameObject(element.getId()).orElseThrow();
                     var crew = entity.getCrew();
                     var armor = Math.max(entity.getArmorRemainingPercent(), 0d);
-                    var internal = entity instanceof IAero ? ((IAero) entity).getSI() / (double) ((IAero) entity).getOSI()
-                        : entity.getInternalRemainingPercent();
+                    var internal = entity instanceof IAero ?
+                          ((IAero) entity).getSI() / (double) ((IAero) entity).getOSI()
+                          :
+                          entity.getInternalRemainingPercent();
                     reportConsumer.accept(new PublicReportEntry("acar.startingScenario.unitStats")
-                        .add(new EntityNameReportEntry(entity).reportText())
-                        .add(String.format("%.2f%%", armor * 100))
-                        .add(String.format("%.2f%%", internal * 100))
-                        .add(crew.getName())
-                        .add(crew.getHits())
-                        .indent(3));
+                          .add(new EntityNameReportEntry(entity).reportText())
+                          .add(String.format("%.2f%%", armor * 100))
+                          .add(String.format("%.2f%%", internal * 100))
+                          .add(crew.getName())
+                          .add(crew.getHits())
+                          .indent(3));
                 }
             }
         }

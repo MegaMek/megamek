@@ -2,7 +2,7 @@ name: MegaMek CI with Gradle
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 env:
   GRADLE_OPTS: "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"
@@ -20,8 +20,14 @@ jobs:
       fail-fast: false
 
     steps:
+      - name: Checkout Data Repo
+        uses: actions/checkout@v5
+        with:
+          repository: megamek/mm-data
+          path: mm-data
+
       - name: "Check out MegaMek"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: megamek
 

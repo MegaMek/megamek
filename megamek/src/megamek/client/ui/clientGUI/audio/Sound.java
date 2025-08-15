@@ -1,34 +1,47 @@
 /*
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.client.ui.clientGUI.audio;
 
-import megamek.common.annotations.Nullable;
-
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
+
+import megamek.common.annotations.Nullable;
 
 /**
  * Contains a sound Clip to allow for managing playback
  */
-public class Sound
-{
+public class Sound {
     private final Clip clip;
 
     public Sound(@Nullable final Clip clip) {
@@ -47,14 +60,15 @@ public class Sound
 
     /**
      * Sets the output volume of the sound
+     *
      * @param volume - float value of the output volume
      */
     public void setVolume(float volume) {
-        if(volume < 0.0f || volume > 1.0f) {
+        if (volume < 0.0f || volume > 1.0f) {
             throw new IllegalArgumentException("Invalid volume: " + volume);
         }
 
-        if(clip != null) {
+        if (clip != null) {
             FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
             gainControl.setValue(20f * (float) Math.log10(volume));
         }

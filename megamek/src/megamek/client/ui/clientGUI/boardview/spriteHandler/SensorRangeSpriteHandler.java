@@ -1,22 +1,41 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview.spriteHandler;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -31,11 +50,6 @@ import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements IPreferenceChangeListener {
 
@@ -53,8 +67,8 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
     private boolean shouldShowSensorRange() {
         GamePhase phase = game.getPhase();
         return GUIP.getShowSensorRange() &&
-                (phase.isDeployment() || phase.isMovement() || phase.isTargeting()
-                        || phase.isFiring() || phase.isOffboard());
+              (phase.isDeployment() || phase.isMovement() || phase.isTargeting()
+                    || phase.isFiring() || phase.isOffboard());
     }
 
     @Override
@@ -95,7 +109,8 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
         var gameOptions = game.getOptions();
 
         if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
-                || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) && entity.isSpaceborne()) {
+              || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS))
+              && entity.isSpaceborne()) {
             Compute.SensorRangeHelper srh = Compute.getSensorRanges(entity.getGame(), entity);
 
             if (srh != null) {
@@ -136,7 +151,8 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
         int rangeToCorner = (new Coords(0, board.getHeight())).distance(assumedPosition);
         rangeToCorner = Math.max(rangeToCorner, (new Coords(0, 0)).distance(assumedPosition));
         rangeToCorner = Math.max(rangeToCorner, (new Coords(board.getWidth(), 0)).distance(assumedPosition));
-        rangeToCorner = Math.max(rangeToCorner, (new Coords(board.getWidth(), board.getHeight())).distance(assumedPosition));
+        rangeToCorner = Math.max(rangeToCorner,
+              (new Coords(board.getWidth(), board.getHeight())).distance(assumedPosition));
 
         for (RangeHelper rangeH : lBrackets) {
             sensorRanges.add(new HashSet<>());
@@ -192,5 +208,5 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
         }
     }
 
-    private record RangeHelper(int min, int max) { }
+    private record RangeHelper(int min, int max) {}
 }

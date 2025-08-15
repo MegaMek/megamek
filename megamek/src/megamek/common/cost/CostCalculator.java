@@ -1,40 +1,60 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.common.cost;
 
-import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.equipment.ArmorType;
-import megamek.common.weapons.infantry.InfantryWeapon;
+package megamek.common.cost;
 
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
+import megamek.common.AmmoType;
+import megamek.common.Bay;
+import megamek.common.Entity;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.StandardSeatCargoBay;
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.ArmorType;
+import megamek.common.weapons.infantry.InfantryWeapon;
+
 public class CostCalculator {
 
 
     /**
-     * Replaces all negative costs in the array with 0. Should only be used for additive costs
-     * in order to avoid them being mistaken for cost multipliers and breaking cost calculations.
+     * Replaces all negative costs in the array with 0. Should only be used for additive costs in order to avoid them
+     * being mistaken for cost multipliers and breaking cost calculations.
      *
      * @param costs An array of cost values - no multiplier values!
      */
@@ -46,11 +66,12 @@ public class CostCalculator {
     }
 
     /**
-     * Specialized method to calculate the total cost based on the given costs array. Stepping
-     * through the array, positive values will be added to the previous total while a negative value
-     * will be multiplied with the previous total (and the negative sign removed).
+     * Specialized method to calculate the total cost based on the given costs array. Stepping through the array,
+     * positive values will be added to the previous total while a negative value will be multiplied with the previous
+     * total (and the negative sign removed).
      *
      * @param costs An array of cost or multplier values
+     *
      * @return The total C-bill cost as calculated from the costs array
      */
     static double calculateCost(double[] costs) {
@@ -66,11 +87,12 @@ public class CostCalculator {
     }
 
     /**
-     * Calculates the total cost of weapons and equipment of the given entity. Ammo costs are added
-     * depending on the ignoreAmmo parameter.
+     * Calculates the total cost of weapons and equipment of the given entity. Ammo costs are added depending on the
+     * ignoreAmmo parameter.
      *
-     * @param entity The unit to calculate costs for
+     * @param entity     The unit to calculate costs for
      * @param ignoreAmmo When true, ammo is not included
+     *
      * @return The total C-bill cost of weapons and equipment (not systems such as cockpit)
      */
     static long getWeaponsAndEquipmentCost(Entity entity, boolean ignoreAmmo) {
@@ -78,13 +100,14 @@ public class CostCalculator {
     }
 
     /**
-     * Calculates the total cost of weapons and equipment of the given entity. Ammo costs are added
-     * depending on the ignoreAmmo parameter. For each weapon and equipment type a line is added to
-     * the given CalculationReport. No header or other addition is made to the report.
+     * Calculates the total cost of weapons and equipment of the given entity. Ammo costs are added depending on the
+     * ignoreAmmo parameter. For each weapon and equipment type a line is added to the given CalculationReport. No
+     * header or other addition is made to the report.
      *
      * @param costReport The CalculationReport to fill in
-     * @param entity The unit to calculate costs for
+     * @param entity     The unit to calculate costs for
      * @param ignoreAmmo When true, ammo is not included
+     *
      * @return The total C-bill cost of weapons and equipment (not systems such as cockpit)
      */
     static long getWeaponsAndEquipmentCost(Entity entity, CalculationReport costReport, boolean ignoreAmmo) {
@@ -95,7 +118,7 @@ public class CostCalculator {
         Map<String, Long> weaponsCostMap = new HashMap<>();
         for (Mounted<?> mounted : entity.getEquipment()) {
             if (ignoreAmmo && (mounted.getType() instanceof AmmoType)
-                    && (!(((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD))) {
+                  && (!(((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD))) {
                 continue;
             }
             if (mounted.isWeaponGroup() || mounted.getType() instanceof ArmorType) {
@@ -103,14 +126,14 @@ public class CostCalculator {
             }
             // BA Manipulators are considered part of the structure costs and must be excluded here
             if ((mounted.getType() instanceof MiscType)
-                    && mounted.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
+                  && mounted.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
                 continue;
             }
             long itemCost = (long) mounted.getCost();
             if (!ignoreAmmo && entity.isSupportVehicle() && (mounted.getSize() > 1)
-                    && (mounted.getType() instanceof InfantryWeapon)) {
+                  && (mounted.getType() instanceof InfantryWeapon)) {
                 itemCost += Double.valueOf((mounted.getSize() - 1d)
-                        * ((InfantryWeapon) mounted.getType()).getAmmoCost()).longValue();
+                      * ((InfantryWeapon) mounted.getType()).getAmmoCost()).longValue();
             }
 
             cost += itemCost;
@@ -122,7 +145,7 @@ public class CostCalculator {
         }
         for (String weapon : weaponsNumberMap.keySet()) {
             costReport.addLine(weaponsNumberMap.get(weapon) + " " + weapon, "",
-                    commafy.format(weaponsCostMap.get(weapon)));
+                  commafy.format(weaponsCostMap.get(weapon)));
         }
 
         int count = entity.implicitClanCASE();
@@ -164,22 +187,21 @@ public class CostCalculator {
     }
 
     /**
-     * Fills in the cost calculation report by adding a header for the entity and lines for
-     * each entry in systemNames and costs. The length of costs must be at least equal to the
-     * length of systemNames and the costs should match the systemName per index for the report
-     * to make sense. Each line will contain the systemName on the left and the cost on the right.
-     * On the array index given by equipIndex the weapons and equipment will be inserted.
+     * Fills in the cost calculation report by adding a header for the entity and lines for each entry in systemNames
+     * and costs. The length of costs must be at least equal to the length of systemNames and the costs should match the
+     * systemName per index for the report to make sense. Each line will contain the systemName on the left and the cost
+     * on the right. On the array index given by equipIndex the weapons and equipment will be inserted.
      *
-     * @param costReport The CalculationReport to fill in
-     * @param entity The unit to calculate costs for
-     * @param ignoreAmmo When true, ammo is not included in the weapons and equipment
-     * @param equipIndex The array index to insert weapons and equipment in
-     * @param cost The total cost of the unit
+     * @param costReport  The CalculationReport to fill in
+     * @param entity      The unit to calculate costs for
+     * @param ignoreAmmo  When true, ammo is not included in the weapons and equipment
+     * @param equipIndex  The array index to insert weapons and equipment in
+     * @param cost        The total cost of the unit
      * @param systemNames An array of cost type names such as "Cockpit"
-     * @param costs An array of costs matching the systemNames
+     * @param costs       An array of costs matching the systemNames
      */
     static void fillInReport(CalculationReport costReport, Entity entity, boolean ignoreAmmo,
-                             String[] systemNames, int equipIndex, double cost, double[] costs) {
+          String[] systemNames, int equipIndex, double cost, double[] costs) {
         NumberFormat commafy = NumberFormat.getInstance();
         costReport.addHeader("Cost Calculations For " + entity.getChassis() + " " + entity.getModel());
         for (int l = 0; l < systemNames.length; l++) {
@@ -200,11 +222,11 @@ public class CostCalculator {
 
 
     /**
-     * Adds a note to the given CalculationReport that no report is available for units of the
-     * given entity's type. Null parameters can be safely passed to this method.
+     * Adds a note to the given CalculationReport that no report is available for units of the given entity's type. Null
+     * parameters can be safely passed to this method.
      *
      * @param costReport The CalculationReport to add the note to
-     * @param entity The unit to calculate costs for
+     * @param entity     The unit to calculate costs for
      */
     public static void addNoReportNote(@Nullable CalculationReport costReport, @Nullable Entity entity) {
         if (costReport != null) {

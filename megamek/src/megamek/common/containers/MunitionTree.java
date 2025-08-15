@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 
 package megamek.common.containers;
 
@@ -36,7 +51,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import megamek.common.AmmoType;
-import megamek.common.BombType;
 import megamek.common.BombType.BombTypeEnum;
 import megamek.common.Entity;
 import megamek.common.Mounted;
@@ -127,9 +141,9 @@ public class MunitionTree {
 
     // Shorter, guaranteed to work in lookups
     public static final List<String> BOMB_MUNITION_NAMES = Arrays.stream(BombTypeEnum.values())
-        .filter(type -> type != BombTypeEnum.NONE)
-        .map(BombTypeEnum::getInternalName)
-        .collect(Collectors.toList());
+          .filter(type -> type != BombTypeEnum.NONE)
+          .map(BombTypeEnum::getInternalName)
+          .collect(Collectors.toList());
 
     private static final String HEADER = String.join(System.lineSeparator(),
           "# ADF (AutoConfiguration Data File) from MegaMek.",
@@ -244,8 +258,8 @@ public class MunitionTree {
                 AmmoType aType = (AmmoType) m.getType();
                 String baseName = aType.getBaseName();
                 String munition = (aType.getSubMunitionName().equals(baseName)) ?
-                                        "Standard" :
-                                        aType.getSubMunitionName();
+                      "Standard" :
+                      aType.getSubMunitionName();
                 if (!(imperatives.containsKey(baseName))) {
                     imperatives.put(baseName, munition);
                 } else {
@@ -513,9 +527,9 @@ class LoadNode {
         }
 
         String actualLookup = candidates.stream()
-                                    .filter(candidate -> imperatives.containsKey(candidate))
-                                    .findFirst()
-                                    .orElse(null);
+              .filter(candidate -> imperatives.containsKey(candidate))
+              .findFirst()
+              .orElse(null);
         String actualImperative = imperatives.getOrDefault(actualLookup, null);
         return (actualImperative == null) ? new ArrayList<>() : Arrays.asList(actualLookup, actualImperative);
     }

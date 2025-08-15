@@ -1,35 +1,52 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client.ui.util;
 
-import megamek.common.annotations.Nullable;
-
-import javax.swing.*;
+import javax.swing.InputVerifier;
+import javax.swing.JComponent;
+import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
+import megamek.common.annotations.Nullable;
+
 /**
- * A text field for integer values that can specify a minimum and maximum value. Attempting to release
- * focus with an illegal value will set the value to the minimum or maximum as appropriate rather than
- * allowing the focus to be released.
+ * A text field for integer values that can specify a minimum and maximum value. Attempting to release focus with an
+ * illegal value will set the value to the minimum or maximum as appropriate rather than allowing the focus to be
+ * released.
  *
  * @author Neoancient
  */
@@ -60,6 +77,7 @@ public class IntRangeTextField extends JTextField {
 
     /**
      * Sets the minimum value for the field.
+     *
      * @param min the minimum value
      */
     public void setMinimum(@Nullable Integer min) {
@@ -75,6 +93,7 @@ public class IntRangeTextField extends JTextField {
 
     /**
      * Sets the maximum legal value
+     *
      * @param max the maximum value
      */
     public void setMaximum(@Nullable Integer max) {
@@ -86,7 +105,7 @@ public class IntRangeTextField extends JTextField {
         public boolean verify(JComponent input) {
             try {
                 return (((minimum == null) || (getIntVal() >= minimum))
-                        && ((maximum == null) || (getIntVal() <= maximum)));
+                      && ((maximum == null) || (getIntVal() <= maximum)));
             } catch (NumberFormatException ignored) {
                 return false;
             }
@@ -110,7 +129,7 @@ public class IntRangeTextField extends JTextField {
 
         @Override
         public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
-                throws BadLocationException {
+              throws BadLocationException {
             if (string.chars().allMatch(this::isCharValid)) {
                 super.insertString(fb, offset, string, attr);
             }
@@ -118,7 +137,7 @@ public class IntRangeTextField extends JTextField {
 
         @Override
         public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
-                throws BadLocationException {
+              throws BadLocationException {
             if (text.chars().allMatch(this::isCharValid)) {
                 super.replace(fb, offset, length, text, attrs);
             }
@@ -133,6 +152,7 @@ public class IntRangeTextField extends JTextField {
 
     /**
      * Parses the text as an {@code int}.
+     *
      * @return The {@code int} value of the text, or zero if the text is not a valid int value
      */
     public int getIntVal() {
@@ -141,7 +161,9 @@ public class IntRangeTextField extends JTextField {
 
     /**
      * Parses the text as an {@code int}.
+     *
      * @param defaultVal The value to return if the text cannot be parsed as an int
+     *
      * @return The {@code int} value of the text, or the indicated default if the text is not a valid int value
      */
     public int getIntVal(int defaultVal) {
@@ -154,6 +176,7 @@ public class IntRangeTextField extends JTextField {
 
     /**
      * Sets the text to a string representation of the provided value
+     *
      * @param val the provided value
      */
     public void setIntVal(int val) {

@@ -32,7 +32,10 @@
  */
 package megamek.common.autoresolve.damage;
 
-import megamek.common.*;
+import megamek.common.Compute;
+import megamek.common.Crew;
+import megamek.common.HitData;
+import megamek.common.Tank;
 
 /**
  * @author Luana Coppio
@@ -66,9 +69,13 @@ public record TankDamageApplier(Tank entity, EntityFinalState entityFinalState) 
         }
 
         entity.setArmor(0, hit);
-        int newInternalValue = Math.max(currentInternalValue + hitDetails.setArmorValueTo(), entityMustSurvive() ? 1 : 0);
+        int newInternalValue = Math.max(currentInternalValue + hitDetails.setArmorValueTo(),
+              entityMustSurvive() ? 1 : 0);
 
-        logger.trace("[{}] Damage: {} - Internal at: {}", entity.getDisplayName(), hitDetails.damageToApply(), newInternalValue);
+        logger.trace("[{}] Damage: {} - Internal at: {}",
+              entity.getDisplayName(),
+              hitDetails.damageToApply(),
+              newInternalValue);
         entity.setInternal(newInternalValue, hit);
         if (hitDetails.hitInternal() == 3) {
             hitDetails = hitDetails.killsCrew();
@@ -78,7 +85,6 @@ public record TankDamageApplier(Tank entity, EntityFinalState entityFinalState) 
         } else {
             hitDetails = destroyLocation(hitDetails);
         }
-
 
 
         return hitDetails;

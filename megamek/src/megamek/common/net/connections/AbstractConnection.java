@@ -1,18 +1,37 @@
 /*
-* MegaMek -
-* Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 package megamek.common.net.connections;
 
 import java.io.ByteArrayInputStream;
@@ -176,8 +195,7 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Sets the connection ID
-     * Note: Be careful with using this method
+     * Sets the connection ID Note: Be careful with using this method
      *
      * @param id new connection ID
      */
@@ -239,8 +257,7 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Adds the specified connection listener to receive connection events from
-     * connection.
+     * Adds the specified connection listener to receive connection events from connection.
      *
      * @param listener the connection listener.
      */
@@ -258,8 +275,7 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * @return The connection type ("Client" / "Server") that is used in the debug
-     *         messages and so on.
+     * @return The connection type ("Client" / "Server") that is used in the debug messages and so on.
      */
     protected String getConnectionTypeText() {
         return isServer() ? "Server" : "Client";
@@ -284,13 +300,9 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Process all incoming data, blocking on the input stream until new input is
-     * available. This
-     * method should not be synchronized as it should only deal with the input side
-     * of things.
-     * Without creating separate read/write locks, making this method synchronized
-     * would not allow
-     * synchronous reads and writes.
+     * Process all incoming data, blocking on the input stream until new input is available. This method should not be
+     * synchronized as it should only deal with the input side of things. Without creating separate read/write locks,
+     * making this method synchronized would not allow synchronous reads and writes.
      */
     public void update() {
         try {
@@ -314,9 +326,7 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Send all queued packets. This method is synchronized since it deals with the
-     * non-thread-safe
-     * send queue.
+     * Send all queued packets. This method is synchronized since it deals with the non-thread-safe send queue.
      */
     public synchronized void flush() {
         SendPacket packet = null;
@@ -327,10 +337,10 @@ public abstract class AbstractConnection {
         } catch (Exception ex) {
             if (packet == null) {
                 logger.error(String.format("%s had an error sending a null packet",
-                        getConnectionTypeText()), ex);
+                      getConnectionTypeText()), ex);
             } else {
                 logger.error(String.format("%s had an error sending command %s",
-                        getConnectionTypeText(), packet.getCommand().name()), ex);
+                      getConnectionTypeText(), packet.getCommand().name()), ex);
             }
             close();
         }
@@ -356,8 +366,7 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Reads a complete NetworkPacket. This method must not block, must return null
-     * instead.
+     * Reads a complete NetworkPacket. This method must not block, must return null instead.
      *
      * @return the NetworkPacket that was sent.
      */
@@ -368,13 +377,13 @@ public abstract class AbstractConnection {
      *
      * @param data   data to send
      * @param zipped should the data be compressed
+     *
      * @throws Exception if there's an issue with sending the packet
      */
     protected abstract void sendNetworkPacket(byte[] data, boolean zipped) throws Exception;
 
     /**
-     * Processes game events occurring on this connection by dispatching them to
-     * any registered GameListener objects.
+     * Processes game events occurring on this connection by dispatching them to any registered GameListener objects.
      *
      * @param event the game event.
      */

@@ -42,7 +42,7 @@ import megamek.common.internationalization.I18n;
 
 /** A Lobby Mek Table sorter that sorts by C3 network association (and by ID after that). */
 public class C3IDSorter extends MekTableSorter {
-    
+
     private final Client client;
 
     /** A Lobby Mek Table sorter that sorts mainly by association to C3 networks */

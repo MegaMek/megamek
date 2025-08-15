@@ -1,18 +1,38 @@
 /*
-* MegaMek -
-* Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 package megamek.common;
 
 import java.io.Serial;
@@ -20,8 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class represents a single, targetable hex of a building. The building itself may occupy
- * multiple hexes.
+ * This class represents a single, targetable hex of a building. The building itself may occupy multiple hexes.
  *
  * @author Suvarov454@sourceforge.net (James A. Damour)
  */
@@ -41,15 +60,14 @@ public class BuildingTarget implements Targetable {
     private int id = Building.UNKNOWN;
 
     /**
-     * The height of the building at the targeted position, used to indicate
-     * the number of levels of the building.  A height 0 building is a 1-story
-     * (level 1) building.  Bridges will always have a height of 0.
+     * The height of the building at the targeted position, used to indicate the number of levels of the building.  A
+     * height 0 building is a 1-story (level 1) building.  Bridges will always have a height of 0.
      */
     private int height = Building.UNKNOWN;
 
     /**
-     * The elevation of the building at the targeted position, generally only
-     * used by bridges but also for buildings on hexes with depth.
+     * The elevation of the building at the targeted position, generally only used by bridges but also for buildings on
+     * hexes with depth.
      */
     private int elevation = Building.UNKNOWN;
 
@@ -68,9 +86,9 @@ public class BuildingTarget implements Targetable {
      *
      * @param coords - the <code>Coords</code> of the hext being targeted.
      * @param board  - the game's <code>Board</code> object.
-     * @param nType the target type
-     * @throws IllegalArgumentException will be thrown if
-     *            the given coordinates do not contain a building.
+     * @param nType  the target type
+     *
+     * @throws IllegalArgumentException will be thrown if the given coordinates do not contain a building.
      */
     protected void init(Coords coords, Board board, int nType) {
         position = coords;
@@ -113,10 +131,10 @@ public class BuildingTarget implements Targetable {
      *
      * @param coords - the <code>Coords</code> of the hext being targeted.
      * @param board  - the game's <code>Board</code> object.
-     * @param nType  - an <code>int</code> value that indicates whether the
-     *               player is attempting to set the building on fire, or not.
-     * @throws IllegalArgumentException will be thrown if
-     *            the given coordinates do not contain a building.
+     * @param nType  - an <code>int</code> value that indicates whether the player is attempting to set the building on
+     *               fire, or not.
+     *
+     * @throws IllegalArgumentException will be thrown if the given coordinates do not contain a building.
      */
     public BuildingTarget(Coords coords, Board board, int nType) {
         init(coords, board, nType);
@@ -131,10 +149,10 @@ public class BuildingTarget implements Targetable {
      *
      * @param coords - the <code>Coords</code> of the hext being targeted.
      * @param board  - the game's <code>Board</code> object.
-     * @param ignite - a <code>boolean</code> flag that indicates whether the
-     *               player is attempting to set the building on fire, or not.
-     * @throws IllegalArgumentException will be thrown if
-     *            the given coordinates do not contain a building.
+     * @param ignite - a <code>boolean</code> flag that indicates whether the player is attempting to set the building
+     *               on fire, or not.
+     *
+     * @throws IllegalArgumentException will be thrown if the given coordinates do not contain a building.
      */
     public BuildingTarget(Coords coords, Board board, boolean ignite) {
         init(coords, board, ignite ? Targetable.TYPE_BLDG_IGNITE : Targetable.TYPE_BUILDING);
@@ -167,7 +185,7 @@ public class BuildingTarget implements Targetable {
     }
 
     @Override
-    public void setOwnerId(int newOwnerId) { }
+    public void setOwnerId(int newOwnerId) {}
 
     @Override
     public int getStrength() {

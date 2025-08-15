@@ -1,40 +1,61 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.client.ui.clientGUI;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.List;
+
 import megamek.client.ui.panels.phaseDisplay.TowLinkWarning;
-import megamek.common.*;
+import megamek.common.Board;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.LargeSupportTank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 
 public class TowLinkWarningTest {
@@ -87,7 +108,9 @@ public class TowLinkWarningTest {
             // Arrange
 
             // Act
-            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTractor, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame,
+                  mockTractor,
+                  mockBoard);
 
             // Assert
             // Empty list - It's not a tractor or trailer!
@@ -101,7 +124,9 @@ public class TowLinkWarningTest {
             when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
 
             // Act
-            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTractor, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame,
+                  mockTractor,
+                  mockBoard);
 
 
             // Assert
@@ -117,7 +142,9 @@ public class TowLinkWarningTest {
             when(mockTrailer.getPosition()).thenReturn(new Coords(3, 3));
 
             // Act
-            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTractor, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame,
+                  mockTractor,
+                  mockBoard);
 
 
             // Assert
@@ -141,7 +168,10 @@ public class TowLinkWarningTest {
             List<Coords> testCoords = null;
 
             try (MockedStatic<Compute> compute = Mockito.mockStatic(Compute.class)) {
-                compute.when(() -> Compute.stackingViolation(any(Game.class), anyInt(), any(Coords.class), anyBoolean())).thenReturn(mock(Entity.class));
+                compute.when(() -> Compute.stackingViolation(any(Game.class),
+                      anyInt(),
+                      any(Coords.class),
+                      anyBoolean())).thenReturn(mock(Entity.class));
 
                 // Act
                 testCoords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTractor, mockBoard);
@@ -163,7 +193,9 @@ public class TowLinkWarningTest {
             // Arrange
 
             // Act
-            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTrailer, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame,
+                  mockTrailer,
+                  mockBoard);
 
             // Assert
             // Empty list - It's not a tractor or trailer!
@@ -177,7 +209,9 @@ public class TowLinkWarningTest {
             when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
 
             // Act
-            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTrailer, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame,
+                  mockTrailer,
+                  mockBoard);
 
             // Assert
             assertEquals(25, coords.size());
@@ -193,7 +227,9 @@ public class TowLinkWarningTest {
             when(mockTractor.getPosition()).thenReturn(new Coords(3, 3));
 
             // Act
-            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTrailer, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame,
+                  mockTrailer,
+                  mockBoard);
 
             // Assert
             assertEquals(1, coords.size());
@@ -216,7 +252,10 @@ public class TowLinkWarningTest {
             List<Coords> testCoords = null;
 
             try (MockedStatic<Compute> compute = Mockito.mockStatic(Compute.class)) {
-                compute.when(() -> Compute.stackingViolation(any(Game.class), anyInt(), any(Coords.class), anyBoolean())).thenReturn(mock(Entity.class));
+                compute.when(() -> Compute.stackingViolation(any(Game.class),
+                      anyInt(),
+                      any(Coords.class),
+                      anyBoolean())).thenReturn(mock(Entity.class));
 
                 // Act
                 testCoords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTrailer, mockBoard);
@@ -226,6 +265,7 @@ public class TowLinkWarningTest {
             assertEquals(6, testCoords.size());
         }
     }
+
     @Nested
     class TractorTrainTests {
         // Let's mock another trailer and put it at the end of the train
@@ -278,7 +318,9 @@ public class TowLinkWarningTest {
             when(mockTrailer2.getPosition()).thenReturn(new Coords(3, 3));
 
             // Act
-            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTractor, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame,
+                  mockTractor,
+                  mockBoard);
 
             // Assert
             // This tractor should be suggested to deploy in any location adjacent to the current deployed trailer - 6 hexes
@@ -302,7 +344,9 @@ public class TowLinkWarningTest {
             when(mockTrailer3.getPosition()).thenReturn(new Coords(3, 3));
 
             // Act
-            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTractor, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame,
+                  mockTractor,
+                  mockBoard);
 
             // Assert
             // These trailers stack, so trailer 3 and 2 will be in one hex, and the tractor and trailer 1 in the adjacent hex
@@ -322,13 +366,18 @@ public class TowLinkWarningTest {
             when(mockTrailer3.getTowedBy()).thenReturn(TRAILER_2_ID);
             when(mockTrailer4.getTowedBy()).thenReturn(TRAILER_3_ID);
 
-            when(mockTractor.getAllTowedUnits()).thenReturn(Arrays.asList(TRAILER_ID, TRAILER_2_ID, TRAILER_3_ID, TRAILER_4_ID));
+            when(mockTractor.getAllTowedUnits()).thenReturn(Arrays.asList(TRAILER_ID,
+                  TRAILER_2_ID,
+                  TRAILER_3_ID,
+                  TRAILER_4_ID));
 
             when(mockTrailer4.isDeployed()).thenReturn(true);
             when(mockTrailer4.getPosition()).thenReturn(new Coords(3, 3));
 
             // Act
-            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTractor, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame,
+                  mockTractor,
+                  mockBoard);
 
             // Assert
             // These trailers stack, so trailer 3 and 2 will be in one hex, and the tractor and trailer 1 in the adjacent hex
@@ -348,13 +397,18 @@ public class TowLinkWarningTest {
             when(mockTrailer3.getTowedBy()).thenReturn(TRAILER_2_ID);
             when(mockTrailer4.getTowedBy()).thenReturn(TRAILER_3_ID);
 
-            when(mockTractor.getAllTowedUnits()).thenReturn(Arrays.asList(TRAILER_ID, TRAILER_2_ID, TRAILER_3_ID, TRAILER_4_ID));
+            when(mockTractor.getAllTowedUnits()).thenReturn(Arrays.asList(TRAILER_ID,
+                  TRAILER_2_ID,
+                  TRAILER_3_ID,
+                  TRAILER_4_ID));
 
             when(mockTrailer2.isDeployed()).thenReturn(true);
             when(mockTrailer2.getPosition()).thenReturn(new Coords(3, 3));
 
             // Act
-            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTrailer4, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame,
+                  mockTrailer4,
+                  mockBoard);
 
             // Assert
             assertEquals(6, coords.size());
@@ -373,7 +427,10 @@ public class TowLinkWarningTest {
             when(mockTrailer3.getTowedBy()).thenReturn(TRAILER_2_ID);
             when(mockTrailer4.getTowedBy()).thenReturn(TRAILER_3_ID);
 
-            when(mockTractor.getAllTowedUnits()).thenReturn(Arrays.asList(TRAILER_ID, TRAILER_2_ID, TRAILER_3_ID, TRAILER_4_ID));
+            when(mockTractor.getAllTowedUnits()).thenReturn(Arrays.asList(TRAILER_ID,
+                  TRAILER_2_ID,
+                  TRAILER_3_ID,
+                  TRAILER_4_ID));
 
             when(mockTractor.isDeployed()).thenReturn(true);
             when(mockTractor.getPosition()).thenReturn(new Coords(3, 3));
@@ -382,7 +439,9 @@ public class TowLinkWarningTest {
             when(mockTrailer4.getPosition()).thenReturn(new Coords(3, 1));
 
             // Act
-            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTrailer2, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame,
+                  mockTrailer2,
+                  mockBoard);
 
             // Assert
             assertEquals(1, coords.size());
@@ -426,7 +485,7 @@ public class TowLinkWarningTest {
             when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
 
             when(mockTractor.isDeployed()).thenReturn(true);
-            when(mockTractor.getPosition()).thenReturn(new Coords(3,3));
+            when(mockTractor.getPosition()).thenReturn(new Coords(3, 3));
 
             // Act
             List<Coords> coords = TowLinkWarning.findTowLinkIssues(mockGame, mockTrailer, mockBoard);
@@ -443,9 +502,9 @@ public class TowLinkWarningTest {
             when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
 
             when(mockTractor.isDeployed()).thenReturn(true);
-            when(mockTractor.getPosition()).thenReturn(new Coords(3,3));
+            when(mockTractor.getPosition()).thenReturn(new Coords(3, 3));
 
-            when(mockTrailer.isLocationProhibited(new Coords(3,3))).thenReturn(true);
+            when(mockTrailer.isLocationProhibited(new Coords(3, 3))).thenReturn(true);
 
             // Act
             List<Coords> coords = TowLinkWarning.findTowLinkIssues(mockGame, mockTrailer, mockBoard);
@@ -478,9 +537,8 @@ public class TowLinkWarningTest {
     }
 
     /**
-     * Inspired by Luana's suggestion to add a limit to how many times the
-     * do while loops while search for a tractor/trailer. This will test
-     * invalid situations to ensure they fail in an expected manner.
+     * Inspired by Luana's suggestion to add a limit to how many times the do while loops while search for a
+     * tractor/trailer. This will test invalid situations to ensure they fail in an expected manner.
      */
     @Nested
     class TestInvalidUseCases {
@@ -495,7 +553,8 @@ public class TowLinkWarningTest {
 
             // Act / Assert
             // This should throw a stack overflow error.
-            Throwable exception = assertThrows(StackOverflowError.class, () -> TowLinkWarning.findTowLinkIssues(mockGame, mockTrailer, mockBoard));
+            Throwable exception = assertThrows(StackOverflowError.class,
+                  () -> TowLinkWarning.findTowLinkIssues(mockGame, mockTrailer, mockBoard));
         }
     }
 }

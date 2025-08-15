@@ -53,7 +53,7 @@ public class MekTreeTopLevelSorter implements Comparator<Object> {
     @Override
     public int compare(final Object a, final Object b) {
         if (!((a instanceof Entity) || (a instanceof Force))
-                || !((b instanceof Entity) || (b instanceof Force))) {
+              || !((b instanceof Entity) || (b instanceof Force))) {
             throw new IllegalArgumentException("Can only compare Entities/Forces");
         }
 

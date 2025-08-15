@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.io.Serial;
@@ -25,6 +46,7 @@ import java.util.UUID;
 import java.util.Vector;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
@@ -33,7 +55,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.util.ConditionalStringJoiner;
 import megamek.logging.MMLogger;
-import megamek.common.TechAdvancement.AdvancementPhase;
 
 /**
  * Taharqa's attempt at creating an Aerospace entity
@@ -251,28 +272,28 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     protected static final TechAdvancement TA_ASF = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE,
                 2470,
                 2490)
-                                                          .setProductionFactions(Faction.TH)
-                                                          .setTechRating(TechRating.D)
-                                                          .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
-                                                          .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setProductionFactions(Faction.TH)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     protected static final TechAdvancement TA_ASF_PRIMITIVE = new TechAdvancement(TechBase.IS)
-                                                                    // Per MUL team and per availability codes should exist to around 2781
-                                                                    .setISAdvancement(Map.of(
-                                                                        AdvancementPhase.PROTOTYPE, DATE_ES,
-                                                                        AdvancementPhase.PRODUCTION, 2200,
-                                                                        AdvancementPhase.EXTINCT, 2781
-                                                                    ))
-                                                                    .setISApproximate(
-                                                                        AdvancementPhase.PRODUCTION, 
-                                                                        AdvancementPhase.EXTINCT)
-                                                                    .setPrototypeFactions(Faction.TA)
-                                                                    .setProductionFactions(Faction.TA)
-                                                                    .setTechRating(TechRating.D)
-                                                                    .setAvailability(AvailabilityValue.D,
-                                                                          AvailabilityValue.X,
-                                                                          AvailabilityValue.F,
-                                                                          AvailabilityValue.F)
-                                                                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          // Per MUL team and per availability codes should exist to around 2781
+          .setISAdvancement(Map.of(
+                AdvancementPhase.PROTOTYPE, DATE_ES,
+                AdvancementPhase.PRODUCTION, 2200,
+                AdvancementPhase.EXTINCT, 2781
+          ))
+          .setISApproximate(
+                AdvancementPhase.PRODUCTION,
+                AdvancementPhase.EXTINCT)
+          .setPrototypeFactions(Faction.TA)
+          .setProductionFactions(Faction.TA)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.D,
+                AvailabilityValue.X,
+                AvailabilityValue.F,
+                AvailabilityValue.F)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -286,9 +307,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     protected static final TechAdvancement[] COCKPIT_TA = {
           new TechAdvancement(TechBase.ALL)
                 .setAdvancement(Map.of(
-                    AdvancementPhase.PROTOTYPE, 2460,
-                    AdvancementPhase.PRODUCTION, 2470,
-                    AdvancementPhase.COMMON, 2491
+                      AdvancementPhase.PROTOTYPE, 2460,
+                      AdvancementPhase.PRODUCTION, 2470,
+                      AdvancementPhase.COMMON, 2491
                 ))
                 .setApproximate(AdvancementPhase.PROTOTYPE)
                 .setPrototypeFactions(Faction.TH)
@@ -299,12 +320,12 @@ public abstract class Aero extends Entity implements IAero, IBomber {
           // Standard
           new TechAdvancement(TechBase.IS)
                 .setISAdvancement(Map.of(
-                    AdvancementPhase.PROTOTYPE, 3065,
-                    AdvancementPhase.PRODUCTION, 3070,
-                    AdvancementPhase.COMMON, 3080
+                      AdvancementPhase.PROTOTYPE, 3065,
+                      AdvancementPhase.PRODUCTION, 3070,
+                      AdvancementPhase.COMMON, 3080
                 ))
                 .setClanAdvancement(Map.of(
-                    AdvancementPhase.COMMON,3080
+                      AdvancementPhase.COMMON, 3080
                 ))
                 .setISApproximate(AdvancementPhase.PROTOTYPE)
                 .setPrototypeFactions(Faction.WB)
@@ -315,15 +336,15 @@ public abstract class Aero extends Entity implements IAero, IBomber {
           // Small
           new TechAdvancement(TechBase.ALL)
                 .setISAdvancement(Map.of(
-                    AdvancementPhase.PROTOTYPE, 2625,
-                    AdvancementPhase.PRODUCTION, 2631,
-                    AdvancementPhase.EXTINCT, 2850,
-                    AdvancementPhase.REINTRODUCED, 3030
+                      AdvancementPhase.PROTOTYPE, 2625,
+                      AdvancementPhase.PRODUCTION, 2631,
+                      AdvancementPhase.EXTINCT, 2850,
+                      AdvancementPhase.REINTRODUCED, 3030
                 ))
                 .setISApproximate(AdvancementPhase.PROTOTYPE, AdvancementPhase.EXTINCT, AdvancementPhase.REINTRODUCED)
                 .setClanAdvancement(Map.of(
-                    AdvancementPhase.PROTOTYPE, 2625,
-                    AdvancementPhase.PRODUCTION, 2631
+                      AdvancementPhase.PROTOTYPE, 2625,
+                      AdvancementPhase.PRODUCTION, 2631
                 ))
                 .setClanApproximate(AdvancementPhase.PROTOTYPE)
                 .setPrototypeFactions(Faction.TH)
@@ -335,9 +356,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
           // Cockpit command console
           new TechAdvancement(TechBase.ALL)
                 .setAdvancement(Map.of(
-                    AdvancementPhase.PROTOTYPE, DATE_ES,
-                    AdvancementPhase.PRODUCTION, 2300,
-                    AdvancementPhase.EXTINCT, 2520
+                      AdvancementPhase.PROTOTYPE, DATE_ES,
+                      AdvancementPhase.PRODUCTION, 2300,
+                      AdvancementPhase.EXTINCT, 2520
                 ))
                 .setISApproximate(AdvancementPhase.PRODUCTION)
                 .setPrototypeFactions(Faction.TA)
@@ -423,8 +444,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND) &&
-                      conditions.getWind().isTornadoF1ToF3() &&
-                      conditions.getWeather().isClear()) {
+                  conditions.getWind().isTornadoF1ToF3() &&
+                  conditions.getWeather().isClear()) {
                 mp += 1;
             }
         }
@@ -957,7 +978,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit")) ||
-                  (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
+              (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
             return (int) (fuel * 0.9);
         } else {
             return fuel;
@@ -967,7 +988,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getCurrentFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit")) ||
-                  (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
+              (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
             return (int) (currentFuel * 0.9);
         } else {
             return currentFuel;
@@ -1154,8 +1175,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     public int getWeaponArc(int weaponNumber) {
         final Mounted<?> mounted = getEquipment(weaponNumber);
         if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) ||
-                  mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB) ||
-                  mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
+              mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB) ||
+              mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
             return Compute.ARC_360;
         }
         int arc;
@@ -1490,8 +1511,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
         // Small/torso-mounted cockpit penalty?
         if ((getCockpitType() == Aero.COCKPIT_SMALL) &&
-                  !hasAbility(OptionsConstants.MD_BVDNI) &&
-                  !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
+              !hasAbility(OptionsConstants.MD_BVDNI) &&
+              !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
             prd.addModifier(1, "Small Cockpit");
         }
 
@@ -1519,10 +1540,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         vDesc.addElement(r);
 
         if (((getEntityType() & Entity.ETYPE_DROPSHIP) == 0) ||
-                  ((getEntityType() & Entity.ETYPE_SMALL_CRAFT) == 0) ||
-                  ((getEntityType() & Entity.ETYPE_FIGHTER_SQUADRON) == 0) ||
-                  ((getEntityType() & Entity.ETYPE_JUMPSHIP) == 0) ||
-                  ((getEntityType() & Entity.ETYPE_SPACE_STATION) == 0)) {
+              ((getEntityType() & Entity.ETYPE_SMALL_CRAFT) == 0) ||
+              ((getEntityType() & Entity.ETYPE_FIGHTER_SQUADRON) == 0) ||
+              ((getEntityType() & Entity.ETYPE_JUMPSHIP) == 0) ||
+              ((getEntityType() & Entity.ETYPE_SPACE_STATION) == 0)) {
             r = new Report(7036);
         } else {
             r = new Report(7030);
@@ -2173,8 +2194,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean hasCommandConsoleBonus() {
         return getCockpitType() == COCKPIT_COMMAND_CONSOLE &&
-                     getCrew().hasActiveCommandConsole() &&
-                     getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY;
+              getCrew().hasActiveCommandConsole() &&
+              getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY;
     }
 
     @Override
@@ -2231,7 +2252,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getECMRange() {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
-                  !isSpaceborne()) {
+              !isSpaceborne()) {
             return super.getECMRange();
         }
         return Math.min(super.getECMRange(), 0);
@@ -2243,7 +2264,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public double getECCMStrength() {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) ||
-                  !isSpaceborne()) {
+              !isSpaceborne()) {
             return super.getECCMStrength();
         }
         if (hasActiveECCM()) {
@@ -2289,10 +2310,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // capital fighters can load other capital fighters (becoming squadrons)
         // but not in the deployment phase
         if (isCapitalFighter() &&
-                  !unit.isEnemyOf(this) &&
-                  unit.isCapitalFighter() &&
-                  (getId() != unit.getId()) &&
-                  !getGame().getPhase().isDeployment()) {
+              !unit.isEnemyOf(this) &&
+              unit.isCapitalFighter() &&
+              (getId() != unit.getId()) &&
+              !getGame().getPhase().isDeployment()) {
             return true;
         }
 
@@ -2433,9 +2454,13 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // Cargo bays and bay doors for large craft
         for (Bay transportBay : getTransportBays()) {
             conditionalStringJoiner.add(transportBay.getBayDamage() > 0,
-                  () -> String.format(Messages.getString("Aero.bayDamageString"), transportBay.getType(), transportBay.getBayNumber()));
+                  () -> String.format(Messages.getString("Aero.bayDamageString"),
+                        transportBay.getType(),
+                        transportBay.getBayNumber()));
             conditionalStringJoiner.add(transportBay.getCurrentDoors() < transportBay.getDoors(),
-                  () -> String.format(Messages.getString("Aero.bayDoorDamageString"), transportBay.getType(), transportBay.getBayNumber(),
+                  () -> String.format(Messages.getString("Aero.bayDoorDamageString"),
+                        transportBay.getType(),
+                        transportBay.getBayNumber(),
                         (transportBay.getDoors() - transportBay.getCurrentDoors())));
         }
         return conditionalStringJoiner.toString();
@@ -2589,12 +2614,12 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // for indirect LRM fire, unless they have a recon cam, an infrared or
         // hyperspace imager, or a high-res imager and it's not night
         boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER) &&
-                                     game.getPlanetaryConditions().getLight().isDayOrDusk();
+              game.getPlanetaryConditions().getLight().isDayOrDusk();
         return !isAirborne() ||
-                     hasWorkingMisc(MiscType.F_RECON_CAMERA) ||
-                     hasWorkingMisc(MiscType.F_INFRARED_IMAGER) ||
-                     hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER) ||
-                     hiresLighted;
+              hasWorkingMisc(MiscType.F_RECON_CAMERA) ||
+              hasWorkingMisc(MiscType.F_INFRARED_IMAGER) ||
+              hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER) ||
+              hiresLighted;
     }
 
     // Damage a fighter that was part of a squadron when splitting it. Per
@@ -2818,16 +2843,16 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             for (WeaponMounted weapon : getWeaponBayList()) {
                 // Skip anything that's not an AMS, AMS Bay or Point Defense Bay
                 if (!weapon.getType().hasFlag(WeaponType.F_AMS) &&
-                          !weapon.getType().hasFlag(WeaponType.F_AMSBAY) &&
-                          !weapon.getType().hasFlag(WeaponType.F_PDBAY)) {
+                      !weapon.getType().hasFlag(WeaponType.F_AMSBAY) &&
+                      !weapon.getType().hasFlag(WeaponType.F_PDBAY)) {
                     continue;
                 }
 
                 // Make sure the AMS is good to go
                 if (!weapon.isReady() ||
-                          weapon.isMissing() ||
-                          weapon.curMode().equals("Off") ||
-                          weapon.curMode().equals("Normal")) {
+                      weapon.isMissing() ||
+                      weapon.curMode().equals("Off") ||
+                      weapon.curMode().equals("Normal")) {
                     continue;
                 }
 
@@ -2840,7 +2865,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 for (WeaponMounted bayW : weapon.getBayWeapons()) {
                     AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
                     if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY)) &&
-                              ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0) || bayWAmmo.isDumping())) {
+                          ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0) || bayWAmmo.isDumping())) {
                         loadWeapon(weapon);
                         bayWAmmo = weapon.getLinkedAmmo();
                     }
@@ -2913,9 +2938,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // If we are in space, add them back...
         if (isSpaceborne()) {
             if (hasETypeFlag(Entity.ETYPE_DROPSHIP) ||
-                      hasETypeFlag(Entity.ETYPE_SPACE_STATION) ||
-                      hasETypeFlag(Entity.ETYPE_JUMPSHIP) ||
-                      hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+                  hasETypeFlag(Entity.ETYPE_SPACE_STATION) ||
+                  hasETypeFlag(Entity.ETYPE_JUMPSHIP) ||
+                  hasETypeFlag(Entity.ETYPE_WARSHIP)) {
                 // Large craft get thermal/optical sensors
                 if (!hasSpacecraftThermal) {
                     getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_THERMAL));

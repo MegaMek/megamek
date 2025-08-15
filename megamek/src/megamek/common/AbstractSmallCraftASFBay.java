@@ -1,22 +1,37 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 /**
@@ -38,7 +53,10 @@ public abstract class AbstractSmallCraftASFBay extends UnitBay {
     @Override
     public void load(Entity unit) throws IllegalArgumentException {
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " into this bay. " + getUnused());
+            throw new IllegalArgumentException("Can not load "
+                  + unit.getShortName()
+                  + " into this bay. "
+                  + getUnused());
         }
         currentSpace -= spaceForUnit(unit);
         troops.addElement(unit.getId());
@@ -55,21 +73,23 @@ public abstract class AbstractSmallCraftASFBay extends UnitBay {
         int used = 0;
         if (game != null) {
             used = troops.stream()
-                    .map(game::getEntity)
-                    .mapToInt(t -> (int) spaceForUnit(t))
-                    .sum();
+                  .map(game::getEntity)
+                  .mapToInt(t -> (int) spaceForUnit(t))
+                  .sum();
         }
         currentSpace = totalSpace - used;
         return currentSpace - getBayDamage();
     }
 
     /**
-     * Recovery is different from loading in that it uses up a recovery slot
-     * load is only used in deployment phase
+     * Recovery is different from loading in that it uses up a recovery slot load is only used in deployment phase
      */
     public void recover(Entity unit) throws IllegalArgumentException {
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not recover " + unit.getShortName() + " into this bay. " + getUnused());
+            throw new IllegalArgumentException("Can not recover "
+                  + unit.getShortName()
+                  + " into this bay. "
+                  + getUnused());
         }
 
         load(unit);

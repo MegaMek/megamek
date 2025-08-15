@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client.ui.widget;
 
 import java.awt.BorderLayout;
@@ -23,7 +44,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -75,7 +95,7 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
     private SBFClientGUI currentClientgui;
     private SBFClient currentClient;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private static final ClientPreferences CP =  PreferenceManager.getClientPreferences();
+    private static final ClientPreferences CP = PreferenceManager.getClientPreferences();
 
     private static final int MRD_MAXNAMELENGHT = 60;
 
@@ -108,7 +128,7 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
 
         JPanel p = new JPanel();
         p.setLayout(new BoxLayout(p, BoxLayout.X_AXIS));
-        p.setBorder(new EmptyBorder(2,2,15,2));
+        p.setBorder(new EmptyBorder(2, 2, 15, 2));
         p.add(comboPlayer);
         p.add(butPlayerSearchUp);
         p.add(butPlayerSearchDown);
@@ -140,7 +160,7 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
         searchPattern = searchPattern.toUpperCase();
 
         if (selCom instanceof JScrollPane
-                && ((JScrollPane) selCom).getViewport().getView() instanceof JComponent) {
+              && ((JScrollPane) selCom).getViewport().getView() instanceof JComponent) {
             JViewport v = ((JScrollPane) selCom).getViewport();
             for (Component comp : v.getComponents()) {
                 if (comp instanceof JTextPane) {
@@ -157,26 +177,28 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
 
                         int newPos = -1;
 
-                        if (searchDown){
+                        if (searchDown) {
                             newPos = text.indexOf(searchPattern, currentPos);
 
                             if (newPos == -1) {
                                 newPos = text.indexOf(searchPattern, 0);
                             }
 
-                        }
-                        else {
-                            newPos = text.lastIndexOf(searchPattern, currentPos-searchPattern.length()-1);
+                        } else {
+                            newPos = text.lastIndexOf(searchPattern, currentPos - searchPattern.length() - 1);
 
                             if (newPos == -1) {
-                                newPos = text.lastIndexOf(searchPattern, text.length()-searchPattern.length()-1);
+                                newPos = text.lastIndexOf(searchPattern, text.length() - searchPattern.length() - 1);
                             }
                         }
 
                         if (newPos != -1) {
                             Rectangle2D r = textPane.modelToView2D(newPos);
-                            int y = UIUtil.calculateCenter(v.getExtentSize().height, v.getViewSize().height, (int) r.getHeight(), (int) r.getY());
-                            v.setViewPosition(new Point(0,y));
+                            int y = UIUtil.calculateCenter(v.getExtentSize().height,
+                                  v.getViewSize().height,
+                                  (int) r.getHeight(),
+                                  (int) r.getY());
+                            v.setViewPosition(new Point(0, y));
                             textPane.setCaretPosition(newPos);
                             textPane.moveCaretPosition(newPos + searchPattern.length());
                             textPane.getCaret().setSelectionVisible(true);
@@ -227,32 +249,32 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
         return displayName;
     }
 
-//    private void updateEntityChoice() {
-//        String lastChoice = (String) comboEntity.getSelectedItem();
-//        comboEntity.removeAllItems();
-//        comboEntity.setEnabled(true);
-//        String displayNane = "";
-//        for (Iterator<Entity> ents = currentClient.getGame().getEntities(); ents.hasNext();) {
-//            Entity entity = ents.next();
-//            if (entity.getOwner().equals(currentClient.getLocalPlayer())) {
-//                displayNane = addEntity(comboEntity, entity.getShortName());
-//            }
-//        }
-//        lastChoice = (lastChoice != null ? lastChoice : displayNane);
-//        comboEntity.setSelectedItem(lastChoice);
-//        if (comboEntity.getItemCount() <= 1) {
-//            comboEntity.setEnabled(false);
-//        } else if (comboEntity.getSelectedIndex() < 0) {
-//            comboEntity.setSelectedIndex(0);
-//        }
-//    }
+    //    private void updateEntityChoice() {
+    //        String lastChoice = (String) comboEntity.getSelectedItem();
+    //        comboEntity.removeAllItems();
+    //        comboEntity.setEnabled(true);
+    //        String displayNane = "";
+    //        for (Iterator<Entity> ents = currentClient.getGame().getEntities(); ents.hasNext();) {
+    //            Entity entity = ents.next();
+    //            if (entity.getOwner().equals(currentClient.getLocalPlayer())) {
+    //                displayNane = addEntity(comboEntity, entity.getShortName());
+    //            }
+    //        }
+    //        lastChoice = (lastChoice != null ? lastChoice : displayNane);
+    //        comboEntity.setSelectedItem(lastChoice);
+    //        if (comboEntity.getItemCount() <= 1) {
+    //            comboEntity.setEnabled(false);
+    //        } else if (comboEntity.getSelectedIndex() < 0) {
+    //            comboEntity.setSelectedIndex(0);
+    //        }
+    //    }
 
     private void updateQuickChoice() {
         String lastChoice = (String) comboQuick.getSelectedItem();
         lastChoice = (lastChoice != null) ? lastChoice : Messages.getString("MiniReportDisplay.Damage");
         comboQuick.removeAllItems();
         comboQuick.setEnabled(true);
-        String[] keywords =  CP.getReportKeywords().split("\n");
+        String[] keywords = CP.getReportKeywords().split("\n");
         for (String keyword : keywords) {
             comboQuick.addItem(keyword);
         }
@@ -268,7 +290,7 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
     public void setVisible(boolean visible) {
         if (visible) {
             updatePlayerChoice();
-//            updateEntityChoice();
+            //            updateEntityChoice();
             updateQuickChoice();
         }
         super.setVisible(visible);
@@ -289,13 +311,13 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
             searchTextPane(searchPattern, true);
         } else if (ae.getSource().equals(butEntitySearchUp)) {
             String searchPattern = comboEntity.getSelectedItem().toString().trim();
-            searchTextPane(searchPattern,false);
+            searchTextPane(searchPattern, false);
         } else if (ae.getSource().equals(butQuickSearchDown)) {
             String searchPattern = comboQuick.getSelectedItem().toString().trim();
             searchTextPane(searchPattern, true);
         } else if (ae.getSource().equals(butQuickSearchUp)) {
             String searchPattern = comboQuick.getSelectedItem().toString().trim();
-            searchTextPane(searchPattern,false);
+            searchTextPane(searchPattern, false);
         }
     }
 
@@ -332,12 +354,12 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
         SBFFullGameReport report = game.getGameReport();
         for (int round = startIndex; round <= numRounds; round++) {
             if (report.hasReportsforRound(round)) {
-            String text=
-                report.get(round).stream().map(r -> r.text()).collect(Collectors.joining());
-            tabs.add(Messages.getString("MiniReportDisplay.Round") + " " + round, loadHtmlScrollPane(text));
+                String text =
+                      report.get(round).stream().map(r -> r.text()).collect(Collectors.joining());
+                tabs.add(Messages.getString("MiniReportDisplay.Round") + " " + round, loadHtmlScrollPane(text));
             }
 
-//            String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
+            //            String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
         }
 
         // add the new current phase tab
@@ -353,37 +375,37 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
 
     @Override
     public void hyperlinkUpdate(HyperlinkEvent evt) {
-//        String evtDesc = evt.getDescription();
-//        if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-//            if (evtDesc.startsWith(Report.ENTITY_LINK)) {
-//                String idString = evtDesc.substring(Report.ENTITY_LINK.length());
-//                int id;
-//                try {
-//                    id = Integer.parseInt(idString);
-//                } catch (Exception ex) {
-//                    id = -1;
-//                }
-//                Entity ent = currentClientgui.getClient().getGame().getEntity(id);
-//                if (ent != null) {
-//                    currentClientgui.getUnitDisplay().displayEntity(ent);
-//                    GUIP.setUnitDisplayEnabled(true);
-//                    if (ent.isDeployed() && !ent.isOffBoard() && ent.getPosition() != null) {
-//                        currentClientgui.getBoardView().centerOnHex(ent.getPosition());
-//                    }
-//                }
-//            } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
-//                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
-//                JOptionPane.showMessageDialog(currentClientgui.getFrame(), desc,
-//                        Messages.getString("MiniReportDisplay.Details"), JOptionPane.PLAIN_MESSAGE);
-//            }
-//        } else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
-//            if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
-//                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
-//                activePane().setToolTipText(desc);
-//            }
-//        } else if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
-//            activePane().setToolTipText(null);
-//        }
+        //        String evtDesc = evt.getDescription();
+        //        if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+        //            if (evtDesc.startsWith(Report.ENTITY_LINK)) {
+        //                String idString = evtDesc.substring(Report.ENTITY_LINK.length());
+        //                int id;
+        //                try {
+        //                    id = Integer.parseInt(idString);
+        //                } catch (Exception ex) {
+        //                    id = -1;
+        //                }
+        //                Entity ent = currentClientgui.getClient().getGame().getEntity(id);
+        //                if (ent != null) {
+        //                    currentClientgui.getUnitDisplay().displayEntity(ent);
+        //                    GUIP.setUnitDisplayEnabled(true);
+        //                    if (ent.isDeployed() && !ent.isOffBoard() && ent.getPosition() != null) {
+        //                        currentClientgui.getBoardView().centerOnHex(ent.getPosition());
+        //                    }
+        //                }
+        //            } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
+        //                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
+        //                JOptionPane.showMessageDialog(currentClientgui.getFrame(), desc,
+        //                        Messages.getString("MiniReportDisplay.Details"), JOptionPane.PLAIN_MESSAGE);
+        //            }
+        //        } else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
+        //            if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
+        //                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
+        //                activePane().setToolTipText(desc);
+        //            }
+        //        } else if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
+        //            activePane().setToolTipText(null);
+        //        }
     }
 
     private GameListener gameListener = new GameListenerAdapter() {
@@ -395,10 +417,11 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
                     break;
                 default:
                     if ((!e.getNewPhase().equals((e.getOldPhase())))
-                            && ((e.getNewPhase().isReport()) || ((e.getNewPhase().isOnMap()) && (tabs.getTabCount() == 0)))){
+                          && ((e.getNewPhase().isReport()) || ((e.getNewPhase().isOnMap()) && (tabs.getTabCount()
+                          == 0)))) {
                         addReportPages(e.getNewPhase());
                         updatePlayerChoice();
-//                        updateEntityChoice();
+                        //                        updateEntityChoice();
                     }
             }
         }

@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.abstractPanels;
 
@@ -26,7 +40,6 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -48,9 +61,8 @@ import megamek.common.util.fileUtils.AbstractDirectory;
 import megamek.logging.MMLogger;
 
 /**
- * An AbstractIconChooser is an abstract panel that is used to select an
- * AbstractIcon from the
- * various potential icons located within the specified AbstractDirectory.
+ * An AbstractIconChooser is an abstract panel that is used to select an AbstractIcon from the various potential icons
+ * located within the specified AbstractDirectory.
  */
 public abstract class abstractIconChooserPanel extends AbstractPanel implements TreeSelectionListener {
     private final static MMLogger logger = MMLogger.create(abstractIconChooserPanel.class);
@@ -77,12 +89,12 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
 
     // region Constructors
     protected abstractIconChooserPanel(final JFrame frame, final String name, final @Nullable JTree tree,
-            final @Nullable AbstractIcon icon) {
+          final @Nullable AbstractIcon icon) {
         this(frame, name, tree, icon, true);
     }
 
     protected abstractIconChooserPanel(final JFrame frame, final String name, final @Nullable JTree tree,
-            final @Nullable AbstractIcon icon, final boolean initialize) {
+          final @Nullable AbstractIcon icon, final boolean initialize) {
         super(frame, name);
         setOriginalIcon(icon);
         setTreeCategories(tree);
@@ -95,18 +107,17 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
     // endregion Constructors
 
     // region Getters/Setters
+
     /**
-     * @return the original AbstractIcon, which may be null if there's not an
-     *         original icon
+     * @return the original AbstractIcon, which may be null if there's not an original icon
      */
     public @Nullable AbstractIcon getOriginalIcon() {
         return originalIcon;
     }
 
     /**
-     * @param originalIcon the original AbstractIcon, which may be null if there
-     *                     isn't one or to
-     *                     clear the original AbstractIcon
+     * @param originalIcon the original AbstractIcon, which may be null if there isn't one or to clear the original
+     *                     AbstractIcon
      */
     public void setOriginalIcon(final @Nullable AbstractIcon originalIcon) {
         this.originalIcon = originalIcon;
@@ -117,11 +128,9 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
     }
 
     /**
-     * @return the current JTree containing the various applicable categories, which
-     *         will only be
-     *         null when initialization of the categories needs to be delayed to the
-     *         end of initialization.
-     *         However, all implementations of this must be null protected.
+     * @return the current JTree containing the various applicable categories, which will only be null when
+     *       initialization of the categories needs to be delayed to the end of initialization. However, all
+     *       implementations of this must be null protected.
      */
     public @Nullable JTree getTreeCategories() {
         return treeCategories;
@@ -176,7 +185,7 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
             finalizeInitialization();
         } catch (Exception ex) {
             logger.error(ex,
-                    "Error finalizing the Icon Chooser. Returning the created dialog, but this is likely to cause some oddities.");
+                  "Error finalizing the Icon Chooser. Returning the created dialog, but this is likely to cause some oddities.");
         }
     }
 
@@ -208,7 +217,7 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
 
         setChkIncludeSubdirectories(new JCheckBox("Include Subdirectories"));
         getChkIncludeSubdirectories().setToolTipText(
-                "Include files contained in subdirectories in the displayed selection. This holds for both general function and the search.");
+              "Include files contained in subdirectories in the displayed selection. This holds for both general function and the search.");
         getChkIncludeSubdirectories().setName("chkIncludeSubdirectories");
         getChkIncludeSubdirectories().setSelected(true);
         getChkIncludeSubdirectories().addActionListener(evt -> updateSearch(""));
@@ -218,15 +227,10 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
     }
 
     /**
-     * This provides a way to override the end of initialization, which is required
-     * for MekHQ's
-     * ForcePieceIcons.
+     * This provides a way to override the end of initialization, which is required for MekHQ's ForcePieceIcons.
      *
-     * @throws Exception if there's an issue finishing initialization. Normally this
-     *                   means there's
-     *                   an issue setting the preferences, which normally means that
-     *                   a component has had its name
-     *                   value set.
+     * @throws Exception if there's an issue finishing initialization. Normally this means there's an issue setting the
+     *                   preferences, which normally means that a component has had its name value set.
      */
     protected void finalizeInitialization() throws Exception {
         setPreferences();
@@ -241,25 +245,23 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
     // endregion Initialization
 
     /**
-     * @return the directory for the current icon. This should not be null, but
-     *         there is a low
-     *         possibility of it occurring if the directory doesn't exist
+     * @return the directory for the current icon. This should not be null, but there is a low possibility of it
+     *       occurring if the directory doesn't exist
      */
     protected abstract @Nullable AbstractDirectory getDirectory();
 
     /**
      * @param category the category of the newly created icon
      * @param filename the filename for the created icon
+     *
      * @return the newly created AbstractIcon
      */
     protected abstract AbstractIcon createIcon(String category, final String filename);
 
     /**
-     * Reacts to changes in the search field, showing searched items for the search
-     * string given by
-     * contents when at least 3 characters are present in the search field, and
-     * reverting to the
-     * selected category when the search field is empty.
+     * Reacts to changes in the search field, showing searched items for the search string given by contents when at
+     * least 3 characters are present in the search field, and reverting to the selected category when the search field
+     * is empty.
      *
      * @param contents the string to search
      */
@@ -286,8 +288,7 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
     }
 
     /**
-     * @return the selected AbstractIcon, which may be null if there is nothing
-     *         selected
+     * @return the selected AbstractIcon, which may be null if there is nothing selected
      */
     public @Nullable AbstractIcon getSelectedItem() {
         return getImageList().getSelectedValue();
@@ -313,9 +314,7 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
     public abstract void refreshDirectory();
 
     /**
-     * This method is ONLY to be called by those methods overwriting the abstract
-     * refreshDirectory
-     * above
+     * This method is ONLY to be called by those methods overwriting the abstract refreshDirectory above
      *
      * @param newTree the new directory tree to use
      */
@@ -331,11 +330,11 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
     }
 
     /**
-     * Called at start and when a new category is selected in the directory tree.
-     * Assumes that the root of the path (AbstractIcon.ROOT_CATEGORY) is passed as
-     * ""!
+     * Called at start and when a new category is selected in the directory tree. Assumes that the root of the path
+     * (AbstractIcon.ROOT_CATEGORY) is passed as ""!
      *
      * @param category the category to get the items for, in TreePath format
+     *
      * @return a list of items that should be shown for the category
      */
     protected List<AbstractIcon> getIcons(final String category) {
@@ -353,14 +352,11 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
     }
 
     /**
-     * @param category the current category directory, or null if there's no further
-     *                 category to
-     *                 check on this path
-     * @param icons    the list of icons determined to be part of the overall
-     *                 category path
+     * @param category the current category directory, or null if there's no further category to check on this path
+     * @param icons    the list of icons determined to be part of the overall category path
      */
     private void recursivelyDetermineCategoryIcons(final @Nullable AbstractDirectory category,
-            final List<AbstractIcon> icons) {
+          final List<AbstractIcon> icons) {
         if (category == null) {
             return;
         }
@@ -369,12 +365,11 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
     }
 
     /**
-     * @param category the current category directory, or null if the category
-     *                 doesn't exist
+     * @param category the current category directory, or null if the category doesn't exist
      * @param icons    the list of icons to add icons in this category to
      */
     private void addCategoryIcons(final @Nullable AbstractDirectory category,
-            final List<AbstractIcon> icons) {
+          final List<AbstractIcon> icons) {
         if (category == null) {
             return;
         }
@@ -386,6 +381,7 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
      * Called when at least 3 characters are entered into the search bar.
      *
      * @param searchString the string to search for
+     *
      * @return a list of icons that fit the provided search string
      */
     protected List<AbstractIcon> getSearchedItems(final String searchString) {
@@ -405,7 +401,7 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
                 continue;
             }
 
-            for (final Iterator<String> itemNames = getDirectory().getItemNames(category); itemNames.hasNext();) {
+            for (final Iterator<String> itemNames = getDirectory().getItemNames(category); itemNames.hasNext(); ) {
                 final String item = itemNames.next();
                 if (item.toLowerCase().contains(lowerSearched)) {
                     result.add(createIcon(category, item));
@@ -417,9 +413,8 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
     }
 
     /**
-     * Selects the given category in the tree, updates the shown images to this
-     * category, and
-     * selects the item given by filename in the image list.
+     * Selects the given category in the tree, updates the shown images to this category, and selects the item given by
+     * filename in the image list.
      *
      * @param icon the icon to select, which may be null to set nothing as selected
      */
@@ -439,7 +434,7 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
         if (icon != null) {
             for (final String name : icon.getCategory().split(Pattern.quote("/"))) {
                 found = false;
-                for (final Enumeration<?> enm = currentNode.children(); enm.hasMoreElements();) {
+                for (final Enumeration<?> enm = currentNode.children(); enm.hasMoreElements(); ) {
                     final DefaultMutableTreeNode child = (DefaultMutableTreeNode) enm.nextElement();
                     if (name.equals(child.getUserObject())) {
                         currentNode = child;

@@ -38,10 +38,10 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 
 /**
- * A layout manager that arranges components in a vertical grid pattern.
- * Components are placed column by column, filling vertically before moving to the next column.
- * This is in contrast to the standard GridLayout which fills horizontally first.
- * 
+ * A layout manager that arranges components in a vertical grid pattern. Components are placed column by column, filling
+ * vertically before moving to the next column. This is in contrast to the standard GridLayout which fills horizontally
+ * first.
+ *
  * @author MegaMek Team
  */
 public class VerticalGridLayout extends GridLayout {
@@ -55,7 +55,7 @@ public class VerticalGridLayout extends GridLayout {
 
     /**
      * Creates a vertical grid layout with the specified number of rows and columns.
-     * 
+     *
      * @param rows the number of rows in the grid
      * @param cols the number of columns in the grid
      */
@@ -64,9 +64,9 @@ public class VerticalGridLayout extends GridLayout {
     }
 
     /**
-     * Creates a vertical grid layout with the specified number of rows and columns,
-     * and the specified horizontal and vertical gaps.
-     * 
+     * Creates a vertical grid layout with the specified number of rows and columns, and the specified horizontal and
+     * vertical gaps.
+     *
      * @param rows the number of rows in the grid
      * @param cols the number of columns in the grid
      * @param hgap the horizontal gap between components
@@ -77,9 +77,9 @@ public class VerticalGridLayout extends GridLayout {
     }
 
     /**
-     * Lays out the specified container using this layout.
-     * Components are arranged in a vertical grid pattern, filling columns before rows.
-     * 
+     * Lays out the specified container using this layout. Components are arranged in a vertical grid pattern, filling
+     * columns before rows.
+     *
      * @param parent the container to be laid out
      */
     @Override
@@ -93,36 +93,38 @@ public class VerticalGridLayout extends GridLayout {
             final Insets insets = parent.getInsets();
             final GridDimensions gridDims = calculateGridDimensions(ncomponents);
             final ComponentDimensions compDims = calculateComponentDimensions(parent, insets, gridDims);
-            
+
             positionComponents(parent, insets, gridDims, compDims, ncomponents);
         }
     }
 
     /**
      * Calculates the optimal grid dimensions based on the number of components.
-     * 
+     *
      * @param ncomponents the number of components to arrange
+     *
      * @return the calculated grid dimensions
      */
     private GridDimensions calculateGridDimensions(int ncomponents) {
         int nrows = getRows();
         int ncols = getColumns();
-        
+
         if (nrows > 0) {
             ncols = (ncomponents + nrows - 1) / nrows;
         } else {
             nrows = (ncomponents + ncols - 1) / ncols;
         }
-        
+
         return new GridDimensions(nrows, ncols);
     }
 
     /**
      * Calculates the component dimensions and positioning information.
-     * 
-     * @param parent the parent container
-     * @param insets the container insets
+     *
+     * @param parent   the parent container
+     * @param insets   the container insets
      * @param gridDims the grid dimensions
+     *
      * @return the calculated component dimensions
      */
     private ComponentDimensions calculateComponentDimensions(Container parent, Insets insets, GridDimensions gridDims) {
@@ -141,17 +143,17 @@ public class VerticalGridLayout extends GridLayout {
 
     /**
      * Positions all components in the container according to the grid layout.
-     * 
-     * @param parent the parent container
-     * @param insets the container insets
-     * @param gridDims the grid dimensions
-     * @param compDims the component dimensions
+     *
+     * @param parent      the parent container
+     * @param insets      the container insets
+     * @param gridDims    the grid dimensions
+     * @param compDims    the component dimensions
      * @param ncomponents the number of components
      */
-    private void positionComponents(Container parent, Insets insets, GridDimensions gridDims, 
-                                  ComponentDimensions compDims, int ncomponents) {
+    private void positionComponents(Container parent, Insets insets, GridDimensions gridDims,
+          ComponentDimensions compDims, int ncomponents) {
         final boolean ltr = parent.getComponentOrientation().isLeftToRight();
-        
+
         if (ltr) {
             positionComponentsLTR(parent, insets, gridDims, compDims, ncomponents);
         } else {
@@ -162,13 +164,13 @@ public class VerticalGridLayout extends GridLayout {
     /**
      * Positions components for left-to-right orientation.
      */
-    private void positionComponentsLTR(Container parent, Insets insets, GridDimensions gridDims, 
-                                     ComponentDimensions compDims, int ncomponents) {
+    private void positionComponentsLTR(Container parent, Insets insets, GridDimensions gridDims,
+          ComponentDimensions compDims, int ncomponents) {
         int x = insets.left + compDims.extraWidthAvailable;
-        
+
         for (int c = 0; c < gridDims.ncols; c++) {
             int y = insets.top + compDims.extraHeightAvailable;
-            
+
             for (int r = 0; r < gridDims.nrows; r++) {
                 final int componentIndex = c * gridDims.nrows + r;
                 if (componentIndex < ncomponents) {
@@ -184,13 +186,13 @@ public class VerticalGridLayout extends GridLayout {
     /**
      * Positions components for right-to-left orientation.
      */
-    private void positionComponentsRTL(Container parent, Insets insets, GridDimensions gridDims, 
-                                     ComponentDimensions compDims, int ncomponents) {
+    private void positionComponentsRTL(Container parent, Insets insets, GridDimensions gridDims,
+          ComponentDimensions compDims, int ncomponents) {
         int x = parent.getWidth() - insets.right - compDims.width - compDims.extraWidthAvailable;
-        
+
         for (int c = 0; c < gridDims.ncols; c++) {
             int y = insets.top + compDims.extraHeightAvailable;
-            
+
             for (int r = 0; r < gridDims.nrows; r++) {
                 final int componentIndex = c * gridDims.nrows + r;
                 if (componentIndex < ncomponents) {

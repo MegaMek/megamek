@@ -1,30 +1,52 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.common.weapons;
 
-import megamek.common.*;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.totalwarfare.TWGameManager;
+package megamek.common.weapons;
 
 import java.io.Serial;
 import java.util.Vector;
+
+import megamek.common.Building;
+import megamek.common.Dropship;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Jumpship;
+import megamek.common.Report;
+import megamek.common.ToHitData;
+import megamek.common.Warship;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author MKerensky
@@ -34,8 +56,9 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
     private static final long serialVersionUID = 6359291710822171023L;
 
     /**
-     * Weapon handler for Anti Ship Electronic Warfare Missiles
-     * Single, large missile - behaves like a thunderbolt except for damage.
+     * Weapon handler for Anti Ship Electronic Warfare Missiles Single, large missile - behaves like a thunderbolt
+     * except for damage.
+     *
      * @param t - ToHit roll data
      * @param w - The weapon attack action for this ASEW missile
      * @param g - The current game
@@ -47,13 +70,13 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
 
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
+          Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+          int bldgAbsorbs) {
         missed = false;
 
         hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                toHit.getSideTable(), waa.getAimedLocation(),
-                waa.getAimingMode(), toHit.getCover());
+              toHit.getSideTable(), waa.getAimedLocation(),
+              waa.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
         hit.setCapital(wtype.isCapital());
         hit.setBoxCars(roll.getIntValue() == 12);
@@ -98,7 +121,7 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
             jumpship.setASEWAffected(loc, 2);
             //If a Warship is hit in the fore or aft side, the broadside arc is also affected
             if ((jumpship instanceof Warship)
-                    && (loc == Jumpship.LOC_FLS || loc == Jumpship.LOC_ALS)) {
+                  && (loc == Jumpship.LOC_FLS || loc == Jumpship.LOC_ALS)) {
                 jumpship.setASEWAffected(Warship.LOC_LBS, 2);
                 //Report the arc hit by the attack and the associated broadside and the duration of the effects
                 r = new Report(3474);
@@ -107,7 +130,7 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
                 r.add("LBS");
                 vPhaseReport.add(r);
             } else if ((jumpship instanceof Warship)
-                    && (loc == Jumpship.LOC_FRS || loc == Jumpship.LOC_ARS)) {
+                  && (loc == Jumpship.LOC_FRS || loc == Jumpship.LOC_ARS)) {
                 jumpship.setASEWAffected(Warship.LOC_RBS, 2);
                 //Report the arc hit by the attack and the associated broadside and the duration of the effects
                 r = new Report(3474);

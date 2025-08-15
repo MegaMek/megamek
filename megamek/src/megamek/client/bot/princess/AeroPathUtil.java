@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 
 package megamek.client.bot.princess;
@@ -30,9 +44,9 @@ import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.IAero;
+import megamek.common.UnitType;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
-import megamek.common.UnitType;
 import megamek.logging.MMLogger;
 
 /**
@@ -81,10 +95,11 @@ public class AeroPathUtil {
     }
 
     /**
-     * Determines if the aircraft undertaking the given path will stall at the end
-     * of the turn. Only relevant for aerodyne units
+     * Determines if the aircraft undertaking the given path will stall at the end of the turn. Only relevant for
+     * aerodyne units
      *
      * @param movePath the path to check
+     *
      * @return whether the aircraft will stall at the end of the path
      */
     public static boolean willStall(MovePath movePath) {
@@ -106,30 +121,31 @@ public class AeroPathUtil {
         }
 
         return (isSpheroid && (movePath.getFinalNDown() == 0) &&
-                (movePath.getMpUsed() == 0) &&
-                !movePath.contains(MoveStepType.VLAND));
+              (movePath.getMpUsed() == 0) &&
+              !movePath.contains(MoveStepType.VLAND));
     }
 
     /**
      * Determines if the aircraft undertaking the given path will become a lawn dart
      *
      * @param movePath the path to check
+     *
      * @return True or false
      */
     public static boolean willCrash(MovePath movePath) {
         return movePath.getEntity().isAero() &&
-                movePath.isOnAtmosphericGroundMap() &&
-                (movePath.getFinalAltitude() < 1) &&
-                !movePath.contains(MoveStepType.VLAND) &&
-                !movePath.contains(MoveStepType.LAND);
+              movePath.isOnAtmosphericGroundMap() &&
+              (movePath.getFinalAltitude() < 1) &&
+              !movePath.contains(MoveStepType.VLAND) &&
+              !movePath.contains(MoveStepType.LAND);
     }
 
     /**
-     * A quick determination that checks the given path for the most common causes
-     * of a PSR and whether it leads us off board. The idea being that a safe path
-     * off board should not include any PSRs.
+     * A quick determination that checks the given path for the most common causes of a PSR and whether it leads us off
+     * board. The idea being that a safe path off board should not include any PSRs.
      *
      * @param movePath The path to check
+     *
      * @return True or false
      */
     public static boolean isSafePathOffBoard(MovePath movePath) {
@@ -141,23 +157,22 @@ public class AeroPathUtil {
         // see your doctor if you experience any of these symptoms as it may lead to
         // your aircraft transforming into a lawn dart
         return !willStall(movePath) &&
-                !willCrash(movePath) &&
-                movePath.fliesOffBoard() &&
-                !movePath.contains(MoveStepType.MANEUVER) &&
-                (movePath.getMpUsed() <= movePath.getEntity().getWalkMP()) &&
-                (movePath.getEntity().isAero() && (movePath.getMpUsed() <= ((IAero) movePath.getEntity()).getSI()));
+              !willCrash(movePath) &&
+              movePath.fliesOffBoard() &&
+              !movePath.contains(MoveStepType.MANEUVER) &&
+              (movePath.getMpUsed() <= movePath.getEntity().getWalkMP()) &&
+              (movePath.getEntity().isAero() && (movePath.getMpUsed() <= ((IAero) movePath.getEntity()).getSI()));
     }
 
     /**
-     * Generates paths that begin with all valid acceleration sequences for this
-     * aircraft.
+     * Generates paths that begin with all valid acceleration sequences for this aircraft.
      *
      * @param startingPath The initial path, hopefully empty.
-     * @return The child paths with all the accelerations this unit possibly can
-     *         undertake.
+     *
+     * @return The child paths with all the accelerations this unit possibly can undertake.
      */
     public static Collection<MovePath> generateValidAccelerations(MovePath startingPath, int lowerBound,
-            int upperBound) {
+          int upperBound) {
         Collection<MovePath> paths = new ArrayList<>();
 
         // sanity check: if we've already done something else with the path, there's no
@@ -183,7 +198,7 @@ public class AeroPathUtil {
         // If the unaltered starting path is within acceptable velocity bounds, it's
         // also a valid "acceleration".
         if (startingPath.getFinalVelocity() <= upperBound &&
-                startingPath.getFinalVelocity() >= lowerBound) {
+              startingPath.getFinalVelocity() >= lowerBound) {
             paths.add(startingPath.clone());
         }
 
@@ -203,12 +218,11 @@ public class AeroPathUtil {
     }
 
     /**
-     * Helper function to calculate the maximum thrust we should use for a
-     * particular aircraft We limit ourselves to the lowest of "safe thrust" and
-     * "structural integrity", as anything further is unsafe, meaning it requires a
-     * PSR.
+     * Helper function to calculate the maximum thrust we should use for a particular aircraft We limit ourselves to the
+     * lowest of "safe thrust" and "structural integrity", as anything further is unsafe, meaning it requires a PSR.
      *
      * @param aero The aero entity for which to calculate max thrust.
+     *
      * @return The max thrust.
      */
     public static int calculateMaxSafeThrust(IAero aero) {
@@ -216,10 +230,10 @@ public class AeroPathUtil {
     }
 
     /**
-     * Given a move path, generate all possible increases and decreases in
-     * elevation.
+     * Given a move path, generate all possible increases and decreases in elevation.
      *
      * @param path The move path to process.
+     *
      * @return Collection of generated paths.
      */
     public static List<MovePath> generateValidAltitudeChanges(MovePath path) {
@@ -228,13 +242,13 @@ public class AeroPathUtil {
         // clone path add UP
         // if path uses more MP than entity has available or altitude higher than 10,
         // stop
-        for (int altChange = 0;; altChange++) {
+        for (int altChange = 0; ; altChange++) {
             int altChangeCost = altChange * 2;
 
             // if we are going to attempt to change altitude but won't actually be able to,
             // break out.
             if ((path.getFinalAltitude() + altChange > 10) ||
-                    path.getMpUsed() + altChangeCost > path.getEntity().getRunMP()) {
+                  path.getMpUsed() + altChangeCost > path.getEntity().getRunMP()) {
                 break;
             }
 
@@ -255,7 +269,7 @@ public class AeroPathUtil {
         // if the path is already at minimum altitude, skip this
         // if path uses more MP than entity has available or altitude lower than 1, stop
         if (path.getFinalAltitude() > 1) {
-            for (int altChange = 1;; altChange++) {
+            for (int altChange = 1; ; altChange++) {
                 MovePath childPath = path.clone();
 
                 for (int numSteps = 0; numSteps < altChange; numSteps++) {
@@ -276,9 +290,8 @@ public class AeroPathUtil {
     }
 
     /**
-     * Given a move path, generates all possible rotations from it, without any
-     * regard to legality. Mostly because it's intended for spheroid DropShips in
-     * atmosphere, which can rotate as much as they want.
+     * Given a move path, generates all possible rotations from it, without any regard to legality. Mostly because it's
+     * intended for spheroid DropShips in atmosphere, which can rotate as much as they want.
      */
     public static List<MovePath> generateValidRotations(MovePath path) {
         List<MovePath> childPaths = new ArrayList<>();

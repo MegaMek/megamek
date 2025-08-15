@@ -32,6 +32,12 @@
  */
 package megamek.client.ui.boardeditor;
 
+import static megamek.common.Terrains.DEPLOYMENT_ZONE;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.util.List;
+
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.HexDrawPlugin;
 import megamek.client.ui.tileset.HexTileset;
@@ -41,12 +47,6 @@ import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Hex;
 import megamek.common.Terrain;
-
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.util.List;
-
-import static megamek.common.Terrains.*;
 
 /**
  * This plugin is used in the Board Editor to draw markers on hexes that are deployment zones
@@ -101,12 +101,12 @@ class DeploymentZoneDrawPlugin implements HexDrawPlugin {
         int x = (int) (boardView.getScale() * HexTileset.HEX_W / 2);
         int y = (int) (boardView.getScale() * HexTileset.HEX_H / 2);
         var zoneText = new StringDrawer(String.join(", ", zonesAsString))
-                    .at(x, y)
-                    .center()
-                    .outline(ZONE_TEXT_OUTLINE, 1f)
-                    .fontSize(HexTileset.HEX_W * boardView.getScale() / 4)
-                    .maxWidth(x)
-                    .color(ZONE_TEXT_COLOR);
+              .at(x, y)
+              .center()
+              .outline(ZONE_TEXT_OUTLINE, 1f)
+              .fontSize(HexTileset.HEX_W * boardView.getScale() / 4)
+              .maxWidth(x)
+              .color(ZONE_TEXT_COLOR);
         zoneText.draw(graphics2D);
     }
 

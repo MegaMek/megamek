@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
@@ -29,12 +43,15 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.EntityWreckHelper;
-import megamek.common.*;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.Terrains;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 
 /**
  * Contains common functionality for wreck sprites (currently isometric and regular)
+ *
  * @author NickAragua
  */
 public abstract class AbstractWreckSprite extends Sprite {
@@ -71,15 +88,14 @@ public abstract class AbstractWreckSprite extends Sprite {
     }
 
     /**
-     * Creates the sprite for this entity. It is an extra pain to create
-     * transparent images in AWT.
+     * Creates the sprite for this entity. It is an extra pain to create transparent images in AWT.
      */
     @Override
     public void prepare() {
         if (entity.getPosition() != null && entity.getGame() != null
-            && entity.getGame().getHexOf(entity) != null &&
-            entity.getGame().getHexOf(entity).containsTerrain(Terrains.ULTRA_SUBLEVEL)) {
-           return; //Don't show wrecks for "Ultra Sublevels" - The unit fell through the map!
+              && entity.getGame().getHexOf(entity) != null &&
+              entity.getGame().getHexOf(entity).containsTerrain(Terrains.ULTRA_SUBLEVEL)) {
+            return; //Don't show wrecks for "Ultra Sublevels" - The unit fell through the map!
         }
 
         // create image for buffer
@@ -89,12 +105,12 @@ public abstract class AbstractWreckSprite extends Sprite {
         // if the entity is underwater or would sink underwater, we want to make the wreckage translucent
         // so it looks like it sunk
         boolean entityIsUnderwater = (entity.relHeight() < 0) ||
-                ((entity.relHeight() >= 0) && entity.getGame().getHexOf(entity).containsTerrain(Terrains.WATER)) &&
-                !EntityWreckHelper.entityOnBridge(entity);
+              ((entity.relHeight() >= 0) && entity.getGame().getHexOf(entity).containsTerrain(Terrains.WATER)) &&
+                    !EntityWreckHelper.entityOnBridge(entity);
 
         if (entityIsUnderwater) {
             graph.setComposite(AlphaComposite.getInstance(
-                    AlphaComposite.SRC_OVER, 0.35f));
+                  AlphaComposite.SRC_OVER, 0.35f));
         }
 
         // draw the 'destroyed decal' where appropriate
@@ -133,12 +149,12 @@ public abstract class AbstractWreckSprite extends Sprite {
         if (EntityWreckHelper.displayDevastation(entity)) {
             // objects in space should not have craters
             wreck = entity.isSpaceborne() ?
-                    bv.getTileManager().wreckMarkerFor(entity, secondaryPos) :
-                     bv.getTileManager().getCraterFor(entity, secondaryPos);
+                  bv.getTileManager().wreckMarkerFor(entity, secondaryPos) :
+                  bv.getTileManager().getCraterFor(entity, secondaryPos);
         } else {
             wreck = EntityWreckHelper.useExplicitWreckImage(entity) ?
-                         bv.getTileManager().wreckMarkerFor(entity, secondaryPos) :
-                         bv.getTileManager().imageFor(entity, secondaryPos);
+                  bv.getTileManager().wreckMarkerFor(entity, secondaryPos) :
+                  bv.getTileManager().imageFor(entity, secondaryPos);
         }
 
         if (null != wreck) {
@@ -147,7 +163,7 @@ public abstract class AbstractWreckSprite extends Sprite {
 
         if (entityIsUnderwater) {
             graph.setComposite(AlphaComposite.getInstance(
-                    AlphaComposite.SRC_OVER, 1.0f));
+                  AlphaComposite.SRC_OVER, 1.0f));
         }
 
         // create final image

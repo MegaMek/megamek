@@ -2,9 +2,9 @@ import java.time.LocalDateTime
 
 plugins {
     id 'application'
-    id 'com.palantir.git-version' version '3.3.0'
-    id 'edu.sc.seis.launch4j' version '3.0.6'
-    id "io.sentry.jvm.gradle" version '5.7.0'
+    id 'com.palantir.git-version' version '4.0.0'
+    id 'edu.sc.seis.launch4j' version '4.0.0'
+    id "io.sentry.jvm.gradle" version '5.8.0'
     id 'jacoco'
     id 'java'
     id 'checkstyle'
@@ -36,33 +36,33 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.19.0'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.19.0'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.0'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.19.2'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.19.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.2'
 
-    implementation 'com.formdev:flatlaf:3.6'
-    implementation 'com.formdev:flatlaf-extras:3.6'
+    implementation 'com.formdev:flatlaf:3.6.1'
+    implementation 'com.formdev:flatlaf-extras:3.6.1'
 
-    implementation 'com.sun.mail:jakarta.mail:2.0.1'
+    implementation 'com.sun.mail:jakarta.mail:2.0.2'
 
     implementation 'com.thoughtworks.xstream:xstream:1.4.21'
 
-    implementation 'commons-io:commons-io:2.19.0'
+    implementation 'commons-io:commons-io:2.20.0'
 
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
 
     implementation 'org.apache.commons:commons-collections4:4.5.0'
     implementation 'org.apache.commons:commons-lang3:3.18.0'
-    implementation 'org.apache.commons:commons-text:1.13.1'
+    implementation 'org.apache.commons:commons-text:1.14.0'
 
-    implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
-    implementation 'org.apache.logging.log4j:log4j-core:2.24.3'
+    implementation 'org.apache.logging.log4j:log4j-api:2.25.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.25.1'
 
     implementation 'org.apache.pdfbox:pdfbox:3.0.5'
 
     implementation 'org.freemarker:freemarker:2.3.34'
 
-    implementation 'org.commonmark:commonmark:0.24.0'
+    implementation 'org.commonmark:commonmark:0.25.1'
 
     implementation 'com.squareup:gifencoder:0.10.1'
 
@@ -70,9 +70,9 @@ dependencies {
 
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.4'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.13.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.13.4'
     testImplementation 'org.mockito:mockito-core:5.18.0'
 }
 
@@ -97,20 +97,8 @@ ext {
             'java.base/java.util.concurrent=ALL-UNNAMED',
             '-Dsun.awt.disablegrab=true'
     ]
-    data = 'data'
-    unitFiles = "${data}/mekfiles"
-    rats = "${data}/rat"
-    docs = "docs"
-    lib = "lib"
-    log = "logs"
-    mmconf = "mmconf"
-    userdata = 'userdata'
     fileStagingDir = "${layout.buildDirectory.get()}/files"
     atlasedImages = "${fileStagingDir}/atlasedImages.txt"
-}
-
-run {
-    jvmArgs = mmJvmOptions
 }
 
 jar {
@@ -119,7 +107,7 @@ jar {
     manifest {
         attributes "Main-Class": application.mainClass
         attributes "Class-Path": project.sourceSets.main.runtimeClasspath.files
-                .findAll { it.name.endsWith(".jar") }.collect { "${lib}/${it.name}" }.join(' ')
+                .findAll { it.name.endsWith(".jar") }.collect { "lib/${it.name}" }.join(' ')
         attributes "Add-Opens": 'java.base/java.util java.base/java.util.concurrent'
         attributes "Build-Date": LocalDateTime.now()
         attributes "Sealed": true
@@ -139,6 +127,15 @@ checkstyle {
 tasks.withType(Checkstyle).configureEach {
     minHeapSize = "1g"
     maxHeapSize = "4g"
+}
+
+tasks.register('stageDataFiles', Sync) {
+    dependsOn gradle.includedBuild('mm-data').task(':stageMMFiles')
+    description = "Syncs Data Files from MM Data"
+    group = 'build'
+    from "../../mm-data/build/staging/mm"
+    into "${layout.projectDirectory.asFile}/data"
+
 }
 
 tasks.register('generateDynamicFiles') {
@@ -169,7 +166,7 @@ tasks.register("stageLicenseFiles", Sync) {
 }
 
 tasks.register("copyLicenseFiles", Copy) {
-    description "Copies from the build folder to the staging folder"
+    description = "Copies from the build folder to the staging folder"
     group = 'build'
 
     dependsOn stageLicenseFiles
@@ -182,38 +179,36 @@ tasks.register('copyFiles', Copy) {
     description = 'Stages files that are to be copied into the distribution.'
     group = 'build'
 
+    mustRunAfter(stageDataFiles)
+
     dependsOn copyLicenseFiles
     dependsOn generateDynamicFiles
 
     from projectDir
-    include "${data}/**"
-    include "${docs}/**"
-    include "${mmconf}/**"
+    include "data/**"
+    include "docs/**"
+    include "mmconf/**"
     include "SubmitBug.html"
     include "sentry.properties"
     include "*.ini"
     exclude "**/*.psd"
 
-    // No need to copy the files that are going to be zipped
-    exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
-
     // User Config Files
-    exclude "${mmconf}/clientsettings.xml"
-    exclude "${mmconf}/gameoptions.xml"
-    exclude "${mmconf}/megameklab.properties"
-    exclude "${mmconf}/megameklab.properties.bak"
-    exclude "${mmconf}/mhq.preferences"
-    exclude "${mmconf}/mm.preferences"
-    exclude "${mmconf}/mml.preferences"
+    exclude "mmconf/clientsettings.xml"
+    exclude "mmconf/gameoptions.xml"
+    exclude "mmconf/megameklab.properties"
+    exclude "mmconf/megameklab.properties.bak"
+    exclude "mmconf/mhq.preferences"
+    exclude "mmconf/mm.preferences"
+    exclude "mmconf/mml.preferences"
 
-    exclude "${rats}/**"
-    exclude "${data}/mekfiles/units.cache"
-    include "${userdata}/"
+    include "userdata/"
 
     into fileStagingDir
 }
 
 tasks.register('createImageAtlases', JavaExec) {
+    mustRunAfter(stageDataFiles)
     dependsOn copyFiles
     description = 'Combines individual image files into a set of image atlases.'
     group = 'utility'
@@ -235,6 +230,7 @@ tasks.register('deleteAtlasedImages') {
 
 tasks.register('officialUnitList', JavaExec) {
     dependsOn jar
+    mustRunAfter(stageDataFiles)
     description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
@@ -242,39 +238,16 @@ tasks.register('officialUnitList', JavaExec) {
     args = ['-oul', "${projectDir}/docs/OfficialUnitList.txt"]
 }
 
-tasks.register('unitFilesZip', Zip) {
-    dependsOn copyFiles
-    description = 'Creates zip archives of all the unit file folders.'
-    from unitFiles
-    archiveFileName = "unit_files.zip"
-    destinationDirectory = file("${fileStagingDir}/${unitFiles}")
-
-    inputs.dir "${projectDir}/${unitFiles}"
-    outputs.dir "${fileStagingDir}/${unitFiles}"
-}
-
-tasks.register('ratZip', Zip) {
-    description = 'Creates a zip archive of all the random assignment tables.'
-    from rats
-    archiveFileName = "rat_default.zip"
-    destinationDirectory = file("${fileStagingDir}/${rats}")
-    doFirst {
-        mkdir "${fileStagingDir}/${rats}"
-    }
-    inputs.dir "${projectDir}/${rats}"
-    outputs.dir "${fileStagingDir}/${rats}"
-}
 
 tasks.register('stageFiles') {
     description = 'Process data files to be included in distribution'
     group = 'distribution'
+    mustRunAfter(stageDataFiles)
     dependsOn officialUnitList
-    dependsOn unitFilesZip
-    dependsOn ratZip
     dependsOn deleteAtlasedImages
 
     doLast {
-        mkdir "${fileStagingDir}/${log}"
+        mkdir "${fileStagingDir}/log"
     }
 }
 
@@ -296,7 +269,7 @@ distributions {
             }
 
             from(jar) {
-                into "${lib}"
+                into "lib"
             }
 
             from("${projectDir}/scripts") {
@@ -309,7 +282,7 @@ distributions {
 
             from(project.sourceSets.main.runtimeClasspath.files
                     .findAll { it.name.endsWith(".jar") }) {
-                into "${lib}"
+                into "lib"
             }
 
             duplicatesStrategy = 'exclude'
@@ -336,6 +309,9 @@ launch4j {
     messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
 }
 
+project.tasks.createExe.dependsOn(stageDataFiles)
+project.tasks.createExe.mustRunAfter(stageDataFiles)
+
 tasks.register("packagePrepWork") {
     description = 'General Catch All for all distributions'
     dependsOn stageFiles
@@ -343,7 +319,6 @@ tasks.register("packagePrepWork") {
     dependsOn createStartScripts
     dependsOn copyFiles
     dependsOn createImageAtlases
-    dependsOn ratZip
     dependsOn createAllExecutables
 }
 
@@ -358,6 +333,11 @@ distTar {
     dependsOn packagePrepWork
     archiveExtension = 'tar.gz'
     compression = Compression.GZIP
+}
+
+run {
+    dependsOn(stageDataFiles)
+    jvmArgs = mmJvmOptions
 }
 
 assemble {
@@ -384,6 +364,13 @@ jacocoTestReport {
         xml.required = true
         html.required = true
     }
+}
+
+tasks.register('cleanAll') {
+    description = 'Cleans all related projects to ensure a proper build.'
+    group = 'build'
+    dependsOn gradle.includedBuild('mm-data').task(':clean')
+    dependsOn clean
 }
 
 tasks.register('easyTest', Test) {

@@ -52,9 +52,9 @@ import javax.swing.*;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
-import megamek.client.ui.comboBoxes.MMComboBox;
-import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.buttons.MMToggleButton;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.comboBoxes.MMComboBox;
 import megamek.client.ui.widget.RawImagePanel;
 import megamek.common.Player;
 import megamek.logging.MMLogger;
@@ -537,8 +537,9 @@ public final class UIUtil {
 
     /**
      * Gets the DPI scale factor for the monitor containing the specified component
-     * 
+     *
      * @param component The component to check
+     *
      * @return The DPI scale factor for the containing monitor
      */
     public static double getMonitorScaleFactor(Component component) {
@@ -553,21 +554,23 @@ public final class UIUtil {
     }
 
     /**
-     * Gets the resolution scale factor for the monitor containing the specified component. 
-     * Baseline is 1080p (1920x1080).
-     * 
+     * Gets the resolution scale factor for the monitor containing the specified component. Baseline is 1080p
+     * (1920x1080).
+     *
      * @param component The component to check
+     *
      * @return The resolution scale factor for the containing monitor
      */
     public static double getResolutionScaleFactor(Component component) {
         return getResolutionScaleFactor(component, REFERENCE_RESOLUTION);
     }
-    
+
     /**
      * Gets the resolution scale factor for the monitor containing the specified component.
-     * 
-     * @param component The component to check
+     *
+     * @param component           The component to check
      * @param referenceResolution The reference resolution width/height to use for scaling
+     *
      * @return The resolution scale factor for the containing monitor
      */
     public static double getResolutionScaleFactor(Component component, Dimension referenceResolution) {
@@ -576,11 +579,12 @@ public final class UIUtil {
         final double scaleFactorY = logicalScreenSize.height / referenceResolution.getHeight();
         return Math.max(MINIMUM_RESOLUTION_SCALE_FACTOR, Math.min(scaleFactorX, scaleFactorY));
     }
-    
+
     /**
      * Calculate the DPI scale factor for a component
-     * 
+     *
      * @param component The component to get scaling information from
+     *
      * @return The scaling factor based on DPI
      */
     public static float getDpiScaleFactor(Component component) {
@@ -609,11 +613,11 @@ public final class UIUtil {
         if (gc == null) {
             try {
                 gc = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                    .getDefaultScreenDevice()
-                    .getDefaultConfiguration();
+                      .getDefaultScreenDevice()
+                      .getDefaultConfiguration();
             } catch (HeadlessException e) {
                 logger.warn("No GraphicsConfiguration found, using default size");
-                return new Dimension(800, 600); 
+                return new Dimension(800, 600);
             }
         }
         Rectangle bounds = gc.getBounds();
@@ -640,7 +644,7 @@ public final class UIUtil {
     public static Image constrainImageSize(Image image, ImageObserver observer, int maxWidth, int maxHeight) {
         int w = image.getWidth(observer);
         int h = image.getHeight(observer);
-        
+
         if (w <= 0 || h <= 0) {
             return image;
         }
@@ -653,7 +657,7 @@ public final class UIUtil {
         // choose resize that fits in bounds
         double scaleW = maxWidth / (double) w;
         double scaleH = maxHeight / (double) h;
-        
+
         if (scaleW < scaleH) {
             // Fit to width
             targetWidth = maxWidth;
@@ -758,18 +762,21 @@ public final class UIUtil {
      * @return a RawImagePanel setup to the correct size to act as a splash screen
      */
 
-    public static RawImagePanel createSplashComponent(Image imgSplash, ImageObserver observer, Dimension scaledMonitorSize) {
+    public static RawImagePanel createSplashComponent(Image imgSplash, ImageObserver observer,
+          Dimension scaledMonitorSize) {
         if (imgSplash == null) {
             return new RawImagePanel(null);
         }
         Dimension maxSize = new Dimension((int) (scaledMonitorSize.width * 0.75),
-                (int) (scaledMonitorSize.height * 0.75));
+              (int) (scaledMonitorSize.height * 0.75));
 
         Image constrainedSplashImage = UIUtil.constrainImageSize(imgSplash, observer, maxSize.width, maxSize.height);
         RawImagePanel splash = new RawImagePanel(constrainedSplashImage);
-        
-        Dimension splashDim = new Dimension(constrainedSplashImage == null ? maxSize.width : constrainedSplashImage.getWidth(observer),
-                constrainedSplashImage == null ? maxSize.height : constrainedSplashImage.getHeight(observer));
+
+        Dimension splashDim = new Dimension(constrainedSplashImage == null ?
+              maxSize.width :
+              constrainedSplashImage.getWidth(observer),
+              constrainedSplashImage == null ? maxSize.height : constrainedSplashImage.getHeight(observer));
 
         splash.setMaximumSize(splashDim);
         splash.setMinimumSize(splashDim);
@@ -789,9 +796,9 @@ public final class UIUtil {
 
         // center and size if out of bounds
         if ((pos.x < 0) ||
-                  (pos.y < 0) ||
-                  (pos.x + size.width > scaledScreenSize.width) ||
-                  (pos.y + size.height > scaledScreenSize.getHeight())) {
+              (pos.y < 0) ||
+              (pos.x + size.width > scaledScreenSize.width) ||
+              (pos.y + size.height > scaledScreenSize.getHeight())) {
             component.setLocationRelativeTo(null);
         }
     }
@@ -1325,7 +1332,7 @@ public final class UIUtil {
      */
     public static boolean isModalDialogDisplayed() {
         return Stream.of(Window.getWindows())
-                     .anyMatch(w -> w.isShowing() && (w instanceof JDialog dialogWindow) && (dialogWindow.isModal()));
+              .anyMatch(w -> w.isShowing() && (w instanceof JDialog dialogWindow) && (dialogWindow.isModal()));
     }
 
     // PRIVATE

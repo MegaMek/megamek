@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
@@ -34,13 +48,11 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 
 /**
- * Sprite and info for movement vector (AT2 advanced movement). Does not
- * actually use the image buffer as this can be horribly inefficient for
- * long diagonal lines.
- *
- * Appears as an arrow pointing to the hex this entity will move to based on
- * current movement vectors.
- *
+ * Sprite and info for movement vector (AT2 advanced movement). Does not actually use the image buffer as this can be
+ * horribly inefficient for long diagonal lines.
+ * <p>
+ * Appears as an arrow pointing to the hex this entity will move to based on current movement vectors.
+ * <p>
  * TODO: Different color depending upon whether
  * entity has already moved this turn
  */
@@ -110,7 +122,7 @@ public class MovementSprite extends Sprite {
         // set bounds
         bounds = new Rectangle(movePoly.getBounds());
         bounds.setSize(bounds.getSize().width + 1,
-                bounds.getSize().height + 1);
+              bounds.getSize().height + 1);
         // move poly to upper right of image
         movePoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
 
@@ -132,15 +144,15 @@ public class MovementSprite extends Sprite {
         // in the centes of hex and hiding mek under.
 
         a.x = a.x + (int) ((HexTileset.HEX_W / 2) * bv.getScale())
-                + (int) Math.round(Math.cos(an) * (int) (18 * bv.getScale()));
+              + (int) Math.round(Math.cos(an) * (int) (18 * bv.getScale()));
         t.x = (t.x + (int) ((HexTileset.HEX_W / 2) * bv.getScale()))
-                - (int) Math.round(Math.cos(an) * (int) (18 * bv.getScale()));
+              - (int) Math.round(Math.cos(an) * (int) (18 * bv.getScale()));
         a.y = a.y + (int) ((HexTileset.HEX_H / 2) * bv.getScale())
-                + (int) Math.round(Math.sin(an) * (int) (18 * bv.getScale()));
+              + (int) Math.round(Math.sin(an) * (int) (18 * bv.getScale()));
         t.y = (t.y + (int) ((HexTileset.HEX_H / 2) * this.bv.getScale()))
-                - (int) Math.round(Math.sin(an) * (int) (18 * bv.getScale()));
+              - (int) Math.round(Math.sin(an) * (int) (18 * bv.getScale()));
         movePoly = new StraightArrowPolygon(a, t, (int) (4 * bv.getScale()),
-                (int) (8 * bv.getScale()), false);
+              (int) (8 * bv.getScale()), false);
     }
 
     @Override
@@ -149,7 +161,7 @@ public class MovementSprite extends Sprite {
         // set bounds
         bounds = new Rectangle(movePoly.getBounds());
         bounds.setSize(bounds.getSize().width + 1,
-                bounds.getSize().height + 1);
+              bounds.getSize().height + 1);
         // move poly to upper right of image
         movePoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
 
@@ -175,7 +187,7 @@ public class MovementSprite extends Sprite {
         }
 
         Polygon drawPoly = new Polygon(movePoly.xpoints, movePoly.ypoints,
-                movePoly.npoints);
+              movePoly.npoints);
         drawPoly.translate(x, y);
 
         g.setColor(moveColor);

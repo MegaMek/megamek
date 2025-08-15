@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI.boardview.spriteHandler;
 
@@ -67,9 +81,8 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     }
 
     /**
-     * Shows the firing arcs for the given weapon on the given unit, centering on
-     * the endpoint
-     * of the planned movePath if it is not null.
+     * Shows the firing arcs for the given weapon on the given unit, centering on the endpoint of the planned movePath
+     * if it is not null.
      *
      * @param entity   The unit carrying the weapon
      * @param weapon   the selected weapon
@@ -117,11 +130,9 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     }
 
     /**
-     * Clears the sprites and resets the cached values so no new sprites are drawn
-     * at this time. As this
-     * handler requires cached values for weapon, arc etc. to draw the sprites, the
-     * {@link #clear()} method
-     * may not be overridden to reset those fields as is done in other handlers.
+     * Clears the sprites and resets the cached values so no new sprites are drawn at this time. As this handler
+     * requires cached values for weapon, arc etc. to draw the sprites, the {@link #clear()} method may not be
+     * overridden to reset those fields as is done in other handlers.
      */
     public void clearValues() {
         clear();
@@ -131,22 +142,20 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     }
 
     /**
-     * For landed DropShips, the effective range is always one more as they can
-     * choose any of their
-     * secondary positions as the effective origin of weapon fire.
+     * For landed DropShips, the effective range is always one more as they can choose any of their secondary positions
+     * as the effective origin of weapon fire.
      *
      * @return 1 for a landed DropShip, 0 otherwise
      */
     private int secondaryPositionsRangeBonus() {
         return ((firingEntity instanceof Dropship) && !firingEntity.isAirborne() &&
-                !firingEntity.isSpaceborne() && clientGUI.getDisplayedWeapon().isPresent()
-                && clientGUI.getDisplayedWeapon().get().getLocation() != Dropship.LOC_NOSE) ? 1 : 0;
+              !firingEntity.isSpaceborne() && clientGUI.getDisplayedWeapon().isPresent()
+              && clientGUI.getDisplayedWeapon().get().getLocation() != Dropship.LOC_NOSE) ? 1 : 0;
     }
 
     /**
-     * Draw the sprites for the currently stored values for position, unit, arc etc.
-     * Does not draw sprites
-     * if field of fire is deactivated.
+     * Draw the sprites for the currently stored values for position, unit, arc etc. Does not draw sprites if field of
+     * fire is deactivated.
      */
     public void renewSprites() {
         clear();
@@ -154,7 +163,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
             return;
         }
         if (!GUIP.getShowFieldOfFire() || (firingEntity == null) || (firingPosition == null)
-                || firingEntity.isOffBoard() || clientGUI.getDisplayedWeapon().isEmpty()) {
+              || firingEntity.isOffBoard() || clientGUI.getDisplayedWeapon().isEmpty()) {
             return;
         }
 
@@ -177,8 +186,8 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         // Special treatment for AFT weapons on landed DS; they can fire only into the
         // DS's hexes:
         if ((firingEntity instanceof Dropship) && !firingEntity.isAirborne()
-                && !firingEntity.isSpaceborne() && clientGUI.getDisplayedWeapon().isPresent()
-                && (clientGUI.getDisplayedWeapon().get().getLocation() == Dropship.LOC_AFT)) {
+              && !firingEntity.isSpaceborne() && clientGUI.getDisplayedWeapon().isPresent()
+              && (clientGUI.getDisplayedWeapon().get().getLocation() == Dropship.LOC_AFT)) {
             // AFT weapons on landed DS can only fire into its own 7 hexes
             range = 0;
         }
@@ -278,7 +287,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 int dist = (rangeend + rangebegin) / 2;
                 // translate to the middle of the range bracket
                 Coords mark = firingPosition.translated((dir[0] + facing) % 6, (dist + 1) / 2)
-                        .translated((dir[1] + facing) % 6, dist / 2);
+                      .translated((dir[1] + facing) % 6, dist / 2);
                 // traverse back to the unit until a hex is onboard
                 while (!board.contains(mark)) {
                     mark = Coords.nextHex(mark, firingPosition);
@@ -286,10 +295,10 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
 
                 // add a text range marker if the found position is good
                 if (board.contains(mark) && fieldFire.get(bracket).contains(mark)
-                        && ((bracket > 0) || (numMinMarkers < 2))) {
+                      && ((bracket > 0) || (numMinMarkers < 2))) {
                     TextMarkerSprite tS =
                           new TextMarkerSprite((BoardView) clientGUI.getBoardView(firingEntity), mark,
-                            rangeTexts[bracket], FieldofFireSprite.getFieldOfFireColor(bracket));
+                                rangeTexts[bracket], FieldofFireSprite.getFieldOfFireColor(bracket));
                     currentSprites.add(tS);
                     if (bracket == 0) {
                         numMinMarkers++;
@@ -373,8 +382,8 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         // Use the Weapon Panel's selected ammo to determine ranges, or the current
         // linked ammo if not set
         AmmoMounted ammoMounted = (clientGUI.getDisplayedAmmo().isPresent())
-                ? clientGUI.getDisplayedAmmo().get()
-                : weapon.getLinkedAmmo();
+              ? clientGUI.getDisplayedAmmo().get()
+              : weapon.getLinkedAmmo();
 
         // Try to get the ammo type from the selected ammo if possible, or the current
         // linked ammo if not
@@ -391,11 +400,11 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         ranges[1] = wtype.getWRanges();
         if (atype != null) {
             if ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM)
-                    || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)
-                    || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.MRM)
-                    || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
-                    || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
-                    || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) {
+                  || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)
+                  || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.MRM)
+                  || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                  || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                  || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) {
                 if (atype.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)) {
                     ranges[1] = wtype.getRanges(weapon, ammoMounted);
                 } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_MULTI_PURPOSE)) {
@@ -420,7 +429,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         // direct fire then
         if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
             boolean isADA = (ammoMounted != null
-                    && ammoMounted.getType().getMunitionType().contains(AmmoType.Munitions.M_ADA));
+                  && ammoMounted.getType().getMunitionType().contains(AmmoType.Munitions.M_ADA));
             if (game.getPhase().isTargeting()) {
                 ranges[0] = (!isADA ? new int[] { 0, 0, 0, 100, 0 } : new int[] { 0, 0, 0, 51, 0 });
             } else {
@@ -466,9 +475,9 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
             // Here as well as in WeaponPanel, choosing a specific ammo
             // only works for the current player's units
             if (!weapon.isBreached() && !weapon.isMissing()
-                    && !weapon.isDestroyed() && !weapon.isJammed()
-                    && ((ammoMounted == null)
-                            || (ammoMounted.getUsableShotsLeft() > 0))) {
+                  && !weapon.isDestroyed() && !weapon.isJammed()
+                  && ((ammoMounted == null)
+                  || (ammoMounted.getUsableShotsLeft() > 0))) {
                 maxr = wtype.getMaxRange(weapon, ammoMounted);
 
                 // set the standard ranges, depending on capital or no
@@ -488,8 +497,8 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
 
         } else {
             if ((firingEntity instanceof Dropship) && !firingEntity.isAirborne()
-                    && !firingEntity.isSpaceborne() && clientGUI.getDisplayedWeapon().isPresent()
-                    && (clientGUI.getDisplayedWeapon().get().getLocation() == Dropship.LOC_AFT)) {
+                  && !firingEntity.isSpaceborne() && clientGUI.getDisplayedWeapon().isPresent()
+                  && (clientGUI.getDisplayedWeapon().get().getLocation() == Dropship.LOC_AFT)) {
                 // AFT weapons on landed DS can only fire into its own 7 hexes
                 ranges[0] = new int[] { -1, 0, 0, 0, 0 };
             }
@@ -497,19 +506,18 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     }
 
     /**
-     * @return True when, for the given movement path, the currently selected weapon
-     *         ends up being underwater.
      * @param movePath The movement path that is considered for the selected unit
+     *
+     * @return True when, for the given movement path, the currently selected weapon ends up being underwater.
      */
     private boolean testUnderWater(MovePath movePath) {
         return (movePath != null) && testUnderWater(movePath.getFinalCoords(),
-                !movePath.isJumping(), movePath.getFinalElevation());
+              !movePath.isJumping(), movePath.getFinalElevation());
     }
 
     /**
-     * @return True when, for the present firingEntity and firingPosition, the
-     *         currently selected weapon
-     *         ends up being underwater.
+     * @return True when, for the present firingEntity and firingPosition, the currently selected weapon ends up being
+     *       underwater.
      */
     private boolean testUnderWater() {
         return testUnderWater(firingPosition, firingEntity.getBoardId(), true, firingEntity.getElevation());
@@ -518,7 +526,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     /**
      * @return True when, at the given position and elevation and when allowSubmerge is true, the currently selected
      *       weapon ends up being underwater
-     *
+     *       <p>
      *       LEGACY replaced with BoardLocation version when ready
      */
     private boolean testUnderWater(Coords position, boolean allowSubmerge, int unitElevation) {
@@ -531,7 +539,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
      */
     private boolean testUnderWater(Coords position, int boardId, boolean allowSubmerge, int unitElevation) {
         if ((firingEntity == null) || clientGUI.getDisplayedWeapon().isEmpty() || (position == null)
-                || (game.getBoard(boardId).getHex(position) == null)) {
+              || (game.getBoard(boardId).getHex(position) == null)) {
             return false;
         }
 
@@ -543,7 +551,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         // ranges, consider it an underwater weapon for the purposes of displaying range
         // brackets
         if (waterDepth > 0 && firingEntity.isSurfaceNaval() &&
-                ranges[0][1] == 0 && ranges[1][1] > 0) {
+              ranges[0][1] == 0 && ranges[1][1] > 0) {
             return true;
         }
 

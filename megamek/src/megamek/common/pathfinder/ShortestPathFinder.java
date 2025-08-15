@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.pathfinder;
 
 import java.io.Serializable;
@@ -24,15 +39,23 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 
-import megamek.common.*;
+import megamek.common.Board;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Hex;
+import megamek.common.IAero;
+import megamek.common.Infantry;
+import megamek.common.Tank;
+import megamek.common.Terrains;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.logging.MMLogger;
 
 /**
- * Implementation of MovePathFinder designed to find the shortest path between
- * two hexes or finding shortest paths from a single hex to all surrounding.
+ * Implementation of MovePathFinder designed to find the shortest path between two hexes or finding shortest paths from
+ * a single hex to all surrounding.
  *
  * @author Saginatio
  */
@@ -40,8 +63,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     private static final MMLogger logger = MMLogger.create(ShortestPathFinder.class);
 
     /**
-     * Returns true if last processed move path had final position equal to
-     * destination.
+     * Returns true if last processed move path had final position equal to destination.
      */
     public static class DestinationReachedStopCondition implements StopCondition<MovePath> {
         private final Coords destination;
@@ -57,8 +79,8 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     }
 
     /**
-     * Compares MovePaths based on distance from final position to destination.
-     * If those distances are equal then spent movement points are compared.
+     * Compares MovePaths based on distance from final position to destination. If those distances are equal then spent
+     * movement points are compared.
      */
     public static class MovePathGreedyComparator implements Comparator<MovePath> {
         private final Coords destination;
@@ -68,9 +90,8 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         }
 
         /**
-         * Compares MovePaths based on distance from final position to
-         * destination. If those distances are equal then spent movement points
-         * are compared.
+         * Compares MovePaths based on distance from final position to destination. If those distances are equal then
+         * spent movement points are compared.
          */
         @Override
         public int compare(MovePath mp1, MovePath mp2) {
@@ -95,8 +116,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         }
 
         /**
-         * Returns true if last step reduces distance to destination or if the
-         * last step is a turn, get_up...
+         * Returns true if last step reduces distance to destination or if the last step is a turn, get_up...
          */
         @Override
         public boolean shouldStay(MovePath movePath) {
@@ -122,7 +142,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * Relaxes edge by favouring MovePaths that end in a not prone stance.
      */
     public static class MovePathRelaxer
-            implements AbstractPathFinder.EdgeRelaxer<MovePath, MovePath> {
+          implements AbstractPathFinder.EdgeRelaxer<MovePath, MovePath> {
         @Override
         public MovePath doRelax(MovePath v, MovePath e, Comparator<MovePath> comparator) {
             if (v == null) {
@@ -147,12 +167,11 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     }
 
     /**
-     * Relaxes edge based on the supplied comparator, with special
-     * considerations for flying off the map (since this will likely always look
-     * back to the comparator).
+     * Relaxes edge based on the supplied comparator, with special considerations for flying off the map (since this
+     * will likely always look back to the comparator).
      */
     public static class AeroMovePathRelaxer
-            implements AbstractPathFinder.EdgeRelaxer<MovePath, MovePath> {
+          implements AbstractPathFinder.EdgeRelaxer<MovePath, MovePath> {
         @Override
         public MovePath doRelax(MovePath v, MovePath e, Comparator<MovePath> comparator) {
             if (v == null) {
@@ -164,11 +183,10 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     }
 
     /**
-     * A MovePath comparator that compares movement points spent and distance to
-     * destination. If those are equal then MovePaths with more HexesMoved are
-     * Preferred. This should considerably speed A* when multiple shortest paths
-     * are present.
-     *
+     * A MovePath comparator that compares movement points spent and distance to destination. If those are equal then
+     * MovePaths with more HexesMoved are Preferred. This should considerably speed A* when multiple shortest paths are
+     * present.
+     * <p>
      * This comparator is used by A* algorithm.
      */
     public static class MovePathAStarComparator implements Comparator<MovePath>, Serializable {
@@ -189,7 +207,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             // We cannot estimate the needed cost for aeros
             // However, DropShips basically follow ground movement rules
             if ((first.getEntity().isAero())
-                    && !((IAero) first.getEntity()).isSpheroid()) {
+                  && !((IAero) first.getEntity()).isSpheroid()) {
                 // We want to pick paths that use fewer MP, and are also shorter
                 // unlike ground units which could benefit from better target
                 // movement modifiers for longer paths
@@ -211,13 +229,13 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             } else {
                 boolean backwards = stepType == MoveStepType.BACKWARDS;
                 h1 = first.getFinalCoords().distance(destination)
-                        + getFacingDiff(first, destination, backwards)
-                        + getLevelDiff(first, destination, board, first.isJumping())
-                        + getElevationDiff(first, destination, board, first.getEntity());
+                      + getFacingDiff(first, destination, backwards)
+                      + getLevelDiff(first, destination, board, first.isJumping())
+                      + getElevationDiff(first, destination, board, first.getEntity());
                 h2 = second.getFinalCoords().distance(destination)
-                        + getFacingDiff(second, destination, backwards)
-                        + getLevelDiff(second, destination, board, second.isJumping())
-                        + getElevationDiff(second, destination, board, second.getEntity());
+                      + getFacingDiff(second, destination, backwards)
+                      + getLevelDiff(second, destination, board, second.isJumping())
+                      + getElevationDiff(second, destination, board, second.getEntity());
             }
 
             int dd = (first.getMpUsed() + h1) - (second.getMpUsed() + h2);
@@ -231,14 +249,14 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     }
 
     private ShortestPathFinder(EdgeRelaxer<MovePath, MovePath> costRelaxer,
-            Comparator<MovePath> comparator, final MoveStepType stepType, Game game) {
+          Comparator<MovePath> comparator, final MoveStepType stepType, Game game) {
         super(costRelaxer, new NextStepsAdjacencyMap(stepType), comparator, game);
     }
 
     /**
-     * Produces a new instance of shortest path between starting points and a
-     * destination finder. Algorithm will halt after reaching destination.
-     *
+     * Produces a new instance of shortest path between starting points and a destination finder. Algorithm will halt
+     * after reaching destination.
+     * <p>
      * Current implementation uses AStar algorithm.
      *
      * @param destination
@@ -246,11 +264,11 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * @param game        The current {@link Game}
      */
     public static ShortestPathFinder newInstanceOfAStar(final Coords destination,
-            final MoveStepType stepType, final Game game, int boardId) {
+          final MoveStepType stepType, final Game game, int boardId) {
         final ShortestPathFinder spf = new ShortestPathFinder(
-                new ShortestPathFinder.MovePathRelaxer(),
-                new ShortestPathFinder.MovePathAStarComparator(destination, stepType, game.getBoard(boardId)),
-                stepType, game);
+              new ShortestPathFinder.MovePathRelaxer(),
+              new ShortestPathFinder.MovePathAStarComparator(destination, stepType, game.getBoard(boardId)),
+              stepType, game);
 
         spf.addStopCondition(new DestinationReachedStopCondition(destination));
         spf.addFilter(new MovePathLegalityFilter(game));
@@ -258,9 +276,8 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     }
 
     /**
-     * Produces new instance of shortest path searcher. It will find all the
-     * shortest paths between starting points that are reachable with at most
-     * maxMp move points.
+     * Produces new instance of shortest path searcher. It will find all the shortest paths between starting points that
+     * are reachable with at most maxMp move points.
      *
      * @param maxMP    maximum MP that entity can use
      * @param stepType the type of step to use
@@ -268,44 +285,43 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      */
     public static ShortestPathFinder newInstanceOfOneToAll(int maxMP, MoveStepType stepType, Game game) {
         var shortestPathFinder = new ShortestPathFinder(new MovePathRelaxer(), new MovePathMPCostComparator(),
-                stepType, game);
+              stepType, game);
         shortestPathFinder.addFilter(new MovePathLengthFilter(maxMP));
         shortestPathFinder.addFilter(new MovePathLegalityFilter(game));
         return shortestPathFinder;
     }
 
     /**
-     * See {@link ShortestPathFinder#newInstanceOfOneToAll} - this returns a customized
-     * ShortestPathFinder to support Aerodyne units.
+     * See {@link ShortestPathFinder#newInstanceOfOneToAll} - this returns a customized ShortestPathFinder to support
+     * Aerodyne units.
      *
      * @param maxMP    maximum MP that entity can use
      * @param stepType
      * @param game     The current {@link Game}
-     * @return - Customized ShortestPathFinder specifically for Aerodyne unit move
-     *         envelope.
+     *
+     * @return - Customized ShortestPathFinder specifically for Aerodyne unit move envelope.
      */
     public static ShortestPathFinder newInstanceOfOneToAllAero(final int maxMP, final MoveStepType stepType,
-            final Game game) {
+          final Game game) {
         final ShortestPathFinder spf = new ShortestPathFinder(
-                new ShortestPathFinder.AeroMovePathRelaxer(),
-                new ShortestPathFinder.MovePathLengthComparator(),
-                stepType, game);
+              new ShortestPathFinder.AeroMovePathRelaxer(),
+              new ShortestPathFinder.MovePathLengthComparator(),
+              stepType, game);
         spf.addFilter(new MovePathLengthFilter(maxMP));
         spf.addFilter(new MovePathLegalityFilter(game));
         return spf;
     }
 
     /**
-     * Constructs a greedy algorithms. It considers only the moves end closer to
-     * destination. Ignores legality of the move. Stops after reaching
-     * destination.
+     * Constructs a greedy algorithms. It considers only the moves end closer to destination. Ignores legality of the
+     * move. Stops after reaching destination.
      */
     public static ShortestPathFinder newInstanceOfGreedy(final Coords destination, final MoveStepType stepType,
-            final Game game) {
+          final Game game) {
 
         final ShortestPathFinder spf = new ShortestPathFinder(new ShortestPathFinder.MovePathRelaxer(),
-                new MovePathGreedyComparator(destination),
-                stepType, game);
+              new MovePathGreedyComparator(destination),
+              stepType, game);
 
         spf.addStopCondition(new DestinationReachedStopCondition(destination));
         spf.addFilter(new MovePathGreedyFilter(destination));
@@ -313,23 +329,20 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     }
 
     /**
-     * Returns the shortest move path to a hex at given coordinates or
-     * {@code null} if none is present. If multiple path are present with
-     * different final facings, the minimal one is chosen.
-     *
+     * Returns the shortest move path to a hex at given coordinates or {@code null} if none is present. If multiple path
+     * are present with different final facings, the minimal one is chosen.
      *
      * @param coordinates - the coordinates of the hex
-     * @return the shortest move path to hex at given coordinates or
-     *         {@code null}
+     *
+     * @return the shortest move path to hex at given coordinates or {@code null}
      */
     public MovePath getComputedPath(Coords coordinates) {
         return getCost(coordinates, getComparator());
     }
 
     /**
-     * Returns a map of all computed shortest paths. If multiple paths to a
-     * single hex, each with different final facing, are present, then the
-     * minimal one is chosen for each hex.
+     * Returns a map of all computed shortest paths. If multiple paths to a single hex, each with different final
+     * facing, are present, then the minimal one is chosen for each hex.
      *
      * @return a map of all computed shortest paths.
      */
@@ -342,7 +355,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     }
 
     public static int getFacingDiff(final MovePath mp, Coords dest,
-            boolean backward) {
+          boolean backward) {
         // Facing doesn't matter for jumping
         if (mp.isJumping()) {
             return 0;
@@ -359,7 +372,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         int destAngle = mp.getFinalCoords().degree(dest);
         // Estimate the number of facing changes to reach destination
         int firstFacing = Math.abs(((destDir + (backward ? 3 : 0)) % 6)
-                - mp.getFinalFacing());
+              - mp.getFinalFacing());
 
         // Adjust for circular nature of facing
         if (firstFacing > 3) {
@@ -380,16 +393,15 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     }
 
     /**
-     * Computes the difference in levels between the current location and the
-     * goal location. This prevents the heuristic from under-estimating when a
-     * unit is on top of a hill.
+     * Computes the difference in levels between the current location and the goal location. This prevents the heuristic
+     * from under-estimating when a unit is on top of a hill.
      *
      * @param mp     MovePath to evaluate
      * @param dest   Destination coordinates
      * @param board  Board on which the move path takes place
      * @param ignore Whether to ignore this calculation and return 0
-     * @return level difference between the final coordinates of the given move path
-     *         and the destination coordinates
+     *
+     * @return level difference between the final coordinates of the given move path and the destination coordinates
      */
     public static int getLevelDiff(final MovePath mp, Coords dest, Board board, boolean ignore) {
         // Ignore level differences if we're not on the ground
@@ -399,31 +411,31 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         Hex currHex = board.getHex(mp.getFinalCoords());
         if (currHex == null) {
             logger.debug("getLevelDiff: currHex was null!" +
-                    "\nStart: " + mp.getStartCoords() +
-                    "\ncurrHex:  " + mp.getFinalCoords() +
-                    "\nPath: " + mp);
+                  "\nStart: " + mp.getStartCoords() +
+                  "\ncurrHex:  " + mp.getFinalCoords() +
+                  "\nPath: " + mp);
             return 0;
         }
         Hex destHex = board.getHex(dest);
         if (destHex == null) {
             logger.debug("getLevelDiff: destHex was null!" +
-                    "\nStart: " + mp.getStartCoords() +
-                    "\ndestHex: " + dest +
-                    "\nPath: " + mp);
+                  "\nStart: " + mp.getStartCoords() +
+                  "\ndestHex: " + dest +
+                  "\nPath: " + mp);
             return 0;
         }
         return Math.abs(destHex.getLevel() - currHex.getLevel());
     }
 
     /**
-     * Computes the difference in elevation between the current location and
-     * the goal location. This is important for using determining when
-     * elevation change steps should be used.
+     * Computes the difference in elevation between the current location and the goal location. This is important for
+     * using determining when elevation change steps should be used.
      *
      * @param mp
      * @param dest
      * @param board
      * @param ent
+     *
      * @return
      */
     public static int getElevationDiff(final MovePath mp, Coords dest, Board board, Entity ent) {

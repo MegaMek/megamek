@@ -1,18 +1,38 @@
 /*
-* MegaMek -
-* Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 package megamek.common;
 
 import java.io.Serial;
@@ -32,10 +52,10 @@ import megamek.logging.MMLogger;
 
 /**
  * This class represents a single, possibly multi-hex building on the board.
- *
+ * <p>
  * FIXME : This needs a complete rewrite to properly handle the latest building
  * rules
- *
+ * <p>
  * Rewrite Notes:
  * TODO : 1) Migrate Magic Numbers to Enums
  * TODO : 2) Offboard Gun Emplacements: Revisit with a required rules query
@@ -55,8 +75,7 @@ public class Building implements Serializable {
     protected static final int UNKNOWN = -1;
 
     /**
-     * The Building Type of the building; equal to the terrain elevation of the
-     * BUILDING terrain of a hex.
+     * The Building Type of the building; equal to the terrain elevation of the BUILDING terrain of a hex.
      */
     private BuildingType type = BuildingType.UNKNOWN;
 
@@ -69,8 +88,7 @@ public class Building implements Serializable {
     // public static final int CASTLE_BRIAN = 3;
 
     /**
-     * The Building Class of the building; equal to the terrain elevation of the
-     * BUILDING CLASS terrain of a hex.
+     * The Building Class of the building; equal to the terrain elevation of the BUILDING CLASS terrain of a hex.
      */
     private int bldgClass = Building.STANDARD;
 
@@ -95,15 +113,13 @@ public class Building implements Serializable {
     private int originalHexes = 0;
 
     /**
-     * The current construction factor of the building hexes. Any damage
-     * immediately updates this value.
+     * The current construction factor of the building hexes. Any damage immediately updates this value.
      */
     private Map<Coords, Integer> currentCF = new HashMap<>();
 
     /**
-     * The construction factor of the building hexes at the start of this attack
-     * phase. Damage that is received during the phase is applied at the end of
-     * the phase.
+     * The construction factor of the building hexes at the start of this attack phase. Damage that is received during
+     * the phase is applied at the end of the phase.
      */
     private Map<Coords, Integer> phaseCF = new HashMap<>();
 
@@ -133,11 +149,9 @@ public class Building implements Serializable {
         public int playerId;
         public Coords pos;
         /**
-         * A UUID to keep track of the identify of this demolition charge.
-         * Since we could have multiple charges in the same building hex, we
-         * can't track identity based upon owner and damage. Additionally,
-         * since we pass objects across the network, we need a mechanism to
-         * track identify other than memory address.
+         * A UUID to keep track of the identify of this demolition charge. Since we could have multiple charges in the
+         * same building hex, we can't track identity based upon owner and damage. Additionally, since we pass objects
+         * across the network, we need a mechanism to track identify other than memory address.
          */
         public UUID uuid = UUID.randomUUID();
 
@@ -164,15 +178,13 @@ public class Building implements Serializable {
     private List<DemolitionCharge> demolitionCharges = new ArrayList<>();
 
     /**
-     * Update this building to include the new hex (and all hexes off the new
-     * hex, which aren't already included).
+     * Update this building to include the new hex (and all hexes off the new hex, which aren't already included).
      *
      * @param coords the <code>Coords</code> of the new hex.
      * @param board  the game's <code>Board</code> object.
-     * @throws IllegalArgumentException will be thrown if the given coordinates do
-     *                                  not contain a
-     *                                  building, or if the building covers multiple
-     *                                  hexes with different CF.
+     *
+     * @throws IllegalArgumentException will be thrown if the given coordinates do not contain a building, or if the
+     *                                  building covers multiple hexes with different CF.
      */
     protected void include(Coords coords, Board board, int structureType) {
 
@@ -192,15 +204,15 @@ public class Building implements Serializable {
             // Hangar...) is off.
             if (getType().getTypeValue() != nextHex.terrainLevel(Terrains.BUILDING)) {
                 throw new IllegalArgumentException("The coordinates, "
-                        + coords.getBoardNum()
-                        + ", should contain the same type of building as "
-                        + coordinates.elementAt(0).getBoardNum());
+                      + coords.getBoardNum()
+                      + ", should contain the same type of building as "
+                      + coordinates.elementAt(0).getBoardNum());
             }
             if (bldgClass != nextHex.terrainLevel(Terrains.BLDG_CLASS)) {
                 throw new IllegalArgumentException("The coordinates, "
-                        + coords.getBoardNum()
-                        + ", should contain the same class of building as "
-                        + coordinates.elementAt(0).getBoardNum());
+                      + coords.getBoardNum()
+                      + ", should contain the same class of building as "
+                      + coordinates.elementAt(0).getBoardNum());
             }
 
         }
@@ -273,7 +285,7 @@ public class Building implements Serializable {
         // Read our construction type from the hex.
         if (!startHex.containsTerrain(structureType)) {
             throw new IllegalArgumentException("The coordinates, "
-                    + coords.getBoardNum() + ", do not contain a building.");
+                  + coords.getBoardNum() + ", do not contain a building.");
         }
         type = BuildingType.getType(startHex.terrainLevel(structureType));
         bldgClass = startHex.terrainLevel(Terrains.BLDG_CLASS);
@@ -282,20 +294,20 @@ public class Building implements Serializable {
         currentCF.put(coords, getDefaultCF(type));
         if (currentCF.get(coords) == Building.UNKNOWN) {
             throw new IllegalArgumentException("Unknown construction type: "
-                    + type + ".  The board is invalid.");
+                  + type + ".  The board is invalid.");
         }
 
         // Now read the *real* CF, if the board specifies one.
         if ((structureType == Terrains.BUILDING)
-                && startHex.containsTerrain(Terrains.BLDG_CF)) {
+              && startHex.containsTerrain(Terrains.BLDG_CF)) {
             currentCF.put(coords, startHex.terrainLevel(Terrains.BLDG_CF));
         }
         if ((structureType == Terrains.BRIDGE)
-                && startHex.containsTerrain(Terrains.BRIDGE_CF)) {
+              && startHex.containsTerrain(Terrains.BRIDGE_CF)) {
             currentCF.put(coords, startHex.terrainLevel(Terrains.BRIDGE_CF));
         }
         if ((structureType == Terrains.FUEL_TANK)
-                && startHex.containsTerrain(Terrains.FUEL_TANK_CF)) {
+              && startHex.containsTerrain(Terrains.FUEL_TANK_CF)) {
             currentCF.put(coords, startHex.terrainLevel(Terrains.FUEL_TANK_CF));
         }
         if (startHex.containsTerrain(Terrains.BLDG_ARMOR)) {
@@ -347,13 +359,13 @@ public class Building implements Serializable {
     }
 
     /**
-     * Determine if the building occupies given coordinates. Multi-hex buildings
-     * will occupy multiple coordinates. Only one building per hex.
+     * Determine if the building occupies given coordinates. Multi-hex buildings will occupy multiple coordinates. Only
+     * one building per hex.
      *
-     * @param coords
-     *               - the <code>Coords</code> being examined.
+     * @param coords - the <code>Coords</code> being examined.
+     *
      * @return <code>true</code> if the building occupies the coordinates.
-     *         <code>false</code> otherwise.
+     *       <code>false</code> otherwise.
      */
     public boolean isIn(Coords coords) {
         return coordinates.contains(coords);
@@ -362,10 +374,10 @@ public class Building implements Serializable {
     /**
      * Determins if the coord exist in the currentCF has.
      *
-     * @param coords
-     *               - the <code>Coords</code> being examined.
+     * @param coords - the <code>Coords</code> being examined.
+     *
      * @return <code>true</code> if the building has CF at the coordinates.
-     *         <code>false</code> otherwise.
+     *       <code>false</code> otherwise.
      */
     public boolean hasCFIn(Coords coords) {
         return currentCF.containsKey(coords);
@@ -387,8 +399,8 @@ public class Building implements Serializable {
     }
 
     /**
-     * Get the construction type of the building. This value will be one of the
-     * values defined in megamek.common.enums.BuildingType
+     * Get the construction type of the building. This value will be one of the values defined in
+     * megamek.common.enums.BuildingType
      *
      * @return the <code>int</code> code of the building's construction type.
      */
@@ -436,10 +448,9 @@ public class Building implements Serializable {
      * Roll what kind of basement this building has
      *
      * @param coords       the <code>Coords</code> of the building to roll for
-     * @param vPhaseReport the {@link Report} <code>Vector</code> containing the
-     *                     phasereport
-     * @return a <code>boolean</code> indicating weather the hex and building was
-     *         changed or not
+     * @param vPhaseReport the {@link Report} <code>Vector</code> containing the phasereport
+     *
+     * @return a <code>boolean</code> indicating weather the hex and building was changed or not
      */
     public boolean rollBasement(Coords coords, Board board, Vector<Report> vPhaseReport) {
         if (basement.get(coords).isUnknown()) {
@@ -482,28 +493,26 @@ public class Building implements Serializable {
     }
 
     /**
-     * Get the current construction factor of the building hex at the passed
-     * coords. Any damage immediately updates this value.
+     * Get the current construction factor of the building hex at the passed coords. Any damage immediately updates this
+     * value.
      *
      * @param coords the <code>Coords</code> of the hex in question
      *
-     * @return the <code>int</code> value of the building hex's current
-     *         construction factor. This value will be greater than or equal to
-     *         zero.
+     * @return the <code>int</code> value of the building hex's current construction factor. This value will be greater
+     *       than or equal to zero.
      */
     public int getCurrentCF(Coords coords) {
         return currentCF.get(coords);
     }
 
     /**
-     * Get the construction factor of the building hex at the passed coords at
-     * the start of the current phase. Damage that is received during the phase
-     * is applied at the end of the phase.
+     * Get the construction factor of the building hex at the passed coords at the start of the current phase. Damage
+     * that is received during the phase is applied at the end of the phase.
      *
      * @param coords the <code>Coords</code> of the hex in question
-     * @return the <code>int</code> value of the building's construction factor
-     *         at the start of this phase. This value will be greater than or
-     *         equal to zero.
+     *
+     * @return the <code>int</code> value of the building's construction factor at the start of this phase. This value
+     *       will be greater than or equal to zero.
      */
     public int getPhaseCF(Coords coords) {
         return phaseCF.get(coords);
@@ -514,13 +523,13 @@ public class Building implements Serializable {
     }
 
     /**
-     * Set the current construction factor of the building hex. Call this method
-     * immediately when the building sustains any damage.
+     * Set the current construction factor of the building hex. Call this method immediately when the building sustains
+     * any damage.
      *
      * @param coords the <code>Coords</code> of the hex in question
-     * @param cf     the <code>int</code> value of the building hex's current
-     *               construction factor. This
-     *               value must be greater than or equal to zero.
+     * @param cf     the <code>int</code> value of the building hex's current construction factor. This value must be
+     *               greater than or equal to zero.
+     *
      * @throws IllegalArgumentException if the passed value is less than zero
      */
     public void setCurrentCF(int cf, Coords coords) {
@@ -532,20 +541,19 @@ public class Building implements Serializable {
     }
 
     /**
-     * Set the construction factor of the building hex for the start of the next
-     * phase. Call this method at the end of the phase to apply damage sustained
-     * by the building during the phase.
+     * Set the construction factor of the building hex for the start of the next phase. Call this method at the end of
+     * the phase to apply damage sustained by the building during the phase.
      *
      * @param coords the <code>Coords</code> of the hex in question
-     * @param cf     the <code>int</code> value of the building hex's current
-     *               construction factor. This
-     *               value must be greater than or equal to zero.
+     * @param cf     the <code>int</code> value of the building hex's current construction factor. This value must be
+     *               greater than or equal to zero.
+     *
      * @throws IllegalArgumentException if the passed value is less than zero
      */
     public void setPhaseCF(int cf, Coords coords) {
         if (cf < 0) {
             throw new IllegalArgumentException(
-                    "Invalid value for Construction Factor: " + cf);
+                  "Invalid value for Construction Factor: " + cf);
         }
 
         phaseCF.put(coords, cf);
@@ -571,20 +579,18 @@ public class Building implements Serializable {
     /**
      * Get the default construction factor for the given type of building.
      */
-    public static int getDefaultCF(BuildingType type) 
-    {
+    public static int getDefaultCF(BuildingType type) {
         return type.getDefaultCF();
     }
-    
+
     /**
-     * Get the default construction factor for the given type of building.
-     * Retained for backwards compatibility
+     * Get the default construction factor for the given type of building. Retained for backwards compatibility
      *
-     * @param type
-     *             - the <code>int</code> construction type of the building.
-     * @return the <code>int</code> default construction factor for that type of
-     *         building. If a bad type value is passed, the constant
-     *         <code>Building.UNKNOWN</code> will be returned instead.
+     * @param type - the <code>int</code> construction type of the building.
+     *
+     * @return the <code>int</code> default construction factor for that type of building. If a bad type value is
+     *       passed, the constant
+     *       <code>Building.UNKNOWN</code> will be returned instead.
      */
     public static int getDefaultCF(int type) {
         return getDefaultCF(BuildingType.getType(type));
@@ -594,6 +600,7 @@ public class Building implements Serializable {
      * Two Buildings are equal if and only if their IDs are equal.
      *
      * @param other The other Object to compare
+     *
      * @return True if this and the given other are considered equal
      */
     @Override
@@ -635,9 +642,7 @@ public class Building implements Serializable {
     /**
      * Set the flag that indicates that this building is on fire.
      *
-     * @param onFire
-     *               - a <code>boolean</code> value that indicates whether this
-     *               building is on fire.
+     * @param onFire - a <code>boolean</code> value that indicates whether this building is on fire.
      */
     public void setBurning(boolean onFire, Coords coords) {
         burning.put(coords, onFire);
@@ -663,8 +668,7 @@ public class Building implements Serializable {
     /**
      * Remove one building hex from the building
      *
-     * @param coords
-     *               - the <code>Coords</code> of the hex to be removed
+     * @param coords - the <code>Coords</code> of the hex to be removed
      */
     public void removeHex(Coords coords) {
         coordinates.remove(coords);
@@ -682,9 +686,7 @@ public class Building implements Serializable {
     }
 
     /**
-     *
-     * @return the damage scale multiplier for units passing through this
-     *         building
+     * @return the damage scale multiplier for units passing through this building
      */
     public double getDamageFromScale() {
         switch (getBldgClass()) {
@@ -701,9 +703,7 @@ public class Building implements Serializable {
     }
 
     /**
-     *
-     * @return the damage scale multiplier for damage applied to this building
-     *         (and occupants)
+     * @return the damage scale multiplier for damage applied to this building (and occupants)
      */
     public double getDamageToScale() {
         switch (getBldgClass()) {
@@ -718,7 +718,6 @@ public class Building implements Serializable {
     }
 
     /**
-     *
      * @return the amount of damage the building absorbs
      */
     public int getAbsorbtion(Coords pos) {
@@ -729,8 +728,8 @@ public class Building implements Serializable {
     }
 
     /**
-     * Returns the percentage of damage done to the building for attacks against
-     * infantry in the building from other units within the building. TW pg175.
+     * Returns the percentage of damage done to the building for attacks against infantry in the building from other
+     * units within the building. TW pg175.
      *
      * @return
      */
@@ -749,8 +748,8 @@ public class Building implements Serializable {
     }
 
     /**
-     * Per page 172 of Total Warfare, this is the fraction of a weapon's damage that
-     * passes through to infantry inside the building.
+     * Per page 172 of Total Warfare, this is the fraction of a weapon's damage that passes through to infantry inside
+     * the building.
      *
      * @return Damage fraction.
      */

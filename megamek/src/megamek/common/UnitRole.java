@@ -45,16 +45,14 @@ import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.logging.MMLogger;
 
 /**
- * Unit roles as defined by Alpha Strike Companion, used in formation building
- * rules in ASC and Campaign Operations
+ * Unit roles as defined by Alpha Strike Companion, used in formation building rules in ASC and Campaign Operations
  *
  * @author Neoancient, Luana Coppio
  */
 public enum UnitRole {
 
     /**
-     * This is the default role; given to units where the role definition is
-     * missing.
+     * This is the default role; given to units where the role definition is missing.
      */
     UNDETERMINED(ALL),
 
@@ -97,6 +95,7 @@ public enum UnitRole {
 
     /**
      * @param unit The unit to check.
+     *
      * @return True when the given unit may use this role. Used in MML.
      */
     public boolean isAvailableTo(BTObject unit) {
@@ -105,8 +104,10 @@ public enum UnitRole {
 
     /**
      * Checks if this role is the same as the given role or any of the other
-     * @param role Role to check against.
+     *
+     * @param role       Role to check against.
      * @param otherRoles The other roles to check against.
+     *
      * @return True when this role is the same as any of the given roles.
      */
     public boolean isAnyOf(UnitRole role, UnitRole... otherRoles) {
@@ -119,9 +120,8 @@ public enum UnitRole {
     }
 
     /**
-     * Parses the given string into the UnitRole if possible and returns it. If it
-     * can't parse the string, logs an error and returns UNDETERMINED. Does not
-     * return null.
+     * Parses the given string into the UnitRole if possible and returns it. If it can't parse the string, logs an error
+     * and returns UNDETERMINED. Does not return null.
      *
      * @return The UnitRole given as a string or UNDETERMINED.
      */
@@ -150,18 +150,15 @@ public enum UnitRole {
     }
 
     /**
-     * Applies the criteria from Alpha Strike Companion to determine whether a unit
-     * qualifies for a particular role. As the canon unit roles do not themselves
-     * adhere strictly to the guidelines, there is some allowance for fuzziness in
-     * applying the criteria by computing a score. Stats outside the given ranges
-     * lower the score, and special abilities that are useful for a role raise the
-     * score.
-     * This method calculates AlphaStrike statistics for the Entity as the first
-     * step in the calculation.
+     * Applies the criteria from Alpha Strike Companion to determine whether a unit qualifies for a particular role. As
+     * the canon unit roles do not themselves adhere strictly to the guidelines, there is some allowance for fuzziness
+     * in applying the criteria by computing a score. Stats outside the given ranges lower the score, and special
+     * abilities that are useful for a role raise the score. This method calculates AlphaStrike statistics for the
+     * Entity as the first step in the calculation.
      *
      * @param entity The unit to be checked for role qualification
-     * @return Boolean value indicating whether the unit meets the qualifications
-     *         for this role.
+     *
+     * @return Boolean value indicating whether the unit meets the qualifications for this role.
      */
     public boolean qualifiesForRole(Entity entity) {
         return qualifiesForRole(ASConverter.convert(entity), 0);
@@ -169,45 +166,45 @@ public enum UnitRole {
 
     /**
      * <p>Applies the criteria from Alpha Strike Companion to determine whether a unit
-     * qualifies for a particular role. As the canon unit roles do not themselves
-     * adhere strictly to the guidelines, there is some allowance for fuzziness in
-     * applying the criteria by computing a score. Stats outside the given ranges
-     * lower the score, and special abilities that are useful for a role raise the
-     * score.</p>
+     * qualifies for a particular role. As the canon unit roles do not themselves adhere strictly to the guidelines,
+     * there is some allowance for fuzziness in applying the criteria by computing a score. Stats outside the given
+     * ranges lower the score, and special abilities that are useful for a role raise the score.</p>
      * <p>This method calculates AlphaStrike statistics for the Entity as the first step in the calculation.</p>
+     *
      * @param entity    The unit to be checked for role qualification
      * @param tolerance A measure of how strictly to apply the qualifications. A value of zero is more or less by the
-     *                 book, while values below 0 are more liberal and above 0 are stricter.
-     * @return Boolean value indicating whether the unit meets the qualifications
-     *         for this role.
+     *                  book, while values below 0 are more liberal and above 0 are stricter.
+     *
+     * @return Boolean value indicating whether the unit meets the qualifications for this role.
      */
     public boolean qualifiesForRole(Entity entity, double tolerance) {
         return qualifiesForRole(ASConverter.convert(entity), tolerance);
     }
 
     /**
-     * Applies the criteria from Alpha Strike Companion to determine whether a unit qualifies for a particular role.
-     * As the canon unit roles do not themselves adhere strictly to the guidelines, there is some allowance for
-     * fuzziness in applying the criteria by computing a score. Stats outside the given ranges lower the score, and
-     * special abilities that are useful for a role raise the score.
+     * Applies the criteria from Alpha Strike Companion to determine whether a unit qualifies for a particular role. As
+     * the canon unit roles do not themselves adhere strictly to the guidelines, there is some allowance for fuzziness
+     * in applying the criteria by computing a score. Stats outside the given ranges lower the score, and special
+     * abilities that are useful for a role raise the score.
      *
      * @param unit The unit to be checked for role qualification
-     * @return Boolean value indicating whether the unit meets the qualifications
-     *         for this role.
+     *
+     * @return Boolean value indicating whether the unit meets the qualifications for this role.
      */
     public boolean qualifiesForRole(AlphaStrikeElement unit) {
         return qualifiesForRole(unit, 0);
     }
 
     /**
-     * Applies the criteria from Alpha Strike Companion to determine whether a unit qualifies for a particular role.
-     * As the canon unit roles do not themselves adhere strictly to the guidelines, there is some allowance for
-     * fuzziness in applying the criteria by computing a score. Stats outside the given ranges lower the score, and
-     * special abilities that are useful for a role raise the score.
+     * Applies the criteria from Alpha Strike Companion to determine whether a unit qualifies for a particular role. As
+     * the canon unit roles do not themselves adhere strictly to the guidelines, there is some allowance for fuzziness
+     * in applying the criteria by computing a score. Stats outside the given ranges lower the score, and special
+     * abilities that are useful for a role raise the score.
      *
      * @param unit      The unit to be checked for role qualification
      * @param tolerance A measure of how strictly to apply the qualifications. A value of zero is more or less by the
-     *                 book, while values &lt; 0 are more liberal and &gt; 0 are stricter.
+     *                  book, while values &lt; 0 are more liberal and &gt; 0 are stricter.
+     *
      * @return Boolean value indicating whether the unit meets the qualifications for this role.
      */
     public boolean qualifiesForRole(AlphaStrikeElement unit, double tolerance) {
@@ -223,13 +220,13 @@ public enum UnitRole {
                 score -= Math.max(0, speed - 6) * 0.5;
                 score -= Math.max(0, unit.getFullArmor() - 5);
                 if (unit.hasSUA(BattleForceSUA.ECM)
-                        || unit.hasSUA(BattleForceSUA.LECM)
-                        || unit.hasSUA(BattleForceSUA.WAT)) {
+                      || unit.hasSUA(BattleForceSUA.LECM)
+                      || unit.hasSUA(BattleForceSUA.WAT)) {
                     score++;
                 }
                 if (unit.hasSUA(BattleForceSUA.STL)
-                        || unit.hasSUA(BattleForceSUA.MAS)
-                        || unit.hasSUA(BattleForceSUA.LMAS)) {
+                      || unit.hasSUA(BattleForceSUA.MAS)
+                      || unit.hasSUA(BattleForceSUA.LMAS)) {
                     score++;
                 }
                 if (unit.getStandardDamage().S.damage > unit.getStandardDamage().M.damage) {
@@ -258,7 +255,7 @@ public enum UnitRole {
                  */
                 score += Math.min(0, unit.getFullArmor() - (unit.getSize() + 4));
                 if (Math.max(unit.getStandardDamage().S.damage,
-                        unit.getStandardDamage().M.damage) * 2 >= unit.getFullArmor()) {
+                      unit.getStandardDamage().M.damage) * 2 >= unit.getFullArmor()) {
                     score++;
                 }
                 if (unit.getStandardDamage().S.damage > unit.getStandardDamage().M.damage) {
@@ -267,35 +264,35 @@ public enum UnitRole {
                     score += 0.5;
                 }
                 if (unit.hasSUA(BattleForceSUA.MEL)
-                        || unit.hasSUA(BattleForceSUA.TSM)) {
+                      || unit.hasSUA(BattleForceSUA.TSM)) {
                     score++;
                 }
                 if (unit.hasSUA(BattleForceSUA.CR)
-                        || unit.hasSUA(BattleForceSUA.RCA)
-                        || unit.hasSUA(BattleForceSUA.RFA)) {
+                      || unit.hasSUA(BattleForceSUA.RCA)
+                      || unit.hasSUA(BattleForceSUA.RFA)) {
                     score++;
                 }
                 if (unit.hasSUA(BattleForceSUA.AMS)
-                        || unit.hasSUA(BattleForceSUA.RAMS)) {
+                      || unit.hasSUA(BattleForceSUA.RAMS)) {
                     score++;
                 }
                 break;
             case MISSILE_BOAT:
                 /* Any artillery piece or can do damage by indirect fire at long range */
                 return (unit.getStandardDamage().L.damage > 0 && unit.hasSUA(BattleForceSUA.IF))
-                        || unit.hasSUA(BattleForceSUA.ARTAIS)
-                        || unit.hasSUA(BattleForceSUA.ARTAC)
-                        || unit.hasSUA(BattleForceSUA.ARTBA)
-                        || unit.hasSUA(BattleForceSUA.ARTCM5)
-                        || unit.hasSUA(BattleForceSUA.ARTCM7)
-                        || unit.hasSUA(BattleForceSUA.ARTCM9)
-                        || unit.hasSUA(BattleForceSUA.ARTCM12)
-                        || unit.hasSUA(BattleForceSUA.ARTT)
-                        || unit.hasSUA(BattleForceSUA.ARTS)
-                        || unit.hasSUA(BattleForceSUA.ARTLT)
-                        || unit.hasSUA(BattleForceSUA.ARTTC)
-                        || unit.hasSUA(BattleForceSUA.ARTSC)
-                        || unit.hasSUA(BattleForceSUA.ARTLTC);
+                      || unit.hasSUA(BattleForceSUA.ARTAIS)
+                      || unit.hasSUA(BattleForceSUA.ARTAC)
+                      || unit.hasSUA(BattleForceSUA.ARTBA)
+                      || unit.hasSUA(BattleForceSUA.ARTCM5)
+                      || unit.hasSUA(BattleForceSUA.ARTCM7)
+                      || unit.hasSUA(BattleForceSUA.ARTCM9)
+                      || unit.hasSUA(BattleForceSUA.ARTCM12)
+                      || unit.hasSUA(BattleForceSUA.ARTT)
+                      || unit.hasSUA(BattleForceSUA.ARTS)
+                      || unit.hasSUA(BattleForceSUA.ARTLT)
+                      || unit.hasSUA(BattleForceSUA.ARTTC)
+                      || unit.hasSUA(BattleForceSUA.ARTSC)
+                      || unit.hasSUA(BattleForceSUA.ARTLTC);
             case SCOUT:
                 /*
                  * Fast (jump, WiGE, or VTOL helpful but not required), lightly armored,
@@ -304,16 +301,16 @@ public enum UnitRole {
                 score += Math.min(0, speed - 8) * 0.5;
                 score -= Math.max(0, unit.getFullArmor() - 4);
                 if (unit.getMovementModes().contains("j") || unit.getMovementModes().contains("g")
-                        || unit.getMovementModes().contains("v")) {
+                      || unit.getMovementModes().contains("v")) {
                     score++;
                 }
                 if (unit.hasSUA(BattleForceSUA.RCN)) {
                     score++;
                 }
                 if (unit.hasSUA(BattleForceSUA.BH)
-                        || unit.hasSUA(BattleForceSUA.PRB)
-                        || unit.hasSUA(BattleForceSUA.LPRB)
-                        || unit.hasSUA(BattleForceSUA.WAT)) {
+                      || unit.hasSUA(BattleForceSUA.PRB)
+                      || unit.hasSUA(BattleForceSUA.LPRB)
+                      || unit.hasSUA(BattleForceSUA.WAT)) {
                     score++;
                 }
                 if (unit.hasSUA(BattleForceSUA.ECM)) {
@@ -402,15 +399,15 @@ public enum UnitRole {
             case TRANSPORT:
                 /* Has transport capacity */
                 return unit.hasSUA(BattleForceSUA.CK)
-                        || unit.hasSUA(BattleForceSUA.IT)
-                        || unit.hasSUA(BattleForceSUA.AT)
-                        || unit.hasSUA(BattleForceSUA.PT)
-                        || unit.hasSUA(BattleForceSUA.VTM)
-                        || unit.hasSUA(BattleForceSUA.VTH)
-                        || unit.hasSUA(BattleForceSUA.VTS)
-                        || unit.hasSUA(BattleForceSUA.MT)
-                        || unit.hasSUA(BattleForceSUA.CT)
-                        || unit.hasSUA(BattleForceSUA.ST);
+                      || unit.hasSUA(BattleForceSUA.IT)
+                      || unit.hasSUA(BattleForceSUA.AT)
+                      || unit.hasSUA(BattleForceSUA.PT)
+                      || unit.hasSUA(BattleForceSUA.VTM)
+                      || unit.hasSUA(BattleForceSUA.VTH)
+                      || unit.hasSUA(BattleForceSUA.VTS)
+                      || unit.hasSUA(BattleForceSUA.MT)
+                      || unit.hasSUA(BattleForceSUA.CT)
+                      || unit.hasSUA(BattleForceSUA.ST);
             default:
                 break;
         }

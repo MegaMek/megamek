@@ -1,30 +1,52 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.common.weapons;
 
-import megamek.common.*;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.totalwarfare.TWGameManager;
+package megamek.common.weapons;
 
 import java.io.Serial;
 import java.util.Vector;
+
+import megamek.common.BattleArmor;
+import megamek.common.Building;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Report;
+import megamek.common.TargetRoll;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -49,9 +71,9 @@ public class LRMFragHandler extends LRMHandler {
         double toReturn = 1;
         // during a swarm, all damage gets applied as one block to one location
         if ((ae instanceof BattleArmor)
-                && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
-                && !(weapon.isSquadSupportWeapon())
-                && (ae.getSwarmTargetId() == target.getId())) {
+              && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
+              && !(weapon.isSquadSupportWeapon())
+              && (ae.getSwarmTargetId() == target.getId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // against infantry, we have 1 hit
@@ -72,7 +94,7 @@ public class LRMFragHandler extends LRMHandler {
 
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage) {
+          Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -94,14 +116,17 @@ public class LRMFragHandler extends LRMHandler {
         // weapons that can't normally start fires. that's weird.
         // Buildings can't be accidentally ignited.
         if ((bldg != null)
-                && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false,
-                        false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
-                        vPhaseReport)) {
+              && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false,
+              false,
+              new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+              vPhaseReport)) {
             return;
         }
 
-        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), target.getBoardId(), nDamage, subjectId);
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(),
+              target.getBoardId(),
+              nDamage,
+              subjectId);
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }
@@ -109,5 +134,5 @@ public class LRMFragHandler extends LRMHandler {
     }
 
     @Override
-    protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage, Coords coords) { }
+    protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage, Coords coords) {}
 }

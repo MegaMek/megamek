@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2024 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2024 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.util;
 
 import java.io.BufferedReader;
@@ -30,8 +51,8 @@ import megamek.SuiteConstants;
 import megamek.logging.MMLogger;
 
 /**
- * buildingBlock is based on a file format I used in an online game. The
- * original was written in PHP, this one is more robust, and written in Java.
+ * buildingBlock is based on a file format I used in an online game. The original was written in PHP, this one is more
+ * robust, and written in Java.
  *
  * @author Nate Rowden
  * @since April 2, 2002, 1:57 PM
@@ -52,13 +73,10 @@ public class BuildingBlock {
     }
 
     /**
-     * Creates a new buildingBlock and fills it with the data in the String[]
-     * array.
+     * Creates a new buildingBlock and fills it with the data in the String[] array.
      *
-     * @param data
-     *             This is most useful for storing one block file inside
-     *             another...but <I>data</I> can be an array of anything...such
-     *             as comments.
+     * @param data This is most useful for storing one block file inside another...but <I>data</I> can be an array of
+     *             anything...such as comments.
      */
     public BuildingBlock(String[] data) {
         rawData = new Vector<>();
@@ -68,8 +86,7 @@ public class BuildingBlock {
     /**
      * Creates a new buildingBlock and fills it with the Vector.
      *
-     * @param data
-     *             The Vector can be filled with anything.
+     * @param data The Vector can be filled with anything.
      */
     public BuildingBlock(Vector<String> data) {
         rawData = data;
@@ -86,7 +103,7 @@ public class BuildingBlock {
         rawData.clear();
 
         try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-                BufferedReader br = new BufferedReader(isr)) {
+              BufferedReader br = new BufferedReader(isr)) {
             // read the file till can't read anymore...
             while (br.ready()) {
                 data = br.readLine();
@@ -110,12 +127,11 @@ public class BuildingBlock {
     }
 
     /**
-     * Finds the starting index of a block. This is used by the class to locate
-     * data, but is a public function that can be useful if you know what you
-     * want to do with the <CODE>rawData</CODE> Vector.
+     * Finds the starting index of a block. This is used by the class to locate data, but is a public function that can
+     * be useful if you know what you want to do with the <CODE>rawData</CODE> Vector.
      *
-     * @param blockName
-     *                  The name of the data block to locate.
+     * @param blockName The name of the data block to locate.
+     *
      * @return Returns the start index of the block data. Or -1 if not found.
      */
     public int findStartIndex(String blockName) {
@@ -139,20 +155,19 @@ public class BuildingBlock {
                 }
             } catch (Exception ex) {
                 logger.error(String.format(
-                        "Was looking for %s and caught an Exception parsing line \n\"%s\" \nat rawData index number %s",
-                        key, line, lineNum), ex);
+                      "Was looking for %s and caught an Exception parsing line \n\"%s\" \nat rawData index number %s",
+                      key, line, lineNum), ex);
             }
         }
         return startIndex;
     }
 
     /**
-     * Finds the starting index of a block. This is used by the class to locate
-     * data, but is a public function that can be useful if you know what you
-     * want to do with the <CODE>rawData</CODE> Vector.
+     * Finds the starting index of a block. This is used by the class to locate data, but is a public function that can
+     * be useful if you know what you want to do with the <CODE>rawData</CODE> Vector.
      *
-     * @param blockName
-     *                  The name of the data block to locate.
+     * @param blockName The name of the data block to locate.
+     *
      * @return Returns the end index of the block data. Or -1 if not found.
      */
     public int findEndIndex(String blockName) {
@@ -176,8 +191,10 @@ public class BuildingBlock {
                 }
             } catch (Exception ex) {
                 logger.error(String.format(
-                        "Was looking for %s and caught an Exception parsing line \n\"%s\" \nwith rawData index number %s",
-                        key, line, lineNum));
+                      "Was looking for %s and caught an Exception parsing line \n\"%s\" \nwith rawData index number %s",
+                      key,
+                      line,
+                      lineNum));
             }
         }
         return endIndex;
@@ -186,8 +203,8 @@ public class BuildingBlock {
     /**
      * Gets data from inside a block.
      *
-     * @param blockName
-     *                  The name of the block to grab the data from.
+     * @param blockName The name of the block to grab the data from.
+     *
      * @return Returns an array of data.
      */
     public String[] getDataAsString(String blockName) {
@@ -360,8 +377,8 @@ public class BuildingBlock {
     /**
      * Gets data from a block.
      *
-     * @param blockName
-     *                  Name of the block to get data from.
+     * @param blockName Name of the block to get data from.
+     *
      * @return Returns the data as a Vector.
      */
     public List<String> getDataAsVector(String blockName) {
@@ -461,10 +478,9 @@ public class BuildingBlock {
     /**
      * Writes a data block to the <CODE>rawData</CODE> vector.
      *
-     * @param blockName
-     *                  Name of the block to be created.
-     * @param blockData
-     *                  Data to be written inside the block.
+     * @param blockName Name of the block to be created.
+     * @param blockData Data to be written inside the block.
+     *
      * @return Returns true on success.
      */
     public boolean writeBlockData(String blockName, List<String> blockData) {
@@ -484,6 +500,7 @@ public class BuildingBlock {
      * Writes a comment.
      *
      * @param theComment The comment to be written.
+     *
      * @return Returns true on success.
      */
     public boolean writeBlockComment(String theComment) {
@@ -495,6 +512,7 @@ public class BuildingBlock {
      * Writes the buildingBlock data to a file.
      *
      * @param file File to write. Overwrites existing files.
+     *
      * @return true on success.
      */
     public boolean writeBlockFile(File file) {
@@ -507,8 +525,8 @@ public class BuildingBlock {
         }
 
         try (OutputStream fos = new FileOutputStream(file);
-                OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                BufferedWriter bw = new BufferedWriter(osw)) {
+              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+              BufferedWriter bw = new BufferedWriter(osw)) {
             for (String rawDatum : rawData) {
                 bw.write(rawDatum);
                 bw.newLine();
@@ -546,8 +564,8 @@ public class BuildingBlock {
     /**
      * Converts a String array into a Vector.
      *
-     * @param stringArray
-     *                    The String array to convert.
+     * @param stringArray The String array to convert.
+     *
      * @return Returns the Vector created by the String[]
      */
     public Vector<String> makeVector(String[] stringArray) {
@@ -610,8 +628,9 @@ public class BuildingBlock {
     /**
      * Just about the same as the <CODE>getVector()</CODE> command.
      *
-     * @see #getVector()
      * @return Returns the <CODE>rawData</CODE> Vector.
+     *
+     * @see #getVector()
      */
     public Vector<String> getAllDataAsVector() {
 
@@ -622,11 +641,10 @@ public class BuildingBlock {
     }
 
     /**
-     * Tells you the size of an array this thing returned by giving you the
-     * number in the [0] position.
+     * Tells you the size of an array this thing returned by giving you the number in the [0] position.
      *
-     * @param array
-     *              The array to get the size of.
+     * @param array The array to get the size of.
+     *
      * @return Returns the number in the [0] position.
      */
     public int getReturnedArraySize(String[] array) {
@@ -635,12 +653,13 @@ public class BuildingBlock {
         } catch (Exception ignored) {
             // couldn't parse it...
             logger.error(
-                    "Couldn't find array size at [0]...is this an array I returned...? Trying to find the size anyway...");
+                  "Couldn't find array size at [0]...is this an array I returned...? Trying to find the size anyway...");
             return this.countArray(array);
         }
     }
 
     // for those of us who like doing things indirectly ; -?
+
     /**
      * @see #getReturnedArraySize (String[])
      */
@@ -649,8 +668,9 @@ public class BuildingBlock {
     }
 
     /**
-     * @see #getReturnedArraySize (String[])
      * @return Returns <CODE>array.size()</CODE>
+     *
+     * @see #getReturnedArraySize (String[])
      */
     public int getReturnedArraySize(Vector<Object> array) {
         return array.size();
@@ -671,8 +691,8 @@ public class BuildingBlock {
     /**
      * Counts the size of an array.
      *
-     * @param array
-     *              The array to count.
+     * @param array The array to count.
+     *
      * @return Returns the array's size.
      */
     public int countArray(String[] array) {
@@ -680,7 +700,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see #countArray( String[] )
+     * @see #countArray(String[])
      */
     public int countArray(float[] array) {
 
@@ -688,7 +708,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see #countArray( String[] )
+     * @see #countArray(String[])
      */
     public int countArray(int[] array) {
 

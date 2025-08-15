@@ -1,27 +1,44 @@
 /*
- * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.commands;
 
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
-import megamek.common.*;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.ManeuverType;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
@@ -47,7 +64,7 @@ public class MoveCommand extends ClientCommand {
 
     public MoveCommand(ClientGUI clientGUI) {
         super(clientGUI, "move",
-                "Move your units. Use #move HELP for more information.");
+              "Move your units. Use #move HELP for more information.");
     }
 
     @Override
@@ -60,17 +77,17 @@ public class MoveCommand extends ClientCommand {
                 return "Move aborted, all movement data cleared.";
             } else if (args[1].equalsIgnoreCase("HELP")) {
                 return "Available commands:\n"
-                        + "#move ABORT = aborts planed move and deselect unit.\n"
-                        + "#move SELECT unitID = Selects the unit named unit ID for movement. This is a prerequisite for all commands listed after this. Also changed current hex.\n"
-                        + "#move COMMIT = commits the planed movement.\n"
-                        + "#move JUMP = clears all movement and starts jump movement. Either the entire move is a jump or the entire move is a walk. switching gears will cancel all planned movement (but leave the unit selected).\n"
-                        + "#move BACK [x y] = Start walking backwards, can be followed by a coordinate.\n"
-                        + "#move WALK [x y] = Start walking/running forwards, this is the default. Can be followed by a coordinate.\n"
-                        + "#move TURN [x y] = Starts turning towards target coordinate. Can be followed by a coordinate.\n"
-                        + "#move CLIP = Clips to path to what is actually possible, and reports on what will happen if committed.\n"
-                        + "#move GETUP = Attempt to stand up. Will require a piloting roll.\n"
-                        + "#move CAREFUL = Attempt to stand up. Will require a piloting roll.\n"
-                        + "#move x y = move towards coordinate in the current gear. It will do pathfinding for least cost path. Note that the entity will try to move to each coordinate supplied in order.\n";
+                      + "#move ABORT = aborts planed move and deselect unit.\n"
+                      + "#move SELECT unitID = Selects the unit named unit ID for movement. This is a prerequisite for all commands listed after this. Also changed current hex.\n"
+                      + "#move COMMIT = commits the planed movement.\n"
+                      + "#move JUMP = clears all movement and starts jump movement. Either the entire move is a jump or the entire move is a walk. switching gears will cancel all planned movement (but leave the unit selected).\n"
+                      + "#move BACK [x y] = Start walking backwards, can be followed by a coordinate.\n"
+                      + "#move WALK [x y] = Start walking/running forwards, this is the default. Can be followed by a coordinate.\n"
+                      + "#move TURN [x y] = Starts turning towards target coordinate. Can be followed by a coordinate.\n"
+                      + "#move CLIP = Clips to path to what is actually possible, and reports on what will happen if committed.\n"
+                      + "#move GETUP = Attempt to stand up. Will require a piloting roll.\n"
+                      + "#move CAREFUL = Attempt to stand up. Will require a piloting roll.\n"
+                      + "#move x y = move towards coordinate in the current gear. It will do pathfinding for least cost path. Note that the entity will try to move to each coordinate supplied in order.\n";
             } else if (args[1].equalsIgnoreCase("SELECT")) {
                 try {
                     clearAllMoves();
@@ -83,7 +100,7 @@ public class MoveCommand extends ClientCommand {
 
                     getClientGUI().setCurrentHex(ce().getPosition());
                     return "Entity " + ce().toString()
-                            + " selected for movement.";
+                          + " selected for movement.";
                 } catch (Exception e) {
                     return "Not an entity ID or valid number." + e;
                 }
@@ -115,13 +132,13 @@ public class MoveCommand extends ClientCommand {
                 } else if (args[1].equalsIgnoreCase("CLIP")) {
                     cmd.clipToPossible();
                     return "Path clipped to whats actually possible. "
-                            + ce().toString() + " is now in gear "
-                            + gearName(gear) + " heading towards "
-                            + cmd.getFinalCoords().toFriendlyString()
-                            + " with a final facing of "
-                            + getDirection(cmd.getFinalFacing())
-                            + ". Total mp used: " + cmd.getMpUsed()
-                            + " for a movement of: " + cmd.getHexesMoved();
+                          + ce().toString() + " is now in gear "
+                          + gearName(gear) + " heading towards "
+                          + cmd.getFinalCoords().toFriendlyString()
+                          + " with a final facing of "
+                          + getDirection(cmd.getFinalFacing())
+                          + ". Total mp used: " + cmd.getMpUsed()
+                          + " for a movement of: " + cmd.getHexesMoved();
                 } else if (args[1].equalsIgnoreCase("GETUP")) {
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
                         cmd.addStep(MoveStepType.GET_UP);
@@ -131,7 +148,7 @@ public class MoveCommand extends ClientCommand {
                     return "Trying to get up but the Mek is not prone.";
                 } else if (args[1].equalsIgnoreCase("CAREFULSTAND")) {
                     if (cmd.getFinalProne() || cmd.getFinalHullDown() && getClient().getGame().getOptions()
-                            .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)) {
+                          .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)) {
                         cmd.addStep(MoveStepType.CAREFUL_STAND);
                         return "Mek will try to stand up. this requires a piloting roll.";
                     }
@@ -148,11 +165,11 @@ public class MoveCommand extends ClientCommand {
                 currentMove(target);
 
                 return "Commands accepted " + ce().toString()
-                        + " is now in gear " + gearName(gear)
-                        + " heading towards "
-                        + cmd.getFinalCoords().toFriendlyString()
-                        + ". Total mp used: " + cmd.getMpUsed()
-                        + " for a movement of: " + cmd.getHexesMoved();
+                      + " is now in gear " + gearName(gear)
+                      + " heading towards "
+                      + cmd.getFinalCoords().toFriendlyString()
+                      + ". Total mp used: " + cmd.getMpUsed()
+                      + " for a movement of: " + cmd.getHexesMoved();
             }
         }
         clearAllMoves();

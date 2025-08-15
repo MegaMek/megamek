@@ -2,7 +2,7 @@ name: MegaMek CI with Code Coverage
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 env:
   GRADLE_OPTS: "-Dscan.link.VCS=https://github.com/MegaMek/megamek/commit/${{ github.sha }}"
@@ -18,8 +18,14 @@ jobs:
         java-version: [ 17, 21 ]
 
     steps:
+      - name: Checkout Data Repo
+        uses: actions/checkout@v5
+        with:
+          repository: megamek/mm-data
+          path: mm-data
+
       - name: "Check out MegaMek"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: megamek
 

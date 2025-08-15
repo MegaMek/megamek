@@ -1,24 +1,44 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+  Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 
 package megamek.common;
 
 /**
- * Represents a hex, not in the game but in an ideal coordinate system. Used for
- * Compute.intervening() calculations and a few others. This ideal hex is 2.0
- * units tall. Tries to keep a cache of IdealHexes requested, as intervening()
- * sure wants a lot of hexes sometimes.
+ * Represents a hex, not in the game but in an ideal coordinate system. Used for Compute.intervening() calculations and
+ * a few others. This ideal hex is 2.0 units tall. Tries to keep a cache of IdealHexes requested, as intervening() sure
+ * wants a lot of hexes sometimes.
  */
 public class IdealHex {
     // used for turns()
@@ -80,21 +100,19 @@ public class IdealHex {
     }
 
     /**
-     * Tests whether a line intersects a point or the point passes to the left
-     * or right of the line. Deals with floating point imprecision. Thx
-     * deadeye00 (Derek Evans)
+     * Tests whether a line intersects a point or the point passes to the left or right of the line. Deals with floating
+     * point imprecision. Thx deadeye00 (Derek Evans)
      */
     public static int turns(double x0, double y0, double x1, double y1,
-                            double x2, double y2) {
+          double x2, double y2) {
         final double cross = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0);
         return ((cross > 0.000001) ? LEFT : ((cross < -0.000001) ? RIGHT
-                                                                 : STRAIGHT));
+              : STRAIGHT));
     }
 
     /**
-     * Ensures that the cache will be at least the specified dimensions. If it
-     * is not, a new cache is created. Hopefully this won't happen too much.
-     * Must be called at least once before get(), since the initial size is 0.
+     * Ensures that the cache will be at least the specified dimensions. If it is not, a new cache is created. Hopefully
+     * this won't happen too much. Must be called at least once before get(), since the initial size is 0.
      */
     public static void ensureCacheSize(int width, int height) {
         if (cacheWidth < width || cacheHeight < height) {
@@ -105,12 +123,12 @@ public class IdealHex {
     }
 
     /**
-     * Gets a hex from the cache, if it exists in the cache. If the hex is not
-     * cached yet, creates it. If the cache is too small, does not resize it.
+     * Gets a hex from the cache, if it exists in the cache. If the hex is not cached yet, creates it. If the cache is
+     * too small, does not resize it.
      */
     public static IdealHex get(Coords coords) {
         if (cache == null || coords.getX() >= cacheWidth || coords.getY() >= cacheHeight
-            || coords.getX() < 0 || coords.getY() < 0) {
+              || coords.getX() < 0 || coords.getY() < 0) {
             return new IdealHex(coords);
         }
         // okay, check cache

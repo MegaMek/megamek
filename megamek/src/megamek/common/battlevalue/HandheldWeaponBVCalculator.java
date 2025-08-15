@@ -32,9 +32,9 @@
  */
 package megamek.common.battlevalue;
 
-import megamek.common.Entity;
-
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
+
+import megamek.common.Entity;
 
 public class HandheldWeaponBVCalculator extends BVCalculator {
     HandheldWeaponBVCalculator(Entity entity) {
@@ -53,7 +53,9 @@ public class HandheldWeaponBVCalculator extends BVCalculator {
         var armor = entity.getTotalArmor();
         var armorBV = armor * 2;
         defensiveValue += armorBV;
-        bvReport.addLine("Armor:", formatForReport(armor) + " (Total Armor Factor) x 2", "= " + formatForReport(armorBV));
+        bvReport.addLine("Armor:",
+              formatForReport(armor) + " (Total Armor Factor) x 2",
+              "= " + formatForReport(armorBV));
     }
 
     @Override

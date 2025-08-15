@@ -1,17 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2019 The MegaMek Team
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.loaders;
 
 import java.io.File;
@@ -312,16 +332,16 @@ public class BLKFile {
 
     protected void loadSVArmor(Entity sv) throws EntityLoadingException {
         boolean patchworkArmor = dataFile.exists("armor_type") &&
-                                       dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK;
+              dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK;
         if (patchworkArmor) {
             for (int i = 1; i < sv.locations(); i++) {
                 megamek.common.equipment.ArmorType armor = dataFile.exists(sv.getLocationName(i) + "_barrating") ?
-                                                                 megamek.common.equipment.ArmorType.svArmor(dataFile.getDataAsInt(
-                                                                       sv.getLocationName(i) + "_barrating")[0]) :
-                                                                 megamek.common.equipment.ArmorType.of(dataFile.getDataAsInt(
-                                                                             sv.getLocationName(i) + "_armor_type")[0],
-                                                                       TechConstants.isClan(dataFile.getDataAsInt(sv.getLocationName(
-                                                                             i) + "_armor_tech")[0]));
+                      megamek.common.equipment.ArmorType.svArmor(dataFile.getDataAsInt(
+                            sv.getLocationName(i) + "_barrating")[0]) :
+                      megamek.common.equipment.ArmorType.of(dataFile.getDataAsInt(
+                                  sv.getLocationName(i) + "_armor_type")[0],
+                            TechConstants.isClan(dataFile.getDataAsInt(sv.getLocationName(
+                                  i) + "_armor_tech")[0]));
                 sv.setArmorType(armor.getArmorType(), i);
                 sv.setBARRating(armor.getBAR(), i);
                 sv.setArmorTechLevel(armor.getStaticTechLevel().getCompoundTechLevel(sv.isClan()), i);
@@ -630,11 +650,11 @@ public class BLKFile {
         }
 
         List<String> quirkList = t.getQuirks()
-                                       .getOptionsList()
-                                       .stream()
-                                       .filter(IOption::booleanValue)
-                                       .map(IBasicOption::getName)
-                                       .collect(Collectors.toList());
+              .getOptionsList()
+              .stream()
+              .filter(IOption::booleanValue)
+              .map(IBasicOption::getName)
+              .collect(Collectors.toList());
 
         if (!quirkList.isEmpty()) {
             blk.writeBlockData("quirks", String.join("\n", quirkList));
@@ -644,12 +664,12 @@ public class BLKFile {
         for (Mounted<?> equipment : t.getEquipment()) {
             for (IOption weaponQuirk : equipment.getQuirks().activeQuirks()) {
                 weaponQuirkList.add(weaponQuirk.getName() +
-                                          ":" +
-                                          t.getLocationAbbr(equipment.getLocation()) +
-                                          ":" +
-                                          t.slotNumber(equipment) +
-                                          ":" +
-                                          equipment.getType().getInternalName());
+                      ":" +
+                      t.getLocationAbbr(equipment.getLocation()) +
+                      ":" +
+                      t.slotNumber(equipment) +
+                      ":" +
+                      equipment.getType().getInternalName());
             }
         }
         if (!weaponQuirkList.isEmpty()) {
@@ -1057,9 +1077,9 @@ public class BLKFile {
             if (js.getTotalGravDeck() > 0) {
                 blk.writeBlockData("grav_decks",
                       (Vector<String>) js.getGravDecks()
-                                             .stream()
-                                             .map(String::valueOf)
-                                             .collect(Collectors.toCollection(Vector::new)));
+                            .stream()
+                            .map(String::valueOf)
+                            .collect(Collectors.toCollection(Vector::new)));
             }
             blk.writeBlockData("designtype", js.getDesignType());
             blk.writeBlockData("crew", js.getNCrew());
@@ -1095,14 +1115,14 @@ public class BLKFile {
                 type = "Mixed (Clan Chassis)";
             }
             if ((t.getTechLevel() == TechConstants.T_IS_ADVANCED) ||
-                      (t.getTechLevel() == TechConstants.T_CLAN_ADVANCED)) {
+                  (t.getTechLevel() == TechConstants.T_CLAN_ADVANCED)) {
                 type += " Advanced";
             } else if ((t.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) ||
-                             (t.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)) {
+                  (t.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)) {
                 type += " Experimental";
             }
             if ((t.getTechLevel() == TechConstants.T_IS_UNOFFICIAL) ||
-                      (t.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
+                  (t.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
                 type += " Unofficial";
             }
         } else {
@@ -1182,12 +1202,12 @@ public class BLKFile {
         // For BattleArmor and ProtoMeks, we need to save how many shots are in this
         // location, but they have different formats, yay!
         if ((m.getEntity() instanceof BattleArmor || m.getEntity() instanceof HandheldWeapon) &&
-                  (m.getType() instanceof AmmoType)) {
+              (m.getType() instanceof AmmoType)) {
             name += ":Shots" + m.getBaseShotsLeft() + "#";
         } else if (m.getEntity() instanceof ProtoMek && (m.getType() instanceof AmmoType)) {
             name += " (" + m.getBaseShotsLeft() + ")";
         } else if (m.getType().isVariableSize() ||
-                         (m.getEntity().isSupportVehicle() && (m.getType() instanceof InfantryWeapon))) {
+              (m.getEntity().isSupportVehicle() && (m.getType() instanceof InfantryWeapon))) {
             name += ":SIZE:" + m.getSize();
         }
         return name;
@@ -1550,7 +1570,7 @@ public class BLKFile {
                 if (potentialBayTypeIndicator.equalsIgnoreCase(COMSTAR_BAY)) {
                     bitmap |= COMSTAR_BIT;
                 } else if (Set.of(new String[] { "jump", "foot", "motorized", "mechanized" })
-                                 .contains(potentialBayTypeIndicator.toLowerCase())) {
+                      .contains(potentialBayTypeIndicator.toLowerCase())) {
                     // Found an infantry type in the last field (2 or 3)
                     // Assign to field 3
                     temp[3] = potentialBayTypeIndicator;

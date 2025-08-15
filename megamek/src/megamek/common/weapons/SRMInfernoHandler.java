@@ -1,37 +1,43 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
@@ -62,12 +68,12 @@ public class SRMInfernoHandler extends SRMHandler {
             return true;
         }
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                : null;
+              : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
-                entityTarget);
+              entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
-                && !(target instanceof Infantry)
-                && ae.getPosition().distance(target.getPosition()) <= 1;
+              && !(target instanceof Infantry)
+              && ae.getPosition().distance(target.getPosition()) <= 1;
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -129,7 +135,7 @@ public class SRMInfernoHandler extends SRMHandler {
         // Set Margin of Success/Failure.
         toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
-                && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
+              && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();
@@ -202,7 +208,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                    : null;
+                  : null;
             if (entityTarget != null && entityTarget.isLargeCraft()) {
                 nMissilesModifier -= getAeroSanityAMSHitsMod();
             }
@@ -212,18 +218,18 @@ public class SRMInfernoHandler extends SRMHandler {
             // We want buildings and large craft to be able to affect this number with AMS
             // treat as a Streak launcher (cluster roll 11) to make this happen
             missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                    nMissilesModifier, weapon.isHotLoaded(), true,
-                    isAdvancedAMS());
+                  nMissilesModifier, weapon.isHotLoaded(), true,
+                  isAdvancedAMS());
         } else {
             if (ae instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
-                        * ((BattleArmor) ae).getShootingStrength(),
-                        nMissilesModifier, weapon.isHotLoaded(), false,
-                        isAdvancedAMS());
+                            * ((BattleArmor) ae).getShootingStrength(),
+                      nMissilesModifier, weapon.isHotLoaded(), false,
+                      isAdvancedAMS());
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                        nMissilesModifier, weapon.isHotLoaded(), false,
-                        isAdvancedAMS());
+                      nMissilesModifier, weapon.isHotLoaded(), false,
+                      isAdvancedAMS());
             }
         }
 
@@ -256,7 +262,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage) {
+          Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -277,14 +283,14 @@ public class SRMInfernoHandler extends SRMHandler {
         // a 5 or less
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false,
-                        true,
-                        getFireTNRoll(), 5,
-                        vPhaseReport)) {
+              && gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, false,
+              true,
+              getFireTNRoll(), 5,
+              vPhaseReport)) {
             return;
         }
         Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), target.getBoardId(),
-                nDamage, subjectId);
+              nDamage, subjectId);
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }

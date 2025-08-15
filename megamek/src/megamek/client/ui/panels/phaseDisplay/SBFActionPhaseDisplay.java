@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.phaseDisplay;
 
@@ -22,7 +36,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Optional;
-
 import javax.swing.AbstractAction;
 
 import megamek.client.ui.clientGUI.MegaMekGUI;
@@ -58,7 +71,9 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
         var donePanel = super.setupDonePanel();
         butSkipTurn = new MegaMekButton("SKIP", SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
         butSkipTurn.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height));
-        String f = UIUtil.fontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE_NO_ACTION)+ "</FONT>";
+        String f = UIUtil.fontHTML(UIUtil.uiLightViolet())
+              + KeyCommandBind.getDesc(KeyCommandBind.DONE_NO_ACTION)
+              + "</FONT>";
         butSkipTurn.setToolTipText("<html><body>" + f + "</body></html>");
         addToDonePanel(donePanel, butSkipTurn);
 
@@ -71,8 +86,8 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
                         return;
                     }
                     if ((clientgui.getClient().isMyTurn())
-                            || (clientgui.getClient().getGame().getTurn() == null)
-                            || (clientgui.getClient().getGame().getPhase().isReport())) {
+                          || (clientgui.getClient().getGame().getTurn() == null)
+                          || (clientgui.getClient().getGame().getPhase().isReport())) {
                         // act like Done button
                         performDoneNoAction();
                         // When the turn is ended, we could miss a key release event
@@ -83,7 +98,7 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
             });
 
             controller.registerCommandAction(KeyCommandBind.DONE_NO_ACTION, this::shouldReceiveDoneKeyCommand,
-                    this::performDoneNoAction);
+                  this::performDoneNoAction);
         }
 
         updateDonePanel();
@@ -97,12 +112,12 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
 
     public boolean shouldReceiveDoneKeyCommand() {
         return ((clientgui.getClient().isMyTurn()
-                || (clientgui.getClient().getGame().getTurn() == null)
-                || (clientgui.getClient().getGame().getPhase().isReport())))
-                && !clientgui.isChatBoxActive()
-                && !isIgnoringEvents()
-                && isVisible()
-                && (butDone.isEnabled() || butSkipTurn.isEnabled());
+              || (clientgui.getClient().getGame().getTurn() == null)
+              || (clientgui.getClient().getGame().getPhase().isReport())))
+              && !clientgui.isChatBoxActive()
+              && !isIgnoringEvents()
+              && isVisible()
+              && (butDone.isEnabled() || butSkipTurn.isEnabled());
     }
 
     @Override
@@ -117,9 +132,10 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
         updateDonePanel();
     }
 
-    /** called to reset, show, hide and relabel the Done panel buttons. Override to change button labels and states,
-     * being sure to call {@link #updateDonePanelButtons(String, String, boolean, java.util.List)}
-     * to set the button labels and states
+    /**
+     * called to reset, show, hide and relabel the Done panel buttons. Override to change button labels and states,
+     * being sure to call {@link #updateDonePanelButtons(String, String, boolean, java.util.List)} to set the button
+     * labels and states
      */
     abstract protected void updateDonePanel();
 
@@ -129,33 +145,35 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
      * they have not preemptively checked @butIgnoreNag
      * the turn timer is not expired
      */
-//    protected boolean needNagForNoAction() {
-//        return GUIP.getNagForNoAction() && !ignoreNoActionNag && !isTimerExpired();
-//    }
-//
-//    protected boolean checkNagForNoAction(String title, String body) {
-//        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
-//        if (nag.getAnswer()) {
-//            // do they want to be bothered again?
-//            if (!nag.getShowAgain()) {
-//                GUIP.setNagForNoAction(false);
-//            }
-//        } else {
-//            return true;
-//        }
-//
-//        return false;
-//    }
+    //    protected boolean needNagForNoAction() {
+    //        return GUIP.getNagForNoAction() && !ignoreNoActionNag && !isTimerExpired();
+    //    }
+    //
+    //    protected boolean checkNagForNoAction(String title, String body) {
+    //        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
+    //        if (nag.getAnswer()) {
+    //            // do they want to be bothered again?
+    //            if (!nag.getShowAgain()) {
+    //                GUIP.setNagForNoAction(false);
+    //            }
+    //        } else {
+    //            return true;
+    //        }
+    //
+    //        return false;
+    //    }
 
 
-    /** set labels and enables on the done and skip buttons depending on the GUIP getNagForNoAction option
+    /**
+     * set labels and enables on the done and skip buttons depending on the GUIP getNagForNoAction option
      *
      * @param doneButtonLabel
      * @param skipButtonLabel
-     * @param isDoingAction true if user has entered actions for this turn, false if not.
+     * @param isDoingAction   true if user has entered actions for this turn, false if not.
      */
-    protected void updateDonePanelButtons(final String doneButtonLabel, final String skipButtonLabel, final boolean isDoingAction,
-                                          @Nullable List<String> turnDetails) {
+    protected void updateDonePanelButtons(final String doneButtonLabel, final String skipButtonLabel,
+          final boolean isDoingAction,
+          @Nullable List<String> turnDetails) {
         if (isIgnoringEvents()) {
             return;
         }
@@ -175,7 +193,7 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
         butSkipTurn.setText("<html><b>" + skipButtonLabel + "</b></html>");
 
         if ((currentFormation == SBFFormation.NONE)
-                || getClientgui().getClient().getGame().getInGameObject(currentFormation).isEmpty()) {
+              || getClientgui().getClient().getGame().getInGameObject(currentFormation).isEmpty()) {
             butDone.setEnabled(false);
             butSkipTurn.setEnabled(false);
         } else if (isDoingAction || ignoreNoActionNag) {
@@ -186,10 +204,10 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
             butSkipTurn.setEnabled(true);
         }
 
-//        TurnDetailsOverlay turnDetailsOverlay = clientgui.getBoardView().getTurnDetailsOverlay();
-//        if (turnDetailsOverlay != null) {
-//            turnDetailsOverlay.setLines(turnDetails);
-//        }
+        //        TurnDetailsOverlay turnDetailsOverlay = clientgui.getBoardView().getTurnDetailsOverlay();
+        //        if (turnDetailsOverlay != null) {
+        //            turnDetailsOverlay.setLines(turnDetails);
+        //        }
     }
 
     private void adaptToGUIScale() {
@@ -197,11 +215,10 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Returns the formation that is currently selected for action (movement/firing etc), if any, as an optional.
-     * Note that this can be empty in many cases. E.g., displays are active when it's not the player's turn.
-     * When the setting to not auto-select a unit for the player is active, no unit may be selected even in a
-     * player's turn.
-     * Note that this is not necessarily equal to the unit *viewed* in the unit display.
+     * Returns the formation that is currently selected for action (movement/firing etc), if any, as an optional. Note
+     * that this can be empty in many cases. E.g., displays are active when it's not the player's turn. When the setting
+     * to not auto-select a unit for the player is active, no unit may be selected even in a player's turn. Note that
+     * this is not necessarily equal to the unit *viewed* in the unit display.
      *
      * @return The currently acting formation, if any
      */

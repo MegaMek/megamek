@@ -32,16 +32,16 @@
  */
 package megamek.common.actions;
 
+import static megamek.common.AmmoType.AmmoTypeEnum.*;
+
+import java.util.EnumSet;
+
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
-
-import java.util.EnumSet;
-
-import static megamek.common.AmmoType.AmmoTypeEnum.*;
 
 class ComputeTargetToHitMods {
 
@@ -170,7 +170,7 @@ class ComputeTargetToHitMods {
                     tcMod = 2;
                 }
                 int ghostTargetMoF = (attacker.getCrew().getSensorOps() + ghostTargetMod) -
-                                           (attacker.getGhostTargetOverride() + bapMod + tcMod);
+                      (attacker.getGhostTargetOverride() + bapMod + tcMod);
                 if (ghostTargetMoF > 1) {
                     // according to this rules clarification the +4 max is on
                     // the PSR not on the to-hit roll
@@ -238,9 +238,9 @@ class ComputeTargetToHitMods {
 
         // target immobile
         boolean mekMortarMunitionsIgnoreImmobile = (wtype != null)
-                    && wtype.hasFlag(WeaponType.F_MEK_MORTAR)
-                    && (atype != null)
-                    && munition.contains(AmmoType.Munitions.M_AIRBURST);
+              && wtype.hasFlag(WeaponType.F_MEK_MORTAR)
+              && (atype != null)
+              && munition.contains(AmmoType.Munitions.M_AIRBURST);
         if (wtype != null && !(wtype instanceof ArtilleryCannonWeapon) && !mekMortarMunitionsIgnoreImmobile) {
             ToHitData immobileMod;
             // grounded dropships are treated as immobile as well for purpose of the mods
@@ -333,8 +333,10 @@ class ComputeTargetToHitMods {
 
             // Target hidden in the sensor shadow of a larger spacecraft
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW) &&
-                      iAeroTarget.isSpaceborne()) {
-                for (Entity other : Compute.getAdjacentEntitiesAlongAttack(attacker.getPosition(), target.getPosition(), game)) {
+                  iAeroTarget.isSpaceborne()) {
+                for (Entity other : Compute.getAdjacentEntitiesAlongAttack(attacker.getPosition(),
+                      target.getPosition(),
+                      game)) {
                     if (createsSensorShadow(entityTarget, other)) {
                         toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorShadow"));
                         break;
@@ -365,5 +367,5 @@ class ComputeTargetToHitMods {
               && (other.getWeight() - target.getWeight() >= -WeaponAttackAction.STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF);
     }
 
-    private ComputeTargetToHitMods() { }
+    private ComputeTargetToHitMods() {}
 }

@@ -38,7 +38,10 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.EquipmentType;
+import megamek.common.Infantry;
+import megamek.common.InfantryMount;
+import megamek.common.Mounted;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
@@ -47,14 +50,13 @@ import megamek.common.verifier.TestInfantry;
 
 /**
  * The Entity information shown in the unit selector and many other places in MM, MML and MHQ.
- *
  */
 class InfantryReadout extends GeneralEntityReadout {
 
     protected final Infantry infantry;
 
     protected InfantryReadout(Infantry infantry, boolean showDetail, boolean useAlternateCost,
-                              boolean ignorePilotBV) {
+          boolean ignorePilotBV) {
 
         super(infantry, showDetail, useAlternateCost, ignorePilotBV);
         this.infantry = infantry;
@@ -156,7 +158,7 @@ class InfantryReadout extends GeneralEntityReadout {
         if (infantry.getCrew() != null) {
             ArrayList<String> augmentations = new ArrayList<>();
             for (Enumeration<IOption> e = infantry.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
-                  e.hasMoreElements();) {
+                  e.hasMoreElements(); ) {
                 final IOption o = e.nextElement();
                 if (o.booleanValue()) {
                     augmentations.add(o.getDisplayableName());
@@ -216,7 +218,8 @@ class InfantryReadout extends GeneralEntityReadout {
 
     private String secondaryCIWeaponDescriptor() {
         if (infantry.getSecondaryWeapon() != null) {
-            return "%s (%d per Squad)".formatted(infantry.getSecondaryWeapon().getDesc(), infantry.getSecondaryWeaponsPerSquad());
+            return "%s (%d per Squad)".formatted(infantry.getSecondaryWeapon().getDesc(),
+                  infantry.getSecondaryWeaponsPerSquad());
         } else {
             return MESSAGE_NONE;
         }
@@ -240,7 +243,7 @@ class InfantryReadout extends GeneralEntityReadout {
                     : Messages.getString("MekView.SquadComposition");
         String squadComposition = squadCompositionFormat.formatted(infantry.getSquadCount());
         result.add(new LabeledLine(Messages.getString("MekView.Composition"), squadComposition));
-        
+
         result.add(new LabeledLine(Messages.getString("MekView.Armor"), getInfantryArmor()));
         result.add(new LabeledLine(Messages.getString("MekView.DamageDivisor"), getDamageDivisor()));
         return result;

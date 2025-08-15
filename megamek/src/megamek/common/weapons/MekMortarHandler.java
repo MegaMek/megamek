@@ -1,23 +1,44 @@
 /*
- * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
 
 import megamek.common.Compute;
-import megamek.common.HitData;
 import megamek.common.Game;
+import megamek.common.HitData;
 import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.Targetable;
@@ -45,7 +66,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -57,7 +78,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
         }
 
         boolean targetHex = (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-                || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE);
+              || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE);
         int missilesHit;
         int nMissilesModifier = getClusterModifiers(true);
 
@@ -65,7 +86,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
             missilesHit = wtype.getRackSize();
         } else {
             missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                    nMissilesModifier);
+                  nMissilesModifier);
         }
 
         if (missilesHit > 0) {
@@ -97,9 +118,8 @@ public class MekMortarHandler extends AmmoWeaponHandler {
 
     /**
      * Calculate the clustering of the hits
-     * 
-     * @return a <code>int</code> value saying how much hits are in each cluster
-     *         of damage.
+     *
+     * @return a <code>int</code> value saying how much hits are in each cluster of damage.
      */
     @Override
     protected int calcnCluster() {
@@ -108,18 +128,18 @@ public class MekMortarHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
-                    wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            
+                  wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                  wtype.getInfantryDamageClass(),
+                  ((Infantry) target).isMechanized(),
+                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+
             toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;
         }

@@ -39,7 +39,9 @@ import java.util.Map;
 
 /**
  * Abstract base class for data maps that use enum fields.
+ *
  * @param <F> The enum type representing field names
+ *
  * @author Luana Coppio
  */
 public abstract class EntityDataMap<F extends Enum<F>> {
@@ -57,6 +59,7 @@ public abstract class EntityDataMap<F extends Enum<F>> {
 
     /**
      * Creates an empty EntityDataMap.
+     *
      * @param fieldEnumClass The class of the enum type F
      */
     protected EntityDataMap(Class<F> fieldEnumClass) {
@@ -66,8 +69,10 @@ public abstract class EntityDataMap<F extends Enum<F>> {
 
     /**
      * Adds a field to the data map.
+     *
      * @param field The field enum
      * @param value The field value
+     *
      * @return This EntityDataMap for method chaining
      */
     public EntityDataMap<F> put(F field, Object value) {
@@ -80,7 +85,9 @@ public abstract class EntityDataMap<F extends Enum<F>> {
 
     /**
      * Gets a field value from the data map.
+     *
      * @param field The field enum
+     *
      * @return The field value, or null if not present
      */
     public Object get(F field) {
@@ -89,9 +96,11 @@ public abstract class EntityDataMap<F extends Enum<F>> {
 
     /**
      * Gets a field value with type casting.
-     * @param <T> The expected type
+     *
+     * @param <T>   The expected type
      * @param field The field enum
-     * @param type The class of the expected type
+     * @param type  The class of the expected type
+     *
      * @return The field value cast to the expected type, or null if not present
      */
     @SuppressWarnings("unchecked")
@@ -105,6 +114,7 @@ public abstract class EntityDataMap<F extends Enum<F>> {
 
     /**
      * Gets all fields and values in the map.
+     *
      * @return The underlying map of data
      */
     public Map<F, Object> getAllFields() {
@@ -113,6 +123,7 @@ public abstract class EntityDataMap<F extends Enum<F>> {
 
     /**
      * Gets the ordered list of field enums.
+     *
      * @return List of fields in insertion order
      */
     public List<F> getFieldOrder() {
@@ -121,6 +132,7 @@ public abstract class EntityDataMap<F extends Enum<F>> {
 
     /**
      * Gets the class of the field enum.
+     *
      * @return The enum class
      */
     public Class<F> getFieldEnumClass() {
@@ -129,6 +141,7 @@ public abstract class EntityDataMap<F extends Enum<F>> {
 
     /**
      * Gets the versioned class name for this data map.
+     *
      * @return The class name with version appended
      */
     public String getVersionedClassName() {

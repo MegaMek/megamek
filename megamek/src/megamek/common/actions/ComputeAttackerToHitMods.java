@@ -32,16 +32,19 @@
  */
 package megamek.common.actions;
 
+import static megamek.common.AmmoType.AmmoTypeEnum.AC_LBX;
+import static megamek.common.AmmoType.AmmoTypeEnum.AC_LBX_THB;
+import static megamek.common.AmmoType.AmmoTypeEnum.HAG;
+import static megamek.common.AmmoType.AmmoTypeEnum.SBGAUSS;
+
+import java.util.EnumSet;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
-
-import java.util.EnumSet;
-
-import static megamek.common.AmmoType.AmmoTypeEnum.*;
 
 class ComputeAttackerToHitMods {
 
@@ -72,7 +75,7 @@ class ComputeAttackerToHitMods {
           ToHitData toHit, int aimingAt, AimingMode aimingMode, WeaponType wtype, Mounted<?> weapon, int weaponId,
           AmmoType atype, EnumSet<AmmoType.Munitions> munition, boolean isFlakAttack, boolean isHaywireINarced,
           boolean isNemesisConfused, boolean isWeaponFieldGuns, boolean usesAmmo) {
-        
+
         if (toHit == null) {
             // Without valid toHit data, the rest of this will fail
             toHit = new ToHitData();
@@ -158,8 +161,8 @@ class ComputeAttackerToHitMods {
 
         // if we're spotting for indirect fire, add +1
         if (attacker.isSpotting() &&
-                  !attacker.getCrew().hasActiveCommandConsole() &&
-                  game.getTagInfo().stream().noneMatch(inf -> inf.attackerId == attacker.getId())) {
+              !attacker.getCrew().hasActiveCommandConsole() &&
+              game.getTagInfo().stream().noneMatch(inf -> inf.attackerId == attacker.getId())) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeSpotting"));
         }
 
@@ -222,10 +225,10 @@ class ComputeAttackerToHitMods {
         // Support vehicle basic/advanced fire control systems
         if ((attacker instanceof SupportTank) || (attacker instanceof SupportVTOL)) {
             if (!attacker.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) &&
-                      !attacker.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
+                  !attacker.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.SupVeeNoFc"));
             } else if (attacker.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) &&
-                             !(attacker.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))) {
+                  !(attacker.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))) {
                 toHit.addModifier(1, Messages.getString("WeaponAttackAction.SupVeeBfc"));
             }
         }
@@ -302,10 +305,10 @@ class ComputeAttackerToHitMods {
      * an SPA? You'll find that here. Defender's a superheavy mek? Using a weapon with a TH penalty? Those are in other
      * methods.
      *
-     * @param game   The current {@link Game}
-     * @param attacker     The Entity making this attack
-     * @param toHit  The running total ToHitData for this WeaponAttackAction
-     * @param weapon The weapon being used (it's type should be WeaponType!)
+     * @param game     The current {@link Game}
+     * @param attacker The Entity making this attack
+     * @param toHit    The running total ToHitData for this WeaponAttackAction
+     * @param weapon   The weapon being used (it's type should be WeaponType!)
      */
     static ToHitData compileCrewToHitMods(Game game, Entity attacker, ToHitData toHit, Mounted<?> weapon) {
 
@@ -332,13 +335,14 @@ class ComputeAttackerToHitMods {
         }
 
         // The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
-        if ((attacker instanceof TripodMek || attacker instanceof QuadVee) && !attacker.getCrew().hasDedicatedGunner()) {
+        if ((attacker instanceof TripodMek || attacker instanceof QuadVee) && !attacker.getCrew()
+              .hasDedicatedGunner()) {
             toHit.addModifier(+2, Messages.getString("WeaponAttackAction.GunnerHit"));
         }
 
         // Fatigue
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE) &&
-                  attacker.getCrew().isGunneryFatigued()) {
+              attacker.getCrew().isGunneryFatigued()) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.Fatigue"));
         }
 
@@ -381,5 +385,5 @@ class ComputeAttackerToHitMods {
         return toHit;
     }
 
-    private ComputeAttackerToHitMods() { }
+    private ComputeAttackerToHitMods() {}
 }

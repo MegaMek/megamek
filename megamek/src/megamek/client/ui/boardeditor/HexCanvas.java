@@ -32,6 +32,16 @@
  */
 package megamek.client.ui.boardeditor;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.swing.JPanel;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -41,12 +51,6 @@ import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
-
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.awt.*;
 
 /**
  * Displays the currently selected hex picture, in component form

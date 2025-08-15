@@ -33,26 +33,20 @@
 package megamek.utilities;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
 
 import megamek.ai.dataset.UnitEnrichment;
 import megamek.ai.dataset.UnitEnrichmentSerializer;
-import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.equipment.ArmorType;
-import megamek.common.templates.TROView;
+import megamek.common.Game;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
 import megamek.logging.MMLogger;
 
 /**
- * This class provides a utility to read in all the /data/mekfiles and print that data out into a TSV format, but
- * only with the information that CASPAR training needs to enrich its current training data.
+ * This class provides a utility to read in all the /data/mekfiles and print that data out into a TSV format, but only
+ * with the information that CASPAR training needs to enrich its current training data.
  *
  * @author Luana Coppio
  */

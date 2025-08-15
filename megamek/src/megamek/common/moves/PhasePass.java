@@ -40,6 +40,7 @@ import megamek.common.pathfinder.CachedEntityState;
 
 /**
  * Interface for a phase pass. A phase pass is a step in the move compilation.
+ *
  * @author Luana Coppio
  * @since 0.50.07
  */
@@ -47,15 +48,18 @@ interface PhasePass {
 
     /**
      * Get the move step types of interest for this phase pass.
+     *
      * @return a set of move step types
      */
     Set<MovePath.MoveStepType> getTypesOfInterest();
 
     /**
      * Check if the phase pass is interested in the move step.
+     *
      * @param moveStep the current move step type
-     * @param game reference to {@link Game}
-     * @param entity the entity that is moving
+     * @param game     reference to {@link Game}
+     * @param entity   the entity that is moving
+     *
      * @return true if the phase pass is interested in this move step
      */
     default boolean isInterested(final MoveStep moveStep, final Game game, final Entity entity) {
@@ -64,11 +68,13 @@ interface PhasePass {
 
     /**
      * Pre-compile the move step. This method is called before the move step is compiled.
-     * @param moveStep the current move step type
-     * @param game reference to {@link Game}
-     * @param entity the entity that is moving
-     * @param prev the previous move step
+     *
+     * @param moveStep          the current move step type
+     * @param game              reference to {@link Game}
+     * @param entity            the entity that is moving
+     * @param prev              the previous move step
      * @param cachedEntityState the cached entity state
+     *
      * @return if the phase pass should compile the move or not after the pre-compile step
      */
     PhasePassResult preCompilation(final MoveStep moveStep, final Game game, final Entity entity, final MoveStep prev,
@@ -76,8 +82,9 @@ interface PhasePass {
 
     /**
      * Post-compile the move step. This method is called after the move step is compiled.
+     *
      * @param moveStep the current move step type
-     * @param entity the entity that is moving
+     * @param entity   the entity that is moving
      */
     default void postCompilation(final MoveStep moveStep, final Entity entity) {
         // no-op
@@ -85,10 +92,11 @@ interface PhasePass {
 
     /**
      * Execute the phase pass on the current {@link MoveStep}.
-     * @param moveStep the current move step type
-     * @param game reference to {@link Game}
-     * @param entity the entity that is moving
-     * @param prev the previous move step
+     *
+     * @param moveStep          the current move step type
+     * @param game              reference to {@link Game}
+     * @param entity            the entity that is moving
+     * @param prev              the previous move step
      * @param cachedEntityState the cached entity state
      */
     default void execute(final MoveStep moveStep, final Game game, final Entity entity, final MoveStep prev,

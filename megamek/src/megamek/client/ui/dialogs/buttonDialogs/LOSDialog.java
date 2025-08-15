@@ -1,27 +1,40 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * MegaMek - Copyright (C) 2020, 2021 - The MegaMek Team
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
 import java.awt.Container;
 import java.awt.GridLayout;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -33,12 +46,10 @@ import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.util.UIUtil;
 
 /**
- * Allows the player to select the type of entity in the hexes used by the LOS
- * tool.
+ * Allows the player to select the type of entity in the hexes used by the LOS tool.
  */
 public class LOSDialog extends AbstractButtonDialog {
 
@@ -48,9 +59,8 @@ public class LOSDialog extends AbstractButtonDialog {
     private final JToggleButton[] toggles2 = new JToggleButton[2];
 
     /**
-     * Allows the player to select the height of the entities in the hexes used by
-     * the LOS tool.
-     * The dialog toggles are preset to the given mekInFirst and mekInSecond.
+     * Allows the player to select the height of the entities in the hexes used by the LOS tool. The dialog toggles are
+     * preset to the given mekInFirst and mekInSecond.
      */
     public LOSDialog(JFrame parent, boolean mekInFirst, boolean mekInSecond) {
         super(parent, "LOSDialog", "LOSDialog.title");
@@ -60,18 +70,16 @@ public class LOSDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Returns true if the unit in the first hex should be counted as having Mek
-     * height (2 levels) and
-     * false if it should be counted as having Tank height (1 level).
+     * Returns true if the unit in the first hex should be counted as having Mek height (2 levels) and false if it
+     * should be counted as having Tank height (1 level).
      */
     public boolean getMekInFirst() {
         return toggles1[0].isSelected();
     }
 
     /**
-     * Returns true if the unit in the second hex should be counted as having Mek
-     * height (2 levels) and
-     * false if it should be counted as having Tank height (1 level).
+     * Returns true if the unit in the second hex should be counted as having Mek height (2 levels) and false if it
+     * should be counted as having Tank height (1 level).
      */
     public boolean getMekInSecond() {
         return toggles2[0].isSelected();

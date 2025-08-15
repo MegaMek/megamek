@@ -36,10 +36,11 @@ import megamek.ai.dataset.MapSettingsData.Field;
 
 /**
  * <p>Serializer for MapSettingsData to TSV format.</p>
+ *
  * @author Luana Coppio
  */
 public class MapSettingsDataSerializer
-      extends EntityDataSerializer<MapSettingsData.Field, MapSettingsData>{
+      extends EntityDataSerializer<MapSettingsData.Field, MapSettingsData> {
 
     /**
      * Creates a serializer with default field order.

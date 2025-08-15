@@ -1,28 +1,62 @@
 /*
- * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.panels.alphaStrike;
+
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.WrapLayout;
-import megamek.client.ui.dialogs.abstractDialogs.ASConversionInfoDialog;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.dialogs.abstractDialogs.ASConversionInfoDialog;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.alphaStrike.ASCardDisplayable;
@@ -31,16 +65,9 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.cardDrawer.ASCardPrinter;
 import megamek.common.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.datatransfer.*;
-import java.util.List;
-import java.util.Vector;
-
 /**
- * This is a JPanel that displays an AlphaStrike unit card and elements to configure the display of
- * the card and allow copying to clipboard. The AlphaStrike element to display can be changed after
- * construction and it may be null.
+ * This is a JPanel that displays an AlphaStrike unit card and elements to configure the display of the card and allow
+ * copying to clipboard. The AlphaStrike element to display can be changed after construction and it may be null.
  */
 public class ConfigurableASCardPanel extends JPanel {
 
@@ -156,7 +183,9 @@ public class ConfigurableASCardPanel extends JPanel {
 
     private void showConversionReport() {
         if (element instanceof AlphaStrikeElement) {
-            var dialog = new ASConversionInfoDialog(parent, ((AlphaStrikeElement) element).getConversionReport(), element);
+            var dialog = new ASConversionInfoDialog(parent,
+                  ((AlphaStrikeElement) element).getConversionReport(),
+                  element);
             dialog.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
             dialog.setVisible(true);
         }

@@ -43,7 +43,7 @@ public class BVSorter extends MekTableSorter {
 
     /** A Lobby Mek Table sorter that sorts by BV. */
     public BVSorter(Sorting sorting) {
-          super(I18n.getTextAt(RESOURCE_BUNDLE, "BVSorter.DisplayName"), MekTableModel.COL_BV, sorting);
+        super(I18n.getTextAt(RESOURCE_BUNDLE, "BVSorter.DisplayName"), MekTableModel.COL_BV, sorting);
     }
 
     @Override

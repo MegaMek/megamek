@@ -1,22 +1,37 @@
 /*
  * Copyright (c) 2000-2003 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import megamek.common.equipment.ArmorType;
@@ -63,59 +78,59 @@ public class SupportTank extends Tank {
     public boolean hasArmoredChassis() {
         return hasMisc(MiscType.F_ARMORED_CHASSIS);
     }
-    
+
     private static final TechAdvancement TA_HOVER = new TechAdvancement(TechBase.ALL)
-            .setTechRating(TechRating.C).setAdvancement(DATE_PS, DATE_ES, DATE_ES)
-            .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setTechRating(TechRating.C).setAdvancement(DATE_PS, DATE_ES, DATE_ES)
+          .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_HOVER_LARGE = new TechAdvancement(TechBase.ALL)
-            .setTechRating(TechRating.C).setAdvancement(DATE_PS, DATE_ES, DATE_ES)
-            .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setTechRating(TechRating.C).setAdvancement(DATE_PS, DATE_ES, DATE_ES)
+          .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_NAVAL = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
-            .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_NAVAL_LARGE = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
-            .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     private static final TechAdvancement TA_TRACKED = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.B)
-            .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.B)
+          .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_TRACKED_LARGE = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.B)
-            .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.B)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_WHEELED_SMALL = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
-            .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
+          .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_WHEELED_MEDIUM = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
-            .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
+          .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_WHEELED_LARGE = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
-            .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
+          .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_WIGE = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
-            .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_WIGE_LARGE = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
-            .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+          .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
+          .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_RAIL = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
-            .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     private static final TechAdvancement TA_RAIL_LARGE = new TechAdvancement(TechBase.ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
-            .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+          .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(TechRating.A)
+          .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
+          .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -187,12 +202,12 @@ public class SupportTank extends Tank {
         if (isHidden()) {
             // Can't deploy in paved hexes
             if (hex.containsTerrain(Terrains.PAVEMENT)
-                    || hex.containsTerrain(Terrains.ROAD)) {
+                  || hex.containsTerrain(Terrains.ROAD)) {
                 return true;
             }
             // Can't deploy on a bridge
             if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
-                    && hex.containsTerrain(Terrains.BRIDGE)) {
+                  && hex.containsTerrain(Terrains.BRIDGE)) {
                 return true;
             }
             // Can't deploy on the surface of water
@@ -204,44 +219,44 @@ public class SupportTank extends Tank {
         switch (movementMode) {
             case TRACKED:
                 return (hex.terrainLevel(Terrains.WOODS) > 1)
-                        || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                && !hex.containsTerrain(Terrains.ICE)
-                                && !hasEnvironmentalSealing())
-                        || hex.containsTerrain(Terrains.JUNGLE)
-                        || (hex.terrainLevel(Terrains.MAGMA) > 1)
-                        || (hex.terrainLevel(Terrains.ROUGH) > 1)
-                        || (hex.terrainLevel(Terrains.RUBBLE) > 5);
+                      || ((hex.terrainLevel(Terrains.WATER) > 0)
+                      && !hex.containsTerrain(Terrains.ICE)
+                      && !hasEnvironmentalSealing())
+                      || hex.containsTerrain(Terrains.JUNGLE)
+                      || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                      || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                      || (hex.terrainLevel(Terrains.RUBBLE) > 5);
             case WHEELED:
                 return (hex.terrainLevel(Terrains.WOODS) > 1)
-                        || ((hex.terrainLevel(Terrains.WOODS) == 1) && !isMonoCycleOrBicycle())
-                        || hex.containsTerrain(Terrains.ROUGH)
-                        || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                && !hex.containsTerrain(Terrains.ICE) 
-                                && !hasEnvironmentalSealing())
-                        || hex.containsTerrain(Terrains.RUBBLE)
-                        || hex.containsTerrain(Terrains.MAGMA)
-                        || hex.containsTerrain(Terrains.JUNGLE)
-                        || (hex.terrainLevel(Terrains.SNOW) > 1)
-                        || (hex.terrainLevel(Terrains.GEYSER) == 2);
+                      || ((hex.terrainLevel(Terrains.WOODS) == 1) && !isMonoCycleOrBicycle())
+                      || hex.containsTerrain(Terrains.ROUGH)
+                      || ((hex.terrainLevel(Terrains.WATER) > 0)
+                      && !hex.containsTerrain(Terrains.ICE)
+                      && !hasEnvironmentalSealing())
+                      || hex.containsTerrain(Terrains.RUBBLE)
+                      || hex.containsTerrain(Terrains.MAGMA)
+                      || hex.containsTerrain(Terrains.JUNGLE)
+                      || (hex.terrainLevel(Terrains.SNOW) > 1)
+                      || (hex.terrainLevel(Terrains.GEYSER) == 2);
             case HOVER:
                 return (hex.terrainLevel(Terrains.WOODS) > 1)
-                        || ((hex.terrainLevel(Terrains.WOODS) == 1) && !isMonoCycleOrBicycle())
-                        || hex.containsTerrain(Terrains.JUNGLE)
-                        || (hex.terrainLevel(Terrains.MAGMA) > 1)
-                        || (hex.terrainLevel(Terrains.ROUGH) > 1)
-                        || (hex.terrainLevel(Terrains.RUBBLE) > 5);
+                      || ((hex.terrainLevel(Terrains.WOODS) == 1) && !isMonoCycleOrBicycle())
+                      || hex.containsTerrain(Terrains.JUNGLE)
+                      || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                      || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                      || (hex.terrainLevel(Terrains.RUBBLE) > 5);
             case NAVAL:
             case HYDROFOIL:
                 return (hex.terrainLevel(Terrains.WATER) <= 0)
-                        || hex.containsTerrain(Terrains.ICE);
+                      || hex.containsTerrain(Terrains.ICE);
             case SUBMARINE:
                 return (hex.terrainLevel(Terrains.WATER) <= 0);
             case WIGE:
                 return (hex.containsTerrain(Terrains.WOODS) || (hex
-                        .containsTerrain(Terrains.BUILDING)))
-                        && !(currElevation > hex
-                                .maxTerrainFeatureElevation(game.getBoard(testBoardId)
-                                        .isLowAltitude()));
+                      .containsTerrain(Terrains.BUILDING)))
+                      && !(currElevation > hex
+                      .maxTerrainFeatureElevation(game.getBoard(testBoardId)
+                            .isLowAltitude()));
             default:
                 return false;
         }
@@ -301,8 +316,8 @@ public class SupportTank extends Tank {
                 } else {
                     return 0.17;
                 }
-           default:
-               return 0;
+            default:
+                return 0;
         }
     }
 
@@ -364,8 +379,8 @@ public class SupportTank extends Tank {
                 } else {
                     return 0.005;
                 }
-           default:
-               return 0;
+            default:
+                return 0;
         }
     }
 
@@ -406,6 +421,6 @@ public class SupportTank extends Tank {
 
     @Override
     public int getGenericBattleValue() {
-        return (int) Math.round(Math.exp(2.681 + 0.681*Math.log(getWeight())));
+        return (int) Math.round(Math.exp(2.681 + 0.681 * Math.log(getWeight())));
     }
 }

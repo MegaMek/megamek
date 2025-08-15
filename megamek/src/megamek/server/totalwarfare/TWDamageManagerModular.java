@@ -250,8 +250,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         // Meks using EI implants take pilot damage each time a hit
         // inflicts IS damage
         if (tookInternalDamage &&
-                  ((entity instanceof Mek) || (entity instanceof ProtoMek)) &&
-                  entity.hasActiveEiCockpit()) {
+              ((entity instanceof Mek) || (entity instanceof ProtoMek)) &&
+              entity.hasActiveEiCockpit()) {
             Report.addNewline(reportVec);
             Roll diceRoll = Compute.rollD6(2);
             report = new Report(5075);
@@ -269,9 +269,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
         // if using VDNI (but not buffered), check for damage on an internal hit
         if (tookInternalDamage &&
-                  entity.hasAbility(OptionsConstants.MD_VDNI) &&
-                  !entity.hasAbility(OptionsConstants.MD_BVDNI) &&
-                  !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+              entity.hasAbility(OptionsConstants.MD_VDNI) &&
+              !entity.hasAbility(OptionsConstants.MD_BVDNI) &&
+              !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
             Report.addNewline(reportVec);
             Roll diceRoll = Compute.rollD6(2);
             report = new Report(3580);
@@ -294,12 +294,12 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         // ...but vehicles and ASFs just have one CASE item for the whole unit, so we need to look at whether there's
         // CASE anywhere at all.
         if (ammoExplosion &&
-                  game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMMUNITION) &&
-                  !(entity.locationHasCase(hit.getLocation()) || entity.hasCASEII(hit.getLocation())) &&
-                  !(((entity instanceof Tank) || (entity instanceof Aero)) && entity.hasCase()) &&
-                  (entity.isDestroyed() || entity.isDoomed()) &&
-                  (damage > 0) &&
-                  ((damage / 10) > 0)) {
+              game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMMUNITION) &&
+              !(entity.locationHasCase(hit.getLocation()) || entity.hasCASEII(hit.getLocation())) &&
+              !(((entity instanceof Tank) || (entity instanceof Aero)) && entity.hasCase()) &&
+              (entity.isDestroyed() || entity.isDoomed()) &&
+              (damage > 0) &&
+              ((damage / 10) > 0)) {
             Report.addNewline(reportVec);
             report = new Report(5068, Report.PUBLIC);
             report.subject = entity.getId();
@@ -379,7 +379,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // Handle ProtoMek pilot damage
                         // due to location destruction
                         int hits = ProtoMek.POSSIBLE_PILOT_DAMAGE[hit.getLocation()] -
-                                         proto.getPilotDamageTaken(hit.getLocation());
+                              proto.getPilotDamageTaken(hit.getLocation());
                         if (hits > 0) {
                             reportVec.addAll(manager.damageCrew(proto, hits));
                             proto.setPilotDamageTaken(hit.getLocation(),
@@ -417,8 +417,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // If the head is destroyed, kill the crew.
 
                         if ((hit.getLocation() == Mek.LOC_HEAD) ||
-                                  ((hit.getLocation() == Mek.LOC_CT) &&
-                                         ((ammoExplosion && !autoEject) || areaSatArty))) {
+                              ((hit.getLocation() == Mek.LOC_CT) &&
+                                    ((ammoExplosion && !autoEject) || areaSatArty))) {
                             proto.getCrew().setDoomed(true);
                         }
                         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
@@ -453,7 +453,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         for (WeaponMounted m : proto.getWeaponList()) {
                             if (m.isSplit()) {
                                 if ((m.getLocation() == hit.getLocation()) ||
-                                          (m.getLocation() == nextHit.getLocation())) {
+                                      (m.getLocation() == nextHit.getLocation())) {
                                     proto.setWeaponHit(m);
                                 }
                             }
@@ -461,8 +461,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // if this is damage from a nail/rivet gun, and we transfer to a location that has armor, and
                         // BAR >=5, no damage
                         if ((damageType == DamageType.NAIL_RIVET) &&
-                                  (proto.getArmor(nextHit.getLocation()) > 0) &&
-                                  (proto.getBARRating(nextHit.getLocation()) >= 5)) {
+                              (proto.getArmor(nextHit.getLocation()) > 0) &&
+                              (proto.getBARRating(nextHit.getLocation()) >= 5)) {
                             damage = 0;
                             report = new Report(6065);
                             report.subject = entityId;
@@ -516,8 +516,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         // This is good for shields if a shield absorbs the hit it shouldn't affect the pilot. TC SRM's that hit the
         // head do external and internal damage, but it's one hit and shouldn't cause 2 hits to the pilot.
         mods.isHeadHit = ((mek.getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED) &&
-                                (hit.getLocation() == Mek.LOC_HEAD) &&
-                                ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS));
+              (hit.getLocation() == Mek.LOC_HEAD) &&
+              ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS));
         int entityId = mek.getId();
         Entity attacker = game.getEntity(hit.getAttackerId());
         Report report;
@@ -526,9 +526,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
         if (ammoExplosion) {
             if (mek.isAutoEject() &&
-                      (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
-                             (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                                    mek.isCondEjectAmmo()))) {
+                  (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
+                        (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
+                              mek.isCondEjectAmmo()))) {
                 autoEject = true;
                 reportVec.addAll(manager.ejectEntity(mek, true));
             }
@@ -541,7 +541,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
         // Allocate the damage
         while (damage > 0) {
-            
+
             // damage some cargo if we're taking damage
             // maybe move past "exterior passenger" check
             if (!ammoExplosion) {
@@ -595,9 +595,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 if (mek instanceof LandAirMek lam) {
                     // LAMs eject if the CT-destroyed switch is on
                     if (lam.isAutoEject() &&
-                              (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
-                                     (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                                            lam.isCondEjectCTDest()))) {
+                          (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
+                                (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
+                                      lam.isCondEjectCTDest()))) {
                         reportVec.addAll(manager.ejectEntity(mek, true, false));
                     }
                 }
@@ -613,10 +613,10 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // Shields take damage first, then cowls, then armor where Shield does not protect from ammo explosions
             // or falls.
             if (!ammoExplosion &&
-                      !hit.isFallDamage() &&
-                      !damageIS &&
-                      mek.hasShield() &&
-                      ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
+                  !hit.isFallDamage() &&
+                  !damageIS &&
+                  mek.hasShield() &&
+                  ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
                 int damageNew = mek.shieldAbsorptionDamage(damage, hit.getLocation(), hit.isRear());
                 // if a shield absorbed the damage, then let's tell the world about it.
                 if (damageNew != damage) {
@@ -640,10 +640,10 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
             // Armored Cowl may absorb some damage from a hit
             if (mek.hasCowl() &&
-                      (hit.getLocation() == Mek.LOC_HEAD) &&
-                      ((mek.getPosition() == null) ||
-                             (attacker == null) ||
-                             !mek.getPosition().isOnHexRow(mek.getSecondaryFacing(), attacker.getPosition()))) {
+                  (hit.getLocation() == Mek.LOC_HEAD) &&
+                  ((mek.getPosition() == null) ||
+                        (attacker == null) ||
+                        !mek.getPosition().isOnHexRow(mek.getSecondaryFacing(), attacker.getPosition()))) {
                 int excessDamage = mek.damageCowl(damage);
                 int blockedByCowl = damage - excessDamage;
                 report = new Report(3520).subject(entityId).indent(3).add(blockedByCowl);
@@ -765,7 +765,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // If a side torso got destroyed, and the corresponding arm is not yet destroyed, add it as a
                         // club to that hex (p.35 BMRr)
                         if ((((hit.getLocation() == Mek.LOC_RT) && (mek.getInternal(Mek.LOC_RARM) > 0)) ||
-                                   ((hit.getLocation() == Mek.LOC_LT) && (mek.getInternal(Mek.LOC_LARM) > 0)))) {
+                              ((hit.getLocation() == Mek.LOC_LT) && (mek.getInternal(Mek.LOC_LARM) > 0)))) {
                             int blownOffLocation;
                             if (hit.getLocation() == Mek.LOC_RT) {
                                 blownOffLocation = Mek.LOC_RARM;
@@ -860,27 +860,27 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                                   !((ammoExplosion || areaSatArty) && (hit.getLocation() == Mek.LOC_CT))));
                             // If the head is destroyed, kill the crew.
                             if ((hit.getLocation() == Mek.LOC_HEAD) &&
-                                      !mek.getCrew().isDead() &&
-                                      !mek.getCrew().isDoomed() &&
-                                      game.getOptions()
-                                            .booleanOption(OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION)) {
+                                  !mek.getCrew().isDead() &&
+                                  !mek.getCrew().isDoomed() &&
+                                  game.getOptions()
+                                        .booleanOption(OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION)) {
                                 if (mek.isAutoEject() &&
-                                          (!game.getOptions()
-                                                  .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
-                                                 (game.getOptions()
-                                                        .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                                                        mek.isCondEjectHeadshot()))) {
+                                      (!game.getOptions()
+                                            .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
+                                            (game.getOptions()
+                                                  .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
+                                                  mek.isCondEjectHeadshot()))) {
                                     autoEject = true;
                                     reportVec.addAll(manager.ejectEntity(mek, true, true));
                                 }
                             }
 
                             if ((hit.getLocation() == Mek.LOC_CT) &&
-                                      !mek.getCrew().isDead() &&
-                                      !mek.getCrew().isDoomed()) {
+                                  !mek.getCrew().isDead() &&
+                                  !mek.getCrew().isDoomed()) {
                                 if (mek.isAutoEject() &&
-                                          game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                                          mek.isCondEjectCTDest()) {
+                                      game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
+                                      mek.isCondEjectCTDest()) {
                                     if (mek.getCrew().getHits() < 5) {
                                         Report.addNewline(reportVec);
                                         mek.setDoomed(false);
@@ -892,8 +892,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                             }
 
                             if ((hit.getLocation() == Mek.LOC_HEAD) ||
-                                      ((hit.getLocation() == Mek.LOC_CT) &&
-                                             ((ammoExplosion && !autoEject) || areaSatArty))) {
+                                  ((hit.getLocation() == Mek.LOC_CT) &&
+                                        ((ammoExplosion && !autoEject) || areaSatArty))) {
                                 mek.getCrew().setDoomed(true);
                             }
                             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
@@ -929,7 +929,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         for (WeaponMounted m : mek.getWeaponList()) {
                             if (m.isSplit()) {
                                 if ((m.getLocation() == hit.getLocation()) ||
-                                          (m.getLocation() == nextHit.getLocation())) {
+                                      (m.getLocation() == nextHit.getLocation())) {
                                     mek.setWeaponHit(m);
                                 }
                             }
@@ -937,8 +937,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // if this is damage from a nail/rivet gun, and we transfer to a location that has armor, and
                         // BAR >=5, no damage
                         if ((damageType == DamageType.NAIL_RIVET) &&
-                                  (mek.getArmor(nextHit.getLocation()) > 0) &&
-                                  (mek.getBARRating(nextHit.getLocation()) >= 5)) {
+                              (mek.getArmor(nextHit.getLocation()) > 0) &&
+                              (mek.getBARRating(nextHit.getLocation()) >= 5)) {
                             damage = 0;
                             report = new Report(6065);
                             report.subject = entityId;
@@ -981,8 +981,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
                     int hitsToDestroy = 3;
                     if (mek.isSuperHeavy() &&
-                              mek.hasEngine() &&
-                              (mek.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) {
+                          mek.hasEngine() &&
+                          (mek.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) {
                         hitsToDestroy = 2;
                     }
 
@@ -1039,9 +1039,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
         if (ammoExplosion) {
             if (aero.isAutoEject() &&
-                      (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
-                             (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                                    aero.isCondEjectAmmo()))) {
+                  (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
+                        (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
+                              aero.isCondEjectAmmo()))) {
                 reportVec.addAll(manager.ejectEntity(aero, true, false));
             }
         }
@@ -1063,13 +1063,13 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
         // check capital/standard damage
         if (isCapital &&
-                  (!aero.isCapitalScale() ||
-                         game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY))) {
+              (!aero.isCapitalScale() ||
+                    game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY))) {
             damage = 10 * damage;
         }
         if (!isCapital &&
-                  aero.isCapitalScale() &&
-                  !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+              aero.isCapitalScale() &&
+              !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             damage = (int) Math.round(damage / 10.0);
         }
         int damage_orig = damage;
@@ -1094,9 +1094,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         if ((hit.getLocation() == Aero.LOC_AFT) && !damageIS) {
             for (Mounted<?> mAmmo : aero.getAmmo()) {
                 if (mAmmo.isDumping() &&
-                          !mAmmo.isDestroyed() &&
-                          !mAmmo.isHit() &&
-                          !(mAmmo.getType() instanceof BombType)) {
+                      !mAmmo.isDestroyed() &&
+                      !mAmmo.isHit() &&
+                      !(mAmmo.getType() instanceof BombType)) {
                     // doh. explode it
                     reportVec.addAll(manager.explodeEquipment(aero, mAmmo.getLocation(), mAmmo));
                     mAmmo.setHit(true);
@@ -1138,9 +1138,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 // Lets auto-eject if we can!
                 // Aeros eject if the SI Destroyed switch is on
                 if (aero.isAutoEject() &&
-                          (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
-                                 (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                                        aero.isCondEjectSIDest()))) {
+                      (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
+                            (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
+                                  aero.isCondEjectSIDest()))) {
                     reportVec.addAll(manager.ejectEntity(aero, true, false));
                 }
                 reportVec.addAll(manager.destroyEntity(aero, "Structural Integrity Collapse"));
@@ -1152,7 +1152,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             }
             // check for aero crits from natural 12 or threshold; LAMs take damage as meks
             manager.checkAeroCrits(reportVec, aero, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
-            
+
             // Return early
             return;
         }
@@ -1210,8 +1210,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE)) {
                 int opRoll = Compute.d6(1);
                 if (((aero instanceof Jumpship) && !(aero instanceof Warship) && (opRoll > 3)) ||
-                          ((aero instanceof Dropship) && (opRoll > 4)) ||
-                          ((aero instanceof Warship) && (aero.getOSI() <= 30) && (opRoll > 5))) {
+                      ((aero instanceof Dropship) && (opRoll > 4)) ||
+                      ((aero instanceof Warship) && (aero.getOSI() <= 30) && (opRoll > 5))) {
                     // over-penetration happened
                     report = new Report(9090);
                     report.subject = entityId;
@@ -1242,8 +1242,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // do not divide by half if it is an ammo explosion
             // Minimum SI damage is now 1 (per errata: https://bg.battletech.com/forums/index.php?topic=81913.0 )
             if (!ammoExplosion &&
-                      !nukeS2S &&
-                      !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                  !nukeS2S &&
+                  !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
                 damage = (int) Math.round(damage / 2.0);
                 critSI = true;
             }
@@ -1269,9 +1269,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             if (aero.getSI() <= 0) {
                 // Lets auto-eject if we can!
                 if (aero.isAutoEject() &&
-                          (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
-                                 (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
-                                        aero.isCondEjectSIDest()))) {
+                      (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) ||
+                            (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) &&
+                                  aero.isCondEjectSIDest()))) {
                     reportVec.addAll(manager.ejectEntity(aero, true, false));
                 } else {
                     reportVec.addAll(manager.destroyEntity(aero,
@@ -1312,9 +1312,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
         // adjust VTOL rotor damage
         if ((tank instanceof VTOL) &&
-                  (hit.getLocation() == VTOL.LOC_ROTOR) &&
-                  (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL) &&
-                  !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FULL_ROTOR_HITS)) {
+              (hit.getLocation() == VTOL.LOC_ROTOR) &&
+              (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL) &&
+              !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FULL_ROTOR_HITS)) {
             damage = (damage + 9) / 10;
         }
 
@@ -1383,8 +1383,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // For optional tank damage thresholds, the `overthresh` flag won't be set if the internal structure is
             // damaged, so set it here.
             if (((tank.getArmor(hit) < 1) || damageIS) &&
-                      game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD) &&
-                      !((tank instanceof VTOL) || (tank instanceof GunEmplacement))) {
+                  game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD) &&
+                  !((tank instanceof VTOL) || (tank instanceof GunEmplacement))) {
                 tank.setOverThresh(true);
             }
 
@@ -1477,7 +1477,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                                   !((ammoExplosion || areaSatArty))));
 
                             if ((hit.getLocation() == Mek.LOC_HEAD) ||
-                                      ((hit.getLocation() == Mek.LOC_CT) && (ammoExplosion || areaSatArty))) {
+                                  ((hit.getLocation() == Mek.LOC_CT) && (ammoExplosion || areaSatArty))) {
                                 tank.getCrew().setDoomed(true);
                             }
                             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
@@ -1513,7 +1513,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         for (WeaponMounted m : tank.getWeaponList()) {
                             if (m.isSplit()) {
                                 if ((m.getLocation() == hit.getLocation()) ||
-                                          (m.getLocation() == nextHit.getLocation())) {
+                                      (m.getLocation() == nextHit.getLocation())) {
                                     tank.setWeaponHit(m);
                                 }
                             }
@@ -1521,8 +1521,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // if this is damage from a nail/rivet gun, and we transfer to a location that has armor, and
                         // BAR >=5, no damage
                         if ((damageType == DamageType.NAIL_RIVET) &&
-                                  (tank.getArmor(nextHit.getLocation()) > 0) &&
-                                  (tank.getBARRating(nextHit.getLocation()) >= 5)) {
+                              (tank.getArmor(nextHit.getLocation()) > 0) &&
+                              (tank.getBARRating(nextHit.getLocation()) >= 5)) {
                             damage = 0;
                             report = new Report(6065);
                             report.subject = entityId;
@@ -1572,18 +1572,18 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         int loc = hit.getLocation();
         if (tank instanceof SuperHeavyTank) {
             if ((loc != Tank.LOC_FRONT) &&
-                      (loc != SuperHeavyTank.LOC_FRONTRIGHT) &&
-                      (loc != SuperHeavyTank.LOC_FRONTLEFT) &&
-                      (loc != SuperHeavyTank.LOC_REARRIGHT) &&
-                      (loc != SuperHeavyTank.LOC_REARLEFT)) {
+                  (loc != SuperHeavyTank.LOC_FRONTRIGHT) &&
+                  (loc != SuperHeavyTank.LOC_FRONTLEFT) &&
+                  (loc != SuperHeavyTank.LOC_REARRIGHT) &&
+                  (loc != SuperHeavyTank.LOC_REARLEFT)) {
                 spotlightHittable = false;
             }
         } else if (tank instanceof LargeSupportTank) {
             if ((loc != Tank.LOC_FRONT) &&
-                      (loc != LargeSupportTank.LOC_FRONTRIGHT) &&
-                      (loc != LargeSupportTank.LOC_FRONTLEFT) &&
-                      (loc != LargeSupportTank.LOC_REARRIGHT) &&
-                      (loc != LargeSupportTank.LOC_REARLEFT)) {
+                  (loc != LargeSupportTank.LOC_FRONTRIGHT) &&
+                  (loc != LargeSupportTank.LOC_FRONTLEFT) &&
+                  (loc != LargeSupportTank.LOC_REARRIGHT) &&
+                  (loc != LargeSupportTank.LOC_REARLEFT)) {
                 spotlightHittable = false;
             }
         } else {
@@ -1763,8 +1763,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         int infernos = 0;
                         for (Mounted<?> m : battleArmor.getEquipment()) {
                             if (m.getType() instanceof AmmoType at) {
-                                if (((at.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) || (at.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) &&
-                                          (at.getMunitionType().contains(Munitions.M_INFERNO))) {
+                                if (((at.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) || (at.getAmmoType()
+                                      == AmmoType.AmmoTypeEnum.MML)) &&
+                                      (at.getMunitionType().contains(Munitions.M_INFERNO))) {
                                     infernos += at.getRackSize() * m.getHittableShotsLeft();
                                 }
                             } else if (m.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
@@ -1846,7 +1847,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         for (WeaponMounted m : battleArmor.getWeaponList()) {
                             if (m.isSplit()) {
                                 if ((m.getLocation() == hit.getLocation()) ||
-                                          (m.getLocation() == nextHit.getLocation())) {
+                                      (m.getLocation() == nextHit.getLocation())) {
                                     battleArmor.setWeaponHit(m);
                                 }
                             }
@@ -1855,8 +1856,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // transfer
                         // to a location that has armor, and BAR >=5, no damage
                         if ((damageType == DamageType.NAIL_RIVET) &&
-                                  (battleArmor.getArmor(nextHit.getLocation()) > 0) &&
-                                  (battleArmor.getBARRating(nextHit.getLocation()) >= 5)) {
+                              (battleArmor.getArmor(nextHit.getLocation()) > 0) &&
+                              (battleArmor.getBARRating(nextHit.getLocation()) >= 5)) {
                             damage = 0;
                             report = new Report(6065);
                             report.subject = entityId;
@@ -1912,8 +1913,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
         // Infantry with TSM implants get 2d6 burst damage from ATSM munitions
         if (damageType.equals(DamageType.ANTI_TSM) &&
-                  infantry.isConventionalInfantry() &&
-                  infantry.antiTSMVulnerable()) {
+              infantry.isConventionalInfantry() &&
+              infantry.antiTSMVulnerable()) {
             Roll diceRoll = Compute.rollD6(2);
             report = new Report(6434);
             report.subject = entityId;
@@ -1950,8 +1951,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
         // Is the infantry in vacuum?
         if (!infantry.isDestroyed() &&
-                  !infantry.isDoomed() &&
-                  game.getPlanetaryConditions().getAtmosphere().isLighterThan(Atmosphere.THIN)) {
+              !infantry.isDoomed() &&
+              game.getPlanetaryConditions().getAtmosphere().isLighterThan(Atmosphere.THIN)) {
             // PBI. Double damage.
             damage *= 2;
             report = new Report(6041);
@@ -2092,7 +2093,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // If the head is destroyed, kill the crew.
 
                         if ((hit.getLocation() == Mek.LOC_HEAD) ||
-                                  ((hit.getLocation() == Mek.LOC_CT) && (ammoExplosion || areaSatArty))) {
+                              ((hit.getLocation() == Mek.LOC_CT) && (ammoExplosion || areaSatArty))) {
                             infantry.getCrew().setDoomed(true);
                         }
                         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
@@ -2117,7 +2118,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         for (WeaponMounted m : infantry.getWeaponList()) {
                             if (m.isSplit()) {
                                 if ((m.getLocation() == hit.getLocation()) ||
-                                          (m.getLocation() == nextHit.getLocation())) {
+                                      (m.getLocation() == nextHit.getLocation())) {
                                     infantry.setWeaponHit(m);
                                 }
                             }
@@ -2125,8 +2126,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                         // if this is damage from a nail/rivet gun, and we transfer to a location that has armor, and
                         // BAR >=5, no damage
                         if ((damageType == DamageType.NAIL_RIVET) &&
-                                  (infantry.getArmor(nextHit.getLocation()) > 0) &&
-                                  (infantry.getBARRating(nextHit.getLocation()) >= 5)) {
+                              (infantry.getArmor(nextHit.getLocation()) > 0) &&
+                              (infantry.getBARRating(nextHit.getLocation()) >= 5)) {
                             damage = 0;
                             report = new Report(6065);
                             report.subject = entityId;
@@ -2151,8 +2152,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         // "advanced determining critical hits rule"
         int critBonus = 0;
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL) &&
-                  (damageOriginal > 0) &&
-                  ((entity instanceof Mek) || (entity instanceof ProtoMek))) {
+              (damageOriginal > 0) &&
+              ((entity instanceof Mek) || (entity instanceof ProtoMek))) {
             critBonus = Math.min((damageOriginal - 1) / 5, 4);
         }
 
@@ -2161,13 +2162,13 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             if ((entity instanceof Mek) && attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_MEK)) {
                 critBonus += 1;
             } else if ((entity instanceof Aero) &&
-                             attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_AERO)) {
+                  attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_AERO)) {
                 critBonus += 1;
             } else if ((entity instanceof Tank) &&
-                             attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_VEE)) {
+                  attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_VEE)) {
                 critBonus += 1;
             } else if ((entity instanceof BattleArmor) &&
-                             attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_BA)) {
+                  attacker.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_BA)) {
                 critBonus += 1;
             }
         }
@@ -2176,9 +2177,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
     public boolean checkFerroFibrous(Entity entity, HitData hit) {
         return ((entity.getArmor(hit) > 0) &&
-                      ((entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_FIBROUS) ||
-                             (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_LIGHT_FERRO) ||
-                             (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAVY_FERRO)));
+              ((entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_FIBROUS) ||
+                    (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_LIGHT_FERRO) ||
+                    (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAVY_FERRO)));
     }
 
     public int applyModularArmor(Entity entity, HitData hit, int damage, boolean ammoExplosion, boolean damageIS,
@@ -2186,8 +2187,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
 
         // modular armor might absorb some damage if the location mounts any.
         if (!ammoExplosion &&
-                  !damageIS &&
-                  ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
+              !damageIS &&
+              ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
             int damageNew = entity.getDamageReductionFromModularArmor(hit, damage, reportVec);
             int damageDiff = damage - damageNew;
             entity.damageThisPhase += damageDiff;
@@ -2211,8 +2212,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             report.add(damage);
             reportVec.add(report);
             int loc = (tank instanceof SuperHeavyTank) ?
-                            SuperHeavyTank.LOC_REAR :
-                            (tank instanceof LargeSupportTank) ? LargeSupportTank.LOC_REAR : Tank.LOC_REAR;
+                  SuperHeavyTank.LOC_REAR :
+                  (tank instanceof LargeSupportTank) ? LargeSupportTank.LOC_REAR : Tank.LOC_REAR;
             if (damage > tank.getArmor(loc)) {
                 tank.setArmor(IArmorState.ARMOR_DESTROYED, loc);
                 report = new Report(6090);
@@ -2260,7 +2261,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             reportVec.addElement(report);
             int loc = hit.getLocation();
             if ((entity instanceof Mek) &&
-                      ((loc == Mek.LOC_HEAD) || ((Mek) entity).isArm(loc) || entity.locationIsLeg(loc))) {
+                  ((loc == Mek.LOC_HEAD) || ((Mek) entity).isArm(loc) || entity.locationIsLeg(loc))) {
                 int half = (int) Math.ceil(entity.getOArmor(loc, false) / 2.0);
                 if (damage > half) {
                     damage = half;
@@ -2319,7 +2320,7 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         // unless the section destroyed in a previous phase?
         // Cause a crit.
         if ((entity.getInternal(hit) != IArmorState.ARMOR_DESTROYED) &&
-                  ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
+              ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
             for (int i = 0; i < crits; i++) {
                 reportVec.addAll(manager.criticalEntity(entity,
                       hit.getLocation(),
@@ -2376,25 +2377,25 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         mods.ferroFibrousArmor = (checkFerroFibrous(entity, hit));
         mods.bar5 = (entity.getBARRating(hit.getLocation()) <= 5);
         mods.ballisticArmor = ((entity instanceof Mek) || (entity instanceof Tank) || (entity instanceof Aero)) &&
-                                    (entity.getArmorType(hit.getLocation()) ==
-                                           EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
+              (entity.getArmorType(hit.getLocation()) ==
+                    EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
         mods.ferroLamellorArmor = ((entity instanceof Mek) || (entity instanceof Tank) || (entity instanceof Aero)) &&
-                                        (entity.getArmorType(hit.getLocation()) ==
-                                               EquipmentType.T_ARMOR_FERRO_LAMELLOR);
+              (entity.getArmorType(hit.getLocation()) ==
+                    EquipmentType.T_ARMOR_FERRO_LAMELLOR);
         mods.hardenedArmor = ((entity instanceof Mek) || (entity instanceof Tank)) &&
-                                   (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
+              (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
         mods.impactArmor = (entity instanceof Mek) &&
-                                 (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT);
+              (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT);
         mods.reactiveArmor = (((entity instanceof Mek) || (entity instanceof Tank) || (entity instanceof Aero)) &&
-                                    (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE)) ||
-                                   (isBattleArmor &&
-                                          (entity.getArmorType(hit.getLocation()) ==
-                                                 EquipmentType.T_ARMOR_BA_REACTIVE));
+              (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE)) ||
+              (isBattleArmor &&
+                    (entity.getArmorType(hit.getLocation()) ==
+                          EquipmentType.T_ARMOR_BA_REACTIVE));
         mods.reflectiveArmor = (((entity instanceof Mek) || (entity instanceof Tank) || (entity instanceof Aero)) &&
-                                      (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)) ||
-                                     isBattleArmor &&
-                                           (entity.getArmorType(hit.getLocation()) ==
-                                                  EquipmentType.T_ARMOR_BA_REFLECTIVE);
+              (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)) ||
+              isBattleArmor &&
+                    (entity.getArmorType(hit.getLocation()) ==
+                          EquipmentType.T_ARMOR_BA_REFLECTIVE);
     }
 
     public int manageDamageTypeReports(Entity entity, Vector<Report> reportVec, int damage, DamageType damageType,
@@ -2443,10 +2444,10 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 break;
             case ACID:
                 if (mods.ferroFibrousArmor ||
-                          mods.reactiveArmor ||
-                          mods.reflectiveArmor ||
-                          mods.ferroLamellorArmor ||
-                          mods.bar5) {
+                      mods.reactiveArmor ||
+                      mods.reflectiveArmor ||
+                      mods.ferroLamellorArmor ||
+                      mods.bar5) {
                     if (entity.getArmor(hit) <= 0) {
                         break; // hitting IS, not acid-affected armor
                     }
@@ -2500,9 +2501,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         Entity passenger = entity.getExteriorUnitAt(nLoc, hit.isRear());
         // Does an exterior passenger absorb some damage?
         if (!ammoExplosion &&
-                  (null != passenger) &&
-                  !passenger.isDoomed() &&
-                  (damageType != DamageType.IGNORE_PASSENGER)) {
+              (null != passenger) &&
+              !passenger.isDoomed() &&
+              (damageType != DamageType.IGNORE_PASSENGER)) {
             extantDamage = manager.damageExternalPassenger(entity, hit, damage, reportVec, passenger);
         }
 
@@ -2511,11 +2512,11 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
         // Does a swarming unit absorb damage?
         int swarmer = entity.getSwarmAttackerId();
         if ((!(entity instanceof Mek) || bTorso) &&
-                  (swarmer != Entity.NONE) &&
-                  ((hit.getEffect() & HitData.EFFECT_CRITICAL) == 0) &&
-                  (Compute.d6() >= 5) &&
-                  (damageType != DamageType.IGNORE_PASSENGER) &&
-                  !ammoExplosion) {
+              (swarmer != Entity.NONE) &&
+              ((hit.getEffect() & HitData.EFFECT_CRITICAL) == 0) &&
+              (Compute.d6() >= 5) &&
+              (damageType != DamageType.IGNORE_PASSENGER) &&
+              !ammoExplosion) {
             Entity swarm = game.getEntity(swarmer);
 
             if (swarm != null) {
@@ -2600,10 +2601,10 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             int origDamage = damage;
 
             if (ferroLamellorArmor &&
-                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
-                      (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION) &&
-                      (hit.getGeneralDamageType() != HitData.DAMAGE_AX)) {
+                  (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
+                  (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
+                  (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION) &&
+                  (hit.getGeneralDamageType() != HitData.DAMAGE_AX)) {
                 tmpDamageHold = damage;
                 damage = (int) Math.floor((((double) damage) * 4) / 5);
                 if (damage <= 0) {
@@ -2616,13 +2617,13 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 report.add(damage);
                 reportVec.addElement(report);
             } else if (ballisticArmor &&
-                             ((hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE) ||
-                                    (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING) ||
-                                    (hit.getGeneralDamageType() == HitData.DAMAGE_BALLISTIC) ||
-                                    (hit.getGeneralDamageType() == HitData.DAMAGE_AX)
-                                    //AX doesn't affect ballistic-reinforced armor, TO:AUE (6th), pg. 179
-                                    ||
-                                    (hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE))) {
+                  ((hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE) ||
+                        (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING) ||
+                        (hit.getGeneralDamageType() == HitData.DAMAGE_BALLISTIC) ||
+                        (hit.getGeneralDamageType() == HitData.DAMAGE_AX)
+                        //AX doesn't affect ballistic-reinforced armor, TO:AUE (6th), pg. 179
+                        ||
+                        (hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE))) {
                 tmpDamageHold = damage;
                 damage = Math.max(1, damage / 2);
                 report = new Report(6088);
@@ -2640,8 +2641,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 report.add(damage);
                 reportVec.addElement(report);
             } else if (reflectiveArmor &&
-                             (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL) &&
-                             !isBattleArmor) { // BA reflect does not receive extra physical damage
+                  (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL) &&
+                  !isBattleArmor) { // BA reflect does not receive extra physical damage
                 tmpDamageHold = damage;
                 int currArmor = entity.getArmor(hit);
                 int dmgToDouble = Math.min(damage, currArmor / 2);
@@ -2679,9 +2680,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 report.add(damage);
                 reportVec.addElement(report);
             } else if (reactiveArmor &&
-                             ((hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE) ||
-                                    (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE) ||
-                                    areaSatArty)) {
+                  ((hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE) ||
+                        (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE) ||
+                        areaSatArty)) {
                 tmpDamageHold = damage;
                 damage = (int) Math.floor(((double) damage) / 2);
                 if (tmpDamageHold == 1) {
@@ -2697,20 +2698,20 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // If we're using optional tank damage thresholds, set up our hit
             // effects now...
             if ((entity instanceof Tank) &&
-                      game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD) &&
-                      !((entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
+                  game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD) &&
+                  !((entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
                 int thresh = (int) Math.ceil((game.getOptions()
-                                                    .booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE) ?
-                                                    entity.getArmor(hit) :
-                                                    entity.getOArmor(hit)) /
-                                                   (double) game.getOptions()
-                                                                  .intOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR));
+                      .booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE) ?
+                      entity.getArmor(hit) :
+                      entity.getOArmor(hit)) /
+                      (double) game.getOptions()
+                            .intOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR));
 
                 // adjust for hardened armor
                 if (hardenedArmor &&
-                          (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                          (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
-                          (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
+                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
+                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
+                      (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
                     thresh *= 2;
                 }
 
@@ -2728,9 +2729,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // if there's a mast mount in the rotor, it and all other equipment on it get destroyed if it takes
             // any amount of damage (0 is no damage)
             if ((entity instanceof VTOL) &&
-                      (hit.getLocation() == VTOL.LOC_ROTOR) &&
-                      entity.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) &&
-                      (damage > 0)) {
+                  (hit.getLocation() == VTOL.LOC_ROTOR) &&
+                  entity.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) &&
+                  (damage > 0)) {
                 report = new Report(6081);
                 report.subject = entityId;
                 report.indent(2);
@@ -2744,9 +2745,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
             // Need to account for the possibility of hardened armor here
             int armorThreshold = entity.getArmor(hit);
             if (hardenedArmor &&
-                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
-                      (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
+                  (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
+                  (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
+                  (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
                 armorThreshold *= 2;
                 armorThreshold -= (entity.isHardenedArmorDamaged(hit)) ? 1 : 0;
                 reportVec.lastElement().newlines = 0;
@@ -2768,9 +2769,9 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 // armor absorbs all damage
                 // Hardened armor deals with damage in its own fashion...
                 if (hardenedArmor &&
-                          (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                          (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
-                          (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
+                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
+                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
+                      (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
                     armorThreshold -= damage;
                     entity.setHardenedArmorDamaged(hit, (armorThreshold % 2) > 0);
                     entity.setArmor((armorThreshold / 2) + (armorThreshold % 2), hit);
@@ -2819,8 +2820,8 @@ public class TWDamageManagerModular extends TWDamageManager implements IDamageMa
                 // damage goes on to internal
                 int absorbed = Math.max(entity.getArmor(hit), 0);
                 if (hardenedArmor &&
-                          (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                          (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
+                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
                     absorbed = (absorbed * 2) - ((entity.isHardenedArmorDamaged(hit)) ? 1 : 0);
                 }
                 if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL) && !isBattleArmor) {

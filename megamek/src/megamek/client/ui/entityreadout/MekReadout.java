@@ -32,14 +32,14 @@
  */
 package megamek.client.ui.entityreadout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.client.ui.Messages;
 import megamek.common.EquipmentType;
 import megamek.common.LandAirMek;
 import megamek.common.Mek;
 import megamek.common.QuadVee;
-
-import java.util.ArrayList;
-import java.util.List;
 
 class MekReadout extends GeneralEntityReadout {
 

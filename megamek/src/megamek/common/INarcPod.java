@@ -1,18 +1,38 @@
 /*
-* MegaMek -
-* Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 package megamek.common;
 
 import java.io.Serializable;
@@ -20,9 +40,8 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * @author Sebastian Brocks This class represents an iNarc pod attached to an
- *         entity. This class is immutable. Once it is created, it can not be
- *         changed. An iNarc pod can be targeted for a "brush off" attack.
+ * @author Sebastian Brocks This class represents an iNarc pod attached to an entity. This class is immutable. Once it
+ *       is created, it can not be changed. An iNarc pod can be targeted for a "brush off" attack.
  */
 public class INarcPod implements Serializable, Targetable {
     private static final long serialVersionUID = -3566809840132774242L;
@@ -36,8 +55,7 @@ public class INarcPod implements Serializable, Targetable {
     private int location;
 
     /**
-     * Creates a new <code>INarcPod</code>, from the team and of the type
-     * specified.
+     * Creates a new <code>INarcPod</code>, from the team and of the type specified.
      */
     public INarcPod(int team, int type, int location) {
         this.team = team;
@@ -61,10 +79,10 @@ public class INarcPod implements Serializable, Targetable {
      * Determine if the other object is an equivalent INarc pod. <p> Overrides
      * <code>Object#equals(Object)</code>.
      *
-     * @param obj the other <code>Object</code> which may be an equivalent
-     *            INarc pod.
+     * @param obj the other <code>Object</code> which may be an equivalent INarc pod.
+     *
      * @return <code>true</code> if the other object matches this one,
-     *         <code>false</code> otherwise.
+     *       <code>false</code> otherwise.
      */
     @Override
     public boolean equals(Object obj) {
@@ -114,6 +132,7 @@ public class INarcPod implements Serializable, Targetable {
      * Create a new iNarc pod that is equivalent to the given ID.
      *
      * @param id the <code>int</code> ID of the iNarc pod.
+     *
      * @return a new <code>INarcPod</code> that matches the ID.
      */
     public static INarcPod idToInstance(int id) {
@@ -137,7 +156,7 @@ public class INarcPod implements Serializable, Targetable {
     }
 
     @Override
-    public void setId(int newId) { }
+    public void setId(int newId) {}
 
     @Override
     public int getOwnerId() {
@@ -145,7 +164,7 @@ public class INarcPod implements Serializable, Targetable {
     }
 
     @Override
-    public void setOwnerId(int newOwnerId) { }
+    public void setOwnerId(int newOwnerId) {}
 
     @Override
     public int getStrength() {

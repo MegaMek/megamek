@@ -1,17 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import static megamek.common.Game.TEAM_HAS_COMBAT_PARALYSIS;
@@ -285,7 +305,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     }
 
     public static void rollInitiative(List<? extends ITurnOrdered> initiativeCandidates,
-                                      boolean bUseInitiativeCompensation, Map<Team, Integer> initiativeAptitude) {
+          boolean bUseInitiativeCompensation, Map<Team, Integer> initiativeAptitude) {
         // Clear all rolls
         for (ITurnOrdered item : initiativeCandidates) {
             item.clearInitiative(bUseInitiativeCompensation, initiativeAptitude);
@@ -313,7 +333,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
             for (ITurnOrdered item : v) {
                 // Observers don't have initiative, and they don't get initiative compensation
                 if (((item instanceof Player) && ((Player) item).isObserver()) ||
-                          ((item instanceof Team) && ((Team) item).isObserverTeam())) {
+                      ((item instanceof Team) && ((Team) item).isObserverTeam())) {
                     continue;
                 }
 
@@ -329,7 +349,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
                     if (!item.equals(winningElement)) {
                         int newBonus = 0;
                         boolean observer = ((item instanceof Player) && ((Player) item).isObserver()) ||
-                                                 ((item instanceof Team) && ((Team) item).isObserverTeam());
+                              ((item instanceof Team) && ((Team) item).isObserverTeam());
                         // Observers don't have initiative, and they don't get initiative compensation
 
                         if (!item.equals(lastRoundInitWinner) && !observer) {
@@ -351,7 +371,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
      */
     @Deprecated(since = "0.50.5", forRemoval = true)
     public static void rollInitAndResolveTies(List<? extends ITurnOrdered> v,
-                                              List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus) {
+          List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus) {
         rollInitAndResolveTies(v, rerollRequests, bInitCompBonus, new HashMap<>());
     }
 
@@ -365,12 +385,12 @@ public abstract class TurnOrdered implements ITurnOrdered {
      *                             prevent one side getting long init win streaks
      */
     public static void rollInitAndResolveTies(List<? extends ITurnOrdered> initiativeCandidates,
-                                              List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus,
-                                              Map<Team, Integer> initiativeAptitude) {
+          List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus,
+          Map<Team, Integer> initiativeAptitude) {
         for (ITurnOrdered initiativeCandidate : initiativeCandidates) {
             // Observers don't have initiative, set it to -1
             if (((initiativeCandidate instanceof Player) && ((Player) initiativeCandidate).isObserver()) ||
-                      ((initiativeCandidate instanceof Team) && ((Team) initiativeCandidate).isObserverTeam())) {
+                  ((initiativeCandidate instanceof Team) && ((Team) initiativeCandidate).isObserverTeam())) {
                 initiativeCandidate.getInitiative().observerRoll();
             }
 
@@ -397,10 +417,13 @@ public abstract class TurnOrdered implements ITurnOrdered {
             // Individual entities are used here if we're using Individual Initiative
             if (initiativeCandidate instanceof Entity entity) {
                 if (entity.getGame() != null) {
-                    boolean useCommandInit = entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT);
+                    boolean useCommandInit = entity.getGame()
+                          .getOptions()
+                          .booleanOption(OptionsConstants.RPG_COMMAND_INIT);
                     final Player player = entity.getOwner();
                     if (player != null) {
-                        bonus = player.getIndividualCommandBonus(entity, useCommandInit) + entity.getCrew().getInitBonus();
+                        bonus = player.getIndividualCommandBonus(entity, useCommandInit) + entity.getCrew()
+                              .getInitBonus();
                         if (entity.hasAbility(ATOW_COMBAT_SENSE)) {
                             initiativeAptitudeSPA = ATOW_COMBAT_SENSE;
                         } else if (entity.hasAbility(ATOW_COMBAT_PARALYSIS)) {
@@ -429,7 +452,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
         for (ITurnOrdered item : initiativeCandidates) {
             // Observers don't have initiative, and were already set to -1
             if (((item instanceof Player) && ((Player) item).isObserver()) ||
-                      ((item instanceof Team) && ((Team) item).isObserverTeam())) {
+                  ((item instanceof Team) && ((Team) item).isObserverTeam())) {
                 continue;
             }
             ties.removeAllElements();
@@ -559,13 +582,13 @@ public abstract class TurnOrdered implements ITurnOrdered {
         }
 
         int total_turns = total_normal_turns +
-                                total_space_station_turns +
-                                total_jumpship_turns +
-                                total_warship_turns +
-                                total_dropship_turns +
-                                total_small_craft_turns +
-                                total_telemissile_turns +
-                                total_aero_turns;
+              total_space_station_turns +
+              total_jumpship_turns +
+              total_warship_turns +
+              total_dropship_turns +
+              total_small_craft_turns +
+              total_telemissile_turns +
+              total_aero_turns;
 
         TurnVectors turns = new TurnVectors(total_normal_turns,
               total_turns,

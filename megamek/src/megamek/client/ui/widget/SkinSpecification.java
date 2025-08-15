@@ -1,17 +1,38 @@
 /*
- * MegaMek - Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
- * Copyright © 2015 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client.ui.widget;
 
 import java.awt.Color;
@@ -22,7 +43,7 @@ import megamek.common.annotations.Nullable;
 
 /**
  * A class that contains state information that specifies a skin.
- * 
+ *
  * @author arlith
  */
 public class SkinSpecification {
@@ -44,6 +65,7 @@ public class SkinSpecification {
 
         /**
          * Constructions a new UIComponent with the given internalcomponent name
+         *
          * @param comp The internal name of this component
          */
         UIComponents(final String comp) {
@@ -51,8 +73,7 @@ public class SkinSpecification {
         }
 
         /**
-         * Returns a string representation of this component, which is just the
-         * internal name.
+         * Returns a string representation of this component, which is just the internal name.
          *
          * @see java.lang.Enum#toString()
          */
@@ -60,13 +81,14 @@ public class SkinSpecification {
         public String toString() {
             return getName();
         }
-        
+
         public String getComp() {
             return comp;
         }
 
         /**
          * Returns an internationalized name for this component.
+         *
          * @return
          */
         public String getName() {
@@ -75,17 +97,18 @@ public class SkinSpecification {
 
         /**
          * Returns an internationalized description for this component.
+         *
          * @return
          */
         public String getDescription() {
             return Messages.getString("SkinSpec." + getComp() + ".Desc");
         }
-        
+
         /**
-         * Given a component name, return it's UIComponents instance or null
-         * if no match is found.
-         * 
+         * Given a component name, return it's UIComponents instance or null if no match is found.
+         *
          * @param val
+         *
          * @return
          */
         @Nullable
@@ -98,12 +121,11 @@ public class SkinSpecification {
             return null;
         }
     }
-    
+
     /**
-     * Indicates the maximum number of colors a skin specification can have.
-     * No UI elements will use more than this many colors, so there is no reason
-     * to allow more than this, and it prevents the editor UI from expanding out
-     * of control.
+     * Indicates the maximum number of colors a skin specification can have. No UI elements will use more than this many
+     * colors, so there is no reason to allow more than this, and it prevents the editor UI from expanding out of
+     * control.
      */
     public static final int MAX_NUM_COLORS = 3;
 
@@ -116,30 +138,30 @@ public class SkinSpecification {
      * Path to an image to be used in the top left corner.
      */
     public String tl_corner;
-    
+
     /**
      * Path to an image to be used in the top right corner.
      */
     public String tr_corner;
-    
+
     /**
      * Path to an image to be used in the bottom left corner.
      */
     public String bl_corner;
-    
+
     /**
      * Path to an image to be used in the bottom right corner.
      */
     public String br_corner;
-    
-    
+
+
     /**
      * Path to images to be used along the top edge.
      */
     public ArrayList<String> topEdge;
     /**
-     * Has an entry for each image for the top edge that determines whether
-     * that image should be tiled or just drawn once.
+     * Has an entry for each image for the top edge that determines whether that image should be tiled or just drawn
+     * once.
      */
     public ArrayList<Boolean> topShouldTile;
 
@@ -148,40 +170,39 @@ public class SkinSpecification {
      */
     public ArrayList<String> rightEdge;
     /**
-     * Has an entry for each image for the right edge that determines whether
-     * that image should be tiled or just drawn once.
+     * Has an entry for each image for the right edge that determines whether that image should be tiled or just drawn
+     * once.
      */
     public ArrayList<Boolean> rightShouldTile;
-    
+
     /**
      * Path to images to be used along the bottom edge.
      */
     public ArrayList<String> bottomEdge;
     /**
-     * Has an entry for each image for the bottom edge that determines whether
-     * that image should be tiled or just drawn once.
+     * Has an entry for each image for the bottom edge that determines whether that image should be tiled or just drawn
+     * once.
      */
     public ArrayList<Boolean> bottomShouldTile;
-    
+
     /**
      * Path to images to be used along the left edge.
      */
     public ArrayList<String> leftEdge;
     /**
-     * Has an entry for each image for the left edge that determines whether
-     * that image should be tiled or just drawn once.
+     * Has an entry for each image for the left edge that determines whether that image should be tiled or just drawn
+     * once.
      */
     public ArrayList<Boolean> leftShouldTile;
-    
+
     /**
      * Specifies the font color for the UI component
      */
     public ArrayList<Color> fontColors;
-    
+
     /**
-     * A collection of background images.  Most UI components only need one,
-     * but some have more.  For instance, buttons have a normal background and
-     * a pressed background.
+     * A collection of background images.  Most UI components only need one, but some have more.  For instance, buttons
+     * have a normal background and a pressed background.
      */
     public ArrayList<String> backgrounds;
 
@@ -191,16 +212,14 @@ public class SkinSpecification {
      * It set, it indicates that no borders should be drawn.
      */
     public boolean noBorder = false;
-    
+
     /**
-     * Flag that determines whether the background image should be tiled or
-     * scaled.
+     * Flag that determines whether the background image should be tiled or scaled.
      */
     public boolean tileBackground = true;
-    
+
     /**
-     * Used to specify whether a component should display scrollbars,
-     * particularly for the board view. 
+     * Used to specify whether a component should display scrollbars, particularly for the board view.
      */
     public boolean showScrollBars = false;
 
@@ -208,7 +227,7 @@ public class SkinSpecification {
      * Specify a non-standard font, or null to use default.
      */
     public String fontName = null;
-    
+
     /**
      * Specify a non-standard font size.  Only used when a non-standard font name is specified.
      */
@@ -234,52 +253,52 @@ public class SkinSpecification {
         fontColors = new ArrayList<>();
         fontColors.add(Color.black);
     }
-    
+
     public boolean hasBorder() {
         // Return false if any corner doesn't exist
         if (tl_corner.isBlank() || tr_corner.isBlank()
-                || bl_corner.isBlank() || br_corner.isBlank()) {
+              || bl_corner.isBlank() || br_corner.isBlank()) {
             return false;
         }
-        
+
         // Return false if any edge doesn't exist
         if (topEdge.isEmpty() || rightEdge.isEmpty() || bottomEdge.isEmpty() || leftEdge.isEmpty()) {
             return false;
         }
-        
+
         // Make sure edges don't contain empty strings
         for (String edge : topEdge) {
             if (edge.isBlank()) {
                 return false;
             }
         }
-        
+
         for (String edge : rightEdge) {
             if (edge.isBlank()) {
                 return false;
             }
         }
-        
+
         for (String edge : bottomEdge) {
             if (edge.isBlank()) {
                 return false;
             }
         }
-        
+
         for (String edge : leftEdge) {
             if (edge.isBlank()) {
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     public boolean hasBackgrounds() {
         if (backgrounds.isEmpty()) {
             return false;
         }
-        
+
         for (String bg : backgrounds) {
             if (bg.isBlank()) {
                 return false;

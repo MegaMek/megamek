@@ -1,31 +1,48 @@
 /*
- * MegaMek - Copyright (C) 2016 The MegaMek Team
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import megamek.common.EntityMovementMode;
+import megamek.logging.MMLogger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import megamek.common.EntityMovementMode;
-import megamek.logging.MMLogger;
-
 /**
- * A force node contains the rules for generating a force when the
- * ForceDescriptor matches the
- * characteristics defined by the force node.
+ * A force node contains the rules for generating a force when the ForceDescriptor matches the characteristics defined
+ * by the force node.
  *
  * @author Neoancient
  */
@@ -67,7 +84,7 @@ public class ForceNode extends RulesetNode {
                 switch (rule.getName()) {
                     case "weightClass":
                         if (fd.getWeightClass() == null
-                                || rule.predicates.containsKey("ifWeightClass")) {
+                              || rule.predicates.containsKey("ifWeightClass")) {
                             ValueNode n = rule.selectOption(fd, true);
                             if (n != null) {
                                 fd.setWeightClass(ForceDescriptor.decodeWeightClass(n.getContent()));
@@ -76,7 +93,7 @@ public class ForceNode extends RulesetNode {
                         break;
                     case "unitType":
                         if (fd.getUnitType() == null
-                                || rule.predicates.containsKey("ifUnitType")) {
+                              || rule.predicates.containsKey("ifUnitType")) {
                             ValueNode n = rule.selectOption(fd, true);
                             if (n != null) {
                                 fd.setUnitType(ModelRecord.parseUnitType(n.getContent()));
@@ -85,7 +102,7 @@ public class ForceNode extends RulesetNode {
                         break;
                     case "chassis":
                         if (fd.getChassis().isEmpty()
-                                || rule.predicates.containsKey("ifChassis")) {
+                              || rule.predicates.containsKey("ifChassis")) {
                             ValueNode n = rule.selectOption(fd, true);
                             if (n != null) {
                                 for (String c : n.getContent().split(",")) {
@@ -127,7 +144,7 @@ public class ForceNode extends RulesetNode {
                         break;
                     case "formation":
                         if (null == fd.getFormation()
-                                || rule.predicates.containsKey("ifFormation")) {
+                              || rule.predicates.containsKey("ifFormation")) {
                             n = rule.selectOption(fd, true);
                             if (n == null) {
                                 break;
@@ -288,7 +305,7 @@ public class ForceNode extends RulesetNode {
     public String getEschelonCode() {
         String retVal = eschelon.toString();
         if (predicates.containsKey("ifAugmented")
-                && predicates.getProperty("ifAugmented").equals("1")) {
+              && predicates.getProperty("ifAugmented").equals("1")) {
             retVal += "*";
         }
         return retVal;
@@ -376,14 +393,14 @@ public class ForceNode extends RulesetNode {
                     for (int y = 0; y < wn.getChildNodes().getLength(); y++) {
                         Node wn2 = wn.getChildNodes().item(y);
                         if (wn2.getNodeName().equals("weightClass")
-                                || wn2.getNodeName().equals("unitType")
-                                || wn2.getNodeName().equals("chassis")
-                                || wn2.getNodeName().equals("variant")
-                                || wn2.getNodeName().equals("motive")
-                                || wn2.getNodeName().equals("formation")
-                                || wn2.getNodeName().equals("role")
-                                || wn2.getNodeName().equals("flags")
-                                || wn2.getNodeName().equals("changeEschelon")) {
+                              || wn2.getNodeName().equals("unitType")
+                              || wn2.getNodeName().equals("chassis")
+                              || wn2.getNodeName().equals("variant")
+                              || wn2.getNodeName().equals("motive")
+                              || wn2.getNodeName().equals("formation")
+                              || wn2.getNodeName().equals("role")
+                              || wn2.getNodeName().equals("flags")
+                              || wn2.getNodeName().equals("changeEschelon")) {
                             currentRuleGroup.add(OptionGroupNode.createFromXml(wn2));
                         }
                     }
@@ -408,10 +425,10 @@ public class ForceNode extends RulesetNode {
             StringBuilder sb = new StringBuilder();
             sb.append("Force Node [eschelon:").append(eschelon).append(" predicates:");
             sb.append(predicates.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
-                    .collect(Collectors.joining(",")));
+                  .collect(Collectors.joining(",")));
             sb.append(" assertions:");
             sb.append(assertions.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
-                    .collect(Collectors.joining(",")));
+                  .collect(Collectors.joining(",")));
             sb.append("]");
             desc = sb.toString();
         }

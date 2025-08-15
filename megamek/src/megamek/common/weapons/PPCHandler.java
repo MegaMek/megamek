@@ -1,22 +1,37 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -61,7 +76,7 @@ public class PPCHandler extends EnergyWeaponHandler {
         double toReturn = wtype.getDamage(nRange);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
-                && weapon.hasModes()) {
+              && weapon.hasModes()) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
 
@@ -70,9 +85,9 @@ public class PPCHandler extends EnergyWeaponHandler {
         }
         // during a swarm, all damage gets applied as one block to one location
         if ((ae instanceof BattleArmor)
-                && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
-                && !(weapon.isSquadSupportWeapon())
-                && (ae.getSwarmTargetId() == target.getId())) {
+              && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
+              && !(weapon.isSquadSupportWeapon())
+              && (ae.getSwarmTargetId() == target.getId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
 
@@ -88,26 +103,26 @@ public class PPCHandler extends EnergyWeaponHandler {
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn -= 1;
         }
         if (game.getOptions().booleanOption(
-                OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+              OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 
         if ((target instanceof Entity)
-                && ((Entity) target).hasActiveBlueShield()) {
+              && ((Entity) target).hasActiveBlueShield()) {
             toReturn = (int) Math.max(Math.floor(toReturn / 2.0), 1);
         }
 
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                    bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  bDirect ? toHit.getMoS() / 3 : 0,
+                  wtype.getInfantryDamageClass(),
+                  ((Infantry) target).isMechanized(),
+                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
@@ -126,8 +141,8 @@ public class PPCHandler extends EnergyWeaponHandler {
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         // Resolve roll for disengaged field inhibitors on PPCs, if needed
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)
-                && weapon.hasModes()
-                && weapon.curMode().equals("Field Inhibitor OFF")) {
+              && weapon.hasModes()
+              && weapon.curMode().equals("Field Inhibitor OFF")) {
             int rollTarget = 0;
             Roll diceRoll = Compute.rollD6(2);
             int distance = Compute.effectiveDistance(game, ae, target);
@@ -159,8 +174,8 @@ public class PPCHandler extends EnergyWeaponHandler {
                 for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
                     CriticalSlot slot1 = ae.getCritical(wlocation, i);
                     if ((slot1 == null)
-                            || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)
-                            || slot1.isHit()) {
+                          || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)
+                          || slot1.isHit()) {
                         continue;
                     }
                     Mounted<?> mounted = slot1.getMount();
@@ -175,8 +190,8 @@ public class PPCHandler extends EnergyWeaponHandler {
                 r.indent(2);
                 vPhaseReport.addElement(r);
                 Vector<Report> newReports = gameManager.damageEntity(ae,
-                        new HitData(wlocation), 10, false, DamageType.NONE,
-                        true);
+                      new HitData(wlocation), 10, false, DamageType.NONE,
+                      true);
                 for (Report rep : newReports) {
                     rep.indent(2);
                 }
@@ -204,7 +219,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
                     CriticalSlot slot = ae.getCritical(wlocation, i);
                     if ((slot == null)
-                            || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                          || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
                         continue;
                     }
                     // Only one Crit needs to be damaged.

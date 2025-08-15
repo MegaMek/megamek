@@ -1,32 +1,58 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.BattleArmor;
+import megamek.common.Building;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Report;
+import megamek.common.Roll;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
- * Weaponhandler for the Centurion Weapon System weapon, 
- * which is found in Jihad Conspiracies Interstellar Players 2, pg 127.
- * 
- * @author arlith
- * Created on Sept 5, 2005
- */ 
+ * Weaponhandler for the Centurion Weapon System weapon, which is found in Jihad Conspiracies Interstellar Players 2, pg
+ * 127.
+ *
+ * @author arlith Created on Sept 5, 2005
+ */
 public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = -5226841653686213141L;
 
@@ -42,7 +68,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.EnergyWeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -52,7 +78,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
 
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
-                                      Building bldg, int hits, int nCluster, int bldgAbsorbs) {
+          Building bldg, int hits, int nCluster, int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
 
         // Report that this unit has been hit by CWS
@@ -71,7 +97,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
             vPhaseReport.add(r);
             return;
         }
-        
+
         // If the Entity is shutdown, it will remain shutdown next turn
         if (entityTarget.isShutDown()) {
             r = new Report(7511);
@@ -89,7 +115,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
                 hotDogMod = 1;
             }
             int shutdown = (4 + (((entityTarget.heat) / 4) * 2))
-                    - hotDogMod;
+                  - hotDogMod;
             if (mtHeat) {
                 shutdown -= 5;
                 switch (entityTarget.getCrew().getPiloting()) {
@@ -133,15 +159,15 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
                     // TODO: fix for salvage purposes
                     entityTarget.destroyLocation(hit.getLocation());
                     // Check to see if the squad has been eliminated
-                    if (entityTarget.getTransferLocation(hit).getLocation() == 
-                            Entity.LOC_DESTROYED) {
+                    if (entityTarget.getTransferLocation(hit).getLocation() ==
+                          Entity.LOC_DESTROYED) {
                         vPhaseReport.addAll(gameManager.destroyEntity(entityTarget,
-                                "all troopers eliminated", false));
+                              "all troopers eliminated", false));
                     }
                 } else {
                     entityTarget.setShutDown(true);
                 }
-            }            
+            }
         }
     }
 }

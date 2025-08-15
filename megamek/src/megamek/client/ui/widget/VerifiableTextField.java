@@ -1,17 +1,48 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.client.ui.widget;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.HeadlessException;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.HashSet;
+import java.util.Set;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.DataVerifier;
@@ -19,18 +50,10 @@ import megamek.client.ui.util.VerifyNotNullOrEmpty;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.util.StringUtil;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
- * This is an extension of the {@link JTextField} that includes the capacity for {@link DataVerifier}
- * objects to be added. These verifiers will be checked when the component loses focus and if any
- * fail, the background of the field will be turned red and the tool tip updated with information
- * on what verifier was failed.
+ * This is an extension of the {@link JTextField} that includes the capacity for {@link DataVerifier} objects to be
+ * added. These verifiers will be checked when the component loses focus and if any fail, the background of the field
+ * will be turned red and the tool tip updated with information on what verifier was failed.
  *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 3/14/14 1:08 PM
@@ -60,9 +83,9 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         super(text, columns);
         addFocusListener(this);
     }
-    
-    public VerifiableTextField(int columns, boolean isReqd, boolean selectOnFoc, DataVerifier ver) 
-            throws HeadlessException {
+
+    public VerifiableTextField(int columns, boolean isReqd, boolean selectOnFoc, DataVerifier ver)
+          throws HeadlessException {
         this(null, columns);
         setRequired(isReqd);
         setSelectAllTextOnGotFocus(selectOnFoc);
@@ -118,8 +141,8 @@ public class VerifiableTextField extends JTextField implements FocusListener {
     }
 
     /**
-     * Marks this text field as required/unrequired and sets up/removes a {@link VerifyNotNullOrEmpty} verifier.
-     * Also sets the background color blue if it is required.
+     * Marks this text field as required/unrequired and sets up/removes a {@link VerifyNotNullOrEmpty} verifier. Also
+     * sets the background color blue if it is required.
      *
      * @param required TRUE if this field is required to have data.
      */
@@ -132,7 +155,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         // Add a new VerifyNotNullOrEmpty verifier and exit.
         if (required) {
             verifiers.add(new VerifyNotNullOrEmpty());
-//            setBackground(BK_REQUIRED);
+            //            setBackground(BK_REQUIRED);
             return;
         }
 
@@ -165,7 +188,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
             return;
         }
 
-//        Color goodBackground = isRequired() ? BK_REQUIRED : BK_DEFAULT;
+        //        Color goodBackground = isRequired() ? BK_REQUIRED : BK_DEFAULT;
         String verifyResult = verifyTextS();
 
         // If verifyResult is null, no problems were found.
@@ -179,7 +202,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         }
 
         // Something failed validation.  Set the background color red and update the tooltip to inform the user.
-        
+
         setBackground(getInvalidColor());
         oldToolTip = getToolTipText();
         setToolTipText(verifyResult);
@@ -205,8 +228,8 @@ public class VerifiableTextField extends JTextField implements FocusListener {
 
     /**
      * Compares the text field's value to the list of {@link DataVerifier} objects to ensure the validity of the data.
-     * If the text value passes all validation checks, a NULL value will be returned.  Otherwise a description of
-     * the failed validation will be returned. Does not verify if the field is disabled.
+     * If the text value passes all validation checks, a NULL value will be returned.  Otherwise a description of the
+     * failed validation will be returned. Does not verify if the field is disabled.
      *
      * @return NULL if the text in the field is valid. A description of the failure otherwise.
      */
@@ -224,7 +247,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         }
         return result;
     }
-    
+
     /**
      * Compares the text field's value to the list of {@link DataVerifier} objects to ensure the validity of the data.
      *
@@ -249,21 +272,20 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         this.oldToolTip = oldToolTip;
     }
 
-    /** 
-     * Returns an "invalid background" color. It is mixed from the
-     * GUIPreferences WarningColor and the UIManager textfield 
-     * background color. 
+    /**
+     * Returns an "invalid background" color. It is mixed from the GUIPreferences WarningColor and the UIManager
+     * textfield background color.
      */
     public static Color getInvalidColor() {
         Color bgColor = UIManager.getColor("TextField.background");
         Color warnColor = GUIPreferences.getInstance().getWarningColor();
         double part = 0.1;
-        int r = (int) (part * warnColor.getRed() + (1 - part) * bgColor.getRed());  
+        int r = (int) (part * warnColor.getRed() + (1 - part) * bgColor.getRed());
         int g = (int) (part * warnColor.getGreen() + (1 - part) * bgColor.getGreen());
         int b = (int) (part * warnColor.getBlue() + (1 - part) * bgColor.getBlue());
         return new Color(r, g, b);
     }
-    
+
     @Override
     public Dimension getMaximumSize() {
         // Make this TextField not stretch vertically

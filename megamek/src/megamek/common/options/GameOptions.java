@@ -1,17 +1,47 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.options;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.Serial;
+import java.util.Enumeration;
+import java.util.Vector;
+import javax.xml.namespace.QName;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -26,11 +56,6 @@ import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import javax.xml.namespace.QName;
-import java.io.*;
-import java.util.Enumeration;
-import java.util.Vector;
 
 /**
  * Contains the options determining play in the current game.
@@ -81,7 +106,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(allowed, OptionsConstants.ALLOWED_CANON_ONLY, false);
         addOption(allowed, OptionsConstants.ALLOWED_YEAR, 3150);
         addOption(allowed, OptionsConstants.ALLOWED_TECHLEVEL, IOption.CHOICE,
-                TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]);
+              TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]);
         addOption(allowed, OptionsConstants.ALLOWED_ERA_BASED, false);
         addOption(allowed, OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false);
         addOption(allowed, OptionsConstants.ALLOWED_SHOW_EXTINCT, true);
@@ -342,7 +367,7 @@ public class GameOptions extends BasicGameOptions {
 
             if (null != tempOption) {
                 if (!tempOption.getValue().toString()
-                        .equals(value.toString())) {
+                      .equals(value.toString())) {
                     try {
                         switch (tempOption.getType()) {
                             case IOption.STRING:
@@ -385,7 +410,7 @@ public class GameOptions extends BasicGameOptions {
      * Saves the given <code>Vector</code> of <code>IBasicOption</code>
      *
      * @param options <code>Vector</code> of <code>IBasicOption</code>
-     * @param file string with the name of the file
+     * @param file    string with the name of the file
      */
     public static void saveOptions(Vector<IBasicOption> options, String file) {
         try {
@@ -399,7 +424,7 @@ public class GameOptions extends BasicGameOptions {
             marshaller.setProperty("org.glassfish.jaxb.xmlHeaders", "<?xml version=\"1.0\"?>");
 
             JAXBElement<GameOptionsXML> element = new JAXBElement<>(new QName("options"), GameOptionsXML.class,
-                    new GameOptionsXML(options));
+                  new GameOptionsXML(options));
 
             marshaller.marshal(element, new File(file));
         } catch (Exception ex) {
@@ -456,6 +481,7 @@ public class GameOptions extends BasicGameOptions {
     }
 
     // region MekHQ I/O
+
     /**
      * This is used by MekHQ to write the game options to the standard file
      *
@@ -464,9 +490,9 @@ public class GameOptions extends BasicGameOptions {
      */
     public void writeToXML(final PrintWriter pw, int indent) {
         MMXMLUtility.writeSimpleXMLOpenTag(pw, indent++, "gameOptions");
-        for (final Enumeration<IOptionGroup> groups = getGroups(); groups.hasMoreElements();) {
+        for (final Enumeration<IOptionGroup> groups = getGroups(); groups.hasMoreElements(); ) {
             final IOptionGroup group = groups.nextElement();
-            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
+            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
                 final IOption option = options.nextElement();
                 MMXMLUtility.writeSimpleXMLOpenTag(pw, indent++, "gameOption");
                 MMXMLUtility.writeSimpleXMLTag(pw, indent, "name", option.getName());
@@ -478,8 +504,7 @@ public class GameOptions extends BasicGameOptions {
     }
 
     /**
-     * This is used to fill a GameOptions object from an XML node list written using
-     * writeToXML.
+     * This is used to fill a GameOptions object from an XML node list written using writeToXML.
      *
      * @param nl the node list to parse
      */

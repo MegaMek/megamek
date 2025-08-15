@@ -1,25 +1,46 @@
 /*
- * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Compute;
 import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.LBXHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -27,9 +48,9 @@ import megamek.server.totalwarfare.TWGameManager;
 /**
  * @author Andrew Hunter
  * @since Oct 15, 2004
- *
- * Note: The AV values declared here are then processed by the LBXHandler to arrive at the correct
- * ASF AV values at runtime.  This seems less janky than writing a new handler, but only just.
+ *       <p>
+ *       Note: The AV values declared here are then processed by the LBXHandler to arrive at the correct ASF AV values
+ *       at runtime.  This seems less janky than writing a new handler, but only just.
  */
 public class ISSilverBulletGauss extends GaussWeapon {
     private static final long serialVersionUID = -6873790245999096707L;
@@ -67,11 +88,11 @@ public class ISSilverBulletGauss extends GaussWeapon {
         rulesRefs = "314, TO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
-                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
-                .setISAdvancement(3051, DATE_NONE, 3080,DATE_NONE, DATE_NONE)
-                .setPrototypeFactions(Faction.FS, Faction.LC)
-                .setProductionFactions(Faction.FC)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
+              .setISAdvancement(3051, DATE_NONE, 3080, DATE_NONE, DATE_NONE)
+              .setPrototypeFactions(Faction.FS, Faction.LC)
+              .setProductionFactions(Faction.FC)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     /*
@@ -83,7 +104,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              TWGameManager manager) {
+          TWGameManager manager) {
         return new LBXHandler(toHit, waa, game, manager);
     }
 
@@ -104,7 +125,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
     public int getBattleForceClass() {
         return BFCLASS_FLAK;
     }
-    
+
     /**
      * This is an LBX weapon, the Aero AV is 60% of normal.
      */

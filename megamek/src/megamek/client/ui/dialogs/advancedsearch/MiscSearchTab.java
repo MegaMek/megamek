@@ -1,31 +1,58 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.advancedsearch;
 
-import megamek.client.ui.Messages;
-import megamek.common.*;
-import megamek.common.equipment.ArmorType;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+
+import megamek.client.ui.Messages;
+import megamek.common.Engine;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
+import megamek.common.Mek;
+import megamek.common.SimpleTechLevel;
+import megamek.common.equipment.ArmorType;
 
 class MiscSearchTab extends JPanel {
 
@@ -35,7 +62,7 @@ class MiscSearchTab extends JPanel {
     final JTextField tStartJump = new JTextField(4);
     final JTextField tEndJump = new JTextField(4);
     final JTextField tStartTankTurrets = new JTextField(4);
-    final JTextField tEndTankTurrets= new JTextField(4);
+    final JTextField tEndTankTurrets = new JTextField(4);
     final JTextField tStartLowerArms = new JTextField(4);
     final JTextField tEndLowerArms = new JTextField(4);
     final JTextField tStartHands = new JTextField(4);
@@ -77,7 +104,7 @@ class MiscSearchTab extends JPanel {
         c.weighty = 0;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
-        c.gridwidth  = 1;
+        c.gridwidth = 1;
         c.insets = new Insets(20, 10, 0, 0);
         c.gridy = 0;
 
@@ -199,7 +226,10 @@ class MiscSearchTab extends JPanel {
         listTechLevel = new TriStateItemList(SimpleTechLevel.getAllSimpleTechLevelCodeName(), 5);
 
         listTechBase = new TriStateItemList(Entity.getTechBaseDescriptions(), 4);
-        List<String> moveModes = Arrays.stream(EntityMovementMode.values()).map(EntityMovementMode::toString).distinct().toList();
+        List<String> moveModes = Arrays.stream(EntityMovementMode.values())
+              .map(EntityMovementMode::toString)
+              .distinct()
+              .toList();
         listMoveMode = new TriStateItemList(moveModes, 13);
 
         JPanel baseComboBoxesPanel = new JPanel();
@@ -245,7 +275,8 @@ class MiscSearchTab extends JPanel {
         baseComboBoxesPanel.add(armorTypePanel, c);
         c.gridx = 1;
         JPanel internalsPanel = new JPanel(new BorderLayout());
-        internalsPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.InternalsType")), BorderLayout.NORTH);
+        internalsPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.InternalsType")),
+              BorderLayout.NORTH);
         internalsPanel.add(new JScrollPane(listInternalsType.getComponent()), BorderLayout.CENTER);
         baseComboBoxesPanel.add(internalsPanel, c);
 
@@ -281,7 +312,7 @@ class MiscSearchTab extends JPanel {
         c.weighty = 0;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
-        c.gridwidth  = 1;
+        c.gridwidth = 1;
         c.insets = new Insets(20, 10, 0, 0);
         c.gridy = 0;
         add(createBaseAttributes(), c);

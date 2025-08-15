@@ -1,17 +1,36 @@
 /*
-* MegaMek -
-* Copyright (C) 2017 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 
 package megamek.common;
 
@@ -33,7 +52,6 @@ import megamek.logging.MMLogger;
  * Methods shared by Aero and LandAirMek
  *
  * @author Neoancient
- *
  */
 public interface IAero {
 
@@ -166,15 +184,10 @@ public interface IAero {
     OffBoardDirection getFlyingOffDirection();
 
     /**
-     * @return True when this aero requires fuel to move. Note that the result is
-     *         undefined when
-     *         the unit has no engine. Callers should consider this case themselves.
-     *         Also note that
-     *         this method does not check whether fuel use as a game option is
-     *         active, only if the unit
-     *         technically requires fuel to move. For example, returns false for
-     *         solar powered prop-driven
-     *         fixed wing support (TM p129).
+     * @return True when this aero requires fuel to move. Note that the result is undefined when the unit has no engine.
+     *       Callers should consider this case themselves. Also note that this method does not check whether fuel use as
+     *       a game option is active, only if the unit technically requires fuel to move. For example, returns false for
+     *       solar powered prop-driven fixed wing support (TM p129).
      */
     default boolean requiresFuel() {
         return true;
@@ -204,11 +217,10 @@ public interface IAero {
     int getAltitude();
 
     /**
-     * Iterate through current weapons and count the number in each capital
-     * fighter location.
+     * Iterate through current weapons and count the number in each capital fighter location.
      *
-     * @return A map with keys in the format "weaponName:loc", with the number
-     *         of weapons of that type in that location as the value.
+     * @return A map with keys in the format "weaponName:loc", with the number of weapons of that type in that location
+     *       as the value.
      */
     Map<String, Integer> groupWeaponsByLocation();
 
@@ -219,7 +231,7 @@ public interface IAero {
      */
     default void updateWeaponGroups() {
         if ((this instanceof Entity entity) && (entity.game != null)
-                && entity.game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER)) {
+              && entity.game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER)) {
             // first we need to reset all the weapons in our existing mounts to zero
             // until proven otherwise
             Set<String> set = getWeaponGroups().keySet();
@@ -266,8 +278,7 @@ public interface IAero {
     /**
      * Set number of fuel points based on fuel tonnage.
      *
-     * @param fuelTons
-     *                 The number of tons of fuel
+     * @param fuelTons The number of tons of fuel
      */
     void setFuelTonnage(double fuelTons);
 
@@ -288,7 +299,7 @@ public interface IAero {
         if (thrust > getSI()) {
             // append the reason modifier
             roll.append(new PilotingRollData(((Entity) this).getId(), thrust - getSI(),
-                    "Thrust exceeds current SI in a single hex"));
+                  "Thrust exceeds current SI in a single hex"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding SI");
         }
@@ -356,9 +367,9 @@ public interface IAero {
             // an airborne, aerodyne aero is considered to "stall" if it's not moving anywhere, hovering, landing, or
             // going off board
         } else if ((md.getFinalVelocity() == 0) && !md.contains(MoveStepType.HOVER) && isAirborne() && !isSpheroid()
-                && !thisEntity.getGame().getBoard(md.getFinalBoardId()).isSpace() && !md.contains(MoveStepType.LAND)
-                && !md.contains(MoveStepType.VLAND) && !md.contains(MoveStepType.RETURN)
-                && !md.contains(MoveStepType.OFF) && !md.contains(MoveStepType.FLEE)) {
+              && !thisEntity.getGame().getBoard(md.getFinalBoardId()).isSpace() && !md.contains(MoveStepType.LAND)
+              && !md.contains(MoveStepType.VLAND) && !md.contains(MoveStepType.RETURN)
+              && !md.contains(MoveStepType.OFF) && !md.contains(MoveStepType.FLEE)) {
             roll.append(new PilotingRollData(thisEntity.getId(), 0, "stalled out"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: entity not stalled out");
@@ -454,10 +465,10 @@ public interface IAero {
      * @return A PilotingRollData tha represents the landing control roll that must be passed
      */
     default PilotingRollData getLandingControlRoll(int velocity, Coords landingPos, int face,
-            boolean isVertical) {
+          boolean isVertical) {
         // Base piloting skill
         PilotingRollData roll = new PilotingRollData(((Entity) this).getId(), ((Entity) this).getCrew().getPiloting(),
-                "Base piloting skill");
+              "Base piloting skill");
 
         // Apply critical hit effects, TW pg 239
         int avihits = getAvionicsHits();
@@ -610,8 +621,8 @@ public interface IAero {
         }
         boolean sideSlipMod = (this instanceof ConvFighter) && isVSTOL();
         roll.append(
-                new PilotingRollData(((Entity) this).getId(), ManeuverType.getMod(step.getManeuverType(), sideSlipMod),
-                        ManeuverType.getTypeName(step.getManeuverType()) + " maneuver"));
+              new PilotingRollData(((Entity) this).getId(), ManeuverType.getMod(step.getManeuverType(), sideSlipMod),
+                    ManeuverType.getTypeName(step.getManeuverType()) + " maneuver"));
 
         return roll;
 
@@ -822,9 +833,9 @@ public interface IAero {
         // flotation hulls.
         // LAMs are not.
         if (hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE)
-                && (hex.terrainLevel(Terrains.WATER) > 0)
-                && (this instanceof Aero)
-                && !((Entity) this).hasWorkingMisc(MiscType.F_FLOTATION_HULL)) {
+              && (hex.terrainLevel(Terrains.WATER) > 0)
+              && (this instanceof Aero)
+              && !((Entity) this).hasWorkingMisc(MiscType.F_FLOTATION_HULL)) {
             return "cannot land on water";
         }
 
@@ -832,9 +843,9 @@ public interface IAero {
     }
 
     /**
-     * Performs necessary changes to this aero unit to place it in airborne mode. Sets the altitude to
-     * the given altitude, changes the movement mode to aerodyne/spheroid movement and clears secondary positions
-     * for DS. Note that altitude should not be 0 but this is not checked.
+     * Performs necessary changes to this aero unit to place it in airborne mode. Sets the altitude to the given
+     * altitude, changes the movement mode to aerodyne/spheroid movement and clears secondary positions for DS. Note
+     * that altitude should not be 0 but this is not checked.
      *
      * @param altitude The altitude to lift off to
      */
@@ -851,8 +862,8 @@ public interface IAero {
     }
 
     /**
-     * Performs necessary changes to this aero unit to place it in grounded mode. Sets altitude and elevation,
-     * velocity and next velocity to 0, OOC and related effects to false and the movement mode to WHEELED.
+     * Performs necessary changes to this aero unit to place it in grounded mode. Sets altitude and elevation, velocity
+     * and next velocity to 0, OOC and related effects to false and the movement mode to WHEELED.
      */
     default void land() {
         Entity aero = (Entity) this;
@@ -890,8 +901,7 @@ public interface IAero {
     }
 
     /**
-     * A method to add/remove sensors that only work in space as we transition in
-     * and out of an atmosphere
+     * A method to add/remove sensors that only work in space as we transition in and out of an atmosphere
      */
     default void updateSensorOptions() {
 
@@ -906,25 +916,28 @@ public interface IAero {
 
     /**
      * Set round that engines were completely destroyed; needed for crash-landing check
+     *
      * @param round
      */
     void setEnginesLostRound(int round);
 
     /**
      * Check if the specified hex is a prohibited terrain for Aero units to taxi into
+     *
      * @param hex the hex to check
+     *
      * @return true if the hex is a prohibited terrain for Aero units to taxi into
      */
     default boolean taxingAeroProhibitedTerrains(@Nullable Hex hex) {
         return (hex == null) || // It is illegal to taxi offboard
-                     hex.containsTerrain(Terrains.WOODS) ||
-                     hex.containsTerrain(Terrains.ROUGH) ||
-                     ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE)) ||
-                     hex.containsTerrain(Terrains.RUBBLE) ||
-                     hex.containsTerrain(Terrains.MAGMA) ||
-                     hex.containsTerrain(Terrains.JUNGLE) ||
-                     (hex.terrainLevel(Terrains.SNOW) > 1) ||
-                     (hex.terrainLevel(Terrains.GEYSER) == 2);
+              hex.containsTerrain(Terrains.WOODS) ||
+              hex.containsTerrain(Terrains.ROUGH) ||
+              ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE)) ||
+              hex.containsTerrain(Terrains.RUBBLE) ||
+              hex.containsTerrain(Terrains.MAGMA) ||
+              hex.containsTerrain(Terrains.JUNGLE) ||
+              (hex.terrainLevel(Terrains.SNOW) > 1) ||
+              (hex.terrainLevel(Terrains.GEYSER) == 2);
     }
 
 }

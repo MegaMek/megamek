@@ -22,7 +22,13 @@ jobs:
     name: Nightly MegaMek CI ${{ matrix.os }} on ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Data Repo
+        uses: actions/checkout@v5
+        with:
+          repository: megamek/mm-data
+          path: mm-data
+
+      - uses: actions/checkout@v5
         with:
           path: megamek
 

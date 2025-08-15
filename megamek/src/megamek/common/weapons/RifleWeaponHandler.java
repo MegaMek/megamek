@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -35,13 +56,13 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
      * @param m
      */
     public RifleWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            TWGameManager m) {
+          TWGameManager m) {
         super(t, w, g, m);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -51,10 +72,10 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         // we default to direct fire weapons for anti-infantry damage
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                    bDirect ? toHit.getMoS() : 0,
-                    wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                  bDirect ? toHit.getMoS() : 0,
+                  wtype.getInfantryDamageClass(),
+                  ((Infantry) target).isMechanized(),
+                  toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
         }
@@ -62,11 +83,11 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         if (target instanceof Entity) {
             te = (Entity) target;
             hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(),
-                    waa.getAimedLocation(), waa.getAimingMode(),
-                    toHit.getCover());
+                  waa.getAimedLocation(), waa.getAimingMode(),
+                  toHit.getCover());
             hit.setAttackerId(getAttackerId());
             if (!(te instanceof Infantry)
-                    && (!te.hasBARArmor(hit.getLocation()) || (te.getBARRating(hit.getLocation()) >= 8))) {
+                  && (!te.hasBARArmor(hit.getLocation()) || (te.getBARRating(hit.getLocation()) >= 8))) {
                 toReturn = Math.max(0, toReturn - 3);
             }
         }
@@ -74,11 +95,11 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
-            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+              && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }
 
@@ -87,19 +108,19 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
 
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
+          Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+          int bldgAbsorbs) {
         missed = false;
 
         hit.setGeneralDamageType(generalDamageType);
         hit.setBoxCars(roll.getIntValue() == 12);
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), ComputeSideTable.sideTable(ae, entityTarget, weapon
-                .getCalledShot().getCall()))) {
+              .getCover(), ComputeSideTable.sideTable(ae, entityTarget, weapon
+              .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
-                    nCluster, bldgAbsorbs);
+                  nCluster, bldgAbsorbs);
             return;
         }
 
@@ -134,9 +155,9 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         // damage absorption by the partial cover, if it would have happened
         Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
-                
-        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
-                vPhaseReport, bldg, targetStickingOutOfBuilding);
+
+        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs,
+              vPhaseReport, bldg, targetStickingOutOfBuilding);
 
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
@@ -160,16 +181,16 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             if (bGlancing) {
                 hit.makeGlancingBlow();
             }
-            
+
             if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
             }
             vPhaseReport
-                    .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
-                            false, ae.getSwarmTargetId() == entityTarget
-                                    .getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront,
-                            underWater, nukeS2S));
+                  .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
+                        false, ae.getSwarmTargetId() == entityTarget
+                              .getId() ? DamageType.IGNORE_PASSENGER
+                              : damageType, false, false, throughFront,
+                        underWater, nukeS2S));
         }
     }
 }

@@ -1,17 +1,40 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.actions;
+
+import java.io.Serial;
 
 import megamek.common.BipedMek;
 import megamek.common.Entity;
@@ -22,8 +45,6 @@ import megamek.common.Terrains;
 import megamek.common.TripodMek;
 import megamek.common.enums.BuildingType;
 import megamek.common.options.OptionsConstants;
-
-import java.io.Serial;
 
 /**
  * The entity tries to find a club.
@@ -41,6 +62,7 @@ public class FindClubAction extends AbstractEntityAction {
 
     /**
      * @param game The current {@link Game}
+     *
      * @return whether an entity can find a club in its current location
      */
     public static boolean canMekFindClub(Game game, int entityId) {
@@ -56,25 +78,25 @@ public class FindClubAction extends AbstractEntityAction {
 
         // Check game options
         if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
-                && entity.getCrew().isClanPilot()) {
+              && entity.getCrew().isClanPilot()) {
             return false;
         }
 
         final Hex hex = game.getHex(entity.getBoardLocation());
         // The hex must contain woods or rubble from a medium, heavy, or hardened building, or a blown off limb
         if ((hex.terrainLevel(Terrains.WOODS) < 1)
-            && (hex.terrainLevel(Terrains.JUNGLE) < 1)
-            && (hex.terrainLevel(Terrains.RUBBLE) < BuildingType.MEDIUM.getTypeValue())
-            && (hex.terrainLevel(Terrains.ARMS) < 1)
-            && (hex.terrainLevel(Terrains.LEGS) < 1)) {
+              && (hex.terrainLevel(Terrains.JUNGLE) < 1)
+              && (hex.terrainLevel(Terrains.RUBBLE) < BuildingType.MEDIUM.getTypeValue())
+              && (hex.terrainLevel(Terrains.ARMS) < 1)
+              && (hex.terrainLevel(Terrains.LEGS) < 1)) {
             return false;
         }
 
         // also, need shoulders and hands; Claws can substitute as hands --Torren
         if (!entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)
-                || !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)
-                || (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) && !((Mek) entity).hasClaw(Mek.LOC_RARM))
-                || (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) && !((Mek) entity).hasClaw(Mek.LOC_LARM))) {
+              || !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)
+              || (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) && !((Mek) entity).hasClaw(Mek.LOC_RARM))
+              || (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) && !((Mek) entity).hasClaw(Mek.LOC_LARM))) {
             return false;
         }
 

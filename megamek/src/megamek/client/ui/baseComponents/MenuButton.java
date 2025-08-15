@@ -32,12 +32,12 @@
  */
 package megamek.client.ui.baseComponents;
 
-import com.formdev.flatlaf.icons.FlatAbstractIcon;
-
-import javax.swing.JButton;
-import javax.swing.UIManager;
 import java.awt.Component;
 import java.awt.Graphics2D;
+import javax.swing.JButton;
+import javax.swing.UIManager;
+
+import com.formdev.flatlaf.icons.FlatAbstractIcon;
 
 /**
  * This is an icon button with a three-stacked-lines icon that indicates a menu of some kind. Usable e.g. as an action

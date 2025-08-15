@@ -1,22 +1,43 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.clientGUI;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,16 +48,9 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.logging.MMLogger;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 /**
- * This class keeps a list of recently opened board files and makes it available statically. It automatically
- * writes the list to a file in the MM's mmconf directory.
+ * This class keeps a list of recently opened board files and makes it available statically. It automatically writes the
+ * list to a file in the MM's mmconf directory.
  */
 public final class RecentBoardList {
 
@@ -44,8 +58,8 @@ public final class RecentBoardList {
 
     private static final MMLogger LOGGER = MMLogger.create(RecentBoardList.class);
     private static final ObjectMapper YAML_MAPPER = new ObjectMapper(new YAMLFactory()
-            .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-            .disable(YAMLGenerator.Feature.SPLIT_LINES)
+          .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+          .disable(YAMLGenerator.Feature.SPLIT_LINES)
     );
     private static final int MAX_RECENT_BOARDS = 10;
     private static final String RECENT_BOARD_FILENAME = "recent_boards.yml";
@@ -65,8 +79,8 @@ public final class RecentBoardList {
     }
 
     /**
-     * Adds a new board to the recent board files, replacing the oldest if the list is full. Also
-     * saves the list to file.
+     * Adds a new board to the recent board files, replacing the oldest if the list is full. Also saves the list to
+     * file.
      *
      * @param board The board filename (full path)
      */
@@ -75,8 +89,8 @@ public final class RecentBoardList {
     }
 
     /**
-     * Adds a new board to the recent board files, replacing the oldest if the list is full. Also
-     * saves the list to file.
+     * Adds a new board to the recent board files, replacing the oldest if the list is full. Also saves the list to
+     * file.
      *
      * @param board The board file
      */
@@ -107,7 +121,7 @@ public final class RecentBoardList {
         }
         saveRecentBoards();
         LISTENERS.forEach(l -> l.preferenceChange(
-                new PreferenceChangeEvent(board, RECENT_BOARDS_UPDATED, null, null)));
+              new PreferenceChangeEvent(board, RECENT_BOARDS_UPDATED, null, null)));
     }
 
     private void saveRecentBoards() {
@@ -121,7 +135,7 @@ public final class RecentBoardList {
     private void initialize() {
         if (INSTANCE.recentBoards == null) {
             try {
-                TypeReference<List<String>> typeRef = new TypeReference<>() { };
+                TypeReference<List<String>> typeRef = new TypeReference<>() {};
                 INSTANCE.recentBoards = YAML_MAPPER.readValue(RECENT_BOARD_FILE, typeRef);
             } catch (FileNotFoundException e) {
                 // ignore, this happens when no list has been saved yet
@@ -134,5 +148,5 @@ public final class RecentBoardList {
         }
     }
 
-    private RecentBoardList() { }
+    private RecentBoardList() {}
 }

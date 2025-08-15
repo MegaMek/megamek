@@ -1,5 +1,4 @@
 /*
- * MegaMek
  * Copyright (c) 2004 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2022 - 2025 The MegaMek Team. All Rights Reserved.
  *
@@ -40,20 +39,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+
 import megamek.common.AmmoType.AmmoTypeEnum;
 
 /**
- * ArtilleryTracker - one held by every entity, it holds a list of the artillery
- * weapons an entity
- * controls, and the mods they get to hit certain hexes.
+ * ArtilleryTracker - one held by every entity, it holds a list of the artillery weapons an entity controls, and the
+ * mods they get to hit certain hexes.
  */
 public class ArtilleryTracker implements Serializable {
     private static final long serialVersionUID = -6913144265531983734L;
 
     /**
-     * Maps WeaponID's of artillery weapons to a Vector of ArtilleryModifiers, for
-     * all the different
-     * coords it's got mods to.
+     * Maps WeaponID's of artillery weapons to a Vector of ArtilleryModifiers, for all the different coords it's got
+     * mods to.
      */
     private Map<Mounted<?>, Vector<ArtilleryModifier>> weapons;
 
@@ -92,9 +90,8 @@ public class ArtilleryTracker implements Serializable {
     }
 
     /**
-     * Remove all autohit mods from hexes that were hit previously; used when artillery unit moves.
-     * This _should_ be thread-safe.
-     * Only autohit mods are lost when an artillery unit spends MPs (TO:AR pg. 150)
+     * Remove all autohit mods from hexes that were hit previously; used when artillery unit moves. This _should_ be
+     * thread-safe. Only autohit mods are lost when an artillery unit spends MPs (TO:AR pg. 150)
      */
     public void clearHitHexMods() {
         for (Vector<ArtilleryModifier> modVector : weapons.values()) {
@@ -122,9 +119,8 @@ public class ArtilleryTracker implements Serializable {
     }
 
     /**
-     * Sets the modifier for artillery weapons on this unit. All weapons use the
-     * same modifier due
-     * to artillery fire adjustment being handled on a per-unit basis.
+     * Sets the modifier for artillery weapons on this unit. All weapons use the same modifier due to artillery fire
+     * adjustment being handled on a per-unit basis.
      *
      * @param modifier
      * @param coords
@@ -145,6 +141,7 @@ public class ArtilleryTracker implements Serializable {
     /**
      * @param weapon weapon to get modifier for
      * @param coords
+     *
      * @return the modifier for the given weapon
      */
     public int getModifier(Mounted<?> weapon, Coords coords) {
@@ -155,6 +152,7 @@ public class ArtilleryTracker implements Serializable {
 
     /**
      * @param mounted weapon to get modifiers for
+     *
      * @return the <code>Vector</code> of the modifiers for the given weapon
      */
     public Vector<ArtilleryModifier> getWeaponModifiers(Mounted<?> mounted) {
@@ -162,22 +160,19 @@ public class ArtilleryTracker implements Serializable {
     }
 
     /**
-     * Search the given vector of modifiers for the modifier which coords equals to
-     * the given coords
+     * Search the given vector of modifiers for the modifier which coords equals to the given coords
      *
      * @param modifiers <code>Vector</code> of the modifiers to process
      * @param coords    coordinates of the modifier looked for
-     * @return modifier with coords equals to the given on <code>null</code> if not
-     *         found
+     *
+     * @return modifier with coords equals to the given on <code>null</code> if not found
      */
     protected ArtilleryModifier getModifierByCoords(Vector<ArtilleryModifier> modifiers, Coords coords) {
         return modifiers.stream().filter(mod -> mod.getCoords().equals(coords)).findFirst().orElse(null);
     }
 
     /**
-     * Small collector... just holds a Coords and a modifier (either
-     * ToHitData.AUTOMATIC_SUCCESS or
-     * just a modifier)
+     * Small collector... just holds a Coords and a modifier (either ToHitData.AUTOMATIC_SUCCESS or just a modifier)
      */
     public static class ArtilleryModifier implements Serializable {
         private static final long serialVersionUID = 4913880091708068708L;

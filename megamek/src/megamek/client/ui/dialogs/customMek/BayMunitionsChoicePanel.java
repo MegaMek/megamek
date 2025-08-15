@@ -1,17 +1,39 @@
 /*
- * MegaMek - Copyright (C) 2024 - The MegaMek Team
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.customMek;
+
+import static megamek.common.AmmoType.F_BATTLEARMOR;
+import static megamek.common.AmmoType.F_PROTOMEK;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -23,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -48,10 +69,6 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 
-import static megamek.common.AmmoType.F_BATTLEARMOR;
-import static megamek.common.AmmoType.F_PROTOMEK;
-import static megamek.common.ITechnology.TechBase;
-
 /**
  * @author Neoancient
  */
@@ -63,9 +80,9 @@ public class BayMunitionsChoicePanel extends JPanel {
     private final Entity entity;
     private final Game game;
     private final List<AmmoRowPanel> rows = new ArrayList<>();
-    
+
     private record AmmoKey(AmmoTypeEnum ammoType, int rackSize) {}
-    
+
     public BayMunitionsChoicePanel(Entity entity, Game game) {
         this.entity = entity;
         this.game = game;
@@ -93,11 +110,9 @@ public class BayMunitionsChoicePanel extends JPanel {
     }
 
     /**
-     * Change the munition types of the bay ammo mounts to the selected values. If
-     * there are more
-     * munition types than there were originally, additional ammo bin mounts will be
-     * added. If fewer,
-     * the unneeded ones will have their shot count zeroed.
+     * Change the munition types of the bay ammo mounts to the selected values. If there are more munition types than
+     * there were originally, additional ammo bin mounts will be added. If fewer, the unneeded ones will have their shot
+     * count zeroed.
      */
     public void apply() {
         for (AmmoRowPanel row : rows) {
@@ -171,7 +186,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             this.spinners = new ArrayList<>();
 
             final Optional<WeaponType> weaponType = bay.getBayWeapons().stream()
-                    .map(Mounted::getType).findAny();
+                  .map(Mounted::getType).findAny();
 
             // set the bay's tech base to that of any weapon in the bay
             // an assumption is made here that bays don't mix clan-only and IS-only tech
@@ -179,22 +194,22 @@ public class BayMunitionsChoicePanel extends JPanel {
             this.techBase = weaponType.map(EquipmentType::getTechBase).orElse(WeaponType.TechBase.ALL);
 
             munitions = AmmoType.getMunitionsFor(at).stream()
-                .filter(this::includeMunition)
-                .toList();
+                  .filter(this::includeMunition)
+                  .toList();
             tonnage = ammoMounts.stream().mapToDouble(Mounted::getSize).sum();
             Map<String, Integer> starting = new HashMap<>();
             ammoMounts.forEach(m -> starting.merge(m.getType().getInternalName(), m.getBaseShotsLeft(), Integer::sum));
             for (AmmoType atype : munitions) {
                 JSpinner spn = new JSpinner(new SpinnerNumberModel(starting.getOrDefault(atype.getInternalName(), 0),
-                        0, null, 1));
+                      0, null, 1));
                 spn.setName(atype.getInternalName());
                 spn.addChangeListener(this);
                 if (atype.getTonnage(entity) > 1) {
                     spn.setToolTipText(String.format(Messages.getString("CustomMekDialog.formatMissileTonnage"),
-                            atype.getName(), atype.getTonnage(entity)));
+                          atype.getName(), atype.getTonnage(entity)));
                 } else {
                     spn.setToolTipText(String.format(Messages.getString("CustomMekDialog.formatShotsPerTon"),
-                            atype.getName(), atype.getShots()));
+                          atype.getName(), atype.getShots()));
                 }
                 spinners.add(spn);
             }
@@ -207,7 +222,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             gbc.insets = new Insets(0, 5, 0, 5);
             gbc.gridwidth = 5;
             add(new JLabel("(" + entity.getLocationAbbr(bay.getLocation()) + ") "
-                    + (weaponType.isPresent() ? weaponType.get().getName() : "?")), gbc);
+                  + (weaponType.isPresent() ? weaponType.get().getName() : "?")), gbc);
             gbc.gridx = 5;
             gbc.gridwidth = 1;
             gbc.weightx = 1.0;
@@ -232,32 +247,34 @@ public class BayMunitionsChoicePanel extends JPanel {
 
         /**
          * Assert if a specific ammo type should be included in the list of munitions for the ship.
-         * @param ammoType  the type of munition to be asserted
+         *
+         * @param ammoType the type of munition to be asserted
+         *
          * @return true means the munition should be included.
          */
         private boolean includeMunition(AmmoType ammoType) {
             if (!ammoType
-                    .canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))
-                    || (ammoType.getAmmoType() != at)
-                    || (ammoType.getRackSize() != rackSize)
-                    || ((ammoType.getTechBase() != techBase)
-                            && (ammoType.getTechBase() != AmmoType.TechBase.ALL)
-                            && (techBase != AmmoType.TechBase.ALL))
-                    || !ammoType.isLegal(game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR),
-                            SimpleTechLevel.getGameTechLevel(game),
-                            techBase == AmmoType.TechBase.CLAN,
-                            techBase == AmmoType.TechBase.ALL,
-                            game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
+                  .canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))
+                  || (ammoType.getAmmoType() != at)
+                  || (ammoType.getRackSize() != rackSize)
+                  || ((ammoType.getTechBase() != techBase)
+                  && (ammoType.getTechBase() != AmmoType.TechBase.ALL)
+                  && (techBase != AmmoType.TechBase.ALL))
+                  || !ammoType.isLegal(game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR),
+                  SimpleTechLevel.getGameTechLevel(game),
+                  techBase == AmmoType.TechBase.CLAN,
+                  techBase == AmmoType.TechBase.ALL,
+                  game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
                 return false;
             }
             if (ammoType.hasFlag(AmmoType.F_NUCLEAR)
-                    && !game.getOptions().booleanOption(
-                            OptionsConstants.ADVAERORULES_AT2_NUKES)) {
+                  && !game.getOptions().booleanOption(
+                  OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                 return false;
             }
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
                 return entity.hasWorkingMisc(MiscType.F_ARTEMIS)
-                        || entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO);
+                      || entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO);
             }
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)) {
                 return entity.hasWorkingMisc(MiscType.F_ARTEMIS_V);
@@ -272,16 +289,16 @@ public class BayMunitionsChoicePanel extends JPanel {
         private String createMunitionLabel(AmmoType atype) {
             if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) {
                 EnumSet<AmmoType.Munitions> artemisCapable = EnumSet.of(
-                        AmmoType.Munitions.M_ARTEMIS_CAPABLE,
-                        AmmoType.Munitions.M_ARTEMIS_V_CAPABLE);
+                      AmmoType.Munitions.M_ARTEMIS_CAPABLE,
+                      AmmoType.Munitions.M_ARTEMIS_V_CAPABLE);
                 if (atype.getMunitionType().stream().noneMatch(artemisCapable::contains)) {
                     return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)
-                            ? "CustomMekDialog.LRM"
-                            : "CustomMekDialog.SRM");
+                          ? "CustomMekDialog.LRM"
+                          : "CustomMekDialog.SRM");
                 } else {
                     return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)
-                            ? "CustomMekDialog.LRMArtemis"
-                            : "CustomMekDialog.SRMArtemis");
+                          ? "CustomMekDialog.LRMArtemis"
+                          : "CustomMekDialog.SRMArtemis");
                 }
             }
 
@@ -301,22 +318,22 @@ public class BayMunitionsChoicePanel extends JPanel {
             }
 
             if ((atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))
-                    || (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))) {
+                  || (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))) {
                 return Messages.getString("CustomMekDialog.Artemis");
             }
 
             // ATM munitions
             if ((atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))
-                    || (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
+                  || (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 return atype.getDesc();
             }
 
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS)) {
                 if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV
-                        || atype.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM
-                        || atype.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER
-                        || atype.getAmmoType() == AmmoType.AmmoTypeEnum.THUMPER
-                        || atype.getAmmoType() == AmmoType.AmmoTypeEnum.CRUISE_MISSILE) {
+                      || atype.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM
+                      || atype.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER
+                      || atype.getAmmoType() == AmmoType.AmmoTypeEnum.THUMPER
+                      || atype.getAmmoType() == AmmoType.AmmoTypeEnum.CRUISE_MISSILE) {
                     if (atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
                         return Messages.getString("CustomMekDialog.StandardMunition");
                     }
@@ -331,18 +348,18 @@ public class BayMunitionsChoicePanel extends JPanel {
             double remaining = tonnage;
             for (int i = 0; i < spinners.size(); i++) {
                 currentWeight[i] += Math.ceil(munitions.get(i).getTonnage(entity)
-                        * ((Integer) spinners.get(i).getValue() / (double) munitions.get(i).getShots()));
+                      * ((Integer) spinners.get(i).getValue() / (double) munitions.get(i).getShots()));
                 remaining -= currentWeight[i];
             }
             for (int i = 0; i < spinners.size(); i++) {
                 int max = (int) Math.floor((currentWeight[i] + remaining)
-                        / munitions.get(i).getTonnage(entity) * munitions.get(i).getShots());
+                      / munitions.get(i).getTonnage(entity) * munitions.get(i).getShots());
                 spinners.get(i).removeChangeListener(this);
                 ((SpinnerNumberModel) spinners.get(i).getModel()).setMaximum(max);
                 spinners.get(i).addChangeListener(this);
             }
             lblTonnage.setText(String.format(Messages.getString("CustomMekDialog.formatAmmoTonnage"),
-                    tonnage - remaining, tonnage));
+                  tonnage - remaining, tonnage));
         }
 
         @Override

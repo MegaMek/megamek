@@ -1,21 +1,36 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 public final class CrossBoardAttackHelper {
@@ -66,27 +81,27 @@ public final class CrossBoardAttackHelper {
 
         // A2A attacks are possible between ground map and atmospheric map
         if (Compute.isAirToAir(game, attacker, target) &&
-                  (game.onDirectlyConnectedBoards(attacker, target) ||
-                         onGroundMapsWithinOneAtmoMap(game, attacker, target))) {
+              (game.onDirectlyConnectedBoards(attacker, target) ||
+                    onGroundMapsWithinOneAtmoMap(game, attacker, target))) {
             return true;
         }
 
         // A2O fire is possible using capital and sub-capital weapons
         if (attacker.isCapitalScale() &&
-                  game.isOnGroundMap(attacker) &&
-                  game.isOnSpaceMap(target.getBoardLocation()) &&
-                  target.isLargeAerospace()
-                  // @@MultiBoardTODO: bring in line with isLargeCraft, SC are not large craft!
-                  &&
-                  (target instanceof Entity)) {
+              game.isOnGroundMap(attacker) &&
+              game.isOnSpaceMap(target.getBoardLocation()) &&
+              target.isLargeAerospace()
+              // @@MultiBoardTODO: bring in line with isLargeCraft, SC are not large craft!
+              &&
+              (target instanceof Entity)) {
             // @@MultiBoardTODO: might add some checks; not necessarily capital scale, but the weapons must be
             return true;
         }
 
         return isOrbitToSurface(game, attacker, target) ||
-                     isCrossBoardArtyAttack(attacker, target, game) ||
-                     isSurfaceToOrbit(attacker, target, game) ||
-                     isAirborneToSurface(attacker, target, game);
+              isCrossBoardArtyAttack(attacker, target, game) ||
+              isSurfaceToOrbit(attacker, target, game) ||
+              isAirborneToSurface(attacker, target, game);
     }
 
     /**
@@ -109,9 +124,9 @@ public final class CrossBoardAttackHelper {
 
     public static boolean onGroundMapsWithinOneAtmoMap(Game game, Targetable unit1, Targetable unit2) {
         return game.isOnGroundMap(unit1) &&
-                     game.isOnGroundMap(unit2) &&
-                     game.hasEnclosingBoard(unit1.getBoardId()) &&
-                     game.getBoard(unit1).getEnclosingBoardId() == game.getBoard(unit2).getEnclosingBoardId();
+              game.isOnGroundMap(unit2) &&
+              game.hasEnclosingBoard(unit1.getBoardId()) &&
+              game.getBoard(unit1).getEnclosingBoardId() == game.getBoard(unit2).getEnclosingBoardId();
     }
 
     /**
@@ -147,17 +162,17 @@ public final class CrossBoardAttackHelper {
      */
     public static boolean isAirborneToSurface(Entity attacker, Targetable target, Game game) {
         return (attacker != null) &&
-                     (target != null) &&
-                     isInAtmosphericTypeHex(attacker, game) &&
-                     game.isOnGroundMap(target) &&
-                     game.onConnectedBoards(attacker, target) &&
-                     target instanceof HexTarget;
+              (target != null) &&
+              isInAtmosphericTypeHex(attacker, game) &&
+              game.isOnGroundMap(target) &&
+              game.onConnectedBoards(attacker, target) &&
+              target instanceof HexTarget;
     }
 
     private static boolean isInAtmosphericTypeHex(Targetable targetable, Game game) {
         Board board = game.getBoard(targetable);
         return board.isLowAltitude() ||
-                     (board.isSpace() && !BoardHelper.isTrueSpaceHex(game, board, targetable.getPosition()));
+              (board.isSpace() && !BoardHelper.isTrueSpaceHex(game, board, targetable.getPosition()));
     }
 
     /**
@@ -173,11 +188,11 @@ public final class CrossBoardAttackHelper {
      */
     public static boolean isSurfaceToOrbit(Entity attacker, Targetable target, Game game) {
         return (attacker != null) &&
-                     (target != null) &&
-                     game.isOnSpaceMap(target) &&
-                     game.isOnGroundMap(attacker) &&
-                     game.onConnectedBoards(attacker, target) &&
-                     target.isLargeAerospace();
+              (target != null) &&
+              game.isOnSpaceMap(target) &&
+              game.isOnGroundMap(attacker) &&
+              game.onConnectedBoards(attacker, target) &&
+              target.isLargeAerospace();
     }
 
     /**
@@ -217,7 +232,7 @@ public final class CrossBoardAttackHelper {
             Board attackerAtmoBoard = game.getEnclosingBoard(attackerBoard);
             Board targetAtmoBoard = game.getEnclosingBoard(targetBoard);
             if (!game.hasEnclosingBoard(attackerAtmoBoard.getBoardId()) ||
-                      !game.hasEnclosingBoard(targetAtmoBoard.getBoardId())) {
+                  !game.hasEnclosingBoard(targetAtmoBoard.getBoardId())) {
                 return Integer.MAX_VALUE;
             }
             if (attackerAtmoBoard.getEnclosingBoardId() == targetAtmoBoard.getEnclosingBoardId()) {
@@ -248,11 +263,11 @@ public final class CrossBoardAttackHelper {
     public static boolean isCrossBoardArtyAttack(Entity attacker, Targetable target, Game game) {
         // @@MultiBoardTODO: forbid attacks on different atmo maps as no direction between them exists?
         return (attacker != null) &&
-                     (target != null) &&
-                     !game.onTheSameBoard(attacker, target) &&
-                     game.isOnGroundMap(attacker) &&
-                     game.isOnGroundMap(target) &&
-                     game.onConnectedBoards(attacker, target);
+              (target != null) &&
+              !game.onTheSameBoard(attacker, target) &&
+              game.isOnGroundMap(attacker) &&
+              game.isOnGroundMap(target) &&
+              game.onConnectedBoards(attacker, target);
     }
 
     private CrossBoardAttackHelper() {

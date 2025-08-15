@@ -33,9 +33,9 @@
  */
 package megamek.common.weapons.capitalweapons;
 
-import megamek.common.SimpleTechLevel;
-
 import java.io.Serial;
+
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Jay Lawson
@@ -69,16 +69,16 @@ public class SubCapCannonWeaponHeavy extends SubCapCannonWeapon {
         rulesRefs = "155, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.ALL)
-                .setIntroLevel(false)
-                .setUnofficial(false)
-                .setTechRating(TechRating.E)
-                .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
-                .setISAdvancement(DATE_NONE, 3068, 3073, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, true, false, false, false)
-                .setClanAdvancement(DATE_NONE, 3090, 3091, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, true, false, false, false)
-                .setPrototypeFactions(Faction.WB)
-                .setProductionFactions(Faction.WB)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+              .setIntroLevel(false)
+              .setUnofficial(false)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
+              .setISAdvancement(DATE_NONE, 3068, 3073, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, true, false, false, false)
+              .setClanAdvancement(DATE_NONE, 3090, 3091, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, true, false, false, false)
+              .setPrototypeFactions(Faction.WB)
+              .setProductionFactions(Faction.WB)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

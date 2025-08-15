@@ -32,13 +32,21 @@
  */
 package megamek.common.actions;
 
+import static megamek.common.ToHitData.HIT_ABOVE;
+import static megamek.common.ToHitData.HIT_BELOW;
+import static megamek.common.ToHitData.HIT_PARTIAL_COVER;
+import static megamek.common.ToHitData.HIT_UNDERWATER;
+import static megamek.common.ToHitData.SIDE_FRONT;
+import static megamek.common.ToHitData.SIDE_LEFT;
+import static megamek.common.ToHitData.SIDE_RANDOM;
+import static megamek.common.ToHitData.SIDE_REAR;
+import static megamek.common.ToHitData.SIDE_RIGHT;
+
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-
-import static megamek.common.ToHitData.*;
 
 class ComputeTerrainMods {
 
@@ -301,5 +309,5 @@ class ComputeTerrainMods {
               && !ComputeECM.isAffectedByECM(attacker, attacker.getPosition(), target.getPosition());
     }
 
-    private ComputeTerrainMods() { }
+    private ComputeTerrainMods() {}
 }

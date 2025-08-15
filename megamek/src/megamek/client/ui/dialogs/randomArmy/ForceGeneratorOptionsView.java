@@ -1,20 +1,34 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.randomArmy;
 
@@ -599,7 +613,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         ((DefaultComboBoxModel<FactionRecord>) cbFaction.getModel()).addAll(activePoliticalFactions);
         cbFaction.setSelectedItem(oldFaction);
         if (cbFaction.getSelectedItem() == null ||
-                  !cbFaction.getSelectedItem().toString().equals(Objects.requireNonNull(oldFaction).toString())) {
+              !cbFaction.getSelectedItem().toString().equals(Objects.requireNonNull(oldFaction).toString())) {
             cbFaction.setSelectedItem(RATGenerator.getInstance().getFaction("IS"));
         }
         if (cbFaction.getSelectedItem() != null) {
@@ -616,12 +630,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         String currentFaction = ((FactionRecord) Objects.requireNonNull(cbFaction.getSelectedItem())).getKey();
         if (currentFaction != null) {
             List<FactionRecord> sorted = RATGenerator.getInstance()
-                                               .getFactionList()
-                                               .stream()
-                                               .filter(fr -> fr.getKey().startsWith(currentFaction + ".") &&
-                                                                   fr.isActiveInYear(currentYear))
-                                               .sorted(Comparator.comparing(fr -> fr.getName(currentYear)))
-                                               .toList();
+                  .getFactionList()
+                  .stream()
+                  .filter(fr -> fr.getKey().startsWith(currentFaction + ".") &&
+                        fr.isActiveInYear(currentYear))
+                  .sorted(Comparator.comparing(fr -> fr.getName(currentYear)))
+                  .toList();
             cbSubFaction.addItem(null);
             sorted.forEach(fr -> cbSubFaction.addItem(fr));
         }
@@ -936,17 +950,17 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private void configureNetworks(ForceDescriptor fd) {
         if (fd.getFlags().contains("c3")) {
             Entity master = fd.getSubforces()
-                                  .stream()
-                                  .map(ForceDescriptor::getEntity)
-                                  .filter(en -> (null != en) && (en.hasC3M() || en.hasC3MM()))
-                                  .findFirst()
-                                  .orElse(null);
+                  .stream()
+                  .map(ForceDescriptor::getEntity)
+                  .filter(en -> (null != en) && (en.hasC3M() || en.hasC3MM()))
+                  .findFirst()
+                  .orElse(null);
             if (null != master) {
                 int c3s = 0;
                 for (ForceDescriptor sf : fd.getSubforces()) {
                     if ((null != sf.getEntity()) &&
-                              (sf.getEntity().getId() != master.getId()) &&
-                              sf.getEntity().hasC3S()) {
+                          (sf.getEntity().getId() != master.getId()) &&
+                          sf.getEntity().hasC3S()) {
                         sf.getEntity().setC3Master(master, false);
                         c3s++;
                         if (c3s == 3) {

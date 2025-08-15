@@ -68,29 +68,29 @@ import javax.swing.filechooser.FileFilter;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
-import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
-import megamek.client.ui.dialogs.minimap.MinimapDialog;
-import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.clientGUI.BoardFileFilter;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.CommonMenuBar;
-import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
-import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.IMapSettingsObserver;
 import megamek.client.ui.clientGUI.RecentBoardList;
-import megamek.client.ui.clientGUI.boardview.overlay.TraceOverlay;
-import megamek.client.ui.clientGUI.boardview.toolTip.BoardEditorTooltip;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.KeyBindingsOverlay;
+import megamek.client.ui.clientGUI.boardview.overlay.TraceOverlay;
+import megamek.client.ui.clientGUI.boardview.toolTip.BoardEditorTooltip;
 import megamek.client.ui.dialogs.CommonAboutDialog;
+import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.ExitsDialog;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
+import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.MultiIntSelectorDialog;
+import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
+import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
+import megamek.client.ui.dialogs.minimap.MinimapDialog;
+import megamek.client.ui.dialogs.minimap.MinimapPanel;
 import megamek.client.ui.dialogs.randomMap.RandomMapDialog;
 import megamek.client.ui.dialogs.randomMap.ResizeMapDialog;
-import megamek.client.ui.dialogs.minimap.MinimapPanel;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
@@ -474,8 +474,8 @@ public class BoardEditorPanel extends JPanel
         ignoreHotKeys = false;
         // When the user cancels or did not actually save the board, don't load anything
         if (((savePrompt == JOptionPane.YES_OPTION) && !boardSave(false)) ||
-                  (savePrompt == JOptionPane.CANCEL_OPTION) ||
-                  (savePrompt == JOptionPane.CLOSED_OPTION)) {
+              (savePrompt == JOptionPane.CANCEL_OPTION) ||
+              (savePrompt == JOptionPane.CLOSED_OPTION)) {
             return DialogResult.CANCELLED;
         } else {
             return DialogResult.CONFIRMED;
@@ -486,7 +486,7 @@ public class BoardEditorPanel extends JPanel
      * Sets up Scaling Icon Buttons
      */
     private ScalingIconButton prepareButton(String iconName, String buttonName, List<ScalingIconButton> bList,
-                                            int width) {
+          int width) {
         // Get the normal icon
         File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/" + iconName + ".png").getFile();
         Image imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
@@ -688,8 +688,8 @@ public class BoardEditorPanel extends JPanel
             // If we don't have at least one of the building values, overwrite the current
             // hex
             if (!curHex.containsTerrain(Terrains.BLDG_CF) &&
-                      !curHex.containsTerrain(Terrains.BLDG_ELEV) &&
-                      !curHex.containsTerrain(Terrains.BUILDING)) {
+                  !curHex.containsTerrain(Terrains.BLDG_ELEV) &&
+                  !curHex.containsTerrain(Terrains.BUILDING)) {
                 curHex.removeAllTerrains();
             }
             // Restore mandatory building parts if some are missing
@@ -733,8 +733,8 @@ public class BoardEditorPanel extends JPanel
         buttonBr.addMouseWheelListener(e -> {
             // If we don't have at least one of the bridge values, overwrite the current hex
             if (!curHex.containsTerrain(Terrains.BRIDGE_CF) &&
-                      !curHex.containsTerrain(Terrains.BRIDGE_ELEV) &&
-                      !curHex.containsTerrain(Terrains.BRIDGE)) {
+                  !curHex.containsTerrain(Terrains.BRIDGE_ELEV) &&
+                  !curHex.containsTerrain(Terrains.BRIDGE)) {
                 curHex.removeAllTerrains();
             }
             setBasicBridge();
@@ -769,9 +769,9 @@ public class BoardEditorPanel extends JPanel
             // If we don't have at least one of the fuel tank values, overwrite the current
             // hex
             if (!curHex.containsTerrain(Terrains.FUEL_TANK) &&
-                      !curHex.containsTerrain(Terrains.FUEL_TANK_CF) &&
-                      !curHex.containsTerrain(Terrains.FUEL_TANK_ELEV) &&
-                      !curHex.containsTerrain(Terrains.FUEL_TANK_MAGN)) {
+                  !curHex.containsTerrain(Terrains.FUEL_TANK_CF) &&
+                  !curHex.containsTerrain(Terrains.FUEL_TANK_ELEV) &&
+                  !curHex.containsTerrain(Terrains.FUEL_TANK_MAGN)) {
                 curHex.removeAllTerrains();
             }
             setBasicFuelTank();
@@ -877,7 +877,7 @@ public class BoardEditorPanel extends JPanel
                 // a multi-select list that lets the user choose which deployment zones will be flagged here
                 // otherwise, re-enable all the buttons and reset the "exits" popup to its normal behavior
                 if (((TerrainHelper) Objects.requireNonNull(choTerrainType.getSelectedItem())).getTerrainType() ==
-                          Terrains.DEPLOYMENT_ZONE) {
+                      Terrains.DEPLOYMENT_ZONE) {
                     butExitUp.setEnabled(false);
                     butExitDown.setEnabled(false);
                     texTerrExits.setEnabled(false);
@@ -1186,9 +1186,8 @@ public class BoardEditorPanel extends JPanel
     }
 
     /**
-     * Removes the given deployment zone from the Hex at Coord c. Does nothing if c is not on the board or the hex
-     * does not have that deployment zone. Removes the deployment zone terrain entirely if no zones are left in that
-     * hex.
+     * Removes the given deployment zone from the Hex at Coord c. Does nothing if c is not on the board or the hex does
+     * not have that deployment zone. Removes the deployment zone terrain entirely if no zones are left in that hex.
      */
     public void removeDeploymentZone(Coords c, int deploymentZoneToRemove) {
         if (board.contains(c) && board.getHex(c).containsTerrain(DEPLOYMENT_ZONE)) {
@@ -1270,16 +1269,16 @@ public class BoardEditorPanel extends JPanel
         // For the terrain subtypes that only add to a main terrain type exits make no
         // sense at all. Therefore, simply do not add them
         if ((type == Terrains.BLDG_ARMOR) ||
-                  (type == Terrains.BLDG_CF) ||
-                  (type == Terrains.BLDG_ELEV) ||
-                  (type == Terrains.BLDG_CLASS) ||
-                  (type == Terrains.BLDG_BASE_COLLAPSED) ||
-                  (type == Terrains.BLDG_BASEMENT_TYPE) ||
-                  (type == Terrains.BRIDGE_CF) ||
-                  (type == Terrains.BRIDGE_ELEV) ||
-                  (type == Terrains.FUEL_TANK_CF) ||
-                  (type == Terrains.FUEL_TANK_ELEV) ||
-                  (type == Terrains.FUEL_TANK_MAGN)) {
+              (type == Terrains.BLDG_CF) ||
+              (type == Terrains.BLDG_ELEV) ||
+              (type == Terrains.BLDG_CLASS) ||
+              (type == Terrains.BLDG_BASE_COLLAPSED) ||
+              (type == Terrains.BLDG_BASEMENT_TYPE) ||
+              (type == Terrains.BRIDGE_CF) ||
+              (type == Terrains.BRIDGE_ELEV) ||
+              (type == Terrains.FUEL_TANK_CF) ||
+              (type == Terrains.FUEL_TANK_ELEV) ||
+              (type == Terrains.FUEL_TANK_MAGN)) {
             return new Terrain(type, level, false, 0);
         } else {
             boolean exitsSpecified = cheTerrExitSpecified.isSelected();
@@ -1294,7 +1293,7 @@ public class BoardEditorPanel extends JPanel
     private void addSetTerrain() {
         Terrain toAdd = enteredTerrain();
         if (((toAdd.getType() == Terrains.BLDG_ELEV) || (toAdd.getType() == Terrains.BRIDGE_ELEV)) &&
-                  (toAdd.getLevel() < 0)) {
+              (toAdd.getLevel() < 0)) {
             texTerrainLevel.setNumber(0);
             JOptionPane.showMessageDialog(frame,
                   Messages.getString("BoardEditor.BridgeBuildingElevError"),
@@ -2038,7 +2037,7 @@ public class BoardEditorPanel extends JPanel
         } else if (ae.getSource().equals(buttonBu)) {
             buttonRaiseLower.setSelected(false);
             if (((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) && ((ae.getModifiers() & ActionEvent.ALT_MASK) ==
-                                                                              0)) {
+                  0)) {
                 curHex.removeAllTerrains();
             }
             setBasicBuilding((ae.getModifiers() & ActionEvent.ALT_MASK) != 0);
@@ -2269,7 +2268,7 @@ public class BoardEditorPanel extends JPanel
                         newHex.removeAllTerrains();
                         // Restore bridges if they're above the water
                         if (hex.containsTerrain(BRIDGE) &&
-                                  (hex.getLevel() + hex.getTerrain(BRIDGE_ELEV).getLevel() >= surface)) {
+                              (hex.getLevel() + hex.getTerrain(BRIDGE_ELEV).getLevel() >= surface)) {
                             newHex.addTerrain(hex.getTerrain(BRIDGE));
                             newHex.addTerrain(new Terrain(BRIDGE_ELEV,
                                   hex.getLevel() + hex.getTerrain(BRIDGE_ELEV).getLevel() - surface));
@@ -2355,12 +2354,12 @@ public class BoardEditorPanel extends JPanel
      */
     public boolean shouldIgnoreHotKeys() {
         return ignoreHotKeys ||
-                     UIUtil.isModalDialogDisplayed() ||
-                     ((help != null) && help.isVisible()) ||
-                     ((settingsDialog != null) && settingsDialog.isVisible()) ||
-                     texElev.hasFocus() ||
-                     texTerrainLevel.hasFocus() ||
-                     texTerrExits.hasFocus();
+              UIUtil.isModalDialogDisplayed() ||
+              ((help != null) && help.isVisible()) ||
+              ((settingsDialog != null) && settingsDialog.isVisible()) ||
+              texElev.hasFocus() ||
+              texTerrainLevel.hasFocus() ||
+              texTerrExits.hasFocus();
     }
 
     private void setDialogSize(JFileChooser dialog) {
@@ -2380,8 +2379,8 @@ public class BoardEditorPanel extends JPanel
      */
     private void setFrameTitle() {
         String title = (curBoardFile == null) ?
-                             Messages.getString("BoardEditor.title") :
-                             Messages.getString("BoardEditor.title0", curBoardFile);
+              Messages.getString("BoardEditor.title") :
+              Messages.getString("BoardEditor.title0", curBoardFile);
         frame.setTitle(title + (hasChanges ? "*" : ""));
     }
 

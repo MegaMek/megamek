@@ -1,16 +1,37 @@
 /*
- * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
+  Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import java.io.File;
@@ -710,8 +731,8 @@ public class MapSettings implements Serializable {
                         Board b = new Board(16, 17);
                         String boardSelected = boardsAvailable.get(rindex);
                         if (!MapSettings.BOARD_GENERATED.equals(boardSelected) &&
-                                  !MapSettings.BOARD_RANDOM.equals(boardSelected) &&
-                                  !MapSettings.BOARD_SURPRISE.equals(boardSelected)) {
+                              !MapSettings.BOARD_RANDOM.equals(boardSelected) &&
+                              !MapSettings.BOARD_SURPRISE.equals(boardSelected)) {
                             b.load(new File(Configuration.boardsDir(), boardSelected + ".board"));
                             if (b.isValid()) {
                                 nonFound = false;
@@ -1064,105 +1085,105 @@ public class MapSettings implements Serializable {
      */
     public boolean equalMapGenParameters(MapSettings other) {
         return (boardWidth == other.getBoardWidth()) &&
-                     (boardHeight == other.getBoardHeight()) &&
-                     (mapWidth == other.getMapWidth()) &&
-                     (mapHeight == other.getMapHeight()) &&
-                     (invertNegativeTerrain == other.getInvertNegativeTerrain()) &&
-                     (hilliness == other.getHilliness()) &&
-                     (cliffs == other.getCliffs()) &&
-                     (range == other.getRange()) &&
-                     (minWaterSpots == other.getMinWaterSpots()) &&
-                     (maxWaterSpots == other.getMaxWaterSpots()) &&
-                     (minWaterSize == other.getMinWaterSize()) &&
-                     (maxWaterSize == other.getMaxWaterSize()) &&
-                     (probDeep == other.getProbDeep()) &&
-                     (minForestSpots == other.getMinForestSpots()) &&
-                     (maxForestSpots == other.getMaxForestSpots()) &&
-                     (minForestSize == other.getMinForestSize()) &&
-                     (maxForestSize == other.getMaxForestSize()) &&
-                     (probHeavy == other.getProbHeavy()) &&
-                     (probUltra == other.getProbUltra()) &&
-                     (minJungleSpots == other.getMinJungleSpots()) &&
-                     (maxJungleSpots == other.getMaxJungleSpots()) &&
-                     (minJungleSize == other.getMinJungleSize()) &&
-                     (maxJungleSize == other.getMaxJungleSize()) &&
-                     (probHeavyJungle == other.getProbHeavyJungle()) &&
-                     (probUltraJungle == other.getProbUltraJungle()) &&
-                     (minFoliageSpots == other.getMinFoliageSpots()) &&
-                     (maxFoliageSpots == other.getMaxFoliageSpots()) &&
-                     (minFoliageSize == other.getMinFoliageSize()) &&
-                     (maxFoliageSize == other.getMaxFoliageSize()) &&
-                     (probFoliageHeavy == other.getProbFoliageHeavy()) &&
-                     (minRoughSpots == other.getMinRoughSpots()) &&
-                     (maxRoughSpots == other.getMaxRoughSpots()) &&
-                     (minRoughSize == other.getMinRoughSize()) &&
-                     (maxRoughSize == other.getMaxRoughSize() && (probUltraRough == other.getProbUltraRough())) &&
-                     (minSandSpots == other.getMinSandSpots()) &&
-                     (maxSandSpots == other.getMaxSandSpots()) &&
-                     (minSandSize == other.getMinSandSize()) &&
-                     (maxSandSize == other.getMaxSandSize()) &&
-                     (minSnowSpots == other.getMinSnowSpots()) &&
-                     (maxSnowSpots == other.getMaxSnowSpots()) &&
-                     (minSnowSize == other.getMinSnowSize()) &&
-                     (maxSnowSize == other.getMaxSnowSize()) &&
-                     (minTundraSpots == other.getMinTundraSpots()) &&
-                     (maxTundraSpots == other.getMaxTundraSpots()) &&
-                     (minTundraSize == other.getMinTundraSize()) &&
-                     (maxTundraSize == other.getMaxTundraSize()) &&
-                     (minPlantedFieldSpots == other.getMinPlantedFieldSpots()) &&
-                     (maxPlantedFieldSpots == other.getMaxPlantedFieldSpots()) &&
-                     (minPlantedFieldSize == other.getMinPlantedFieldSize()) &&
-                     (maxPlantedFieldSize == other.getMaxPlantedFieldSize()) &&
-                     (minSwampSpots == other.getMinSwampSpots()) &&
-                     (maxSwampSpots == other.getMaxSwampSpots()) &&
-                     (minSwampSize == other.getMinSwampSize()) &&
-                     (maxSwampSize == other.getMaxSwampSize()) &&
-                     (minPavementSpots == other.getMinPavementSpots()) &&
-                     (maxPavementSpots == other.getMaxPavementSpots()) &&
-                     (minPavementSize == other.getMinPavementSize()) &&
-                     (maxPavementSize == other.getMaxPavementSize()) &&
-                     (minRubbleSpots == other.getMinRubbleSpots()) &&
-                     (maxRubbleSpots == other.getMaxRubbleSpots()) &&
-                     (minRubbleSize == other.getMinRubbleSize()) &&
-                     (maxRubbleSize == other.getMaxRubbleSize()) &&
-                     (minFortifiedSpots == other.getMinFortifiedSpots() &&
-                            (probUltraRubble == other.getProbUltraRubble())) &&
-                     (maxFortifiedSpots == other.getMaxFortifiedSpots()) &&
-                     (minFortifiedSize == other.getMinFortifiedSize()) &&
-                     (maxFortifiedSize == other.getMaxFortifiedSize()) &&
-                     (minIceSpots == other.getMinIceSpots()) &&
-                     (maxIceSpots == other.getMaxIceSpots()) &&
-                     (minIceSize == other.getMinIceSize()) &&
-                     (maxIceSize == other.getMaxIceSize()) &&
-                     (probRoad == other.getProbRoad()) &&
-                     (probInvert == other.getProbInvert()) &&
-                     (probRiver == other.getProbRiver()) &&
-                     (probCrater == other.getProbCrater()) &&
-                     (minRadius == other.getMinRadius()) &&
-                     (maxRadius == other.getMaxRadius()) &&
-                     (minCraters == other.getMinCraters()) &&
-                     (maxCraters == other.getMaxCraters()) &&
-                     (theme.equals(other.getTheme())) &&
-                     (fxMod == other.getFxMod()) &&
-                     (cityBlocks == other.getCityBlocks()) &&
-                     (cityType.equals(other.getCityType())) &&
-                     (cityMinCF == other.getCityMinCF()) &&
-                     (cityMaxCF == other.getCityMaxCF()) &&
-                     (cityMinFloors == other.getCityMinFloors()) &&
-                     (cityMaxFloors == other.getCityMaxFloors()) &&
-                     (cityDensity == other.getCityDensity()) &&
-                     (probFlood == other.getProbFlood()) &&
-                     (probForestFire == other.getProbForestFire()) &&
-                     (probFreeze == other.getProbFreeze()) &&
-                     (probDrought == other.getProbDrought()) &&
-                     (algorithmToUse == other.getAlgorithmToUse()) &&
-                     (mountainHeightMin == other.getMountainHeightMin()) &&
-                     (mountainHeightMax == other.getMountainHeightMax()) &&
-                     (mountainPeaks == other.getMountainPeaks()) &&
-                     (mountainStyle == other.getMountainStyle()) &&
-                     (mountainWidthMin == other.getMountainWidthMin()) &&
-                     (mountainWidthMax == other.getMountainWidthMax()) &&
-                     (boardBuildings.equals(other.getBoardBuildings()) && (medium == other.medium));
+              (boardHeight == other.getBoardHeight()) &&
+              (mapWidth == other.getMapWidth()) &&
+              (mapHeight == other.getMapHeight()) &&
+              (invertNegativeTerrain == other.getInvertNegativeTerrain()) &&
+              (hilliness == other.getHilliness()) &&
+              (cliffs == other.getCliffs()) &&
+              (range == other.getRange()) &&
+              (minWaterSpots == other.getMinWaterSpots()) &&
+              (maxWaterSpots == other.getMaxWaterSpots()) &&
+              (minWaterSize == other.getMinWaterSize()) &&
+              (maxWaterSize == other.getMaxWaterSize()) &&
+              (probDeep == other.getProbDeep()) &&
+              (minForestSpots == other.getMinForestSpots()) &&
+              (maxForestSpots == other.getMaxForestSpots()) &&
+              (minForestSize == other.getMinForestSize()) &&
+              (maxForestSize == other.getMaxForestSize()) &&
+              (probHeavy == other.getProbHeavy()) &&
+              (probUltra == other.getProbUltra()) &&
+              (minJungleSpots == other.getMinJungleSpots()) &&
+              (maxJungleSpots == other.getMaxJungleSpots()) &&
+              (minJungleSize == other.getMinJungleSize()) &&
+              (maxJungleSize == other.getMaxJungleSize()) &&
+              (probHeavyJungle == other.getProbHeavyJungle()) &&
+              (probUltraJungle == other.getProbUltraJungle()) &&
+              (minFoliageSpots == other.getMinFoliageSpots()) &&
+              (maxFoliageSpots == other.getMaxFoliageSpots()) &&
+              (minFoliageSize == other.getMinFoliageSize()) &&
+              (maxFoliageSize == other.getMaxFoliageSize()) &&
+              (probFoliageHeavy == other.getProbFoliageHeavy()) &&
+              (minRoughSpots == other.getMinRoughSpots()) &&
+              (maxRoughSpots == other.getMaxRoughSpots()) &&
+              (minRoughSize == other.getMinRoughSize()) &&
+              (maxRoughSize == other.getMaxRoughSize() && (probUltraRough == other.getProbUltraRough())) &&
+              (minSandSpots == other.getMinSandSpots()) &&
+              (maxSandSpots == other.getMaxSandSpots()) &&
+              (minSandSize == other.getMinSandSize()) &&
+              (maxSandSize == other.getMaxSandSize()) &&
+              (minSnowSpots == other.getMinSnowSpots()) &&
+              (maxSnowSpots == other.getMaxSnowSpots()) &&
+              (minSnowSize == other.getMinSnowSize()) &&
+              (maxSnowSize == other.getMaxSnowSize()) &&
+              (minTundraSpots == other.getMinTundraSpots()) &&
+              (maxTundraSpots == other.getMaxTundraSpots()) &&
+              (minTundraSize == other.getMinTundraSize()) &&
+              (maxTundraSize == other.getMaxTundraSize()) &&
+              (minPlantedFieldSpots == other.getMinPlantedFieldSpots()) &&
+              (maxPlantedFieldSpots == other.getMaxPlantedFieldSpots()) &&
+              (minPlantedFieldSize == other.getMinPlantedFieldSize()) &&
+              (maxPlantedFieldSize == other.getMaxPlantedFieldSize()) &&
+              (minSwampSpots == other.getMinSwampSpots()) &&
+              (maxSwampSpots == other.getMaxSwampSpots()) &&
+              (minSwampSize == other.getMinSwampSize()) &&
+              (maxSwampSize == other.getMaxSwampSize()) &&
+              (minPavementSpots == other.getMinPavementSpots()) &&
+              (maxPavementSpots == other.getMaxPavementSpots()) &&
+              (minPavementSize == other.getMinPavementSize()) &&
+              (maxPavementSize == other.getMaxPavementSize()) &&
+              (minRubbleSpots == other.getMinRubbleSpots()) &&
+              (maxRubbleSpots == other.getMaxRubbleSpots()) &&
+              (minRubbleSize == other.getMinRubbleSize()) &&
+              (maxRubbleSize == other.getMaxRubbleSize()) &&
+              (minFortifiedSpots == other.getMinFortifiedSpots() &&
+                    (probUltraRubble == other.getProbUltraRubble())) &&
+              (maxFortifiedSpots == other.getMaxFortifiedSpots()) &&
+              (minFortifiedSize == other.getMinFortifiedSize()) &&
+              (maxFortifiedSize == other.getMaxFortifiedSize()) &&
+              (minIceSpots == other.getMinIceSpots()) &&
+              (maxIceSpots == other.getMaxIceSpots()) &&
+              (minIceSize == other.getMinIceSize()) &&
+              (maxIceSize == other.getMaxIceSize()) &&
+              (probRoad == other.getProbRoad()) &&
+              (probInvert == other.getProbInvert()) &&
+              (probRiver == other.getProbRiver()) &&
+              (probCrater == other.getProbCrater()) &&
+              (minRadius == other.getMinRadius()) &&
+              (maxRadius == other.getMaxRadius()) &&
+              (minCraters == other.getMinCraters()) &&
+              (maxCraters == other.getMaxCraters()) &&
+              (theme.equals(other.getTheme())) &&
+              (fxMod == other.getFxMod()) &&
+              (cityBlocks == other.getCityBlocks()) &&
+              (cityType.equals(other.getCityType())) &&
+              (cityMinCF == other.getCityMinCF()) &&
+              (cityMaxCF == other.getCityMaxCF()) &&
+              (cityMinFloors == other.getCityMinFloors()) &&
+              (cityMaxFloors == other.getCityMaxFloors()) &&
+              (cityDensity == other.getCityDensity()) &&
+              (probFlood == other.getProbFlood()) &&
+              (probForestFire == other.getProbForestFire()) &&
+              (probFreeze == other.getProbFreeze()) &&
+              (probDrought == other.getProbDrought()) &&
+              (algorithmToUse == other.getAlgorithmToUse()) &&
+              (mountainHeightMin == other.getMountainHeightMin()) &&
+              (mountainHeightMax == other.getMountainHeightMax()) &&
+              (mountainPeaks == other.getMountainPeaks()) &&
+              (mountainStyle == other.getMountainStyle()) &&
+              (mountainWidthMin == other.getMountainWidthMin()) &&
+              (mountainWidthMax == other.getMountainWidthMax()) &&
+              (boardBuildings.equals(other.getBoardBuildings()) && (medium == other.medium));
     }
 
     public int getInvertNegativeTerrain() {

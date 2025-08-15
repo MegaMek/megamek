@@ -1,27 +1,42 @@
 /*
- * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
  *
  * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
-package megamek.common;
 
-import megamek.common.annotations.Nullable;
+package megamek.common;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import megamek.common.annotations.Nullable;
 
 public final class BoardHelper {
 
@@ -86,10 +101,10 @@ public final class BoardHelper {
 
     /**
      * Returns the hexes of a straight line that has the given direction (facing) on the given Board and crosses the hex
-     * at the given hexToCross position. If the board is null or does not contain hexToCross, an empty list is
-     * returned. The coords are ordered so that each next hex lies in the given facing direction from the previous
-     * (e.g., if facing is 3 = south, the first hex in the resulting line will be on the northern board edge and the
-     * last hex on the southern board edge.)
+     * at the given hexToCross position. If the board is null or does not contain hexToCross, an empty list is returned.
+     * The coords are ordered so that each next hex lies in the given facing direction from the previous (e.g., if
+     * facing is 3 = south, the first hex in the resulting line will be on the northern board edge and the last hex on
+     * the southern board edge.)
      *
      * @param board      The Board on which the line is located; its size determines that start and end of the line
      * @param hexToCross Coords that the line crosses

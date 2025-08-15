@@ -33,7 +33,15 @@
 
 package megamek.server.totalwarfare;
 
-import megamek.MMConstants;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.GameOptions;
@@ -47,12 +55,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class TWDamageManagerTest {
 
@@ -155,11 +157,11 @@ class TWDamageManagerTest {
         newMan.damageEntity(damageInfo);
         assertEquals(5, mek2.getArmor(BattleArmor.LOC_TROOPER_1));
     }
-    
+
     @Test
     void killBAComparison() throws FileNotFoundException {
         // We need to show that both old and new damagers kill BAs _dead_.
-        
+
         String unit = "Elemental BA [Laser] (Sqd5).blk";
         BattleArmor mek = loadBA(unit);
         DamageInfo damageInfo;
@@ -168,12 +170,12 @@ class TWDamageManagerTest {
         assertEquals(10, mek.getArmor(BattleArmor.LOC_TROOPER_1));
 
         // Deal damage with original method
-        for (int count=0; count<=15; count++) {
+        for (int count = 0; count <= 15; count++) {
             HitData hit = mek.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
             damageInfo = new DamageInfo(mek, hit, 5);
             oldMan.damageEntity(damageInfo);
         }
-        
+
         assertTrue(mek.isDoomed());
 
         // Reset for new damage method
@@ -183,14 +185,14 @@ class TWDamageManagerTest {
         assertEquals(10, mek2.getArmor(BattleArmor.LOC_TROOPER_1));
 
         // Deal damage with new method
-        for (int count=0; count<=15; count++) {
+        for (int count = 0; count <= 15; count++) {
             HitData hit = mek2.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
             damageInfo = new DamageInfo(mek2, hit, 5);
             newMan.damageEntity(damageInfo);
         }
         assertTrue(mek2.isDoomed());
     }
-    
+
     @Test
     void destroySectionDamageTransferComparison() throws FileNotFoundException {
         // We need to show that both old and new damagers transfer damage correctly.
@@ -247,7 +249,7 @@ class TWDamageManagerTest {
     }
 
     @ParameterizedTest()
-    @ValueSource(strings = { "Original", "Modular"})
+    @ValueSource(strings = { "Original", "Modular" })
     void destroySectionCritTransfers(String manager) throws FileNotFoundException {
         // We need to show that both old and new damage managers transfer damage correctly.
         TWDamageManager damageManager = (manager.equals("Original")) ? oldMan : newMan;
@@ -264,7 +266,7 @@ class TWDamageManagerTest {
 
         // set phase to Firing
         game.setPhase(GamePhase.FIRING);
-        
+
         // Deal initial damage
         // Destroy LT
         HitData hit = new HitData(Mek.LOC_LT);
@@ -281,22 +283,22 @@ class TWDamageManagerTest {
         assertEquals(IArmorState.ARMOR_DOOMED, mek.getInternal(Mek.LOC_LT));
         // No damage transfers to CT
         assertEquals(18, mek.getArmor(Mek.LOC_CT));
-        
+
         // Rest phase for mek entity to finalize damage (skip actual phase mgmt here)
         gameMan.resetEntityPhase(GamePhase.PHYSICAL);
-        
+
         // Now destroy the left leg plus 1
         hit = new HitData(Mek.LOC_LLEG);
         damageInfo = new DamageInfo(mek, hit, 35);
         damageManager.damageEntity(damageInfo);
-        
+
         // LL now destroyed
         assertEquals(IArmorState.ARMOR_DOOMED, mek.getArmor(Mek.LOC_LLEG));
         assertEquals(IArmorState.ARMOR_DOOMED, mek.getInternal(Mek.LOC_LLEG));
 
         // 1 damage transfers to CT
         assertEquals(17, mek.getArmor(Mek.LOC_CT));
-        
+
         // Assert PSR for this unit exists
         assertTrue(game.getPSRs().hasMoreElements());
     }
@@ -369,7 +371,7 @@ class TWDamageManagerTest {
 
         // Deal "20" points of AP damage (should fill 20 circles against Hardened)
         HitData hit = new HitData(BipedMek.LOC_CT, false, 0, false,
-              -1, true,true, HitData.DAMAGE_ARMOR_PIERCING, 0);
+              -1, true, true, HitData.DAMAGE_ARMOR_PIERCING, 0);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 20);
         newMan.damageEntity(damageInfo);
 
@@ -384,7 +386,7 @@ class TWDamageManagerTest {
 
         // Deal "20" points of AP damage (should fill 20 circles against Standard)
         HitData hit = new HitData(BipedMek.LOC_CT, false, 0, false,
-              -1, true,true, HitData.DAMAGE_ARMOR_PIERCING, 0);
+              -1, true, true, HitData.DAMAGE_ARMOR_PIERCING, 0);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 20);
         newMan.damageEntity(damageInfo);
 

@@ -44,8 +44,8 @@ import megamek.client.ui.util.FlatLafStyleBuilder;
  */
 public class MMToggleButton extends JToggleButton {
 
-    private static final String CHECK = "#90FF90>\u2713 ";
-    private static final String CROSS = "#FF9090>\u2717 ";
+    private static final String CHECK = "#90FF90>\u2713 "; // Checkmark
+    private static final String CROSS = "#FF9090>\u2717 "; // X
     private static final String INTRO = "<HTML><NOBR><FONT COLOR=";
     private static final String CLOSE = "</FONT>";
     private static final int MARK_LENGTH = CHECK.length() + INTRO.length() + CLOSE.length();

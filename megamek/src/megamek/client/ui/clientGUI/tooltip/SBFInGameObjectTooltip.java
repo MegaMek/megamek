@@ -40,7 +40,6 @@ import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.Set;
 
-import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.IGame;
 import megamek.common.InGameObject;
@@ -58,7 +57,6 @@ public final class SBFInGameObjectTooltip {
 
     public static final int TOOLTIP_BASE_WIDTH = 420;
 
-    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final String SHORT = "&nbsp;";
     private static final Set<String> ABBREV_NAME_PARTS_UNIT = Set.of("Lance", "Squadron", "Wing", "Flight");
     private static final int BASE_UNIT_NAME_WIDTH = 110;
@@ -101,14 +99,6 @@ public final class SBFInGameObjectTooltip {
             result.append(unitsStats(formation));
         }
 
-        //        Predicate<EntityAction> thisFormation = a -> a.getEntityId() == unit.getId();
-        //        List<EntityAction> actions = game.getActionsVector().stream().filter(thisFormation).toList();
-        //        for (EntityAction action : actions) {
-        //            if (action instanceof SBFStandardUnitAttack attack) {
-        //                result.append("Attacking! Unit: " + attack.getUnitNumber() + " Target: " + attack.getTargetId());
-        //            }
-        //        }
-
         result.append("</div>");
         return result.toString();
     }
@@ -142,7 +132,6 @@ public final class SBFInGameObjectTooltip {
     private static StringBuilder nameLines(InGameObject unit, @Nullable IGame game) {
         StringBuilder result = new StringBuilder();
         Player owner = (game != null) ? game.getPlayer(unit.getOwnerId()) : null;
-        Color ownerColor = (owner != null) ? owner.getColour().getColour() : GUIP.getUnitToolTipFGColor();
 
         // obscure values for sensor blips
         String pointValue = (unit instanceof SBFFormation) ? Integer.toString(unit.getStrength()) : "??";
@@ -212,7 +201,7 @@ public final class SBFInGameObjectTooltip {
 
         result.append("<TABLE><TR>");
         result.append(tdCSS("label", "MV"))
-              .append(tdCSS("valuecell", "" + stats.mv + stats.mvcode));
+              .append(tdCSS("valuecell", stats.mv + stats.mvcode));
 
         if (!Objects.equals(stats.jump, "0")) {
             result.append(tdCSS("label", "JUMP"))
@@ -221,7 +210,7 @@ public final class SBFInGameObjectTooltip {
 
         if (!Objects.equals(stats.trsp, stats.mv)) {
             result.append(tdCSS("label", "Trsp MV"))
-                  .append(tdCSS("valuecell", "" + stats.trsp + stats.trspcode));
+                  .append(tdCSS("valuecell", stats.trsp + stats.trspcode));
         }
 
         result.append(tdCSS("label", "TC"))

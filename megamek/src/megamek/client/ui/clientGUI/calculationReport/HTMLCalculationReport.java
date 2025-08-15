@@ -43,19 +43,8 @@ import javax.swing.JEditorPane;
  */
 public class HTMLCalculationReport implements CalculationReport {
 
-    private static class ReportLine {
+    private record ReportLine(String content1, String content2, String content3, LineType lineType) {
 
-        ReportLine(String c1, String c2, String c3, LineType lt) {
-            lineType = lt;
-            content1 = c1;
-            content2 = c2;
-            content3 = c3;
-        }
-
-        final LineType lineType;
-        final String content1;
-        final String content2;
-        final String content3;
     }
 
     private final static String HTML_START = "<HTML><BODY>";

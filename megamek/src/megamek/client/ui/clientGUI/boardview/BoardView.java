@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2008 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -70,6 +70,8 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.overlay.ChatterBoxOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.TurnDetailsOverlay;
 import megamek.client.ui.clientGUI.boardview.sprite.*;
+import megamek.client.ui.clientGUI.boardview.sprite.isometric.IsometricSprite;
+import megamek.client.ui.clientGUI.boardview.sprite.isometric.IsometricWreckSprite;
 import megamek.client.ui.clientGUI.boardview.toolTip.BoardViewTooltipProvider;
 import megamek.client.ui.dialogs.phaseDisplay.EntityChoiceDialog;
 import megamek.client.ui.tileset.TilesetManager;
@@ -181,9 +183,6 @@ public final class BoardView extends AbstractBoardView
     public final Game game;
     ClientGUI clientgui;
 
-    // Only for debugging: a unique ID number for each boardview that can be shown on screen
-    private final int boardViewId;
-
     private Dimension boardSize;
 
     // scroll stuff:
@@ -192,7 +191,7 @@ public final class BoardView extends AbstractBoardView
     private JScrollBar horizontalBar;
     private int scrollXDifference = 0;
     private int scrollYDifference = 0;
-    private int preZoomOverivewIndex = 0;
+    private int preZoomOverviewIndex = 0;
     private int preZoomOverviewViewX = 0;
     private int preZoomOverviewViewY = 0;
     private int bestZoomFactor = 0;
@@ -399,7 +398,7 @@ public final class BoardView extends AbstractBoardView
     /** The coords where the mouse was last. */
     Coords lastCoords;
 
-    private GUIPreferences GUIP = GUIPreferences.getInstance();
+    private final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private final TerrainShadowHelper shadowHelper = new TerrainShadowHelper(this);
 
@@ -431,7 +430,8 @@ public final class BoardView extends AbstractBoardView
         super(boardId);
         this.game = game;
         this.clientgui = clientgui;
-        boardViewId = hashCode();
+        // Only for debugging: a unique ID number for each boardview that can be shown on screen
+        int boardViewId = hashCode();
 
         hexImageCache = new ImageCache<>();
         tileManager = new TilesetManager(game);
@@ -977,9 +977,9 @@ public final class BoardView extends AbstractBoardView
                 toggleIsometric();
                 break;
 
-            case GUIPreferences.AOHEXSHADOWS:
-            case GUIPreferences.FLOATINGISO:
-            case GUIPreferences.LEVELHIGHLIGHT:
+            case GUIPreferences.AO_HEX_SHADOWS:
+            case GUIPreferences.FLOATING_ISO:
+            case GUIPreferences.LEVEL_HIGHLIGHT:
             case GUIPreferences.SHOW_COORDS:
             case GUIPreferences.FOV_DARKEN:
             case GUIPreferences.FOV_DARKEN_ALPHA:
@@ -989,7 +989,7 @@ public final class BoardView extends AbstractBoardView
             case GUIPreferences.FOV_STRIPES:
             case GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB:
             case GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII:
-            case GUIPreferences.SHADOWMAP:
+            case GUIPreferences.SHADOW_MAP:
                 clearHexImageCache();
                 tileManager.reloadUnitIcons();
                 boardPanel.repaint();
@@ -1410,7 +1410,7 @@ public final class BoardView extends AbstractBoardView
     }
 
     /**
-     * Draws the wrecksprites for the given hex. This function is used by the isometric rendering process so that
+     * Draws the wreck sprites for the given hex. This function is used by the isometric rendering process so that
      * sprites are drawn in the order that hills are rendered to create the appearance that the sprite is behind the
      * hill.
      *
@@ -2640,7 +2640,7 @@ public final class BoardView extends AbstractBoardView
         boolean hasLoS = saveBoardImage || fovHighlightingAndDarkening.draw(graphics2D, coords);
 
         // draw map sheet borders
-        if (GUIP.getShowMapsheets()) {
+        if (GUIP.getShowMapSheets()) {
             graphics2D.setColor(GUIP.getMapsheetColor());
             if ((coords.getX() % 16) == 0) {
                 // left edge of sheet (edge 4 & 5)
@@ -3097,7 +3097,7 @@ public final class BoardView extends AbstractBoardView
                         if (HexDrawUtilities.getHexFull(getHexLocation(c1), scale).contains(point)
                               && (hexAlt != null)
                               && (hexAlt.getLevel() == elev)) {
-                            // Return immediately with highest hex found.
+                            // Return immediately with the highest hex found.
                             return c1;
                         }
                     }
@@ -4905,7 +4905,7 @@ public final class BoardView extends AbstractBoardView
             } else {
                 newECMHexes.put(coords, hexColorECM);
             }
-        } else if (hexColorECM == null && hexColorECCM != null) {
+        } else if (hexColorECM == null) {
             if (eccm.isECCM()) {
                 newECCMHexes.put(coords, hexColorECCM);
             } else {
@@ -5107,7 +5107,7 @@ public final class BoardView extends AbstractBoardView
     @Override
     public void zoomOverviewToggle() {
         if (!zoomOverview) {
-            preZoomOverivewIndex = zoomIndex;
+            preZoomOverviewIndex = zoomIndex;
             preZoomOverviewViewX = scrollPane.getHorizontalScrollBar().getValue();
             preZoomOverviewViewY = scrollPane.getVerticalScrollBar().getValue();
 
@@ -5120,21 +5120,20 @@ public final class BoardView extends AbstractBoardView
                         bestZoomFactor = i;
                         break;
                     }
-                    bestZoomFactor = 0;
                 } else {
                     if (((boardSize.height / ZOOM_FACTORS[zoomIndex]) + HEX_H * 2) * ZOOM_FACTORS[i]
                           < getComponent().getHeight()) {
                         bestZoomFactor = i;
                         break;
                     }
-                    bestZoomFactor = 0;
                 }
+                bestZoomFactor = 0;
             }
             zoomIndex = bestZoomFactor;
             zoomOverview = true;
             zoom();
         } else {
-            zoomIndex = preZoomOverivewIndex;
+            zoomIndex = preZoomOverviewIndex;
             zoomOverview = false;
             zoom();
             scrollPane.getHorizontalScrollBar().setValue(preZoomOverviewViewX);
@@ -5172,7 +5171,7 @@ public final class BoardView extends AbstractBoardView
             inHexDeltaX = ((double) inHexDelta.x) / ((double) HEX_W) / scale;
             inHexDeltaY = ((double) inHexDelta.y) / ((double) HEX_H) / scale;
 
-        } catch (Exception e) { // zoom on view center, if mouse position is outside of the map
+        } catch (Exception e) { // zoom on view center, if mouse position is outside the map
             Point viewCenter = new Point(boardPanel.getVisibleRect().getLocation().x
                   + boardPanel.getVisibleRect().width / 2,
                   boardPanel.getVisibleRect().getLocation().y + boardPanel.getVisibleRect().height / 2);
@@ -5513,8 +5512,8 @@ public final class BoardView extends AbstractBoardView
     }
 
     /**
-     * @return The unit currently shown in the Unit Display. Note: This can be a another unit than the one that is
-     *       selected to move or fire.
+     * @return The unit currently shown in the Unit Display. Note: This can be a unit than the one that is selected to
+     *       move or fire.
      */
     @Nullable
     public Entity getSelectedEntity() {
@@ -5559,7 +5558,12 @@ public final class BoardView extends AbstractBoardView
     public void removeSprites(Collection<? extends Sprite> sprites) {
         super.removeSprites(sprites);
         overTerrainSprites.removeAll(sprites);
-        behindTerrainHexSprites.removeAll(sprites);
+
+        for (Sprite sprite : sprites) {
+            if (sprite instanceof HexSprite hexSprite) {
+                behindTerrainHexSprites.remove(hexSprite);
+            }
+        }
     }
 
     /**
@@ -5586,38 +5590,6 @@ public final class BoardView extends AbstractBoardView
      */
     public boolean isOnThisBord(BoardLocation boardLocation) {
         return boardLocation.isOn(boardId);
-    }
-
-    /**
-     * Draw an outline around legal deployment hexes
-     */
-    private void drawEmbeddedBoards(Graphics g) {
-        Rectangle view = g.getClipBounds();
-        // only update visible hexes
-        int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
-        int drawY = (view.y / (int) (HEX_H * scale)) - 1;
-
-        int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
-        int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
-
-        for (Coords coords : getBoard().embeddedBoardCoords()) {
-            if ((coords.getX() >= drawX)
-                  && (coords.getX() <= drawX + drawWidth)
-                  && (coords.getY() >= drawY)
-                  && (coords.getY() <= drawY + drawHeight)) {
-                Point p = getHexLocation(coords);
-                AffineTransform oldTransform = ((Graphics2D) g).getTransform();
-                ((Graphics2D) g).transform(AffineTransform.getTranslateInstance(p.x, p.y));
-                ((Graphics2D) g).transform(AffineTransform.getScaleInstance(scale, scale));
-                ((Graphics2D) g).transform(AffineTransform.getTranslateInstance(-p.x, -p.y));
-                g.setColor(new Color(0, 140, 0, 120));
-                g.fillRect(p.x + HEX_W / 4 + 1, p.y + 2, HEX_W / 2 - 2, HEX_H - 4);
-                g.setColor(new Color(0, 140, 0));
-                ((Graphics2D) g).setStroke(new BasicStroke(1.5f));
-                g.drawRect(p.x + HEX_W / 4 + 1, p.y + 2, HEX_W / 2 - 2, HEX_H - 4);
-                ((Graphics2D) g).setTransform(oldTransform);
-            }
-        }
     }
 
     /**

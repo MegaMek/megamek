@@ -66,7 +66,7 @@ public class BoardViewPanel extends JPanel implements Scrollable {
         point.translate(HexTileset.HEX_W, HexTileset.HEX_H);
         // move to the right of the current hex
         point.translate((int) (HexTileset.HEX_W * boardView.scale * 0.75),
-              (int) (-HexTileset.HEX_H / 4 * boardView.scale));
+              (int) ((-HexTileset.HEX_H / 4.0f) * boardView.scale));
         return new Point(point.x, point.y);
     }
 

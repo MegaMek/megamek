@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,10 +32,10 @@
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
-import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.CUT_LBORDER;
-import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.CUT_LINSIDE;
-import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.CUT_RBORDER;
-import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.CUT_RINSIDE;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.CUT_LEFT_BORDER;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.CUT_LEFT_INSIDE;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.CUT_RIGHT_BORDER;
+import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.CUT_RIGHT_INSIDE;
 import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexBorderArea;
 import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexBorderLine;
 
@@ -87,8 +87,8 @@ public class MovementEnvelopeSprite extends HexSprite {
         for (int i = 0; i < 6; i++) {
             if ((borders & (1 << i)) > 0) {
                 // 1) thick transparent border
-                int cut = ((borders & (1 << ((i + 1) % 6))) == 0) ? CUT_RBORDER : CUT_RINSIDE;
-                cut |= ((borders & (1 << ((i + 5) % 6))) == 0) ? CUT_LBORDER : CUT_LINSIDE;
+                int cut = ((borders & (1 << ((i + 1) % 6))) == 0) ? CUT_RIGHT_BORDER : CUT_RIGHT_INSIDE;
+                cut |= ((borders & (1 << ((i + 5) % 6))) == 0) ? CUT_LEFT_BORDER : CUT_LEFT_INSIDE;
 
                 graph.setColor(new Color(drawColor.getRed(), drawColor.getGreen(),
                       drawColor.getBlue(), BORDER_OPACITY));

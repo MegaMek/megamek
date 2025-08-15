@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,7 +37,7 @@ import java.util.Collection;
 import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
-import megamek.client.ui.clientGUI.boardview.sprite.FieldofFireSprite;
+import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
 import megamek.common.Coords;
 
 public class FleeZoneSpriteHandler extends BoardViewSpriteHandler {
@@ -59,7 +59,7 @@ public class FleeZoneSpriteHandler extends BoardViewSpriteHandler {
         IBoardView iBoardView = clientGUI.getBoardView(boardId);
         if (iBoardView instanceof BoardView boardView) {
             coords.stream()
-                  .map(c -> new FieldofFireSprite(boardView, 1, c, 63))
+                  .map(c -> new FieldOfFireSprite(boardView, 1, c, 63))
                   .forEach(currentSprites::add);
             boardView.addSprites(currentSprites);
         }

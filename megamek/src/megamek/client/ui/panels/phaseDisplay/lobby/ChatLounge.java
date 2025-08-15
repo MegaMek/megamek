@@ -3328,13 +3328,13 @@ public class ChatLounge extends AbstractPhaseDisplay
     private void setColumnWidth(TableColumn column) {
         String key;
         if (column.getModelIndex() == MekTableModel.COL_PILOT) {
-            key = GUIPreferences.LOBBY_MEKTABLE_PILOT_WIDTH;
+            key = GUIPreferences.LOBBY_MEK_TABLE_PILOT_WIDTH;
         } else if (column.getModelIndex() == MekTableModel.COL_UNIT) {
-            key = GUIPreferences.LOBBY_MEKTABLE_UNIT_WIDTH;
+            key = GUIPreferences.LOBBY_MEK_TABLE_UNIT_WIDTH;
         } else if (column.getModelIndex() == MekTableModel.COL_PLAYER) {
-            key = GUIPreferences.LOBBY_MEKTABLE_PLAYER_WIDTH;
+            key = GUIPreferences.LOBBY_MEK_TABLE_PLAYER_WIDTH;
         } else if (column.getModelIndex() == MekTableModel.COL_BV) {
-            key = GUIPreferences.LOBBY_MEKTABLE_BV_WIDTH;
+            key = GUIPreferences.LOBBY_MEK_TABLE_BV_WIDTH;
         } else {
             return;
         }
@@ -3352,13 +3352,13 @@ public class ChatLounge extends AbstractPhaseDisplay
                 TableColumn column = mekTable.getColumnModel().getColumn(i);
                 String key;
                 if (column.getModelIndex() == MekTableModel.COL_PILOT) {
-                    key = GUIPreferences.LOBBY_MEKTABLE_PILOT_WIDTH;
+                    key = GUIPreferences.LOBBY_MEK_TABLE_PILOT_WIDTH;
                 } else if (column.getModelIndex() == MekTableModel.COL_UNIT) {
-                    key = GUIPreferences.LOBBY_MEKTABLE_UNIT_WIDTH;
+                    key = GUIPreferences.LOBBY_MEK_TABLE_UNIT_WIDTH;
                 } else if (column.getModelIndex() == MekTableModel.COL_PLAYER) {
-                    key = GUIPreferences.LOBBY_MEKTABLE_PLAYER_WIDTH;
+                    key = GUIPreferences.LOBBY_MEK_TABLE_PLAYER_WIDTH;
                 } else if (column.getModelIndex() == MekTableModel.COL_BV) {
-                    key = GUIPreferences.LOBBY_MEKTABLE_BV_WIDTH;
+                    key = GUIPreferences.LOBBY_MEK_TABLE_BV_WIDTH;
                 } else {
                     continue;
                 }

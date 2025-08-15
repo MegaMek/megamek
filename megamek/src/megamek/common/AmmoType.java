@@ -3552,7 +3552,7 @@ public class AmmoType extends EquipmentType {
         // Create the munition types for vehicle flamers Tech Progression tweaked to
         // combine IntOps with TRO Prototypes/3145 NTNU RS
         // December 2021 - CGL requested we move this to Advanced for all fluid gun
-        // ammos.
+        // ammunition.
         munitions.add(COOLANT_MUNITION_MUTATOR);
         AmmoType.createMunitions(vehicleFlamerAmmos, munitions);
 

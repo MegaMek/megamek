@@ -33,6 +33,7 @@
 package megamek.client.ui.buttons;
 
 import java.awt.Dimension;
+import java.io.Serial;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 
@@ -43,6 +44,7 @@ import megamek.client.ui.util.UIUtil;
  */
 public class DialogButton extends JButton {
 
+    @Serial
     private static final long serialVersionUID = 952919304556828345L;
 
     /** The minimum width this button will have at GUI scale == 1 */

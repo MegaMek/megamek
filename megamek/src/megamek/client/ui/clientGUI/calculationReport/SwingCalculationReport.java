@@ -53,24 +53,12 @@ import javax.swing.border.MatteBorder;
  */
 public class SwingCalculationReport implements CalculationReport {
 
-    private static class ReportLine {
+    private record ReportLine(String content1, String content2, String content3, LineType lineType) {
 
-        ReportLine(String c1, String c2, String c3, LineType lt) {
-            lineType = lt;
-            content1 = c1;
-            content2 = c2;
-            content3 = c3;
-        }
-
-        final LineType lineType;
-        final String content1;
-        final String content2;
-        final String content3;
     }
 
     private final JPanel report = new JPanel(new GridBagLayout());
     private final GridBagConstraints gbc = new GridBagConstraints();
-    private final String LINE_START_SPACER = "        ";
     private final static int COL_SPACER = 35;
 
     /** Tentative Section lines are kept in their own list. */
@@ -145,6 +133,7 @@ public class SwingCalculationReport implements CalculationReport {
         } else {
             newLine();
             gbc.ipadx = 0;
+            String LINE_START_SPACER = "        ";
             report.add(new JLabel(LINE_START_SPACER), gbc);
             gbc.gridx++;
             gbc.ipadx = COL_SPACER;

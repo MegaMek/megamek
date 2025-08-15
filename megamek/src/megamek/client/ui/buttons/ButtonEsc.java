@@ -34,6 +34,7 @@
 package megamek.client.ui.buttons;
 
 import java.awt.event.KeyEvent;
+import java.io.Serial;
 import javax.swing.AbstractAction;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
@@ -46,9 +47,10 @@ import javax.swing.KeyStroke;
  */
 public class ButtonEsc extends DialogButton {
 
+    @Serial
     private static final long serialVersionUID = -1259826896841611521L;
 
-    private static final String MYACTION = "ButtonEscAction";
+    private static final String MY_ACTION = "ButtonEscAction";
 
     /**
      * Constructs a {@link javax.swing.JButton JButton} that will react to ESC key presses by calling the
@@ -59,8 +61,8 @@ public class ButtonEsc extends DialogButton {
         super(escAction);
 
         // Link ESC to the escAction
-        getActionMap().put(MYACTION, escAction);
+        getActionMap().put(MY_ACTION, escAction);
         InputMap imap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), MYACTION);
+        imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), MY_ACTION);
     }
 }

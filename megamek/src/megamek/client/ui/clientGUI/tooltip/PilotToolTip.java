@@ -38,7 +38,9 @@ import static megamek.client.ui.clientGUI.tooltip.TipUtil.htmlSpacer;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -59,10 +61,10 @@ import megamek.common.util.CrewSkillSummaryUtil;
 import megamek.logging.MMLogger;
 
 public final class PilotToolTip {
-    private static final MMLogger logger = MMLogger.create(PilotToolTip.class);
+    private static final MMLogger LOGGER = MMLogger.create(PilotToolTip.class);
 
     /** the portrait base size */
-    public static final int PORTRAIT_BASESIZE = 72;
+    public static final int PORTRAIT_BASE_SIZE = 72;
     static final String TEMP_DIR = "/temp/";
     static final String PORTRAIT_PREFIX = "TT_Portrait_";
     static final String PNG_EXT = ".png";
@@ -103,7 +105,7 @@ public final class PilotToolTip {
         }
 
         String rows = "";
-        String row = "";
+        String row;
         String cols = "";
 
         // The crew info (names etc.) and portraits, if shown, are placed
@@ -129,9 +131,9 @@ public final class PilotToolTip {
     }
 
     /** The crew advantages and MD */
-    public static StringBuilder getCrewAdvs(Entity entity, boolean detailed) {
-        String sCrewAdvs = crewAdvs(entity, detailed).toString();
-        String result = htmlSpacer(3) + sCrewAdvs;
+    public static StringBuilder getCrewAdvantages(Entity entity, boolean detailed) {
+        String sCrewAdvantages = crewAdvantages(entity, detailed).toString();
+        String result = htmlSpacer(3) + sCrewAdvantages;
 
         return new StringBuilder().append(result);
     }
@@ -143,8 +145,7 @@ public final class PilotToolTip {
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         String col = CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
         col = UIUtil.tag("TD", "", col);
-        String row = UIUtil.tag("TR", "", col);
-        String rows = row;
+        String rows = UIUtil.tag("TR", "", col);
         String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0 BORDER=0", rows);
         return new StringBuilder(table);
     }
@@ -153,7 +154,7 @@ public final class PilotToolTip {
     private static StringBuilder crewInfoCell(final Entity entity) {
         Crew crew = entity.getCrew();
         Game game = entity.getGame();
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         // Name / Callsign and Status for each crew member
         for (int i = 0; i < crew.getSlotCount(); i++) {
@@ -173,22 +174,24 @@ public final class PilotToolTip {
             }
 
             if (crew.getSlotCount() > 1) {
-                sCrew += " \u2B1D " + crew.getCrewType().getRoleName(i) + " ";
+                sCrew += " \u2B1D " + crew.getCrewType().getRoleName(i) + " "; // middot
             }
 
             if (!crew.getStatusDesc(i).isEmpty()) {
                 String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getWarningColor()));
                 sCrew += UIUtil.tag("FONT", attr, crew.getStatusDesc(i));
             }
-            result += sCrew + "<BR>";
+            result.append(sCrew).append("<BR>");
         }
 
         // Effective entity skill for the whole crew
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-        result += CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
+        result.append(CrewSkillSummaryUtil.getSkillNames(entity))
+              .append(": ")
+              .append(crew.getSkillsAsString(rpg_skills));
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
-        result = UIUtil.tag("span", fontSizeAttr, result);
-        String col = UIUtil.tag("TD", "align=\"left\"", result);
+        result = new StringBuilder(UIUtil.tag("span", fontSizeAttr, result.toString()));
+        String col = UIUtil.tag("TD", "align=\"left\"", result.toString());
 
         return new StringBuilder().append(col);
     }
@@ -219,7 +222,7 @@ public final class PilotToolTip {
     /** Returns a tooltip part with crew portraits. */
     private static StringBuilder crewPortraits(final Entity entity, boolean showDefaultPortrait, boolean report) {
         Crew crew = entity.getCrew();
-        String col = "";
+        StringBuilder col = new StringBuilder();
 
         for (int i = 0; i < crew.getSlotCount(); i++) {
             if ((!showDefaultPortrait) && crew.getPortrait(i).isDefault()) {
@@ -231,7 +234,7 @@ public final class PilotToolTip {
             }
             try {
                 // Adjust the portrait size to the GUI scale and number of pilots
-                float imgSize = UIUtil.scaleForGUI(PORTRAIT_BASESIZE);
+                float imgSize = UIUtil.scaleForGUI(PORTRAIT_BASE_SIZE);
                 imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
                 Image portrait = baseImage.getScaledInstance(-1, (int) imgSize,
                       Image.SCALE_SMOOTH);
@@ -241,7 +244,7 @@ public final class PilotToolTip {
                     try {
                         // Write the scaled portrait to file
                         // This is done to avoid using HTML rescaling on the portrait which does
-                        // not do any smoothing and has extremely ugly results
+                        // not do any smoothing and has hideous results
                         String tempPath = Configuration.imagesDir() + TEMP_DIR + PORTRAIT_PREFIX
                               + crew.getExternalIdAsString() + "_" + i + PNG_EXT;
                         File tempFile = new File(tempPath);
@@ -260,9 +263,9 @@ public final class PilotToolTip {
                     img = UIUtil.tag("span", "crew='" + entity.getId() + ":" + i + "'", "");
                 }
 
-                col += UIUtil.tag("TD", "VALIGN=TOP", img);
+                col.append(UIUtil.tag("TD", "VALIGN=TOP", img));
             } catch (Exception e) {
-                logger.error("", e);
+                LOGGER.error("", e);
             }
         }
 
@@ -273,9 +276,9 @@ public final class PilotToolTip {
      * Returns a tooltip part with crew advantages. When detailed is true, the advantages will be fully listed,
      * otherwise only the groups and number of advantages per group are given.
      */
-    private static StringBuilder crewAdvs(final Entity entity, boolean detailed) {
-        String result = "";
-        String sOptionList = "";
+    private static StringBuilder crewAdvantages(final Entity entity, boolean detailed) {
+        String result;
+        String sOptionList;
         Crew crew = entity.getCrew();
         sOptionList = getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed);
         String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipQuirkColor()));
@@ -293,15 +296,17 @@ public final class PilotToolTip {
         String tempPath = Configuration.imagesDir() + TEMP_DIR;
         String filter = PORTRAIT_PREFIX + "*" + PNG_EXT;
 
-        try {
-            StreamSupport.stream(Files.newDirectoryStream(Paths.get(tempPath), filter).spliterator(), true)
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(tempPath), filter)) {
+            StreamSupport.stream(stream.spliterator(), true)
                   .forEach(p -> {
                       try {
                           Files.delete(p);
                       } catch (Exception ex) {
+                          LOGGER.error(ex, "Unable To Delete File In Cache: {}", ex.getMessage());
                       }
                   });
         } catch (Exception ex) {
+            LOGGER.error(ex, "Unable To open directory stream: {}", ex.getMessage());
         }
     }
 
@@ -312,6 +317,7 @@ public final class PilotToolTip {
         try {
             Files.deleteIfExists(tempFile.toPath());
         } catch (Exception ex) {
+            LOGGER.error(ex, "Unable To Delete File: {}", ex.getMessage());
         }
     }
 }

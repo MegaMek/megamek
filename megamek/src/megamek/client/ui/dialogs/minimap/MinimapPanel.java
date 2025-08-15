@@ -2176,7 +2176,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(GUIPreferences.MMSYMBOL)
+        if (e.getName().equals(GUIPreferences.MM_SYMBOL)
               || e.getName().equals(GUIPreferences.TEAM_COLORING)) {
             refreshMap();
         }

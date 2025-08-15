@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -77,19 +77,18 @@ public class ChatterBox implements KeyListener {
     Client client;
     private final ClientGUI clientGUI;
 
-    private JPanel chatPanel;
+    private final JPanel chatPanel;
     JTextArea chatArea;
     JList<String> playerList;
     JScrollPane scrPlayers;
-    private JTextField inputField;
+    private final JTextField inputField;
     private JButton butDone;
-    private JSplitPane playerChatSplit;
 
     public LinkedList<String> history;
     public int historyBookmark = -1;
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    private static final String CB_KEY_ADVANCED_CHATBOXSIZE = "AdvancedChatboxSize";
+    private static final String CB_KEY_ADVANCED_CHAT_BOX_SIZE = "AdvancedChatboxSize";
 
     public ChatterBox(ClientGUI clientgui) {
         client = clientgui.getClient();
@@ -148,12 +147,12 @@ public class ChatterBox implements KeyListener {
         });
         history = new LinkedList<>();
 
-        chatArea = new JTextArea(" \n", GUIPreferences.getInstance().getInt(CB_KEY_ADVANCED_CHATBOXSIZE), 40);
+        chatArea = new JTextArea(" \n", GUIPreferences.getInstance().getInt(CB_KEY_ADVANCED_CHAT_BOX_SIZE), 40);
         chatArea.setEditable(false);
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
         playerList = new JList<>(new DefaultListModel<>());
-        playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt(CB_KEY_ADVANCED_CHATBOXSIZE));
+        playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt(CB_KEY_ADVANCED_CHAT_BOX_SIZE));
         scrPlayers = new JScrollPane(playerList);
         scrPlayers.setPreferredSize(new Dimension(250, chatArea.getHeight()));
         inputField = new JTextField(Messages.getString("ChatLounge.ChatPlaceholder"));
@@ -181,7 +180,7 @@ public class ChatterBox implements KeyListener {
         chatPanel = new JPanel(new BorderLayout());
         chatPanel.setLayout(new GridBagLayout());
 
-        playerChatSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
+        JSplitPane playerChatSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
               scrPlayers, new JScrollPane(chatArea));
         playerChatSplit.setResizeWeight(0.01);
 
@@ -295,7 +294,7 @@ public class ChatterBox implements KeyListener {
     public String fetchHistory() {
         try {
             inputField.setText(history.get(historyBookmark));
-        } catch (IndexOutOfBoundsException ioobe) {
+        } catch (IndexOutOfBoundsException ex) {
             inputField.setText("");
             historyBookmark = -1;
         }

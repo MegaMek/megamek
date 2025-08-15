@@ -33,6 +33,5 @@
 package megamek.client.ui.boardeditor;
 
 enum PaintMode {
-
-    NORMAL, LOWER_RAISE_HEXLEVEL, DEPLOYMENT_ZONE
+    NORMAL, LOWER_RAISE_HEX_LEVEL, DEPLOYMENT_ZONE
 }

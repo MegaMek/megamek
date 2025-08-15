@@ -48,19 +48,7 @@ public class TextCalculationReport implements CalculationReport {
 
     private final static int LINE_START_SPACER = 3;
 
-    private static class ReportLine {
-
-        ReportLine(String c1, String c2, String c3, LineType lt) {
-            lineType = lt;
-            content1 = c1;
-            content2 = c2;
-            content3 = c3;
-        }
-
-        final LineType lineType;
-        final String content1;
-        final String content2;
-        final String content3;
+    private record ReportLine(String content1, String content2, String content3, LineType lineType) {
 
         int getWidth() {
             if (lineType == LineType.LINE) {

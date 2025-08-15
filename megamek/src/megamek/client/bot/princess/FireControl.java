@@ -1301,7 +1301,7 @@ public class FireControl {
                         ret.append(shootingCheck);
                     }
                 } else {
-                    // For certain weapon types, look over all their loaded ammos
+                    // For certain weapon types, look over all their loaded ammunition
                     List<AmmoMounted> ammos;
                     if (List.of(AmmoType.AmmoTypeEnum.ATM, AmmoType.AmmoTypeEnum.IATM, AmmoType.AmmoTypeEnum.MML)
                           .contains(weaponType.getAmmoType())) {
@@ -1734,7 +1734,7 @@ public class FireControl {
             if (effectivelyAmmoless(weaponType)) {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, true);
             } else {
-                // For certain weapon types, look over all their loaded ammos
+                // For certain weapon types, look over all their loaded ammunition
                 List<AmmoMounted> ammos;
                 if (List.of(AmmoType.AmmoTypeEnum.ATM, AmmoType.AmmoTypeEnum.IATM, AmmoType.AmmoTypeEnum.MML)
                       .contains(weaponType.getAmmoType())) {
@@ -1883,7 +1883,7 @@ public class FireControl {
             if (effectivelyAmmoless(weaponType)) {
                 bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
             } else {
-                // For certain weapon types, look over all their loaded ammos
+                // For certain weapon types, look over all their loaded ammunition
                 List<AmmoMounted> ammos;
                 if (List.of(AmmoType.AmmoTypeEnum.ATM, AmmoType.AmmoTypeEnum.IATM, AmmoType.AmmoTypeEnum.MML)
                       .contains(weaponType.getAmmoType())) {
@@ -2767,7 +2767,7 @@ public class FireControl {
                 // Iterate over all valid ammo for this weapon
                 int bracket;
 
-                // For certain weapon types, look over all their loaded ammos
+                // For certain weapon types, look over all their loaded ammunition
                 List<AmmoMounted> ammos;
                 if (List.of(AmmoType.AmmoTypeEnum.ATM, AmmoType.AmmoTypeEnum.IATM, AmmoType.AmmoTypeEnum.MML)
                       .contains(weaponType.getAmmoType())) {

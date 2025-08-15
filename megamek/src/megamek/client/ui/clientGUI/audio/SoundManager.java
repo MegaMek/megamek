@@ -128,7 +128,7 @@ public class SoundManager implements AudioService {
         final File file = new File(filename);
 
         if (!file.exists()) {
-            logger.error(Messages.getString("SoundManager.failedToLoadAudioFile") + " " + filename);
+            logger.error("{} {}", Messages.getString("SoundManager.failedToLoadAudioFile"), filename);
             return null;
         }
 

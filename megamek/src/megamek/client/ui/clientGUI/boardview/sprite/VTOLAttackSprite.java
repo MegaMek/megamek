@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,16 +53,16 @@ import megamek.common.VTOL;
  * @author Neoancient
  */
 public class VTOLAttackSprite extends Sprite {
-    private BoardView bv;
-    private Entity entity;
+    private final BoardView boardView;
+    private final Entity entity;
     private List<Coords> targets;
-    private Color spriteColor;
+    private final Color spriteColor;
 
-    public VTOLAttackSprite(BoardView boardView, Entity en) {
+    public VTOLAttackSprite(BoardView boardView, Entity entity) {
         super(boardView);
-        this.bv = boardView;
-        this.entity = en;
-        spriteColor = en.getOwner().getColour().getColour();
+        this.boardView = boardView;
+        this.entity = entity;
+        spriteColor = entity.getOwner().getColour().getColour();
         image = null;
         prepare();
     }
@@ -78,16 +78,16 @@ public class VTOLAttackSprite extends Sprite {
         }
         int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
         if (!targets.isEmpty()) {
-            x1 = x2 = (int) bv.getHexLocation(targets.get(0)).getX();
-            y1 = y2 = (int) bv.getHexLocation(targets.get(0)).getX();
+            x1 = x2 = (int) boardView.getHexLocation(targets.get(0)).getX();
+            y1 = y2 = (int) boardView.getHexLocation(targets.get(0)).getX();
         }
 
         if (targets.size() > 1) {
             for (int i = 1; i < targets.size(); i++) {
-                x1 = Math.min(x1, (int) bv.getHexLocation(targets.get(i)).getX());
-                y1 = Math.min(y1, (int) bv.getHexLocation(targets.get(i)).getY());
-                x2 = Math.max(x2, (int) bv.getHexLocation(targets.get(i)).getX());
-                y2 = Math.max(y2, (int) bv.getHexLocation(targets.get(i)).getY());
+                x1 = Math.min(x1, (int) boardView.getHexLocation(targets.get(i)).getX());
+                y1 = Math.min(y1, (int) boardView.getHexLocation(targets.get(i)).getY());
+                x2 = Math.max(x2, (int) boardView.getHexLocation(targets.get(i)).getX());
+                y2 = Math.max(y2, (int) boardView.getHexLocation(targets.get(i)).getY());
             }
         }
         Shape hex = HexDrawUtilities.getHexFullBorderArea(3);
@@ -103,10 +103,10 @@ public class VTOLAttackSprite extends Sprite {
     }
 
     @Override
-    public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
-        if (g instanceof Graphics2D graphics2D) {
+    public void drawOnto(Graphics graphics, int x, int y, ImageObserver observer) {
+        if (graphics instanceof Graphics2D graphics2D) {
             for (Coords c : targets) {
-                bv.drawHexBorder(graphics2D, bv.getHexLocation(c), spriteColor, 0, 3);
+                boardView.drawHexBorder(graphics2D, boardView.getHexLocation(c), spriteColor, 0, 3);
             }
         }
     }

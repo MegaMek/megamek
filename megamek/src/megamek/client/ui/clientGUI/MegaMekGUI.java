@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,7 @@ import static megamek.common.Compute.d6;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.VolatileImage;
@@ -144,10 +145,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private Server server;
     private IGameManager gameManager;
     private CommonSettingsDialog settingsDialog;
-    private Image splashImage;
     private ManagedVolatileImage logoImage;
     private ManagedVolatileImage medalImage;
-    private RawImagePanel splashPanel;
     private TipOfTheDay tipOfTheDay;
 
     private static MegaMekController controller;
@@ -359,7 +358,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // Use the current monitor, so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
         Dimension scaledMonitorSize = UIUtil.getScaledScreenSize(frame);
-        splashImage = getImage(FILENAME_MEGAMEK_SPLASH, scaledMonitorSize.width, scaledMonitorSize.height);
+        Image splashImage = getImage(FILENAME_MEGAMEK_SPLASH, scaledMonitorSize.width, scaledMonitorSize.height);
         logoImage = new ManagedVolatileImage(getImage(FILENAME_LOGO, scaledMonitorSize.width, scaledMonitorSize.height),
               Transparency.TRANSLUCENT);
         medalImage = new ManagedVolatileImage(getImage(FILENAME_MEDAL,
@@ -367,37 +366,12 @@ public class MegaMekGUI implements IPreferenceChangeListener {
               scaledMonitorSize.height), Transparency.TRANSLUCENT);
         Dimension splashPanelPreferredSize = calculateSplashPanelPreferredSize(scaledMonitorSize, splashImage);
         // This is an empty panel that will contain the splash image
-        splashPanel = new RawImagePanel(splashImage) {
-            @Override
-            public void paint(Graphics g) {
-                super.paint(g); // Draw background, border, and children first
-                Graphics2D g2d = (Graphics2D) g.create();
-                try {
-                    int panelWidth = this.getWidth();
-                    int panelHeight = this.getHeight();
-                    int padding = 20;
-                    int targetMedalWidth = 0;
-
-                    // Draw Tip of the Day
-                    if (tipOfTheDay != null) {
-                        // Absolute drawing position
-                        Rectangle bounds = this.getBounds();
-                        bounds.x = 0;
-                        bounds.y = 0;
-                        tipOfTheDay.drawTipOfTheDay(g2d, bounds, TipOfTheDay.Position.BOTTOM_LEFT_CORNER, false);
-                    }
-
-                    // Draw medalImage
-                    targetMedalWidth = drawMedal(g2d, panelWidth, panelHeight, padding);
-
-                    // Draw logoImage
-                    drawLogo(g2d, panelWidth, panelHeight, targetMedalWidth, padding);
-                } finally {
-                    g2d.dispose();
-                }
-            }
-        };
-        splashPanel.setPreferredSize(splashPanelPreferredSize);
+        // Draw background, border, and children first
+        // Draw Tip of the Day
+        // Absolute drawing position
+        // Draw medalImage
+        // Draw logoImage
+        RawImagePanel splashPanel = getRawImagePanel(splashImage, splashPanelPreferredSize);
 
         FontMetrics metrics = hostB.getFontMetrics(loadB.getFont());
         int width = metrics.stringWidth(hostB.getText());
@@ -481,6 +455,41 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         frame.pack();
         // center window in screen
         frame.setLocationRelativeTo(null);
+    }
+
+    private RawImagePanel getRawImagePanel(Image splashImage, Dimension splashPanelPreferredSize) {
+        RawImagePanel splashPanel = new RawImagePanel(splashImage) {
+            @Override
+            public void paint(Graphics g) {
+                super.paint(g); // Draw background, border, and children first
+                Graphics2D g2d = (Graphics2D) g.create();
+                try {
+                    int panelWidth = this.getWidth();
+                    int panelHeight = this.getHeight();
+                    int padding = 20;
+                    int targetMedalWidth;
+
+                    // Draw Tip of the Day
+                    if (tipOfTheDay != null) {
+                        // Absolute drawing position
+                        Rectangle bounds = this.getBounds();
+                        bounds.x = 0;
+                        bounds.y = 0;
+                        tipOfTheDay.drawTipOfTheDay(g2d, bounds, TipOfTheDay.Position.BOTTOM_LEFT_CORNER, false);
+                    }
+
+                    // Draw medalImage
+                    targetMedalWidth = drawMedal(g2d, panelWidth, panelHeight, padding);
+
+                    // Draw logoImage
+                    drawLogo(g2d, panelWidth, panelHeight, targetMedalWidth, padding);
+                } finally {
+                    g2d.dispose();
+                }
+            }
+        };
+        splashPanel.setPreferredSize(splashPanelPreferredSize);
+        return splashPanel;
     }
 
     /**
@@ -738,7 +747,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         });
         int returnVal = fc.showOpenDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
-            // I want a file, y'know!
             return;
         }
 
@@ -1237,7 +1245,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 host();
                 break;
             case ClientGUI.FILE_GAME_SCENARIO:
-                if ((ev.getModifiers() & Event.CTRL_MASK) != 0) {
+                if ((ev.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0) {
                     // As a dev convenience, start the last scenario again when clicked with CTRL
                     scenario(PreferenceManager.getClientPreferences().getLastScenario());
                 } else {
@@ -1256,7 +1264,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             case ClientGUI.FILE_GAME_LOAD:
                 loadGame();
                 break;
-            case ClientGUI.FILE_GAME_QLOAD:
+            case ClientGUI.FILE_GAME_QUICK_LOAD:
                 quickLoadGame();
                 break;
             case ClientGUI.HELP_ABOUT:
@@ -1302,8 +1310,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
     }
 
-    private @Nullable Image getImage(final String filename, final int screenWidth,
-          final int screenHeight) {
+    private @Nullable Image getImage(final String filename, final int screenWidth, final int screenHeight) {
         File file = new MegaMekFile(Configuration.widgetsDir(), filename).getFile();
         if (!file.exists()) {
             LOGGER.error("MainMenu Error: Image doesn't exist: {}", file.getAbsolutePath());

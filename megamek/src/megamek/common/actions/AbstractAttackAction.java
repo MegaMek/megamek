@@ -181,7 +181,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
             toHit.addModifier(-searchlightMod, "target illuminated by searchlight");
             night_modifier -= searchlightMod;
         } else if (atype != null) {
-            // Certain ammunitions reduce the penalty
+            // Certain ammunition reduce the penalty
             if (((atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC)
                   || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.LAC)
                   || (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP)

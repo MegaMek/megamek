@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,11 +53,11 @@ import megamek.client.ui.tileset.HexTileset;
  * The methods named ...Full...Line() return closed shapes for all 6 faces. They can be used to both graph.draw() and
  * graph.fill().
  * <BR>
- * When a border line is moved inside the hex (inset &gt; 0) and for all border areas, the cuttype parameter controls
- * how the line/area is delimited. <BR> CUT_BORDER extends the line/area out to the hex borders<BR> CUT_VERT leaves the
- * line/area with the length of the hex border<BR> CUT_INSIDE shrinks the line/area to be inside the triangle between
- * the hex face and the center point. CUT_LBORDER, CUT_RBORDER, CUT_LVERT, CUT_RVERT, CUT_LINSIDE, CUT_RINSIDE can be
- * ORed to achieve different cuts left and right.
+ * When a border line is moved inside the hex (inset &gt; 0) and for all border areas, the cut type parameter controls
+ * how the line/area is delimited. <BR> CUT_BORDER extends the line/area out to the hex borders<BR> CUT_VERTEX leaves
+ * the line/area with the length of the hex border<BR> CUT_INSIDE shrinks the line/area to be inside the triangle
+ * between the hex face and the center point. CUT_LEFT_BORDER, CUT_RIGHT_BORDER, CUT_LEFT_VERTEX, CUT_RIGHT_VERTEX,
+ * CUT_LEFT_INSIDE, CUT_RIGHT_INSIDE can be ORed to achieve different cuts left and right.
  *
  * @author Simon
  */
@@ -74,28 +74,28 @@ public class HexDrawUtilities {
     public static final Point2D.Double HEX_LL = new Point2D.Double(HEX_WID * 0.25, HEX_HGT);
     public static final Point2D.Double HEX_LR = new Point2D.Double(HEX_WID * 0.75, HEX_HGT);
 
-    public static final double PerfectHextoHexY = ((double) HexTileset.HEX_H) / HEX_HGT;
+    public static final double PerfectHexToHexY = ((double) HexTileset.HEX_H) / HEX_HGT;
 
-    public static final AffineTransform PerfectHextoHex = AffineTransform.getScaleInstance(1, PerfectHextoHexY);
+    public static final AffineTransform PerfectHexToHex = AffineTransform.getScaleInstance(1, PerfectHexToHexY);
 
-    public static final int CUT_LBORDER = 1;
-    public static final int CUT_RBORDER = 2;
-    public static final int CUT_LINSIDE = 4;
-    public static final int CUT_RINSIDE = 8;
-    public static final int CUT_LVERT = 16;
-    public static final int CUT_RVERT = 32;
-    public static final int CUT_VERT = CUT_LVERT | CUT_RVERT;
-    public static final int CUT_BORDER = CUT_LBORDER | CUT_RBORDER;
-    public static final int CUT_INSIDE = CUT_LINSIDE | CUT_RINSIDE;
+    public static final int CUT_LEFT_BORDER = 1;
+    public static final int CUT_RIGHT_BORDER = 2;
+    public static final int CUT_LEFT_INSIDE = 4;
+    public static final int CUT_RIGHT_INSIDE = 8;
+    public static final int CUT_LEFT_VERTEX = 16;
+    public static final int CUT_RIGHT_VERTEX = 32;
+    public static final int CUT_VERTEX = CUT_LEFT_VERTEX | CUT_RIGHT_VERTEX;
+    public static final int CUT_BORDER = CUT_LEFT_BORDER | CUT_RIGHT_BORDER;
+    public static final int CUT_INSIDE = CUT_LEFT_INSIDE | CUT_RIGHT_INSIDE;
 
     // the slope of the side hex faces, multiplying by x gives y distance
-    private static final double slopeYoverX = 2 * HEX_HGT / HEX_WID;
+    private static final double slopeYOverX = 2 * HEX_HGT / HEX_WID;
 
     // the slope of the side hex faces, multiplying by y gives x distance
-    private static final double slopeXoverY = 1 / slopeYoverX;
+    private static final double slopeXOverY = 1 / slopeYOverX;
 
     // the weaker slope from the upper left corner to the right mid-corner
-    private static final double slopeWYoverX = slopeYoverX / 3;
+    private static final double slopeWYOverX = slopeYOverX / 3;
 
     // Internal functions that will return perfect hex shapes
 
@@ -110,15 +110,15 @@ public class HexDrawUtilities {
         return getHRU(hexFace).createTransformedShape(getHBLU());
     }
 
-    private static Shape getHBLU(int cuttype, double inset) {
+    private static Shape getHBLU(int cutType, double inset) {
         Path2D.Double border = new Path2D.Double();
-        border.moveTo(HEX_UL.x + getDeltaL(cuttype, inset), HEX_UL.y + inset);
-        border.lineTo(HEX_UR.x + getDeltaR(cuttype, inset), HEX_UR.y + inset);
+        border.moveTo(HEX_UL.x + getDeltaL(cutType, inset), HEX_UL.y + inset);
+        border.lineTo(HEX_UR.x + getDeltaR(cutType, inset), HEX_UR.y + inset);
         return border;
     }
 
-    private static Shape getHBLU(int hexFace, int cuttype, double inset) {
-        return getHRU(hexFace).createTransformedShape(getHBLU(cuttype, inset));
+    private static Shape getHBLU(int hexFace, int cutType, double inset) {
+        return getHRU(hexFace).createTransformedShape(getHBLU(cutType, inset));
     }
 
     private static Shape getHFBLU() {
@@ -145,29 +145,29 @@ public class HexDrawUtilities {
         return area;
     }
 
-    private static double getDeltaL(int cuttype, double thickness) {
-        double DX = slopeXoverY * thickness;
+    private static double getDeltaL(int cutType, double thickness) {
+        double DX = slopeXOverY * thickness;
         double LX;
-        if ((cuttype & CUT_LBORDER) == CUT_LBORDER) {
+        if ((cutType & CUT_LEFT_BORDER) == CUT_LEFT_BORDER) {
             LX = -DX;
-        } else if ((cuttype & CUT_LVERT) == CUT_LVERT) {
+        } else if ((cutType & CUT_LEFT_VERTEX) == CUT_LEFT_VERTEX) {
             LX = 0;
         } else {
-            // CUT_LINSIDE
+            // CUT_LEFT_INSIDE
             LX = DX;
         }
         return LX;
     }
 
-    private static double getDeltaR(int cuttype, double thickness) {
-        double DX = slopeXoverY * thickness;
+    private static double getDeltaR(int cutType, double thickness) {
+        double DX = slopeXOverY * thickness;
         double RX;
-        if ((cuttype & CUT_RBORDER) == CUT_RBORDER) {
+        if ((cutType & CUT_RIGHT_BORDER) == CUT_RIGHT_BORDER) {
             RX = DX;
-        } else if ((cuttype & CUT_RVERT) == CUT_RVERT) {
+        } else if ((cutType & CUT_RIGHT_VERTEX) == CUT_RIGHT_VERTEX) {
             RX = 0;
         } else {
-            // CUT_RINSIDE
+            // CUT_RIGHT_INSIDE
             RX = -DX;
         }
         return RX;
@@ -177,7 +177,7 @@ public class HexDrawUtilities {
     private static Shape getHCLU012() {
         Path2D.Double border = new Path2D.Double();
         border.moveTo(HEX_UL.x, HEX_UL.y);
-        border.lineTo(HEX_LR.x, (HEX_LR.x - HEX_UL.x) * slopeWYoverX);
+        border.lineTo(HEX_LR.x, (HEX_LR.x - HEX_UL.x) * slopeWYOverX);
         border.lineTo(HEX_LR.x, HEX_LR.y);
         return border;
     }
@@ -188,7 +188,7 @@ public class HexDrawUtilities {
         double ft = Math.sqrt(getDeltaL(CUT_BORDER, thickness) * getDeltaL(CUT_BORDER, thickness) +
               thickness * thickness);
         double my = (HEX_LR.x - ft - HEX_UL.x - getDeltaL(CUT_BORDER, thickness))
-              * slopeWYoverX + HEX_UL.y + thickness;
+              * slopeWYOverX + HEX_UL.y + thickness;
         Path2D.Double area = new Path2D.Double();
         area.append(getHCLU012(), false);
         area.lineTo(HEX_LR.x - ft, HEX_LR.y);
@@ -221,7 +221,7 @@ public class HexDrawUtilities {
     private static Shape getHCLU0123() {
         Path2D.Double border = new Path2D.Double();
         // the 5/8 is chosen arbitrarily
-        double mh = (HEX_WID * 5 / 8 - HEX_UL.x) * slopeWYoverX;
+        double mh = (HEX_WID * 5 / 8 - HEX_UL.x) * slopeWYOverX;
         border.moveTo(HEX_UL.x, HEX_UL.y);
         border.lineTo(HEX_WID * 5 / 8, mh);
         border.lineTo(HEX_WID * 5 / 8, HEX_LL.y - mh);
@@ -235,7 +235,7 @@ public class HexDrawUtilities {
         double ft = Math.sqrt(getDeltaL(CUT_BORDER, thickness) * getDeltaL(CUT_BORDER, thickness) +
               thickness * thickness);
         double my = (HEX_WID * 5 / 8 - ft - HEX_UL.x - getDeltaL(CUT_BORDER, thickness))
-              * slopeWYoverX + HEX_UL.y + thickness;
+              * slopeWYOverX + HEX_UL.y + thickness;
         Path2D.Double area = new Path2D.Double();
         area.append(getHCLU0123(), false);
         area.lineTo(HEX_LL.x + getDeltaL(CUT_BORDER, thickness), HEX_LL.y - thickness);
@@ -279,74 +279,74 @@ public class HexDrawUtilities {
 
     // external functions that will return shapes scaled to the real hex
 
-    public static Shape getHexBorderLine(int hexFace, int cuttype, double inset) {
-        return PerfectHextoHex.createTransformedShape(
-              getHBLU(hexFace, cuttype, inset));
+    public static Shape getHexBorderLine(int hexFace, int cutType, double inset) {
+        return PerfectHexToHex.createTransformedShape(
+              getHBLU(hexFace, cutType, inset));
     }
 
     public static AffineTransform getHexRotation(int facing) {
-        return AffineTransform.getRotateInstance(Math.toRadians(facing * 60), HexTileset.HEX_W / 2,
-              HexTileset.HEX_H / 2);
+        return AffineTransform.getRotateInstance(Math.toRadians(facing * 60), HexTileset.HEX_W / 2.0f,
+              HexTileset.HEX_H / 2.0f);
     }
 
     public static Shape getHexBorderLine(int hexFace) {
-        return PerfectHextoHex.createTransformedShape(getHBLU(hexFace));
+        return PerfectHexToHex.createTransformedShape(getHBLU(hexFace));
     }
 
     public static Shape getHexFullBorderLine(double inset) {
-        return PerfectHextoHex.createTransformedShape(getHFBLU(inset));
+        return PerfectHexToHex.createTransformedShape(getHFBLU(inset));
     }
 
-    public static Shape getHexBorderArea(int cuttype, double thickness) {
+    public static Shape getHexBorderArea(int cutType, double thickness) {
         Path2D.Double area = new Path2D.Double();
         area.append(getHBLU(), false);
-        area.lineTo(HEX_UR.x + getDeltaR(cuttype, thickness), HEX_UR.y + thickness);
-        area.lineTo(HEX_UL.x + getDeltaL(cuttype, thickness), HEX_UL.y + thickness);
+        area.lineTo(HEX_UR.x + getDeltaR(cutType, thickness), HEX_UR.y + thickness);
+        area.lineTo(HEX_UL.x + getDeltaL(cutType, thickness), HEX_UL.y + thickness);
         area.closePath();
-        return PerfectHextoHex.createTransformedShape(area);
+        return PerfectHexToHex.createTransformedShape(area);
     }
 
-    public static Shape getHexBorderArea(int cuttype, double thickness, double inset) {
+    public static Shape getHexBorderArea(int cutType, double thickness, double inset) {
         Path2D.Double area = new Path2D.Double();
-        area.moveTo(HEX_UR.x + getDeltaR(cuttype, inset), HEX_UR.y + inset);
-        area.lineTo(HEX_UL.x + getDeltaL(cuttype, inset), HEX_UL.y + inset);
-        area.lineTo(HEX_UL.x + getDeltaL(cuttype, inset + thickness),
+        area.moveTo(HEX_UR.x + getDeltaR(cutType, inset), HEX_UR.y + inset);
+        area.lineTo(HEX_UL.x + getDeltaL(cutType, inset), HEX_UL.y + inset);
+        area.lineTo(HEX_UL.x + getDeltaL(cutType, inset + thickness),
               HEX_UL.y + inset + thickness);
-        area.lineTo(HEX_UR.x + getDeltaR(cuttype, inset + thickness),
+        area.lineTo(HEX_UR.x + getDeltaR(cutType, inset + thickness),
               HEX_UR.y + inset + thickness);
         area.closePath();
-        return PerfectHextoHex.createTransformedShape(area);
+        return PerfectHexToHex.createTransformedShape(area);
     }
 
     public static Shape getHexFullBorderArea(double thickness) {
         Area area = new Area(getHFBLU());
         area.subtract(new Area(getHFBLU(thickness)));
-        return PerfectHextoHex.createTransformedShape(area);
+        return PerfectHexToHex.createTransformedShape(area);
     }
 
     public static Shape getHexFullBorderArea(double thickness, double inset) {
         Area area = new Area(getHFBLU(inset));
         area.subtract(new Area(getHFBLU(inset + thickness)));
-        return PerfectHextoHex.createTransformedShape(area);
+        return PerfectHexToHex.createTransformedShape(area);
     }
 
-    public static Shape getHexBorderArea(int hexFace, int cuttype, double thickness) {
-        return PerfectHextoHex.createTransformedShape(
-              getHRU(hexFace).createTransformedShape(getHexBorderArea(cuttype, thickness)));
+    public static Shape getHexBorderArea(int hexFace, int cutType, double thickness) {
+        return PerfectHexToHex.createTransformedShape(
+              getHRU(hexFace).createTransformedShape(getHexBorderArea(cutType, thickness)));
     }
 
-    public static Shape getHexBorderArea(int hexFace, int cuttype, double thickness, double inset) {
-        return PerfectHextoHex.createTransformedShape(
-              getHRU(hexFace).createTransformedShape(getHexBorderArea(cuttype, thickness, inset)));
+    public static Shape getHexBorderArea(int hexFace, int cutType, double thickness, double inset) {
+        return PerfectHexToHex.createTransformedShape(
+              getHRU(hexFace).createTransformedShape(getHexBorderArea(cutType, thickness, inset)));
     }
 
     public static Shape getHexFull() {
-        return PerfectHextoHex.createTransformedShape(getHFBLU());
+        return PerfectHexToHex.createTransformedShape(getHFBLU());
     }
 
     public static Shape getHexFull(Point2D.Double p) {
         return AffineTransform.getTranslateInstance(p.x, p.y).createTransformedShape(
-              PerfectHextoHex.createTransformedShape(getHFBLU()));
+              PerfectHexToHex.createTransformedShape(getHFBLU()));
     }
 
     public static Shape getHexFull(Point p) {
@@ -367,51 +367,51 @@ public class HexDrawUtilities {
         if (hexFace % 6 != 0) {
             double angle = Math.toRadians(hexFace * 60);
             xN = -(-HEX_CTR.y + thickness / 2) * Math.sin(angle);
-            yN = +(-HEX_CTR.y + thickness / 2) * Math.cos(angle);
+            yN = (-HEX_CTR.y + thickness / 2) * Math.cos(angle);
         }
         xN += HEX_CTR.x;
         yN += HEX_CTR.y;
-        yN *= PerfectHextoHexY;
+        yN *= PerfectHexToHexY;
         return new Point2D.Double(xN, yN);
     }
 
     public static Shape getHexCrossArea01(int hexFace, double thickness) {
-        return PerfectHextoHex.createTransformedShape(
+        return PerfectHexToHex.createTransformedShape(
               getHRU(hexFace).createTransformedShape(getHCAU01(thickness)));
     }
 
     public static Shape getHexCrossLine01(int hexFace, double thickness) {
-        return PerfectHextoHex.createTransformedShape(
+        return PerfectHexToHex.createTransformedShape(
               getHRU(hexFace).createTransformedShape(getHCLU01()));
     }
 
     public static Shape getHexCrossArea012(int hexFace, double thickness) {
-        return PerfectHextoHex.createTransformedShape(
+        return PerfectHexToHex.createTransformedShape(
               getHRU(hexFace).createTransformedShape(getHCAU012(thickness)));
     }
 
     public static Shape getHexCrossLine012(int hexFace, double thickness) {
-        return PerfectHextoHex.createTransformedShape(
+        return PerfectHexToHex.createTransformedShape(
               getHRU(hexFace).createTransformedShape(getHCLU012()));
     }
 
     public static Shape getHexCrossArea0123(int hexFace, double thickness) {
-        return PerfectHextoHex.createTransformedShape(
+        return PerfectHexToHex.createTransformedShape(
               getHRU(hexFace).createTransformedShape(getHCAU0123(thickness)));
     }
 
     public static Shape getHexCrossLine0123(int hexFace, double thickness) {
-        return PerfectHextoHex.createTransformedShape(
+        return PerfectHexToHex.createTransformedShape(
               getHRU(hexFace).createTransformedShape(getHCLU0123()));
     }
 
     public static Shape getHexCrossArea01234(int hexFace, double thickness) {
-        return PerfectHextoHex.createTransformedShape(
+        return PerfectHexToHex.createTransformedShape(
               getHRU(hexFace).createTransformedShape(getHCAU01234(thickness)));
     }
 
     public static Shape getHexCrossLine01234(int hexFace, double thickness) {
-        return PerfectHextoHex.createTransformedShape(
+        return PerfectHexToHex.createTransformedShape(
               getHRU(hexFace).createTransformedShape(getHCLU01234()));
     }
 }

@@ -2186,7 +2186,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      */
     private void updateRangeDisplayForAmmo(AmmoMounted mAmmo) {
         AmmoType atype = mAmmo.getType();
-        // Only override the display for the various ATM and MML ammos
+        // Only override the display for the various ATM and MML ammunition
         if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
             if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                 wMinR.setText("4");

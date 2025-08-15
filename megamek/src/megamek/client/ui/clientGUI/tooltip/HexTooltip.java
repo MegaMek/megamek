@@ -344,13 +344,13 @@ public final class HexTooltip {
 
         if (isMovement) {
             sTerrain += "<BR>";
-            String sDinstanceMove;
+            String sDistanceMove;
             if (disPM == 1) {
-                sDinstanceMove = Messages.getString("BoardView1.Tooltip.DistanceMove1");
+                sDistanceMove = Messages.getString("BoardView1.Tooltip.DistanceMove1");
             } else {
-                sDinstanceMove = Messages.getString("BoardView1.Tooltip.DistanceMoveN", disPM);
+                sDistanceMove = Messages.getString("BoardView1.Tooltip.DistanceMoveN", disPM);
             }
-            sTerrain += UIUtil.tag("I", "", sDinstanceMove);
+            sTerrain += UIUtil.tag("I", "", sDistanceMove);
         }
 
         String attr = String.format("FACE=Dialog COLOR=%s",
@@ -362,7 +362,7 @@ public final class HexTooltip {
     }
 
     public static String getArtilleryHit(Game game, Coords coords, int boardId) {
-        String sAttilleryAutoHix = "";
+        StringBuilder sArtilleryAutoHits = new StringBuilder();
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         boolean foundPlayer = false;
         for (Player player : game.getPlayersList()) {
@@ -370,35 +370,35 @@ public final class HexTooltip {
             if (game.getBoard(boardId).isLegalDeployment(coords, player)) {
                 if (!foundPlayer) {
                     foundPlayer = true;
-                    sAttilleryAutoHix += Messages.getString("BoardView1.Tooltip.ArtyAutoHeader") + "<BR>";
+                    sArtilleryAutoHits.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHeader")).append("<BR>");
                 }
 
                 String sName = "&nbsp;&nbsp;" + player.getName();
                 String attr = String.format("FACE=Dialog COLOR=%s",
                       UIUtil.toColorHexString(player.getColour().getColour()));
                 sName = UIUtil.tag("FONT", attr, sName);
-                sAttilleryAutoHix += UIUtil.tag("B", "", sName);
-                sAttilleryAutoHix += "<BR>";
+                sArtilleryAutoHits.append(UIUtil.tag("B", "", sName));
+                sArtilleryAutoHits.append("<BR>");
             }
         }
         if (foundPlayer) {
-            sAttilleryAutoHix += "<BR>";
+            sArtilleryAutoHits.append("<BR>");
         }
 
         // Add a hint with keybind that the zones can be shown graphically
         String keybindText = KeyCommandBind.getDesc(KeyCommandBind.getBindByCmd("autoArtyDeployZone"));
-        String msg_artyautohit = Messages.getString("BoardView1.Tooltip.ArtyAutoHint1") + "<BR>";
-        msg_artyautohit += Messages.getString("BoardView1.Tooltip.ArtyAutoHint2") + "<BR>";
-        msg_artyautohit += Messages.getString("BoardView1.Tooltip.ArtyAutoHint3", keybindText);
-        sAttilleryAutoHix = UIUtil.tag("I", "", msg_artyautohit);
+        String msgArtyAutoHit = Messages.getString("BoardView1.Tooltip.ArtyAutoHint1") + "<BR>";
+        msgArtyAutoHit += Messages.getString("BoardView1.Tooltip.ArtyAutoHint2") + "<BR>";
+        msgArtyAutoHit += Messages.getString("BoardView1.Tooltip.ArtyAutoHint3", keybindText);
+        sArtilleryAutoHits = new StringBuilder(UIUtil.tag("I", "", msgArtyAutoHit));
 
         String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
-        sAttilleryAutoHix = UIUtil.tag("FONT", attr, sAttilleryAutoHix);
+        sArtilleryAutoHits = new StringBuilder(UIUtil.tag("FONT", attr, sArtilleryAutoHits.toString()));
 
         attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(uiWhite()));
-        sAttilleryAutoHix = UIUtil.tag("FONT", attr, sAttilleryAutoHix);
-        sAttilleryAutoHix = UIUtil.tag("span", fontSizeAttr, sAttilleryAutoHix);
-        String col = UIUtil.tag("TD", "", sAttilleryAutoHix);
+        sArtilleryAutoHits = new StringBuilder(UIUtil.tag("FONT", attr, sArtilleryAutoHits.toString()));
+        sArtilleryAutoHits = new StringBuilder(UIUtil.tag("span", fontSizeAttr, sArtilleryAutoHits.toString()));
+        String col = UIUtil.tag("TD", "", sArtilleryAutoHits.toString());
         String row = UIUtil.tag("TR", "", col);
         attr = String.format("CELLSPACING=0 CELLPADDING=0 BORDER=0 BGCOLOR=%s width=100%%",
               GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor()));
@@ -437,7 +437,7 @@ public final class HexTooltip {
 
                 if (!wSprite.getEntity().getCrew().isEjected()) {
                     String sPilot = PilotToolTip.getPilotTipShort(wSprite.getEntity(),
-                          GUIP.getshowPilotPortraitTT(), false).toString();
+                          GUIP.getShowPilotPortraitTT(), false).toString();
 
                     attr = String.format("FACE=Dialog COLOR=%s",
                           UIUtil.toColorHexString(GUIP.getUnitToolTipAltFGColor()));

@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,15 +30,18 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.clientGUI;
+package megamek.client.ui.clientGUI.tooltip.info;
 
-import megamek.client.ui.panels.DialogOptionComponentYPanel;
-import megamek.common.options.IOption;
+import java.util.HashMap;
 
-/** @author Cord Awtry */
-public interface DialogOptionListener {
-
-    void optionClicked(DialogOptionComponentYPanel comp, IOption option, boolean state);
-
-    void optionSwitched(DialogOptionComponentYPanel comp, IOption option, int i);
+public class WeaponInfo {
+    public String name;
+    public String sortString;
+    public String range = "";
+    public int count = 1;
+    public boolean isClan;
+    public boolean isHotLoaded = false;
+    public boolean isRapidFire = false;
+    public HashMap<String, Integer> ammunition = new HashMap<>();
+    public int ammoActiveWeaponCount;
 }

@@ -1330,7 +1330,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         JLabel unitTooltipDestroyedLabel =
               new JLabel(Messages.getString("CommonSettingsDialog.armorMiniDestroyedChar"));
         unitTooltipArmorMiniDestroyedCharText = new JTextField(5);
-        unitTooltipArmorMiniDestroyedCharText.setText(GUIP.getUnitToolTipArmorMiniDestoryedChar());
+        unitTooltipArmorMiniDestroyedCharText.setText(GUIP.getUnitToolTipArmorMiniDestroyedChar());
         unitTooltipArmorMiniDestroyedCharText.setMaximumSize(new Dimension(150, 40));
         unitTooltipArmorMiniDestroyedCharText.setToolTipText(Messages.getString(
               "CommonSettingsDialog.armorMiniDestroyedChar.tooltip"));
@@ -2210,10 +2210,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             tooltipDelay.setText(Integer.toString(GUIP.getTooltipDelay()));
             tooltipDismissDelay.setText(Integer.toString(GUIP.getTooltipDismissDelay()));
             tooltipDistSupression.setText(Integer.toString(GUIP.getTooltipDistSuppression()));
-            showWpsinTT.setSelected(GUIP.getShowWpsinTT());
+            showWpsinTT.setSelected(GUIP.getShowWpsInTT());
             showWpsLocinTT.setSelected(GUIP.getShowWpsLocinTT());
-            showArmorMiniVisTT.setSelected(GUIP.getshowArmorMiniVisTT());
-            showPilotPortraitTT.setSelected(GUIP.getshowPilotPortraitTT());
+            showArmorMiniVisTT.setSelected(GUIP.getShowArmorMiniVisTT());
+            showPilotPortraitTT.setSelected(GUIP.getShowPilotPortraitTT());
             comboDefaultWeaponSortOrder.setSelectedItem(GUIP.getDefaultWeaponSortOrder());
             mouseWheelZoom.setSelected(GUIP.getMouseWheelZoom());
             mouseWheelZoomFlip.setSelected(GUIP.getMouseWheelZoomFlip());
@@ -2273,7 +2273,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             }
             displayLocale.setSelectedIndex(index);
 
-            showMapsheets.setSelected(GUIP.getShowMapsheets());
+            showMapsheets.setSelected(GUIP.getShowMapSheets());
             chkHighQualityGraphics.setSelected(GUIP.getHighQualityGraphics());
             chkHighPerformanceGraphics.setSelected(GUIP.getHighPerformanceGraphics());
             showDamageLevel.setSelected(GUIP.getShowDamageLevel());
@@ -2573,7 +2573,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         unitTooltipArmorMiniArmorCharText.setText(GUIP.getUnitToolTipArmorMiniArmorChar());
         unitTooltipArmorMiniInternalStructureCharText.setText(GUIP.getUnitToolTipArmorMiniISChar());
         unitTooltipArmorMiniCriticalCharText.setText(GUIP.getUnitToolTipArmorMiniCriticalChar());
-        unitTooltipArmorMiniDestroyedCharText.setText(GUIP.getUnitToolTipArmorMiniDestoryedChar());
+        unitTooltipArmorMiniDestroyedCharText.setText(GUIP.getUnitToolTipArmorMiniDestroyedChar());
         unitTooltipArmorMiniCapArmorCharText.setText(GUIP.getUnitToolTipArmorMiniCapArmorChar());
         unitTooltipArmorMiniUnitsPerBlockText.setText(String.format("%d", GUIP.getUnitToolTipArmorMiniUnitsPerBlock()));
         unitTooltipFontSizeModCbo.setSelectedItem(GUIP.getUnitToolTipFontSizeMod());
@@ -2636,10 +2636,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setNagForOddSizedBoard(nagForOddSizedBoard.isSelected());
         GUIP.setShowMoveStep(animateMove.isSelected());
         GUIP.setShowWrecks(showWrecks.isSelected());
-        GUIP.setShowWpsinTT(showWpsinTT.isSelected());
+        GUIP.setShowWpsInTT(showWpsinTT.isSelected());
         GUIP.setShowWpsLocinTT(showWpsLocinTT.isSelected());
-        GUIP.setshowArmorMiniVisTT(showArmorMiniVisTT.isSelected());
-        GUIP.setshowPilotPortraitTT(showPilotPortraitTT.isSelected());
+        GUIP.setShowArmorMiniVisTT(showArmorMiniVisTT.isSelected());
+        GUIP.setShowPilotPortraitTT(showPilotPortraitTT.isSelected());
 
         GUIP.setWarningColor(csbWarningColor.getColour());
         GUIP.setCautionColor(csbCautionColor.getColour());
@@ -2662,8 +2662,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setMoveBackColor(csbMoveBackColor.getColour());
         GUIP.setMoveSprintColor(csbMoveSprintColor.getColour());
 
-        GUIP.setFireSolnCanSeeColor(csbFireSolnCanSeeColor.getColour());
-        GUIP.setFireSolnNoSeeColor(csbFireSolnNoSeeColor.getColour());
+        GUIP.setFireSolutionCanSeeColor(csbFireSolnCanSeeColor.getColour());
+        GUIP.setFireSolutionNoSeeColor(csbFireSolnNoSeeColor.getColour());
         GUIP.setFieldOfFireMinColor(csbFieldOfFireMinColor.getColour());
         GUIP.setFieldOfFireShortColor(csbFieldOfFireShortColor.getColour());
         GUIP.setBoardFieldOfFireMediumColor(csbFieldOfFireMediumColor.getColour());
@@ -2681,7 +2681,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setBoardTextColor(csbBoardTextColor.getColour());
         GUIP.setBoardSpaceTextColor(csbBoardSpaceTextColor.getColour());
         GUIP.setLowFoliageColor(csbLowFoliageColor.getColour());
-        GUIP.setMapsheetColor(csbMapsheetColor.getColour());
+        GUIP.setMapSheetColor(csbMapsheetColor.getColour());
 
         GUIP.setAttackArrowTransparency((Integer) attackArrowTransparency.getValue());
         GUIP.setECMTransparency((Integer) ecmTransparency.getValue());
@@ -2782,15 +2782,15 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         }
 
         CLIENT_PREFERENCES.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale.getSelectedIndex()]);
-        GUIP.setShowMapsheets(showMapsheets.isSelected());
+        GUIP.setShowMapSheets(showMapsheets.isSelected());
         GUIP.setAOHexShadows(aOHexShadows.isSelected());
         GUIP.setFloatingIso(floatingIso.isSelected());
         GUIP.setMmSymbol(mmSymbol.isSelected());
         GUIP.setLevelHighlight(levelhighlight.isSelected());
         GUIP.setShadowMap(shadowMap.isSelected());
         GUIP.setHexInclines(hexInclines.isSelected());
-        GUIP.setSoftcenter(useSoftCenter.isSelected());
-        GUIP.setAutocenter(useAutoCenter.isSelected());
+        GUIP.setSoftCenter(useSoftCenter.isSelected());
+        GUIP.setAutoCenter(useAutoCenter.isSelected());
         GUIP.setAutoSelectNextUnit(useAutoSelectNext.isSelected());
         GUIP.setGameSummaryBoardView(gameSummaryBV.isSelected());
         GUIP.setGameSummaryMinimap(gameSummaryMM.isSelected());
@@ -3093,17 +3093,17 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setUnitTooltipBlockBGColor(csbUnitTooltipBlockBGColor.getColour());
         GUIP.setUnitTooltipTerrainBGColor(csbUnitTooltipTerrainBGColor.getColour());
 
-        GUIP.setUnitTooltipHightlightColor(csbUnitTooltipHighlightColor.getColour());
+        GUIP.setUnitTooltipHighlightColor(csbUnitTooltipHighlightColor.getColour());
         GUIP.setUnitTooltipWeaponColor(csbUnitTooltipQuirkColor.getColour());
         GUIP.setUnitTooltipQuirkColor(csbUnitTooltipWeaponColor.getColour());
 
-        GUIP.setUnitTooltipArmorminiColorIntact(csbUnitTooltipArmorMiniIntact.getColour());
-        GUIP.setUnitTooltipArmorminiColorPartialDamage(csbUnitTooltipArmorMiniPartial.getColour());
-        GUIP.setUnitTooltipArmorminiColorDamaged(csbUnitTooltipArmorMiniDamaged.getColour());
+        GUIP.setUnitTooltipArmorMiniColorIntact(csbUnitTooltipArmorMiniIntact.getColour());
+        GUIP.setUnitTooltipArmorMiniColorPartialDamage(csbUnitTooltipArmorMiniPartial.getColour());
+        GUIP.setUnitTooltipArmorMiniColorDamaged(csbUnitTooltipArmorMiniDamaged.getColour());
         GUIP.setUnitToolTipArmorMiniArmorChar(unitTooltipArmorMiniArmorCharText.getText());
         GUIP.setUnitToolTipArmorMiniISChar(unitTooltipArmorMiniInternalStructureCharText.getText());
         GUIP.setUnitToolTipArmorMiniCriticalChar(unitTooltipArmorMiniCriticalCharText.getText());
-        GUIP.setUnitTooltipArmorminiDestroyedChar(unitTooltipArmorMiniDestroyedCharText.getText());
+        GUIP.setUnitTooltipArmorMiniDestroyedChar(unitTooltipArmorMiniDestroyedCharText.getText());
         GUIP.setUnitTooltipArmorMiniCapArmorChar(unitTooltipArmorMiniCapArmorCharText.getText());
         try {
             GUIP.setUnitTooltipArmorMiniUnitsPerBlock(
@@ -3120,7 +3120,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setReportLinkColor(csbReportLinkColor.getColour());
         GUIP.setReportSuccessColor(csbReportSuccessColor.getColour());
         GUIP.setReportMissColor(csbReportMissColor.getColour());
-        GUIP.setReportrInfoColo(csbReportInfoColor.getColour());
+        GUIP.setReportInfoColo(csbReportInfoColor.getColour());
         GUIP.setReportFontType(fontTypeChooserReportFont.getSelectedItem().toString());
         GUIP.setMiniReportShowSprites(showReportSprites.isSelected());
 

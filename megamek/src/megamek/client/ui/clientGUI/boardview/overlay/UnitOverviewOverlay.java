@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -341,7 +341,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
     }
 
     private void drawBars(Graphics graph, Entity entity, int x, int y) {
-        // Lets draw our armor and internal status bars
+        // Let's draw our armor and internal status bars
         int baseBarLength = 23;
         int barLength;
         double percentRemaining;

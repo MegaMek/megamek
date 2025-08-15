@@ -56,9 +56,9 @@ import megamek.common.equipment.AmmoMounted;
  */
 public class EntityActionLog implements Collection<EntityAction> {
     private final Game game;
-    private final ArrayList<EntityAction> actions = new ArrayList<EntityAction>();
+    private final ArrayList<EntityAction> actions = new ArrayList<>();
     // cache to prevent regeneration of info if action already processed
-    private final HashMap<EntityAction, String> infoCache = new HashMap<EntityAction, String>();
+    private final HashMap<EntityAction, String> infoCache = new HashMap<>();
     private final ArrayList<String> descriptions = new ArrayList<>();
 
     public EntityActionLog(Game game) {
@@ -126,13 +126,13 @@ public class EntityActionLog implements Collection<EntityAction> {
     }
 
     @Override
-    public boolean containsAll(Collection<?> c) {
-        return actions.containsAll(c);
+    public boolean containsAll(Collection<?> collection) {
+        return actions.containsAll(collection);
     }
 
     @Override
-    public boolean addAll(Collection<? extends EntityAction> c) {
-        if (!actions.addAll(c)) {
+    public boolean addAll(Collection<? extends EntityAction> entityActions) {
+        if (!actions.addAll(entityActions)) {
             return false;
         }
         rebuildDescriptions();
@@ -140,13 +140,15 @@ public class EntityActionLog implements Collection<EntityAction> {
     }
 
     @Override
-    public boolean removeAll(Collection<?> c) {
-        if (!actions.removeAll(c)) {
+    public boolean removeAll(Collection<?> collection) {
+        if (!actions.removeAll(collection)) {
             return false;
         }
-        for (var a : c) {
+
+        for (var a : collection) {
             infoCache.remove(a);
         }
+
         rebuildDescriptions();
         return true;
     }
@@ -223,28 +225,33 @@ public class EntityActionLog implements Collection<EntityAction> {
         tableDesc = !tableDesc.isEmpty() ? ' ' + tableDesc : "";
         final String toHitDesc = toHit.getValueAsString() + tableDesc;
         final Entity entity = game.getEntity(attack.getEntityId());
-        final String weaponName = (entity.getEquipment(attack.getWeaponId()).getType()).getName();
-        Entity ammoCarrier = game.getEntity(attack.getAmmoCarrier());
-        if (ammoCarrier == null) {
-            ammoCarrier = entity;
-        }
-        final AmmoMounted ammo = ammoCarrier.getAmmo(attack.getAmmoId());
-        final String ammoName = (ammo == null) ? "" : " [" + ammo.getType().getShortName() + "] ";
 
-        //add to an existing entry if possible
-        boolean found = false;
-        ListIterator<String> i = descriptions.listIterator();
-        while (i.hasNext()) {
-            String s = i.next();
-            if (s.startsWith(weaponName)) {
-                i.set(s + ", " + toHitDesc);
-                found = true;
-                break;
+        if (entity != null) {
+            final String weaponName = (entity.getEquipment(attack.getWeaponId()).getType()).getName();
+            
+            Entity ammoCarrier = game.getEntity(attack.getAmmoCarrier());
+            if (ammoCarrier == null) {
+                ammoCarrier = entity;
             }
-        }
+            final AmmoMounted ammo = ammoCarrier.getAmmo(attack.getAmmoId());
+            final String ammoName = (ammo == null) ? "" : " [" + ammo.getType().getShortName() + "] ";
 
-        if (!found) {
-            descriptions.add(weaponName + ammoName + Messages.getString("BoardView1.needs") + ' ' + toHitDesc);
+            //add to an existing entry if possible
+            boolean found = false;
+            ListIterator<String> i = descriptions.listIterator();
+            while (i.hasNext()) {
+                String s = i.next();
+                if (s.startsWith(weaponName)) {
+                    i.set(s + ", " + toHitDesc);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                descriptions.add(weaponName + ammoName + Messages.getString("BoardView1.needs") + ' ' + toHitDesc);
+            }
+
         }
     }
 }

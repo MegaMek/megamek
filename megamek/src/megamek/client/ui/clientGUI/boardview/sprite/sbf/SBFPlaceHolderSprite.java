@@ -30,7 +30,8 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.clientGUI.boardview.sprite;
+
+package megamek.client.ui.clientGUI.boardview.sprite.sbf;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -40,51 +41,40 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Transparency;
-import java.util.List;
 import java.util.Objects;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.Player;
-import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.strategicBattleSystems.SBFSomethingOutThereUnitPlaceHolder;
+import megamek.common.strategicBattleSystems.SBFUnitPlaceHolder;
 
-/**
- * Sprite for an entity. Changes whenever the entity changes. Consists of an image, drawn from the Tile Manager; facing
- * and possibly secondary facing arrows; armor and internal bars; and an identification label.
- */
-public class SBFFormationSprite extends Sprite {
+public class SBFPlaceHolderSprite extends Sprite {
 
     private static final int INSET = 10;
 
-    private final SBFFormation formation;
+    private final SBFUnitPlaceHolder placeHolder;
     private final Player owner;
-    private final int positionInHex;
-    private final int formationCountInHex;
 
     /** The area actually covered by the icon */
     private Rectangle hitBox;
 
     /** Used to color the label when this unit is selected for movement etc. */
-    private boolean isSelected;
-
-
-    public SBFFormationSprite(BoardView boardView, SBFFormation formation, Player owner, SBFGame game) {
+    //    private boolean isSelected;
+    public SBFPlaceHolderSprite(BoardView boardView, SBFUnitPlaceHolder placeHolder, Player owner, SBFGame game) {
         super(boardView);
-        this.formation = Objects.requireNonNull(formation);
+        this.placeHolder = Objects.requireNonNull(placeHolder);
         this.owner = owner;
-        List<SBFFormation> formationsInHex = game.getActiveFormationsAt(formation.getPosition());
-        formationCountInHex = formationsInHex.size();
-        positionInHex = MathUtility.clamp(formationsInHex.indexOf(formation), 0, 3);
         getBounds();
     }
 
     @Override
     public Rectangle getBounds() {
         bounds = new Rectangle(0, 0, bv.getHexSize().width, bv.getHexSize().height);
-        Point ePos = bv.getHexLocation(formation.getPosition().coords());
+        Point ePos = bv.getHexLocation(placeHolder.getPosition().coords());
         bounds.setLocation(ePos.x, ePos.y);
 
         hitBox = new Rectangle(bounds.x + INSET, bounds.y + INSET,
@@ -105,16 +95,7 @@ public class SBFFormationSprite extends Sprite {
         UIUtil.setHighQualityRendering(graph);
 
         graph.scale(bv.getScale(), bv.getScale());
-        graph.translate(positionInHex > 1 ? 42 : 0, (positionInHex % 2 == 1) ? 36 : 0);
-        double scaling = formationCountInHex > 1 ? 0.5 : 1;
-        graph.scale(scaling, scaling);
-        if (isSelected) {
-            graph.setColor(Color.WHITE);
-        } else if (formation.isDone()) {
-            graph.setColor(Color.DARK_GRAY);
-        } else {
-            graph.setColor(Color.GREEN);
-        }
+        graph.setColor(Color.MAGENTA);
         graph.setStroke(new BasicStroke(2));
         graph.drawImage(owner.getCamouflage().getImage(), INSET + INSET / 2, INSET + INSET / 2,
               84 - 3 * INSET, 72 - 3 * INSET, null);
@@ -123,29 +104,17 @@ public class SBFFormationSprite extends Sprite {
         graph.setColor(owner.getColour().getColour());
         graph.fillRoundRect(INSET, INSET, 84 - 2 * INSET, 72 - 2 * INSET,
               INSET / 2, INSET / 2);
-        new StringDrawer(formation.getType().toString()).at(42, 36).absoluteCenter().color(Color.DARK_GRAY).draw(graph);
+        if (placeHolder instanceof SBFSomethingOutThereUnitPlaceHolder hasType) {
+            new StringDrawer(hasType.getType().toString()).at(42, 36)
+                  .absoluteCenter()
+                  .color(Color.DARK_GRAY)
+                  .draw(graph);
+        }
         graph.dispose();
     }
 
     @Override
     public boolean isInside(Point point) {
         return hitBox.contains(point.x, point.y);
-    }
-
-    /** Marks the entity as selected for movement etc., recoloring the label */
-    public void setSelected(boolean status) {
-        if (isSelected != status) {
-            isSelected = status;
-            prepare();
-        }
-    }
-
-    /** Returns if the entity is marked as selected for movement etc., recoloring the label */
-    public boolean getSelected() {
-        return isSelected;
-    }
-
-    public SBFFormation getFormation() {
-        return formation;
     }
 }

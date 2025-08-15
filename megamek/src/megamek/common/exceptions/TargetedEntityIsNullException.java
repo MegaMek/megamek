@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -17,7 +16,7 @@
  * A copy of the GPL should have been included with this project;
  * if not, see <https://www.gnu.org/licenses/>.
  *
- * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * NOTICE: The MegaMek organization is attackingPoint non-profit group of volunteers
  * creating free software for the BattleTech community.
  *
  * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
@@ -31,15 +30,14 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.clientGUI;
+package megamek.common.exceptions;
 
-import megamek.client.ui.panels.DialogOptionComponentYPanel;
-import megamek.common.options.IOption;
-
-/** @author Cord Awtry */
-public interface DialogOptionListener {
-
-    void optionClicked(DialogOptionComponentYPanel comp, IOption option, boolean state);
-
-    void optionSwitched(DialogOptionComponentYPanel comp, IOption option, int i);
+/**
+ * General exception for any place there is an Attacking Entity that is Null when it shouldn't be. To help with tracking
+ * down issues, pass in the name of the class it is calling from or some other information.
+ */
+public class TargetedEntityIsNullException extends RuntimeException {
+    public TargetedEntityIsNullException(String message) {
+        super(message);
+    }
 }

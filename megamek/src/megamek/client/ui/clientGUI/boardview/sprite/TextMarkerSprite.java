@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -48,14 +48,12 @@ import megamek.common.Coords;
 public class TextMarkerSprite extends HexSprite {
 
     private final String spriteText;
-    private final Color spriteColor;
     private final StringDrawer textDrawer;
 
     public TextMarkerSprite(BoardView boardView1, Coords loc, String text, Color color) {
         super(boardView1, loc);
         spriteText = text;
-        spriteColor = color;
-        textDrawer = new StringDrawer(spriteText).color(spriteColor).center();
+        textDrawer = new StringDrawer(spriteText).color(color).center();
     }
 
     @Override

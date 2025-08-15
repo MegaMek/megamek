@@ -136,7 +136,7 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
         }
 
         String txt = UnitToolTip.getEntityTipUnitDisplay(entity, localPlayer).toString();
-        txt += PilotToolTip.getCrewAdvs(entity, true).toString();
+        txt += PilotToolTip.getCrewAdvantages(entity, true).toString();
         return UnitToolTip.wrapWithHTML(txt);
     }
 

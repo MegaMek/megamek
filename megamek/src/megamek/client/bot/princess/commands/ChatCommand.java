@@ -79,7 +79,7 @@ public interface ChatCommand {
      *
      * @return String with the arguments representation
      */
-    default String getArgumentsRepr() {
+    default String getArgumentsRepresentation() {
         StringBuilder help = new StringBuilder();
         for (Argument<?> arg : defineArguments()) {
             help.append(arg.getRepr());

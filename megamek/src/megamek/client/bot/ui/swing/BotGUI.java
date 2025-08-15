@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,23 +40,12 @@ import megamek.client.ui.dialogs.buttonDialogs.BotReadmeNagDialog;
 import megamek.client.ui.dialogs.helpDialogs.BotHelpDialog;
 import megamek.common.event.*;
 
-public class BotGUI implements GameListener {
-    private JFrame frame;
-    private BotClient bot;
-
-    public BotGUI(final JFrame frame, final BotClient botClient) {
-        this.frame = frame;
-        this.bot = botClient;
-    }
-
-    public JFrame getFrame() {
-        return frame;
-    }
+public record BotGUI(JFrame frame, BotClient bot) implements GameListener {
 
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
         if (bot.getGame().getPhase().isLounge() || bot.getGame().getPhase().isStartingScenario()) {
-            if (new BotReadmeNagDialog(getFrame()).showDialog().isConfirmed()) {
+            if (new BotReadmeNagDialog(frame()).showDialog().isConfirmed()) {
                 new BotHelpDialog(frame).setVisible(true);
             }
         }

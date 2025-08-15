@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -112,7 +112,7 @@ public abstract class PathRanker implements IPathRanker {
 
         // Let's try to whittle down this list.
         List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance);
-        logger.debug("Validated " + validPaths.size() + " out of " + movePaths.size() + " possible paths.");
+        logger.debug("Validated {} out of {} possible paths.", validPaths.size(), movePaths.size());
 
         // If the heat map of friendly activity has sufficient data, use the nearest hot
         // spot as
@@ -128,7 +128,6 @@ public abstract class PathRanker implements IPathRanker {
             final BigDecimal numberPaths = new BigDecimal(validPaths.size());
             BigDecimal count = BigDecimal.ZERO;
             BigDecimal interval = new BigDecimal(5);
-            boolean withHeader = true;
             boolean pathsHaveExpectedDamage = false;
             for (MovePath path : validPaths) {
                 try {
@@ -138,7 +137,6 @@ public abstract class PathRanker implements IPathRanker {
 
                     returnPaths.add(rankedPath);
 
-                    withHeader = false;
                     // we want to keep track of if any of the paths we've considered have some kind
                     // of damage potential
                     pathsHaveExpectedDamage |= (rankedPath.getExpectedDamage() > 0);
@@ -152,7 +150,7 @@ public abstract class PathRanker implements IPathRanker {
                         interval = percent.add(new BigDecimal(5));
                     }
                 } catch (Exception e) {
-                    logger.error(e, e.getMessage() + "while processing " + path);
+                    logger.error(e, "{} while processing {}", e.getMessage(), path);
                 }
             }
             Entity mover = movePaths.get(0).getEntity();
@@ -437,10 +435,6 @@ public abstract class PathRanker implements IPathRanker {
      * <p>
      * XXX Sleet01: add fall pilot damage, skid damage, and low-gravity overspeed damage calcs
      *
-     * @param movingEntity
-     * @param path
-     *
-     * @return
      */
     protected double calculateMovePathPSRDamage(Entity movingEntity, MovePath path) {
         double damage = 0.0;
@@ -627,8 +621,7 @@ public abstract class PathRanker implements IPathRanker {
         Coords center = new Coords(xCenter, yCenter);
 
         if (!board.contains(center)) {
-            logger.error("Center of ally group " + center.toFriendlyString()
-                  + " not within board boundaries.");
+            logger.error("Center of ally group {} not within board boundaries.", center.toFriendlyString());
             return null;
         }
 

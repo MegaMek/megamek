@@ -53,9 +53,9 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.*;
 
-import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
+import megamek.client.bot.princess.geometry.HexLine;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.equipment.ArmorType;

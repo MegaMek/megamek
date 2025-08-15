@@ -58,9 +58,9 @@ import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.MMConstants;
 import megamek.client.TimerSingleton;
-import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.PathEnumerator;
 import megamek.client.bot.princess.Princess;
+import megamek.client.bot.princess.geometry.ConvexBoardArea;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;

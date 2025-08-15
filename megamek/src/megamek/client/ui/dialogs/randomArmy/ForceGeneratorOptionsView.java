@@ -481,7 +481,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         fd.setYear(forceDesc.getYear());
         fd.setFaction(forceDesc.getFaction());
         fd.setUnitType(forceDesc.getUnitType());
-        fd.setEschelon(forceDesc.getEschelon());
+        fd.setEchelon(forceDesc.getEchelon());
         fd.setAugmented(forceDesc.isAugmented());
         fd.setSizeMod(forceDesc.getSizeMod());
         fd.getFlags().addAll(forceDesc.getFlags());
@@ -712,7 +712,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbFormation.removeAllItems();
 
         if (tocNode != null) {
-            ValueNode n = tocNode.findEschelons(forceDesc);
+            ValueNode n = tocNode.findEchelons(forceDesc);
             if (n != null) {
                 formationDisplayNames.clear();
                 for (String formation : n.getContent().split(",")) {
@@ -730,7 +730,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                             }
                         }
                     } while (fn == null && rs != null);
-                    String formName = (fn != null) ? fn.getEschelonName() : formation;
+                    String formName = (fn != null) ? fn.getEchelonName() : formation;
                     if (formation.endsWith("+")) {
                         formName = Messages.getString("ForceGeneratorDialog.reinforced") + formName;
                     }
@@ -745,7 +745,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 }
             }
         } else {
-            logger.warn("No eschelon node found.");
+            logger.warn("No echelon node found.");
         }
 
         if (hasCurrent) {
@@ -949,7 +949,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     private void configureNetworks(ForceDescriptor fd) {
         if (fd.getFlags().contains("c3")) {
-            Entity master = fd.getSubforces()
+            Entity master = fd.getSubForces()
                   .stream()
                   .map(ForceDescriptor::getEntity)
                   .filter(en -> (null != en) && (en.hasC3M() || en.hasC3MM()))
@@ -957,7 +957,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                   .orElse(null);
             if (null != master) {
                 int c3s = 0;
-                for (ForceDescriptor sf : fd.getSubforces()) {
+                for (ForceDescriptor sf : fd.getSubForces()) {
                     if ((null != sf.getEntity()) &&
                           (sf.getEntity().getId() != master.getId()) &&
                           sf.getEntity().hasC3S()) {
@@ -975,7 +975,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             // any C3i units that happen to be present.
             Entity first = null;
             int nodes = 0;
-            for (ForceDescriptor sf : fd.getSubforces()) {
+            for (ForceDescriptor sf : fd.getSubForces()) {
                 if ((null != sf.getEntity()) && sf.getEntity().hasC3i()) {
                     sf.getEntity().setC3UUID();
                     if (null == first) {
@@ -991,12 +991,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 }
             }
         }
-        fd.getSubforces().forEach(this::configureNetworks);
+        fd.getSubForces().forEach(this::configureNetworks);
         fd.getAttached().forEach(this::configureNetworks);
     }
 
     private void setFormation(String esch) {
-        forceDesc.setEschelon(MathUtility.parseInt(esch.replaceAll("[^0-9]", ""), 0));
+        forceDesc.setEchelon(MathUtility.parseInt(esch.replaceAll("[^0-9]", ""), 0));
         forceDesc.setAugmented(esch.contains("^"));
         if (esch.endsWith("+")) {
             forceDesc.setSizeMod(1);

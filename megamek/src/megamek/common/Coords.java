@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Objects;
 
 import jakarta.xml.bind.annotation.XmlElement;
-import megamek.client.bot.princess.BotGeometry.HexLine;
+import megamek.client.bot.princess.geometry.HexLine;
 import megamek.common.annotations.Nullable;
 
 /**

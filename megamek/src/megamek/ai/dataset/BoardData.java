@@ -52,7 +52,7 @@ public class BoardData extends EntityDataMap<BoardData.Field> {
         BOARD_NAME,
         WIDTH,
         HEIGHT,
-        HEX_DATA; // Special field that contains all hex data
+        HEX_DATA // Special field that contains all hex data
     }
 
     /**

@@ -295,14 +295,14 @@ public class ForceGeneratorViewUi implements ActionListener {
 
     private void configureNetworks(ForceDescriptor fd) {
         if (fd.getFlags().contains("c3")) {
-            Entity master = fd.getSubforces().stream().map(ForceDescriptor::getEntity)
+            Entity master = fd.getSubForces().stream().map(ForceDescriptor::getEntity)
                   .filter(en -> modelChosen.hasEntity(en)
                         && (en.hasC3M() || en.hasC3MM()))
                   .findFirst().orElse(null);
             if (null != master) {
                 master.setC3UUID();
                 int c3s = 0;
-                for (ForceDescriptor sf : fd.getSubforces()) {
+                for (ForceDescriptor sf : fd.getSubForces()) {
                     if (modelChosen.hasEntity(sf.getEntity())
                           && !sf.getEntity().getExternalIdAsString().equals(master.getExternalIdAsString())
                           && sf.getEntity().hasC3S()) {
@@ -321,7 +321,7 @@ public class ForceGeneratorViewUi implements ActionListener {
             // any C3i units that happen to be present.
             String netId = null;
             int nodes = 0;
-            for (ForceDescriptor sf : fd.getSubforces()) {
+            for (ForceDescriptor sf : fd.getSubForces()) {
                 if (modelChosen.hasEntity(sf.getEntity())
                       && sf.getEntity().hasC3i()) {
                     sf.getEntity().setC3UUID();
@@ -341,7 +341,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                 }
             }
         }
-        fd.getSubforces().forEach(this::configureNetworks);
+        fd.getSubForces().forEach(this::configureNetworks);
         fd.getAttached().forEach(this::configureNetworks);
     }
 
@@ -351,7 +351,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         if (null != fd) {
             lblOrganization.setText(Ruleset.findRuleset(fd).getEschelonNames(fd.getUnitType() == null
                   ? ""
-                  : UnitType.getTypeName(fd.getUnitType())).get(fd.getEschelonCode()));
+                  : UnitType.getTypeName(fd.getUnitType())).get(fd.getEchelonCode()));
             lblFaction.setText(RATGenerator.getInstance().getFaction(fd.getFaction()).getName(fd.getYear()));
             lblRating.setText(SkillLevel.values()[fd.getExperience()].toString()
                   + ((fd.getRating() == null) ? "" : "/" + fd.getRating()));
@@ -533,8 +533,8 @@ public class ForceGeneratorViewUi implements ActionListener {
         public boolean isLeaf(Object node) {
             return (getChildCount(node) == 0)
                   || ((node instanceof ForceDescriptor forceDescriptor)
-                  && (forceDescriptor.getEschelon() != null)
-                  && (forceDescriptor.getEschelon() == 0));
+                  && (forceDescriptor.getEchelon() != null)
+                  && (forceDescriptor.getEchelon() == 0));
         }
 
         @Override
@@ -655,7 +655,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                     addEntity(fd.getEntity());
                 }
             }
-            fd.getSubforces().forEach(this::addEntities);
+            fd.getSubForces().forEach(this::addEntities);
             fd.getAttached().forEach(this::addEntities);
         }
 

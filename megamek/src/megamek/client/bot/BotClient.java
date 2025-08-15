@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -81,7 +81,7 @@ import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
 public abstract class BotClient extends Client {
-    private final static MMLogger logger = MMLogger.create(BotClient.class);
+    private final static MMLogger LOGGER = MMLogger.create(BotClient.class);
 
     public static final int BOT_TURN_RETRY_COUNT = 3;
 
@@ -155,11 +155,11 @@ public abstract class BotClient extends Client {
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 calculatedTurnThisPhase = false;
                 if (e.getOldPhase().isSimultaneous(getGame())) {
-                    logger.info(String.format("%s: Calculated %d / %d turns for phase %s",
+                    LOGGER.info("{}: Calculated {} / {} turns for phase {}",
                           getName(),
                           calculatedTurnsThisPhase,
                           getGame().getEntitiesOwnedBy(getLocalPlayer()),
-                          e.getOldPhase()));
+                          e.getOldPhase());
                 }
                 calculatedTurnsThisPhase = 0;
             }
@@ -176,6 +176,8 @@ public abstract class BotClient extends Client {
 
             @Override
             public void gameClientFeedbackRequest(GameCFREvent evt) {
+                WeaponAttackAction waa;
+
                 switch (evt.getCFRType()) {
                     case CFR_DOMINO_EFFECT:
                         // This will always send a "no action" response.
@@ -186,7 +188,7 @@ public abstract class BotClient extends Client {
                     case CFR_AMS_ASSIGN:
                         // Picks the WAA with the highest expected damage,
                         // essentially same as if the auto_ams option was on
-                        WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, evt.getWAAs(), true);
+                        waa = Compute.getHighestExpectedDamage(game, evt.getWAAs(), true);
                         sendAMSAssignCFRResponse(evt.getWAAs().indexOf(waa));
                         break;
                     case CFR_APDS_ASSIGN:
@@ -419,8 +421,6 @@ public abstract class BotClient extends Client {
                 case DEPLOYMENT:
                     initialize();
                     break;
-                case PREMOVEMENT:
-                    break;
                 case MOVEMENT:
                     /*
                      * Do not uncomment this. It is so that bots stick around till end of game
@@ -446,13 +446,9 @@ public abstract class BotClient extends Client {
                     }
                     initMovement();
                     break;
-                case PREFIRING:
-                    break;
                 case FIRING:
                     postMovementProcessing();
                     initFiring();
-                    break;
-                case PHYSICAL:
                     break;
                 case TARGETING:
                     initTargeting();
@@ -482,7 +478,7 @@ public abstract class BotClient extends Client {
                     break;
             }
         } catch (Throwable t) {
-            logger.error(t, "changePhase");
+            LOGGER.error(t, "changePhase");
         }
     }
 
@@ -519,7 +515,7 @@ public abstract class BotClient extends Client {
             // Save the entities to the file.
             EntityListFile.saveTo(unitFile, living);
         } catch (Exception ex) {
-            logger.error(ex, "runEndGame");
+            LOGGER.error(ex, "runEndGame");
             doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
         }
     }
@@ -555,7 +551,7 @@ public abstract class BotClient extends Client {
                 try {
                     Thread.sleep(Compute.randomInt(1000) + 500);
                 } catch (InterruptedException e) {
-                    logger.error(e, "calculateMyTurn");
+                    LOGGER.error(e, "calculateMyTurn");
                 }
             }
         }
@@ -592,7 +588,7 @@ public abstract class BotClient extends Client {
                 } else {
                     // This attempt to calculate the turn failed, but we don't want to log
                     // an exception here.
-                    logger.warn("Null move path; entity was {}", ((moverId != -1) ? "ID " + moverId : "Unknown"));
+                    LOGGER.warn("Null move path; entity was {}", ((moverId != -1) ? "ID " + moverId : "Unknown"));
                     return false;
                 }
             } else if (game.getPhase().isFiring()) {
@@ -624,7 +620,7 @@ public abstract class BotClient extends Client {
 
             return true;
         } catch (Exception ex) {
-            logger.error(ex, "calculateMyTurnWorker");
+            LOGGER.error(ex, "calculateMyTurnWorker");
             return false;
         }
     }
@@ -1022,20 +1018,26 @@ public abstract class BotClient extends Client {
     // Missile hits table
     // Some of these are interpolated for odd weapons sizes found in Protos and
     // new BAs
-    private static float[] expectedHitsByRackSize = { 0.0f, 1.0f, 1.58f, 2.0f, 2.63f, 3.17f, 4.0f, 4.49f, 4.98f, 5.47f,
-                                                      6.31f, 7.23f, 8.14f, 8.59f, 9.04f, 9.5f, 0.0f, 0.0f, 0.0f, 0.0f,
-                                                      12.7f };
+    private static final float[] expectedHitsByRackSize = { 0.0f, 1.0f, 1.58f, 2.0f, 2.63f, 3.17f, 4.0f, 4.49f, 4.98f,
+                                                            5.47f,
+                                                            6.31f, 7.23f, 8.14f, 8.59f, 9.04f, 9.5f, 0.0f, 0.0f, 0.0f,
+                                                            0.0f,
+                                                            12.7f };
 
     /**
      * Determines the expected damage of a weapon attack, based on to-hit, salvo sizes, etc. This has been copied almost
      * wholesale from Compute.getExpectedDamage; the log file print commands were removed due to excessive data
      * generated
      */
-    private static float getDeployDamage(Game g, WeaponAttackAction waa, List<ECMInfo> allECMInfo) {
-        Entity attacker = g.getEntity(waa.getEntityId());
+    private static float getDeployDamage(Game game, WeaponAttackAction weaponAttackAction, List<ECMInfo> allECMInfo) {
+        Entity attacker = game.getEntity(weaponAttackAction.getEntityId());
+        if (attacker == null) {
+            return 0.0f;
+        }
+
         boolean naturalAptGunnery = attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-        Mounted<?> weapon = attacker.getEquipment(waa.getWeaponId());
-        ToHitData hitData = waa.toHit(g, allECMInfo);
+        Mounted<?> weapon = attacker.getEquipment(weaponAttackAction.getWeaponId());
+        ToHitData hitData = weaponAttackAction.toHit(game, allECMInfo);
         if (hitData.getValue() > 12) {
             return 0.0f;
         }
@@ -1066,7 +1068,7 @@ public abstract class BotClient extends Client {
                 fHits = expectedHitsByRackSize[wt.getRackSize()];
             }
             // adjust for previous AMS
-            List<WeaponMounted> vCounters = waa.getCounterEquipment();
+            List<WeaponMounted> vCounters = weaponAttackAction.getCounterEquipment();
             if (wt.hasFlag(WeaponType.F_MISSILE) && vCounters != null) {
                 for (WeaponMounted vCounter : vCounters) {
                     WeaponType type = vCounter.getType();
@@ -1185,7 +1187,7 @@ public abstract class BotClient extends Client {
             // Don't do anything, just return a null and allow the bot to remain silent
             return null;
         } catch (Exception ex) {
-            logger.error(ex, "Error while reading ./mmconf/botmessages.txt");
+            LOGGER.error(ex, "Error while reading ./mmconf/botmessages.txt");
             return null;
         }
 
@@ -1216,7 +1218,7 @@ public abstract class BotClient extends Client {
             String oldName = getName();
             String newName = (String) (inP.getObject(0));
             if (!this.equals(bots.get(oldName))) {
-                logger.error("Name correction arrived at incorrect BotClient!");
+                LOGGER.error("Name correction arrived at incorrect BotClient!");
                 return;
             }
             bots.remove(oldName);
@@ -1385,11 +1387,9 @@ public abstract class BotClient extends Client {
             if (this == o) {
                 return true;
             }
-            if (!(o instanceof RankedCoords)) {
+            if (!(o instanceof RankedCoords coords1)) {
                 return false;
             }
-
-            RankedCoords coords1 = (RankedCoords) o;
 
             if (Double.compare(coords1.fitness, fitness) != 0) {
                 return false;
@@ -1404,8 +1404,7 @@ public abstract class BotClient extends Client {
 
         @Override
         public int hashCode() {
-            long temp = Double.doubleToLongBits(fitness);
-            return 31 * coords.hashCode() + (int) (temp ^ (temp >>> 32));
+            return 31 * coords.hashCode() + Double.hashCode(fitness);
         }
 
         @Override

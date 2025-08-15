@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,8 +44,8 @@ import megamek.common.moves.MovePath;
  * intended to be basically stateless.
  */
 public class PathRankerState {
-    private Map<MovePath.Key, Double> pathSuccessProbabilities = new HashMap<>();
-    private Map<Coords, Double> incomingFriendlyArtilleryDamage = new HashMap<>();
+    private final Map<MovePath.Key, Double> pathSuccessProbabilities = new HashMap<>();
+    private final Map<Coords, Double> incomingFriendlyArtilleryDamage = new HashMap<>();
 
     /**
      * The map of success probabilities for given move paths. The calculation of a move success probability is pretty

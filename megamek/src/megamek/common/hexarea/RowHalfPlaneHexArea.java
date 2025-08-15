@@ -35,7 +35,7 @@ package megamek.common.hexarea;
 
 import java.util.Objects;
 
-import megamek.client.bot.princess.BotGeometry;
+import megamek.client.bot.princess.geometry.HexLine;
 import megamek.common.Board;
 import megamek.common.Coords;
 
@@ -50,7 +50,7 @@ public class RowHalfPlaneHexArea extends AbstractHexArea {
     public enum HalfPlaneType {RIGHT, LEFT}
 
     private final HalfPlaneType planeDirection;
-    private final BotGeometry.HexLine hexLine;
+    private final HexLine hexLine;
 
     /**
      * Creates a half plane, delimited by a hex line through the given point going in the given direction, wherein the
@@ -63,7 +63,7 @@ public class RowHalfPlaneHexArea extends AbstractHexArea {
      */
     public RowHalfPlaneHexArea(Coords point, int direction, HalfPlaneType planeDirection) {
         this.planeDirection = Objects.requireNonNull(planeDirection);
-        hexLine = new BotGeometry.HexLine(Objects.requireNonNull(point), direction);
+        hexLine = new HexLine(Objects.requireNonNull(point), direction);
     }
 
     @Override

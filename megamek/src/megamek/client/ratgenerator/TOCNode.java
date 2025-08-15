@@ -38,19 +38,19 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Contains details about which units and eschelon levels are available to this unit in given eras.
+ * Contains details about which units and echelon levels are available to this unit in given eras.
  *
  * @author Neoancient
  */
 public class TOCNode extends RulesetNode {
     protected ArrayList<ValueNode> unitTypeNodes;
-    protected ArrayList<ValueNode> eschelonNodes;
+    protected ArrayList<ValueNode> echelonNodes;
     protected ArrayList<ValueNode> ratingNodes;
     protected ArrayList<ValueNode> flagNodes;
 
     protected TOCNode() {
         unitTypeNodes = new ArrayList<>();
-        eschelonNodes = new ArrayList<>();
+        echelonNodes = new ArrayList<>();
         ratingNodes = new ArrayList<>();
         flagNodes = new ArrayList<>();
     }
@@ -64,8 +64,8 @@ public class TOCNode extends RulesetNode {
         return null;
     }
 
-    public ValueNode findEschelons(ForceDescriptor fd) {
-        for (ValueNode n : eschelonNodes) {
+    public ValueNode findEchelons(ForceDescriptor fd) {
+        for (ValueNode n : echelonNodes) {
             if (n.matches(fd)) {
                 return n;
             }
@@ -114,11 +114,11 @@ public class TOCNode extends RulesetNode {
                         }
                     }
                     break;
-                case "eschelon":
+                case "echelon":
                     for (int y = 0; y < wn.getChildNodes().getLength(); y++) {
                         Node wn2 = wn.getChildNodes().item(y);
                         if (wn2.getNodeName().equals("option")) {
-                            eschelonNodes.add(ValueNode.createFromXml(wn2));
+                            echelonNodes.add(ValueNode.createFromXml(wn2));
                         }
                     }
                     break;

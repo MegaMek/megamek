@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -385,22 +385,27 @@ public class UtilityPathRanker extends BasicPathRanker {
             int currentDistanceToHome = distanceToHomeEdge(path.getEntity().getPosition(),
                   path.getEntity().getBoardId(), getOwner().getHomeEdge(movingUnit), game);
 
-            double deltaDistance = currentDistanceToHome - newDistanceToHome;
-            double selfPreservationMod;
-
-            // normally, we favor being closer to the edge we're trying to get to
-            if (deltaDistance > 0 && currentDistanceToHome > 0) {
-                selfPreservationMod = 1.0 - newDistanceToHome / (double) currentDistanceToHome;
-            } else if (deltaDistance < 0) {
-                selfPreservationMod = 1.0 - currentDistanceToHome / (double) newDistanceToHome;
-            } else {
-                selfPreservationMod = 1.0;
-            }
+            double selfPreservationMod = getSelfPreservationMod(currentDistanceToHome, newDistanceToHome);
 
             return clampUlp1(1.1 - weight + selfPreservationMod * weight);
         }
         logger.trace("self preservation mod [1] - not moving nor forced to withdraw");
         return 1.0;
+    }
+
+    private static double getSelfPreservationMod(int currentDistanceToHome, int newDistanceToHome) {
+        double deltaDistance = currentDistanceToHome - newDistanceToHome;
+        double selfPreservationMod;
+
+        // normally, we favor being closer to the edge we're trying to get to
+        if (deltaDistance > 0 && currentDistanceToHome > 0) {
+            selfPreservationMod = 1.0 - newDistanceToHome / (double) currentDistanceToHome;
+        } else if (deltaDistance < 0) {
+            selfPreservationMod = 1.0 - currentDistanceToHome / (double) newDistanceToHome;
+        } else {
+            selfPreservationMod = 1.0;
+        }
+        return selfPreservationMod;
     }
 
     private double calculateExposurePenalty(Entity unit, MovePath movePath, List<Entity> enemies) {

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -109,21 +109,14 @@ public abstract class ClientCommand {
     }
 
     public static String getDirection(int arg) {
-        switch (arg) {
-            case 0:
-                return "N";
-            case 1:
-                return "NE";
-            case 2:
-                return "SE";
-            case 3:
-                return "S";
-            case 4:
-                return "SW";
-            case 5:
-                return "NW";
-            default:
-                return "Unk";
-        }
+        return switch (arg) {
+            case 0 -> "N";
+            case 1 -> "NE";
+            case 2 -> "SE";
+            case 3 -> "S";
+            case 4 -> "SW";
+            case 5 -> "NW";
+            default -> "Unk";
+        };
     }
 }

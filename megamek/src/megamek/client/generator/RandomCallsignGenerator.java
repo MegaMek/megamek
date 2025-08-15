@@ -110,7 +110,7 @@ public class RandomCallsignGenerator {
                 }
             }
         } catch (Exception e) {
-            logger.error(e, "Failed to populate callsigns from " + file);
+            logger.error(e, "Failed to populate callsigns from {}", file);
         }
     }
     // endregion Initialization

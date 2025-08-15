@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -59,24 +59,29 @@ public class LookCommand extends ClientCommand {
     public String run(String[] args) {
         Coords pos = getClientGUI().getCurrentHex();
         Hex hex = getClient().getGame().getBoard().getHex(pos);
-        String str;
+        StringBuilder str;
         if (hex != null) {
-            str = "Looking around hex (" + (pos.getX() + 1) + ", "
-                  + (pos.getY() + 1) + ")\n";
+            str = new StringBuilder("Looking around hex (" + (pos.getX() + 1) + ", "
+                  + (pos.getY() + 1) + ")\n");
             for (String dir : directions) {
                 Coords coord = pos.translated(dir);
-                str += "To the " + dir + " (" + (coord.getX() + 1) + ", "
-                      + (coord.getY() + 1) + "): ";
+                str.append("To the ")
+                      .append(dir)
+                      .append(" (")
+                      .append(coord.getX() + 1)
+                      .append(", ")
+                      .append(coord.getY() + 1)
+                      .append("): ");
                 hex = getClient().getGame().getBoard().getHex(coord);
                 if (hex != null) {
-                    str += hex.toString();
+                    str.append(hex);
                 } else {
-                    str += "off map.\n";
+                    str.append("off map.\n");
                 }
             }
         } else {
-            str = "No current hex, or current hex off board.";
+            str = new StringBuilder("No current hex, or current hex off board.");
         }
-        return str;
+        return str.toString();
     }
 }

@@ -42,7 +42,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import megamek.client.generator.RandomUnitGenerator.RatEntry;
 import megamek.common.MekSummary;
 import org.junit.jupiter.api.Test;
 

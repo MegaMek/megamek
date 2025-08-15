@@ -68,7 +68,7 @@ public class ReconfigurationParameters {
     public long enemyOffBoard = 0;
     public long enemyECMCount = 0;
     public long enemyTSMCount = 0;
-    public HashSet<String> enemyFactions = new HashSet<String>();
+    public HashSet<String> enemyFactions = new HashSet<>();
 
     // Friendly stats
     //
@@ -84,7 +84,6 @@ public class ReconfigurationParameters {
     public long friendlyECMCount = 0;
     public long friendlyInfantry = 0;
     public long friendlyBattleArmor = 0;
-    public long friendlyHeatGens = 0;
 
     // User-selected directives
     // Nukes may be banned for a given team but allowed in general (boo, hiss)

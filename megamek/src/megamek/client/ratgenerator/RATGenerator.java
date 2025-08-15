@@ -1378,10 +1378,13 @@ public class RATGenerator {
             LOGGER.error("{} is not a directory", dir);
         } else {
             loadFactions(dir);
+            File[] files = dir.listFiles();
 
-            for (File f : dir.listFiles()) {
-                if (f.getName().matches("\\d+\\.xml")) {
-                    eraSet.add(Integer.parseInt(f.getName().replace(".xml", "")));
+            if (files != null) {
+                for (File file : files) {
+                    if (file.getName().matches("\\d+\\.xml")) {
+                        eraSet.add(Integer.parseInt(file.getName().replace(".xml", "")));
+                    }
                 }
             }
         }

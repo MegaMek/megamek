@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,19 +32,37 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.bot.princess.commands;
+package megamek.client.generator;
 
-import megamek.client.bot.princess.Princess;
-import megamek.server.commands.arguments.Arguments;
+import java.util.Vector;
 
 /**
- * Command to do nothing because it is marked to be removed.
+ * Keeps track of a RAT entry, stores the name of a unit in the RAT, and its change of appearing (weight).
  *
- * @author Luana Coppio
+ * @author arlith
  */
-public class VerboseCommand implements ChatCommand {
-    @Override
-    public void execute(Princess princess, Arguments arguments) {
-        princess.sendChat("This command does nothing.");
+class RatEntry {
+    private Vector<String> units;
+    private Vector<Float> weights;
+
+    RatEntry() {
+        setUnits(new Vector<>());
+        setWeights(new Vector<>());
+    }
+
+    public Vector<String> getUnits() {
+        return units;
+    }
+
+    public void setUnits(Vector<String> units) {
+        this.units = units;
+    }
+
+    public Vector<Float> getWeights() {
+        return weights;
+    }
+
+    public void setWeights(Vector<Float> weights) {
+        this.weights = weights;
     }
 }

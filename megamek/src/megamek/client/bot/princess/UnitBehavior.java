@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,7 +46,7 @@ import megamek.common.Mek;
 import megamek.logging.MMLogger;
 
 public class UnitBehavior {
-    private final static MMLogger logger = MMLogger.create(UnitBehavior.class);
+    private final static MMLogger LOGGER = MMLogger.create(UnitBehavior.class);
 
     public enum BehaviorType {
         // this unit is under 'forced withdrawal' due to being crippled
@@ -68,9 +68,6 @@ public class UnitBehavior {
     private final Map<Integer, BehaviorType> entityBehaviors = new HashMap<>();
     private final Map<Integer, Deque<Coords>> entityWaypoints = new HashMap<>();
 
-    /**
-     * Worker function that calculates a unit's desired behavior
-     */
     /**
      * Worker function that calculates a unit's desired behavior
      */
@@ -138,12 +135,7 @@ public class UnitBehavior {
 
     public boolean isDestinationValidForEntity(Entity entity, Coords destination, Princess owner) {
         var value = owner.getClusterTracker().getDestinationCoords(entity, destination, true).isEmpty();
-        logger.debug("Checking if destination is valid for entity "
-              + entity.getId()
-              + ": "
-              + destination
-              + " -> "
-              + value);
+        LOGGER.debug("Checking if destination is valid for entity {}: {} -> {}", entity.getId(), destination, value);
         return value;
     }
 
@@ -152,13 +144,15 @@ public class UnitBehavior {
         for (var waypoint : waypoints) {
             if (isDestinationValidForEntity(entity, waypoint, owner)) {
                 // just discard any invalid waypoint
-                logger.info("Discarding invalid waypoint for entity " + entity.getId() + ": " + waypoint);
+                LOGGER.info("addEntityWaypoint - Discarding invalid waypoint for entity {}: {}",
+                      entity.getId(),
+                      waypoint);
                 continue;
             }
             coords.add(waypoint);
         }
         entityWaypoints.computeIfAbsent(entity.getId(), k -> new ArrayDeque<>()).addAll(coords);
-        logger.info("Adding waypoints for entity " + entity.getId() + ": " + coords);
+        LOGGER.info("Adding waypoints for entity {}: {}", entity.getId(), coords);
         return true;
     }
 
@@ -172,10 +166,10 @@ public class UnitBehavior {
      *
      * @param entity the entity to remove the waypoint from
      */
-    public Optional<Coords> removeHeadWaypoint(Entity entity) {
-        logger.info("Removing head waypoint for entity " + entity.getId());
-        return Optional.ofNullable(entityWaypoints.computeIfAbsent(entity.getId(), k -> new ArrayDeque<>())
-              .pollFirst());
+    public void removeHeadWaypoint(Entity entity) {
+        LOGGER.info("Removing head waypoint for entity {}", entity.getId());
+        entityWaypoints.computeIfAbsent(entity.getId(), k -> new ArrayDeque<>())
+              .pollFirst();
     }
 
     /**
@@ -184,44 +178,37 @@ public class UnitBehavior {
      *
      * @param entity the entity to remove the waypoint from
      */
-    public Optional<Coords> removeTailWaypoint(Entity entity) {
-        logger.info("Removing tail waypoint for entity " + entity.getId());
-        return Optional.ofNullable(entityWaypoints.computeIfAbsent(entity.getId(), k -> new ArrayDeque<>()).pollLast());
+    public void removeTailWaypoint(Entity entity) {
+        LOGGER.info("Removing tail waypoint for entity {}", entity.getId());
+        entityWaypoints.computeIfAbsent(entity.getId(), k -> new ArrayDeque<>()).pollLast();
     }
 
     /**
      * Sets the entity's waypoints to the given destination
      *
-     * @param entity
-     * @param waypoints
-     * @param owner
-     *
-     * @return
      */
-    public boolean setEntityWaypoints(Entity entity, List<Coords> waypoints, Princess owner) {
+    public void setEntityWaypoints(Entity entity, List<Coords> waypoints, Princess owner) {
         var deque = new ArrayDeque<Coords>();
         for (var waypoint : waypoints) {
             if (isDestinationValidForEntity(entity, waypoint, owner)) {
                 // just discard any invalid waypoint
-                logger.info("Discarding invalid waypoint for entity " + entity.getId() + ": " + waypoint);
+                LOGGER.info("Discarding invalid waypoint for entity {}: {}", entity.getId(), waypoint);
                 continue;
             }
             deque.add(waypoint);
         }
-        logger.debug("Setting waypoints for entity " + entity.getId() + ": " + deque);
+        LOGGER.debug("Setting waypoints for entity {}: {}", entity.getId(), deque);
         entityWaypoints.put(entity.getId(), deque);
-        return true;
     }
 
 
-    public boolean clearWaypoints(Entity entity) {
-        logger.debug("Clearing all waypoints for entity {}", entity.getDisplayName());
+    public void clearWaypoints(Entity entity) {
+        LOGGER.debug("Clearing all waypoints for entity {}", entity.getDisplayName());
         entityWaypoints.put(entity.getId(), new ArrayDeque<>());
-        return true;
     }
 
     public void clearWaypoints() {
-        logger.debug("Clearing all waypoints");
+        LOGGER.debug("Clearing all waypoints");
         entityWaypoints.clear();
     }
 

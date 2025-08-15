@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -69,50 +69,44 @@ public enum MissionRole {
     MIXED_ARTILLERY;
 
     public boolean fitsUnitType(int unitType) {
-        switch (this) {
+        return switch (this) {
 
             // RECON applies to all unit types except gun emplacements, JumpShips,
             // space stations, and some specialized aerospace
-            case RECON:
-                return unitType != UnitType.GUN_EMPLACEMENT &&
-                      unitType != UnitType.JUMPSHIP &&
-                      unitType != UnitType.SPACE_STATION &&
-                      unitType != UnitType.AERO;
+            case RECON -> unitType != UnitType.GUN_EMPLACEMENT &&
+                  unitType != UnitType.JUMPSHIP &&
+                  unitType != UnitType.SPACE_STATION &&
+                  unitType != UnitType.AERO;
 
             // EW_SUPPORT role applies to all ground units, VTOL, blue water naval, gun
             // emplacement,
             // and small craft. Infantry and large spacecraft are excluded.
-            case EW_SUPPORT:
-                return unitType == UnitType.MEK ||
-                      unitType == UnitType.TANK ||
-                      unitType == UnitType.PROTOMEK ||
-                      unitType == UnitType.VTOL ||
-                      unitType == UnitType.NAVAL ||
-                      unitType == UnitType.GUN_EMPLACEMENT ||
-                      unitType == UnitType.SMALL_CRAFT;
+            case EW_SUPPORT -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.PROTOMEK ||
+                  unitType == UnitType.VTOL ||
+                  unitType == UnitType.NAVAL ||
+                  unitType == UnitType.GUN_EMPLACEMENT ||
+                  unitType == UnitType.SMALL_CRAFT;
 
             // SPOTTER role applies to all ground units plus VTOL, blue water naval, gun
             // emplacements, and fixed wing aircraft.
-            case SPOTTER:
-                return unitType <= UnitType.AEROSPACEFIGHTER;
+            case SPOTTER -> unitType <= UnitType.AEROSPACEFIGHTER;
 
             // COMMAND role applies to all ground units, VTOLs, blue water naval,
             // conventional
             // fixed wing aircraft, and small craft. Conventional infantry, battle armor,
             // ProtoMeks, gun emplacements, and large space vessels are excluded.
-            case COMMAND:
-                return unitType == UnitType.MEK ||
-                      unitType == UnitType.TANK ||
-                      unitType == UnitType.VTOL ||
-                      unitType == UnitType.NAVAL ||
-                      unitType == UnitType.CONV_FIGHTER ||
-                      unitType == UnitType.SMALL_CRAFT;
+            case COMMAND -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.VTOL ||
+                  unitType == UnitType.NAVAL ||
+                  unitType == UnitType.CONV_FIGHTER ||
+                  unitType == UnitType.SMALL_CRAFT;
 
             // Fire support roles apply to most types except fixed wing aircraft and
             // spacecraft
-            case FIRE_SUPPORT:
-            case SR_FIRE_SUPPORT:
-                return unitType <= UnitType.GUN_EMPLACEMENT;
+            case FIRE_SUPPORT, SR_FIRE_SUPPORT -> unitType <= UnitType.GUN_EMPLACEMENT;
 
             // Artillery roles apply to all ground units, VTOL, blue water naval, gun
             // emplacements,
@@ -121,190 +115,139 @@ public enum MissionRole {
             // artillery type weapons, are included. ProtoMeks cannot carry any existing
             // artillery
             // weapons so are excluded.
-            case ARTILLERY:
-            case MISSILE_ARTILLERY:
-            case MIXED_ARTILLERY:
-                return unitType <= UnitType.INFANTRY ||
-                      unitType == UnitType.VTOL ||
-                      unitType == UnitType.NAVAL ||
-                      unitType == UnitType.GUN_EMPLACEMENT ||
-                      unitType == UnitType.CONV_FIGHTER ||
-                      unitType == UnitType.SMALL_CRAFT ||
-                      unitType == UnitType.DROPSHIP;
+            case ARTILLERY, MISSILE_ARTILLERY, MIXED_ARTILLERY -> unitType <= UnitType.INFANTRY ||
+                  unitType == UnitType.VTOL ||
+                  unitType == UnitType.NAVAL ||
+                  unitType == UnitType.GUN_EMPLACEMENT ||
+                  unitType == UnitType.CONV_FIGHTER ||
+                  unitType == UnitType.SMALL_CRAFT ||
+                  unitType == UnitType.DROPSHIP;
 
             // URBAN role applies to all ground units. Although infantry are inherently
             // urban-oriented this role should be reserved for mechanized (wheeled) and
             // others which
             // are not optimized for non-urban terrain.
-            case URBAN:
-                return unitType <= UnitType.PROTOMEK;
+            case URBAN -> unitType <= UnitType.PROTOMEK;
 
             // Infantry support roles are limited to ground units and VTOLs. This includes
             // infantry
             // and battle armor that are armed primarily with anti-infantry weapons.
-            case ANTI_INFANTRY:
-            case INF_SUPPORT:
-                return unitType <= UnitType.PROTOMEK ||
-                      unitType == UnitType.VTOL;
+            case ANTI_INFANTRY, INF_SUPPORT -> unitType <= UnitType.PROTOMEK ||
+                  unitType == UnitType.VTOL;
 
             // APC role is limited to units which can carry conventional infantry. Although
             // blue
             // water naval units can carry infantry they have limited use so are excluded.
-            case APC:
-                return unitType == UnitType.TANK ||
-                      unitType == UnitType.VTOL;
+            case APC -> unitType == UnitType.TANK ||
+                  unitType == UnitType.VTOL;
 
             // Naturally limited to battle armor
-            case MECHANIZED_BA:
-                return unitType == UnitType.BATTLE_ARMOR;
+            case MECHANIZED_BA -> unitType == UnitType.BATTLE_ARMOR;
 
             // Both battle armor and ProtoMeks can make use of mag clamps
-            case MAG_CLAMP:
-                return unitType == UnitType.BATTLE_ARMOR ||
-                      unitType == UnitType.PROTOMEK;
+            case MAG_CLAMP -> unitType == UnitType.BATTLE_ARMOR ||
+                  unitType == UnitType.PROTOMEK;
 
             // MARINE role applies to select battle armor and conventional infantry units
             // equipped
             // for space combat
-            case MARINE:
-                return unitType == UnitType.BATTLE_ARMOR ||
-                      unitType == UnitType.INFANTRY;
+            case MARINE -> unitType == UnitType.BATTLE_ARMOR ||
+                  unitType == UnitType.INFANTRY;
 
             // Conventional infantry roles:
             // PARATROOPER may be added on non-foot infantry to designate 'airmobile'
-            case MOUNTAINEER:
-            case PARATROOPER:
-            case ANTI_MEK:
-            case FIELD_GUN:
-            case XCT:
-                return unitType == UnitType.INFANTRY;
+            case MOUNTAINEER, PARATROOPER, ANTI_MEK, FIELD_GUN, XCT -> unitType == UnitType.INFANTRY;
 
             // CAVALRY applies to Meks, ground vehicles, and ProtoMeks
-            case CAVALRY:
-                return unitType == UnitType.MEK ||
-                      unitType == UnitType.TANK ||
-                      unitType == UnitType.PROTOMEK;
+            case CAVALRY -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.PROTOMEK;
 
             // RAIDER can be applied to Meks, ground vehicles, ProtoMeks, and VTOLs
-            case RAIDER:
-                return unitType == UnitType.MEK ||
-                      unitType == UnitType.TANK ||
-                      unitType == UnitType.PROTOMEK ||
-                      unitType == UnitType.VTOL;
+            case RAIDER -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.PROTOMEK ||
+                  unitType == UnitType.VTOL;
 
             // ANTI_AIRCRAFT role applies to all ground units, plus blue water naval and
             // gun emplacements. Conventional infantry are included (field guns/artillery)
             // but
             // not battle armor or ProtoMeks.
-            case ANTI_AIRCRAFT:
-                return unitType == UnitType.MEK ||
-                      unitType == UnitType.TANK ||
-                      unitType == UnitType.INFANTRY ||
-                      unitType == UnitType.NAVAL ||
-                      unitType == UnitType.GUN_EMPLACEMENT;
+            case ANTI_AIRCRAFT -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.INFANTRY ||
+                  unitType == UnitType.NAVAL ||
+                  unitType == UnitType.GUN_EMPLACEMENT;
 
             // INCENDIARY applies to all ground units. This excludes VTOL, blue water naval,
             // and gun emplacements.
-            case INCENDIARY:
-                return unitType <= UnitType.PROTOMEK;
+            case INCENDIARY -> unitType <= UnitType.PROTOMEK;
 
             // SPECOPS role applies to Meks, ground vehicles, VTOLs, conventional infantry,
             // and
             // battle armor.
-            case SPECOPS:
-                return unitType == UnitType.MEK ||
-                      unitType == UnitType.TANK ||
-                      unitType == UnitType.INFANTRY ||
-                      unitType == UnitType.BATTLE_ARMOR ||
-                      unitType == UnitType.VTOL;
+            case SPECOPS -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.INFANTRY ||
+                  unitType == UnitType.BATTLE_ARMOR ||
+                  unitType == UnitType.VTOL;
 
             // OMNI applies to all units which are capable of being built to make use of
             // pod-mounted
             // equipment. This is primarily used to determine suitability for mechanized
             // battle
             // armor but other uses may be added later.
-            case OMNI:
-                return unitType == UnitType.MEK ||
-                      unitType == UnitType.TANK ||
-                      unitType == UnitType.AEROSPACEFIGHTER;
+            case OMNI -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.AEROSPACEFIGHTER;
 
             // Roles for conventional and aerospace fighters
-            case BOMBER:
-            case INTERCEPTOR:
-                return unitType == UnitType.CONV_FIGHTER ||
-                      unitType == UnitType.AEROSPACEFIGHTER;
-
-            case GROUND_SUPPORT:
-                return unitType == UnitType.CONV_FIGHTER ||
-                      unitType == UnitType.AEROSPACEFIGHTER ||
-                      unitType == UnitType.SMALL_CRAFT;
-
-            case ESCORT:
-                return unitType == UnitType.CONV_FIGHTER ||
-                      unitType == UnitType.AEROSPACEFIGHTER ||
-                      unitType == UnitType.SMALL_CRAFT;
+            case BOMBER, INTERCEPTOR -> unitType == UnitType.CONV_FIGHTER ||
+                  unitType == UnitType.AEROSPACEFIGHTER;
+            case GROUND_SUPPORT, ESCORT -> unitType == UnitType.CONV_FIGHTER ||
+                  unitType == UnitType.AEROSPACEFIGHTER ||
+                  unitType == UnitType.SMALL_CRAFT;
 
             // Roles for DropShips
-            case ASSAULT:
-            case INFANTRY_CARRIER:
-            case BA_CARRIER:
-                return unitType == UnitType.DROPSHIP ||
-                      unitType == UnitType.SMALL_CRAFT;
-
-            case VEE_CARRIER:
-            case MEK_CARRIER:
-            case TUG:
-            case POCKET_WARSHIP:
-            case PROTOMEK_CARRIER:
-                return unitType == UnitType.DROPSHIP;
+            case ASSAULT, INFANTRY_CARRIER, BA_CARRIER -> unitType == UnitType.DROPSHIP ||
+                  unitType == UnitType.SMALL_CRAFT;
+            case VEE_CARRIER, MEK_CARRIER, TUG, POCKET_WARSHIP, PROTOMEK_CARRIER -> unitType == UnitType.DROPSHIP;
 
             // Mixed units carrier and aerospace carrier roles apply to DropShips and
             // WarShips
-            case TROOP_CARRIER:
-            case ASF_CARRIER:
-                return unitType == UnitType.DROPSHIP || unitType == UnitType.WARSHIP;
+            case TROOP_CARRIER, ASF_CARRIER -> unitType == UnitType.DROPSHIP || unitType == UnitType.WARSHIP;
 
             // Roles for WarShips are primarily 'class' designations.
-            case CORVETTE:
-            case DESTROYER:
-            case FRIGATE:
-            case CRUISER:
-            case BATTLESHIP:
-                return unitType == UnitType.WARSHIP;
+            case CORVETTE, DESTROYER, FRIGATE, CRUISER, BATTLESHIP -> unitType == UnitType.WARSHIP;
 
             // TRAINING applies to Meks, ground vehicles, VTOLs, blue water naval, and
             // conventional
             // fighters. Infantry, battle armor, ProtoMeks, and gun emplacements are
             // excluded.
-            case TRAINING:
-                return unitType == UnitType.MEK ||
-                      unitType == UnitType.TANK ||
-                      unitType == UnitType.VTOL ||
-                      unitType == UnitType.NAVAL ||
-                      unitType == UnitType.CONV_FIGHTER;
+            case TRAINING -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.VTOL ||
+                  unitType == UnitType.NAVAL ||
+                  unitType == UnitType.CONV_FIGHTER;
 
             // ENGINEER applies to Meks, ground vehicles, and conventional infantry
-            case ENGINEER:
-                return unitType == UnitType.MEK ||
-                      unitType == UnitType.TANK ||
-                      unitType == UnitType.INFANTRY;
+            case ENGINEER -> unitType == UnitType.MEK ||
+                  unitType == UnitType.TANK ||
+                  unitType == UnitType.INFANTRY;
 
             // MINESWEEPER and MINELAYER roles apply to ground vehicles, battle armor, and
             // conventional infantry
-            case MINESWEEPER:
-            case MINELAYER:
-                return unitType == UnitType.TANK ||
-                      unitType == UnitType.BATTLE_ARMOR ||
-                      unitType == UnitType.INFANTRY;
+            case MINESWEEPER, MINELAYER -> unitType == UnitType.TANK ||
+                  unitType == UnitType.BATTLE_ARMOR ||
+                  unitType == UnitType.INFANTRY;
 
             // SUPPORT applies to all non-combat ground units, VTOLs, blue water naval,
             // conventional
             // fighters, small craft, and some specialized aerospace. ProtoMeks, gun
             // emplacements, and WarShips are excluded as these are strictly combat units.
-            case SUPPORT:
-                return unitType != UnitType.PROTOMEK &&
-                      unitType != UnitType.GUN_EMPLACEMENT &&
-                      unitType != UnitType.WARSHIP;
+            case SUPPORT -> unitType != UnitType.PROTOMEK &&
+                  unitType != UnitType.GUN_EMPLACEMENT &&
+                  unitType != UnitType.WARSHIP;
 
             // CIVILIAN applies to all non-combat vehicles in civilian service, which
             // includes
@@ -315,25 +258,20 @@ public enum MissionRole {
             // gun emplacements, aerospace fighters, and WarShips are excluded as they are
             // strictly
             // combat units.
-            case CIVILIAN:
-                return unitType != UnitType.PROTOMEK &&
-                      unitType != UnitType.GUN_EMPLACEMENT &&
-                      unitType != UnitType.AEROSPACEFIGHTER &&
-                      unitType != UnitType.WARSHIP;
+            case CIVILIAN -> unitType != UnitType.PROTOMEK &&
+                  unitType != UnitType.GUN_EMPLACEMENT &&
+                  unitType != UnitType.AEROSPACEFIGHTER &&
+                  unitType != UnitType.WARSHIP;
 
             // CARGO applies to ground vehicles, VTOLs, blue water naval, conventional
             // fighters,
             // small craft, and all large space vessels.
-            case CARGO:
-                return unitType == UnitType.TANK ||
-                      unitType == UnitType.VTOL ||
-                      unitType == UnitType.NAVAL ||
-                      unitType == UnitType.CONV_FIGHTER ||
-                      (unitType >= UnitType.SMALL_CRAFT && unitType <= UnitType.SPACE_STATION);
-
-            default:
-                return false;
-        }
+            case CARGO -> unitType == UnitType.TANK ||
+                  unitType == UnitType.VTOL ||
+                  unitType == UnitType.NAVAL ||
+                  unitType == UnitType.CONV_FIGHTER ||
+                  (unitType >= UnitType.SMALL_CRAFT && unitType <= UnitType.SPACE_STATION);
+        };
     }
 
     /**
@@ -1303,118 +1241,62 @@ public enum MissionRole {
     }
 
     public static MissionRole parseRole(String role) {
-        switch (role.toLowerCase().replace("_", " ")) {
-            case "recon":
-                return RECON;
-            case "fire support":
-                return FIRE_SUPPORT;
-            case "command":
-                return COMMAND;
-            case "sr fire support":
-                return SR_FIRE_SUPPORT;
-            case "spotter":
-                return SPOTTER;
-            case "urban":
-                return URBAN;
-            case "infantry support":
-            case "inf support":
-                return INF_SUPPORT;
-            case "cavalry":
-                return CAVALRY;
-            case "raider":
-                return RAIDER;
-            case "incendiary":
-            case "incindiary":
-                return INCENDIARY;
-            case "ew support":
-                return EW_SUPPORT;
-            case "artillery":
-                return ARTILLERY;
-            case "missile artillery":
-                return MISSILE_ARTILLERY;
-            case "mixed artillery":
-                return MIXED_ARTILLERY;
-            case "anti aircraft":
-                return ANTI_AIRCRAFT;
-            case "anti infantry":
-                return ANTI_INFANTRY;
-            case "apc":
-                return APC;
-            case "specops":
-                return SPECOPS;
-            case "cargo":
-                return CARGO;
-            case "support":
-                return SUPPORT;
-            case "bomber":
-                return BOMBER;
-            case "escort":
-                return ESCORT;
-            case "interceptor":
-                return INTERCEPTOR;
-            case "ground support":
-                return GROUND_SUPPORT;
-            case "training":
-                return TRAINING;
-            case "assault":
-                return ASSAULT;
-            case "mek carrier":
-                return MEK_CARRIER;
-            case "asf carrier":
-                return ASF_CARRIER;
-            case "vee carrier":
-                return VEE_CARRIER;
-            case "infantry carrier":
-                return INFANTRY_CARRIER;
-            case "ba carrier":
-                return BA_CARRIER;
-            case "protomek carrier":
-                return PROTOMEK_CARRIER;
-            case "tug":
-                return TUG;
-            case "troop carrier":
-                return TROOP_CARRIER;
-            case "pocket warship":
-                return POCKET_WARSHIP;
-            case "corvette":
-                return CORVETTE;
-            case "destroyer":
-                return DESTROYER;
-            case "frigate":
-                return FRIGATE;
-            case "cruiser":
-                return CRUISER;
-            case "battleship":
-                return BATTLESHIP;
-            case "engineer":
-                return ENGINEER;
-            case "marine":
-                return MARINE;
-            case "mountaineer":
-                return MOUNTAINEER;
-            case "xct":
-                return XCT;
-            case "paratrooper":
-                return PARATROOPER;
-            case "anti mek":
-                return ANTI_MEK;
-            case "omni":
-                return OMNI;
-            case "mechanized ba":
-                return MECHANIZED_BA;
-            case "mag clamp":
-                return MAG_CLAMP;
-            case "field gun":
-                return FIELD_GUN;
-            case "civilian":
-                return CIVILIAN;
-            case "minesweeper":
-                return MINESWEEPER;
-            case "minelayer":
-                return MINELAYER;
-            default:
-                return null;
-        }
+        return switch (role.toLowerCase().replace("_", " ")) {
+            case "recon" -> RECON;
+            case "fire support" -> FIRE_SUPPORT;
+            case "command" -> COMMAND;
+            case "sr fire support" -> SR_FIRE_SUPPORT;
+            case "spotter" -> SPOTTER;
+            case "urban" -> URBAN;
+            case "infantry support", "inf support" -> INF_SUPPORT;
+            case "cavalry" -> CAVALRY;
+            case "raider" -> RAIDER;
+            case "incendiary", "incindiary" -> INCENDIARY;
+            case "ew support" -> EW_SUPPORT;
+            case "artillery" -> ARTILLERY;
+            case "missile artillery" -> MISSILE_ARTILLERY;
+            case "mixed artillery" -> MIXED_ARTILLERY;
+            case "anti aircraft" -> ANTI_AIRCRAFT;
+            case "anti infantry" -> ANTI_INFANTRY;
+            case "apc" -> APC;
+            case "specops" -> SPECOPS;
+            case "cargo" -> CARGO;
+            case "support" -> SUPPORT;
+            case "bomber" -> BOMBER;
+            case "escort" -> ESCORT;
+            case "interceptor" -> INTERCEPTOR;
+            case "ground support" -> GROUND_SUPPORT;
+            case "training" -> TRAINING;
+            case "assault" -> ASSAULT;
+            case "mek carrier" -> MEK_CARRIER;
+            case "asf carrier" -> ASF_CARRIER;
+            case "vee carrier" -> VEE_CARRIER;
+            case "infantry carrier" -> INFANTRY_CARRIER;
+            case "ba carrier" -> BA_CARRIER;
+            case "protomek carrier" -> PROTOMEK_CARRIER;
+            case "tug" -> TUG;
+            case "troop carrier" -> TROOP_CARRIER;
+            case "pocket warship" -> POCKET_WARSHIP;
+            case "corvette" -> CORVETTE;
+            case "destroyer" -> DESTROYER;
+            case "frigate" -> FRIGATE;
+            case "cruiser" -> CRUISER;
+            case "battleship" -> BATTLESHIP;
+            case "engineer" -> ENGINEER;
+            case "marine" -> MARINE;
+            case "mountaineer" -> MOUNTAINEER;
+            case "xct" -> XCT;
+            case "paratrooper" -> PARATROOPER;
+            case "anti mek" -> ANTI_MEK;
+            case "omni" -> OMNI;
+            case "mechanized ba" -> MECHANIZED_BA;
+            case "mag clamp" -> MAG_CLAMP;
+            case "field gun" -> FIELD_GUN;
+            case "civilian" -> CIVILIAN;
+            case "minesweeper" -> MINESWEEPER;
+            case "minelayer" -> MINELAYER;
+            default -> null;
+        };
     }
 
     @Override

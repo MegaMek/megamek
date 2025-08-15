@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -231,7 +231,7 @@ public class ChassisRecord extends AbstractUnitRecord {
     public double totalModelWeight(int era, String fKey) {
         FactionRecord fRec = RATGenerator.getInstance().getFaction(fKey);
         if (fRec == null) {
-            logger.warn("Attempt to find totalModelWeight for non-existent faction " + fKey);
+            logger.warn("Attempt to find totalModelWeight for non-existent faction {}", fKey);
             return 0;
         }
         return totalModelWeight(era, fRec);

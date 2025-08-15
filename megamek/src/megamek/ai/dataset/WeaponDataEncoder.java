@@ -58,9 +58,7 @@ public class WeaponDataEncoder {
      */
     public static List<Integer> getEncodedWeaponData(Entity entity) {
         List<Integer> weaponData = new ArrayList<>();
-        entity.getWeaponList().forEach(weapon -> {
-            serializeWeaponData(weapon, entity, weaponData);
-        });
+        entity.getWeaponList().forEach(weapon -> serializeWeaponData(weapon, entity, weaponData));
         return weaponData;
     }
 

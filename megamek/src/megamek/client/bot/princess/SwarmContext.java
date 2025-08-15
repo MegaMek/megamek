@@ -63,7 +63,7 @@ public class SwarmContext {
     private final List<SwarmCluster> clusters = new ArrayList<>();
 
     public SwarmContext() {
-        ;
+        
     }
 
     /**

@@ -151,7 +151,7 @@ class LobbyMekPopup {
         boolean optCapFighters = opts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER);
 
         // A set of all selected entities and all entities in selected forces and their
-        // subforces
+        // subForces
         Set<Entity> joinedEntities = new HashSet<>(entities);
         for (Force force : forces) {
             joinedEntities.addAll(ForceAssignable.filterToEntityList(game.getForces().getFullEntities(force)));

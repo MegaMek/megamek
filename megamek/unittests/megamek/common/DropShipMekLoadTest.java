@@ -32,7 +32,9 @@
  */
 package megamek.common;
 
+import static megamek.testUtilities.MMTestUtilities.getEntityForUnitTesting;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,13 +52,16 @@ import megamek.server.totalwarfare.TWGameManager;
 import org.junit.jupiter.api.Test;
 
 class DropShipMekLoadTest {
-
     @Test
     void test() throws Exception {
-        MekSummaryCache instance = MekSummaryCache.getInstance(true);
-        Mek atlas = (Mek) instance.getMek("Atlas AS7-D").loadEntity();
+        Entity entity = getEntityForUnitTesting("Atlas AS7-D", false);
+        assertNotNull(entity, "Atlas AS7-D not found");
+        Mek atlas = (Mek) entity;
         atlas.setId(2);
-        Dropship leopard = (Dropship) instance.getMek("Leopard (2537)").loadEntity();
+
+        entity = getEntityForUnitTesting("Leopard (2537)", true);
+        assertNotNull(entity, "Leopard (2537) not found");
+        Dropship leopard = (Dropship) entity;
         leopard.setId(1);
 
         Game game = new Game();

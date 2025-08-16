@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,7 +45,7 @@ import megamek.common.force.Force;
 import megamek.common.force.Forces;
 
 public class ForceDisplayMekTreeModel extends DefaultTreeModel {
-    private Client client;
+    private final Client client;
     /** A sorted list of all top-level objects: top-level forces and force-less entities. */
     private ArrayList<Object> allToplevel;
 
@@ -75,9 +75,8 @@ public class ForceDisplayMekTreeModel extends DefaultTreeModel {
             }
             return allToplevel.get(index);
 
-        } else if (parent instanceof Force) {
+        } else if (parent instanceof Force pnt) {
             Forces forces = client.getGame().getForces();
-            Force pnt = (Force) parent;
             if (index < pnt.entityCount()) {
                 return client.getGame().getEntity(pnt.getEntityId(index));
             } else if (index < pnt.getChildCount()) {
@@ -95,8 +94,7 @@ public class ForceDisplayMekTreeModel extends DefaultTreeModel {
             }
             return allToplevel.size();
 
-        } else if (parent instanceof Force) {
-            Force pnt = (Force) parent;
+        } else if (parent instanceof Force pnt) {
             return pnt.getChildCount();
 
         } else { // Entity
@@ -125,11 +123,11 @@ public class ForceDisplayMekTreeModel extends DefaultTreeModel {
 
     @Override
     public int getIndexOfChild(Object parent, Object child) {
-        if (child == root || !(parent instanceof Force)
+        if (child == root || !(parent instanceof Force pnt)
               || !((child instanceof Force) || (child instanceof Entity))) {
             return -1;
         }
-        Force pnt = (Force) parent;
+        
         if (child instanceof Entity) {
             return pnt.entityIndex((Entity) child);
         } else {

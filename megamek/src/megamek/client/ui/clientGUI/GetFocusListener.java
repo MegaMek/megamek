@@ -36,11 +36,9 @@ import javax.swing.JComponent;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
-public class GetFocusListener implements AncestorListener {
-    private boolean removeListener;
-
+public record GetFocusListener(boolean removeListener) implements AncestorListener {
     /*
-     * Convenience constructor. The listener is only used once and then it is
+     * Convenience constructor. The listener is only used once, and then it is
      * removed from the component.
      */
     public GetFocusListener() {
@@ -54,9 +52,6 @@ public class GetFocusListener implements AncestorListener {
      * @param removeListener when true this listener is only invoked once
      * otherwise it can be invoked multiple times.
      */
-    public GetFocusListener(boolean removeListener) {
-        this.removeListener = removeListener;
-    }
 
     @Override
     public void ancestorAdded(AncestorEvent e) {

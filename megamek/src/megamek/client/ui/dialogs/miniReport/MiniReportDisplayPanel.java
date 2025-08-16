@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,10 +42,12 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import megamek.client.Client;
@@ -66,11 +68,14 @@ import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.logging.MMLogger;
 
 /**
  * Shows reports, with an Okay JButton
  */
 public class MiniReportDisplayPanel extends JPanel implements ActionListener, HyperlinkListener {
+    private final static MMLogger LOGGER = MMLogger.create(MiniReportDisplayPanel.class);
+
     private JButton butSwitchLocation;
     private JTabbedPane tabs;
     private JButton butPlayerSearchUp;
@@ -80,31 +85,46 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
     private JButton butQuickSearchUp;
     private JButton butQuickSearchDown;
     private JButton butQuickFilter;
-    private JComboBox<String> comboPlayer = new JComboBox<>();
-    private JComboBox<String> comboEntity = new JComboBox<>();
-    private JComboBox<String> comboQuick = new JComboBox<>();
-    private IClientGUI currentClientgui;
+    private final JComboBox<String> comboPlayer = new JComboBox<>();
+    private final JComboBox<String> comboEntity = new JComboBox<>();
+    private final JComboBox<String> comboQuick = new JComboBox<>();
+    private IClientGUI currentClientGUI;
     private Client currentClient;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CP = PreferenceManager.getClientPreferences();
 
     private boolean filterEnabled = false;
 
-    private static final int MRD_MAXNAMELENGHT = 60;
+    private static final int MRD_MAX_NAME_LENGTH = 60;
 
-    public MiniReportDisplayPanel(IClientGUI clientgui) {
+    public MiniReportDisplayPanel(IClientGUI clientGUI) {
 
-        if (clientgui == null) {
+        if (clientGUI == null) {
             return;
         }
 
-        currentClientgui = clientgui;
-        if (clientgui.getClient() instanceof Client) {
-            currentClient = (Client) clientgui.getClient();
+        currentClientGUI = clientGUI;
+        if (clientGUI.getClient() instanceof Client) {
+            currentClient = (Client) clientGUI.getClient();
         } else {
             return;
         }
 
+        GameListener gameListener = new GameListenerAdapter() {
+            @Override
+            public void gamePhaseChange(GamePhaseChangeEvent e) {
+                if (Objects.requireNonNull(e.getOldPhase()) == GamePhase.VICTORY) {
+                    setVisible(false);
+                } else {
+                    if ((!e.getNewPhase().equals((e.getOldPhase()))) && ((e.getNewPhase().isReport())
+                          || ((e.getNewPhase().isOnMap()) && (tabs.getTabCount() == 0)))) {
+                        addReportPages(e.getNewPhase());
+                        updatePlayerChoice();
+                        updateEntityChoice();
+                    }
+                }
+            }
+        };
         currentClient.getGame().addGameListener(gameListener);
         butSwitchLocation = new JButton(Messages.getString("MiniReportDisplay.SwitchLocation"));
         butSwitchLocation.addActionListener(this);
@@ -229,27 +249,26 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
     }
 
     private void filterReport(String selectedKeyword) {
-        String filterResult = "";
+        StringBuilder filterResult = new StringBuilder();
         String[] keywords = selectedKeyword.split(" ");
         String[] htmlLines = currentClient.phaseReport.split("<br>");
         for (int i = 0; i < htmlLines.length; i++) {
             String htmlLine = htmlLines[i];
-            for (int j = 0; j < keywords.length; j++) {
-                String word = keywords[j];
+            for (String word : keywords) {
                 if (htmlLine.replaceAll("<[^>]*>", "").toUpperCase().contains(word.toUpperCase())) {
                     if (i > 0 && htmlLines[i - 1].contains("<img")) {
-                        filterResult += htmlLines[i - 1] + "<br>"; // get image from line above
+                        filterResult.append(htmlLines[i - 1]).append("<br>"); // get image from line above
                     }
-                    filterResult += htmlLine + "<br>";
+                    filterResult.append(htmlLine).append("<br>");
                     if (i < htmlLines.length - 1 && htmlLines[i + 1].contains("</div>")) {
-                        filterResult += "</div>"; // close div tag
+                        filterResult.append("</div>"); // close div tag
                     }
                     break;
                 }
             }
         }
 
-        filterReportOutput(filterResult);
+        filterReportOutput(filterResult.toString());
 
         butQuickFilter.setText("Filter*");
         filterEnabled = true;
@@ -277,47 +296,56 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         if (selCom instanceof JScrollPane && ((JScrollPane) selCom).getViewport().getView() instanceof JComponent) {
             JViewport v = ((JScrollPane) selCom).getViewport();
             for (Component comp : v.getComponents()) {
-                if (comp instanceof JTextPane) {
+                if (comp instanceof JTextPane textPane) {
+
+                    Document doc = textPane.getDocument();
+                    String text = "";
+
                     try {
-                        JTextPane textPane = (JTextPane) comp;
-                        Document doc = textPane.getDocument();
-                        String text = doc.getText(0, doc.getLength()).toUpperCase();
-                        int currentPos = textPane.getCaretPosition();
+                        text = doc.getText(0, doc.getLength()).toUpperCase();
+                    } catch (BadLocationException exception) {
+                        LOGGER.error(exception);
+                    }
 
-                        if (currentPos > text.length() - searchPattern.length()) {
-                            textPane.setCaretPosition(0);
-                            currentPos = 0;
+                    int currentPos = textPane.getCaretPosition();
+
+                    if (currentPos > text.length() - searchPattern.length()) {
+                        textPane.setCaretPosition(0);
+                        currentPos = 0;
+                    }
+
+                    int newPos;
+
+                    if (searchDown) {
+                        newPos = text.indexOf(searchPattern, currentPos);
+
+                        if (newPos == -1) {
+                            newPos = text.indexOf(searchPattern);
                         }
 
-                        int newPos = -1;
+                    } else {
+                        newPos = text.lastIndexOf(searchPattern, currentPos - searchPattern.length() - 1);
 
-                        if (searchDown) {
-                            newPos = text.indexOf(searchPattern, currentPos);
-
-                            if (newPos == -1) {
-                                newPos = text.indexOf(searchPattern, 0);
-                            }
-
-                        } else {
-                            newPos = text.lastIndexOf(searchPattern, currentPos - searchPattern.length() - 1);
-
-                            if (newPos == -1) {
-                                newPos = text.lastIndexOf(searchPattern, text.length() - searchPattern.length() - 1);
-                            }
+                        if (newPos == -1) {
+                            newPos = text.lastIndexOf(searchPattern, text.length() - searchPattern.length() - 1);
                         }
+                    }
 
-                        if (newPos != -1) {
-                            Rectangle2D r = textPane.modelToView2D(newPos);
+                    if (newPos != -1) {
+                        try {
+                            Rectangle2D rectangle2D = textPane.modelToView2D(newPos);
+
                             int y = UIUtil.calculateCenter(v.getExtentSize().height,
                                   v.getViewSize().height,
-                                  (int) r.getHeight(),
-                                  (int) r.getY());
+                                  (int) rectangle2D.getHeight(),
+                                  (int) rectangle2D.getY());
                             v.setViewPosition(new Point(0, y));
                             textPane.setCaretPosition(newPos);
                             textPane.moveCaretPosition(newPos + searchPattern.length());
                             textPane.getCaret().setSelectionVisible(true);
+                        } catch (BadLocationException exception) {
+                            LOGGER.error(exception);
                         }
-                    } catch (Exception e) {
                     }
 
                     break;
@@ -346,11 +374,11 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         }
     }
 
-    private String addEntity(JComboBox comboBox, String name) {
+    private String addEntity(JComboBox<String> comboBox, String name) {
         boolean found = false;
-        int len = (name.length() < MRD_MAXNAMELENGHT ? name.length() : MRD_MAXNAMELENGHT);
+        int len = (Math.min(name.length(), MRD_MAX_NAME_LENGTH));
         String displayNane = String.format("%-12s", name).substring(0, len);
-        found = false;
+
         for (int i = 0; i < comboBox.getItemCount(); i++) {
             if (comboBox.getItemAt(i).equals(displayNane)) {
                 found = true;
@@ -508,14 +536,14 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
                 } catch (Exception ex) {
                     id = -1;
                 }
-                var optionalEntity = currentClientgui.getClient().getGame().getInGameObject(id);
+                var optionalEntity = currentClientGUI.getClient().getGame().getInGameObject(id);
                 if (optionalEntity.isPresent() && optionalEntity.get() instanceof Entity entity) {
-                    if (currentClientgui instanceof IHasUnitDisplay) {
-                        ((IHasUnitDisplay) currentClientgui).getUnitDisplay().displayEntity(entity);
+                    if (currentClientGUI instanceof IHasUnitDisplay) {
+                        ((IHasUnitDisplay) currentClientGUI).getUnitDisplay().displayEntity(entity);
                         GUIP.setUnitDisplayEnabled(true);
                         if (entity.isDeployed() && !entity.isOffBoard() && entity.getPosition() != null) {
-                            if (currentClientgui instanceof IHasBoardView) {
-                                ((IHasBoardView) currentClientgui).getBoardView().centerOnHex(entity.getPosition());
+                            if (currentClientGUI instanceof IHasBoardView) {
+                                ((IHasBoardView) currentClientGUI).getBoardView().centerOnHex(entity.getPosition());
                             }
                         }
                     }
@@ -523,7 +551,7 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
                 String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
-                JOptionPane.showMessageDialog(currentClientgui.getFrame(),
+                JOptionPane.showMessageDialog(currentClientGUI.getFrame(),
                       desc,
                       Messages.getString("MiniReportDisplay.Details"),
                       JOptionPane.PLAIN_MESSAGE);
@@ -538,21 +566,4 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         }
     }
 
-    private GameListener gameListener = new GameListenerAdapter() {
-        @Override
-        public void gamePhaseChange(GamePhaseChangeEvent e) {
-            switch (e.getOldPhase()) {
-                case VICTORY:
-                    setVisible(false);
-                    break;
-                default:
-                    if ((!e.getNewPhase().equals((e.getOldPhase()))) && ((e.getNewPhase().isReport())
-                          || ((e.getNewPhase().isOnMap()) && (tabs.getTabCount() == 0)))) {
-                        addReportPages(e.getNewPhase());
-                        updatePlayerChoice();
-                        updateEntityChoice();
-                    }
-            }
-        }
-    };
 }

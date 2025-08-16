@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002, 2004 Josh Yockey
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -123,14 +123,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected Map<Integer, Integer> techLevelListToIndex = new HashMap<>();
     protected JComboBox<String> comboUnitType = new JComboBox<>();
     protected JComboBox<String> comboWeight = new JComboBox<>();
-    private JPanel panelFilterButtons;
     protected JLabel labelImage = new JLabel(""); // inline to avoid potential null pointer issues
     protected JTable tableUnits;
     protected JTextField textFilter;
     protected JTextField textGunnery;
     protected JTextField textPilot;
     protected EntityViewPane panePreview;
-    private JPanel selectionPanel;
     private JSplitPane splitPane;
 
     private StringBuffer searchBuffer = new StringBuffer();
@@ -156,7 +154,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     private AdvancedSearchDialog advancedSearchDialog;
 
     protected TableRowSorter<MekTableModel> sorter;
-    private JScrollPane scrollTableUnits;
 
     protected GameOptions gameOptions = null;
     protected boolean enableYearLimits = false;
@@ -241,7 +238,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         // endregion Unit Preview Pane
 
         // region Selection Panel
-        selectionPanel = new JPanel(new GridBagLayout());
+        JPanel selectionPanel = new JPanel(new GridBagLayout());
 
         tableUnits = new JTable(unitModel);
         tableUnits.setColumnModel(unitColumnModel);
@@ -284,10 +281,10 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         variableRulesLevelColumn = tableUnits.getColumnModel().getColumn(MekTableModel.COL_VTL);
         togglePV(false);
         toggleVtl(isVTL());
-        scrollTableUnits = new JScrollPane(tableUnits);
+        JScrollPane scrollTableUnits = new JScrollPane(tableUnits);
         scrollTableUnits.setName("scrollTableUnits");
 
-        panelFilterButtons = new JPanel(new GridBagLayout());
+        JPanel panelFilterButtons = new JPanel(new GridBagLayout());
 
         JLabel labelType = new JLabel(Messages.getString("MekSelectorDialog.m_labelType"));
         labelType.setToolTipText(Messages.getString("MekSelectorDialog.m_labelType.ToolTip"));
@@ -333,7 +330,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
         unitTypeModel.addElement(Messages.getString("MekSelectorDialog.All"));
         for (int i = 0; i < UnitType.SIZE; i++) {
-            // the AERO type does not match any units and there are no preconstructed life boats or escape pods
+            // the AERO type does not match any units and there are no preconstructed lifeboats or escape pods
             if (i != UnitType.AERO) {
                 unitTypeModel.addElement(UnitType.getTypeDisplayableName(i));
             }
@@ -687,8 +684,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             return;
         }
         sorter.setRowFilter(unitTypeFilter);
-        String msg_unitcount = Messages.getString("MekSelectorDialog.UnitCount");
-        lblCount.setText(String.format(" %s %d", msg_unitcount, sorter.getViewRowCount()));
+        String msgUnitCount = Messages.getString("MekSelectorDialog.UnitCount");
+        lblCount.setText(String.format(" %s %d", msgUnitCount, sorter.getViewRowCount()));
     }
 
     protected boolean matchesTextFilter(MekSummary unit) {
@@ -732,8 +729,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             // print so this sets the source file to the full path.
             return new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
         } catch (Exception e) {
-            logger.error(e, "Unable to load mek: " + ms.getSourceFile() + ": " + ms.getEntryName()
-                  + ": " + e.getMessage());
+            logger.error(e, "Unable to load mek: {}: {}: {}", ms.getSourceFile(), ms.getEntryName(), e.getMessage());
             return null;
         }
     }
@@ -744,7 +740,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                   try {
                       return new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                   } catch (EntityLoadingException e) {
-                      logger.error(e, "Unable to load mek: " + ms.getSourceFile() + ": " + ms.getEntryName());
+                      logger.error(e, "Unable to load mek: {}: {}", ms.getSourceFile(), ms.getEntryName());
                       return null;
                   }
               }
@@ -782,7 +778,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     /**
-     * @param visible whether or not to make the GUI visible
+     * @param visible whether to make the GUI visible
      */
     @Override
     public void setVisible(boolean visible) {

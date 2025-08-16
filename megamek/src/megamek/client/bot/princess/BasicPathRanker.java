@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,10 +47,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
-import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
-import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
-import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
+import megamek.client.bot.princess.coverage.Builder;
+import megamek.client.bot.princess.geometry.ConvexBoardArea;
+import megamek.client.bot.princess.geometry.CoordFacingCombo;
+import megamek.client.bot.princess.geometry.HexLine;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.moves.MovePath;
@@ -205,8 +206,8 @@ public class BasicPathRanker extends PathRanker {
         final double damageDiscount = 0.25;
         EntityEvaluationResponse returnResponse = new EntityEvaluationResponse();
 
-        // Airborne AeroSpace on ground maps always move after other units, and would
-        // require an entirely different evaluation
+        // Airborne AeroSpace on ground maps always move after other units, and would require an entirely different
+        // evaluation
         // TODO (low priority) implement a way to see if I can dodge aero units
         if (enemy.isAirborneAeroOnGroundMap()) {
             return returnResponse;
@@ -329,7 +330,7 @@ public class BasicPathRanker extends PathRanker {
         }
 
         int maxHeat = (enemy.getHeatCapacity() - enemy.heat) + (enemy.isAero() ? 0 : 5);
-        FiringPlanCalculationParameters guess = new FiringPlanCalculationParameters.Builder().buildGuess(enemy,
+        FiringPlanCalculationParameters guess = new Builder().buildGuess(enemy,
               shooterState,
               actualTarget,
               targetState,
@@ -403,7 +404,7 @@ public class BasicPathRanker extends PathRanker {
                   game,
                   false);
         } else {
-            FiringPlanCalculationParameters guess = new FiringPlanCalculationParameters.Builder().buildGuess(path.getEntity(),
+            FiringPlanCalculationParameters guess = new Builder().buildGuess(path.getEntity(),
                   new EntityState(path),
                   enemy,
                   null,
@@ -1204,7 +1205,7 @@ public class BasicPathRanker extends PathRanker {
                     // Docstring says ignore self, so ignore self.
                     max_damage = 0;
                 } else {
-                    FiringPlanCalculationParameters guess = new FiringPlanCalculationParameters.Builder().buildGuess(e,
+                    FiringPlanCalculationParameters guess = new Builder().buildGuess(e,
                           null,
                           f,
                           null,
@@ -1232,7 +1233,7 @@ public class BasicPathRanker extends PathRanker {
                 continue; // Skip targets not actually on the board.
             }
 
-            FiringPlanCalculationParameters guess = new FiringPlanCalculationParameters.Builder().buildGuess(path.getEntity(),
+            FiringPlanCalculationParameters guess = new Builder().buildGuess(path.getEntity(),
                   new EntityState(path),
                   target,
                   null,

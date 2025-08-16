@@ -81,20 +81,18 @@ public class TraceOverlay implements IDisplayable, IPreferenceChangeListener {
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(GUIPreferences.SHOW_TRACE_OVERLAY)) {
-            visible = GUIP.getShowTraceOverlay();
-            boardView.refreshDisplayables();
-        } else if (e.getName().equals(GUIPreferences.TRACE_OVERLAY_TRANSPARENCY)) {
-            boardView.refreshDisplayables();
-        } else if (e.getName().equals(GUIPreferences.TRACE_OVERLAY_SCALE)) {
-            boardView.refreshDisplayables();
-        } else if (e.getName().equals(GUIPreferences.TRACE_OVERLAY_ORIGIN_X)) {
-            boardView.refreshDisplayables();
-        } else if (e.getName().equals(GUIPreferences.TRACE_OVERLAY_ORIGIN_Y)) {
-            boardView.refreshDisplayables();
-        } else if (e.getName().equals(GUIPreferences.TRACE_OVERLAY_IMAGE_FILE)) {
-            traceImage = ImageUtil.loadImageFromFile(GUIP.getTraceOverlayImageFile());
-            boardView.refreshDisplayables();
+        switch (e.getName()) {
+            case GUIPreferences.SHOW_TRACE_OVERLAY -> {
+                visible = GUIP.getShowTraceOverlay();
+                boardView.refreshDisplayables();
+            }
+            case GUIPreferences.TRACE_OVERLAY_TRANSPARENCY, GUIPreferences.TRACE_OVERLAY_SCALE,
+                 GUIPreferences.TRACE_OVERLAY_ORIGIN_X, GUIPreferences.TRACE_OVERLAY_ORIGIN_Y ->
+                  boardView.refreshDisplayables();
+            case GUIPreferences.TRACE_OVERLAY_IMAGE_FILE -> {
+                traceImage = ImageUtil.loadImageFromFile(GUIP.getTraceOverlayImageFile());
+                boardView.refreshDisplayables();
+            }
         }
     }
 }

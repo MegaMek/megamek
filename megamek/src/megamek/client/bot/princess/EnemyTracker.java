@@ -275,8 +275,8 @@ public class EnemyTracker {
         }
 
         @Override
-        public int compareTo(Double o) {
-            return Double.compare(threatScore, o);
+        public int compareTo(Double aDouble) {
+            return Double.compare(threatScore, aDouble);
         }
     }
 }

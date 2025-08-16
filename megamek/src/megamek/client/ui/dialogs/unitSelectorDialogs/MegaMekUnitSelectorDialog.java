@@ -34,6 +34,7 @@ package megamek.client.ui.dialogs.unitSelectorDialogs;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -62,11 +63,12 @@ import megamek.logging.MMLogger;
 
 public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
+    @Serial
     private static final long serialVersionUID = -5717009055093904636L;
     MMLogger LOGGER = MMLogger.create(MegaMekUnitSelectorDialog.class);
     //region Variable Declarations
-    private ClientGUI clientGUI;
-    private JComboBox<String> comboPlayer = new JComboBox<>();
+    private final ClientGUI clientGUI;
+    private final JComboBox<String> comboPlayer = new JComboBox<>();
     //endregion Variable Declarations
 
     public MegaMekUnitSelectorDialog(ClientGUI clientGUI, UnitLoadingDialog unitLoadingDialog) {
@@ -222,7 +224,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         if (mscInstance.isInitialized()) {
             final Map<String, String> hFailedFiles = MekSummaryCache.getInstance().getFailedFiles();
             if ((hFailedFiles != null) && !hFailedFiles.isEmpty()) {
-                LOGGER.warn("Unit loading errors: " + hFailedFiles);
+                LOGGER.warn("Unit loading errors: {}", hFailedFiles);
             }
         }
     }

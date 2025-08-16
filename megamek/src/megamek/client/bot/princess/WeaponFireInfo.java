@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -277,16 +278,8 @@ public class WeaponFireInfo {
         return maxFriendlyDamage;
     }
 
-    private void setMaxFriendlyDamage(final double maxFriendlyDamage) {
-        this.maxFriendlyDamage = maxFriendlyDamage;
-    }
-
     double getMaxBuildingDamage() {
         return maxBuildingDamage;
-    }
-
-    private void setMaxBuildingDamage(final double maxBuildingDamage) {
-        this.maxBuildingDamage = maxBuildingDamage;
     }
 
     double getProbabilityToHit() {
@@ -521,7 +514,7 @@ public class WeaponFireInfo {
         }
 
         // For clan plasma cannon, assume 7 "damage".
-        final WeaponType weaponType = (WeaponType) weapon.getType();
+        final WeaponType weaponType = weapon.getType();
         if (weaponType.hasFlag(WeaponType.F_PLASMA) &&
               TechAdvancement.TechBase.CLAN == weaponType.getTechBase()) {
             return new double[] { 7D, 0D, 0D };
@@ -558,7 +551,7 @@ public class WeaponFireInfo {
 
         // this is a special case - if we're considering hitting a swarmed target
         // that's basically our only option
-        if (weaponType.getInternalName() == Infantry.SWARM_WEAPON_MEK) {
+        if (Objects.equals(weaponType.getInternalName(), Infantry.SWARM_WEAPON_MEK)) {
             return new double[] { 1, 0D, 0D };
         }
 
@@ -606,9 +599,6 @@ public class WeaponFireInfo {
      * weapon. Prime example: Homing artillery, which requires a friendly TAG-equipped unit be able to hit the target at
      * the appropriate time.
      *
-     * @param realToHitData
-     *
-     * @return
      */
     ToHitData postProcessToHit(ToHitData realToHitData) {
         // If the shot already can't hit, no more processing is required.
@@ -667,7 +657,7 @@ public class WeaponFireInfo {
             // See if we can catch the target in the blast
             Hex hex = game.getBoard().getHex(target.getPosition());
             int targetLevel = (target.getTargetType() == Targetable.TYPE_ENTITY)
-                  ? ((Entity) target).getElevation()
+                  ? target.getElevation()
                   : ((HexTarget) target).getTargetLevel();
 
             if (hex != null && hex.containsAnyTerrainOf(Terrains.WATER, Terrains.BLDG_ELEV)) {
@@ -681,11 +671,10 @@ public class WeaponFireInfo {
     }
 
     /**
-     * Generalized computation of hitting with TAG given current guidable muniitions in play
+     * Generalized computation of hitting with TAG given current guidable munitions in play
      *
      * @param exclusiveWithOtherWeapons true if Aero, false otherwise.
      *
-     * @return
      */
     double[] computeExpectedTAGDamage(boolean exclusiveWithOtherWeapons) {
         final StringBuilder msg = new StringBuilder("Assessing the expected max damage from ")
@@ -1019,7 +1008,7 @@ public class WeaponFireInfo {
 
     String getDebugDescription() {
         String ammoClause = (getAmmo() == null) ? ""
-              : ", Ammo: " + ((AmmoType) getAmmo().getType()).getSubMunitionName();
+              : ", Ammo: " + getAmmo().getType().getSubMunitionName();
         return getWeapon().getName() + " P. Hit: " + LOG_PER.format(getProbabilityToHit())
               + ", Max Dam: " + LOG_DEC.format(getMaxDamage())
               + ", Exp. Dam: " + LOG_DEC.format(getDamageOnHit())

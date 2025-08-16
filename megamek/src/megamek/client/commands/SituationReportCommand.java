@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -59,7 +59,7 @@ public class SituationReportCommand extends ClientCommand {
         boolean showFriendly = true;
         boolean showHostile = true;
         int hexRange = DEFAULT_HEX_RANGE;
-        int entityID = Entity.NONE;
+        int entityID;
 
         if (args.length > 1) {
             if (args[1].equalsIgnoreCase("HELP")) {

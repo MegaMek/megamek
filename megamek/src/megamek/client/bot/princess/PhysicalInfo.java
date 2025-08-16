@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -73,12 +73,11 @@ public class PhysicalInfo {
     private double expectedCriticals;
     private double killProbability; // probability to destroy CT or HEAD (ignores criticals)
     private double utility; // filled out externally
-    private Princess owner;
+    private final Princess owner;
 
     /**
      * For unit testing.
      *
-     * @param owner
      */
     protected PhysicalInfo(Princess owner) {
         this.owner = owner;
@@ -235,12 +234,11 @@ public class PhysicalInfo {
         setExpectedCriticals(ROLL_TWO * expectedCriticalHitCount * getProbabilityToHit());
         setKillProbability(0);
 
-        if (!(getTarget() instanceof Mek)) {
+        if (!(getTarget() instanceof Mek targetMek)) {
             return;
         }
 
         // now guess how many critical hits will be done
-        Mek targetMek = (Mek) getTarget();
         for (int i = 0; i <= 7; i++) {
             int hitLoc = i;
             while (targetMek.isLocationBad(hitLoc) && (hitLoc != Mek.LOC_CT)

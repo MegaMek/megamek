@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -62,8 +62,8 @@ public class FiringSolutionSprite extends HexSprite {
     private static final Color TEXT_COLOR = new Color(40, 255, 255, 230);
     private static final Color OUTLINE_COLOR = new Color(40, 40, 40, 200);
 
-    private static final int TOHITMOD_SIZE = 25;
-    private static final Point TOHITMOD_AT = new Point(HEX_CENTER_X, 18);
+    private static final int TO_HIT_MOD_SIZE = 25;
+    private static final Point TO_HIT_MOD_AT = new Point(HEX_CENTER_X, 18);
 
     private static final int RANGE_SIZE = 20;
     private static final Point RANGE_AT = new Point(HEX_CENTER_X + 11, 40);
@@ -98,7 +98,7 @@ public class FiringSolutionSprite extends HexSprite {
         int toHitModifier = firingSolution.getToHitData().getValue();
         String toHitMod = ((toHitModifier >= 0) ? "+" : "") + toHitModifier;
         noHitPossible = (toHitModifier == TargetRoll.IMPOSSIBLE) || (toHitModifier == TargetRoll.AUTOMATIC_FAIL);
-        toHitModWriter = new StringDrawer(toHitMod).at(TOHITMOD_AT).color(TEXT_COLOR).fontSize(TOHITMOD_SIZE)
+        toHitModWriter = new StringDrawer(toHitMod).at(TO_HIT_MOD_AT).color(TEXT_COLOR).fontSize(TO_HIT_MOD_SIZE)
               .center().outline(OUTLINE_COLOR, 1.5f);
 
         // range

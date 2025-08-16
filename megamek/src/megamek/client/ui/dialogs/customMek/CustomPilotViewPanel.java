@@ -35,6 +35,7 @@ package megamek.client.ui.dialogs.customMek;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -70,6 +71,7 @@ import megamek.common.preference.PreferenceManager;
  * @author Neoancient
  */
 public class CustomPilotViewPanel extends JPanel {
+    @Serial
     private static final long serialVersionUID = 345126674612500365L;
 
     private final Entity entity;
@@ -213,8 +215,7 @@ public class CustomPilotViewPanel extends JPanel {
                 add(fldGunneryAero, GBC.eol());
             }
         }
-        if (entity.getCrew() instanceof LAMPilot) {
-            LAMPilot pilot = (LAMPilot) entity.getCrew();
+        if (entity.getCrew() instanceof LAMPilot pilot) {
             fldGunneryL.setText(Integer.toString(pilot.getGunneryMekL()));
             fldGunneryM.setText(Integer.toString(pilot.getGunneryMekM()));
             fldGunneryB.setText(Integer.toString(pilot.getGunneryMekB()));
@@ -328,7 +329,6 @@ public class CustomPilotViewPanel extends JPanel {
 
             // If we got any other entities, show the unit number controls.
             if (otherUnitEntities.hasNext()) {
-                label = new JLabel(Messages.getString("CustomMekDialog.labUnitNum"), SwingConstants.CENTER);
                 add(choUnitNum, GBC.eop());
                 refreshUnitNum(otherUnitEntities);
             }

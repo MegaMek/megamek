@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -64,7 +64,7 @@ import megamek.common.weapons.Weapon;
 public class FireCommand extends ClientCommand {
     private int cen = Entity.NONE;
 
-    private Vector<AbstractEntityAction> attacks;
+    private final Vector<AbstractEntityAction> attacks;
 
     public FireCommand(ClientGUI clientGUI) {
         super(clientGUI, "fire", "used to shoot. See #fire HELP for more details.");
@@ -92,25 +92,27 @@ public class FireCommand extends ClientCommand {
                     return "Not an entity ID or valid number." + e;
                 }
             } else if (args[1].equalsIgnoreCase("HELP")) {
-                return "Available commands:\n"
-                      + "#fire ABORT = aborts planed firing and deselect unit.\n"
-                      + "#fire SELECT unitID = Selects the unit named unit ID for firing. This is a prerequisite " +
-                      "for all commands listed after this.\n"
-                      + "#fire COMMIT = executes the current firing plan.\n"
-                      + "#fire LIST unitID = List targeting information for all weapons at the specified target. " +
-                      "This is currently the only way to get weapon IDs.\n"
-                      + "#fire TWIST heading = used for torso twisting, the heading being to which direction (N, " +
-                      "NE, SE, etc) to try and turn.\n"
-                      + "#fire TARGET unitID weaponID1 weaponID2 ... = fires all specified weapons at the specified" +
-                      " target. Any number of weapons may be specified.\n"
-                      + "#fire TARGET unitID ALL = fires all remaining weapons at the specified target.\n";
+                return """
+                      Available commands:
+                      #fire ABORT = aborts planed firing and deselect unit.
+                      #fire SELECT unitID = Selects the unit named unit ID for firing. This is a prerequisite \
+                      for all commands listed after this.
+                      #fire COMMIT = executes the current firing plan.
+                      #fire LIST unitID = List targeting information for all weapons at the specified target. \
+                      This is currently the only way to get weapon IDs.
+                      #fire TWIST heading = used for torso twisting, the heading being to which direction (N, \
+                      NE, SE, etc) to try and turn.
+                      #fire TARGET unitID weaponID1 weaponID2 ... = fires all specified weapons at the specified\
+                       target. Any number of weapons may be specified.
+                      #fire TARGET unitID ALL = fires all remaining weapons at the specified target.
+                      """;
             } else if (ce() != null) {
                 if (args[1].equalsIgnoreCase("COMMIT")) {
                     commit();
                     return "Attacks send to the server";
                 } else if (args.length > 2) {
                     if (args[1].equalsIgnoreCase("TARGET")) {
-                        String str = "";
+                        StringBuilder str = new StringBuilder();
                         try {
                             Targetable target = getClient().getEntity(Integer.parseInt(args[2]));
                             if ((args.length == 4) && args[3].equalsIgnoreCase("ALL")) {
@@ -123,8 +125,11 @@ public class FireCommand extends ClientCommand {
                             } else {
                                 for (int i = 3; i < args.length; i++) {
                                     fire(Integer.parseInt(args[i]), target);
-                                    str += "Firing weapon " + args[i] + " at "
-                                          + target.toString() + "\n";
+                                    str.append("Firing weapon ")
+                                          .append(args[i])
+                                          .append(" at ")
+                                          .append(target.toString())
+                                          .append("\n");
                                 }
                             }
                         } catch (Exception ignored) {
@@ -136,18 +141,19 @@ public class FireCommand extends ClientCommand {
                         try {
                             Targetable target = getClient().getEntity(Integer.parseInt(args[2]));
                             if (target != null) {
-                                String str = " Weapons for " + ce() + " at " + target + ":\n";
+                                StringBuilder str = new StringBuilder(" Weapons for " + ce() + " at " + target + ":\n");
 
                                 for (Mounted<?> weapon : ce().getWeaponList()) {
-                                    str += "("
-                                          + ce().getEquipmentNum(weapon)
-                                          + ") "
-                                          + weapon.getName()
-                                          + " = "
-                                          + calculateToHit(ce().getEquipmentNum(weapon), target) + "\n";
+                                    str.append("(")
+                                          .append(ce().getEquipmentNum(weapon))
+                                          .append(") ")
+                                          .append(weapon.getName())
+                                          .append(" = ")
+                                          .append(calculateToHit(ce().getEquipmentNum(weapon), target))
+                                          .append("\n");
                                 }
 
-                                return str;
+                                return str.toString();
                             }
                         } catch (Exception ignored) {
 
@@ -326,8 +332,7 @@ public class FireCommand extends ClientCommand {
         Vector<EntityAction> newAttacks = new Vector<>();
         for (Enumeration<AbstractEntityAction> e = attacks.elements(); e.hasMoreElements(); ) {
             AbstractEntityAction o = e.nextElement();
-            if (o instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction) o;
+            if (o instanceof WeaponAttackAction waa) {
                 Entity attacker = waa.getEntity(getClient().getGame());
                 Targetable target = waa.getTarget(getClient().getGame());
                 boolean curInFrontArc = ComputeArc.isInArc(attacker.getPosition(),
@@ -347,8 +352,7 @@ public class FireCommand extends ClientCommand {
         }
         for (Enumeration<AbstractEntityAction> e = attacks.elements(); e.hasMoreElements(); ) {
             Object o = e.nextElement();
-            if (o instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction) o;
+            if (o instanceof WeaponAttackAction waa) {
                 Entity attacker = waa.getEntity(getClient().getGame());
                 Targetable target = waa.getTarget(getClient().getGame());
                 boolean curInFrontArc = ComputeArc.isInArc(attacker.getPosition(),

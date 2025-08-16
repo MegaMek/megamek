@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,5 +38,5 @@ package megamek.client.ui.dialogs.advancedsearch;
 abstract class EquipmentFilterToken implements FilterToken {
 
     int qty;
-    boolean atleast;
+    boolean atLeast;
 }

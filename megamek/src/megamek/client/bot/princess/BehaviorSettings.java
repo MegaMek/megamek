@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -397,7 +397,7 @@ public class BehaviorSettings implements Serializable {
         try {
             addPriorityUnit(Integer.parseInt(id));
         } catch (final NumberFormatException ex) {
-            logger.error(ex, "Invalid unit ID: {}", id);
+            logger.error(ex, "Add Priority Unit - Invalid unit ID: {}", id);
         }
     }
 
@@ -422,7 +422,7 @@ public class BehaviorSettings implements Serializable {
         try {
             removePriorityUnit(Integer.parseInt(id));
         } catch (final NumberFormatException ex) {
-            logger.error(ex, "Invalid unit ID: {}", id);
+            logger.error(ex, "Remove Priority Unit - Invalid unit ID: {}", id);
         }
     }
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ package megamek.client.ui.dialogs.clientDialogs;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
+import java.io.Serial;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -46,9 +47,10 @@ import javax.swing.JPanel;
  */
 public class ClientDialog extends JDialog {
 
+    @Serial
     private static final long serialVersionUID = 6154951760485853883L;
 
-    protected JFrame owner = null;
+    protected JFrame owner;
 
     /**
      * Creates a ClientDialog with modality as given by modal.

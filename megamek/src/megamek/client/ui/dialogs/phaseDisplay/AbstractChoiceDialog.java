@@ -52,7 +52,7 @@ import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
 
 /**
- * A modal dialog for presenting options as buttons. Can do single or multi-selection. Sub-classes should define methods
+ * A modal dialog for presenting options as buttons. Can do single or multi-selection. Subclasses should define methods
  * for setting the text labels for the buttons as a summary or details of the item. Text label can be HTML or any other
  * JButton legal content.
  *

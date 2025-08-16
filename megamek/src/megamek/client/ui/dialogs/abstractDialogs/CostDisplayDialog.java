@@ -136,7 +136,7 @@ public class CostDisplayDialog extends AbstractDialog {
         }
     }
 
-    /** Does gui-scaling, packs the dialog and reduces the height if its too big. */
+    /** Does gui-scaling, packs the dialog and reduces the height if It's too big. */
     private void updateDialogSize() {
         pack();
         Dimension screenSize = UIUtil.getScaledScreenSize(this);

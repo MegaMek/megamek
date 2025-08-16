@@ -35,12 +35,12 @@ package megamek.client.ui.dialogs.gameConnectionDialogs;
 import static megamek.codeUtilities.MathUtility.clamp;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.Serial;
 import java.util.Vector;
 import javax.swing.*;
 
@@ -56,41 +56,11 @@ import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
-import megamek.logging.MMLogger;
 import megamek.server.Server;
 
 public abstract class AbstractGameConnectionDialog extends ClientDialog implements ActionListener {
-    private static final MMLogger logger = MMLogger.create(AbstractGameConnectionDialog.class);
 
-    /**
-     * We need a way to access the action map for a JComboBox editor, so that we can have it fire an action when wenter
-     * is pressed. This simple class allows this.
-     */
-    public static class SimpleComboBoxEditor extends JTextField implements ComboBoxEditor {
-
-        private static final long serialVersionUID = 4496820410417436582L;
-
-        @Override
-        public Component getEditorComponent() {
-            return this;
-        }
-
-        @Override
-        public void setItem(Object anObject) {
-            if (anObject != null) {
-                setText(anObject.toString());
-            } else {
-                setText(null);
-            }
-        }
-
-        @Override
-        public Object getItem() {
-            return getText();
-        }
-
-    }
-
+    @Serial
     private static final long serialVersionUID = -5114410402284987181L;
     private String playerName;
     private int port;
@@ -101,9 +71,9 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
     private JComboBox<String> playerNameCombo = null;
     private JTextField portField;
 
-    private Vector<String> playerNames = null;
+    private final Vector<String> playerNames;
 
-    private ClientPreferences clientPreferences = PreferenceManager.getClientPreferences();
+    private final ClientPreferences clientPreferences = PreferenceManager.getClientPreferences();
 
     protected AbstractGameConnectionDialog(JFrame owner, String title, boolean modal, String playerName) {
         this(owner, title, modal, playerName, null);
@@ -222,6 +192,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
             ActionMap am = cbe.getActionMap();
             im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
             am.put("enter", new AbstractAction() {
+                @Serial
                 private static final long serialVersionUID = 1L;
 
                 @Override

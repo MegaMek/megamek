@@ -111,16 +111,16 @@ public class MovementEnvelopeSpriteHandler extends BoardViewSpriteHandler {
                 mvAdjType = 0;
                 Coords adjacentHex = loc.translated(dir);
                 // get the movement type
-                Integer Adjmv = mvEnvData.get(adjacentHex);
-                if (Adjmv != null) {
+                Integer adjacentMovement = mvEnvData.get(adjacentHex);
+                if (adjacentMovement != null) {
                     if (gear == MovementDisplay.GEAR_JUMP) {
-                        if (Adjmv <= jump) {
+                        if (adjacentMovement <= jump) {
                             mvAdjType = 1;
                         }
                     } else {
-                        if (Adjmv <= walk) {
+                        if (adjacentMovement <= walk) {
                             mvAdjType = 2;
-                        } else if (Adjmv <= run) {
+                        } else if (adjacentMovement <= run) {
                             mvAdjType = 3;
                         } else {
                             mvAdjType = 4;

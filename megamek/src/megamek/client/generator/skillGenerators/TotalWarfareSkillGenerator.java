@@ -103,7 +103,7 @@ public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
                 pilotingLevel = (int) Math.ceil(pilotingRoll / 2.0) + 6;
                 break;
             default:
-                logger.error("Attempting to generate skills for unknown skill level of " + level);
+                logger.error("Attempting to generate skills for unknown skill level of {}", level);
                 gunneryLevel = 0;
                 pilotingLevel = 0;
                 break;

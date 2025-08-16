@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -78,12 +78,11 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
     private final JButton butCancel = new JButton(Messages.getString("Cancel"));
 
 
-    private EnumMap<BombTypeEnum, JComboBox<String>> b_choices = new EnumMap<>(BombTypeEnum.class);
-    private EnumMap<BombTypeEnum, JLabel> b_labels = new EnumMap<>(BombTypeEnum.class);
-    private JLabel description;
+    private final EnumMap<BombTypeEnum, JComboBox<String>> b_choices = new EnumMap<>(BombTypeEnum.class);
+    private final EnumMap<BombTypeEnum, JLabel> b_labels = new EnumMap<>(BombTypeEnum.class);
 
     /**
-     * Keeps track of the number of fighters in the squadron, 0 implies a single fighter not in a squadron squadron.
+     * Keeps track of the number of fighters in the squadron, 0 implies a single fighter not in a squadron.
      */
     private double numFighters;
 
@@ -94,22 +93,18 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
      * @param title          - the title <code>String</code> for this dialog.
      * @param availableBombs The bomb choice list
      * @param spaceBomb      Flag for whether this is space bombing
-     * @param bombDump
-     * @param lim
      * @param numFighters    The number of fighters in a squadron, 0 implies a single fighter not in a squadron.
      */
-    @SuppressWarnings("unchecked")
     private void initialize(JFrame parent, String title, BombLoadout availableBombs, boolean spaceBomb,
           boolean bombDump, int lim,
           int numFighters) {
-        // super.setResizable(false);
 
         this.numFighters = numFighters;
         this.availableBombs = new BombLoadout(availableBombs);
         this.limit = lim;
 
-        GridBagLayout gridbag = new GridBagLayout();
-        setLayout(gridbag);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        setLayout(gridBagLayout);
 
         GridBagConstraints c = new GridBagConstraints();
 
@@ -119,7 +114,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         //c.gridy = 0;
         c.insets = new Insets(5, 5, 5, 5);
 
-        description = new JLabel();
+        JLabel description = new JLabel();
         if (numFighters != 0) {
             description.setText(Messages.getString("BombPayloadDialog.SquadronBombDesc"));
         } else {
@@ -162,7 +157,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
                 int maxNumSalvos = (int) Math.ceil(availableCount / this.numFighters);
                 // Add the full-squadron salvos
                 for (int j = 1; j < maxNumSalvos; j++) {
-                    int numBombs = (int) (j * numFighters);
+                    int numBombs = j * numFighters;
                     comboBox.addItem(j + " (" + numBombs + ")");
                 }
                 // Add the maximum number of salvos
@@ -179,12 +174,12 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             c.gridy = currentRow + 1;
             c.anchor = GridBagConstraints.EAST;
             add(label, c);
-            gridbag.setConstraints(label, c);
+            gridBagLayout.setConstraints(label, c);
             c.gridx = 2;
             c.gridy = currentRow + 1;
             c.anchor = GridBagConstraints.WEST;
             add(comboBox, c);
-            gridbag.setConstraints(comboBox, c);
+            gridBagLayout.setConstraints(comboBox, c);
             currentRow++;
         }
 
@@ -238,13 +233,9 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
      * Create a choice dialog. The player can choose any or all of the choices. If no choices are passed in, this will
      * be a very boring dialog, but it will not suffer an exception.
      *
-     * @param parent      - the <code>Frame</code> that is locked by this dialog.
-     * @param title       - the title <code>String</code> for this dialog.
-     * @param bombs       - an array of <code>String</code>s the number of bombs of each type
-     * @param spaceBomb
-     * @param bombDump
-     * @param limit
-     * @param numFighters
+     * @param parent - the <code>Frame</code> that is locked by this dialog.
+     * @param title  - the title <code>String</code> for this dialog.
+     * @param bombs  - an array of <code>String</code>s the number of bombs of each type
      */
     public BombPayloadDialog(JFrame parent, String title, BombLoadout bombs, boolean spaceBomb, boolean bombDump,
           int limit,
@@ -265,7 +256,6 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void itemStateChanged(ItemEvent ie) {
         if (limit < 0) {
             return;
@@ -333,11 +323,11 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         // Squadrons have to parse values differently
         if (numFighters != 0) {
             // Parse squadron format: "# (#)"
-            StringTokenizer toks = new StringTokenizer(selected, "() ");
-            toks.nextToken(); // Skip salvo count
-            if (toks.hasMoreTokens()) {
+            StringTokenizer tokens = new StringTokenizer(selected, "() ");
+            tokens.nextToken(); // Skip salvo count
+            if (tokens.hasMoreTokens()) {
                 try {
-                    return Integer.parseInt(toks.nextToken());
+                    return Integer.parseInt(tokens.nextToken());
                 } catch (NumberFormatException ignored) {
                     // Will return 0
                 }
@@ -363,10 +353,10 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             if (numFighters != 0) {
                 // Squadron format
                 if (item.contains("(") && item.contains(")")) {
-                    StringTokenizer toks = new StringTokenizer(item, "() ");
-                    toks.nextToken(); // Skip salvo count
+                    StringTokenizer tokens = new StringTokenizer(item, "() ");
+                    tokens.nextToken(); // Skip salvo count
                     try {
-                        if (toks.hasMoreTokens() && (Integer.parseInt(toks.nextToken()) == count)) {
+                        if (tokens.hasMoreTokens() && (Integer.parseInt(tokens.nextToken()) == count)) {
                             comboBox.setSelectedIndex(i);
                             return;
                         }

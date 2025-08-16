@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,9 +45,9 @@ import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalCalculator;
 import megamek.client.bot.PhysicalOption;
 import megamek.client.bot.princess.FireControl.FireControlType;
-import megamek.client.bot.princess.FiringPlanCalculationParameters.Builder;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
+import megamek.client.bot.princess.coverage.Builder;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.panels.phaseDisplay.TowLinkWarning;
 import megamek.codeUtilities.MathUtility;
@@ -481,7 +481,7 @@ public class Princess extends BotClient {
             throw new NullPointerException("Coords is null.");
         }
         if (!getGame().getBoard().contains(coords)) {
-            LOGGER.warn("Board does not contain " + coords.toFriendlyString());
+            LOGGER.warn("Board does not contain {}", coords.toFriendlyString());
             return;
         }
         getStrategicBuildingTargets().add(coords);
@@ -769,14 +769,21 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Rank possible deployment coordinates by hazard, path freedom, concealment 1. Randomly select N coords from list
-     * 2. For selected coords: 1. Check if hex is invalid 2. Create a MovePath containing the starting coordinate 3. Get
-     * the hazard value 4. Save Coords to HashMap with hazard as key
+     * Rank possible deployment coordinates by hazard, path freedom, concealment
+     * <p>
+     * <ol>
+     *     <li>Randomly select N coords from list</li>
+     *     <li>
+     *         For selected coords:
+     *         <ol>
+     *             <li>Check if hex is invalid</li>
+     *             <li>Create a MovePath containing the starting coordinate</li>
+     *             <li>Get the hazard value</li>
+     *             <li>Save Coords to HashMap with hazard as key</li>
+     *         </ol>
+     *     </li>
+     * </ol>
      *
-     * @param deployedUnit
-     * @param possibleDeployCoords
-     *
-     * @return
      */
     protected Coords rankDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         StringBuilder sb = null;
@@ -818,7 +825,7 @@ public class Princess extends BotClient {
                     deployedUnit.getElevation() > 0))) {
             double hazard;
             int longest = 0;
-            int size = 0;
+            int size;
             for (Coords dest : localCopy) {
                 deployStep.setPosition(dest);
                 if (null != super.getFirstValidCoords(deployedUnit, List.of(dest))) {
@@ -832,7 +839,7 @@ public class Princess extends BotClient {
 
                     if (sb != null) {
                         sb.append("\n\tFound valid coordinates (")
-                              .append(dest.toString())
+                              .append(dest)
                               .append(") with initial hazard of: ")
                               .append(hazard);
                     }
@@ -862,7 +869,7 @@ public class Princess extends BotClient {
                 if (bestCandidate != null) {
                     if (sb != null) {
                         sb.append("\n\tFound best candidate (")
-                              .append(bestCandidate.toString())
+                              .append(bestCandidate)
                               .append(") out of ")
                               .append(candidates.size())
                               .append(" with a score of ")
@@ -953,9 +960,9 @@ public class Princess extends BotClient {
                     plan.sortPlan();
 
                     // Log info and debug at different levels
-                    LOGGER.info(shooter.getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(false));
-                    LOGGER.debug(shooter.getDisplayName() +
-                          " - Detailed Best Firing Plan: " +
+                    LOGGER.info("{} - Best Firing Plan: {}", shooter.getDisplayName(), plan.getDebugDescription(false));
+                    LOGGER.debug("{} - Detailed Best Firing Plan: {}",
+                          shooter.getDisplayName(),
                           plan.getDebugDescription(true));
 
                     // Consider making an aimed shot if the target is shut down or the attacker has
@@ -1067,7 +1074,7 @@ public class Princess extends BotClient {
                     sendAttackData(shooter.getId(), actions);
                     return;
                 } else {
-                    LOGGER.info("No best firing plan for " + shooter.getDisplayName());
+                    LOGGER.info("No best firing plan for {}", shooter.getDisplayName());
                 }
             }
 
@@ -1588,19 +1595,8 @@ public class Princess extends BotClient {
 
         // Each type of unit requires its own checking process due to unique locations.
         // TODO: placeholders are used for non-Mek targets. Create appropriate methods for each.
-        switch (((Entity) target).getUnitType()) {
-            case UnitType.MEK:
-                aimLocation = calculateAimedShotLocation((Mek) target, workingShots, rearAttack, includeHead);
-                break;
-            case UnitType.TANK:
-            case UnitType.VTOL:
-            case UnitType.NAVAL:
-                break;
-            case UnitType.CONV_FIGHTER:
-            case UnitType.AEROSPACEFIGHTER:
-                break;
-            default:
-                break;
+        if (((Entity) target).getUnitType() == UnitType.MEK) {
+            aimLocation = calculateAimedShotLocation((Mek) target, workingShots, rearAttack, includeHead);
         }
 
         return aimLocation;
@@ -2211,11 +2207,7 @@ public class Princess extends BotClient {
         } else if (0 < getPathRanker(entity).distanceToHomeEdge(entity.getPosition(), entity.getBoardId(),
               getHomeEdge(entity), getGame())) {
             return false;
-        } else if (!getFleeBoard() && !(entity.isCrippled() && getForcedWithdrawal())) {
-            return false;
-        } else {
-            return true;
-        }
+        } else {return getFleeBoard() || entity.isCrippled() && getForcedWithdrawal();}
     }
 
     boolean isImmobilized(final Entity mover) {
@@ -2263,7 +2255,7 @@ public class Princess extends BotClient {
             // If our odds to get up are equal to or worse than the threshold,
             // consider ourselves immobile.
             final PilotingRollData target = mek.checkGetUp(getUp, movePath.getLastStepMovementType());
-            LOGGER.info("Need to roll " + target.getValue() + " to stand and our tolerance is " + threshold);
+            LOGGER.info("Need to roll {} to stand and our tolerance is {}", target.getValue(), threshold);
             return (target.getValue() >= threshold);
         }
 
@@ -2278,7 +2270,7 @@ public class Princess extends BotClient {
               mek.getPosition(),
               hex.getLevel(),
               false);
-        LOGGER.info("Need to roll " + target.getValue() + " to get unstuck and our tolerance is " + threshold);
+        LOGGER.info("Need to roll {} to get unstuck and our tolerance is {}", target.getValue(), threshold);
         return (target.getValue() >= threshold);
     }
 
@@ -2294,7 +2286,7 @@ public class Princess extends BotClient {
             // figure out who moved last, and whose move lists need to be updated
 
             // moves this entity during movement phase
-            LOGGER.debug("Moving " + entity.getDisplayName() + " (ID " + entity.getId() + ")");
+            LOGGER.debug("Moving {} (ID {})", entity.getDisplayName(), entity.getId());
             getPrecognition().ensureUpToDate();
 
             if (isFallingBack(entity)) {
@@ -2365,10 +2357,10 @@ public class Princess extends BotClient {
                 return performPathPostProcessing(new MovePath(game, entity), 0);
             }
 
-            LOGGER.debug("Path ranking took " + (stop_time - startTime) + " millis");
+            LOGGER.debug("Path ranking took {} millis", stop_time - startTime);
 
             final RankedPath bestPath = getPathRanker(entity).getBestPath(rankedPaths);
-            LOGGER.info("Best Path: " + bestPath.getPath() + "  Rank: " + bestPath.getRank());
+            LOGGER.info("Best Path: {}  Rank: {}", bestPath.getPath(), bestPath.getRank());
 
             return performPathPostProcessing(bestPath);
         } catch (Exception e) {
@@ -2819,10 +2811,6 @@ public class Princess extends BotClient {
      * Reduce utility of TAGging something if we're already trying.  Update the utility if it's better, otherwise try to
      * dissuade the next attacker.
      *
-     * @param te
-     * @param damage
-     *
-     * @return
      */
     public int computeTeamTagUtility(Targetable te, int damage) {
         int key = te.getId();
@@ -3474,7 +3462,7 @@ public class Princess extends BotClient {
      * @param path MovePath that brought us here.
      */
     private void abandonShip(MovePath path) {
-        /**** Can Unload? ****/
+        // Can Unload?
         Entity movingEntity = path.getEntity();
 
         // If no method of carrying units, skip it.
@@ -3483,13 +3471,13 @@ public class Princess extends BotClient {
             return;
         }
 
-        /**** Should Unload? ****/
+        // Should Unload?
         // If this entity is still able to maneuver and fight, don't abandon it yet.
         if (!shouldAbandon(movingEntity)) {
             return;
         }
 
-        /**** Unload What, Where? ****/
+        // Unload What, Where?
         abandonShipOneUnit(movingEntity, transporters, path);
     }
 
@@ -3636,7 +3624,6 @@ public class Princess extends BotClient {
     /**
      * Flag an entity as having used manual AMS this round
      *
-     * @param id
      */
     public void flagManualAMSUse(int id) {
         if (manualAMSIds == null) {
@@ -3668,7 +3655,6 @@ public class Princess extends BotClient {
     /**
      * Get a list of all hot spots (positions of high activity) for opposing units
      *
-     * @return
      */
     public List<Coords> getEnemyHotSpots() {
         List<Coords> accumulatedHotSpots = new ArrayList<>();
@@ -3698,9 +3684,6 @@ public class Princess extends BotClient {
     /**
      * Get the nearest top-rated hot spot for friendly units
      *
-     * @param testPosition
-     *
-     * @return
      */
     public Coords getFriendlyHotSpot(Coords testPosition) {
         return friendlyHeatMap == null ? null : friendlyHeatMap.getHotSpot(testPosition, true);

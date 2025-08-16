@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,6 +42,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -60,18 +61,17 @@ import megamek.common.Mounted;
  * A dialog displayed to the player when they want to lay mines with their BA unit.
  */
 public class MineLayingDialog extends JDialog implements ActionListener {
+    @Serial
     private static final long serialVersionUID = -1067865530113792340L;
-    private JButton butOkay = new JButton(Messages.getString("Okay"));
-    private JButton butCancel = new JButton(Messages.getString("Cancel"));
-    private JLabel labMessage;
+    private final JButton butCancel = new JButton(Messages.getString("Cancel"));
     private boolean okay = true;
 
     /**
      * The <code>int</code> ID of the entity that lays the mine.
      */
-    private Entity entity;
-    private JComboBox<String> chMines = new JComboBox<>();
-    private ArrayList<Mounted<?>> vMines = new ArrayList<>();
+    private final Entity entity;
+    private final JComboBox<String> chMines = new JComboBox<>();
+    private final ArrayList<Mounted<?>> vMines = new ArrayList<>();
 
     /**
      * Display a dialog that shows the mines on the entity, and allows the player to choose one.
@@ -83,22 +83,21 @@ public class MineLayingDialog extends JDialog implements ActionListener {
         super(parent, Messages.getString("MineLayingDialog.title"), true);
         this.entity = entity;
 
-        labMessage = new JLabel(Messages.getString("MineLayingDialog.selectMineToLay",
+        JLabel labMessage = new JLabel(Messages.getString("MineLayingDialog.selectMineToLay",
               entity.getDisplayName()));
 
         // Walk through the entity's misc equipment, looking for mines.
         for (Mounted<?> mount : entity.getMisc()) {
 
-            // Is this a Mine that can be layed?
+            // Is this a Mine that can be laid?
             EquipmentType type = mount.getType();
             if ((type.hasFlag(MiscType.F_MINE) ||
                   type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) &&
                   mount.canFire()) {
-                StringBuffer message = new StringBuffer();
-                message.append(entity.getLocationName(mount.getLocation()))
-                      .append(' ')
-                      .append(mount.getDesc());
-                chMines.addItem(message.toString());
+                String message = entity.getLocationName(mount.getLocation())
+                      + ' '
+                      + mount.getDesc();
+                chMines.addItem(message);
                 vMines.add(mount);
 
             } // End found-mine
@@ -106,23 +105,24 @@ public class MineLayingDialog extends JDialog implements ActionListener {
         } // Look at the next piece of equipment.
 
         // buttons
+        JButton butOkay = new JButton(Messages.getString("Okay"));
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
 
         // layout
-        GridBagLayout gridbag = new GridBagLayout();
+        GridBagLayout gridBagLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        getContentPane().setLayout(gridbag);
+        getContentPane().setLayout(gridBagLayout);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 10, 10, 10);
         c.weightx = 1.0;
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(labMessage, c);
+        gridBagLayout.setConstraints(labMessage, c);
         getContentPane().add(labMessage);
 
-        gridbag.setConstraints(chMines, c);
+        gridBagLayout.setConstraints(chMines, c);
         getContentPane().add(chMines);
 
         // Allow the player to confirm or abort the choice.
@@ -139,17 +139,13 @@ public class MineLayingDialog extends JDialog implements ActionListener {
 
         pack();
         Dimension size = getSize();
-        boolean updateSize = false;
         if (size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
             size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
         }
         if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
             size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
         }
-        if (updateSize) {
-            setSize(size);
-            size = getSize();
-        }
+
         setResizable(false);
         setLocation(parent.getLocation().x + parent.getSize().width / 2
                     - size.width / 2,

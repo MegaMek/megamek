@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.io.Serial;
 import java.util.Vector;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -52,6 +53,7 @@ import megamek.server.Server;
  * The host game dialog shown when hosting a new game and when loading a game
  */
 public class HostDialog extends AbstractGameConnectionDialog {
+    @Serial
     private static final long serialVersionUID = -103094006944170081L;
 
     // Some fields are accessed for the results of the dialog

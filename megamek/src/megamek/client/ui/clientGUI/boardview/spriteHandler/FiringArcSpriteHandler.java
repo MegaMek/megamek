@@ -39,8 +39,7 @@ import java.util.Set;
 
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.client.ui.clientGUI.boardview.sprite.FieldofFireSprite;
+import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.TextMarkerSprite;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -170,9 +169,9 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         Board board = game.getBoard(firingEntity);
 
         // check if extreme range is used
-        int maxrange = 4;
+        int maxRange = 4;
         if (!board.isGround() || game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
-            maxrange = 5;
+            maxRange = 5;
         }
 
         // create the lists of hexes
@@ -196,7 +195,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         if (board.isHighAltitude()) {
             // This is more computationally expensive as the atmospheric row hexes reduce range per hex
             // for all available range brackets Min/S/M/L/E ...
-            for (int bracket = 0; bracket < maxrange; bracket++) {
+            for (int bracket = 0; bracket < maxRange; bracket++) {
                 fieldFire.add(new HashSet<>());
                 // Add all hexes up to the weapon range for the current range bracket
                 final int currentRange = ranges[underWaterIndex()][bracket];
@@ -218,7 +217,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 }
             }
         } else {
-            for (int bracket = 0; bracket < maxrange; bracket++) {
+            for (int bracket = 0; bracket < maxRange; bracket++) {
                 fieldFire.add(new HashSet<>());
                 // Don't add any hexes to the min range bracket when the minimum range is 0,
                 // i.e. no minimum range
@@ -258,8 +257,10 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 }
                 // create sprite if there's a border to paint
                 if (edgesToPaint > 0) {
-                    FieldofFireSprite ffSprite = new FieldofFireSprite(
-                          (BoardView) clientGUI.getBoardView(firingEntity), bracket, loc, edgesToPaint);
+                    FieldOfFireSprite ffSprite = new FieldOfFireSprite(clientGUI.getBoardView(firingEntity),
+                          bracket,
+                          loc,
+                          edgesToPaint);
                     currentSprites.add(ffSprite);
                 }
             }
@@ -279,12 +280,12 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
             int numMinMarkers = 0;
             for (int[] dir : directions) {
                 // find the middle of the range bracket
-                int rangeend = Math.max(ranges[underWaterIndex()][bracket], 0);
-                int rangebegin = 1;
+                int rangeRnd = Math.max(ranges[underWaterIndex()][bracket], 0);
+                int rangeBegin = 1;
                 if (bracket > 0) {
-                    rangebegin = Math.max(ranges[underWaterIndex()][bracket - 1] + 1, 1);
+                    rangeBegin = Math.max(ranges[underWaterIndex()][bracket - 1] + 1, 1);
                 }
-                int dist = (rangeend + rangebegin) / 2;
+                int dist = (rangeRnd + rangeBegin) / 2;
                 // translate to the middle of the range bracket
                 Coords mark = firingPosition.translated((dir[0] + facing) % 6, (dist + 1) / 2)
                       .translated((dir[1] + facing) % 6, dist / 2);
@@ -297,8 +298,10 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 if (board.contains(mark) && fieldFire.get(bracket).contains(mark)
                       && ((bracket > 0) || (numMinMarkers < 2))) {
                     TextMarkerSprite tS =
-                          new TextMarkerSprite((BoardView) clientGUI.getBoardView(firingEntity), mark,
-                                rangeTexts[bracket], FieldofFireSprite.getFieldOfFireColor(bracket));
+                          new TextMarkerSprite(clientGUI.getBoardView(firingEntity),
+                                mark,
+                                rangeTexts[bracket],
+                                FieldOfFireSprite.getFieldOfFireColor(bracket));
                     currentSprites.add(tS);
                     if (bracket == 0) {
                         numMinMarkers++;
@@ -377,7 +380,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
     }
 
     private void findRanges(WeaponMounted weapon) {
-        WeaponType wtype = weapon.getType();
+        WeaponType weaponType = weapon.getType();
 
         // Use the Weapon Panel's selected ammo to determine ranges, or the current
         // linked ammo if not set
@@ -387,28 +390,28 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
 
         // Try to get the ammo type from the selected ammo if possible, or the current
         // linked ammo if not
-        AmmoType atype = (ammoMounted != null) ? ammoMounted.getType() : null;
-        if (atype == null && (weapon.getLinked() != null) && (weapon.getLinked().getType() instanceof AmmoType)) {
-            atype = (AmmoType) weapon.getLinked().getType();
+        AmmoType ammoType = (ammoMounted != null) ? ammoMounted.getType() : null;
+        if (ammoType == null && (weapon.getLinked() != null) && (weapon.getLinked().getType() instanceof AmmoType)) {
+            ammoType = (AmmoType) weapon.getLinked().getType();
         }
 
         // Ranges set by weapon + ammo combination, but will be updated depending on
         // selected unit
-        ranges[0] = wtype.getRanges(weapon, ammoMounted);
+        ranges[0] = weaponType.getRanges(weapon, ammoMounted);
 
         // gather underwater ranges
-        ranges[1] = wtype.getWRanges();
-        if (atype != null) {
-            if ((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM)
-                  || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)
-                  || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.MRM)
-                  || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
-                  || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
-                  || (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) {
-                if (atype.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)) {
-                    ranges[1] = wtype.getRanges(weapon, ammoMounted);
-                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_MULTI_PURPOSE)) {
-                    ranges[1] = wtype.getRanges(weapon, ammoMounted);
+        ranges[1] = weaponType.getWRanges();
+        if (ammoType != null) {
+            if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM)
+                  || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)
+                  || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM)
+                  || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                  || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                  || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.MML)) {
+                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)) {
+                    ranges[1] = weaponType.getRanges(weapon, ammoMounted);
+                } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_MULTI_PURPOSE)) {
+                    ranges[1] = weaponType.getRanges(weapon, ammoMounted);
                 }
             }
         }
@@ -417,8 +420,8 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         // the usual range types as displaying 5 range circles
         // would be visual overkill (and besides this makes
         // things easier)
-        if (wtype instanceof InfantryWeapon inftype) {
-            int iR = inftype.getInfantryRange();
+        if (weaponType instanceof InfantryWeapon infantryWeapon) {
+            int iR = infantryWeapon.getInfantryRange();
             ranges[0] = new int[] { 0, iR, iR * 2, iR * 3, 0 };
             ranges[1] = new int[] { 0, iR / 2, (iR / 2) * 2, (iR / 2) * 3, 0 };
         }
@@ -427,28 +430,28 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         // large range for the targeting phase and
         // 6 to 17 in the other phases as it will be
         // direct fire then
-        if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+        if (weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
             boolean isADA = (ammoMounted != null
                   && ammoMounted.getType().getMunitionType().contains(AmmoType.Munitions.M_ADA));
             if (game.getPhase().isTargeting()) {
                 ranges[0] = (!isADA ? new int[] { 0, 0, 0, 100, 0 } : new int[] { 0, 0, 0, 51, 0 });
             } else {
-                ranges[0] = (!isADA ? new int[] { 6, 0, 0, 17, 0 } : wtype.getRanges(weapon, ammoMounted));
+                ranges[0] = (!isADA ? new int[] { 6, 0, 0, 17, 0 } : weaponType.getRanges(weapon, ammoMounted));
             }
             ranges[1] = new int[] { 0, 0, 0, 0, 0 };
         }
 
-        // Override for the MML ammos
-        if (atype != null) {
-            if (atype.getAmmoType() == AmmoType.AmmoTypeEnum.MML) {
-                if (atype.hasFlag(AmmoType.F_MML_LRM)) {
-                    if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+        // Override for the MML ammunition
+        if (ammoType != null) {
+            if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) {
+                if (ammoType.hasFlag(AmmoType.F_MML_LRM)) {
+                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                         ranges[0] = new int[] { 4, 5, 10, 15, 20 };
                     } else {
                         ranges[0] = new int[] { 6, 7, 14, 21, 28 };
                     }
                 } else {
-                    if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                         ranges[0] = new int[] { 0, 2, 4, 6, 8 };
                     } else {
                         ranges[0] = new int[] { 0, 3, 6, 9, 12 };
@@ -465,9 +468,9 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         // Aero
         if (firingEntity.isAirborne()) {
 
-            // keep original ranges ranges, no underwater
+            // keep original ranges, no underwater
             ranges[1] = new int[] { 0, 0, 0, 0, 0 };
-            int maxr;
+            int maxRange;
 
             // In the WeaponPanel, when the weapon is out of ammo
             // or otherwise nonfunctional, SHORT range will be listed;
@@ -478,16 +481,16 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                   && !weapon.isDestroyed() && !weapon.isJammed()
                   && ((ammoMounted == null)
                   || (ammoMounted.getUsableShotsLeft() > 0))) {
-                maxr = wtype.getMaxRange(weapon, ammoMounted);
+                maxRange = weaponType.getMaxRange(weapon, ammoMounted);
 
                 // set the standard ranges, depending on capital or no
-                int rangeMultiplier = wtype.isCapital() ? 2 : 1;
+                int rangeMultiplier = weaponType.isCapital() ? 2 : 1;
                 if (game.getBoard(firingEntity).isGround()) {
                     rangeMultiplier *= 8;
                 }
 
                 for (int rangeIndex = RangeType.RANGE_MINIMUM; rangeIndex <= RangeType.RANGE_EXTREME; rangeIndex++) {
-                    if (maxr >= rangeIndex) {
+                    if (maxRange >= rangeIndex) {
                         ranges[0][rangeIndex] = WeaponType.AIRBORNE_WEAPON_RANGES[rangeIndex] * rangeMultiplier;
                     } else {
                         ranges[0][rangeIndex] = 0;
@@ -547,7 +550,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         Hex hex = game.getBoard(boardId).getHex(position);
         int waterDepth = hex.terrainLevel(Terrains.WATER);
 
-        // if this is a ship/sub on the surface and we have a weapon that only has water
+        // if this is a ship/sub on the surface, and we have a weapon that only has water
         // ranges, consider it an underwater weapon for the purposes of displaying range
         // brackets
         if (waterDepth > 0 && firingEntity.isSurfaceNaval() &&

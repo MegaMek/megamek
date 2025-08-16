@@ -172,11 +172,11 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
      * This runs revalidation on the dialog, which sets the validation state to pending before calling
      * validateButtonActionPerformed to perform the data validation.
      *
-     * @param evt the event triggering this, or null if you want to put the output into a popup, if applicable
+     * @param actionEvent the event triggering this, or null if you want to put the output into a popup, if applicable
      */
-    protected void revalidateAction(final @Nullable ActionEvent evt) {
+    protected void revalidateAction(final @Nullable ActionEvent actionEvent) {
         setState(ValidationState.PENDING);
-        validateButtonActionPerformed(evt);
+        validateButtonActionPerformed(actionEvent);
     }
 
     /**
@@ -193,7 +193,7 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
 
     /**
      * This validates the data contained within this dialog, returning the determined state (with SUCCESS being returned
-     * if all warnings are skipped). The Ok Button can be accessed through a getter, so the tooltip can be changed and
+     * if all warnings are skipped). The Ok Button can be accessed through a getter, so the tooltip can be changed, and
      * it can be enabled/disabled.
      *
      * @param display put any outputs into a popup, if applicable

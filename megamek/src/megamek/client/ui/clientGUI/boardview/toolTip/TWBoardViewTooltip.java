@@ -80,7 +80,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         Player localPlayer = localPlayer();
         Hex mhex = bv.getBoard().getHex(coords);
 
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         // Hex Terrain
         if (GUIP.getShowMapHexPopup() && (mhex != null)) {
@@ -139,11 +139,11 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             attr = String.format("BORDER=0 BGCOLOR=%s width=100%%",
                   GUIPreferences.hexColor(GUIP.getUnitToolTipTerrainBGColor()));
             String table = UIUtil.tag("TABLE", attr, row);
-            result += table;
+            result.append(table);
 
             StringBuffer sbBuildings = new StringBuffer();
             appendBuildingsTooltip(sbBuildings, mhex, bv.getBoardId());
-            result += sbBuildings.toString();
+            result.append(sbBuildings);
 
             if (bv.displayInvalidFields()) {
                 List<String> errors = new ArrayList<>();
@@ -159,22 +159,22 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                     row = UIUtil.tag("TR", "", col);
                     attr = String.format("BORDER=0 BGCOLOR=%s width=100%%",
                           GUIPreferences.hexColor(GUIP.getUnitToolTipTerrainBGColor()));
-                    result += UIUtil.tag("TABLE", attr, row);
+                    result.append(UIUtil.tag("TABLE", attr, row));
                 }
             }
         }
 
         // Show the player(s) that may deploy here
-        // in the artillery autohit designation phase
+        // in the artillery auto hit designation phase
         if (game.getPhase().isSetArtilleryAutohitHexes() && (mhex != null)) {
-            result += HexTooltip.getArtilleryHit(game, coords, bv.getBoardId());
+            result.append(HexTooltip.getArtilleryHit(game, coords, bv.getBoardId()));
         }
 
         // check if it's on any flares
-        result += HexTooltip.getFlares(GUIP, bv, point);
+        result.append(HexTooltip.getFlares(GUIP, bv, point));
 
         // Add wreck info
-        result += HexTooltip.getWrecks(GUIP, bv, coords);
+        result.append(HexTooltip.getWrecks(GUIP, bv, coords));
 
         // Entity tooltips
         int entityCount = 0;
@@ -182,8 +182,8 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         int maxShown = 4;
         boolean hidden = false;
 
-        Set<Entity> coordEnts = new HashSet<>(game.getEntitiesVector(coords, bv.getBoardId(), true));
-        for (Entity entity : coordEnts) {
+        Set<Entity> coordEntities = new HashSet<>(game.getEntitiesVector(coords, bv.getBoardId(), true));
+        for (Entity entity : coordEntities) {
             entityCount++;
 
             // List only the first four units
@@ -191,7 +191,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 if (EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, entity)) {
                     StringBuffer sbEntity = new StringBuffer();
                     appendEntityTooltip(sbEntity, entity);
-                    result += sbEntity.toString();
+                    result.append(sbEntity);
                 } else {
                     hidden = true;
                 }
@@ -216,7 +216,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             attr = String.format("BORDER=0 BGCOLOR=%s width=100%%",
                   GUIPreferences.hexColor(GUIP.getUnitToolTipBlockBGColor()));
             String table = UIUtil.tag("TABLE", attr, row);
-            result += table;
+            result.append(table);
         }
 
         // check if it's on any attacks
@@ -233,7 +233,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 attr = String.format("BORDER=0 BGCOLOR=%s width=100%%",
                       GUIPreferences.hexColor(GUIP.getUnitToolTipAltBGColor()));
                 String table = UIUtil.tag("TABLE", attr, row);
-                result += table;
+                result.append(table);
             }
         }
 
@@ -257,60 +257,60 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 }
             }
 
-            String msg_artilleryatack;
+            String msgArtilleryAttack;
 
             if (aaa.getTurnsTilHit() == 1) {
-                msg_artilleryatack = Messages.getString("BoardView1.Tooltip.ArtilleryAttackOne1", wpName);
-                msg_artilleryatack += "<BR>&nbsp;&nbsp;";
-                msg_artilleryatack += Messages.getString("BoardView1.Tooltip.ArtilleryAttackOne2", ammoName);
+                msgArtilleryAttack = Messages.getString("BoardView1.Tooltip.ArtilleryAttackOne1", wpName);
+                msgArtilleryAttack += "<BR>&nbsp;&nbsp;";
+                msgArtilleryAttack += Messages.getString("BoardView1.Tooltip.ArtilleryAttackOne2", ammoName);
             } else {
-                msg_artilleryatack = Messages.getString("BoardView1.Tooltip.ArtilleryAttackN1",
+                msgArtilleryAttack = Messages.getString("BoardView1.Tooltip.ArtilleryAttackN1",
                       wpName, aaa.getTurnsTilHit());
-                msg_artilleryatack += "<BR>&nbsp;&nbsp;";
-                msg_artilleryatack += Messages.getString("BoardView1.Tooltip.ArtilleryAttackN2", ammoName);
+                msgArtilleryAttack += "<BR>&nbsp;&nbsp;";
+                msgArtilleryAttack += Messages.getString("BoardView1.Tooltip.ArtilleryAttackN2", ammoName);
             }
 
             String attr = String.format("FACE=Dialog  COLOR=%s",
                   UIUtil.toColorHexString(GUIP.getUnitToolTipBlockFGColor()));
-            msg_artilleryatack = UIUtil.tag("FONT", attr, msg_artilleryatack);
-            msg_artilleryatack = UIUtil.tag("span", fontSizeAttr, msg_artilleryatack);
-            String col = UIUtil.tag("TD", "", msg_artilleryatack);
+            msgArtilleryAttack = UIUtil.tag("FONT", attr, msgArtilleryAttack);
+            msgArtilleryAttack = UIUtil.tag("span", fontSizeAttr, msgArtilleryAttack);
+            String col = UIUtil.tag("TD", "", msgArtilleryAttack);
             String row = UIUtil.tag("TR", "", col);
             attr = String.format("BORDER=0 BGCOLOR=%s width=100%%",
                   GUIPreferences.hexColor(GUIP.getUnitToolTipBlockBGColor()));
             String table = UIUtil.tag("TABLE", attr, row);
-            result += table;
+            result.append(table);
         }
 
         // Artillery fire adjustment
         final Mounted<?> curWeapon = getSelectedArtilleryWeapon();
         if ((curWeapon != null) && (selectedEntity != null)) {
             // process targeted hexes
-            int amod = 0;
+            int artilleryModifier;
             // Check the predesignated hexes
             if (selectedEntity.getOwner().getArtyAutoHitHexes().contains(BoardLocation.of(coords, bv.getBoardId()))) {
-                amod = TargetRoll.AUTOMATIC_SUCCESS;
+                artilleryModifier = TargetRoll.AUTOMATIC_SUCCESS;
             } else {
-                amod = selectedEntity.aTracker.getModifier(curWeapon, coords);
+                artilleryModifier = selectedEntity.aTracker.getModifier(curWeapon, coords);
             }
 
-            String msg_artilleryautohit;
+            String msgArtilleryAutoHit;
 
-            if (amod == TargetRoll.AUTOMATIC_SUCCESS) {
-                msg_artilleryautohit = Messages.getString("BoardView1.ArtilleryAutohit");
+            if (artilleryModifier == TargetRoll.AUTOMATIC_SUCCESS) {
+                msgArtilleryAutoHit = Messages.getString("BoardView1.ArtilleryAutohit");
             } else {
-                msg_artilleryautohit = Messages.getString("BoardView1.ArtilleryAdjustment", amod);
+                msgArtilleryAutoHit = Messages.getString("BoardView1.ArtilleryAdjustment", artilleryModifier);
             }
 
             String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
-            msg_artilleryautohit = UIUtil.tag("FONT", attr, msg_artilleryautohit);
+            msgArtilleryAutoHit = UIUtil.tag("FONT", attr, msgArtilleryAutoHit);
 
-            msg_artilleryautohit = UIUtil.tag("span", fontSizeAttr, msg_artilleryautohit);
-            String col = UIUtil.tag("TD", "", msg_artilleryautohit);
+            msgArtilleryAutoHit = UIUtil.tag("span", fontSizeAttr, msgArtilleryAutoHit);
+            String col = UIUtil.tag("TD", "", msgArtilleryAutoHit);
             String row = UIUtil.tag("TR", "", col);
             attr = String.format("BORDER=0 BGCOLOR=%s width=100%%",
                   GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor()));
-            result += UIUtil.tag("TABLE", attr, row);
+            result.append(UIUtil.tag("TABLE", attr, row));
         }
 
         final Collection<SpecialHexDisplay> shdList = bv.getBoard().getSpecialHexDisplay(coords);
@@ -346,12 +346,12 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             String row = UIUtil.tag("TR", "", col);
             String attr = String.format("BORDER=0 BGCOLOR=%s width=100%%",
                   GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor()));
-            result += UIUtil.tag("TABLE", attr, row);
+            result.append(UIUtil.tag("TABLE", attr, row));
         }
 
         StringBuilder txt = new StringBuilder();
         String attr = String.format("WIDTH=%s", UIUtil.scaleForGUI(500));
-        String div = UIUtil.tag("DIV", attr, result);
+        String div = UIUtil.tag("DIV", attr, result.toString());
         txt.append(UnitToolTip.wrapWithHTML(div));
 
         // Check to see if the tool tip is completely empty
@@ -388,7 +388,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
     }
 
     public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex) {
-        // LEGACY replace with board Id version
+        // LEGACY replace with board ID version
         appendBuildingsTooltip(txt, mhex, 0);
     }
 
@@ -433,7 +433,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             Mounted<?> selectedWeapon = clientGui.getDisplayedWeapon().get();
 
             // We don't want to display artillery auto-hit/adjusted fire hexes during
-            // the artyautohithexes phase. These could be displayed if the player
+            // the arty auto hit hexes phase. These could be displayed if the player
             // uses the /reset command in some situations
             if ((selectedUnit != null)
                   && !game.getPhase().isSetArtilleryAutohitHexes()

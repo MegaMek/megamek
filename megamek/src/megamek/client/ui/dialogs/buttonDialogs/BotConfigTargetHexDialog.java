@@ -38,6 +38,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
@@ -83,6 +84,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(enter, OK_ACTION);
         getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(enter, OK_ACTION);
         getRootPane().getActionMap().put(OK_ACTION, new AbstractAction() {
+            @Serial
             private static final long serialVersionUID = -1060468627937876090L;
 
             @Override

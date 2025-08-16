@@ -113,8 +113,7 @@ public class ASConversionInfoDialog extends AbstractDialog {
         JButton exportText = new JButton("Copy as Text");
         JButton exportHTML = new JButton("Copy as HTML");
 
-        if (report instanceof FlexibleCalculationReport) {
-            FlexibleCalculationReport flexReport = (FlexibleCalculationReport) report;
+        if (report instanceof FlexibleCalculationReport flexReport) {
             exportText.addActionListener(evt -> copyToClipboard(flexReport.getTextReport().toString()));
             exportHTML.addActionListener(evt -> copyToClipboard(flexReport.getHtmlReport().toString()));
         } else {

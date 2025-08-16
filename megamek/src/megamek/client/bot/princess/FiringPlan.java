@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -295,11 +295,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
             return false;
         } else if (Math.abs(getExpectedCriticals() - that.getExpectedCriticals()) > TOLERANCE) {
             return false;
-        } else if (Math.abs(getExpectedDamage() - that.getExpectedDamage()) > TOLERANCE) {
-            return false;
-        } else {
-            return true;
-        }
+        } else {return !(Math.abs(getExpectedDamage() - that.getExpectedDamage()) > TOLERANCE);}
     }
 
     @Override

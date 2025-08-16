@@ -52,7 +52,7 @@ public class FontComboBox extends MMComboBox<FontDisplay> {
                   final boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value instanceof FontDisplay) {
-                    setFont(((FontDisplay) value).getFont());
+                    setFont(((FontDisplay) value).font());
                     list.setToolTipText(value.toString());
                 }
                 return this;
@@ -61,7 +61,7 @@ public class FontComboBox extends MMComboBox<FontDisplay> {
         addActionListener(evt -> {
             final FontDisplay fontDisplay = getSelectedItem();
             if (fontDisplay != null) {
-                setFont(fontDisplay.getFont());
+                setFont(fontDisplay.font());
             }
         });
     }

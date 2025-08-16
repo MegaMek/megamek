@@ -51,7 +51,7 @@ public class Messages {
         try {
             return RESOURCE_BUNDLE.getString(key);
         } catch (MissingResourceException e) {
-            logger.error("Missing megamek.client.scenario.messages i18n entry with key " + key);
+            logger.error("Missing megamek.client.scenario.messages i18n entry with key {}", key);
             return '!' + key + '!';
         }
     }

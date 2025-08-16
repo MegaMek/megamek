@@ -51,7 +51,7 @@ import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * N.B. This class is overridden for AC/2, AC/5, AC/10, AC/10, NOT ultras/LB/RAC. (No difference between ACWeapon and
- * AmmoWeapon except the ability to use special ammos (precision, AP, etc.))
+ * AmmoWeapon except the ability to use special ammunition (precision, AP, etc.))
  *
  * @author Andrew Hunter
  */

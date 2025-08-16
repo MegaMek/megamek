@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,7 +41,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
  */
 public class HelpCommand extends ClientCommand {
 
-    private IClientCommandHandler cmdHandler;
+    private final IClientCommandHandler cmdHandler;
 
     public HelpCommand(ClientGUI clientGUI) {
         super(

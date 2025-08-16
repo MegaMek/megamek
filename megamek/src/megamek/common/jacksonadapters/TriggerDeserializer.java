@@ -68,7 +68,7 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
     private static final String PLAYER = "player";
     private static final String COUNT = "count";
     private static final String AT_MOST = "atmost";
-    private static final String AT_LEAST = "atleast";
+    private static final String AT_LEAST = "atLeast";
     private static final String ROUND = "round";
     private static final String PHASE = "phase";
     private static final String UNITS = "units";

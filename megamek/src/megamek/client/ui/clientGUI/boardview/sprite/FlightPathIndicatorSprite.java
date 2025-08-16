@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -208,7 +208,7 @@ public class FlightPathIndicatorSprite extends HexSprite {
     }
 
     /*
-     * Returns true if the fighter can make a turn at this step given it's current velocity
+     * Returns true if the fighter can make a turn at this step given its current velocity
      * and turn restrictions.
      */
     private boolean canTurnWithThrustCost(MoveStep step) {

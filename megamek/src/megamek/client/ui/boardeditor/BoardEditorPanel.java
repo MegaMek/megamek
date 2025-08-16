@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -161,7 +161,8 @@ public class BoardEditorPanel extends JPanel
     private ScalingIconToggleButton buttonBrush1, buttonBrush2, buttonBrush3;
     private ScalingIconToggleButton buttonOOC;
     private final List<ScalingIconToggleButton> paintModeButtons = new ArrayList<>();
-    private ScalingIconToggleButton buttonPaintTerrain, buttonRaiseLower, buttonDeployZone;
+    private ScalingIconToggleButton buttonRaiseLower;
+    private ScalingIconToggleButton buttonDeployZone;
 
     private final SpinnerNumberModel deploymentZoneSpnModel = new SpinnerNumberModel(1, 1, 31, 1);
     private final JSpinner deploymentZoneChooser = new JSpinner(deploymentZoneSpnModel);
@@ -187,15 +188,8 @@ public class BoardEditorPanel extends JPanel
     private JComboBox<String> choTheme;
     private ScalingIconButton butTerrDown, butTerrUp;
     private JButton butAddTerrain;
-    private JButton butBoardNew;
-    private JButton butBoardOpen;
-    private JButton butBoardSave;
-    private JButton butBoardSaveAs;
-    private JButton butBoardSaveAsImage;
-    private JButton butBoardValidate;
     private JButton butSourceFile;
     private MapSettings mapSettings = MapSettings.getInstance();
-    private JButton butExpandMap;
     private Coords lastClicked;
     private final JLabel labTheme = new JLabel(Messages.getString("BoardEditor.labTheme"), SwingConstants.LEFT);
 
@@ -318,7 +312,7 @@ public class BoardEditorPanel extends JPanel
                 Coords c = b.getCoords();
                 // return if there are no or no valid coords or if we click the same hex again unless Raise/Lower
                 // Terrain is active which should let us click the same hex
-                if ((c == null) || (c.equals(lastClicked) && (paintMode() != PaintMode.LOWER_RAISE_HEXLEVEL))
+                if ((c == null) || (c.equals(lastClicked) && (paintMode() != PaintMode.LOWER_RAISE_HEX_LEVEL))
                       || !board.contains(c)) {
                     return;
                 }
@@ -330,7 +324,7 @@ public class BoardEditorPanel extends JPanel
                 boolean isLMB = (b.getButton() == MouseEvent.BUTTON1);
 
                 // Raise/Lower Terrain is selected
-                if (paintMode() == PaintMode.LOWER_RAISE_HEXLEVEL) {
+                if (paintMode() == PaintMode.LOWER_RAISE_HEX_LEVEL) {
                     // Mouse Button released
                     if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
                         hexLevelToDraw = -1000;
@@ -587,7 +581,7 @@ public class BoardEditorPanel extends JPanel
         brushGroup.add(buttonBrush3);
         buttonOOC = prepareToggleButton("ButtonOOC", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
 
-        buttonPaintTerrain = prepareToggleButton("ButtonPaintTerrain", paintModeButtons,
+        ScalingIconToggleButton buttonPaintTerrain = prepareToggleButton("ButtonPaintTerrain", paintModeButtons,
               BASE_ARROWBUTTON_ICON_WIDTH);
         buttonRaiseLower = prepareToggleButton("ButtonUpDn", paintModeButtons, BASE_ARROWBUTTON_ICON_WIDTH);
         buttonDeployZone = prepareToggleButton("ButtonDepl", paintModeButtons, BASE_ARROWBUTTON_ICON_WIDTH);
@@ -876,7 +870,7 @@ public class BoardEditorPanel extends JPanel
                 // if we've selected DEPLOYMENT ZONE, disable the "exits" buttons and make the "exits" popup point to
                 // a multi-select list that lets the user choose which deployment zones will be flagged here
                 // otherwise, re-enable all the buttons and reset the "exits" popup to its normal behavior
-                if (((TerrainHelper) Objects.requireNonNull(choTerrainType.getSelectedItem())).getTerrainType() ==
+                if (((TerrainHelper) Objects.requireNonNull(choTerrainType.getSelectedItem())).terrainType() ==
                       Terrains.DEPLOYMENT_ZONE) {
                     butExitUp.setEnabled(false);
                     butExitDown.setEnabled(false);
@@ -972,29 +966,29 @@ public class BoardEditorPanel extends JPanel
         panelBoardSettings.add(cheRoadsAutoExit);
 
         // Board Buttons (Save, Load...)
-        butBoardNew = new JButton(Messages.getString("BoardEditor.butBoardNew"));
+        JButton butBoardNew = new JButton(Messages.getString("BoardEditor.butBoardNew"));
         butBoardNew.setActionCommand(ClientGUI.BOARD_NEW);
 
-        butExpandMap = new JButton(Messages.getString("BoardEditor.butExpandMap"));
+        JButton butExpandMap = new JButton(Messages.getString("BoardEditor.butExpandMap"));
         butExpandMap.setActionCommand(ClientGUI.BOARD_RESIZE);
 
-        butBoardOpen = new JButton(Messages.getString("BoardEditor.butBoardOpen"));
+        JButton butBoardOpen = new JButton(Messages.getString("BoardEditor.butBoardOpen"));
         butBoardOpen.setActionCommand(ClientGUI.BOARD_OPEN);
 
-        butBoardSave = new JButton(Messages.getString("BoardEditor.butBoardSave"));
+        JButton butBoardSave = new JButton(Messages.getString("BoardEditor.butBoardSave"));
         butBoardSave.setActionCommand(ClientGUI.BOARD_SAVE);
 
-        butBoardSaveAs = new JButton(Messages.getString("BoardEditor.butBoardSaveAs"));
+        JButton butBoardSaveAs = new JButton(Messages.getString("BoardEditor.butBoardSaveAs"));
         butBoardSaveAs.setActionCommand(ClientGUI.BOARD_SAVE_AS);
 
-        butBoardSaveAsImage = new JButton(Messages.getString("BoardEditor.butBoardSaveAsImage"));
+        JButton butBoardSaveAsImage = new JButton(Messages.getString("BoardEditor.butBoardSaveAsImage"));
         butBoardSaveAsImage.setActionCommand(ClientGUI.BOARD_SAVE_AS_IMAGE);
 
-        butBoardValidate = new JButton(Messages.getString("BoardEditor.butBoardValidate"));
+        JButton butBoardValidate = new JButton(Messages.getString("BoardEditor.butBoardValidate"));
         butBoardValidate.setActionCommand(ClientGUI.BOARD_VALIDATE);
 
         butSourceFile = new JButton(Messages.getString("BoardEditor.butSourceFile"));
-        butSourceFile.setActionCommand(ClientGUI.BOARD_SOURCEFILE);
+        butSourceFile.setActionCommand(ClientGUI.BOARD_SOURCE_FILE);
 
         addManyActionListeners(butBoardValidate, butBoardSaveAsImage, butBoardSaveAs, butBoardSave);
         addManyActionListeners(butBoardOpen, butExpandMap, butBoardNew);
@@ -1264,7 +1258,7 @@ public class BoardEditorPanel extends JPanel
      * Returns a new instance of the terrain that is currently entered in the terrain input fields
      */
     private Terrain enteredTerrain() {
-        int type = ((TerrainHelper) Objects.requireNonNull(choTerrainType.getSelectedItem())).getTerrainType();
+        int type = ((TerrainHelper) Objects.requireNonNull(choTerrainType.getSelectedItem())).terrainType();
         int level = texTerrainLevel.getNumber();
         // For the terrain subtypes that only add to a main terrain type exits make no
         // sense at all. Therefore, simply do not add them
@@ -1874,7 +1868,7 @@ public class BoardEditorPanel extends JPanel
             ignoreHotKeys = true;
             boardSaveAsImage(false);
             ignoreHotKeys = false;
-        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_SOURCEFILE)) {
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_SOURCE_FILE)) {
             if (curBoardFile != null) {
                 try {
                     Desktop.getDesktop().open(curBoardFile);
@@ -2407,7 +2401,7 @@ public class BoardEditorPanel extends JPanel
 
     private PaintMode paintMode() {
         if (buttonRaiseLower.isSelected()) {
-            return PaintMode.LOWER_RAISE_HEXLEVEL;
+            return PaintMode.LOWER_RAISE_HEX_LEVEL;
         } else if (buttonDeployZone.isSelected()) {
             return PaintMode.DEPLOYMENT_ZONE;
         } else {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -481,7 +481,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         fd.setYear(forceDesc.getYear());
         fd.setFaction(forceDesc.getFaction());
         fd.setUnitType(forceDesc.getUnitType());
-        fd.setEschelon(forceDesc.getEschelon());
+        fd.setEchelon(forceDesc.getEchelon());
         fd.setAugmented(forceDesc.isAugmented());
         fd.setSizeMod(forceDesc.getSizeMod());
         fd.getFlags().addAll(forceDesc.getFlags());
@@ -712,7 +712,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbFormation.removeAllItems();
 
         if (tocNode != null) {
-            ValueNode n = tocNode.findEschelons(forceDesc);
+            ValueNode n = tocNode.findEchelons(forceDesc);
             if (n != null) {
                 formationDisplayNames.clear();
                 for (String formation : n.getContent().split(",")) {
@@ -730,7 +730,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                             }
                         }
                     } while (fn == null && rs != null);
-                    String formName = (fn != null) ? fn.getEschelonName() : formation;
+                    String formName = (fn != null) ? fn.getEchelonName() : formation;
                     if (formation.endsWith("+")) {
                         formName = Messages.getString("ForceGeneratorDialog.reinforced") + formName;
                     }
@@ -745,20 +745,20 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 }
             }
         } else {
-            logger.warn("No eschelon node found.");
+            logger.warn("No echelon node found.");
         }
 
         if (hasCurrent) {
             cbFormation.setSelectedItem(currentFormation);
         } else {
             Ruleset rs = Ruleset.findRuleset(forceDesc.getFaction());
-            String esch = rs.getDefaultEschelon(forceDesc);
-            if ((esch == null || !formationDisplayNames.containsKey(esch) && cbFormation.getItemCount() > 0)) {
-                esch = cbFormation.getItemAt(0);
+            String echelon = rs.getDefaultEschelon(forceDesc);
+            if ((echelon == null || !formationDisplayNames.containsKey(echelon) && cbFormation.getItemCount() > 0)) {
+                echelon = cbFormation.getItemAt(0);
             }
-            if (esch != null) {
-                cbFormation.setSelectedItem(esch);
-                setFormation(esch);
+            if (echelon != null) {
+                cbFormation.setSelectedItem(echelon);
+                setFormation(echelon);
             }
         }
 
@@ -769,8 +769,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private void refreshRatings() {
         cbRating.removeActionListener(this);
         TOCNode tocNode = findTOCNode();
-        String currentRating = forceDesc.getRating();
-        boolean hasCurrent = false;
         cbRating.removeAllItems();
         ratingDisplayNames.clear();
         if (tocNode != null) {
@@ -792,18 +790,14 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
         }
 
-        if (hasCurrent) {
-            cbRating.setSelectedItem(currentRating);
-        } else {
-            Ruleset rs = Ruleset.findRuleset(forceDesc.getFaction());
-            String rating = rs.getDefaultRating(forceDesc);
-            if (rating == null && cbRating.getItemCount() > 0) {
-                rating = cbRating.getItemAt(0);
-            }
-            if (rating != null) {
-                cbRating.setSelectedItem(rating);
-                forceDesc.setRating(rating);
-            }
+        Ruleset rs = Ruleset.findRuleset(forceDesc.getFaction());
+        String rating = rs.getDefaultRating(forceDesc);
+        if (rating == null && cbRating.getItemCount() > 0) {
+            rating = cbRating.getItemAt(0);
+        }
+        if (rating != null) {
+            cbRating.setSelectedItem(rating);
+            forceDesc.setRating(rating);
         }
         refreshFlags();
         cbRating.addActionListener(this);
@@ -812,8 +806,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private void refreshFlags() {
         cbFlags.removeActionListener(this);
         TOCNode tocNode = findTOCNode();
-        String currentFlag = (String) cbFlags.getSelectedItem();
-        boolean hasCurrent = false;
         cbFlags.removeAllItems();
         cbFlags.addItem(null);
         if (tocNode != null) {
@@ -832,11 +824,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
         }
 
-        if (hasCurrent) {
-            cbFlags.setSelectedItem(currentFlag);
-        } else {
-            cbFlags.setSelectedIndex(0);
-        }
+        cbFlags.setSelectedIndex(0);
         forceDesc.getFlags().clear();
         if (cbFlags.getSelectedItem() != null) {
             forceDesc.getFlags().add((String) cbFlags.getSelectedItem());
@@ -881,9 +869,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             forceDesc.setUnitType((Integer) cbUnitType.getSelectedItem());
             refreshFormations();
         } else if (ev.getSource() == cbFormation) {
-            String esch = (String) cbFormation.getSelectedItem();
-            if (esch != null) {
-                setFormation(esch);
+            String echelon = (String) cbFormation.getSelectedItem();
+            if (echelon != null) {
+                setFormation(echelon);
             }
             refreshRatings();
         } else if (ev.getSource() == cbRating) {
@@ -949,7 +937,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     private void configureNetworks(ForceDescriptor fd) {
         if (fd.getFlags().contains("c3")) {
-            Entity master = fd.getSubforces()
+            Entity master = fd.getSubForces()
                   .stream()
                   .map(ForceDescriptor::getEntity)
                   .filter(en -> (null != en) && (en.hasC3M() || en.hasC3MM()))
@@ -957,7 +945,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                   .orElse(null);
             if (null != master) {
                 int c3s = 0;
-                for (ForceDescriptor sf : fd.getSubforces()) {
+                for (ForceDescriptor sf : fd.getSubForces()) {
                     if ((null != sf.getEntity()) &&
                           (sf.getEntity().getId() != master.getId()) &&
                           sf.getEntity().hasC3S()) {
@@ -975,7 +963,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             // any C3i units that happen to be present.
             Entity first = null;
             int nodes = 0;
-            for (ForceDescriptor sf : fd.getSubforces()) {
+            for (ForceDescriptor sf : fd.getSubForces()) {
                 if ((null != sf.getEntity()) && sf.getEntity().hasC3i()) {
                     sf.getEntity().setC3UUID();
                     if (null == first) {
@@ -991,16 +979,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 }
             }
         }
-        fd.getSubforces().forEach(this::configureNetworks);
+        fd.getSubForces().forEach(this::configureNetworks);
         fd.getAttached().forEach(this::configureNetworks);
     }
 
-    private void setFormation(String esch) {
-        forceDesc.setEschelon(MathUtility.parseInt(esch.replaceAll("[^0-9]", ""), 0));
-        forceDesc.setAugmented(esch.contains("^"));
-        if (esch.endsWith("+")) {
+    private void setFormation(String echelon) {
+        forceDesc.setEchelon(MathUtility.parseInt(echelon.replaceAll("[^0-9]", ""), 0));
+        forceDesc.setAugmented(echelon.contains("^"));
+        if (echelon.endsWith("+")) {
             forceDesc.setSizeMod(1);
-        } else if (esch.endsWith("-")) {
+        } else if (echelon.endsWith("-")) {
             forceDesc.setSizeMod(-1);
         } else {
             forceDesc.setSizeMod(0);

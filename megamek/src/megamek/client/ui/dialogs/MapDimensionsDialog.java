@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serial;
 import javax.swing.*;
 
 import megamek.client.ui.Messages;
@@ -51,27 +52,28 @@ import megamek.common.MapSettings;
  * @since February 12, 2010
  */
 public class MapDimensionsDialog extends JDialog implements ActionListener {
+    @Serial
     private static final long serialVersionUID = -6941422625466067948L;
 
-    private ClientGUI clientGUI;
-    private MapSettings mapSettings;
+    private final ClientGUI clientGUI;
+    private final MapSettings mapSettings;
 
-    private JPanel panMapSize = new JPanel();
-    private JLabel labBoardSize = new JLabel(Messages.getString("BoardSelectionDialog.BoardSize"),
+    private final JPanel panMapSize = new JPanel();
+    private final JLabel labBoardSize = new JLabel(Messages.getString("BoardSelectionDialog.BoardSize"),
           SwingConstants.RIGHT);
-    private JLabel labBoardDivider = new JLabel("x", SwingConstants.CENTER);
-    private JTextField texBoardWidth = new JTextField(2);
-    private JTextField texBoardHeight = new JTextField(2);
+    private final JLabel labBoardDivider = new JLabel("x", SwingConstants.CENTER);
+    private final JTextField texBoardWidth = new JTextField(2);
+    private final JTextField texBoardHeight = new JTextField(2);
 
-    private JLabel labMapSize = new JLabel(Messages.getString("BoardSelectionDialog.MapSize"),
+    private final JLabel labMapSize = new JLabel(Messages.getString("BoardSelectionDialog.MapSize"),
           SwingConstants.RIGHT);
-    private JLabel labMapDivider = new JLabel("x", SwingConstants.CENTER);
+    private final JLabel labMapDivider = new JLabel("x", SwingConstants.CENTER);
     private JSpinner spnMapWidth = new JSpinner();
     private JSpinner spnMapHeight = new JSpinner();
 
-    private JPanel panButtons = new JPanel();
-    private JButton butOkay = new JButton(Messages.getString("Okay"));
-    private JButton butCancel = new JButton(Messages.getString("Cancel"));
+    private final JPanel panButtons = new JPanel();
+    private final JButton butOkay = new JButton(Messages.getString("Okay"));
+    private final JButton butCancel = new JButton(Messages.getString("Cancel"));
 
     public MapDimensionsDialog(ClientGUI clientGUI, MapSettings mapSettings) {
         super(clientGUI.getFrame(), Messages.getString("MapDimensionsDialog.MapDimensions"), true);
@@ -82,29 +84,29 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         setupButtons();
 
         // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        getContentPane().setLayout(gridbag);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        getContentPane().setLayout(gridBagLayout);
 
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(4, 4, 4, 4);
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        gridbag.setConstraints(panMapSize, c);
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new Insets(4, 4, 4, 4);
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagLayout.setConstraints(panMapSize, gridBagConstraints);
         add(panMapSize);
 
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        gridbag.setConstraints(panButtons, c);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagLayout.setConstraints(panButtons, gridBagConstraints);
         add(panButtons);
 
         pack();
@@ -132,104 +134,104 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
             spnMapWidth.setEnabled(false);
         }
 
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panMapSize.setLayout(gridbag);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        panMapSize.setLayout(gridBagLayout);
 
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(labMapSize, c);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(1, 1, 1, 1);
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        gridBagLayout.setConstraints(labMapSize, gridBagConstraints);
         panMapSize.add(labBoardSize);
 
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.gridx = 1;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        gridbag.setConstraints(texBoardWidth, c);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(1, 1, 1, 1);
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagLayout.setConstraints(texBoardWidth, gridBagConstraints);
         panMapSize.add(texBoardWidth);
 
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.gridx = 2;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(labBoardDivider, c);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(1, 1, 1, 1);
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        gridBagLayout.setConstraints(labBoardDivider, gridBagConstraints);
         panMapSize.add(labBoardDivider);
 
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.gridx = 3;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        gridbag.setConstraints(texBoardHeight, c);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(1, 1, 1, 1);
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagLayout.setConstraints(texBoardHeight, gridBagConstraints);
         panMapSize.add(texBoardHeight);
 
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(labMapSize, c);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(1, 1, 1, 1);
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        gridBagLayout.setConstraints(labMapSize, gridBagConstraints);
         panMapSize.add(labMapSize);
 
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.gridx = 1;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        gridbag.setConstraints(spnMapHeight, c);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(1, 1, 1, 1);
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagLayout.setConstraints(spnMapHeight, gridBagConstraints);
         panMapSize.add(spnMapHeight);
 
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.gridx = 2;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(labMapDivider, c);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(1, 1, 1, 1);
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        gridBagLayout.setConstraints(labMapDivider, gridBagConstraints);
         panMapSize.add(labMapDivider);
 
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.gridx = 3;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        gridbag.setConstraints(spnMapWidth, c);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(1, 1, 1, 1);
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagLayout.setConstraints(spnMapWidth, gridBagConstraints);
         panMapSize.add(spnMapWidth);
     }
 
@@ -238,30 +240,30 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
 
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panButtons.setLayout(gridbag);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        panButtons.setLayout(gridBagLayout);
 
-        c.insets = new Insets(1, 1, 1, 1);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        gridbag.setConstraints(butOkay, c);
+        gridBagConstraints.insets = new Insets(1, 1, 1, 1);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagLayout.setConstraints(butOkay, gridBagConstraints);
         panButtons.add(butOkay);
 
-        c.insets = new Insets(1, 1, 1, 1);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.gridx = 1;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        gridbag.setConstraints(butCancel, c);
+        gridBagConstraints.insets = new Insets(1, 1, 1, 1);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridheight = 1;
+        gridBagLayout.setConstraints(butCancel, gridBagConstraints);
         panButtons.add(butCancel);
 
     }

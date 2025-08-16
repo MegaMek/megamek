@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -56,9 +56,9 @@ import megamek.common.Coords;
 /**
  * This sprite is used to paint the visual and sensor range
  *
- * <BR><BR>Extends {@link FieldofFireSprite}
+ * <BR><BR>Extends {@link FieldOfFireSprite}
  */
-public class SensorRangeSprite extends FieldofFireSprite {
+public class SensorRangeSprite extends FieldOfFireSprite {
     public final static int SENSORS = 0;
     public final static int SENSORS_AIR = 1;
     public final static int VISUAL = 2;
@@ -80,23 +80,16 @@ public class SensorRangeSprite extends FieldofFireSprite {
         // the color of the super doesn't matter
         super(boardView1, sensorType, l, borders);
         Color c = getColor(sensorType);
-        setFillColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), getBorderOpac()));
+        setFillColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), getBorderOpacity()));
 
     }
 
     public static Color getColor(int sensorType) {
-        switch (sensorType) {
-            case SENSORS:
-                return GUIP.getSensorRangeColor();
-            case SENSORS_AIR:
-                return GUIP.getSensorRangeColor();
-            case VISUAL:
-                return GUIP.getVisualRangeColor();
-            case VISUAL_DARK:
-                return GUIP.getVisualRangeColor();
-            default:
-                return new Color(0, 0, 0);
-        }
+        return switch (sensorType) {
+            case SENSORS, SENSORS_AIR -> GUIP.getSensorRangeColor();
+            case VISUAL, VISUAL_DARK -> GUIP.getVisualRangeColor();
+            default -> new Color(0, 0, 0);
+        };
     }
 
     @Override

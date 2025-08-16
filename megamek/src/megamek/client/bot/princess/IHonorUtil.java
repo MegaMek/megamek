@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,17 +44,17 @@ import megamek.common.Targetable;
 public interface IHonorUtil {
 
     /**
-     * Indicates whether or not the identified unit can be considered broken.
+     * Indicates whether the identified unit can be considered broken.
      *
      * @param targetId The target to be checked.
      * @param playerId The ID of the player owning the target.
      *
-     * @return TRUE if the unit is on the broken units list without being on the honorless enemies list.
+     * @return TRUE if the unit is on the broken units list without being on the honor less enemies list.
      */
     boolean isEnemyBroken(int targetId, int playerId, boolean forcedWithdrawal);
 
     /**
-     * Indicates whether or not the identified player is on the dishonored enemies list.
+     * Indicates whether the identified player is on the dishonored enemies list.
      *
      * @param playerId The ID of the player to be checked.
      *

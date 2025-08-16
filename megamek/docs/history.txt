@@ -17,7 +17,7 @@ DEV NOTE - Starting with this release the History file is built on release rathe
 * Fix: Fixes the Damage Status box on Label no appearing correctly. by @rjhancock in https://github.com/MegaMek/megamek/pull/6946
 * Revert "Added Heroic and Legendary Skill Levels" by @IllianiBird in https://github.com/MegaMek/megamek/pull/6949
 * Fix: uses bot skill generator when creating armies by @Scoppio in https://github.com/MegaMek/megamek/pull/6945
-* fix for null clientgui and memory leaks by @exeea in https://github.com/MegaMek/megamek/pull/6954
+* fix for null clientGUI and memory leaks by @exeea in https://github.com/MegaMek/megamek/pull/6954
 * Use proper default fluff art for HHWs by @pavelbraginskiy in https://github.com/MegaMek/megamek/pull/6956
 * Dereference NPE Removals in MovementDisplay by @rjhancock in https://github.com/MegaMek/megamek/pull/6934
 * Update Orion ON1-Kb.mtf by @HammerGS in https://github.com/MegaMek/megamek/pull/6963
@@ -5586,7 +5586,7 @@ v0.37.0 (2013-12-21, 13:13 UTC1+)
 + Updated TestAero: made the isClan state variable of AeroArmor public.
 + Updated MiscType Data for Aeros and some unit fixes.
 + Unit Fixes
-+ made it possible to use MechDisplay with a null clientgui, for use in MekWars
++ made it possible to use MechDisplay with a null clientGUI, for use in MekWars
 + Bug [#3943]: Firing Heavy SRM Infantry causes fire phase to hang
 + Updated EntityVerifier: -v flag now only prints reports for failed units,
     use -valid along with -v to print reports for all units, updated usage msg.
@@ -6901,7 +6901,7 @@ v0.35.29 (2012-04-02)
 v0.35.28 (2012-22-02, 23:07 UTC+1)
 + Added bridgelayer construction data
 + Separated handheld searchlight from mounted searchlight
-+ pass frame rather than clientgui to AdvancedSearchDialog so other programs can
++ pass frame rather than clientGUI to AdvancedSearchDialog so other programs can
     use
 + Bug: Princess bot NPE with aeros that fly off the map
 + Bug 3474185: Princess bot NPE with ejected MekWarriors

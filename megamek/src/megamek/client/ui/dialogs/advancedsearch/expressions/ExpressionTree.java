@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,19 +30,40 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.bot.princess.commands;
-
-import megamek.client.bot.princess.Princess;
-import megamek.server.commands.arguments.Arguments;
+package megamek.client.ui.dialogs.advancedsearch.expressions;
 
 /**
- * Command to do nothing because it is marked to be removed.
+ * This class allows to create a tree where the leaf nodes contain names and quantities of pieces of equipment while the
+ * non-leaf nodes contain boolean operations (AND and OR).
  *
- * @author Luana Coppio
+ * @author Arlith
  */
-public class VerboseCommand implements ChatCommand {
+public class ExpressionTree {
+    private final ExpNode root;
+
+    public ExpressionTree() {
+        root = new ExpNode();
+    }
+
+    /**
+     * Deep copy constructor. New instantiations of all state variables are created.
+     *
+     * @param expressionTree The <code>ExpressionTree</code> to create a copy of.
+     */
+    public ExpressionTree(ExpressionTree expressionTree) {
+        root = new ExpNode(expressionTree.root);
+    }
+
+    public ExpressionTree(ExpNode rootNode) {
+        root = rootNode;
+    }
+
     @Override
-    public void execute(Princess princess, Arguments arguments) {
-        princess.sendChat("This command does nothing.");
+    public String toString() {
+        return root.children.isEmpty() ? "" : root.toString();
+    }
+
+    public ExpNode getRoot() {
+        return root;
     }
 }

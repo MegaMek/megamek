@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -412,7 +412,7 @@ public class EquipChoicePanel extends JPanel {
         // Weapons that can be used in an Armored Glove
         ArrayList<WeaponType> agWeaponTypes = new ArrayList<>(100);
         Enumeration<EquipmentType> allTypes = EquipmentType.getAllTypes();
-        int gameYear = 0;
+        int gameYear;
         SimpleTechLevel legalLevel;
         if (clientgui == null) {
             gameYear = client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);

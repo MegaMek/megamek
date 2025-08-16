@@ -41,7 +41,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 public class LandingHexNotice extends SimpleNagNotice {
 
     /**
-     * Creates a dialog telling the player to select a touch down hex for a horizontal or vertical landing from an
+     * Creates a dialog telling the player to select a touch-down hex for a horizontal or vertical landing from an
      * atmospheric board (when the aero-on-ground movement option is not used).
      */
     public LandingHexNotice(ClientGUI clientGui) {

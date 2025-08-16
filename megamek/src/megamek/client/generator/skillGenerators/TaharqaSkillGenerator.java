@@ -57,31 +57,15 @@ public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
      */
     @Override
     public int[] generateRandomSkills(final Entity entity, final boolean clanPilot, final boolean forceClan) {
-        int bonus;
-        switch (getLevel()) {
-            case ULTRA_GREEN:
-                bonus = -4;
-                break;
-            case GREEN:
-                bonus = -2;
-                break;
-            case VETERAN:
-                bonus = 2;
-                break;
-            case ELITE:
-                bonus = 4;
-                break;
-            case HEROIC:
-                bonus = 6;
-                break;
-            case LEGENDARY:
-                bonus = 8;
-                break;
-            case REGULAR:
-            default:
-                bonus = 0;
-                break;
-        }
+        int bonus = switch (getLevel()) {
+            case ULTRA_GREEN -> -4;
+            case GREEN -> -2;
+            case VETERAN -> 2;
+            case ELITE -> 4;
+            case HEROIC -> 6;
+            case LEGENDARY -> 8;
+            default -> 0;
+        };
 
         if (entity instanceof LandAirMek) {
             bonus += 3;
@@ -90,6 +74,12 @@ public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
         final int roll = Compute.d6(2) + bonus;
 
         // Calculate the level to generate at based on the roll
+        final SkillLevel level = getSkillLevel(roll);
+
+        return generateRandomSkills(level, entity, clanPilot, forceClan);
+    }
+
+    private static SkillLevel getSkillLevel(int roll) {
         final SkillLevel level;
         if (roll < 2) {
             level = SkillLevel.ULTRA_GREEN;
@@ -106,7 +96,6 @@ public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
         } else {
             level = SkillLevel.LEGENDARY;
         }
-
-        return generateRandomSkills(level, entity, clanPilot, forceClan);
+        return level;
     }
 }

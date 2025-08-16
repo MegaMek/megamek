@@ -43,7 +43,7 @@ import megamek.common.annotations.Nullable;
 /**
  * MMButton is an extension of JButton that overrides the constructors for JButton, albeit with the addition of the name
  * of the button as the first value for all constructors, and adds two new constructors to create standardized JButtons
- * with all of the required information.
+ * with all the required information.
  * <p>
  * Note: All constructors contain the name of the JButton in question. This MUST be provided and means that they don't
  * directly line up to the traditional JButton constructors.

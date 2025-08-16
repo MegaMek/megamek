@@ -45,7 +45,7 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.common.preference.PreferenceChangeEvent;
 
 /**
- * An overlay for the Boardview that displays a selection of keybinds for the current game situation
+ * An overlay for the BoardView that displays a selection of keybinds for the current game situation
  *
  * @author SJuliez
  */
@@ -90,16 +90,17 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
           KeyCommandBind.HEX_COORDS);
 
     /** The keybinds to be shown in the Board Editor */
-    private static final List<KeyCommandBind> BINDS_BOARD_EDITOR = Arrays.asList(KeyCommandBind.HEX_COORDS);
+    private static final List<KeyCommandBind> BINDS_BOARD_EDITOR = List.of(KeyCommandBind.HEX_COORDS);
 
-    private static final List<String> ADDTL_BINDS = Arrays.asList(Messages.getString("KeyBindingsDisplay.fixedBinds")
+    private static final List<String> ADDITIONAL_BINDS = Arrays.asList(Messages.getString(
+                "KeyBindingsDisplay.fixedBinds")
           .split("\n"));
 
-    private static final List<String> ADDTL_BINDS_BOARD_EDITOR = Arrays.asList(Messages.getString(
+    private static final List<String> ADDITIONAL_BINDS_BOARD_EDITOR = Arrays.asList(Messages.getString(
           "KeyBindingsDisplay.fixedBindsBoardEd").split("\n"));
 
     /**
-     * An overlay for the Boardview that displays a selection of keybinds for the current game situation.
+     * An overlay for the BoardView that displays a selection of keybinds for the current game situation.
      */
     public KeyBindingsOverlay(BoardView boardView) {
         super(boardView, new Font("SansSerif", Font.PLAIN, 13));
@@ -138,20 +139,20 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
                 result.addAll(convertToStrings(BINDS_MY_TURN));
             }
             result.addAll(convertToStrings(BINDS_ANY_TURN));
-            result.addAll(ADDTL_BINDS);
+            result.addAll(ADDITIONAL_BINDS);
         } else {
             // Board Editor
             result.addAll(convertToStrings(BINDS_BOARD_EDITOR));
-            result.addAll(ADDTL_BINDS_BOARD_EDITOR);
+            result.addAll(ADDITIONAL_BINDS_BOARD_EDITOR);
         }
 
         return result;
     }
 
     /** Converts a list of KeyCommandBinds to a list of formatted strings. */
-    private List<String> convertToStrings(List<KeyCommandBind> kcbs) {
+    private List<String> convertToStrings(List<KeyCommandBind> keyCommandBinds) {
         List<String> result = new ArrayList<>();
-        for (KeyCommandBind kcb : kcbs) {
+        for (KeyCommandBind kcb : keyCommandBinds) {
             String label = Messages.getString("KeyBinds.cmdNames." + kcb.cmd);
             String d = KeyCommandBind.getDesc(kcb);
             result.add(label + ": " + d);

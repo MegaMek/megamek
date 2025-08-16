@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,6 +37,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
+import java.io.Serial;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -64,8 +65,9 @@ import megamek.logging.MMLogger;
  * @since 3/13/14 3:57 PM
  */
 public class RandomMapPanelAdvancedPanel extends JPanel {
-    private static final MMLogger logger = MMLogger.create(RandomMapPanelAdvancedPanel.class);
+    private static final MMLogger LOGGER = MMLogger.create(RandomMapPanelAdvancedPanel.class);
 
+    @Serial
     private static final long serialVersionUID = 7904626306929132645L;
 
     // City Type constants.
@@ -405,7 +407,11 @@ public class RandomMapPanelAdvancedPanel extends JPanel {
         craterSizeMaxField.setText(String.valueOf(mapSettings.getMaxRadius()));
         elevationPeaksField.setText(String.valueOf(mapSettings.getMountainPeaks()));
         MountainStyle style = MountainStyle.getMountainStyle(mapSettings.getMountainStyle());
-        mountainStyleCombo.setSelectedItem(style.getDescription());
+
+        if (style != null) {
+            mountainStyleCombo.setSelectedItem(style.getDescription());
+        }
+
         mountainHeightMinField.setText(String.valueOf(mapSettings.getMountainHeightMin()));
         mountainHeightMaxField.setText(String.valueOf(mapSettings.getMountainHeightMax()));
         mountainWidthMinField.setText(String.valueOf(mapSettings.getMountainWidthMin()));
@@ -419,7 +425,7 @@ public class RandomMapPanelAdvancedPanel extends JPanel {
     }
 
     private void initGUI() {
-        // Let each tab have it's own scroll bar.
+        // Let each tab have its own scroll bar.
 
         JScrollPane civilizedFeaturesPanel = setupCivilizedPanel();
         civilizedFeaturesPanel.getVerticalScrollBar().setUnitIncrement(16);
@@ -701,9 +707,7 @@ public class RandomMapPanelAdvancedPanel extends JPanel {
         cityTypeCombo.setToolTipText(Messages.getString("RandomMapDialog.cityTypeCombo.toolTip"));
 
         // don't nag the user about city parameters if the city is NONE
-        cityTypeCombo.addActionListener(e -> {
-            setCityPanelState();
-        });
+        cityTypeCombo.addActionListener(e -> setCityPanelState());
         panel.add(cityTypeCombo);
         panel.add(new JLabel());
         panel.add(new JLabel());
@@ -902,7 +906,8 @@ public class RandomMapPanelAdvancedPanel extends JPanel {
         return panel;
     }
 
-    private class FeaturePanel extends JPanel {
+    private static class FeaturePanel extends JPanel {
+        @Serial
         private static final long serialVersionUID = 2064014325837995657L;
 
         public FeaturePanel(LayoutManager layout) {
@@ -1247,7 +1252,7 @@ public class RandomMapPanelAdvancedPanel extends JPanel {
               Messages.getString("RandomMapDialog.volcanoDormant")),
         VOLCANO_ACTIVE(MapSettings.MOUNTAIN_VOLCANO_ACTIVE,
               Messages.getString("RandomMapDialog.volcanoActive")),
-        SNOWCAPPED(MapSettings.MOUNTAIN_SNOWCAPPED, Messages.getString("RandomMapDialog.mountainSnowcapped")),
+        SNOW_CAPPED(MapSettings.MOUNTAIN_SNOWCAPPED, Messages.getString("RandomMapDialog.mountainSnowcapped")),
         LAKE(MapSettings.MOUNTAIN_LAKE, Messages.getString("RandomMapDialog.mountainLake"));
 
         private final int code;
@@ -1302,7 +1307,7 @@ public class RandomMapPanelAdvancedPanel extends JPanel {
         String result = field.verifyTextS();
         if (result != null) {
             result = field.getName() + ": " + result;
-            logger.error(new RuntimeException(), result);
+            LOGGER.error(new RuntimeException(), result);
             field.requestFocus();
             showDataValidationError(result);
         }
@@ -1319,7 +1324,7 @@ public class RandomMapPanelAdvancedPanel extends JPanel {
 
         final String INVALID = "Minimum cannot exceed maximum.";
         if (min.getAsInt() > max.getAsInt()) {
-            logger.error(new RuntimeException(INVALID), "");
+            LOGGER.error(new RuntimeException(INVALID), "");
             min.setOldToolTip(min.getToolTipText());
             max.setOldToolTip(max.getToolTipText());
             min.setBackground(VerifiableTextField.getInvalidColor());
@@ -1571,11 +1576,7 @@ public class RandomMapPanelAdvancedPanel extends JPanel {
             return false;
         }
 
-        if (!isFieldVerified(specialFxField)) {
-            return false;
-        }
-
-        return true;
+        return isFieldVerified(specialFxField);
     }
 
     /**
@@ -1601,13 +1602,22 @@ public class RandomMapPanelAdvancedPanel extends JPanel {
 
         // No idea why this is an int instead of a boolean.
         newMapSettings.setInvertNegativeTerrain(invertNegativeCheck.isSelected() ? 1 : 0);
-        newMapSettings.setMountainParams(elevationPeaksField.getAsInt(),
-              mountainWidthMinField.getAsInt(),
-              mountainWidthMaxField.getAsInt(),
-              mountainHeightMinField.getAsInt(),
-              mountainHeightMaxField.getAsInt(),
-              MountainStyle.getMountainStyle((String) mountainStyleCombo.getSelectedItem())
-                    .getCode());
+
+        Object selectedMountainComboStyle = mountainStyleCombo.getSelectedItem();
+
+        if (selectedMountainComboStyle instanceof String selectedStyle) {
+            MountainStyle selectedMountainStyle = MountainStyle.getMountainStyle(selectedStyle);
+
+            if (selectedMountainStyle != null) {
+                newMapSettings.setMountainParams(elevationPeaksField.getAsInt(),
+                      mountainWidthMinField.getAsInt(),
+                      mountainWidthMaxField.getAsInt(),
+                      mountainHeightMinField.getAsInt(),
+                      mountainHeightMaxField.getAsInt(),
+                      selectedMountainStyle.getCode());
+            }
+        }
+
         newMapSettings.setCraterParam(craterChanceField.getAsInt(),
               craterAmountMinField.getAsInt(),
               craterAmountMaxField.getAsInt(),

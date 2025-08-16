@@ -59,15 +59,13 @@ import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
  */
 public class AdvancedSearchDialog extends AbstractButtonDialog {
 
-    private final int year;
     private final TWAdvancedSearchPanel totalWarTab;
     private final ASAdvancedSearchPanel alphaStrikeTab = new ASAdvancedSearchPanel();
     private final JTabbedPane advancedSearchPane = new JTabbedPane();
 
     public AdvancedSearchDialog(JFrame parent, int allowedYear) {
         super(parent, true, "AdvancedSearchDialog", "AdvancedSearchDialog.title");
-        year = allowedYear;
-        totalWarTab = new TWAdvancedSearchPanel(year);
+        totalWarTab = new TWAdvancedSearchPanel(allowedYear);
         advancedSearchPane.addTab("Total Warfare", totalWarTab);
         advancedSearchPane.addTab("Alpha Strike", new TWAdvancedSearchPanel.StandardScrollPane(alphaStrikeTab));
         initialize();

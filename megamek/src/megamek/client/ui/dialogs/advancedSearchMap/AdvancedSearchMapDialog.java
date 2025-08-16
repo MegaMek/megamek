@@ -42,13 +42,12 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
@@ -64,27 +63,27 @@ import megamek.utilities.BoardsTagger;
  */
 public class AdvancedSearchMapDialog extends AbstractButtonDialog {
     private BoardClassifier bc;
-    private JTable boardTable = new JTable() {
+    private final JTable boardTable = new JTable() {
         @Override
         public Dimension getPreferredScrollableViewportSize() {
             Dimension standardSize = super.getPreferredScrollableViewportSize();
             return new Dimension(standardSize.width, getRowHeight() * 20);
         }
     };
-    private JList<String> listBoardTags = new JList<>();
+    private final JList<String> listBoardTags = new JList<>();
     private final JCheckBox boardTagsAllCheckBox = new JCheckBox(Messages.getString(
           "AdvancedSearchMapDialog.boardTagsAllCheckBox"));
-    private JList<String> listBoardPaths = new JList<>();
+    private final JList<String> listBoardPaths = new JList<>();
     private JLabel boardImage;
     private JLabel boardInfo;
-    private TableRowSorter<BoardTableModel> boardSorter = new TableRowSorter<>();
-    private BoardTableModel boardModel = new BoardTableModel();
-    private JLabel boardCountLabel = new JLabel("");
-    private JTextField widthStartTextField = new JTextField(4);
-    private JTextField widthEndTextField = new JTextField(4);
-    private JTextField heightStartTextField = new JTextField(4);
-    private JTextField heightEndTextField = new JTextField(4);
-    private JTextField nameTextField = new JTextField(4);
+    private final TableRowSorter<BoardTableModel> boardSorter = new TableRowSorter<>();
+    private final BoardTableModel boardModel = new BoardTableModel();
+    private final JLabel boardCountLabel = new JLabel("");
+    private final JTextField widthStartTextField = new JTextField(4);
+    private final JTextField widthEndTextField = new JTextField(4);
+    private final JTextField heightStartTextField = new JTextField(4);
+    private final JTextField heightEndTextField = new JTextField(4);
+    private final JTextField nameTextField = new JTextField(4);
 
     public AdvancedSearchMapDialog(JFrame parent) {
         super(parent, true, "AdvancedSearchMapDialog", "AdvancedSearchMapDialog.title");
@@ -274,18 +273,13 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         return titlePanel;
     }
 
-    private JPanel createFilterList(JList list, List<String> data, JPanel title, boolean selectAll) {
+    private JPanel createFilterList(JList<String> list, List<String> data, JPanel title, boolean selectAll) {
         DefaultListModel<String> model = new DefaultListModel<>();
         model.addAll(data);
         list.setModel(model);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         list.setSelectedIndex(0);
-        list.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                filterTables();
-            }
-        });
+        list.addListSelectionListener(e -> filterTables());
 
         if (selectAll) {
             list.addSelectionInterval(0, data.size());
@@ -305,15 +299,12 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         boardModel.setData(bc);
         boardTable.setName("Board");
         ListSelectionModel boardSelModel = boardTable.getSelectionModel();
-        boardSelModel.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                int index = boardTable.getSelectedRow();
-                if (index >= 0) {
-                    index = boardTable.convertRowIndexToModel(index);
-                    boardImage.setIcon(boardModel.getIconAt(index, UIUtil.scaleForGUI(200)));
-                    boardInfo.setText(boardModel.getInfoAt(index));
-                }
+        boardSelModel.addListSelectionListener(e -> {
+            int index = boardTable.getSelectedRow();
+            if (index >= 0) {
+                index = boardTable.convertRowIndexToModel(index);
+                boardImage.setIcon(boardModel.getIconAt(index, UIUtil.scaleForGUI(200)));
+                boardInfo.setText(boardModel.getInfoAt(index));
             }
         });
         boardTable.setModel(boardModel);
@@ -400,7 +391,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         List<String> include = listBoardTags.getSelectedValuesList();
 
         if (boardTagsAllCheckBox.isSelected()) {
-            return !include.isEmpty() && include.stream().allMatch(tags::contains);
+            return !include.isEmpty() && new HashSet<>(tags).containsAll(include);
         } else {
             return !include.isEmpty() && include.stream().anyMatch(tags::contains);
         }
@@ -413,8 +404,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         int index = boardTable.getSelectedRow();
         if (index >= 0) {
             index = boardTable.convertRowIndexToModel(index);
-            String path = boardModel.getPathAt(index);
-            return path;
+            return boardModel.getPathAt(index);
         }
 
         return null;

@@ -87,7 +87,7 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         ARMOR_LEFT_P,
         ARMOR_RIGHT_P,
         ARMOR_BACK_P,
-        WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE;
+        WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE
     }
 
     /**

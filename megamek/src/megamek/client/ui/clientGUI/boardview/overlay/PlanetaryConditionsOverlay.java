@@ -46,23 +46,23 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceChangeEvent;
 
 /**
- * An overlay for the Boardview that displays a selection of Planetary Conditions for the current game situation
+ * An overlay for the BoardView that displays a selection of Planetary Conditions for the current game situation
  */
 public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
     private static final String MSG_TEMPERATURE = Messages.getString("PlanetaryConditionsOverlay.Temperature");
     private static final String MSG_GRAVITY = Messages.getString("PlanetaryConditionsOverlay.Gravity");
     private static final String MSG_LIGHT = Messages.getString("PlanetaryConditionsOverlay.Light");
-    private static final String MSG_ATMOSPHERICPREASSURE = Messages.getString(
+    private static final String MSG_ATMOSPHERIC_PRESSURE = Messages.getString(
           "PlanetaryConditionsOverlay.AtmosphericPressure");
     private static final String MSG_EMI = Messages.getString("PlanetaryConditionsOverlay.EMI");
     private static final String MSG_WEATHER = Messages.getString("PlanetaryConditionsOverlay.Weather");
     private static final String MSG_WIND = Messages.getString("PlanetaryConditionsOverlay.Wind");
     private static final String MSG_DIRECTION = Messages.getString("PlanetaryConditionsOverlay.WindDirection");
     private static final String MSG_FOG = Messages.getString("PlanetaryConditionsOverlay.Fog");
-    private static final String MSG_BLOWINGSAND = Messages.getString("PlanetaryConditionsOverlay.BlowingSand");
+    private static final String MSG_BLOWING_SAND = Messages.getString("PlanetaryConditionsOverlay.BlowingSand");
 
     /**
-     * An overlay for the Boardview that displays a selection of Planetary Conditions for the current game situation.
+     * An overlay for the BoardView that displays a selection of Planetary Conditions for the current game situation.
      */
     public PlanetaryConditionsOverlay(BoardView boardView) {
         super(boardView, new Font("SansSerif", Font.PLAIN, 13));
@@ -105,9 +105,9 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
 
             if (showDefaultConditions || (conditions.isExtremeTemperature())) {
                 tmpStr = (showLabel ? MSG_TEMPERATURE + "  " : "");
-                tmpStr = tmpStr + (showValue ? temp + "\u00B0C  " : "");
+                tmpStr = tmpStr + (showValue ? temp + "\u00B0C  " : ""); // Degree
                 tmpStr = tmpStr + (showIndicator ?
-                      (!showValue ? temp + "\u00B0C   " : "") + conditions.getTemperatureIndicator() :
+                      (!showValue ? temp + "\u00B0C   " : "") + conditions.getTemperatureIndicator() : // Degree
                       "");
                 result.add(tempColor + tmpStr);
             }
@@ -130,7 +130,7 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
             }
 
             if (showDefaultConditions || !conditions.getAtmosphere().isStandard()) {
-                tmpStr = (showLabel ? MSG_ATMOSPHERICPREASSURE + "  " : "");
+                tmpStr = (showLabel ? MSG_ATMOSPHERIC_PRESSURE + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getAtmosphere().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getAtmosphere().getIndicator() : "");
                 result.add(tmpStr);
@@ -169,7 +169,7 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
             }
 
             if (showDefaultConditions || conditions.isBlowingSand()) {
-                tmpStr = (showLabel ? MSG_BLOWINGSAND + "  " : "");
+                tmpStr = (showLabel ? MSG_BLOWING_SAND + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getBlowingSand().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getBlowingSand().getIndicator() : "");
                 result.add(tmpStr);
@@ -196,7 +196,7 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY)) {
+        if (e.getName().equals(GUIPreferences.SHOW_PLANETARY_CONDITIONS_OVERLAY)) {
             setVisible((boolean) e.getNewValue());
             scheduleBoardViewRepaint();
         }

@@ -3598,7 +3598,7 @@ public class Compute {
 
         // To save processing time, lets see if we have more than one type of
         // bin
-        // Thunder-type ammos and empty bins are excluded from the list
+        // Thunder-type ammunition and empty bins are excluded from the list
         for (AmmoMounted abin : shooter.getAmmo()) {
             if (shooter.loadWeapon((WeaponMounted) shooter.getEquipment(atk.getWeaponId()), abin)) {
                 if (abin.getUsableShotsLeft() > 0) {

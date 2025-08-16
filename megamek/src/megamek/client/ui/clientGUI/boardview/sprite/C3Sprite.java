@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -110,44 +110,30 @@ public class C3Sprite extends Sprite {
     }
 
     private void makePoly() {
-        // make a polygon
-        final Point a = bv.getHexLocation(entityE.getPosition());
-        final Point t = this.bv.getHexLocation(entityM.getPosition());
+        // make attackingPoint polygon
+        final Point attackingPoint = bv.getHexLocation(entityE.getPosition());
+        final Point targetPoint = this.bv.getHexLocation(entityM.getPosition());
 
-        final double an = (entityE.getPosition().radian(
-              entityM.getPosition()) + (Math.PI * 1.5))
-              % (Math.PI * 2); // angle
-        final double lw = this.bv.getScale() * BoardView.C3_LINE_WIDTH; // line width
+        final double angle = (entityE.getPosition().radian(entityM.getPosition()) + (Math.PI * 1.5)) % (Math.PI
+              * 2); // angle
+        final double lineWidth = this.bv.getScale() * BoardView.C3_LINE_WIDTH; // line width
 
         c3Poly = new Polygon();
+        int roundedWidth = (int) Math.round(Math.sin(angle) * lineWidth);
+        int roundedHeight = (int) Math.round(Math.cos(angle) * lineWidth);
+
         c3Poly.addPoint(
-              a.x
-                    + (int) ((this.bv.getScale() * (HexTileset.HEX_W / 2)) - (int) Math
-                    .round(Math.sin(an) * lw)),
-              a.y
-                    + (int) ((this.bv.getScale() * (HexTileset.HEX_H / 2)) + (int) Math
-                    .round(Math.cos(an) * lw)));
+              attackingPoint.x + (int) ((this.bv.getScale() * (HexTileset.HEX_W / 2.0f)) - roundedWidth),
+              attackingPoint.y + (int) ((this.bv.getScale() * (HexTileset.HEX_H / 2.0f)) + roundedHeight));
         c3Poly.addPoint(
-              a.x
-                    + (int) ((this.bv.getScale() * (HexTileset.HEX_W / 2)) + (int) Math
-                    .round(Math.sin(an) * lw)),
-              a.y
-                    + (int) ((this.bv.getScale() * (HexTileset.HEX_H / 2)) - (int) Math
-                    .round(Math.cos(an) * lw)));
+              attackingPoint.x + (int) ((this.bv.getScale() * (HexTileset.HEX_W / 2.0f)) + roundedWidth),
+              attackingPoint.y + (int) ((this.bv.getScale() * (HexTileset.HEX_H / 2.0f)) - roundedHeight));
         c3Poly.addPoint(
-              t.x
-                    + (int) ((this.bv.getScale() * (HexTileset.HEX_W / 2)) + (int) Math
-                    .round(Math.sin(an) * lw)),
-              t.y
-                    + (int) ((this.bv.getScale() * (HexTileset.HEX_H / 2)) - (int) Math
-                    .round(Math.cos(an) * lw)));
+              targetPoint.x + (int) ((this.bv.getScale() * (HexTileset.HEX_W / 2.0f)) + roundedWidth),
+              targetPoint.y + (int) ((this.bv.getScale() * (HexTileset.HEX_H / 2.0f)) - roundedHeight));
         c3Poly.addPoint(
-              t.x
-                    + (int) ((this.bv.getScale() * (HexTileset.HEX_W / 2)) - (int) Math
-                    .round(Math.sin(an) * lw)),
-              t.y
-                    + (int) ((this.bv.getScale() * (HexTileset.HEX_H / 2)) + (int) Math
-                    .round(Math.cos(an) * lw)));
+              targetPoint.x + (int) ((this.bv.getScale() * (HexTileset.HEX_W / 2.0f)) - roundedWidth),
+              targetPoint.y + (int) ((this.bv.getScale() * (HexTileset.HEX_H / 2.0f)) + roundedHeight));
     }
 
     @Override

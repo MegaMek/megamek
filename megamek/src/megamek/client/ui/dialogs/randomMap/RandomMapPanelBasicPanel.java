@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ package megamek.client.ui.dialogs.randomMap;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.io.Serial;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -55,6 +56,7 @@ import megamek.logging.MMLogger;
 public class RandomMapPanelBasicPanel extends JPanel {
     private static final MMLogger logger = MMLogger.create(RandomMapPanelBasicPanel.class);
 
+    @Serial
     private static final long serialVersionUID = -6971330721623187856L;
 
     private static final String NONE = Messages.getString("RandomMapDialog.uiNONE");
@@ -581,8 +583,6 @@ public class RandomMapPanelBasicPanel extends JPanel {
     private void setupCity(String cityType, MapSettings mapSettings) {
         if (NONE.equalsIgnoreCase(cityType)) {
             mapSettings.setCityParams(0, cityType, 0, 0, 0, 0, 0, 0);
-        } else if (NONE.equalsIgnoreCase(cityType)) {
-            mapSettings.setCityParams(3, cityType, 10, 50, 1, 3, 75, 60);
         } else {
             mapSettings.setCityParams(16, cityType, 10, 100, 1, 6, 75, 60);
         }

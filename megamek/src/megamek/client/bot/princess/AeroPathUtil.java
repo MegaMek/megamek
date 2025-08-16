@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -56,16 +56,14 @@ import megamek.logging.MMLogger;
  */
 public class AeroPathUtil {
     private AeroPathUtil() {
-
     }
 
-    private static final MMLogger logger = MMLogger.create(AeroPathUtil.class);
+    private static final MMLogger LOGGER = MMLogger.create(AeroPathUtil.class);
 
     protected static final List<List<MoveStepType>> TURNS = new ArrayList<>();
 
     static {
-        // put together a pre-defined array of turns. Indexes correspond to the
-        // directional values found in Coords.java
+        // put together a pre-defined array of turns. Indexes correspond to the directional values found in Coords.java
         TURNS.add(new ArrayList<>()); // "no turns"
 
         TURNS.add(new ArrayList<>());
@@ -88,8 +86,7 @@ public class AeroPathUtil {
         TURNS.get(5).add(MoveStepType.TURN_LEFT);
     }
 
-    // Used to protect the TURNS List to ensure it can't be modified outside of the
-    // class.
+    // Used to protect the TURNS List to ensure it can't be modified outside the class.
     public static List<List<MoveStepType>> getTurns() {
         return TURNS;
     }
@@ -108,10 +105,9 @@ public class AeroPathUtil {
             return false;
         }
 
-        // aircraft that are not VTOLs or spheroids will stall if the final velocity is
-        // zero after all acc/dec aerodyne units can actually land or "vertical land"
-        // and it's ok to do so (even though you're unlikely to find the 20 clear
-        // spaces) spheroids will stall if they don't move or land
+        // aircraft that are not VTOLs or spheroids will stall if the final velocity is zero after all acc/dec
+        // aerodyne units can actually land or "vertical land" and it's ok to do so (even though you're unlikely to
+        // find the 20 clear spaces) spheroids will stall if they don't move or land
 
         boolean isAirborne = movePath.getEntity().isAirborne();
         boolean isSpheroid = UnitType.isSpheroidDropship(movePath.getEntity());
@@ -150,10 +146,12 @@ public class AeroPathUtil {
      */
     public static boolean isSafePathOffBoard(MovePath movePath) {
         // common causes of PSR include, but are not limited to:
+        //
         // - stalling your aircraft
         // - crashing your aircraft into the ground
         // - executing maneuvers
         // - thrusting too hard
+        //
         // see your doctor if you experience any of these symptoms as it may lead to
         // your aircraft transforming into a lawn dart
         return !willStall(movePath) &&
@@ -175,16 +173,15 @@ public class AeroPathUtil {
           int upperBound) {
         Collection<MovePath> paths = new ArrayList<>();
 
-        // sanity check: if we've already done something else with the path, there's no
-        // acceleration to be done
+        // sanity check: if we've already done something else with the path, there's no acceleration to be done
         if (startingPath.length() > 0) {
             return paths;
         }
 
         int currentVelocity = startingPath.getFinalVelocity();
 
-        // we go from the lower bound to the current velocity and generate paths with
-        // the required number of DECs to get to the desired velocity
+        // we go from the lower bound to the current velocity and generate paths with the required number of DECs to
+        // get to the desired velocity
         for (int desiredVelocity = lowerBound; desiredVelocity < currentVelocity; desiredVelocity++) {
             MovePath path = startingPath.clone();
 
@@ -195,15 +192,14 @@ public class AeroPathUtil {
             paths.add(path);
         }
 
-        // If the unaltered starting path is within acceptable velocity bounds, it's
-        // also a valid "acceleration".
+        // If the unaltered starting path is within acceptable velocity bounds, it's also a valid "acceleration".
         if (startingPath.getFinalVelocity() <= upperBound &&
               startingPath.getFinalVelocity() >= lowerBound) {
             paths.add(startingPath.clone());
         }
 
-        // we go from the current velocity to the upper bound and generate paths with
-        // the required number of DECs to get to the desired velocity
+        // we go from the current velocity to the upper bound and generate paths with the required number of DECs to
+        // get to the desired velocity
         for (int desiredVelocity = currentVelocity; desiredVelocity < upperBound; desiredVelocity++) {
             MovePath path = startingPath.clone();
 
@@ -240,13 +236,11 @@ public class AeroPathUtil {
         List<MovePath> paths = new ArrayList<>();
 
         // clone path add UP
-        // if path uses more MP than entity has available or altitude higher than 10,
-        // stop
+        // if path uses more MP than entity has available or altitude higher than 10, stop
         for (int altChange = 0; ; altChange++) {
             int altChangeCost = altChange * 2;
 
-            // if we are going to attempt to change altitude but won't actually be able to,
-            // break out.
+            // if we are going to attempt to change altitude but won't actually be able to, break out.
             if ((path.getFinalAltitude() + altChange > 10) ||
                   path.getMpUsed() + altChangeCost > path.getEntity().getRunMP()) {
                 break;
@@ -276,8 +270,8 @@ public class AeroPathUtil {
                     childPath.addStep(MoveStepType.DOWN);
                 }
 
-                // going down doesn't use MP, but if we drop down more than 2 altitude it causes
-                // a massive difficulty PSR, which is just not worth it.
+                // going down doesn't use MP, but if we drop down more than 2 altitude it causes a massive difficulty
+                // PSR, which is just not worth it.
                 if ((childPath.getFinalAltitude() < 1) || childPath.length() > 2) {
                     break;
                 }
@@ -310,32 +304,32 @@ public class AeroPathUtil {
     }
 
     public static int getSpheroidDir(Game game, Entity mover) {
-        logger.debug("Deciding where to point %s...", mover.getDisplayName());
+        LOGGER.debug("Deciding where to point {}...", mover.getDisplayName());
 
         // Face the center of the board
         int dir = mover.getPosition().direction(game.getBoard().getCenter());
-        logger.debug("Map center is to the %s", ClientCommand.getDirection(dir));
+        LOGGER.debug("Map center is to the {}", ClientCommand.getDirection(dir));
 
         int enemyDir = dir;
 
         // Get all enemies, find centroid, face that.
         final Coords centroid;
         ArrayList<Entity> enemies = new ArrayList<>();
-        Iterator<Entity> eIt = game.getAllEnemyEntities(mover);
-        while (eIt.hasNext()) {
-            enemies.add(eIt.next());
+        Iterator<Entity> enemyEntities = game.getAllEnemyEntities(mover);
+        while (enemyEntities.hasNext()) {
+            enemies.add(enemyEntities.next());
         }
         if (!enemies.isEmpty()) {
             // Calc center of allies _of the enemy_, if possible
             centroid = PathRanker.calcAllyCenter(enemies.get(0).getId(), enemies, game);
             enemyDir = mover.getPosition().direction((centroid != null) ? centroid : game.getBoard().getCenter());
-            logger.debug("Enemies are over in %s", ClientCommand.getDirection(enemyDir));
+            LOGGER.debug("Enemies are over in {}", ClientCommand.getDirection(enemyDir));
         }
 
         // Then determine if we need to protect part of the ship
         if (mover.getDamageLevel() == Entity.DMG_NONE) {
             dir = enemyDir;
-            logger.debug("Being hale and hearty, we will aim toward the %s", ClientCommand.getDirection(dir));
+            LOGGER.debug("Being hale and hearty, we will aim toward the {}", ClientCommand.getDirection(dir));
         } else {
             int leastArmor = 9999999;
             int leastLoc = Dropship.LOC_NONE;
@@ -362,12 +356,11 @@ public class AeroPathUtil {
                     case Dropship.LOC_AFT:
                     case Dropship.LOC_WINGS:
                     case Dropship.LOC_FUSELAGE:
-                        // Default is nose to enemy. If this should be different, suggest using NOSE
-                        // case.
+                        // Default is nose to enemy. If this should be different, suggest using NOSE case.
                         dir = enemyDir;
                 }
-                logger.debug("We've taken a lot of damage to our %s", mover.getLocationAbbr(leastLoc));
-                logger.debug("nTurning to the %s to protect ourselves!", ClientCommand.getDirection(dir));
+                LOGGER.debug("We've taken a lot of damage to our {}", mover.getLocationAbbr(leastLoc));
+                LOGGER.debug("nTurning to the {} to protect ourselves!", ClientCommand.getDirection(dir));
             }
         }
 

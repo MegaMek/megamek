@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -272,7 +272,7 @@ public class FovHighlightingAndDarkening {
     public @Nullable LosEffects getCachedLosEffects(Coords src, Coords dest, int boardId) {
         ArrayList<StepSprite> pathSprites = boardView.pathSprites;
         StepSprite lastStepSprite = pathSprites.isEmpty() ? null : pathSprites.get(pathSprites.size() - 1);
-        // lets check if cache should be cleared
+        // let's check if cache should be cleared
         if ((cachedSelectedEntity != boardView.getSelectedEntity()) ||
               (cachedStepSprite != lastStepSprite) ||
               (!src.equals(cachedSrc)) ||
@@ -331,10 +331,7 @@ public class FovHighlightingAndDarkening {
                 Color tc = new Color(Color.HSBtoRGB(h, s, b));
                 ringsColors.add(new Color(tc.getRed(), tc.getGreen(), tc.getBlue(), highlight_alpha));
             } catch (Exception e) {
-                logger.error(e,
-                      String.format("Cannot parse %s parameter '%s'",
-                            GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB,
-                            rcr));
+                logger.error(e, "Cannot parse {} parameter '{}'", GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB, rcr);
                 break;
             }
         }
@@ -367,30 +364,18 @@ public class FovHighlightingAndDarkening {
         }
 
         // Need to re-write this to work with Low Alt maps
-        // LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
         LosEffects.AttackInfo attackInfo = LosEffects.prepLosAttackInfo(
               boardView.game, boardView.getSelectedEntity(), null, src, dest, boardId,
               guip.getMekInFirst(), guip.getMekInSecond());
-        // ai.attackPos = src;
-        // ai.targetPos = dest;
         // First, we check for a selected unit and use its height. If
         // there's no selected unit we use the mekInFirst GUIPref.
         if (boardView.getSelectedEntity() != null) {
-            Entity ae = boardView.getSelectedEntity();
+            Entity selectedEntity = boardView.getSelectedEntity();
             // Elevation of entity above the hex surface
-            int elevation;
-            if (!boardView.pathSprites.isEmpty()) {
-                // If we've got a step, get the elevation from it
-                int lastStepIdx = this.boardView.pathSprites.size() - 1;
-                MoveStep lastMS = this.boardView.pathSprites.get(lastStepIdx).getStep();
-                elevation = (attackInfo.lowAltitude) ? lastMS.getAltitude() : lastMS.getElevation();
-            } else {
-                // otherwise we use entity's altitude / elevation
-                elevation = (attackInfo.lowAltitude) ? ae.getAltitude() : ae.getElevation();
-            }
+            int elevation = getElevation(attackInfo, selectedEntity);
             attackInfo.attackAbsHeight = (attackInfo.lowAltitude) ?
                   elevation :
-                  srcHex.getLevel() + elevation + ae.getHeight();
+                  srcHex.getLevel() + elevation + selectedEntity.getHeight();
         } else {
             // For hexes, getLevel is functionally the same as getAltitude()
             attackInfo.attackAbsHeight = srcHex.getLevel() + attackInfo.attackHeight;
@@ -414,5 +399,19 @@ public class FovHighlightingAndDarkening {
             attackInfo.targetAbsHeight = dstHex.getLevel() + attackInfo.targetHeight;
         }
         return LosEffects.calculateLos(boardView.game, attackInfo);
+    }
+
+    private int getElevation(LosEffects.AttackInfo attackInfo, Entity ae) {
+        int elevation;
+        if (!boardView.pathSprites.isEmpty()) {
+            // If we've got a step, get the elevation from it
+            int lastStepIdx = this.boardView.pathSprites.size() - 1;
+            MoveStep lastMS = this.boardView.pathSprites.get(lastStepIdx).getStep();
+            elevation = (attackInfo.lowAltitude) ? lastMS.getAltitude() : lastMS.getElevation();
+        } else {
+            // otherwise we use entity's altitude / elevation
+            elevation = (attackInfo.lowAltitude) ? ae.getAltitude() : ae.getElevation();
+        }
+        return elevation;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,6 +44,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.Serial;
 import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.*;
@@ -70,44 +71,36 @@ import megamek.common.util.fileUtils.MegaMekFile;
 class SystemPanel extends PicMap
       implements ItemListener, ActionListener, ListSelectionListener {
 
-    private static int LOC_ALL_EQUIP = 0;
-    private static int LOC_ALL_WEAPS = 1;
-    private static int LOC_SPACER = 2;
-    private static int LOC_OFFSET = 3;
+    private static final int LOC_ALL_EQUIP = 0;
+    private static final int LOC_ALL_WEAPONS = 1;
+    private static final int LOC_SPACER = 2;
+    private static final int LOC_OFFSET = 3;
 
     private final UnitDisplayPanel unitDisplayPanel;
 
+    @Serial
     private static final long serialVersionUID = 6660316427898323590L;
 
-    private JPanel panelMain;
-    private JScrollPane tSlotScroll;
-    private JLabel locLabel;
-    private JLabel slotLabel;
-    private JLabel modeLabel;
-    private JLabel unitLabel;
-    private JList<String> slotList;
-    private JList<String> locList;
-    private JList<String> unitList;
+    private final JList<String> slotList;
+    private final JList<String> locList;
+    private final JList<String> unitList;
 
-    private JComboBox<String> m_chMode;
-    private JButton m_bDumpAmmo;
+    private final JComboBox<String> m_chMode;
+    private final JButton m_bDumpAmmo;
 
     private Entity en;
-    private Vector<Entity> entities = new Vector<>();
-
-    private int minTopMargin = 8;
-    private int minLeftMargin = 8;
+    private final Vector<Entity> entities = new Vector<>();
 
     SystemPanel(UnitDisplayPanel unitDisplayPanel) {
         this.unitDisplayPanel = unitDisplayPanel;
-        locLabel = new JLabel(Messages.getString("MekDisplay.Location"), SwingConstants.CENTER);
+        JLabel locLabel = new JLabel(Messages.getString("MekDisplay.Location"), SwingConstants.CENTER);
         locLabel.setOpaque(false);
         locLabel.setForeground(Color.WHITE);
-        slotLabel = new JLabel(Messages.getString("MekDisplay.Slot"), SwingConstants.CENTER);
+        JLabel slotLabel = new JLabel(Messages.getString("MekDisplay.Slot"), SwingConstants.CENTER);
         slotLabel.setOpaque(false);
         slotLabel.setForeground(Color.WHITE);
 
-        unitLabel = new JLabel(Messages.getString("MekDisplay.Unit"), SwingConstants.CENTER);
+        JLabel unitLabel = new JLabel(Messages.getString("MekDisplay.Unit"), SwingConstants.CENTER);
         unitLabel.setOpaque(false);
         unitLabel.setForeground(Color.WHITE);
 
@@ -130,14 +123,14 @@ class SystemPanel extends PicMap
         m_bDumpAmmo.setEnabled(false);
         m_bDumpAmmo.setActionCommand("dump");
 
-        modeLabel = new JLabel(Messages.getString("MekDisplay.modeLabel"), SwingConstants.RIGHT);
+        JLabel modeLabel = new JLabel(Messages.getString("MekDisplay.modeLabel"), SwingConstants.RIGHT);
         modeLabel.setOpaque(false);
         modeLabel.setForeground(Color.WHITE);
 
         // layout main panel
-        GridBagLayout gridbag = new GridBagLayout();
+        GridBagLayout gridBagLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        panelMain = new JPanel(gridbag);
+        JPanel panelMain = new JPanel(gridBagLayout);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(15, 9, 1, 1);
@@ -147,7 +140,7 @@ class SystemPanel extends PicMap
         c.weighty = 0.0;
         c.gridwidth = 1;
         c.gridheight = 1;
-        gridbag.setConstraints(locLabel, c);
+        gridBagLayout.setConstraints(locLabel, c);
         panelMain.add(locLabel);
 
         c.weightx = 0.0;
@@ -155,7 +148,7 @@ class SystemPanel extends PicMap
         c.gridx = 1;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.insets = new Insets(15, 1, 1, 9);
-        gridbag.setConstraints(slotLabel, c);
+        gridBagLayout.setConstraints(slotLabel, c);
         panelMain.add(slotLabel);
 
         c.weightx = 0.5;
@@ -165,7 +158,7 @@ class SystemPanel extends PicMap
         c.gridwidth = 1;
         c.insets = new Insets(1, 9, 15, 1);
         c.gridheight = 1;
-        gridbag.setConstraints(locList, c);
+        gridBagLayout.setConstraints(locList, c);
         panelMain.add(locList);
 
         c.fill = GridBagConstraints.BOTH;
@@ -176,7 +169,7 @@ class SystemPanel extends PicMap
         c.weighty = 0.0;
         c.gridwidth = 1;
         c.gridheight = 1;
-        gridbag.setConstraints(unitLabel, c);
+        gridBagLayout.setConstraints(unitLabel, c);
         panelMain.add(unitLabel);
 
         c.weightx = 0.5;
@@ -186,7 +179,7 @@ class SystemPanel extends PicMap
         c.gridwidth = 1;
         c.insets = new Insets(1, 9, 15, 1);
         c.gridheight = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(unitList, c);
+        gridBagLayout.setConstraints(unitList, c);
         panelMain.add(unitList);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -196,9 +189,9 @@ class SystemPanel extends PicMap
         c.weightx = 0.0;
         c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 9);
-        tSlotScroll = new JScrollPane(slotList);
+        JScrollPane tSlotScroll = new JScrollPane(slotList);
         tSlotScroll.setMinimumSize(new Dimension(200, 100));
-        gridbag.setConstraints(tSlotScroll, c);
+        gridBagLayout.setConstraints(tSlotScroll, c);
         panelMain.add(tSlotScroll);
 
         c.gridwidth = 1;
@@ -206,7 +199,7 @@ class SystemPanel extends PicMap
         c.gridx = 1;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        gridbag.setConstraints(modeLabel, c);
+        gridBagLayout.setConstraints(modeLabel, c);
         c.insets = new Insets(1, 1, 1, 1);
         panelMain.add(modeLabel);
 
@@ -215,7 +208,7 @@ class SystemPanel extends PicMap
         c.gridy = 2;
         c.gridx = 2;
         c.insets = new Insets(1, 1, 1, 9);
-        gridbag.setConstraints(m_chMode, c);
+        gridBagLayout.setConstraints(m_chMode, c);
         panelMain.add(m_chMode);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -223,7 +216,7 @@ class SystemPanel extends PicMap
         c.gridy = 3;
         c.gridx = 1;
         c.insets = new Insets(4, 4, 15, 9);
-        gridbag.setConstraints(m_bDumpAmmo, c);
+        gridBagLayout.setConstraints(m_bDumpAmmo, c);
         panelMain.add(m_bDumpAmmo);
 
         setLayout(new BorderLayout());
@@ -243,17 +236,18 @@ class SystemPanel extends PicMap
         if (r == null) {
             return;
         }
-        int dx = Math.round(((w - r.width) / 2));
+        int dx = Math.round(((w - r.width) / 2.0f));
+        int minLeftMargin = 8;
         if (dx < minLeftMargin) {
             dx = minLeftMargin;
         }
-        int dy = minTopMargin;
+        int dy = 8;
         setContentMargins(dx, dy, dx, dy);
     }
 
     private CriticalSlot getSelectedCritical() {
         if ((locList.getSelectedIndex() == LOC_ALL_EQUIP)
-              || (locList.getSelectedIndex() == LOC_ALL_WEAPS)
+              || (locList.getSelectedIndex() == LOC_ALL_WEAPONS)
               || (locList.getSelectedIndex() == LOC_SPACER)) {
             return null;
         }
@@ -274,7 +268,7 @@ class SystemPanel extends PicMap
                 return null;
             }
         }
-        if (locList.getSelectedIndex() == LOC_ALL_WEAPS) {
+        if (locList.getSelectedIndex() == LOC_ALL_WEAPONS) {
             if (slotList.getSelectedIndex() != -1) {
                 return en.getWeaponList().get(slotList.getSelectedIndex());
             } else {
@@ -305,7 +299,7 @@ class SystemPanel extends PicMap
                                  cs.getMount2().getName() },
                   true);
             choiceDialog.setVisible(true);
-            if (choiceDialog.getAnswer() == true) {
+            if (choiceDialog.getAnswer()) {
                 // load up the choices
                 int[] toDump = choiceDialog.getChoices();
                 if (toDump[0] == 0) {
@@ -338,10 +332,10 @@ class SystemPanel extends PicMap
               .removeAllElements();
         ((DefaultListModel<String>) unitList.getModel())
               .addElement(Messages.getString("MekDisplay.Ego"));
-        for (Entity loadee : newEntity.getLoadedUnits()) {
+        for (Entity loadedUnit : newEntity.getLoadedUnits()) {
             ((DefaultListModel<String>) unitList.getModel())
-                  .addElement(loadee.getModel());
-            entities.add(loadee);
+                  .addElement(loadedUnit.getModel());
+            entities.add(loadedUnit);
         }
         unitList.setSelectedIndex(0);
         displayLocations();
@@ -359,7 +353,7 @@ class SystemPanel extends PicMap
         locModel.insertElementAt(
               Messages.getString("MekDisplay.AllEquipment"), LOC_ALL_EQUIP);
         locModel.insertElementAt(
-              Messages.getString("MekDisplay.AllWeapons"), LOC_ALL_WEAPS);
+              Messages.getString("MekDisplay.AllWeapons"), LOC_ALL_WEAPONS);
         locModel.insertElementAt("-----", LOC_SPACER);
         for (int loc = 0; loc < en.locations(); loc++) {
             int idx = loc + LOC_OFFSET;
@@ -385,7 +379,7 @@ class SystemPanel extends PicMap
         }
 
         // Display all Weapons
-        if (loc == LOC_ALL_WEAPS) {
+        if (loc == LOC_ALL_WEAPONS) {
             for (Mounted<?> m : en.getWeaponList()) {
                 slotModel.addElement(getMountedDisplay(m, loc));
             }
@@ -401,7 +395,7 @@ class SystemPanel extends PicMap
         loc -= LOC_OFFSET;
         for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
-            StringBuffer sb = new StringBuffer(32);
+            StringBuilder sb = new StringBuilder(32);
             if (cs == null) {
                 sb.append("---");
             } else {
@@ -413,7 +407,7 @@ class SystemPanel extends PicMap
                         if (cs.isBreached()) {
                             sb.append("x");
                         }
-                        // Protomeks have different system names.
+                        // ProtoMeks have different system names.
                         if (en instanceof ProtoMek) {
                             sb.append(ProtoMek.SYSTEM_NAMES[cs.getIndex()]);
                         } else {
@@ -441,7 +435,7 @@ class SystemPanel extends PicMap
 
     private String getMountedDisplay(Mounted<?> m, int loc, CriticalSlot cs) {
         String hotLoaded = Messages.getString("MekDisplay.isHotLoaded");
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append(m.getDesc());
 
@@ -553,9 +547,9 @@ class SystemPanel extends PicMap
                         if (m.canInstantSwitch(nMode)) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.switched",
                                   m.getName(), m.curMode().getDisplayableName()));
-                            int weap = this.unitDisplayPanel.wPan.getSelectedWeaponNum();
+                            int weapon = this.unitDisplayPanel.wPan.getSelectedWeaponNum();
                             this.unitDisplayPanel.wPan.displayMek(en);
-                            this.unitDisplayPanel.wPan.selectWeapon(weap);
+                            this.unitDisplayPanel.wPan.selectWeapon(weapon);
                         } else {
                             if (clientgui.getClient().getGame().getPhase().isDeployment()) {
                                 clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtStart",
@@ -574,8 +568,7 @@ class SystemPanel extends PicMap
                     int nMode = m_chMode.getSelectedIndex();
                     if (nMode >= 0) {
                         if ((cs.getIndex() == Mek.SYSTEM_COCKPIT)
-                              && en.hasEiCockpit() && (en instanceof Mek)) {
-                            Mek mek = (Mek) en;
+                              && en.hasEiCockpit() && (en instanceof Mek mek)) {
                             mek.setCockpitStatus(nMode);
                             clientgui.getClient().sendSystemModeChange(
                                   en.getId(), Mek.SYSTEM_COCKPIT, nMode);
@@ -769,19 +762,13 @@ class SystemPanel extends PicMap
                 m_bDumpAmmo.setEnabled(false);
                 m_chMode.setEnabled(false);
                 Mounted<?> m = getSelectedEquipment();
-                boolean carryingBAsOnBack = false;
-                if ((en instanceof Mek)
+                boolean carryingBAsOnBack = (en instanceof Mek)
                       && ((en.getExteriorUnitAt(Mek.LOC_CT, true) != null)
                       || (en.getExteriorUnitAt(Mek.LOC_LT, true) != null) || (en
-                      .getExteriorUnitAt(Mek.LOC_RT, true) != null))) {
-                    carryingBAsOnBack = true;
-                }
+                      .getExteriorUnitAt(Mek.LOC_RT, true) != null));
 
-                boolean invalidEnvironment = false;
-                if ((en instanceof Mek)
-                      && (en.getLocationStatus(Mek.LOC_CT) > ILocationExposureStatus.NORMAL)) {
-                    invalidEnvironment = true;
-                }
+                boolean invalidEnvironment = (en instanceof Mek)
+                      && (en.getLocationStatus(Mek.LOC_CT) > ILocationExposureStatus.NORMAL);
 
                 if ((en instanceof Tank) && !(en instanceof GunEmplacement)
                       && (en.getLocationStatus(Tank.LOC_REAR) > ILocationExposureStatus.NORMAL)) {
@@ -830,7 +817,7 @@ class SystemPanel extends PicMap
                           && m.getType().hasFlag(MiscType.F_STEALTH)
                           && m.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
-                    } // if the maxtech eccm option is not set then the ECM
+                    } // if the max tech eccm option is not set then the ECM
                     // should not show anything.
                     if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_ECM)
                           && !(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)

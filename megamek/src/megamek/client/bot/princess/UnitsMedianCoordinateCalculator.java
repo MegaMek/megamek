@@ -56,9 +56,7 @@ import megamek.common.annotations.Nullable;
  * @author Luana Coppio
  * @since 0.50.06
  */
-class UnitsMedianCoordinateCalculator {
-
-    private final int numberOfUnitsToConsider;
+record UnitsMedianCoordinateCalculator(int numberOfUnitsToConsider) {
 
     /**
      * Constructor for UnitsMedianCoordinateCalculator.
@@ -68,11 +66,10 @@ class UnitsMedianCoordinateCalculator {
      *
      * @throws IllegalArgumentException if numberOfUnitToConsider is less than or equal to 0.
      */
-    UnitsMedianCoordinateCalculator(int numberOfUnitsToConsider) {
+    UnitsMedianCoordinateCalculator {
         if (numberOfUnitsToConsider <= 0) {
             throw new IllegalArgumentException("numberOfUnitToConsider must be greater than 0");
         }
-        this.numberOfUnitsToConsider = numberOfUnitsToConsider;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,12 +53,12 @@ public class SBFClientGUIGameListener extends GameListenerAdapter {
         //        // better one without making massive changes (which didn't seem
         //        // worth it for one little feature).
         //        if (bv.getLocalPlayer() != client.getLocalPlayer()) {
-        //            // The adress based comparison is somewhat important.
+        //            // The address based comparison is somewhat important.
         //            // Use of the /reset command can cause the player to get reset,
         //            // and the equals function of Player isn't powerful enough.
         //            bv.setLocalPlayer(client.getLocalPlayer());
         //        }
-        //        // Make sure the ChatterBox starts out deactived.
+        //        // Make sure the ChatterBox starts out deactivated.
         //        bv.setChatterBoxActive(false);
         //
         // Swap to this phase's panel.

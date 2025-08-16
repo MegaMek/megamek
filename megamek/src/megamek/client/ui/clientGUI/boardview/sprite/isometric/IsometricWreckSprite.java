@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,7 +30,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.clientGUI.boardview.sprite;
+package megamek.client.ui.clientGUI.boardview.sprite.isometric;
 
 import java.awt.AlphaComposite;
 import java.awt.Font;
@@ -41,10 +41,11 @@ import java.awt.image.ImageObserver;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.sprite.AbstractWreckSprite;
 import megamek.common.Entity;
 
 /**
- * Sprite for an wreck. Consists of an image, drawn from the Tile Manager and an identification label.
+ * Sprite for a wreck. Consists of an image, drawn from the Tile Manager and an identification label.
  */
 public class IsometricWreckSprite extends AbstractWreckSprite {
 
@@ -81,7 +82,4 @@ public class IsometricWreckSprite extends AbstractWreckSprite {
         }
     }
 
-    public Entity getEntity() {
-        return entity;
-    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -72,17 +72,17 @@ public class FactionRecord {
         CLAN_VEE, IS_ADVANCED_VEE
     }
 
-    private String key;
+    private final String key;
     private boolean minor;
     private boolean clan;
     private boolean periphery;
     private String name;
-    private TreeMap<Integer, String> altNames;
-    private ArrayList<DateRange> yearsActive;
-    private ArrayList<String> ratingLevels;
-    private HashMap<Integer, Integer> pctSalvage;
-    private HashMap<TechCategory, HashMap<Integer, ArrayList<Integer>>> pctTech;
-    private HashMap<Integer, HashMap<String, Integer>> salvage;
+    private final TreeMap<Integer, String> altNames;
+    private final ArrayList<DateRange> yearsActive;
+    private final ArrayList<String> ratingLevels;
+    private final HashMap<Integer, Integer> pctSalvage;
+    private final HashMap<TechCategory, HashMap<Integer, ArrayList<Integer>>> pctTech;
+    private final HashMap<Integer, HashMap<String, Integer>> salvage;
     /*
      * FM:Updates gives percentage values for omni, Clan, and SL tech. Later manuals
      * are less precise, giving omni percentages for Clans and (in FM:3085) upgrade
@@ -94,18 +94,18 @@ public class FactionRecord {
     /**
      * Margin of uncertainty for Omni-unit percentages
      */
-    private HashMap<Integer, Integer> omniMargin;
+    private final HashMap<Integer, Integer> omniMargin;
     /**
      * Margin of uncertainty for Clan/Star League tech percentages
      */
-    private HashMap<Integer, Integer> techMargin;
+    private final HashMap<Integer, Integer> techMargin;
     /**
      * Margin of uncertainty for basic IS tech percentages which may be applied to Star League or advanced IS tech
      */
-    private HashMap<Integer, Integer> upgradeMargin;
+    private final HashMap<Integer, Integer> upgradeMargin;
 
-    private HashMap<Integer, HashMap<Integer, ArrayList<Integer>>> weightDistribution;
-    private ArrayList<String> parentFactions;
+    private final HashMap<Integer, HashMap<Integer, ArrayList<Integer>>> weightDistribution;
+    private final ArrayList<String> parentFactions;
 
     // Constants: IS and Clan "general" keys
     public static final String IS_GENERAL_KEY = "IS";
@@ -407,7 +407,7 @@ public class FactionRecord {
         }
 
         if (count > 0) {
-            return (int) ((total / count + 0.5));
+            return total / count;
         } else {
             return null;
         }
@@ -438,7 +438,7 @@ public class FactionRecord {
                 try {
                     list.add(Integer.parseInt(pct));
                 } catch (NumberFormatException ex) {
-                    logger.error(ex, "Failed to parse tech percent while loading faction data for " + key);
+                    logger.error(ex, "Failed to parse tech percent while loading faction data for {}", key);
                 }
             }
         }
@@ -607,7 +607,8 @@ public class FactionRecord {
                               .parseUnitType(wn.getAttributes().getNamedItem("unitType").getTextContent());
                         setWeightDistribution(era, unitType, wn.getTextContent());
                     } catch (Exception ex) {
-                        logger.error(ex, "RATGenerator: error parsing weight distributions for " + key + ", " + era);
+                        logger.error(ex,
+                              "RATGenerator: error parsing weight distributions for {}, {}", key, era);
                     }
                     break;
             }
@@ -745,7 +746,7 @@ public class FactionRecord {
             }
         }
 
-        if (factionRecordBuilder.length() > 0) {
+        if (!factionRecordBuilder.isEmpty()) {
             pw.println("\t<faction key='" + key + "'>");
             pw.println(factionRecordBuilder.toString().replaceFirst("\\n$", ""));
             pw.println("\t</faction>");

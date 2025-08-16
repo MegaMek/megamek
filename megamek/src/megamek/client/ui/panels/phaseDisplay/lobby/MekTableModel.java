@@ -224,7 +224,7 @@ public class MekTableModel extends AbstractTableModel {
             unitTooltips.add(UnitToolTip.wrapWithHTML(s));
             s = PilotToolTip.lobbyTip(entity).toString();
             if (entity instanceof Entity) {
-                s += PilotToolTip.getCrewAdvs((Entity) entity, true).toString();
+                s += PilotToolTip.getCrewAdvantages((Entity) entity, true).toString();
             }
             pilotTooltips.add(UnitToolTip.wrapWithHTML(s));
         }

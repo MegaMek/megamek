@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -527,8 +527,7 @@ public final class PhysicalCalculator {
     }
 
     /**
-     * @param odds
-     * @param ent  The {@link Entity} that is falling
+     * @param ent The {@link Entity} that is falling
      *
      * @return Falling damage after a successful To-Hit.
      */

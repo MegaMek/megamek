@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,11 +33,14 @@
  */
 package megamek.client.bot.princess;
 
+import java.io.Serial;
+
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 8/17/13 11:03 PM
  */
 public class PrincessException extends Exception {
+    @Serial
     private static final long serialVersionUID = -657543995772098106L;
 
     public PrincessException() {

@@ -823,7 +823,7 @@ public class HeatMap {
             List<Coords> removals = checkMap.keySet()
                   .stream()
                   .filter(p -> checkMap.get(p) == lowestRank.getAsInt())
-                  .collect(Collectors.toList());
+                  .toList();
             for (Coords curPosition : removals) {
                 checkMap.remove(curPosition);
             }

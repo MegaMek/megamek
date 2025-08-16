@@ -38,101 +38,98 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Node while contains rules for generating subforces -- either lower eschelons or the actual units if this is a
- * bottom-level eschelon.
+ * Node while contains rules for generating subForces -- either lower echelons or the actual units if this is a
+ * bottom-level echelon.
  *
  * @author Neoancient
  */
-public class SubforcesNode extends RulesetNode {
+public class SubForcesNode extends RulesetNode {
     String altFaction;
     boolean parentFaction;
-    ArrayList<ValueNode> subforces;
-    ArrayList<OptionGroupNode> optionSubforces;
+    ArrayList<ValueNode> subForces;
+    ArrayList<OptionGroupNode> optionSubForces;
 
-    protected SubforcesNode() {
+    protected SubForcesNode() {
         altFaction = null;
         parentFaction = false;
-        subforces = new ArrayList<>();
-        optionSubforces = new ArrayList<>();
+        subForces = new ArrayList<>();
+        optionSubForces = new ArrayList<>();
     }
 
-    public ArrayList<ForceDescriptor> generateSubforces(ForceDescriptor fd) {
-        return generateSubforces(fd, false);
+    public ArrayList<ForceDescriptor> generateSubForces(ForceDescriptor forceDescriptor) {
+        return generateSubForces(forceDescriptor, false);
     }
 
-    public ArrayList<ForceDescriptor> generateSubforces(ForceDescriptor fd,
+    public ArrayList<ForceDescriptor> generateSubForces(ForceDescriptor forceDescriptor,
           boolean isAttached) {
         ArrayList<ForceDescriptor> retVal = new ArrayList<>();
-        for (ValueNode n : subforces) {
-            if (n.matches(fd)) {
+        for (ValueNode valueNode : subForces) {
+            if (valueNode.matches(forceDescriptor)) {
                 ArrayList<ForceDescriptor> subs = new ArrayList<>();
-                for (int i = 0; i < n.getNum(); i++) {
+                for (int i = 0; i < valueNode.getNum(); i++) {
                     /* Remove the middle weight class to keep the overall weight class
                      * roughly the same.
                      */
-                    if (!isAttached && fd.getSizeMod() == ForceDescriptor.UNDERSTRENGTH
-                          && i == n.getNum() / 2) {
+                    if (!isAttached && forceDescriptor.getSizeMod() == ForceDescriptor.UNDERSTRENGTH
+                          && i == valueNode.getNum() / 2) {
                         continue;
                     }
-                    ForceDescriptor sub = fd.createChild(i);
-                    sub.setEschelon(Integer.parseInt(n.getContent()));
+                    ForceDescriptor sub = forceDescriptor.createChild(i);
+                    sub.setEchelon(Integer.parseInt(valueNode.getContent()));
                     apply(sub, i);
-                    n.apply(sub, i);
+                    valueNode.apply(sub, i);
                     subs.add(sub);
                 }
-                if (!isAttached && fd.getSizeMod() == ForceDescriptor.REINFORCED) {
-                    ForceDescriptor sub = fd.createChild(subs.size());
-                    sub.setEschelon(Integer.parseInt(n.getContent()));
-                    apply(sub, n.getNum() / 2);
-                    n.apply(sub, n.getNum() / 2);
+                if (!isAttached && forceDescriptor.getSizeMod() == ForceDescriptor.REINFORCED) {
+                    ForceDescriptor sub = forceDescriptor.createChild(subs.size());
+                    sub.setEchelon(Integer.parseInt(valueNode.getContent()));
+                    apply(sub, valueNode.getNum() / 2);
+                    valueNode.apply(sub, valueNode.getNum() / 2);
                     subs.add(sub);
 
                 }
                 retVal.addAll(subs);
-                if (!isAttached && null == fd.getGenerationRule()) {
-                    fd.setGenerationRule(findGenerateProperty(n, this));
+                if (!isAttached && null == forceDescriptor.getGenerationRule()) {
+                    forceDescriptor.setGenerationRule(findGenerateProperty(valueNode, this));
                 }
             }
         }
-        for (OptionGroupNode n : optionSubforces) {
-            if (n.matches(fd)) {
-                ValueNode vn = n.selectOption(fd);
+        for (OptionGroupNode n : optionSubForces) {
+            if (n.matches(forceDescriptor)) {
+                ValueNode vn = n.selectOption(forceDescriptor);
                 if (vn != null) {
                     ArrayList<ForceDescriptor> subs = new ArrayList<>();
                     for (int i = 0; i < vn.getNum(); i++) {
-                        if (fd.getSizeMod() == ForceDescriptor.UNDERSTRENGTH
+                        if (forceDescriptor.getSizeMod() == ForceDescriptor.UNDERSTRENGTH
                               && i == vn.getNum() / 2) {
                             continue;
                         }
-                        ForceDescriptor sub = fd.createChild(i);
+                        ForceDescriptor sub = forceDescriptor.createChild(i);
                         if (vn.getContent().endsWith("+")) {
                             sub.setSizeMod(ForceDescriptor.REINFORCED);
-                            sub.setEschelon(Integer.parseInt(vn.getContent().replace("+", "")));
+                            sub.setEchelon(Integer.parseInt(vn.getContent().replace("+", "")));
                         } else if (vn.getContent().endsWith("-")) {
                             sub.setSizeMod(ForceDescriptor.UNDERSTRENGTH);
-                            sub.setEschelon(Integer.parseInt(vn.getContent().replace("-", "")));
+                            sub.setEchelon(Integer.parseInt(vn.getContent().replace("-", "")));
                         } else {
-                            sub.setEschelon(Integer.parseInt(vn.getContent()));
+                            sub.setEchelon(Integer.parseInt(vn.getContent()));
                         }
                         apply(sub, i);
                         n.apply(sub, i);
                         vn.apply(sub, i);
-                        // if (sub.getEschelon() == 0) {
-                        //     sub.generate(false);
-                        // }
                         subs.add(sub);
                     }
-                    if (fd.getSizeMod() == ForceDescriptor.REINFORCED) {
-                        ForceDescriptor sub = fd.createChild(subs.size());
-                        sub.setEschelon(Integer.parseInt(vn.getContent()));
+                    if (forceDescriptor.getSizeMod() == ForceDescriptor.REINFORCED) {
+                        ForceDescriptor sub = forceDescriptor.createChild(subs.size());
+                        sub.setEchelon(Integer.parseInt(vn.getContent()));
                         apply(sub, vn.getNum() / 2);
                         n.apply(sub, vn.getNum() / 2);
                         subs.add(sub);
 
                     }
                     retVal.addAll(subs);
-                    if (!isAttached && null == fd.getGenerationRule()) {
-                        fd.setGenerationRule(findGenerateProperty(vn, n, this));
+                    if (!isAttached && null == forceDescriptor.getGenerationRule()) {
+                        forceDescriptor.setGenerationRule(findGenerateProperty(vn, n, this));
                     }
                 }
             }
@@ -165,8 +162,8 @@ public class SubforcesNode extends RulesetNode {
         return parentFaction;
     }
 
-    public static SubforcesNode createFromXml(Node node) {
-        SubforcesNode retVal = new SubforcesNode();
+    public static SubForcesNode createFromXml(Node node) {
+        SubForcesNode retVal = new SubForcesNode();
         retVal.loadFromXml(node);
         return retVal;
     }
@@ -179,14 +176,11 @@ public class SubforcesNode extends RulesetNode {
         for (int x = 0; x < nl.getLength(); x++) {
             Node wn = nl.item(x);
 
-            if (wn.getNodeName().equals("subforce")) {
-                subforces.add(ValueNode.createFromXml(wn));
-            } else if (wn.getNodeName().equals("subforceOption")) {
-                optionSubforces.add(OptionGroupNode.createFromXml(wn));
-            } else if (wn.getNodeName().equals("asFaction")) {
-                altFaction = wn.getTextContent().trim();
-            } else if (wn.getNodeName().equals("asParent")) {
-                parentFaction = true;
+            switch (wn.getNodeName()) {
+                case "subforce" -> subForces.add(ValueNode.createFromXml(wn));
+                case "subforceOption" -> optionSubForces.add(OptionGroupNode.createFromXml(wn));
+                case "asFaction" -> altFaction = wn.getTextContent().trim();
+                case "asParent" -> parentFaction = true;
             }
         }
     }

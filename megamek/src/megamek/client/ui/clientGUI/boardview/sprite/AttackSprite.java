@@ -16,7 +16,7 @@
  * A copy of the GPL should have been included with this project;
  * if not, see <https://www.gnu.org/licenses/>.
  *
- * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * NOTICE: The MegaMek organization is attackingPoint non-profit group of volunteers
  * creating free software for the BattleTech community.
  *
  * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
@@ -41,93 +41,107 @@ import java.awt.image.ImageObserver;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.clientGUI.tooltip.EntityActionLog;
+import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.StraightArrowPolygon;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
-import megamek.common.actions.*;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.IdealHex;
+import megamek.common.Targetable;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.EntityAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.exceptions.AttackingEntityIsNullException;
+import megamek.common.exceptions.TargetedEntityIsNullException;
 
 /**
- * Sprite and info for an attack. Does not actually use the image buffer as
- * this can be horribly inefficient for long diagonal lines. Appears as an
- * arrow. Arrow becoming cut in half when two Meks attacking each other.
+ * Sprite and info for angle attack. Does not actually use the image buffer as this can be horribly inefficient for long
+ * diagonal lines. Appears as angle arrow. Arrow becoming cut in half when two Meks attacking each other.
  */
 public class AttackSprite extends Sprite {
     private final BoardView boardView1;
 
-    private Point a;
+    private Point attackingPoint;
 
-    private Point t;
+    private Point targetPoint;
 
-    private double an;
+    private final double angle;
 
     private StraightArrowPolygon attackPoly;
 
-    private Color attackColor;
+    private final Color attackColor;
 
-    private int entityId;
+    private final int entityId;
 
-    private int targetType;
+    private final int targetId;
 
-    private int targetId;
+    private final String attackerDesc;
 
-    private String attackerDesc;
-
-    private String targetDesc;
+    private final String targetDesc;
 
     EntityActionLog attacks;
 
-    private final Entity ae;
+    private final Entity attackingEntity;
 
-    private final Targetable target;
+    private final Targetable targetedEntity;
 
-    private Coords aCoord;
-    private Coords tCoord;
-    private IdealHex aHex;
-    private IdealHex tHex;
+    private final Coords attackCoord;
+    private final Coords targetCoord;
+    private final IdealHex attackHex;
+    private final IdealHex targetHex;
 
 
     public AttackSprite(BoardView boardView1, final AttackAction attack) {
         super(boardView1);
+
         attacks = new EntityActionLog(boardView1.getClientgui().getClient().getGame());
         this.boardView1 = boardView1;
         entityId = attack.getEntityId();
-        targetType = attack.getTargetType();
+        int targetType = attack.getTargetType();
         targetId = attack.getTargetId();
-        ae = this.boardView1.game.getEntity(attack.getEntityId());
-        target = this.boardView1.game.getTarget(targetType, targetId);
-        aCoord = ae.getPosition();
-        tCoord = target.getPosition();
-        aHex = new IdealHex(aCoord);
-        tHex = new IdealHex(tCoord);
+        attackingEntity = this.boardView1.game.getEntity(attack.getEntityId());
+        targetedEntity = this.boardView1.game.getTarget(targetType, targetId);
+
+        if (attackingEntity == null) {
+            throw new AttackingEntityIsNullException("AttackSprite");
+        }
+
+        if (targetedEntity == null) {
+            throw new TargetedEntityIsNullException("AttackSprite");
+        }
+
+        attackCoord = attackingEntity.getPosition();
+        targetCoord = targetedEntity.getPosition();
+        attackHex = new IdealHex(attackCoord);
+        targetHex = new IdealHex(targetCoord);
 
         // color?
-        attackColor = ae.getOwner().getColour().getColour();
+        attackColor = attackingEntity.getOwner().getColour().getColour();
         // angle of line connecting two hexes
         Coords targetPosition;
-        if (Compute.isGroundToAir(ae, target)) {
-            targetPosition = Compute.getClosestFlightPath(ae.getId(),
-                    ae.getPosition(), (Entity) target);
+        if (Compute.isGroundToAir(attackingEntity, targetedEntity)) {
+            targetPosition = Compute.getClosestFlightPath(attackingEntity.getId(),
+                  attackingEntity.getPosition(), (Entity) targetedEntity);
         } else {
-            targetPosition = target.getPosition();
+            targetPosition = targetedEntity.getPosition();
         }
-        an = (ae.getPosition().radian(targetPosition) + (Math.PI * 1.5))
-                % (Math.PI * 2); // angle
+        angle = (attackingEntity.getPosition().radian(targetPosition) + (Math.PI * 1.5))
+              % (Math.PI * 2); // angle
         makePoly();
 
         // set bounds
         bounds = new Rectangle(attackPoly.getBounds());
         bounds.setSize(bounds.getSize().width + 1,
-                bounds.getSize().height + 1);
+              bounds.getSize().height + 1);
         // move poly to upper right of image
         attackPoly.translate(-bounds.getLocation().x,
-                -bounds.getLocation().y);
+              -bounds.getLocation().y);
 
         // set names & stuff
-        attackerDesc = ae.getDisplayName();
-        targetDesc = target.getDisplayName();
+        attackerDesc = attackingEntity.getDisplayName();
+        targetDesc = targetedEntity.getDisplayName();
         addEntityAction(attack);
 
         // nullify image
@@ -138,49 +152,47 @@ public class AttackSprite extends Sprite {
         attacks.add(entityAction);
     }
 
-    /** reuild the text descriptions to reflect changes in ToHits from adding or removing other attacks such as secondaryTarget */
-    public void rebuildDescriptions()
-    {
+    /**
+     * reuild the text descriptions to reflect changes in ToHits from adding or removing other attacks such as
+     * secondaryTarget
+     */
+    public void rebuildDescriptions() {
         attacks.rebuildDescriptions();
     }
 
     private void makePoly() {
-        // make a polygon
-        a = this.boardView1.getHexLocation(ae.getPosition());
+        // make attackingPoint polygon
+        attackingPoint = this.boardView1.getHexLocation(attackingEntity.getPosition());
         Coords targetPosition;
-        if (Compute.isGroundToAir(ae, target)) {
-            targetPosition = Compute.getClosestFlightPath(ae.getId(),
-                    ae.getPosition(), (Entity) target);
+        if (Compute.isGroundToAir(attackingEntity, targetedEntity)) {
+            targetPosition = Compute.getClosestFlightPath(attackingEntity.getId(),
+                  attackingEntity.getPosition(), (Entity) targetedEntity);
         } else {
-            targetPosition = target.getPosition();
+            targetPosition = targetedEntity.getPosition();
         }
-        t = this.boardView1.getHexLocation(targetPosition);
+        targetPoint = this.boardView1.getHexLocation(targetPosition);
         // OK, that is actually not good. I do not like hard coded figures.
-        // HEX_W/2 - x distance in pixels from origin of hex bounding box to
-        // the center of hex.
-        // HEX_H/2 - y distance in pixels from origin of hex bounding box to
-        // the center of hex.
-        // 18 - is actually 36/2 - we do not want arrows to start and end
-        // directly
-        // in the centes of hex and hiding mek under.
+        // HEX_W/2 - x distance in pixels from origin of hex bounding box to the center of hex.
+        // HEX_H/2 - y distance in pixels from origin of hex bounding box to the center of hex.
+        // 18 - is actually 36/2 - we do not want arrows to start and end directly in the centers of hex and hiding
+        // mek under.
 
-        a.x = a.x + (int) ((HexTileset.HEX_W / 2) * this.boardView1.getScale())
-                + (int) Math.round(Math.cos(an) * (int) (18 * this.boardView1.getScale()));
-        t.x = (t.x + (int) ((HexTileset.HEX_W / 2) * this.boardView1.getScale()))
-                - (int) Math.round(Math.cos(an) * (int) (18 * this.boardView1.getScale()));
-        a.y = a.y + (int) ((HexTileset.HEX_H / 2) * this.boardView1.getScale())
-                + (int) Math.round(Math.sin(an) * (int) (18 * this.boardView1.getScale()));
-        t.y = (t.y + (int) ((HexTileset.HEX_H / 2) * this.boardView1.getScale()))
-                - (int) Math.round(Math.sin(an) * (int) (18 * this.boardView1.getScale()));
+        attackingPoint.x = attackingPoint.x + (int) Math.floor((HexTileset.HEX_W / 2.0f) * this.boardView1.getScale())
+              + (int) Math.round(Math.cos(angle) * (int) (18 * this.boardView1.getScale()));
+        targetPoint.x = (targetPoint.x + (int) ((HexTileset.HEX_W / 2.0f) * this.boardView1.getScale()))
+              - (int) Math.round(Math.cos(angle) * (int) (18 * this.boardView1.getScale()));
+        attackingPoint.y = attackingPoint.y + (int) ((HexTileset.HEX_H / 2.0f) * this.boardView1.getScale())
+              + (int) Math.round(Math.sin(angle) * (int) (18 * this.boardView1.getScale()));
+        targetPoint.y = (targetPoint.y + (int) ((HexTileset.HEX_H / 2.0f) * this.boardView1.getScale()))
+              - (int) Math.round(Math.sin(angle) * (int) (18 * this.boardView1.getScale()));
 
-        // Checking if given attack is mutual. In this case we building
-        // halved arrow
+        // Checking if given attack is mutual. In this case we're building halved arrow
         if (isMutualAttack()) {
-            attackPoly = new StraightArrowPolygon(a, t, (int) (8 * this.boardView1.getScale()),
-                    (int) (12 * this.boardView1.getScale()), true);
+            attackPoly = new StraightArrowPolygon(attackingPoint, targetPoint, (int) (8 * this.boardView1.getScale()),
+                  (int) (12 * this.boardView1.getScale()), true);
         } else {
-            attackPoly = new StraightArrowPolygon(a, t, (int) (4 * this.boardView1.getScale()),
-                    (int) (8 * this.boardView1.getScale()), false);
+            attackPoly = new StraightArrowPolygon(attackingPoint, targetPoint, (int) (4 * this.boardView1.getScale()),
+                  (int) (8 * this.boardView1.getScale()), false);
         }
     }
 
@@ -190,37 +202,37 @@ public class AttackSprite extends Sprite {
         // set bounds
         bounds = new Rectangle(attackPoly.getBounds());
         bounds.setSize(bounds.getSize().width + 1,
-                bounds.getSize().height + 1);
+              bounds.getSize().height + 1);
         // move poly to upper right of image
         attackPoly.translate(-bounds.getLocation().x,
-                -bounds.getLocation().y);
+              -bounds.getLocation().y);
 
         return bounds;
     }
 
     /**
-     * If we have build full arrow already with single attack and have got
-     * counter attack from our target lately - lets change arrow to halved.
+     * If we have build full arrow already with single attack and have got counter attack from our targetedEntity lately
+     * - lets change arrow to halved.
      */
     public void rebuildToHalvedPolygon() {
-        attackPoly = new StraightArrowPolygon(a, t, (int) (8 * this.boardView1.getScale()),
-                (int) (12 * this.boardView1.getScale()), true);
+        attackPoly = new StraightArrowPolygon(attackingPoint, targetPoint, (int) (8 * this.boardView1.getScale()),
+              (int) (12 * this.boardView1.getScale()), true);
         // set bounds
         bounds = new Rectangle(attackPoly.getBounds());
         bounds.setSize(bounds.getSize().width + 1,
-                bounds.getSize().height + 1);
+              bounds.getSize().height + 1);
         // move poly to upper right of image
         attackPoly.translate(-bounds.getLocation().x,
-                -bounds.getLocation().y);
+              -bounds.getLocation().y);
     }
 
     /**
-     * Cheking if attack is mutual and changing target arrow to half-arrow
+     * Cheking if attack is mutual and changing targetedEntity arrow to half-arrow
      */
     private boolean isMutualAttack() {
         for (AttackSprite sprite : this.boardView1.getAttackSprites()) {
             if ((sprite.getEntityId() == targetId)
-                    && (sprite.getTargetId() == entityId)) {
+                  && (sprite.getTargetId() == entityId)) {
                 sprite.rebuildToHalvedPolygon();
                 return true;
             }
@@ -238,15 +250,19 @@ public class AttackSprite extends Sprite {
     }
 
     @Override
-    public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
+    public void drawOnto(Graphics graphics, int x, int y, ImageObserver observer) {
+        createPolygon(graphics, x, y, attackPoly, attackColor);
+    }
+
+    static void createPolygon(Graphics graphics, int x, int y, StraightArrowPolygon attackPoly, Color attackColor) {
         Polygon drawPoly = new Polygon(attackPoly.xpoints,
-                attackPoly.ypoints, attackPoly.npoints);
+              attackPoly.ypoints, attackPoly.npoints);
         drawPoly.translate(x, y);
 
-        g.setColor(attackColor);
-        g.fillPolygon(drawPoly);
-        g.setColor(Color.gray.darker());
-        g.drawPolygon(drawPoly);
+        graphics.setColor(attackColor);
+        graphics.fillPolygon(drawPoly);
+        graphics.setColor(Color.gray.darker());
+        graphics.drawPolygon(drawPoly);
     }
 
     /**
@@ -260,7 +276,9 @@ public class AttackSprite extends Sprite {
     public boolean isInside(Coords mcoords) {
         IdealHex mHex = new IdealHex(mcoords);
 
-        return ((mHex.isIntersectedBy(aHex.cx, aHex.cy, tHex.cx, tHex.cy)) && (mcoords.between(aCoord, tCoord)));
+        return ((mHex.isIntersectedBy(attackHex.cx, attackHex.cy, targetHex.cx, targetHex.cy)) && (mcoords.between(
+              attackCoord,
+              targetCoord)));
     }
 
     public int getEntityId() {
@@ -274,15 +292,15 @@ public class AttackSprite extends Sprite {
     @Override
     public StringBuffer getTooltip() {
         GamePhase phase = this.boardView1.game.getPhase();
-        String result = "";
-        String sAttacherDesc = "";
+        String result;
+        String sAttacherDesc;
 
         sAttacherDesc = attackerDesc + "<BR>&nbsp;&nbsp;" + Messages.getString("BoardView1.on") + " " + targetDesc;
         result = UIUtil.fontHTML(attackColor) + sAttacherDesc + "</FONT>";
-        String sAttacks = "";
+        StringBuilder sAttacks = new StringBuilder();
         if ((phase.isFiring()) || (phase.isPhysical())) {
             for (String wpD : attacks.getDescriptions()) {
-                sAttacks += "<BR>" + wpD;
+                sAttacks.append("<BR>").append(wpD);
             }
             result += sAttacks;
         }

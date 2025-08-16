@@ -33,8 +33,8 @@
 
 package megamek.client;
 
-import static megamek.client.ui.clientGUI.ClientGUI.CG_FILEEXTENTIONMUL;
-import static megamek.client.ui.clientGUI.ClientGUI.CG_FILENAMESALVAGE;
+import static megamek.client.ui.clientGUI.ClientGUI.CG_FILENAME_SALVAGE;
+import static megamek.client.ui.clientGUI.ClientGUI.CG_FILE_EXTENSION_MUL;
 
 import java.io.File;
 import java.io.IOException;
@@ -105,7 +105,7 @@ public class HeadlessClient extends Client {
                             return;
                         }
                     }
-                    String fileName = CG_FILENAMESALVAGE + CG_FILEEXTENTIONMUL;
+                    String fileName = CG_FILENAME_SALVAGE + CG_FILE_EXTENSION_MUL;
                     if (PREFERENCES.stampFilenames()) {
                         fileName = StringUtil.addDateTimeStamp(fileName);
                     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,14 +30,15 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.clientGUI.boardview.spriteHandler;
+package megamek.client.ui.clientGUI.boardview.spriteHandler.sbf;
 
 import megamek.client.SBFClient;
 import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.client.ui.clientGUI.boardview.sprite.SBFFormationSprite;
-import megamek.client.ui.clientGUI.boardview.sprite.SBFPlaceHolderSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
+import megamek.client.ui.clientGUI.boardview.sprite.sbf.SBFFormationSprite;
+import megamek.client.ui.clientGUI.boardview.sprite.sbf.SBFPlaceHolderSprite;
+import megamek.client.ui.clientGUI.boardview.spriteHandler.BoardViewSpriteHandler;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEvent;
 import megamek.common.strategicBattleSystems.SBFFormation;

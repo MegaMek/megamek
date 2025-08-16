@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -77,7 +77,6 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
 
     private ForceDisplayMekTreeModel forceTreeModel;
     JTree forceTree;
-    private ForceTreeMouseAdapter mekForceTreeMouseListener = new ForceTreeMouseAdapter();
     private ClientGUI clientgui;
     private Client client;
     private Game game;
@@ -178,6 +177,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         JScrollPane sp = new JScrollPane(forceTree);
         add(sp, BorderLayout.CENTER);
 
+        ForceTreeMouseAdapter mekForceTreeMouseListener = new ForceTreeMouseAdapter();
         forceTree.addMouseListener(mekForceTreeMouseListener);
         client.getGame().addGameListener(this);
         GUIP.addPreferenceChangeListener(this);
@@ -207,12 +207,17 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         // Refresh the force tree and restore selection/expand status
         HashSet<Object> selections = new HashSet<>();
         if (!forceTree.isSelectionEmpty()) {
-            for (TreePath path : forceTree.getSelectionPaths()) {
-                Object sel = path.getLastPathComponent();
-                if (sel instanceof Force || sel instanceof Entity) {
-                    selections.add(path.getLastPathComponent());
+            TreePath[] treePaths = forceTree.getSelectionPaths();
+
+            if (treePaths != null) {
+                for (TreePath path : treePaths) {
+                    Object sel = path.getLastPathComponent();
+                    if (sel instanceof Force || sel instanceof Entity) {
+                        selections.add(path.getLastPathComponent());
+                    }
                 }
             }
+
         }
 
         Forces forces = game.getForces();
@@ -321,8 +326,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
             if (e.getClickCount() == 2) {
                 int row = forceTree.getRowForLocation(e.getX(), e.getY());
                 TreePath path = forceTree.getPathForRow(row);
-                if (path != null && path.getLastPathComponent() instanceof Entity) {
-                    Entity entity = (Entity) path.getLastPathComponent();
+                if (path != null && path.getLastPathComponent() instanceof Entity entity) {
                     if (clientgui != null) {
                         clientgui.getUnitDisplay().displayEntity(entity);
                     } else {
@@ -362,8 +366,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         private void showPopup(MouseEvent e) {
             int row = forceTree.getRowForLocation(e.getX(), e.getY());
             TreePath path = forceTree.getPathForRow(row);
-            if (path != null && path.getLastPathComponent() instanceof Entity) {
-                Entity entity = (Entity) path.getLastPathComponent();
+            if (path != null && path.getLastPathComponent() instanceof Entity entity) {
                 ScalingPopup popup = new ScalingPopup();
                 popup.add(viewReadoutJMenuItem(entity));
                 popup.show(e.getComponent(), e.getX(), e.getY());
@@ -373,22 +376,22 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
 
     @Override
     public void gamePlayerConnected(GamePlayerConnectedEvent e) {
-        // noaction default
+        // no action default
     }
 
     @Override
     public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
-        // noaction default
+        // no action default
     }
 
     @Override
     public void gamePlayerChange(GamePlayerChangeEvent e) {
-        // noaction default
+        // no action default
     }
 
     @Override
     public void gamePlayerChat(GamePlayerChatEvent e) {
-        // noaction default
+        // no action default
     }
 
     @Override
@@ -403,67 +406,67 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
 
     @Override
     public void gameReport(GameReportEvent e) {
-        // noaction default
+        // no action default
     }
 
     @Override
     public void gameEnd(GameEndEvent e) {
-        // noaction default
+        // no action default
     }
 
     @Override
     public void gameBoardNew(GameBoardNewEvent e) {
-        // noaction default
+        // no action default
     }
 
     @Override
     public void gameBoardChanged(GameBoardChangeEvent e) {
-        // noaction default
+        // no action default
     }
 
     @Override
     public void gameSettingsChange(GameSettingsChangeEvent e) {
-        // noaction default
+        // no action default
     }
 
     @Override
     public void gameMapQuery(GameMapQueryEvent e) {
-        // noaction default
+        // no action default
     }
 
     @Override
     public void gameEntityNew(GameEntityNewEvent e) {
-        // noaction default
+        // no action default
     }
 
     @Override
     public void gameEntityNewOffboard(GameEntityNewOffboardEvent e) {
-        // noaction default
+        // no action default
     }
 
     @Override
     public void gameEntityRemove(GameEntityRemoveEvent e) {
-        // noaction default
+        // no action default
     }
 
     @Override
     public void gameEntityChange(GameEntityChangeEvent e) {
-        // noaction default
+        // no action default
     }
 
     @Override
     public void gameNewAction(GameNewActionEvent e) {
-        // noaction default
+        // no action default
     }
 
     @Override
     public void gameClientFeedbackRequest(GameCFREvent evt) {
-        // noaction default
+        // no action default
     }
 
     @Override
     public void gameVictory(PostGameResolution e) {
-        // noaction default
+        // no action default
     }
 
     @Override

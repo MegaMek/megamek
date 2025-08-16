@@ -46,8 +46,8 @@ import megamek.client.ui.util.UIUtil.FixedYPanel;
  * A dialog that allows the user to select some count of ints within some range.
  */
 public class MultiIntSelectorDialog extends AbstractButtonDialog {
-    private String description;
-    private JList<Integer> list;
+    private final String description;
+    private final JList<Integer> list;
 
     /** Constructs a modal dialog with frame as parent. */
     public MultiIntSelectorDialog(JFrame frame, String nameResourceID, String titleResourceID,
@@ -56,7 +56,7 @@ public class MultiIntSelectorDialog extends AbstractButtonDialog {
         this.setResizable(false);
 
         description = getString(descriptionResourceID);
-        ListModel<Integer> listData = new AbstractListModel<Integer>() {
+        ListModel<Integer> listData = new AbstractListModel<>() {
             public int getSize() {
                 return maxValue;
             }

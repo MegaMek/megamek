@@ -48,7 +48,6 @@ import megamek.common.options.WeaponQuirks;
 
 class QuirksSearchTab extends JPanel {
 
-    private final JButton btnQuirksClear = new JButton(Messages.getString("MekSelectorDialog.ClearTab"));
     final JComboBox<String> cQuirkInclude = new JComboBox<>();
     final JComboBox<String> cQuirkExclude = new JComboBox<>();
     final JComboBox<String> cWeaponQuirkInclude = new JComboBox<>();
@@ -57,6 +56,7 @@ class QuirksSearchTab extends JPanel {
     TriStateItemList listWeaponQuirkType;
 
     QuirksSearchTab() {
+        JButton btnQuirksClear = new JButton(Messages.getString("MekSelectorDialog.ClearTab"));
         btnQuirksClear.addActionListener(e -> clear());
 
         loadAndOr(cQuirkInclude, 0);

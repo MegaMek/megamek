@@ -171,7 +171,7 @@ public class LobbyActions {
 
     /**
      * Attaches the given force as a subforce to the given new parent. Does NOT work for newParentId == NO_FORCE. Use
-     * promoteForce to do this. Does not allow attaching a force to one of its own subforces.
+     * promoteForce to do this. Does not allow attaching a force to one of its own subForces.
      */
     void forceAttach(int forceId, int newParentId) {
         Forces forces = game().getForces();
@@ -714,7 +714,7 @@ public class LobbyActions {
      */
     void delete(Collection<Force> foDelete, Collection<Entity> enDelete, boolean confirm) {
         Forces forces = game().getForces();
-        // Remove redundant forces = subforces of other forces in the list
+        // Remove redundant forces = subForces of other forces in the list
         Set<Force> allSubForces = new HashSet<>();
         foDelete.forEach(f -> allSubForces.addAll(forces.getFullSubForces(f)));
         foDelete.removeIf(allSubForces::contains);
@@ -971,7 +971,7 @@ public class LobbyActions {
     }
 
     /**
-     * Changes the owner of the given forces to a different player together with all subforces and units.
+     * Changes the owner of the given forces to a different player together with all subForces and units.
      */
     void forceAssignFull(Collection<Force> forceList, int newOwnerId) {
         if (newOwnerId == Player.PLAYER_NONE) {

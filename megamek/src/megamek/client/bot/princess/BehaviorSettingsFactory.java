@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -66,7 +66,7 @@ public class BehaviorSettingsFactory {
     private static final String PRINCESS_BEHAVIOR_PATH = "mmconf" + File.separator + "princessBehaviors.xml";
 
     final Map<String, BehaviorSettings> behaviorMap = new HashMap<>();
-    private static BehaviorSettingsFactory instance = new BehaviorSettingsFactory();
+    private static final BehaviorSettingsFactory instance = new BehaviorSettingsFactory();
 
     private BehaviorSettingsFactory() {
         init(true);
@@ -78,7 +78,7 @@ public class BehaviorSettingsFactory {
 
     /**
      * Initializes the {@link megamek.client.bot.princess.BehaviorSettings} cache. If the cache is empty, it will load
-     * from mmconf/princessBehaviors.xml. Also, if the "DEFAULT behavior is missing, it will be added.
+     * from mmconf/princessBehaviors.xml. Also, if the "DEFAULT" behavior is missing, it will be added.
      *
      * @param reinitialize Set TRUE to force the cache to be completely rebuilt.
      */
@@ -134,9 +134,9 @@ public class BehaviorSettingsFactory {
      * Removes the behavior setting with the given name from the cache. Returns the BehaviorSettings that was removed
      * (or null if there was no such BehaviorSettings).
      */
-    public BehaviorSettings removeBehavior(String settingName) {
+    public void removeBehavior(String settingName) {
         synchronized (behaviorMap) {
-            return behaviorMap.remove(settingName);
+            behaviorMap.remove(settingName);
         }
     }
 
@@ -223,10 +223,8 @@ public class BehaviorSettingsFactory {
      * Saves the contents of the cache to the mmconf/princessBehaviors.xml file.
      *
      * @param includeTargets Set TRUE to include the contents of the Strategic Targets list.
-     *
-     * @return TRUE if the save is successful.
      */
-    public boolean saveBehaviorSettings(boolean includeTargets) {
+    public void saveBehaviorSettings(boolean includeTargets) {
         init(false);
 
         try {
@@ -236,14 +234,14 @@ public class BehaviorSettingsFactory {
                 if (!behaviorFile.createNewFile()) {
                     String message = String.format("Could not create %s", PRINCESS_BEHAVIOR_PATH);
                     logger.error(message);
-                    return false;
+                    return;
                 }
             }
 
             if (!behaviorFile.canWrite()) {
                 String message = String.format("Could not write to %s", PRINCESS_BEHAVIOR_PATH);
                 logger.error(message);
-                return false;
+                return;
             }
 
             Document behaviorDoc = MMXMLUtility.newSafeDocumentBuilder().newDocument();
@@ -259,7 +257,7 @@ public class BehaviorSettingsFactory {
 
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            transformer.setOutputProperty("{https://xml.apache.org/xslt}indent-amount", "2");
             DOMSource source = new DOMSource(behaviorDoc);
 
             Writer writer = new FileWriter(behaviorFile);
@@ -267,10 +265,8 @@ public class BehaviorSettingsFactory {
             transformer.transform(source, result);
         } catch (Exception e) {
             logger.error(e, "Save Behavior Settings Exception");
-            return false;
         }
 
-        return true;
     }
 
     /**

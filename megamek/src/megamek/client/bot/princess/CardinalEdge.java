@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -50,8 +50,8 @@ public enum CardinalEdge {
     // no edge
     NONE(5, Messages.getString("BotConfigDialog.noEdge"));
 
-    private int index;
-    private String text;
+    private final int index;
+    private final String text;
 
     CardinalEdge(int index, String text) {
         this.index = index;
@@ -96,36 +96,26 @@ public enum CardinalEdge {
      * Convert an OffBoardDirection to a cardinal edge
      */
     public static CardinalEdge getCardinalEdge(OffBoardDirection direction) {
-        switch (direction) {
-            case NORTH:
-                return NORTH;
-            case SOUTH:
-                return SOUTH;
-            case EAST:
-                return EAST;
-            case WEST:
-                return WEST;
-            default:
-                return NONE;
-        }
+        return switch (direction) {
+            case NORTH -> NORTH;
+            case SOUTH -> SOUTH;
+            case EAST -> EAST;
+            case WEST -> WEST;
+            default -> NONE;
+        };
     }
 
     /**
      * Attempt to determine the opposite edge, given another cardinal edge
      */
     public static CardinalEdge getOppositeEdge(CardinalEdge edge) {
-        switch (edge) {
-            case NORTH:
-                return SOUTH;
-            case SOUTH:
-                return NORTH;
-            case EAST:
-                return WEST;
-            case WEST:
-                return EAST;
-            default:
-                return NONE;
-        }
+        return switch (edge) {
+            case NORTH -> SOUTH;
+            case SOUTH -> NORTH;
+            case EAST -> WEST;
+            case WEST -> EAST;
+            default -> NONE;
+        };
 
     }
 }

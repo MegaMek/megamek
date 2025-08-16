@@ -55,7 +55,7 @@ import megamek.client.ui.clientGUI.boardview.overlay.PlanetaryConditionsOverlay;
 import megamek.client.ui.clientGUI.boardview.spriteHandler.BoardViewSpriteHandler;
 import megamek.client.ui.clientGUI.boardview.spriteHandler.MovePathSpriteHandler;
 import megamek.client.ui.clientGUI.boardview.spriteHandler.MovementEnvelopeSpriteHandler;
-import megamek.client.ui.clientGUI.boardview.spriteHandler.SBFFormationSpriteHandler;
+import megamek.client.ui.clientGUI.boardview.spriteHandler.sbf.SBFFormationSpriteHandler;
 import megamek.client.ui.clientGUI.boardview.toolTip.SBFBoardViewTooltip;
 import megamek.client.ui.panels.ReceivingGameDataPanel;
 import megamek.client.ui.panels.StartingScenarioPanel;
@@ -81,22 +81,22 @@ import megamek.logging.MMLogger;
 public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     private static final MMLogger logger = MMLogger.create(SBFClientGUI.class);
 
-    public static final String CG_BOARDVIEW = "BoardView";
-    public static final String CG_CHATLOUNGE = "ChatLounge";
-    public static final String CG_STARTINGSCENARIO = "JLabel-StartingScenario";
+    public static final String CG_BOARD_VIEW = "BoardView";
+    public static final String CG_CHAT_LOUNGE = "ChatLounge";
+    public static final String CG_STARTING_SCENARIO = "JLabel-StartingScenario";
     public static final String CG_EXCHANGE = "JLabel-Exchange";
-    public static final String CG_SELECTARTYAUTOHITHEXDISPLAY = "SelectArtyAutoHitHexDisplay";
-    public static final String CG_DEPLOYMINEFIELDDISPLAY = "DeployMinefieldDisplay";
-    public static final String CG_DEPLOYMENTDISPLAY = "DeploymentDisplay";
-    public static final String CG_TARGETINGPHASEDISPLAY = "TargetingPhaseDisplay";
-    public static final String CG_PREMOVEMENTDISPLAY = "PremovementDisplay";
-    public static final String CG_MOVEMENTDISPLAY = "MovementDisplay";
-    public static final String CG_OFFBOARDDISPLAY = "OffboardDisplay";
-    public static final String CG_PREFIRING = "Prefiring";
-    public static final String CG_FIRINGDISPLAY = "FiringDisplay";
-    public static final String CG_POINTBLANKSHOTDISPLAY = "PointblankShotDisplay";
-    public static final String CG_PHYSICALDISPLAY = "PhysicalDisplay";
-    public static final String CG_REPORTDISPLAY = "ReportDisplay";
+    public static final String CG_SELECT_ARTY_AUTO_HIT_HEX_DISPLAY = "SelectArtyAutoHitHexDisplay";
+    public static final String CG_DEPLOY_MINEFIELD_DISPLAY = "DeployMinefieldDisplay";
+    public static final String CG_DEPLOYMENT_DISPLAY = "DeploymentDisplay";
+    public static final String CG_TARGETING_PHASE_DISPLAY = "TargetingPhaseDisplay";
+    public static final String CG_PREMOVEMENT_DISPLAY = "PremovementDisplay";
+    public static final String CG_MOVEMENT_DISPLAY = "MovementDisplay";
+    public static final String CG_OFFBOARD_DISPLAY = "OffboardDisplay";
+    public static final String CG_PRE_FIRING = "PreFiring";
+    public static final String CG_FIRING_DISPLAY = "FiringDisplay";
+    public static final String CG_POINTBLANK_SHOT_DISPLAY = "PointblankShotDisplay";
+    public static final String CG_PHYSICAL_DISPLAY = "PhysicalDisplay";
+    public static final String CG_REPORT_DISPLAY = "ReportDisplay";
     public static final String CG_DEFAULT = "JLabel-Default";
 
     private final SBFClient client;
@@ -106,9 +106,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     protected JComponent curPanel;
     private final JPanel panTop = new JPanel(new BorderLayout());
-    private JSplitPane splitPaneA;
-    private JPanel panA1;
-    private JPanel panA2;
 
     /**
      * The <code>JPanel</code> containing the main display area.
@@ -144,8 +141,8 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
      */
     private final Map<String, JComponent> phaseComponents = new HashMap<>();
 
-    private JDialog miniReportDisplayDialog;
-    private SBFReportPanel reportPanel;
+    private final JDialog miniReportDisplayDialog;
+    private final SBFReportPanel reportPanel;
 
     /**
      * Map each phase to the name of the card for the main display area.
@@ -159,7 +156,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
     private MovePathSpriteHandler movePathSpriteHandler;
 
-    public SBFClientGUI(SBFClient client, MegaMekController c) {
+    public SBFClientGUI(SBFClient client, MegaMekController megaMekController) {
         super(client);
         this.client = client;
         frame.getContentPane().setLayout(new BorderLayout());
@@ -173,6 +170,12 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         panMain.add("UnderConstruction", new UnderConstructionPanel());
 
         clientGuiPanel.setLayout(new BorderLayout());
+        ComponentListener resizeListener = new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent evt) {
+                boardViewsContainer.getPanel().setPreferredSize(clientGuiPanel.getSize());
+            }
+        };
         clientGuiPanel.addComponentListener(resizeListener);
         clientGuiPanel.add(panMain, BorderLayout.CENTER);
         clientGuiPanel.add(panSecondary, BorderLayout.SOUTH);
@@ -180,13 +183,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         miniReportDisplayDialog = new JDialog(getFrame());
         reportPanel = new SBFReportPanel(this);
     }
-
-    private final ComponentListener resizeListener = new ComponentAdapter() {
-        @Override
-        public void componentResized(ComponentEvent evt) {
-            boardViewsContainer.getPanel().setPreferredSize(clientGuiPanel.getSize());
-        }
-    };
 
     /**
      * Initializes a number of things about this frame.
@@ -212,18 +208,18 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
             bv.addOverlay(new KeyBindingsOverlay(bv));
             bv.addOverlay(new PlanetaryConditionsOverlay(bv));
             bv.getPanel().setPreferredSize(clientGuiPanel.getSize());
-            boardViewsContainer.setName(CG_BOARDVIEW);
+            boardViewsContainer.setName(CG_BOARD_VIEW);
             boardViewsContainer.updateMapTabs();
             initializeSpriteHandlers();
 
-            panA1 = new JPanel();
+            JPanel panA1 = new JPanel();
             panA1.setVisible(false);
-            panA2 = new JPanel();
+            JPanel panA2 = new JPanel();
             panA2.setVisible(false);
             panA2.add(boardViewsContainer.getPanel());
             panA2.setVisible(true);
 
-            splitPaneA = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+            JSplitPane splitPaneA = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
             splitPaneA.setDividerSize(10);
             splitPaneA.setResizeWeight(0.5);
@@ -285,9 +281,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
 
     protected void switchPanel(GamePhase phase) {
         // Clear the old panel's listeners.
-        // if (curPanel instanceof BoardViewListener) {
-        // bv.removeBoardViewListener((BoardViewListener) curPanel);
-        // }
 
         if (curPanel instanceof ActionListener) {
             menuBar.removeActionListener((ActionListener) curPanel);
@@ -304,25 +297,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
             curPanel = initializePanel(phase);
         }
 
-        // Handle phase-specific items.
-        switch (phase) {
-            case LOUNGE:
-                // // reset old report tabs and images, if any
-                // ChatLounge cl = (ChatLounge)
-                // phaseComponents.get(String.valueOf(GamePhase.LOUNGE));
-                // cb.setDoneButton(cl.butDone);
-                // cl.setBottom(cb.getComponent());
-                // getBoardView().getTilesetManager().reset();
-                break;
-            default:
-                break;
-        }
-
-        // maybeShowMinimap();
-        // maybeShowUnitDisplay();
-        // maybeShowForceDisplay();
         showReportPanel();
-        // maybeShowPlayerList();
 
         cardsMain.show(panMain, mainNames.get(name));
         String secondaryToShow = secondaryNames.get(name);
@@ -335,11 +310,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
             panSecondary.setVisible(false);
         }
 
-        // Set the new panel's listeners
-        // if (curPanel instanceof BoardViewListener) {
-        // bv.addBoardViewListener((BoardViewListener) curPanel);
-        // }
-
         if (curPanel instanceof ActionListener) {
             menuBar.addActionListener((ActionListener) curPanel);
         }
@@ -348,10 +318,6 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
             ((Distractable) curPanel).setIgnoringEvents(false);
         }
 
-        // Make the new panel the focus, if the Client option says so
-        // if (GUIP.getFocus() && !(client instanceof BotClient)) {
-        // curPanel.requestFocus();
-        // }
         clientGuiPanel.validate();
     }
 
@@ -374,7 +340,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     }
 
     private void initializeWithBoardView(GamePhase phase, StatusBarPhaseDisplay component, String secondary) {
-        String identifier = CG_BOARDVIEW;
+        String identifier = CG_BOARD_VIEW;
         String phaseName = String.valueOf(phase);
         component.setName(identifier);
         panMain.add(component, identifier);
@@ -394,47 +360,27 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
         // Create the components for this phase.
         JComponent component = new ReceivingGameDataPanel();
         String secondary;
-        String main = CG_BOARDVIEW;
+        String main = CG_BOARD_VIEW;
         switch (phase) {
-            case LOUNGE:
-                // initializeSingleComponent(phase, new ChatLounge(this), CG_CHATLOUNGE);
+            case LOUNGE, SET_ARTILLERY_AUTOHIT_HEXES, DEPLOY_MINEFIELDS, DEPLOYMENT, POINTBLANK_SHOT, PHYSICAL:
                 break;
             case STARTING_SCENARIO:
-                initializeSingleComponent(phase, new StartingScenarioPanel(), CG_STARTINGSCENARIO);
+                initializeSingleComponent(phase, new StartingScenarioPanel(), CG_STARTING_SCENARIO);
                 break;
             case EXCHANGE:
                 initializeSingleComponent(phase, new ReceivingGameDataPanel(), CG_EXCHANGE);
                 break;
-            case SET_ARTILLERY_AUTOHIT_HEXES:
-                // initializeWithBoardView(phase, new SelectArtyAutoHitHexDisplay(this),
-                // CG_SELECTARTYAUTOHITHEXDISPLAY);
-                break;
-            case DEPLOY_MINEFIELDS:
-                // initializeWithBoardView(phase, new DeployMinefieldDisplay(this),
-                // CG_DEPLOYMINEFIELDDISPLAY);
-                break;
-            case DEPLOYMENT:
-                // initializeWithBoardView(phase, new DeploymentDisplay(this),
-                // CG_DEPLOYMINEFIELDDISPLAY);
-                break;
             case TARGETING:
-                // initializeWithBoardView(phase, new TargetingPhaseDisplay(this, false),
-                // CG_DEPLOYMINEFIELDDISPLAY);
-                // component = new TargetingPhaseDisplay(this, false);
-                // ((TargetingPhaseDisplay) component).initializeListeners();
-                secondary = CG_TARGETINGPHASEDISPLAY;
+                secondary = CG_TARGETING_PHASE_DISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(panTop, main);
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
-                // offBoardOverlay.setTargetingPhaseDisplay((TargetingPhaseDisplay) component);
                 break;
             case PREMOVEMENT:
-                // component = new PrephaseDisplay(this, GamePhase.PREMOVEMENT);
-                // ((PrephaseDisplay) component).initializeListeners();
-                secondary = CG_PREMOVEMENTDISPLAY;
+                secondary = CG_PREMOVEMENT_DISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(panTop, main);
@@ -443,12 +389,10 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 panSecondary.add(component, secondary);
                 break;
             case MOVEMENT:
-                initializeWithBoardView(phase, new SBFMovementDisplay(this), CG_MOVEMENTDISPLAY);
+                initializeWithBoardView(phase, new SBFMovementDisplay(this), CG_MOVEMENT_DISPLAY);
                 break;
             case OFFBOARD:
-                // component = new TargetingPhaseDisplay(this, true);
-                // ((TargetingPhaseDisplay) component).initializeListeners();
-                secondary = CG_OFFBOARDDISPLAY;
+                secondary = CG_OFFBOARD_DISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(panTop, main);
@@ -457,9 +401,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 panSecondary.add(component, secondary);
                 break;
             case PREFIRING:
-                // component = new PrephaseDisplay(this, GamePhase.PREFIRING);
-                // ((PrephaseDisplay) component).initializeListeners();
-                secondary = CG_PREFIRING;
+                secondary = CG_PRE_FIRING;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(panTop, main);
@@ -468,15 +410,7 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
                 panSecondary.add(component, secondary);
                 break;
             case FIRING:
-                initializeWithBoardView(phase, new SBFFiringDisplay(this), CG_FIRINGDISPLAY);
-                break;
-            case POINTBLANK_SHOT:
-                // initializeWithBoardView(phase, new PointblankShotDisplay(this),
-                // CG_POINTBLANKSHOTDISPLAY);
-                break;
-            case PHYSICAL:
-                // initializeWithBoardView(phase, new PhysicalDisplay(this),
-                // CG_PHYSICALDISPLAY);
+                initializeWithBoardView(phase, new SBFFiringDisplay(this), CG_FIRING_DISPLAY);
                 break;
             case INITIATIVE_REPORT:
             case TARGETING_REPORT:
@@ -488,9 +422,9 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
             case VICTORY:
                 if (reportDisplay == null) {
                     reportDisplay = new SBFReportDisplay(this);
-                    reportDisplay.setName(CG_REPORTDISPLAY);
+                    reportDisplay.setName(CG_REPORT_DISPLAY);
                 }
-                initializeWithBoardView(phase, reportDisplay, CG_REPORTDISPLAY);
+                initializeWithBoardView(phase, reportDisplay, CG_REPORT_DISPLAY);
                 break;
             default:
                 component = new WaitingForServerPanel();

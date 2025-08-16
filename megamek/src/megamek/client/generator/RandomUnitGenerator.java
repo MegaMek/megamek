@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -112,37 +112,6 @@ public class RandomUnitGenerator implements Serializable {
 
         public String name;
         public Vector<RatTreeNode> children;
-    }
-
-    /**
-     * Keeps track of a RAT entry, stores the name of a unit in the RAT, and its change of appearing (weight).
-     *
-     * @author arlith
-     */
-    protected static class RatEntry {
-        private Vector<String> units;
-        private Vector<Float> weights;
-
-        RatEntry() {
-            setUnits(new Vector<>());
-            setWeights(new Vector<>());
-        }
-
-        public Vector<String> getUnits() {
-            return units;
-        }
-
-        public void setUnits(Vector<String> units) {
-            this.units = units;
-        }
-
-        public Vector<Float> getWeights() {
-            return weights;
-        }
-
-        public void setWeights(Vector<Float> weights) {
-            this.weights = weights;
-        }
     }
 
     private RatTreeNode ratTree;

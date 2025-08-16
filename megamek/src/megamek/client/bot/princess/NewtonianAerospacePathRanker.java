@@ -36,7 +36,8 @@ package megamek.client.bot.princess;
 import java.util.Iterator;
 import java.util.List;
 
-import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
+import megamek.client.bot.princess.coverage.Builder;
+import megamek.client.bot.princess.geometry.ConvexBoardArea;
 import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.ComputeArc;
@@ -115,7 +116,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
 
         FiringPlan myFiringPlan;
 
-        FiringPlanCalculationParameters guess = new FiringPlanCalculationParameters.Builder().buildGuess(path.getEntity(),
+        FiringPlanCalculationParameters guess = new Builder().buildGuess(path.getEntity(),
               new EntityState(path),
               enemy,
               null,

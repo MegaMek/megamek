@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -88,8 +88,8 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
     private void initialize(JFrame parent, String[] choices) {
         super.setResizable(false);
 
-        GridBagLayout gridbag = new GridBagLayout();
-        getContentPane().setLayout(gridbag);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        getContentPane().setLayout(gridBagLayout);
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridwidth = 1;
@@ -114,11 +114,10 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
                 int saveFill = c.fill;
                 c.fill = GridBagConstraints.HORIZONTAL;
 
-                // Place the choice area in the center
-                // of another panel that is scrolled.
-                JPanel scrollee = new JPanel(new GridBagLayout());
-                scrollee.add(choiceArea, center);
-                JScrollPane scroller = new JScrollPane(scrollee);
+                // Place the choice area in the center of another panel that is scrolled.
+                JPanel scrolled = new JPanel(new GridBagLayout());
+                scrolled.add(choiceArea, center);
+                JScrollPane scroller = new JScrollPane(scrolled);
                 getContentPane().add(scroller, c);
 
                 // Restore the saved value of c.fill.
@@ -172,9 +171,9 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
         butCancel.addActionListener(this);
 
         // layout
-        GridBagLayout gridbag = new GridBagLayout();
+        GridBagLayout gridBagLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        panButtons.setLayout(gridbag);
+        panButtons.setLayout(gridBagLayout);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 5, 5, 5);
@@ -185,11 +184,11 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
         c.ipady = 5;
 
         c.gridwidth = 1;
-        gridbag.setConstraints(butOK, c);
+        gridBagLayout.setConstraints(butOK, c);
         panButtons.add(butOK);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(butCancel, c);
+        gridBagLayout.setConstraints(butCancel, c);
         panButtons.add(butCancel);
     }
 
@@ -263,7 +262,7 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
      *       <code>int</code> indexes from the input array that match the selected choices is returned.
      */
     public int getChoice() {
-        int[] retval = { -1 };
+        int[] retVal = { -1 };
 
         // Did the player make a choice?
         if (checkboxes != null && confirm) {
@@ -283,16 +282,16 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
             // Do we need to shrink the array?
             if (checkboxes.length == index) {
                 // No, the player selected all choices.
-                retval = temp;
+                retVal = temp;
             } else if (index > 0) {
                 // Yup. Create an array and copy the values from temp.
-                retval = new int[index];
-                System.arraycopy(temp, 0, retval, 0, index);
+                retVal = new int[index];
+                System.arraycopy(temp, 0, retVal, 0, index);
             }
             // If 0 == index, then we want to return a null array.
         }
 
-        return retval[0];
+        return retVal[0];
     }
 
     public void checkPerformability(int velocity, int altitude, int ceiling,

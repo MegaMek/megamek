@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -99,66 +99,63 @@ public class PhysicalOption {
     }
 
     public AbstractAttackAction toAction() {
-        switch (type) {
-            case PUNCH_LEFT:
-                return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
-                      PunchAttackAction.LEFT);
-            case PUNCH_RIGHT:
-                return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
-                      PunchAttackAction.RIGHT);
-            case PUNCH_BOTH:
-                return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
-                      PunchAttackAction.BOTH);
-            case KICK_LEFT:
-                return new KickAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
-                      KickAttackAction.LEFT);
-            case KICK_RIGHT:
-                return new KickAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
-                      KickAttackAction.RIGHT);
-            case USE_CLUB:
+        return switch (type) {
+            case PUNCH_LEFT -> new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
+                  PunchAttackAction.LEFT);
+            case PUNCH_RIGHT -> new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
+                  PunchAttackAction.RIGHT);
+            case PUNCH_BOTH -> new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
+                  PunchAttackAction.BOTH);
+            case KICK_LEFT -> new KickAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
+                  KickAttackAction.LEFT);
+            case KICK_RIGHT -> new KickAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
+                  KickAttackAction.RIGHT);
+            case USE_CLUB -> {
                 if (club != null) {
-                    return new ClubAttackAction(attacker.getId(), target.getTargetType(), target
+                    yield new ClubAttackAction(attacker.getId(), target.getTargetType(), target
                           .getId(), club, ToHitData.HIT_NORMAL, false);
                 }
-                return null;
-            case PUSH_ATTACK:
-                return new PushAttackAction(attacker.getId(), target.getId(),
-                      target.getPosition());
-            case TRIP_ATTACK:
-                return null; // Trip attack not implemented yet
-            case BRUSH_LEFT:
+                yield null;
+            }
+            case PUSH_ATTACK -> new PushAttackAction(attacker.getId(), target.getId(),
+                  target.getPosition());
+            case TRIP_ATTACK -> null; // Trip attack not implemented yet
+            case BRUSH_LEFT -> {
                 if (target == null) {
-                    return new BrushOffAttackAction(attacker.getId(), i_target
+                    yield new BrushOffAttackAction(attacker.getId(), i_target
                           .getTargetType(), i_target.getId(),
                           BrushOffAttackAction.LEFT);
                 }
-                return new BrushOffAttackAction(attacker.getId(), target
+                yield new BrushOffAttackAction(attacker.getId(), target
                       .getTargetType(), target.getId(),
                       BrushOffAttackAction.LEFT);
-            case BRUSH_RIGHT:
+            }
+            case BRUSH_RIGHT -> {
                 if (target == null) {
-                    return new BrushOffAttackAction(attacker.getId(), i_target
+                    yield new BrushOffAttackAction(attacker.getId(), i_target
                           .getTargetType(), i_target.getId(),
                           BrushOffAttackAction.RIGHT);
                 }
-                return new BrushOffAttackAction(attacker.getId(), target
+                yield new BrushOffAttackAction(attacker.getId(), target
                       .getTargetType(), target.getId(),
                       BrushOffAttackAction.RIGHT);
-            case BRUSH_BOTH:
+            }
+            case BRUSH_BOTH -> {
                 if (target == null) {
-                    return new BrushOffAttackAction(attacker.getId(), i_target
+                    yield new BrushOffAttackAction(attacker.getId(), i_target
                           .getTargetType(), i_target.getId(),
                           BrushOffAttackAction.BOTH);
                 }
-                return new BrushOffAttackAction(attacker.getId(), target
+                yield new BrushOffAttackAction(attacker.getId(), target
                       .getTargetType(), target.getId(),
                       BrushOffAttackAction.BOTH);
-            /*
-             * case THRASH_INF : return new
-             * ThrashAttackAction(attacker.getId(), target.getId());
-             */
-        }
-        return null;
+                /*
+                 * case THRASH_INF : return new
+                 * ThrashAttackAction(attacker.getId(), target.getId());
+                 */
+            }
+            default -> null;
+        };
     }
 
     public Vector<EntityAction> getVector() {

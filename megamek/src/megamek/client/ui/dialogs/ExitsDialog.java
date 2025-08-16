@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,6 +40,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.Serial;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -58,6 +59,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * A dialog of which exits are connected for terrain.
  */
 public class ExitsDialog extends JDialog implements ActionListener {
+    @Serial
     private static final long serialVersionUID = -3126840102187553386L;
     JToggleButton cheExit0;
     JToggleButton cheExit1;
@@ -65,17 +67,11 @@ public class ExitsDialog extends JDialog implements ActionListener {
     JToggleButton cheExit3;
     JToggleButton cheExit4;
     JToggleButton cheExit5;
-    private JLabel labBlank = new JLabel("                            ");
-    private JPanel panNorth = new JPanel(new GridBagLayout());
-    private JPanel panSouth = new JPanel(new GridBagLayout());
-    private JPanel panWest = new JPanel(new BorderLayout());
-    private JPanel panEast = new JPanel(new BorderLayout());
-    private JPanel panExits = new JPanel(new BorderLayout());
-    private JButton butDone = new JButton(Messages.getString("BoardEditor.Done"));
 
     public ExitsDialog(JFrame frame) {
         super(frame, Messages.getString("BoardEditor.SetExits"), true);
         setResizable(false);
+        JButton butDone = new JButton(Messages.getString("BoardEditor.Done"));
         butDone.addActionListener(this);
         cheExit0 = setupTButton("ToggleEx", "0");
         cheExit1 = setupTButton("ToggleEx", "1");
@@ -83,14 +79,20 @@ public class ExitsDialog extends JDialog implements ActionListener {
         cheExit3 = setupTButton("ToggleEx", "3");
         cheExit4 = setupTButton("ToggleEx", "4");
         cheExit5 = setupTButton("ToggleEx", "5");
+        JPanel panNorth = new JPanel(new GridBagLayout());
         panNorth.add(cheExit0);
+        JPanel panSouth = new JPanel(new GridBagLayout());
         panSouth.add(cheExit3);
+        JPanel panWest = new JPanel(new BorderLayout());
         panWest.add(cheExit5, BorderLayout.NORTH);
         panWest.add(cheExit4, BorderLayout.SOUTH);
+        JPanel panEast = new JPanel(new BorderLayout());
         panEast.add(cheExit1, BorderLayout.NORTH);
         panEast.add(cheExit2, BorderLayout.SOUTH);
+        JPanel panExits = new JPanel(new BorderLayout());
         panExits.add(panNorth, BorderLayout.NORTH);
         panExits.add(panWest, BorderLayout.WEST);
+        JLabel labBlank = new JLabel("                            ");
         panExits.add(labBlank, BorderLayout.CENTER);
         panExits.add(panEast, BorderLayout.EAST);
         panExits.add(panSouth, BorderLayout.SOUTH);

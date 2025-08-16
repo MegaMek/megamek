@@ -96,7 +96,7 @@ public final class FontHandler {
     /**
      * @return A standardized symbols font ("Material Symbols"). This font has a load of useful icons. They are centered
      *       in a way that makes them less aesthetic to use within normal text, so their primary use is for standalone
-     *       symbols like marking hexes. Look for the symbol unicodes on the linked website.
+     *       symbols like marking hexes. Look for the symbol Unicode's on the linked website.
      *
      * @see <a href="https://fonts.google.com/icons">(Google) Material Symbols</a>
      */

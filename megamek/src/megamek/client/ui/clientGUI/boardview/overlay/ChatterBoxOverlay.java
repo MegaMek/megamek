@@ -62,7 +62,7 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
-import megamek.client.ui.widget.PMUtil;
+import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Configuration;
 import megamek.common.event.GameEntityChangeEvent;

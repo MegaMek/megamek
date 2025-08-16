@@ -1807,7 +1807,7 @@ public final class BoardView extends AbstractBoardView
                     // draw the cross-hairs
                     if (attackMod.getModifier() == TargetRoll.AUTOMATIC_SUCCESS) {
                         // predesignated or already hit
-                        artyIconImage = tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);
+                        artyIconImage = tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_AUTO_HIT);
                     } else {
                         artyIconImage = tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_ADJUSTED);
                     }
@@ -2348,7 +2348,7 @@ public final class BoardView extends AbstractBoardView
         }
 
         // Orthographic = bridges
-        List<Image> orthogonalImages = tileManager.orthoFor(hex);
+        List<Image> orthogonalImages = tileManager.orthographicFor(hex);
         if (orthogonalImages != null) {
             for (Image image : orthogonalImages) {
                 if (animatedImages.contains(image.hashCode())) {
@@ -2720,8 +2720,8 @@ public final class BoardView extends AbstractBoardView
         if (!useIsometric()) {
             orthogonalY = oHexLoc.y;
         }
-        if (tileManager.orthoFor(oHex) != null) {
-            for (Image image : tileManager.orthoFor(oHex)) {
+        if (tileManager.orthographicFor(oHex) != null) {
+            for (Image image : tileManager.orthographicFor(oHex)) {
                 BufferedImage scaledImage = ImageUtil.createAcceleratedImage(getScaledImage(image, true));
 
                 // Darken the hex for nighttime, if applicable

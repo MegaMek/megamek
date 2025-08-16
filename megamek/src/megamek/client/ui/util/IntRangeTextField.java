@@ -57,8 +57,57 @@ public class IntRangeTextField extends JTextField {
 
     public IntRangeTextField() {
         super();
+        InputVerifier inputVerifier = new InputVerifier() {
+            @Override
+            public boolean verify(JComponent input) {
+                try {
+                    return (((minimum == null) || (getIntVal() >= minimum))
+                          && ((maximum == null) || (getIntVal() <= maximum)));
+                } catch (NumberFormatException ignored) {
+                    return false;
+                }
+            }
+
+            @Override
+            public boolean shouldYieldFocus(JComponent input, JComponent target) {
+                if (!verify(input)) {
+                    int val = getIntVal();
+                    if ((minimum != null) && (val < minimum)) {
+                        setIntVal(minimum);
+                    } else if ((maximum != null) && (val > maximum)) {
+                        setIntVal(maximum);
+                    }
+                }
+                return true;
+            }
+        };
         setInputVerifier(inputVerifier);
         if (getDocument() instanceof AbstractDocument) {
+            // Allow digits and, if the minimum is below zero or not set, a minus sign
+            DocumentFilter docFilter = new DocumentFilter() {
+
+                @Override
+                public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
+                      throws BadLocationException {
+                    if (string.chars().allMatch(this::isCharValid)) {
+                        super.insertString(fb, offset, string, attr);
+                    }
+                }
+
+                @Override
+                public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                      throws BadLocationException {
+                    if (text.chars().allMatch(this::isCharValid)) {
+                        super.replace(fb, offset, length, text, attrs);
+                    }
+                }
+
+                // Allow digits and, if the minimum is below zero or not set, a minus sign
+                private boolean isCharValid(int chr) {
+                    return Character.isDigit(chr) || ((chr == '-') && ((minimum == null) || (minimum < 0)));
+                }
+
+            };
             ((AbstractDocument) getDocument()).setDocumentFilter(docFilter);
         }
     }
@@ -99,56 +148,6 @@ public class IntRangeTextField extends JTextField {
     public void setMaximum(@Nullable Integer max) {
         maximum = max;
     }
-
-    private final InputVerifier inputVerifier = new InputVerifier() {
-        @Override
-        public boolean verify(JComponent input) {
-            try {
-                return (((minimum == null) || (getIntVal() >= minimum))
-                      && ((maximum == null) || (getIntVal() <= maximum)));
-            } catch (NumberFormatException ignored) {
-                return false;
-            }
-        }
-
-        @Override
-        public boolean shouldYieldFocus(JComponent input, JComponent target) {
-            if (!verify(input)) {
-                int val = getIntVal();
-                if ((minimum != null) && (val < minimum)) {
-                    setIntVal(minimum);
-                } else if ((maximum != null) && (val > maximum)) {
-                    setIntVal(maximum);
-                }
-            }
-            return true;
-        }
-    };
-
-    private final DocumentFilter docFilter = new DocumentFilter() {
-
-        @Override
-        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
-              throws BadLocationException {
-            if (string.chars().allMatch(this::isCharValid)) {
-                super.insertString(fb, offset, string, attr);
-            }
-        }
-
-        @Override
-        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
-              throws BadLocationException {
-            if (text.chars().allMatch(this::isCharValid)) {
-                super.replace(fb, offset, length, text, attrs);
-            }
-        }
-
-        // Allow digits and, if the minimum is below zero or not set, a minus sign
-        private boolean isCharValid(int chr) {
-            return Character.isDigit(chr) || ((chr == '-') && ((minimum == null) || (minimum < 0)));
-        }
-
-    };
 
     /**
      * Parses the text as an {@code int}.

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -74,7 +74,7 @@ public class MekTileset {
     private static final String QUADVEE_STRING = "default_quadvee";
     private static final String QUADVEE_VEHICLE_STRING = "default_quadvee_vehicle";
     private static final String LAM_MEK_STRING = "default_lam_mek";
-    private static final String LAM_AIRMEK_STRING = "default_lam_airmek";
+    private static final String LAM_AIRMEK_STRING = "default_lam_air_mek";
     private static final String LAM_FIGHTER_STRING = "default_lam_fighter";
     private static final String TRIPOD_STRING = "default_tripod";
     private static final String TRACKED_STRING = "default_tracked";
@@ -129,7 +129,7 @@ public class MekTileset {
     private MekEntry default_quadvee;
     private MekEntry default_quadvee_vehicle;
     private MekEntry default_lam_mek;
-    private MekEntry default_lam_airmek;
+    private MekEntry default_lam_air_mek;
     private MekEntry default_lam_fighter;
     private MekEntry default_tripod;
     private MekEntry default_tracked;
@@ -249,7 +249,7 @@ public class MekTileset {
         } else if (entity instanceof LandAirMek) {
             return switch (entity.getConversionMode()) {
                 case LandAirMek.CONV_MODE_FIGHTER -> default_lam_fighter;
-                case LandAirMek.CONV_MODE_AIRMEK -> default_lam_airmek;
+                case LandAirMek.CONV_MODE_AIRMEK -> default_lam_air_mek;
                 default -> default_lam_mek;
             };
         } else if (entity instanceof Mek) {
@@ -370,7 +370,7 @@ public class MekTileset {
         default_quadvee = exact.get(QUADVEE_STRING.toUpperCase(Locale.ROOT));
         default_quadvee_vehicle = exact.get(QUADVEE_VEHICLE_STRING.toUpperCase(Locale.ROOT));
         default_lam_mek = exact.get(LAM_MEK_STRING.toUpperCase(Locale.ROOT));
-        default_lam_airmek = exact.get(LAM_AIRMEK_STRING.toUpperCase(Locale.ROOT));
+        default_lam_air_mek = exact.get(LAM_AIRMEK_STRING.toUpperCase(Locale.ROOT));
         default_lam_fighter = exact.get(LAM_FIGHTER_STRING.toUpperCase(Locale.ROOT));
         default_tripod = exact.get(TRIPOD_STRING.toUpperCase(Locale.ROOT));
         default_tracked = exact.get(TRACKED_STRING.toUpperCase(Locale.ROOT));

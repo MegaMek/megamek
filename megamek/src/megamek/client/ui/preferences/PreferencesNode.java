@@ -118,7 +118,7 @@ public class PreferencesNode {
                 try {
                     element.initialize(getInitialValues().get(element.getName()));
                 } catch (Exception ex) {
-                    logger.error(ex, "Failed initializing element " + element.getName());
+                    logger.error(ex, "Failed initializing element {}", element.getName());
                 }
             }
         }

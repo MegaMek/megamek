@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,16 +35,18 @@
 package megamek.client.ui.widget;
 
 import java.awt.Dimension;
+import java.io.Serial;
 import javax.swing.JComboBox;
 
 /**
  * Override of the basic {@link JComboBox} that adds the capacity to checkpoint its current value. Once the value is
- * checkpointed, the {@link #hasChanged} method will reflect if the current value equals the checkpointed value or not.
+ * checkpoint, the {@link #hasChanged} method will reflect if the current value equals the checkpoint value or not.
  *
  * @author Deric Page (deric dot page at usa dot net)
  * @since 3/21/14 8:34 AM
  */
 public class CheckpointComboBox<E> extends JComboBox<E> {
+    @Serial
     private static final long serialVersionUID = -5047466175280294296L;
     int checkpointIndex = -1;
 
@@ -64,7 +66,7 @@ public class CheckpointComboBox<E> extends JComboBox<E> {
     }
 
     /**
-     * Checkpoints the combobox's current state by saving the value of it's current index.
+     * Checkpoints the combobox's current state by saving the value of its current index.
      */
     public void checkpoint() {
         checkpointIndex = getSelectedIndex();
@@ -72,24 +74,24 @@ public class CheckpointComboBox<E> extends JComboBox<E> {
 
     /**
      * @return TRUE if the {@link #checkpoint()} method has been called and the currently selected index does not match
-     *       the checkpointed index.
+     *       the checkpoint index.
      */
     public boolean hasChanged() {
         return (checkpointIndex != -1) && (checkpointIndex != getSelectedIndex());
     }
 
     /**
-     * @return The currently checkpointed index or -1 if the {@link #checkpoint()} method has not been called.
+     * @return The current checkpoint index or -1 if the {@link #checkpoint()} method has not been called.
      */
     public int getCheckpointIndex() {
         return checkpointIndex;
     }
 
     /**
-     * @return The {@link Object} stored at the checkpointed index or NULL if the {@link #checkpoint()} method has not
+     * @return The {@link Object} stored at the checkpoint index or NULL if the {@link #checkpoint()} method has not
      *       been called.
      */
-    public Object getCheckpointedItem() {
+    public Object getCheckpointItem() {
         if (checkpointIndex == -1) {
             return null;
         }
@@ -97,7 +99,7 @@ public class CheckpointComboBox<E> extends JComboBox<E> {
     }
 
     /**
-     * Removes the current checkpoint by resetting the checkpointed index to -1.
+     * Removes the current checkpoint by resetting the checkpoint index to -1.
      */
     public void removeCheckpoint() {
         checkpointIndex = -1;

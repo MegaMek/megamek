@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2008 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,6 +40,7 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.MediaTracker;
 import java.io.File;
+import java.io.Serial;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
@@ -60,6 +61,7 @@ import megamek.logging.MMLogger;
 public class MegaMekBorder extends EtchedBorder {
     private static final MMLogger logger = MMLogger.create(MegaMekBorder.class);
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     // Abbreviations: tl = top left, tr = top right,
@@ -113,7 +115,7 @@ public class MegaMekBorder extends EtchedBorder {
         imgURL = file.toURI();
         icon = new ImageIcon(imgURL.toURL());
         if (!file.exists()) {
-            logger.error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
+            logger.error("loadIcon - MegaMekBorder icon doesn't exist: {}", file.getAbsolutePath());
             iconsLoaded = false;
         }
         return icon;
@@ -155,7 +157,7 @@ public class MegaMekBorder extends EtchedBorder {
                 file = new MegaMekFile(Configuration.widgetsDir(), skin.leftEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()) {
-                    logger.error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
+                    logger.error("leftEdge - MegaMekBorder icon doesn't exist: {}", file.getAbsolutePath());
                     iconsLoaded = false;
                 }
                 leftLine.add(new ImageIcon(imgURL.toURL()));
@@ -174,7 +176,7 @@ public class MegaMekBorder extends EtchedBorder {
                 file = new MegaMekFile(Configuration.widgetsDir(), skin.rightEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()) {
-                    logger.error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
+                    logger.error("rightEdge - MegaMekBorder icon doesn't exist: {}", file.getAbsolutePath());
                     iconsLoaded = false;
                 }
                 rightLine.add(new ImageIcon(imgURL.toURL()));
@@ -193,7 +195,7 @@ public class MegaMekBorder extends EtchedBorder {
                 file = new MegaMekFile(Configuration.widgetsDir(), skin.topEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()) {
-                    logger.error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
+                    logger.error("topEdge - MegaMekBorder icon doesn't exist: {}", file.getAbsolutePath());
                     iconsLoaded = false;
                 }
                 topLine.add(new ImageIcon(imgURL.toURL()));
@@ -212,7 +214,7 @@ public class MegaMekBorder extends EtchedBorder {
                 file = new MegaMekFile(Configuration.widgetsDir(), skin.bottomEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()) {
-                    logger.error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
+                    logger.error("bottomEdge - MegaMekBorder icon doesn't exist: {}", file.getAbsolutePath());
                     iconsLoaded = false;
                 }
                 bottomLine.add(new ImageIcon(imgURL.toURL()));
@@ -341,7 +343,7 @@ public class MegaMekBorder extends EtchedBorder {
      * @param icons         The ImageIcons to draw
      * @param shouldTile    Denotes whether each icon should be tiled or not
      * @param numTiledIcons The number of tiled icons we have to draw with
-     * @param staticSpace   How much space needs to be filled with tiledi cons
+     * @param staticSpace   How much space needs to be filled with tiled cons
      */
     private void paintEdge(Component c, Graphics g, ArrayList<ImageIcon> icons,
           int x, int y, int width, int height, boolean isLeftRight,
@@ -416,12 +418,8 @@ public class MegaMekBorder extends EtchedBorder {
         }
     }
 
-    private Insets computeInsets(Insets i) {
-        return (Insets) (insets.clone());
+    private Insets computeInsets(Insets insets) {
+        return (Insets) (this.insets.clone());
     }
 
-    @Override
-    public boolean isBorderOpaque() {
-        return true;
-    }
 }

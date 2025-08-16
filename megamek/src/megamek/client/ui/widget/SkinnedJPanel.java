@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -61,7 +61,7 @@ public class SkinnedJPanel extends JPanel {
             if (file.exists()) {
                 backgroundIcon = ImageUtil.loadImageFromFile(file.toString());
             } else {
-                logger.error("Background icon doesn't exist: " + file.getPath());
+                logger.error("Background icon doesn't exist: {}", file.getPath());
                 backgroundIcon = null;
             }
         } else {

@@ -277,14 +277,14 @@ public class QuickGameRunner {
                 case COMMANDER:
                     createController();
                     gui = new CommanderGUI(watcher, controller);
-                    controller.clientgui = gui;
+                    controller.clientGUI = gui;
                     gui.initialize();
                     break;
                 case NONE:
                     break;
                 default:
                     gui = new ClientGUI(watcher, controller);
-                    controller.clientgui = gui;
+                    controller.clientGUI = gui;
                     gui.initialize();
                     break;
             }

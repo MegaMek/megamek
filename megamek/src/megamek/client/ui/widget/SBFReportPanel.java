@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,6 +43,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -56,6 +57,7 @@ import javax.swing.JViewport;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import megamek.client.SBFClient;
@@ -76,11 +78,14 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.common.strategicBattleSystems.SBFReportEntry;
+import megamek.logging.MMLogger;
 
 /**
  * Shows reports, with an Okay JButton
  */
 public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkListener, IPreferenceChangeListener {
+    private final static MMLogger LOGGER = MMLogger.create(SBFReportPanel.class);
+
     private JButton butSwitchLocation;
     private JTabbedPane tabs;
     private JButton butPlayerSearchUp;
@@ -89,24 +94,37 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
     private JButton butEntitySearchDown;
     private JButton butQuickSearchUp;
     private JButton butQuickSearchDown;
-    private JComboBox<String> comboPlayer = new JComboBox<>();
-    private JComboBox<String> comboEntity = new JComboBox<>();
-    private JComboBox<String> comboQuick = new JComboBox<>();
-    private SBFClientGUI currentClientgui;
+    private final JComboBox<String> comboPlayer = new JComboBox<>();
+    private final JComboBox<String> comboEntity = new JComboBox<>();
+    private final JComboBox<String> comboQuick = new JComboBox<>();
     private SBFClient currentClient;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CP = PreferenceManager.getClientPreferences();
 
-    private static final int MRD_MAXNAMELENGHT = 60;
+    public SBFReportPanel(SBFClientGUI clientGUI) {
 
-    public SBFReportPanel(SBFClientGUI clientgui) {
-
-        if (clientgui == null) {
+        if (clientGUI == null) {
             return;
         }
 
-        currentClientgui = clientgui;
-        currentClient = clientgui.getClient();
+        currentClient = clientGUI.getClient();
+        //                        updateEntityChoice();
+        GameListener gameListener = new GameListenerAdapter() {
+            @Override
+            public void gamePhaseChange(GamePhaseChangeEvent e) {
+                if (Objects.requireNonNull(e.getOldPhase()) == GamePhase.VICTORY) {
+                    setVisible(false);
+                } else {
+                    if ((!e.getNewPhase().equals((e.getOldPhase())))
+                          && ((e.getNewPhase().isReport()) || ((e.getNewPhase().isOnMap()) && (tabs.getTabCount()
+                          == 0)))) {
+                        addReportPages(e.getNewPhase());
+                        updatePlayerChoice();
+                        //                        updateEntityChoice();
+                    }
+                }
+            }
+        };
         currentClient.getGame().addGameListener(gameListener);
 
         butSwitchLocation = new JButton(Messages.getString("MiniReportDisplay.SwitchLocation"));
@@ -163,47 +181,57 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
               && ((JScrollPane) selCom).getViewport().getView() instanceof JComponent) {
             JViewport v = ((JScrollPane) selCom).getViewport();
             for (Component comp : v.getComponents()) {
-                if (comp instanceof JTextPane) {
+                if (comp instanceof JTextPane textPane) {
+                    Document doc = textPane.getDocument();
+                    String text = "";
+
                     try {
-                        JTextPane textPane = (JTextPane) comp;
-                        Document doc = textPane.getDocument();
-                        String text = doc.getText(0, doc.getLength()).toUpperCase();
-                        int currentPos = textPane.getCaretPosition();
+                        text = doc.getText(0, doc.getLength()).toUpperCase();
+                    } catch (BadLocationException exception) {
+                        LOGGER.error(exception, "SearchText - getText - BadLocationException : {}",
+                              exception.getMessage());
+                    }
 
-                        if (currentPos > text.length() - searchPattern.length()) {
-                            textPane.setCaretPosition(0);
-                            currentPos = 0;
+                    int currentPos = textPane.getCaretPosition();
+
+                    if (currentPos > text.length() - searchPattern.length()) {
+                        textPane.setCaretPosition(0);
+                        currentPos = 0;
+                    }
+
+                    int newPos;
+
+                    if (searchDown) {
+                        newPos = text.indexOf(searchPattern, currentPos);
+
+                        if (newPos == -1) {
+                            newPos = text.indexOf(searchPattern);
                         }
 
-                        int newPos = -1;
+                    } else {
+                        newPos = text.lastIndexOf(searchPattern, currentPos - searchPattern.length() - 1);
 
-                        if (searchDown) {
-                            newPos = text.indexOf(searchPattern, currentPos);
-
-                            if (newPos == -1) {
-                                newPos = text.indexOf(searchPattern, 0);
-                            }
-
-                        } else {
-                            newPos = text.lastIndexOf(searchPattern, currentPos - searchPattern.length() - 1);
-
-                            if (newPos == -1) {
-                                newPos = text.lastIndexOf(searchPattern, text.length() - searchPattern.length() - 1);
-                            }
+                        if (newPos == -1) {
+                            newPos = text.lastIndexOf(searchPattern, text.length() - searchPattern.length() - 1);
                         }
+                    }
 
-                        if (newPos != -1) {
-                            Rectangle2D r = textPane.modelToView2D(newPos);
+                    if (newPos != -1) {
+                        try {
+
+                            Rectangle2D rectangle2D = textPane.modelToView2D(newPos);
                             int y = UIUtil.calculateCenter(v.getExtentSize().height,
                                   v.getViewSize().height,
-                                  (int) r.getHeight(),
-                                  (int) r.getY());
+                                  (int) rectangle2D.getHeight(),
+                                  (int) rectangle2D.getY());
                             v.setViewPosition(new Point(0, y));
                             textPane.setCaretPosition(newPos);
                             textPane.moveCaretPosition(newPos + searchPattern.length());
                             textPane.getCaret().setSelectionVisible(true);
+                        } catch (BadLocationException exception) {
+                            LOGGER.error(exception, "Search Text - modelToView - BadLocationException : {}",
+                                  exception.getMessage());
                         }
-                    } catch (Exception e) {
                     }
 
                     break;
@@ -231,43 +259,6 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
             comboPlayer.setSelectedIndex(0);
         }
     }
-
-    private String addEntity(JComboBox<String> comboBox, String name) {
-        boolean found = false;
-        int len = (name.length() < MRD_MAXNAMELENGHT ? name.length() : MRD_MAXNAMELENGHT);
-        String displayName = String.format("%-12s", name).substring(0, len);
-        found = false;
-        for (int i = 0; i < comboBox.getItemCount(); i++) {
-            if (comboBox.getItemAt(i).equals(displayName)) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            comboBox.addItem(displayName);
-        }
-        return displayName;
-    }
-
-    //    private void updateEntityChoice() {
-    //        String lastChoice = (String) comboEntity.getSelectedItem();
-    //        comboEntity.removeAllItems();
-    //        comboEntity.setEnabled(true);
-    //        String displayNane = "";
-    //        for (Iterator<Entity> ents = currentClient.getGame().getEntities(); ents.hasNext();) {
-    //            Entity entity = ents.next();
-    //            if (entity.getOwner().equals(currentClient.getLocalPlayer())) {
-    //                displayNane = addEntity(comboEntity, entity.getShortName());
-    //            }
-    //        }
-    //        lastChoice = (lastChoice != null ? lastChoice : displayNane);
-    //        comboEntity.setSelectedItem(lastChoice);
-    //        if (comboEntity.getItemCount() <= 1) {
-    //            comboEntity.setEnabled(false);
-    //        } else if (comboEntity.getSelectedIndex() < 0) {
-    //            comboEntity.setSelectedIndex(0);
-    //        }
-    //    }
 
     private void updateQuickChoice() {
         String lastChoice = (String) comboQuick.getSelectedItem();
@@ -298,26 +289,42 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
 
     @Override
     public void actionPerformed(ActionEvent ae) {
+        String selectedPlayer = (String) comboPlayer.getSelectedItem();
+        String selectedEntity = (String) comboEntity.getSelectedItem();
+        String selectedQuick = (String) comboQuick.getSelectedItem();
+
         if (ae.getSource().equals(butSwitchLocation)) {
             GUIP.toggleMiniReportLocation();
         } else if (ae.getSource().equals(butPlayerSearchDown)) {
-            String searchPattern = comboPlayer.getSelectedItem().toString().trim();
-            searchTextPane(searchPattern, true);
+            if (selectedPlayer != null) {
+                String searchPattern = selectedPlayer.trim();
+                searchTextPane(searchPattern, true);
+            }
         } else if (ae.getSource().equals(butPlayerSearchUp)) {
-            String searchPattern = comboPlayer.getSelectedItem().toString().trim();
-            searchTextPane(searchPattern, false);
+            if (selectedPlayer != null) {
+                String searchPattern = selectedPlayer.trim();
+                searchTextPane(searchPattern, false);
+            }
         } else if (ae.getSource().equals(butEntitySearchDown)) {
-            String searchPattern = comboEntity.getSelectedItem().toString().trim();
-            searchTextPane(searchPattern, true);
+            if (selectedEntity != null) {
+                String searchPattern = selectedEntity.trim();
+                searchTextPane(searchPattern, true);
+            }
         } else if (ae.getSource().equals(butEntitySearchUp)) {
-            String searchPattern = comboEntity.getSelectedItem().toString().trim();
-            searchTextPane(searchPattern, false);
+            if (selectedEntity != null) {
+                String searchPattern = selectedEntity.trim();
+                searchTextPane(searchPattern, false);
+            }
         } else if (ae.getSource().equals(butQuickSearchDown)) {
-            String searchPattern = comboQuick.getSelectedItem().toString().trim();
-            searchTextPane(searchPattern, true);
+            if (selectedQuick != null) {
+                String searchPattern = selectedQuick.trim();
+                searchTextPane(searchPattern, true);
+            }
         } else if (ae.getSource().equals(butQuickSearchUp)) {
-            String searchPattern = comboQuick.getSelectedItem().toString().trim();
-            searchTextPane(searchPattern, false);
+            if (selectedQuick != null) {
+                String searchPattern = selectedQuick.trim();
+                searchTextPane(searchPattern, false);
+            }
         }
     }
 
@@ -355,7 +362,7 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
         for (int round = startIndex; round <= numRounds; round++) {
             if (report.hasReportsforRound(round)) {
                 String text =
-                      report.get(round).stream().map(r -> r.text()).collect(Collectors.joining());
+                      report.get(round).stream().map(SBFReportEntry::text).collect(Collectors.joining());
                 tabs.add(Messages.getString("MiniReportDisplay.Round") + " " + round, loadHtmlScrollPane(text));
             }
 
@@ -369,63 +376,9 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
         tabs.setMinimumSize(new Dimension(0, 0));
     }
 
-    private JComponent activePane() {
-        return (JComponent) ((JScrollPane) tabs.getSelectedComponent()).getViewport().getView();
-    }
-
     @Override
     public void hyperlinkUpdate(HyperlinkEvent evt) {
-        //        String evtDesc = evt.getDescription();
-        //        if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-        //            if (evtDesc.startsWith(Report.ENTITY_LINK)) {
-        //                String idString = evtDesc.substring(Report.ENTITY_LINK.length());
-        //                int id;
-        //                try {
-        //                    id = Integer.parseInt(idString);
-        //                } catch (Exception ex) {
-        //                    id = -1;
-        //                }
-        //                Entity ent = currentClientgui.getClient().getGame().getEntity(id);
-        //                if (ent != null) {
-        //                    currentClientgui.getUnitDisplay().displayEntity(ent);
-        //                    GUIP.setUnitDisplayEnabled(true);
-        //                    if (ent.isDeployed() && !ent.isOffBoard() && ent.getPosition() != null) {
-        //                        currentClientgui.getBoardView().centerOnHex(ent.getPosition());
-        //                    }
-        //                }
-        //            } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
-        //                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
-        //                JOptionPane.showMessageDialog(currentClientgui.getFrame(), desc,
-        //                        Messages.getString("MiniReportDisplay.Details"), JOptionPane.PLAIN_MESSAGE);
-        //            }
-        //        } else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
-        //            if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
-        //                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
-        //                activePane().setToolTipText(desc);
-        //            }
-        //        } else if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
-        //            activePane().setToolTipText(null);
-        //        }
     }
-
-    private GameListener gameListener = new GameListenerAdapter() {
-        @Override
-        public void gamePhaseChange(GamePhaseChangeEvent e) {
-            switch (e.getOldPhase()) {
-                case VICTORY:
-                    setVisible(false);
-                    break;
-                default:
-                    if ((!e.getNewPhase().equals((e.getOldPhase())))
-                          && ((e.getNewPhase().isReport()) || ((e.getNewPhase().isOnMap()) && (tabs.getTabCount()
-                          == 0)))) {
-                        addReportPages(e.getNewPhase());
-                        updatePlayerChoice();
-                        //                        updateEntityChoice();
-                    }
-            }
-        }
-    };
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {

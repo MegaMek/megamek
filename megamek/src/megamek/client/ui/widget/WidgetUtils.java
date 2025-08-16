@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 
+import megamek.client.ui.widget.picmap.PMSimpleLabel;
+import megamek.client.ui.widget.picmap.PMSimplePolygonArea;
+import megamek.client.ui.widget.picmap.PMValueLabel;
 import megamek.common.annotations.Nullable;
 
 public class WidgetUtils {

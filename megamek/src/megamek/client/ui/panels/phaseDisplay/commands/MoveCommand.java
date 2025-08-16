@@ -203,13 +203,13 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
                 result += "&nbsp;&nbsp;" +
                       msgToggleMoveJump +
                       ": " +
-                      KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
+                      KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVE_MODE);
                 break;
             case MOVE_BACK_UP:
                 result += KeyCommandBind.getDesc(KeyCommandBind.MOVE_BACKUP);
                 break;
             case MOVE_GO_PRONE:
-                result += KeyCommandBind.getDesc(KeyCommandBind.MOVE_GOPRONE);
+                result += KeyCommandBind.getDesc(KeyCommandBind.MOVE_GO_PRONE);
                 break;
             case MOVE_GET_UP:
                 result += KeyCommandBind.getDesc(KeyCommandBind.MOVE_GETUP);
@@ -230,7 +230,7 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
                 result += "&nbsp;&nbsp;" +
                       msgToggleMode +
                       ": " +
-                      KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_CONVERSIONMODE);
+                      KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_CONVERSION_MODE);
                 break;
             default:
                 break;

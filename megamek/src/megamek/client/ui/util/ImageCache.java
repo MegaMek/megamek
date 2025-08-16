@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -54,7 +54,7 @@ public class ImageCache<K, V> {
     /**
      * The cache of Key/Value pairs.
      */
-    private Hashtable<K, V> cache;
+    private final Hashtable<K, V> cache;
 
     /**
      * Create a cache with the default maximum size.
@@ -71,10 +71,6 @@ public class ImageCache<K, V> {
     /**
      * Adds a new key/value pair into the cache.
      *
-     * @param key
-     * @param value
-     *
-     * @return
      */
     public synchronized @Nullable V put(@Nullable K key, @Nullable V value) {
         if ((key == null) || (value == null)) {
@@ -89,7 +85,7 @@ public class ImageCache<K, V> {
         return cache.getOrDefault(key, null);
     }
 
-    public void remove(Object key) {
+    public void remove(K key) {
         cache.remove(key);
     }
 

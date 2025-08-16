@@ -377,13 +377,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
               () -> selectEntity(clientgui.getClient().getPrevEntityNum(currentEntity)));
 
         controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::cancel);
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_MOVEMODE, this, this::performToggleMovementMode);
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_MOVE_MODE, this, this::performToggleMovementMode);
         controller.registerCommandAction(KeyCommandBind.MOVE_BACKUP, this, this::moveBackUp);
-        controller.registerCommandAction(KeyCommandBind.MOVE_GOPRONE, this, this::moveGoProne);
+        controller.registerCommandAction(KeyCommandBind.MOVE_GO_PRONE, this, this::moveGoProne);
         controller.registerCommandAction(KeyCommandBind.MOVE_GETUP, this, this::moveGetUp);
-        controller.registerCommandAction(KeyCommandBind.MOVE_STEPFORWARD, this, this::moveStepForward);
-        controller.registerCommandAction(KeyCommandBind.MOVE_STEPBACKWARD, this, this::moveStepBackward);
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_CONVERSIONMODE, this, this::performToggleConversionMode);
+        controller.registerCommandAction(KeyCommandBind.MOVE_STEP_FORWARD, this, this::moveStepForward);
+        controller.registerCommandAction(KeyCommandBind.MOVE_STEP_BACKWARD, this, this::moveStepBackward);
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_CONVERSION_MODE,
+              this,
+              this::performToggleConversionMode);
     }
 
     /**

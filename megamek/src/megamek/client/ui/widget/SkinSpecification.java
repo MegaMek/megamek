@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -64,7 +64,7 @@ public class SkinSpecification {
         private final String comp;
 
         /**
-         * Constructions a new UIComponent with the given internalcomponent name
+         * Constructions a new UIComponent with the given internal component name
          *
          * @param comp The internal name of this component
          */
@@ -89,7 +89,6 @@ public class SkinSpecification {
         /**
          * Returns an internationalized name for this component.
          *
-         * @return
          */
         public String getName() {
             return Messages.getString("SkinSpec." + getComp() + ".Text");
@@ -98,7 +97,6 @@ public class SkinSpecification {
         /**
          * Returns an internationalized description for this component.
          *
-         * @return
          */
         public String getDescription() {
             return Messages.getString("SkinSpec." + getComp() + ".Desc");
@@ -107,9 +105,6 @@ public class SkinSpecification {
         /**
          * Given a component name, return it's UIComponents instance or null if no match is found.
          *
-         * @param val
-         *
-         * @return
          */
         @Nullable
         public static UIComponents getUIComponent(@Nullable String val) {
@@ -132,7 +127,7 @@ public class SkinSpecification {
     /**
      * The name of the component this SkinSpec is for.  This helps identify the skin spec, particularly for debugging.
      */
-    private String compName;
+    private final String compName;
 
     /**
      * Path to an image to be used in the top left corner.

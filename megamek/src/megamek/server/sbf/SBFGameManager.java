@@ -88,7 +88,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
     public void handlePacket(int connId, Packet packet) {
         super.handlePacket(connId, packet);
 
-        switch (packet.getCommand()) {
+        switch (packet.command()) {
             case ENTITY_MOVE:
                 receiveMovement(packet, connId);
                 break;
@@ -99,7 +99,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
                 break;
         }
 
-        logger.info("Leaving handle packet: {}", packet.getCommand());
+        logger.info("Leaving handle packet: {}", packet.command());
         logger.info(pendingPackets);
         sendPendingPackets();
     }

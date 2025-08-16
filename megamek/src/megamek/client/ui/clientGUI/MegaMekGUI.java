@@ -707,7 +707,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         PilotToolTip.deleteImageCache();
         client = getClient(gameType, playerName, serverAddress, port);
         IClientGUI gui = getClientGUI(gameType, client, controller);
-        controller.clientgui = gui;
+        controller.clientGUI = gui;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -1118,7 +1118,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
               bcd.getBehaviorSettings());
         client.getGame().addGameListener(new BotGUI(frame, (BotClient) client));
         ClientGUI gui = new ClientGUI((Client) client, controller);
-        controller.clientgui = gui;
+        controller.clientGUI = gui;
         gui.initialize();
         if (!client.connect()) {
             JOptionPane.showMessageDialog(frame,

@@ -72,7 +72,7 @@ public abstract class AbstractGameManager implements IGameManager {
 
     @Override
     public void handlePacket(int connId, Packet packet) {
-        if (packet.getCommand() == PacketCommand.PLAYER_READY) {
+        if (packet.command() == PacketCommand.PLAYER_READY) {
             receivePlayerDone(packet, connId);
             send(packetHelper.createPlayerDonePacket(connId));
             checkReady();

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2008 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,8 +51,7 @@ import megamek.server.totalwarfare.TWGameManager;
 
 
 public class SharedUtility {
-    private final static MMLogger logger = MMLogger.create(SharedUtility.class);
-    private static int CRIT_VALUE = 100;
+    private final static MMLogger LOGGER = MMLogger.create(SharedUtility.class);
 
     public static String doPSRCheck(MovePath md) {
         return (String) doPSRCheck(md, true);
@@ -86,9 +85,8 @@ public class SharedUtility {
         final Entity entity = md.getEntity();
         final Game game = entity.getGame();
         // okay, proceed with movement calculations
-        Coords curPos = entity.getPosition();
-        int curFacing = entity.getFacing();
-        EntityMovementType moveType = EntityMovementType.MOVE_NONE;
+        Coords curPos;
+        int curFacing;
 
         PilotingRollData rollTarget;
 
@@ -115,7 +113,6 @@ public class SharedUtility {
             checkNag(rollTarget, nagReport, psrList);
 
             // set most step parameters
-            moveType = step.getMovementType(md.isEndStep(step));
 
             // set last step parameters
             curPos = step.getPosition();
@@ -196,11 +193,11 @@ public class SharedUtility {
         Coords curPos = entity.getPosition();
         int curBoardId = entity.getBoardId();
         int lastElevation = entity.getElevation();
-        int curElevation = entity.getElevation();
+        int curElevation;
         int curFacing = entity.getFacing();
-        int distance = 0;
-        EntityMovementType moveType = EntityMovementType.MOVE_NONE;
-        EntityMovementType overallMoveType = EntityMovementType.MOVE_NONE;
+        int distance;
+        EntityMovementType moveType;
+        EntityMovementType overallMoveType;
         boolean firstStep;
         int prevFacing = curFacing;
         Hex prevHex = game.getBoard(curBoardId).getHex(curPos);
@@ -608,7 +605,7 @@ public class SharedUtility {
 
         // but the danger isn't over yet! landing from a jump can be risky!
         if ((overallMoveType == EntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
-            // check for damaged criticals
+            // check for damaged critical slots
             rollTarget = entity.checkLandingWithDamage(overallMoveType);
             checkNag(rollTarget, nagReport, psrList);
             // check for landing with prototype JJs
@@ -627,7 +624,7 @@ public class SharedUtility {
                 if (!(entity instanceof Infantry)) {
                     nagReport.append(Messages.getString("MovementDisplay.IceLanding"));
                 }
-            } else if (!(prevStep.climbMode() && hex.containsTerrain(Terrains.BRIDGE))) {
+            } else if (prevStep != null && !(prevStep.climbMode() && hex.containsTerrain(Terrains.BRIDGE))) {
                 if (!entity.getMovementMode().isHoverOrWiGE()) {
                     rollTarget = entity.checkWaterMove(waterLevel, overallMoveType);
                     checkNag(rollTarget, nagReport, psrList);
@@ -686,9 +683,7 @@ public class SharedUtility {
     }
 
     /**
-     * @param rollTarget
-     * @param nagReport
-     * @param psrList
+     *
      */
     private static void checkNag(PilotingRollData rollTarget, StringBuffer nagReport,
           List<TargetRoll> psrList) {
@@ -743,10 +738,10 @@ public class SharedUtility {
                 int health = 6 - hits;
 
                 if (thrustUsed > (2 * health)) {
-                    int targetroll = 2 + (thrustUsed - (2 * health)) + (2 * hits);
+                    int targetRoll = 2 + (thrustUsed - (2 * health)) + (2 * hits);
                     nagReport.append(Messages.getString("MovementDisplay.addNag",
-                          new Object[] { Integer.toString(targetroll),
-                                         "Thrust exceeded twice pilot's health in single hex" }));
+                          Integer.toString(targetRoll),
+                          "Thrust exceeded twice pilot's health in single hex"));
                 }
 
                 thrustUsed = 0;
@@ -757,36 +752,36 @@ public class SharedUtility {
 
     }
 
-    public static MovePath moveAero(MovePath md, Client client) {
-        final Entity entity = md.getEntity();
+    public static MovePath moveAero(MovePath movePath, Client client) {
+        final Entity entity = movePath.getEntity();
         final Game game = entity.getGame();
         // Don't process further unless the entity belongs in space
         if (!entity.isAero() && !(entity instanceof EjectedCrew)) {
-            return md;
+            return movePath;
         }
         // Ejected crew/pilots and lifeboats can't move, so just add the inherited move
         // steps and be done with it
         if ((entity instanceof EjectedCrew)
               || ((entity instanceof EscapePods) && (entity.getOriginalWalkMP() <= 0))) {
-            return addSteps(md, client);
+            return addSteps(movePath, client);
         }
-        IAero a = (IAero) entity;
+        IAero aero = (IAero) entity;
 
         // need to check and see if the units current velocity is zero
-        boolean isRamming = (md.getLastStep() != null) && (md.getLastStep().getType() == MoveStepType.RAM);
+        boolean isRamming = (movePath.getLastStep() != null) && (movePath.getLastStep().getType() == MoveStepType.RAM);
 
         // if using advanced movement then I need to add on movement
-        // steps to get the vessel from point a to point b
+        // steps to get the vessel from point aero to point b
         if (game.useVectorMove()) {
             // if the unit is ramming then this is already done
             if (!isRamming) {
-                md = addSteps(md, client);
+                addSteps(movePath, client);
             }
-        } else if (a.isOutControlTotal()) {
-            // OOC units need a new movement path
-            MovePath oldmd = md;
-            md = new MovePath(game, entity);
-            int vel = a.getCurrentVelocity();
+        } else if (aero.isOutControlTotal()) {
+            // OOC units need aero new movement path
+            MovePath oldMovePath = movePath;
+            movePath = new MovePath(game, entity);
+            int vel = aero.getCurrentVelocity();
 
             while (vel > 0) {
                 int steps = 1;
@@ -795,63 +790,63 @@ public class SharedUtility {
                     steps = 16;
                 }
                 while (steps > 0 &&
-                      game.getBoard().contains(md.getFinalCoords())) {
-                    md.addStep(MoveStepType.FORWARDS);
+                      game.getBoard().contains(movePath.getFinalCoords())) {
+                    movePath.addStep(MoveStepType.FORWARDS);
                     steps--;
                 }
-                if (!game.getBoard().contains(md.getFinalCoords())) {
-                    md.removeLastStep();
+                if (!game.getBoard().contains(movePath.getFinalCoords())) {
+                    movePath.removeLastStep();
                     if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
-                        // Telemissiles shouldn't get a return option
+                        // Telemissiles shouldn't get aero return option
                         if (entity instanceof TeleMissile) {
-                            md.addStep(MoveStepType.OFF);
+                            movePath.addStep(MoveStepType.OFF);
                         } else {
-                            md.addStep(MoveStepType.RETURN);
+                            movePath.addStep(MoveStepType.RETURN);
                         }
                     } else {
-                        md.addStep(MoveStepType.OFF);
+                        movePath.addStep(MoveStepType.OFF);
                     }
                     break;
                 }
-                if (a.isRandomMove()) {
+                if (aero.isRandomMove()) {
                     int roll = Compute.d6(1);
                     switch (roll) {
                         case 1:
-                            md.addStep(MoveStepType.TURN_LEFT);
-                            md.addStep(MoveStepType.TURN_LEFT);
+                            movePath.addStep(MoveStepType.TURN_LEFT);
+                            movePath.addStep(MoveStepType.TURN_LEFT);
                             break;
                         case 2:
-                            md.addStep(MoveStepType.TURN_LEFT);
+                            movePath.addStep(MoveStepType.TURN_LEFT);
                             break;
                         case 5:
-                            md.addStep(MoveStepType.TURN_RIGHT);
+                            movePath.addStep(MoveStepType.TURN_RIGHT);
                             break;
                         case 6:
-                            md.addStep(MoveStepType.TURN_RIGHT);
-                            md.addStep(MoveStepType.TURN_RIGHT);
+                            movePath.addStep(MoveStepType.TURN_RIGHT);
+                            movePath.addStep(MoveStepType.TURN_RIGHT);
                             break;
                     }
                 }
                 vel--;
             }
-            // check to see if old movement path contained a launch
-            if (oldmd.contains(MoveStepType.LAUNCH)) {
+            // check to see if old movement path contained aero launch
+            if (oldMovePath.contains(MoveStepType.LAUNCH)) {
                 // since launches have to be the last step
-                MoveStep lastStep = oldmd.getLastStep();
+                MoveStep lastStep = oldMovePath.getLastStep();
                 if (lastStep.getType() == MoveStepType.LAUNCH) {
-                    md.addStep(lastStep.getType(), lastStep.getLaunched());
+                    movePath.addStep(lastStep.getType(), lastStep.getLaunched());
                 }
             }
             // check to see if old movement path contained an undocking
-            if (oldmd.contains(MoveStepType.UNDOCK)) {
+            if (oldMovePath.contains(MoveStepType.UNDOCK)) {
                 // since launches have to be the last step
-                MoveStep lastStep = oldmd.getLastStep();
+                MoveStep lastStep = oldMovePath.getLastStep();
                 if (lastStep.getType() == MoveStepType.UNDOCK) {
-                    md.addStep(lastStep.getType(), lastStep.getLaunched());
+                    movePath.addStep(lastStep.getType(), lastStep.getLaunched());
                 }
             }
         }
-        return md;
+        return movePath;
     }
 
     /**
@@ -894,7 +889,7 @@ public class SharedUtility {
 
             Coords c = in.get(i);
             // check for split hexes
-            // check for some number after a multiple of 3 (1, 4, 7, etc)
+            // check for some number after a multiple of 3 (1, 4, 7, etc.)
             if (((i % 3) == 1) && split) {
                 Coords left = in.get(i);
                 Coords right = in.get(i + 1);
@@ -1002,7 +997,7 @@ public class SharedUtility {
         int fallHeight = data.getModifiers().get(data.getModifiers().size() - 1).getValue();
         double fallDamage = Math.round(movingEntity.getWeight() / 10.0)
               * (fallHeight + 1);
-        logger.trace("Predicting Leap fall damage for {} at {}% odds, {} fall height",
+        LOGGER.trace("Predicting Leap fall damage for {} at {}% odds, {} fall height",
               movingEntity.getDisplayName(),
               odds,
               fallHeight);
@@ -1014,32 +1009,29 @@ public class SharedUtility {
      * per leg); mod is 2 x distance leaped. 1.a 1 critical roll _per leg_. 1.b 1 _additional_ critical per leg that
      * takes internal structure damage due to leaping damage. 2. risk of falling; mod is distance leaped.
      *
-     * @param movingEntity
-     * @param data
-     *
-     * @return
      */
     public static double predictLeapDamage(Entity movingEntity, TargetRoll data) {
         int legMultiplier = (movingEntity.isQuadMek()) ? 4 : 2;
         double odds = Compute.oddsAbove(data.getValue(), false) / 100d;
         int fallHeight = data.getModifiers().get(data.getModifiers().size() - 1).getValue() / 2;
         double legDamage = fallHeight * (legMultiplier);
-        logger.trace("Predicting Leap damage for {} at {}% odds, {} fall height",
+        LOGGER.trace("Predicting Leap damage for {} at {}% odds, {} fall height",
               movingEntity.getDisplayName(),
               odds,
               fallHeight);
         int[] legLocations = { BipedMek.LOC_LLEG, BipedMek.LOC_RLEG, QuadMek.LOC_LARM, QuadMek.LOC_RARM };
 
         // Add required crits; say the effective leg "damage" from a crit is 20 for now.
+        int CRIT_VALUE = 100;
         legDamage += legMultiplier * CRIT_VALUE;
-        logger.trace("Adding {} leg critical chances as {} additional damage",
+        LOGGER.trace("Adding {} leg critical chances as {} additional damage",
               legMultiplier,
               legMultiplier * CRIT_VALUE);
 
         // Add additional crits for each leg that would take internal damage
         for (int i = 0; i < legMultiplier; i++) {
             if (movingEntity.getArmor(legLocations[i]) < fallHeight) {
-                logger.trace("Adding additional critical for leg {} due to internal structure damage", i);
+                LOGGER.trace("Adding additional critical for leg {} due to internal structure damage", i);
                 legDamage += CRIT_VALUE;
             }
         }

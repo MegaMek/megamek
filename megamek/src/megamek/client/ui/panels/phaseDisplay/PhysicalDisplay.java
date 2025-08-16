@@ -204,10 +204,10 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
               this,
               () -> jumpToTarget(false, true, false));
 
-        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_NOALLIES,
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_NO_ALLIES,
               this,
               () -> jumpToTarget(true, false, true));
-        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_NOALLIES,
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_NO_ALLIES,
               this,
               () -> jumpToTarget(false, false, true));
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -117,8 +117,7 @@ public class Client extends AbstractClient {
     private Set<BoardDimensions> availableSizes = new TreeSet<>();
     private AbstractSkillGenerator skillGenerator;
 
-    // FIXME: Should ideally be located elsewhere; the client should handle data,
-    // not gfx or UI-related stuff:
+    // FIXME: Should ideally be located elsewhere; the client should handle data, not gfx or UI-related stuff:
     private TilesetManager tilesetManager;
 
     public Client(String name, String host, int port) {
@@ -387,7 +386,6 @@ public class Client extends AbstractClient {
      * @param entities The collection of Entity objects to add. This should ideally be an {@link ArrayList<Entity>}, but
      *                 other kinds of {@link List} will be converted to an {@link ArrayList}.
      *
-     * @see megamek.server.totalwarfare.TWGameManager#receiveEntityAdd(Packet, int)
      */
     public void sendAddEntity(List<Entity> entities) {
         // Trying to pass a non-ArrayList jams the receiving client and prevents it from ever receiving more packets.
@@ -423,7 +421,7 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Sends a "set Artillery Autohit Hexes" packet
+     * Sends a "set Artillery AutoHit Hexes" packet
      */
     public void sendArtyAutoHitHexes(List<BoardLocation> hexes) {
         send(new Packet(PacketCommand.SET_ARTILLERY_AUTOHIT_HEXES, hexes));
@@ -493,26 +491,26 @@ public class Client extends AbstractClient {
     /**
      * Loads the entities from the data in the net command.
      */
-    @SuppressWarnings("unchecked")
-    protected void receiveEntities(Packet c) {
-        List<Entity> newEntities = (List<Entity>) c.getObject(0);
-        List<Entity> newOutOfGame = (List<Entity>) c.getObject(1);
-        Forces forces = (Forces) c.getObject(2);
+    protected void receiveEntities(Packet packet) {
+        List<Entity> newEntities = packet.getEntityList(0);
+        List<Entity> newOutOfGame = packet.getEntityList(1);
+        Forces forces = packet.getForces(2);
+
         // Replace the entities in the game.
         if (forces != null) {
             game.setForces(forces);
         }
+
         game.setEntitiesVector(newEntities);
-        if (newOutOfGame != null) {
-            game.setOutOfGameEntitiesVector(newOutOfGame);
-            for (Entity e : newOutOfGame) {
-                cacheImgTag(e);
-            }
+        game.setOutOfGameEntitiesVector(newOutOfGame);
+        for (Entity entity : newOutOfGame) {
+            cacheImgTag(entity);
         }
+
         // cache the image data for the entities and set force for entities
-        for (Entity e : newEntities) {
-            cacheImgTag(e);
-            e.setForceId(game.getForces().getForceId(e));
+        for (Entity entity : newEntities) {
+            cacheImgTag(entity);
+            entity.setForceId(game.getForces().getForceId(entity));
         }
 
         if (GUIPreferences.getInstance().getMiniReportShowSprites() &&
@@ -525,10 +523,10 @@ public class Client extends AbstractClient {
     /**
      * Receives a force-related update containing affected forces and affected entities
      */
-    @SuppressWarnings("unchecked")
-    protected void receiveForceUpdate(Packet c) {
-        Collection<Force> forces = (Collection<Force>) c.getObject(0);
-        Collection<Entity> entities = (Collection<Entity>) c.getObject(1);
+    protected void receiveForceUpdate(Packet packet) {
+        Collection<Force> forces = packet.getForceList(0);
+        Collection<Entity> entities = packet.getEntityList(1);
+
         for (Force force : forces) {
             getGame().getForces().replace(force.getId(), force);
         }
@@ -541,9 +539,8 @@ public class Client extends AbstractClient {
     /**
      * Receives a server packet commanding deletion of forces. Only valid in the lobby phase.
      */
-    protected void receiveForcesDelete(Packet c) {
-        @SuppressWarnings("unchecked")
-        Collection<Integer> forceIds = (Collection<Integer>) c.getObject(0);
+    protected void receiveForcesDelete(Packet packet) {
+        Collection<Integer> forceIds = packet.getIntList(0);
         Forces forces = game.getForces();
 
         // Gather the forces and entities to be deleted
@@ -567,32 +564,31 @@ public class Client extends AbstractClient {
     /**
      * Loads entity update data from the data in the net command.
      */
-    @SuppressWarnings("unchecked")
-    protected void receiveEntityUpdate(Packet c) {
-        int eindex = c.getIntValue(0);
-        Entity entity = (Entity) c.getObject(1);
-        Vector<UnitLocation> movePath = (Vector<UnitLocation>) c.getObject(2);
-        // Replace this entity in the game.
-        getGame().setEntity(eindex, entity, movePath);
+    protected void receiveEntityUpdate(Packet packet) {
+        int entityIndex = packet.getIntValue(0);
+        Entity entity = packet.getEntity(1);
+
+        if (entity != null) {
+            Vector<UnitLocation> movePath = packet.getUnitLocationVector(2);
+            // Replace this entity in the game.
+            getGame().setEntity(entityIndex, entity, movePath);
+        }
     }
 
     /**
      * Update multiple entities from the server. Used only in the lobby phase.
      */
-    @SuppressWarnings("unchecked")
-    protected void receiveEntitiesUpdate(Packet c) {
-        Collection<Entity> entities = (Collection<Entity>) c.getObject(0);
+    protected void receiveEntitiesUpdate(Packet packet) {
+        Collection<Entity> entities = packet.getEntityList(0);
         for (Entity entity : entities) {
             getGame().setEntity(entity.getId(), entity);
         }
     }
 
     protected void receiveEntityRemove(Packet packet) {
-        @SuppressWarnings("unchecked")
-        List<Integer> entityIds = (List<Integer>) packet.getObject(0);
+        List<Integer> entityIds = packet.getIntList(0);
         int condition = packet.getIntValue(1);
-        @SuppressWarnings("unchecked")
-        List<Force> forces = (List<Force>) packet.getObject(2);
+        List<Force> forces = packet.getForceList(2);
         // create a final image for the entity
         for (int id : entityIds) {
             cacheImgTag(game.getEntity(id));
@@ -607,7 +603,7 @@ public class Client extends AbstractClient {
     @SuppressWarnings("unchecked")
     protected void receiveEntityVisibilityIndicator(Packet packet) {
         Entity e = game.getEntity(packet.getIntValue(0));
-        if (e != null) { // we may not have this entity due to double blind
+        if (e != null) { // we may not have this entity due to double-blind
             e.setEverSeenByEnemy(packet.getBooleanValue(1));
             e.setVisibleToEnemy(packet.getBooleanValue(2));
             e.setDetectedByEnemy(packet.getBooleanValue(3));
@@ -625,14 +621,12 @@ public class Client extends AbstractClient {
         game.processGameEvent(new GameBoardChangeEvent(this));
     }
 
-    @SuppressWarnings("unchecked")
     protected void receiveDeployMinefields(Packet packet) {
-        game.addMinefields((Vector<Minefield>) packet.getObject(0));
+        game.addMinefields(packet.getMinefieldVector(0));
     }
 
-    @SuppressWarnings("unchecked")
     protected void receiveSendingMinefields(Packet packet) {
-        game.setMinefields((Vector<Minefield>) packet.getObject(0));
+        game.setMinefields(packet.getMinefieldVector(0));
     }
 
     @SuppressWarnings("unchecked")
@@ -648,11 +642,10 @@ public class Client extends AbstractClient {
         game.removeMinefield((Minefield) packet.getObject(0));
     }
 
-    @SuppressWarnings("unchecked")
     protected void receiveUpdateMinefields(Packet packet) {
         // only update information if you know about the minefield
         Vector<Minefield> newMines = new Vector<>();
-        for (Minefield mf : (Vector<Minefield>) packet.getObject(0)) {
+        for (Minefield mf : packet.getMinefieldVector(0)) {
             if (getLocalPlayer().containsMinefield(mf)) {
                 newMines.add(mf);
             }
@@ -663,17 +656,15 @@ public class Client extends AbstractClient {
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected void receiveBuildingUpdate(Packet packet) {
-        for (Building building : (List<Building>) packet.getObject(0)) {
+        for (Building building : packet.getBuildingList(0)) {
             game.getBoard(building.getBoardId()).updateBuilding(building);
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected void receiveBuildingCollapse(Packet packet) {
         int boardId = packet.getIntValue(1);
-        game.getBoard(boardId).collapseBuilding((Vector<Coords>) packet.getObject(0));
+        game.getBoard(boardId).collapseBuilding(packet.getCoordsVector(0));
     }
 
     /**
@@ -686,18 +677,22 @@ public class Client extends AbstractClient {
         boolean addAction = true;
         for (EntityAction ea : vector) {
             int entityId = ea.getEntityId();
-            if ((ea instanceof TorsoTwistAction) && game.hasEntity(entityId)) {
-                TorsoTwistAction tta = (TorsoTwistAction) ea;
+            if ((ea instanceof TorsoTwistAction tta) && game.hasEntity(entityId)) {
                 Entity entity = game.getEntity(entityId);
-                entity.setSecondaryFacing(tta.getFacing());
-            } else if ((ea instanceof FlipArmsAction) && game.hasEntity(entityId)) {
-                FlipArmsAction faa = (FlipArmsAction) ea;
+                if (entity != null) {
+                    entity.setSecondaryFacing(tta.getFacing());
+                }
+            } else if ((ea instanceof FlipArmsAction faa) && game.hasEntity(entityId)) {
                 Entity entity = game.getEntity(entityId);
-                entity.setArmsFlipped(faa.getIsFlipped());
+                if (entity != null) {
+                    entity.setArmsFlipped(faa.getIsFlipped());
+                }
             } else if ((ea instanceof DodgeAction) && game.hasEntity(entityId)) {
                 Entity entity = game.getEntity(entityId);
-                entity.dodging = true;
-                addAction = false;
+                if (entity != null) {
+                    entity.dodging = true;
+                    addAction = false;
+                }
             } else if (ea instanceof ClubAttackAction clubAttackAction) {
                 Mounted<?> club = clubAttackAction.getClub();
                 club.restore();
@@ -720,7 +715,7 @@ public class Client extends AbstractClient {
             return "[null report vector]";
         }
 
-        StringBuffer report = new StringBuffer();
+        StringBuilder report = new StringBuilder();
         for (Report r : reports) {
             report.append(r.text());
         }
@@ -744,8 +739,9 @@ public class Client extends AbstractClient {
         String updatedReport = report.toString();
         // loop through the hashset of unique ids and replace the ids with img tags
         for (int i : setEntity) {
-            if (getCachedImgTag(i) != null) {
-                updatedReport = updatedReport.replace("<span id='" + i + "'></span>", getCachedImgTag(i));
+            String cachedImageTag = getCachedImgTag(i);
+            if (cachedImageTag != null) {
+                updatedReport = updatedReport.replace("<span id='" + i + "'></span>", cachedImageTag);
             }
         }
 
@@ -886,7 +882,7 @@ public class Client extends AbstractClient {
     @SuppressWarnings("unchecked")
     @Override
     protected boolean handleGameSpecificPacket(Packet packet) {
-        switch (packet.getCommand()) {
+        switch (packet.command()) {
             case SERVER_GREETING:
                 if (this instanceof Princess) {
                     ((Princess) this).sendPrincessSettings();
@@ -974,7 +970,7 @@ public class Client extends AbstractClient {
                 }
                 game.addReports((List<Report>) packet.getObject(0));
                 roundReport = receiveReport(game.getReports(game.getRoundCount()));
-                if (packet.getCommand().isSendingReportsTacticalGenius()) {
+                if (packet.command().isSendingReportsTacticalGenius()) {
                     game.processGameEvent(new GameReportEvent(this, roundReport));
                 }
                 break;
@@ -989,8 +985,8 @@ public class Client extends AbstractClient {
                     // Re-write gamelog.txt from scratch
                     initGameLog();
                     if (log != null) {
-                        for (int i = 0; i < allReports.size(); i++) {
-                            log.append(receiveReport(allReports.get(i)));
+                        for (List<Report> allReport : allReports) {
+                            log.append(receiveReport(allReport));
                         }
                     }
                 }
@@ -1094,21 +1090,21 @@ public class Client extends AbstractClient {
                 receiveEntityNovaNetworkModeChange(packet);
                 break;
             case CLIENT_FEEDBACK_REQUEST:
-                final PacketCommand cfrType = (PacketCommand) packet.getData()[0];
+                final PacketCommand cfrType = (PacketCommand) packet.data()[0];
                 GameCFREvent cfrEvt = new GameCFREvent(this, cfrType);
                 switch (cfrType) {
                     case CFR_DOMINO_EFFECT:
-                        cfrEvt.setEntityId((int) packet.getData()[1]);
+                        cfrEvt.setEntityId((int) packet.data()[1]);
                         break;
                     case CFR_AMS_ASSIGN:
-                        cfrEvt.setEntityId((int) packet.getData()[1]);
-                        cfrEvt.setAmsEquipNum((int) packet.getData()[2]);
-                        cfrEvt.setWAAs((List<WeaponAttackAction>) packet.getData()[3]);
+                        cfrEvt.setEntityId((int) packet.data()[1]);
+                        cfrEvt.setAmsEquipNum((int) packet.data()[2]);
+                        cfrEvt.setWAAs((List<WeaponAttackAction>) packet.data()[3]);
                         break;
                     case CFR_APDS_ASSIGN:
-                        cfrEvt.setEntityId((int) packet.getData()[1]);
-                        cfrEvt.setApdsDists((List<Integer>) packet.getData()[2]);
-                        cfrEvt.setWAAs((List<WeaponAttackAction>) packet.getData()[3]);
+                        cfrEvt.setEntityId((int) packet.data()[1]);
+                        cfrEvt.setApdsDists((List<Integer>) packet.data()[2]);
+                        cfrEvt.setWAAs((List<WeaponAttackAction>) packet.data()[3]);
                         break;
                     case CFR_HIDDEN_PBS:
                         cfrEvt.setEntityId((int) packet.getObject(1));

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ package megamek.client.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.io.Serial;
 
 /**
  * A helper class for setting line-wise GridBagLayouts Do not use this if you need a Component to span two rows
@@ -43,6 +44,7 @@ import java.awt.Insets;
  * @author beerockxs
  */
 public class GBC extends GridBagConstraints {
+    @Serial
     private static final long serialVersionUID = 6653886439201996453L;
 
     private GBC() {
@@ -69,7 +71,7 @@ public class GBC extends GridBagConstraints {
 
     /**
      * @return a <code>GridBagConstraints</code> that will have a component fill a line, and have a 10 pixel inset to
-     *       the south (ie. a paragraph)
+     *       the south (i.e. a paragraph)
      */
     public static GBC eop() {
         return eol().insets(0, 0, 0, 10);
@@ -91,11 +93,6 @@ public class GBC extends GridBagConstraints {
 
     /**
      * change the insets of this <code>GridBagConstraints</code>
-     *
-     * @param left
-     * @param top
-     * @param right
-     * @param bottom
      *
      * @return <code>this</code>
      *
@@ -139,86 +136,86 @@ public class GBC extends GridBagConstraints {
     /**
      * Set the padding of this <code>GridBagConstraints</code>
      *
-     * @param padx the <code>int</code> ipadx to set
-     * @param pady the <code>int</code> ipady to set
+     * @param padX the <code>int</code> padX to set
+     * @param padY the <code>int</code> padY to set
      *
      * @return <code>this</code>
      *
      * @see GridBagConstraints#ipadx
      * @see GridBagConstraints#ipady
      */
-    public GBC pad(int padx, int pady) {
-        ipadx = padx;
-        ipady = pady;
+    public GBC pad(int padX, int padY) {
+        ipadx = padX;
+        ipady = padY;
         return this;
     }
 
     /**
-     * Set the gridx of this <code>GridBagConstraints</code>
+     * Set the gridX of this <code>GridBagConstraints</code>
      *
-     * @param gridx the <code>int</code> gridx to set
+     * @param gridX the <code>int</code> gridX to set
      *
      * @return <code>this</code>
      *
      * @see GridBagConstraints#gridx
      */
-    public GBC gridx(int gridx) {
-        this.gridx = gridx;
+    public GBC gridX(int gridX) {
+        this.gridx = gridX;
         return this;
     }
 
     /**
-     * Set the gridy of this <code>GridBagConstraints</code>
+     * Set the gridY of this <code>GridBagConstraints</code>
      *
-     * @param gridy the <code>int</code> gridy to set
+     * @param gridY the <code>int</code> gridY to set
      *
      * @return <code>this</code>
      *
      * @see GridBagConstraints#gridy
      */
-    public GBC gridy(int gridy) {
-        this.gridy = gridy;
+    public GBC gridY(int gridY) {
+        this.gridy = gridY;
         return this;
     }
 
     /**
-     * Set the gridheight of  this <code>GridBagConstraints</code>
+     * Set the grid height of  this <code>GridBagConstraints</code>
      *
-     * @param height the <code>int</code> gridheight to set
+     * @param height the <code>int</code> grid height to set
      *
      * @return <code>this</code>
      *
      * @see GridBagConstraints#gridheight
      */
-    public GBC gridheight(int height) {
+    public GBC gridHeight(int height) {
         gridheight = height;
         return this;
     }
 
     /**
-     * Set the gridwidth of  this <code>GridBagConstraints</code>
+     * Set the grid width of  this <code>GridBagConstraints</code>
      *
-     * @param width the <code>int</code> gridheight to set
+     * @param width the <code>int</code> grid width to set
      *
      * @return <code>this</code>
      *
      * @see GridBagConstraints#gridwidth
      */
-    public GBC gridwidth(int width) {
+    public GBC gridWidth(int width) {
         gridwidth = width;
         return this;
     }
 
     /**
-     * Set the weightx of this <code>GridBagConstraints</code>
+     * Set the weightX of this <code>GridBagConstraints</code>
      *
-     * @param weight the <code>double</code> weightx to set
+     * @param weight the <code>double</code> weightX to set
      *
      * @return <code>this</code>
      *
      * @see GridBagConstraints#weightx
      */
-    public GBC weightx(double weight) {
+    public GBC weightX(double weight) {
         weightx = weight;
         return this;
     }

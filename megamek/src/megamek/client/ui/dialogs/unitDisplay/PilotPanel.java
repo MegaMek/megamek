@@ -43,8 +43,8 @@ import javax.swing.JToggleButton;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.widget.BackGroundDrawer;
-import megamek.client.ui.widget.PicMap;
-import megamek.client.ui.widget.PilotMapSet;
+import megamek.client.ui.widget.mapset.PilotMapSet;
+import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.CrewType;
 import megamek.common.Entity;
 

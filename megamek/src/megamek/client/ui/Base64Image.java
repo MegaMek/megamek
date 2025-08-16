@@ -110,8 +110,8 @@ public class Base64Image implements Serializable {
             synchronized (this) {
                 if (image == null) {
                     byte[] imageBytes = Base64.getDecoder().decode(base64encodedImage);
-                    try (ByteArrayInputStream inStreambj = new ByteArrayInputStream(imageBytes)) {
-                        image = ImageIO.read(inStreambj);
+                    try (ByteArrayInputStream inStreamBytes = new ByteArrayInputStream(imageBytes)) {
+                        image = ImageIO.read(inStreamBytes);
                     } catch (IOException ex) {
                         logger.warn(ex, "Could not convert base64 to image");
                         image = ImageUtil.failStandardImage();

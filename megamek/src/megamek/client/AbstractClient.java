@@ -389,7 +389,7 @@ public abstract class AbstractClient implements IClient {
             return;
         }
         try {
-            if (packet.getCommand() == PacketCommand.MULTI_PACKET) {
+            if (packet.command() == PacketCommand.MULTI_PACKET) {
                 // TODO gather any fired events and fire them only at the end of the packets,
                 // possibly only for SBF
                 @SuppressWarnings("unchecked") var includedPackets = (List<Packet>) packet.getObject(0);
@@ -400,12 +400,12 @@ public abstract class AbstractClient implements IClient {
                 boolean isHandled = handleGameIndependentPacket(packet);
                 isHandled |= handleGameSpecificPacket(packet);
                 if (!isHandled) {
-                    String message = String.format("Unknown PacketCommand of %s", packet.getCommand().name());
+                    String message = String.format("Unknown PacketCommand of %s", packet.command().name());
                     logger.error(message);
                 }
             }
         } catch (Exception ex) {
-            String message = String.format("Failed to parse Packet command of %s", packet.getCommand());
+            String message = String.format("Failed to parse Packet command of %s", packet.command());
             logger.error(ex, message);
         }
     }
@@ -435,7 +435,7 @@ public abstract class AbstractClient implements IClient {
      */
     @SuppressWarnings("unchecked")
     protected boolean handleGameIndependentPacket(Packet packet) {
-        switch (packet.getCommand()) {
+        switch (packet.command()) {
             case SERVER_GREETING:
                 connected = true;
                 send(new Packet(PacketCommand.CLIENT_NAME, name, isBot()));

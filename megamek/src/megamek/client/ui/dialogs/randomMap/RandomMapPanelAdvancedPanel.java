@@ -51,9 +51,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.util.VerifyInRange;
-import megamek.client.ui.util.VerifyIsInteger;
-import megamek.client.ui.util.VerifyIsPositiveInteger;
+import megamek.client.ui.util.verifier.VerifyInRange;
+import megamek.client.ui.util.verifier.VerifyIsInteger;
+import megamek.client.ui.util.verifier.VerifyIsPositiveInteger;
 import megamek.client.ui.widget.VerifiableTextField;
 import megamek.common.MapSettings;
 import megamek.common.annotations.Nullable;

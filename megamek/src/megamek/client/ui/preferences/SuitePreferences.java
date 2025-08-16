@@ -80,7 +80,7 @@ public class SuitePreferences {
 
     // region Write To File
     public void saveToFile(final String filePath) {
-        logger.debug("Saving nameToPreferencesMap to: " + filePath);
+        logger.debug("Saving nameToPreferencesMap to: {}", filePath);
         final JsonFactory factory = new JsonFactory();
         try (FileOutputStream output = new FileOutputStream(filePath);
               JsonGenerator writer = factory.createGenerator(output).useDefaultPrettyPrinter()) {
@@ -208,7 +208,7 @@ public class SuitePreferences {
             try {
                 readPreferenceElement(parser, elements);
             } catch (IOException ex) {
-                logger.warn(ex, "Error reading elements for node: %s.", className);
+                logger.warn(ex, "Error reading elements for node: {}.", className);
             }
         }
 

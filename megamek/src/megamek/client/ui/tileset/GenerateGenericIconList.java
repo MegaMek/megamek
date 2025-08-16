@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -93,6 +93,18 @@ public class GenerateGenericIconList implements MekSummaryCache.Listener {
 
         System.out.println();
         System.out.println("Units using Chassis Icons (not including units that have no model!):");
+        outputChassisNames(chassisUsing);
+        
+        System.out.println("Units using Generic Icons:");
+        outputChassisNames(genericsUsing);
+        int genericCount = genericsUsing.values().stream().mapToInt(List::size).sum();
+        System.out.println("Total units with generic icons: " + genericCount);
+        for (String type : genericsUsing.keySet()) {
+            System.out.println("    " + type + genericsUsing.get(type).size());
+        }
+    }
+
+    private void outputChassisNames(Map<String, List<String>> chassisUsing) {
         for (String type : chassisUsing.keySet()) {
             System.out.println();
             System.out.println(type);
@@ -103,22 +115,6 @@ public class GenerateGenericIconList implements MekSummaryCache.Listener {
         }
 
         System.out.println();
-        System.out.println("Units using Generic Icons:");
-        for (String type : genericsUsing.keySet()) {
-            System.out.println();
-            System.out.println(type);
-            List<String> names = genericsUsing.get(type);
-            for (String name : names) {
-                System.out.println("    " + name);
-            }
-        }
-
-        System.out.println();
-        int genericCount = genericsUsing.values().stream().mapToInt(List::size).sum();
-        System.out.println("Total units with generic icons: " + genericCount);
-        for (String type : genericsUsing.keySet()) {
-            System.out.println("    " + type + genericsUsing.get(type).size());
-        }
     }
 
     private static String getTypeName(Entity entity) {

@@ -54,16 +54,12 @@ public class EntityWreckHelper {
         // for units that were destroyed by ejection rather than unit destruction
         // for units on top of a bridge (looks kind of stupid)
 
-        if (entity.getGame().getBoard(entity).isSpace() ||
-              (entity instanceof Mek) ||
-              (entity instanceof Infantry) ||
-              (entity instanceof GunEmplacement) ||
-              !entity.getSecondaryPositions().isEmpty() ||
-              entityOnBridge(entity)) {
-            return false;
-        }
-
-        return true;
+        return !entity.getGame().getBoard(entity).isSpace() &&
+              (!(entity instanceof Mek)) &&
+              (!(entity instanceof Infantry)) &&
+              (!(entity instanceof GunEmplacement)) &&
+              entity.getSecondaryPositions().isEmpty() &&
+              !entityOnBridge(entity);
     }
 
     public static boolean useExplicitWreckImage(Entity entity) {
@@ -110,14 +106,11 @@ public class EntityWreckHelper {
             return null;
         }
 
-        switch (entity.getMovementMode()) {
-            case WHEELED:
-                return "wheels";
-            case TRACKED:
-                return "treads";
-            default:
-                return null;
-        }
+        return switch (entity.getMovementMode()) {
+            case WHEELED -> "wheels";
+            case TRACKED -> "treads";
+            default -> null;
+        };
     }
 
     /**
@@ -134,10 +127,10 @@ public class EntityWreckHelper {
                 if ((entity.getWeight() > 0) && (entity.getWeight() < 20)) {
                     return TilesetManager.FILENAME_SUFFIX_WRECKS_ULTRALIGHT;
                 } else {
-                    return TilesetManager.FILENAME_SUFFIX_WRECKS_ASSAULTPLUS;
+                    return TilesetManager.FILENAME_SUFFIX_WRECKS_ASSAULT_PLUS;
                 }
             default:
-                return TilesetManager.FILENAME_SUFFIX_WRECKS_ASSAULTPLUS;
+                return TilesetManager.FILENAME_SUFFIX_WRECKS_ASSAULT_PLUS;
         }
     }
 
@@ -149,9 +142,7 @@ public class EntityWreckHelper {
         if (hex != null) {
             boolean hexHasBridge = hex.containsTerrain(Terrains.BRIDGE_CF);
 
-            if (hexHasBridge && entity.getElevation() >= hex.ceiling()) {
-                return true;
-            }
+            return hexHasBridge && entity.getElevation() >= hex.ceiling();
         }
 
         return false;

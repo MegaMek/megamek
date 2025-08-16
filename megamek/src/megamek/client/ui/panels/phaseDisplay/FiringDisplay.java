@@ -168,9 +168,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                           + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_VALID);
                     result += "<BR>";
                     result += "&nbsp;&nbsp;" + msgNoAllies + " " + msg_next + ": "
-                          + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_NOALLIES);
+                          + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_NO_ALLIES);
                     result += "&nbsp;&nbsp;" + msg_previous + ": "
-                          + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_NOALLIES);
+                          + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_NO_ALLIES);
                     result += "<BR>";
                     result += "&nbsp;&nbsp;" + msg_valid + " (" + msgNoAllies + ") " + msg_next + ": "
                           + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES);
@@ -325,9 +325,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         controller.registerCommandAction(KeyCommandBind.PREV_TARGET_VALID, this,
               () -> jumpToTarget(false, true, false));
 
-        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_NOALLIES, this,
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_NO_ALLIES, this,
               () -> jumpToTarget(true, false, true));
-        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_NOALLIES, this,
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_NO_ALLIES, this,
               () -> jumpToTarget(false, false, true));
 
         controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES, this,

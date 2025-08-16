@@ -55,7 +55,7 @@ import megamek.common.preference.PreferenceManager;
 public final class FluffImageHelper {
 
     public static final String DIR_NAME_BA = "BattleArmor";
-    public static final String DIR_NAME_CONVFIGHTER = "ConvFighter";
+    public static final String DIR_NAME_CONV_FIGHTER = "ConvFighter";
     public static final String DIR_NAME_DROPSHIP = "DropShip";
     public static final String DIR_NAME_FIGHTER = "Fighter";
     public static final String DIR_NAME_INFANTRY = "Infantry";
@@ -63,7 +63,7 @@ public final class FluffImageHelper {
     public static final String DIR_NAME_MEK = "Mek";
     public static final String DIR_NAME_PROTOMEK = "ProtoMek";
     public static final String DIR_NAME_SMALLCRAFT = "Small Craft";
-    public static final String DIR_NAME_SPACESTATION = "Space Station";
+    public static final String DIR_NAME_SPACE_STATION = "Space Station";
     public static final String DIR_NAME_VEHICLE = "Vehicle";
     public static final String DIR_NAME_WARSHIP = "WarShip";
     public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".PNG", ".png", ".JPG",
@@ -133,7 +133,7 @@ public final class FluffImageHelper {
 
         // UserDir matches
         // For internal use: in [user dir]/data/images/rs/<type> images for record sheets can be placed; these will
-        // be preferentially loaded when the recordSheet paremeter is true (i.e. when called from RS printing)
+        // be preferentially loaded when the recordSheet parameter is true (i.e. when called from RS printing)
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
         if (!userDir.isBlank() && new File(userDir).isDirectory()) {
             var fluffUserDir = new File(userDir, fluffDir.toString());
@@ -225,11 +225,11 @@ public final class FluffImageHelper {
         if (unit.isWarShip()) {
             return DIR_NAME_WARSHIP;
         } else if (unit.isSpaceStation()) {
-            return DIR_NAME_SPACESTATION;
+            return DIR_NAME_SPACE_STATION;
         } else if (unit.isJumpShip()) {
             return DIR_NAME_JUMPSHIP;
         } else if (unit.isConventionalFighter() || unit.isFixedWingSupport()) {
-            return DIR_NAME_CONVFIGHTER;
+            return DIR_NAME_CONV_FIGHTER;
         } else if (unit.isDropShip()) {
             return DIR_NAME_DROPSHIP;
         } else if (unit.isSmallCraft()) {

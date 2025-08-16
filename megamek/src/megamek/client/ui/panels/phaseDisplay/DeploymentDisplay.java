@@ -131,7 +131,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
 
             if (this == DeployCommand.DEPLOY_TURN) {
-                result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.DEPLOY_TURNUNIT);
+                result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.DEPLOY_TURN_UNIT);
             }
 
             return result;
@@ -209,7 +209,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         MegaMekController controller = clientgui.controller;
         controller.registerCommandAction(KeyCommandBind.NEXT_UNIT, this, this::nextUnit);
-        controller.registerCommandAction(KeyCommandBind.DEPLOY_TURNUNIT, this, this::turnUnit);
+        controller.registerCommandAction(KeyCommandBind.DEPLOY_TURN_UNIT, this, this::turnUnit);
     }
 
     private void nextUnit() {

@@ -50,10 +50,10 @@ import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.BackGroundDrawer;
-import megamek.client.ui.widget.PMUtil;
-import megamek.client.ui.widget.PicMap;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
+import megamek.client.ui.widget.picmap.PMUtil;
+import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.EntityVisibilityUtils;
@@ -109,53 +109,53 @@ public class SummaryPanel extends PicMap {
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
+        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.V_ALIGN_TOP;
         tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
               udSpec.getTopLine()).toString());
         PMUtil.setImage(tile, unitDisplayPanel);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
+        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.V_ALIGN_BOTTOM;
         tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
               udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, unitDisplayPanel);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
+        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.H_ALIGN_LEFT;
         tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
               udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, unitDisplayPanel);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
+        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.H_ALIGN_RIGHT;
         tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
               udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, unitDisplayPanel);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-              | BackGroundDrawer.HALIGN_LEFT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_TOP
+              | BackGroundDrawer.H_ALIGN_LEFT;
         tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
               udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, unitDisplayPanel);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-              | BackGroundDrawer.HALIGN_LEFT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_BOTTOM
+              | BackGroundDrawer.H_ALIGN_LEFT;
         tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
               udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, unitDisplayPanel);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-              | BackGroundDrawer.HALIGN_RIGHT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_TOP
+              | BackGroundDrawer.H_ALIGN_RIGHT;
         tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
               udSpec.getTopRightCorner()).toString());
         PMUtil.setImage(tile, unitDisplayPanel);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-              | BackGroundDrawer.HALIGN_RIGHT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_BOTTOM
+              | BackGroundDrawer.H_ALIGN_RIGHT;
         tile = unitDisplayPanel.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
               udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, unitDisplayPanel);

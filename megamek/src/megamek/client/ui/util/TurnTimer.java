@@ -71,7 +71,7 @@ public class TurnTimer {
 
     public TurnTimer(int limit, AbstractPhaseDisplay pD, IClient client) {
         phaseDisplay = pD;
-        // linit in seconds.
+        // limit in seconds.
         timeLimit = limit;
         extendTimer = false;
         expired = false;

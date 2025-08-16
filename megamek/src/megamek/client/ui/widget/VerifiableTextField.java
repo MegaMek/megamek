@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,14 +39,15 @@ import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.util.DataVerifier;
-import megamek.client.ui.util.VerifyNotNullOrEmpty;
+import megamek.client.ui.util.verifier.DataVerifier;
+import megamek.client.ui.util.verifier.VerifyNotNullOrEmpty;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.util.StringUtil;
 
@@ -60,6 +61,7 @@ import megamek.common.util.StringUtil;
  */
 public class VerifiableTextField extends JTextField implements FocusListener {
 
+    @Serial
     private static final long serialVersionUID = -4169356645839508584L;
 
     private boolean selectAllTextOnGotFocus = false;
@@ -84,10 +86,10 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         addFocusListener(this);
     }
 
-    public VerifiableTextField(int columns, boolean isReqd, boolean selectOnFoc, DataVerifier ver)
+    public VerifiableTextField(int columns, boolean isRequired, boolean selectOnFoc, DataVerifier ver)
           throws HeadlessException {
         this(null, columns);
-        setRequired(isReqd);
+        setRequired(isRequired);
         setSelectAllTextOnGotFocus(selectOnFoc);
         addVerifier(ver);
     }
@@ -135,6 +137,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         for (DataVerifier v : verifiers) {
             if (v instanceof VerifyNotNullOrEmpty) {
                 required = true;
+                break;
             }
         }
         return required;
@@ -228,7 +231,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
 
     /**
      * Compares the text field's value to the list of {@link DataVerifier} objects to ensure the validity of the data.
-     * If the text value passes all validation checks, a NULL value will be returned.  Otherwise a description of the
+     * If the text value passes all validation checks, a NULL value will be returned.  Otherwise, a description of the
      * failed validation will be returned. Does not verify if the field is disabled.
      *
      * @return NULL if the text in the field is valid. A description of the failure otherwise.
@@ -273,8 +276,8 @@ public class VerifiableTextField extends JTextField implements FocusListener {
     }
 
     /**
-     * Returns an "invalid background" color. It is mixed from the GUIPreferences WarningColor and the UIManager
-     * textfield background color.
+     * Returns an "invalid background" color. It is mixed from the GUIPreferences WarningColor and the UIManager text
+     * field background color.
      */
     public static Color getInvalidColor() {
         Color bgColor = UIManager.getColor("TextField.background");

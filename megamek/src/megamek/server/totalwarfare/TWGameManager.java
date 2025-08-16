@@ -692,7 +692,7 @@ public class TWGameManager extends AbstractGameManager {
     public void handlePacket(int connId, Packet packet) {
         super.handlePacket(connId, packet);
         final Player player = game.getPlayer(connId);
-        switch (packet.getCommand()) {
+        switch (packet.command()) {
             case PRINCESS_SETTINGS:
                 if (player != null) {
                     if (game.getBotSettings() == null) {
@@ -709,7 +709,7 @@ public class TWGameManager extends AbstractGameManager {
                 receiveForwardIni(connId);
                 break;
             case BLDG_EXPLODE:
-                DemolitionCharge charge = (DemolitionCharge) packet.getData()[0];
+                DemolitionCharge charge = (DemolitionCharge) packet.data()[0];
                 if (charge.playerId == connId) {
                     if (!explodingCharges.contains(charge)) {
                         explodingCharges.add(charge);
@@ -822,7 +822,7 @@ public class TWGameManager extends AbstractGameManager {
                 resetPlayersDone();
                 break;
             case ENTITY_WORDER_UPDATE:
-                Object[] data = packet.getData();
+                Object[] data = packet.data();
                 Entity ent = game.getEntity((Integer) data[0]);
                 if (ent != null) {
                     WeaponSortOrder order = (WeaponSortOrder) data[1];
@@ -6283,7 +6283,7 @@ public class TWGameManager extends AbstractGameManager {
                           rp.getConnectionId()));
                     continue;
                 }
-                return (int) rp.getPacket().getData()[1];
+                return (int) rp.getPacket().data()[1];
             }
         }
     }
@@ -6315,7 +6315,7 @@ public class TWGameManager extends AbstractGameManager {
                           rp.getConnectionId()));
                     continue;
                 }
-                return (int) rp.getPacket().getData()[1];
+                return (int) rp.getPacket().data()[1];
             }
         }
     }
@@ -9207,7 +9207,7 @@ public class TWGameManager extends AbstractGameManager {
                                 logger.error("Excepted a CFR_DOMINO_EFFECT CFR packet, received: " + cfrType);
                                 throw new IllegalStateException();
                             }
-                            MovePath mp = (MovePath) rp.getPacket().getData()[1];
+                            MovePath mp = (MovePath) rp.getPacket().data()[1];
                             // Move based on the feedback
                             if (mp != null) {
                                 mp.setGame(getGame());
@@ -9973,7 +9973,7 @@ public class TWGameManager extends AbstractGameManager {
                         logger.error("Expected a CFR_APDS_ASSIGN CFR packet, received: " + cfrType);
                         throw new IllegalStateException();
                     }
-                    Integer waaIndex = (Integer) rp.getPacket().getData()[1];
+                    Integer waaIndex = (Integer) rp.getPacket().data()[1];
                     if (waaIndex != null) {
                         targetedWAA = vAttacksInArc.get(waaIndex);
                     }
@@ -10046,7 +10046,7 @@ public class TWGameManager extends AbstractGameManager {
                             logger.error("Expected a CFR_AMS_ASSIGN CFR packet, received: " + cfrType);
                             throw new IllegalStateException();
                         }
-                        Integer waaIndex = (Integer) rp.getPacket().getData()[1];
+                        Integer waaIndex = (Integer) rp.getPacket().data()[1];
                         if (waaIndex != null) {
                             targetedWAA = vAttacksInArc.get(waaIndex);
                         }

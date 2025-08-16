@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -70,7 +70,6 @@ public class ImageAtlasMap {
     /**
      * Constructor that takes an existing map.
      *
-     * @param imgFileToAtlasMap
      */
     public ImageAtlasMap(ImageAtlasRecords imgFileToAtlasMap) {
         this.imgFileToAtlasMap = imgFileToAtlasMap;
@@ -91,9 +90,6 @@ public class ImageAtlasMap {
     /**
      * Return the value for the given key, which is converted to a UNIX-style path string.
      *
-     * @param key
-     *
-     * @return
      */
     public String get(Path key) {
         String keyString = FilenameUtils.separatorsToUnix(key.toString());
@@ -103,9 +99,6 @@ public class ImageAtlasMap {
     /**
      * Return true if the atlas map contains the given path, which is converted to UNIX-style path strings.
      *
-     * @param key
-     *
-     * @return
      */
     public boolean containsKey(Path key) {
         String valueString = FilenameUtils.separatorsToUnix(key.toString());
@@ -141,7 +134,6 @@ public class ImageAtlasMap {
      *
      * @param filePath File to read from. Primarily used for testing but can be utilized elsewhere
      *
-     * @return
      */
     public static @Nullable ImageAtlasMap readFromFile(File filePath) {
         if (!filePath.exists()) {
@@ -164,7 +156,6 @@ public class ImageAtlasMap {
     /**
      * Read the map from the image atlas map file.
      *
-     * @return
      */
     public static @Nullable ImageAtlasMap readFromFile() {
         return ImageAtlasMap.readFromFile(Configuration.imageFileAtlasMapFile());

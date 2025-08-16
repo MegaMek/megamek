@@ -133,7 +133,7 @@ public class Precognition implements Runnable {
         // it may be being updated
         GAME_LOCK.lock();
         try {
-            switch (c.getCommand()) {
+            switch (c.command()) {
                 case PLAYER_UPDATE, PLAYER_ADD:
                     receivePlayerInfo(c);
                     break;
@@ -265,21 +265,21 @@ public class Precognition implements Runnable {
                     receiveEntityNovaNetworkModeChange(c);
                     break;
                 case CLIENT_FEEDBACK_REQUEST:
-                    final PacketCommand cfrType = (PacketCommand) c.getData()[0];
+                    final PacketCommand cfrType = (PacketCommand) c.data()[0];
                     GameCFREvent cfrEvt = new GameCFREvent(this, cfrType);
                     switch (cfrType) {
                         case CFR_DOMINO_EFFECT:
-                            cfrEvt.setEntityId((int) c.getData()[1]);
+                            cfrEvt.setEntityId((int) c.data()[1]);
                             break;
                         case CFR_AMS_ASSIGN:
-                            cfrEvt.setEntityId((int) c.getData()[1]);
-                            cfrEvt.setAmsEquipNum((int) c.getData()[2]);
-                            cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
+                            cfrEvt.setEntityId((int) c.data()[1]);
+                            cfrEvt.setAmsEquipNum((int) c.data()[2]);
+                            cfrEvt.setWAAs((List<WeaponAttackAction>) c.data()[3]);
                             break;
                         case CFR_APDS_ASSIGN:
-                            cfrEvt.setEntityId((int) c.getData()[1]);
-                            cfrEvt.setApdsDists((List<Integer>) c.getData()[2]);
-                            cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
+                            cfrEvt.setEntityId((int) c.data()[1]);
+                            cfrEvt.setApdsDists((List<Integer>) c.data()[2]);
+                            cfrEvt.setWAAs((List<WeaponAttackAction>) c.data()[3]);
                             break;
                         default:
                             break;
@@ -312,10 +312,10 @@ public class Precognition implements Runnable {
                 case LOAD_SAVEGAME:
                 case SENDING_AVAILABLE_MAP_SIZES:
                 case SCRIPTED_MESSAGE:
-                    LOGGER.debug("Intentionally ignoring PacketCommand: {}", c.getCommand().name());
+                    LOGGER.debug("Intentionally ignoring PacketCommand: {}", c.command().name());
                     break;
                 default:
-                    LOGGER.error("Attempted to parse unknown PacketCommand: {}", c.getCommand().name());
+                    LOGGER.error("Attempted to parse unknown PacketCommand: {}", c.command().name());
                     break;
             }
         } catch (Exception ex) {

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -57,18 +57,18 @@ public enum KeyCommandBind {
     TOGGLE_CHAT("toggleChat", VK_ENTER),
     // Activates chat box and adds the command character (/)
     TOGGLE_CHAT_CMD("toggleChatCmd", VK_SLASH),
-    DEPLOY_TURNUNIT("deployTurnUnit", VK_T, SHIFT_DOWN_MASK),
+    DEPLOY_TURN_UNIT("deployTurnUnit", VK_T, SHIFT_DOWN_MASK),
     // Move one hex forward
-    MOVE_STEPFORWARD("moveStepForward", VK_W, SHIFT_DOWN_MASK),
+    MOVE_STEP_FORWARD("moveStepForward", VK_W, SHIFT_DOWN_MASK),
     // Move one hex backward (back up)
-    MOVE_STEPBACKWARD("moveStepBackward", VK_S, SHIFT_DOWN_MASK),
-    // Change facing one hexside to the left
+    MOVE_STEP_BACKWARD("moveStepBackward", VK_S, SHIFT_DOWN_MASK),
+    // Change facing one hex side to the left
     TURN_LEFT("turnLeft", VK_A, SHIFT_DOWN_MASK),
-    // Change facing one hexside to the right
+    // Change facing one hex side to the right
     TURN_RIGHT("turnRight", VK_D, SHIFT_DOWN_MASK),
-    // Change facing one hexside to the left
+    // Change facing one hex side to the left
     TWIST_LEFT("twistLeft", VK_A, SHIFT_DOWN_MASK),
-    // Change facing one hexside to the right
+    // Change facing one hex side to the right
     TWIST_RIGHT("twistRight", VK_D, SHIFT_DOWN_MASK),
     // Fire the currently selected weapon
     FIRE("fire", VK_F),
@@ -80,8 +80,8 @@ public enum KeyCommandBind {
     PREV_TARGET("prevTarget", VK_LEFT),
     NEXT_TARGET_VALID("nextTargetValid", VK_RIGHT, SHIFT_DOWN_MASK),
     PREV_TARGET_VALID("prevTargetValid", VK_LEFT, SHIFT_DOWN_MASK),
-    NEXT_TARGET_NOALLIES("nextTargetNoAllies", VK_RIGHT, CTRL_DOWN_MASK),
-    PREV_TARGET_NOALLIES("prevTargetNoAllies", VK_LEFT, CTRL_DOWN_MASK),
+    NEXT_TARGET_NO_ALLIES("nextTargetNoAllies", VK_RIGHT, CTRL_DOWN_MASK),
+    PREV_TARGET_NO_ALLIES("prevTargetNoAllies", VK_LEFT, CTRL_DOWN_MASK),
     NEXT_TARGET_VALID_NO_ALLIES("nextTargetValidNoAllies", VK_RIGHT, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     PREV_TARGET_VALID_NO_ALLIES("prevTargetValidNoAllies", VK_LEFT, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     PHYS_PUNCH("physPunch", VK_P),
@@ -109,19 +109,19 @@ public enum KeyCommandBind {
     UD_SYSTEMS("udSystems", VK_F5),
     UD_EXTRAS("udExtras", VK_F6),
     /** Toggles between Jumping and Walk/Run, also acts as a reset when a unit cannot jump */
-    TOGGLE_MOVEMODE("toggleJump", VK_J),
+    TOGGLE_MOVE_MODE("toggleJump", VK_J),
     MOVE_BACKUP("moveBackUp", VK_B),
-    MOVE_GOPRONE("moveGoProne", VK_P),
+    MOVE_GO_PRONE("moveGoProne", VK_P),
     MOVE_GETUP("moveGetUp", VK_U),
-    TOGGLE_CONVERSIONMODE("toggleConversion", VK_M),
+    TOGGLE_CONVERSION_MODE("toggleConversion", VK_M),
     PREV_MODE("prevMode", VK_KP_DOWN),
     NEXT_MODE("nextMode", VK_KP_UP),
     PAUSE("pause", VK_P, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     UNPAUSE("unpause", VK_P, CTRL_DOWN_MASK | ALT_DOWN_MASK),
     REPORT_KEY_NEXT("reportKeyNext", VK_N),
     REPORT_KEY_PREV("reportKeyPrev", VK_N, SHIFT_DOWN_MASK),
-    REPORT_KEY_SELNEXT("reportKeySelNext", VK_N, CTRL_DOWN_MASK),
-    REPORT_KEY_SELPREV("reportKeySelPrev", VK_N, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    REPORT_KEY_SELECT_NEXT("reportKeySelNext", VK_N, CTRL_DOWN_MASK),
+    REPORT_KEY_SELECT_PREVIOUS("reportKeySelPrev", VK_N, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     REPORT_KEY_FILTER("reportKeyFilter", VK_F, SHIFT_DOWN_MASK),
 
     // --------- The following binds are used by the CommonMenuBar:
@@ -139,8 +139,8 @@ public enum KeyCommandBind {
     PLANETARY_CONDITIONS(true, "togglePlanetaryConditions", VK_P, CTRL_DOWN_MASK),
     TURN_DETAILS(true, "toggleTurnDetails", VK_T, CTRL_DOWN_MASK),
     CLIENT_SETTINGS(true, "clientSettings", VK_C, ALT_DOWN_MASK),
-    INC_GUISCALE(true, "incGuiScale", VK_ADD, CTRL_DOWN_MASK),
-    DEC_GUISCALE(true, "decGuiScale", VK_SUBTRACT, CTRL_DOWN_MASK),
+    INC_GUI_SCALE(true, "incGuiScale", VK_ADD, CTRL_DOWN_MASK),
+    DEC_GUI_SCALE(true, "decGuiScale", VK_SUBTRACT, CTRL_DOWN_MASK),
     ROUND_REPORT(true, "roundReport", VK_R, CTRL_DOWN_MASK),
     ZOOM_IN(true, "zoomIn", VK_ADD),
     ZOOM_OUT(true, "zoomOut", VK_SUBTRACT),
@@ -173,7 +173,7 @@ public enum KeyCommandBind {
      * The CommandAction that is performed will be the first one encountered. Exclusive binds can't share their key with
      * other binds.
      */
-    public boolean isExclusive = false;
+    public boolean isExclusive;
 
     /**
      * For a repeatable bind, when the key is pressed the action will be added to a timer and repeated until the key is
@@ -187,41 +187,41 @@ public enum KeyCommandBind {
      */
     public boolean isMenuBar = false;
 
-    private KeyCommandBind(String c, int k) {
-        this(c, false, k, 0, false);
+    KeyCommandBind(String command, int keyCode) {
+        this(command, false, keyCode, 0, false);
     }
 
-    private KeyCommandBind(String c, int k, int m) {
-        this(c, false, k, m, false);
+    KeyCommandBind(String command, int keyCode, int modifier) {
+        this(command, false, keyCode, modifier, false);
     }
 
-    private KeyCommandBind(String c, boolean r, int k) {
-        this(c, r, k, 0, false);
+    KeyCommandBind(String command, boolean repeatable, int keyCode) {
+        this(command, repeatable, keyCode, 0, false);
     }
 
-    private KeyCommandBind(String c, boolean r, int k, int m) {
-        this(c, r, k, m, false);
+    KeyCommandBind(String command, boolean repeatable, int keyCode, int modifier) {
+        this(command, repeatable, keyCode, modifier, false);
     }
 
     // CommonMenuBar keybinds - these are exclusive, as multiple menu items on the same key don't work
-    private KeyCommandBind(boolean n, String c, int k, int m) {
-        this(c, false, k, m, true);
-        isMenuBar = n;
+    KeyCommandBind(boolean inMenuBar, String command, int keyCode, int modifier) {
+        this(command, false, keyCode, modifier, true);
+        isMenuBar = inMenuBar;
     }
 
-    private KeyCommandBind(boolean n, String c, int k) {
-        this(c, false, k, 0, true);
-        isMenuBar = n;
+    KeyCommandBind(boolean inMenuBar, String command, int keyCode) {
+        this(command, false, keyCode, 0, true);
+        isMenuBar = inMenuBar;
     }
 
-    private KeyCommandBind(String c, boolean r, int k, int m, boolean e) {
-        cmd = c;
-        key = k;
-        keyDefault = k;
-        modifiers = m;
-        modifiersDefault = m;
-        isRepeatable = r;
-        isExclusive = e;
+    KeyCommandBind(String command, boolean repeatable, int keyCode, int modifier, boolean exclusive) {
+        cmd = command;
+        key = keyCode;
+        keyDefault = keyCode;
+        modifiers = modifier;
+        modifiersDefault = modifier;
+        isRepeatable = repeatable;
+        isExclusive = exclusive;
     }
 
     /**

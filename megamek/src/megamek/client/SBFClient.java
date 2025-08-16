@@ -94,7 +94,7 @@ public class SBFClient extends AbstractClient {
     @Override
     @SuppressWarnings("unchecked")
     protected boolean handleGameSpecificPacket(Packet packet) {
-        switch (packet.getCommand()) {
+        switch (packet.command()) {
             case SENDING_ENTITIES:
                 receiveEntities(packet);
                 break;

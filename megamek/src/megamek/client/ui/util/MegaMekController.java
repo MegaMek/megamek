@@ -113,7 +113,7 @@ public class MegaMekController implements KeyEventDispatcher {
     @Override
     public boolean dispatchKeyEvent(KeyEvent evt) {
 
-        // Don't consider hotkeys when the clientgui has a dialog visible
+        // Don't consider hotkeys when the clientGUI has a dialog visible
         if (((clientgui != null) && clientgui.shouldIgnoreHotKeys())
               || ((boardEditor != null) && boardEditor.shouldIgnoreHotKeys())
               || ignoreKeyPresses) {

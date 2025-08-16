@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -48,9 +49,10 @@ import megamek.common.options.OptionsConstants;
 
 public class MekTreeForceModel extends DefaultTreeModel {
 
+    @Serial
     private static final long serialVersionUID = -6458173460367645667L;
 
-    private ChatLounge lobby;
+    private final ChatLounge lobby;
     /** A sorted list of all top-level objects: top-level forces and force-less entities. */
     private ArrayList<Object> allToplevel;
 
@@ -80,9 +82,8 @@ public class MekTreeForceModel extends DefaultTreeModel {
             }
             return allToplevel.get(index);
 
-        } else if (parent instanceof Force) {
+        } else if (parent instanceof Force pnt) {
             Forces forces = lobby.game().getForces();
-            Force pnt = (Force) parent;
             if (index < pnt.entityCount()) {
                 return lobby.game().getEntity(pnt.getEntityId(index));
             } else if (index < pnt.getChildCount()) {
@@ -100,8 +101,7 @@ public class MekTreeForceModel extends DefaultTreeModel {
             }
             return allToplevel.size();
 
-        } else if (parent instanceof Force) {
-            Force pnt = (Force) parent;
+        } else if (parent instanceof Force pnt) {
             return pnt.getChildCount();
 
         } else { // Entity
@@ -114,10 +114,10 @@ public class MekTreeForceModel extends DefaultTreeModel {
      * blind drop.
      */
     private void createTopLevel() {
-        Game game = lobby.getClientgui().getClient().getGame();
+        Game game = lobby.getClientGUI().getClient().getGame();
         boolean realBD = game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
         Forces forces = lobby.game().getForces();
-        Player localPlayer = lobby.getClientgui().getClient().getLocalPlayer();
+        Player localPlayer = lobby.getClientGUI().getClient().getLocalPlayer();
         boolean localGM = localPlayer.isGameMaster();
         ArrayList<Force> toplevel = new ArrayList<>(forces.getTopLevelForces());
         if (!localGM && realBD) {
@@ -129,7 +129,7 @@ public class MekTreeForceModel extends DefaultTreeModel {
         }
         allToplevel = new ArrayList<>(toplevel);
         allToplevel.addAll(forceless);
-        allToplevel.sort(new MekTreeTopLevelSorter(lobby.getClientgui().getClient()));
+        allToplevel.sort(new MekTreeTopLevelSorter(lobby.getClientGUI().getClient()));
     }
 
     @Override
@@ -139,11 +139,10 @@ public class MekTreeForceModel extends DefaultTreeModel {
 
     @Override
     public int getIndexOfChild(Object parent, Object child) {
-        if (child == root || !(parent instanceof Force)
+        if (child == root || !(parent instanceof Force pnt)
               || !((child instanceof Force) || (child instanceof Entity))) {
             return -1;
         }
-        Force pnt = (Force) parent;
         if (child instanceof Entity) {
             return pnt.entityIndex((Entity) child);
         } else {

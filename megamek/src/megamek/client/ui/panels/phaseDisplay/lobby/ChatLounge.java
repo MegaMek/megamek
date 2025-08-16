@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2006 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -2188,7 +2188,7 @@ public class ChatLounge extends AbstractPhaseDisplay
               client().getPort(),
               bcd.getBehaviorSettings());
         botClient.setClientGUI(clientgui);
-        botClient.getGame().addGameListener(new BotGUI(getClientgui().getFrame(), botClient));
+        botClient.getGame().addGameListener(new BotGUI(getClientGUI().getFrame(), botClient));
         try {
             botClient.connect();
             clientgui.getLocalBots().put(bcd.getBotName(), botClient);
@@ -2724,10 +2724,10 @@ public class ChatLounge extends AbstractPhaseDisplay
                 int newTeam = Integer.parseInt(st.nextToken());
                 lobbyActions.changeTeam(getSelectedPlayers(), newTeam);
                 break;
-            case PlayerTablePopup.PTP_BOTREMOVE:
+            case PlayerTablePopup.PTP_BOT_REMOVE:
                 removeBot();
                 break;
-            case PlayerTablePopup.PTP_BOTSETTINGS:
+            case PlayerTablePopup.PTP_BOT_SETTINGS:
                 doBotSettings();
                 break;
             case PlayerTablePopup.PTP_DEPLOY:
@@ -2780,7 +2780,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             } else if (code == KeyEvent.VK_SPACE) {
                 evt.consume();
                 List<Integer> entityIds = entities.stream().map(Entity::getId).toList();
-                LobbyUtility.liveEntityReadoutAction(entityIds, canSeeAll(entities), getClientgui().getFrame(), game());
+                LobbyUtility.liveEntityReadoutAction(entityIds, canSeeAll(entities), getClientGUI().getFrame(), game());
 
             } else if (code == KeyEvent.VK_ENTER) {
                 evt.consume();
@@ -2928,7 +2928,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                 List<Integer> entityIds = selEntities.stream().map(Entity::getId).toList();
                 LobbyUtility.liveEntityReadoutAction(entityIds,
                       canSeeAll(selEntities),
-                      getClientgui().getFrame(),
+                      getClientGUI().getFrame(),
                       game());
 
             } else if (code == KeyEvent.VK_ENTER && onlyOneEntity) {
@@ -3834,7 +3834,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         return clientgui.getClient().getGame();
     }
 
-    /** Convenience for clientgui.getClient() */
+    /** Convenience for clientGUI.getClient() */
     Client client() {
         return clientgui.getClient();
     }
@@ -3850,7 +3850,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     @Override
-    public ClientGUI getClientgui() {
+    public ClientGUI getClientGUI() {
         return clientgui;
     }
 }

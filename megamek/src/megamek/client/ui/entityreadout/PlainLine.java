@@ -35,13 +35,7 @@ package megamek.client.ui.entityreadout;
 /**
  * Displays a single line of text. The default constructor is used to insert a new line.
  */
-class PlainLine implements ViewElement {
-
-    private final String value;
-
-    PlainLine(String value) {
-        this.value = value;
-    }
+record PlainLine(String value) implements ViewElement {
 
     PlainLine() {
         this("");

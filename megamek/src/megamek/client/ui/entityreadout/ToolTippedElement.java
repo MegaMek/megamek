@@ -30,14 +30,9 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-
 package megamek.client.ui.entityreadout;
 
-record PlainElement(String text) implements ViewElement {
-
-    public PlainElement(int number) {
-        this(String.valueOf(number));
-    }
+record ToolTippedElement(String text, String tooltip) implements ViewElement {
 
     @Override
     public String toPlainText() {
@@ -46,7 +41,7 @@ record PlainElement(String text) implements ViewElement {
 
     @Override
     public String toHTML() {
-        return text;
+        return "<span title=\"" + tooltip + "\">" + text + "*</span>";
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,7 +51,7 @@ public class SBFReportDisplay extends StatusBarPhaseDisplay {
 
     public enum ReportCommand implements PhaseCommand {
         REPORT_REPORT("reportReport"),
-        REPORT_PLAYERLIST("reportPlayerList");
+        REPORT_PLAYER_LIST("reportPlayerList");
 
         final String cmd;
 
@@ -99,15 +99,15 @@ public class SBFReportDisplay extends StatusBarPhaseDisplay {
     // buttons
     private Map<ReportCommand, MegaMekButton> buttons;
 
-    private static final String RD_REPORTDISPLAY = "ReportDisplay.";
+    private static final String RD_REPORT_DISPLAY = "ReportDisplay.";
     private static final String RD_TOOLTIP = ".tooltip";
 
 
     /**
-     * Creates and lays out a new movement phase display for the specified clientgui.getClient().
+     * Creates and lays out a new movement phase display for the specified clientGUI.getClient().
      */
-    public SBFReportDisplay(SBFClientGUI clientgui) {
-        super(Objects.requireNonNull(clientgui));
+    public SBFReportDisplay(SBFClientGUI clientGUI) {
+        super(Objects.requireNonNull(clientGUI));
 
         setupStatusBar("");
         setButtons();
@@ -116,14 +116,14 @@ public class SBFReportDisplay extends StatusBarPhaseDisplay {
         butDone.setText(Messages.getString("ReportDisplay.Done"));
         butDone.setEnabled(false);
         setupButtonPanel();
-        clientgui.getClient().getGame().addGameListener(this);
+        clientGUI.getClient().getGame().addGameListener(this);
     }
 
     @Override
     protected void setButtons() {
         buttons = new HashMap<>((int) (ReportCommand.values().length * 1.25 + 0.5));
         for (ReportCommand cmd : ReportCommand.values()) {
-            buttons.put(cmd, createButton(cmd.getCmd(), RD_REPORTDISPLAY));
+            buttons.put(cmd, createButton(cmd.getCmd(), RD_REPORT_DISPLAY));
         }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
     }
@@ -131,7 +131,7 @@ public class SBFReportDisplay extends StatusBarPhaseDisplay {
     @Override
     protected void setButtonsTooltips() {
         for (ReportCommand cmd : ReportCommand.values()) {
-            String tt = createToolTip(cmd.getCmd(), RD_REPORTDISPLAY, cmd.getHotKeyDesc());
+            String tt = createToolTip(cmd.getCmd(), RD_REPORT_DISPLAY, cmd.getHotKeyDesc());
             buttons.get(cmd).setToolTipText(tt);
         }
     }
@@ -164,20 +164,20 @@ public class SBFReportDisplay extends StatusBarPhaseDisplay {
     }
 
     public void setPlayerListEnabled(boolean enabled) {
-        buttons.get(ReportCommand.REPORT_PLAYERLIST).setEnabled(enabled);
+        buttons.get(ReportCommand.REPORT_PLAYER_LIST).setEnabled(enabled);
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
         if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_REPORT.getCmd()))) {
             GUIP.toggleRoundReportEnabled();
-        } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_PLAYERLIST.getCmd()))) {
+        } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_PLAYER_LIST.getCmd()))) {
             GUIP.togglePlayerListEnabled();
         }
     }
 
     private void resetButtons() {
-        butDone.setEnabled(!clientgui.getClient().getLocalPlayer().isDone());
+        butDone.setEnabled(!clientGUI.getClient().getLocalPlayer().isDone());
         setReportEnabled(true);
         setPlayerListEnabled(true);
     }
@@ -188,7 +188,7 @@ public class SBFReportDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        GamePhase phase = clientgui.getClient().getGame().getPhase();
+        GamePhase phase = clientGUI.getClient().getGame().getPhase();
 
         switch (phase) {
             case INITIATIVE_REPORT:
@@ -207,11 +207,11 @@ public class SBFReportDisplay extends StatusBarPhaseDisplay {
                 break;
         }
 
-        //        clientgui.bingMyTurn();
+        //        clientGUI.bingMyTurn();
     }
 
     @Override
     public void removeAllListeners() {
-        clientgui.getClient().getGame().removeGameListener(this);
+        clientGUI.getClient().getGame().removeGameListener(this);
     }
 }

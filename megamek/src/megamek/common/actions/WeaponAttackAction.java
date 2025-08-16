@@ -689,7 +689,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
         return isHomingShot;
     }
 
-    @Deprecated(since = "0.50.07", forRemoval = true) // the value is never used
     public void setHomingShot(boolean isHomingShot) {
         this.isHomingShot = isHomingShot;
     }

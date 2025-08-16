@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -68,7 +68,7 @@ public class UnitDisplaySpecPanel extends JPanel {
         /**
          * Specifies the width of text fields
          */
-        private static final int TEXTFIELD_COLS = 20;
+        private static final int TEXT_FIELD_COLS = 20;
 
         JButton pathLbl;
 
@@ -82,8 +82,6 @@ public class UnitDisplaySpecPanel extends JPanel {
          * Constructor for BorderElements that only have one image (like corners). The option to tile the image is not
          * present, nor are the add and remove buttons.
          *
-         * @param elementName
-         * @param imgPath
          */
         BorderElement(UnitDisplaySpecPanel udPanel, String elementName, String imgPath) {
             super(new GridBagLayout());
@@ -97,7 +95,7 @@ public class UnitDisplaySpecPanel extends JPanel {
             pathLbl.setToolTipText(Messages.getString("SkinEditor.PathToolTip",
                   Configuration.widgetsDir().getPath()));
             pathLbl.addActionListener(this);
-            path = new JTextField(imgPath, TEXTFIELD_COLS);
+            path = new JTextField(imgPath, TEXT_FIELD_COLS);
             path.getDocument().addDocumentListener(this);
 
             layoutPanel();
@@ -213,7 +211,6 @@ public class UnitDisplaySpecPanel extends JPanel {
     /**
      * Update the given UnitDisplaySkinSpecification based on the state of the UI elements.
      *
-     * @param udSpec
      */
     public void updateSkinSpec(UnitDisplaySkinSpecification udSpec) {
 
@@ -415,7 +412,6 @@ public class UnitDisplaySpecPanel extends JPanel {
         mekOutline = new BorderElement(this, Messages.getString("SkinEditor.mekOutline"), udSpec.getMekOutline());
         borderPanel.add(mekOutline, gbc);
         gbc.gridwidth = 1;
-        gbc.gridy++;
 
         gbc.gridx = gbc.gridy = 0;
         add(tabsPanel, gbc);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,13 +37,7 @@ import megamek.client.ui.util.DiscordFormat;
 /**
  * The unit name, i.e. the first line of the readout. Should not be used for anything else.
  */
-class UnitName implements ViewElement {
-
-    private final String unitName;
-
-    UnitName(String unitName) {
-        this.unitName = unitName;
-    }
+record UnitName(String unitName) implements ViewElement {
 
     @Override
     public String toPlainText() {

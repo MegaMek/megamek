@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -95,9 +95,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected static final Dimension MIN_BUTTON_SIZE = new Dimension(32, 32);
 
     private static final int BUTTON_ROWS = 2;
-    private static final String SBPD_KEY_CLEARBUTTON = "clearButton";
+    private static final String SBPD_KEY_CLEAR_BUTTON = "clearButton";
 
-    protected final IClientGUI clientgui;
+    protected final IClientGUI clientGUI;
 
     /**
      * timer that ends turn if time limit set in options is over
@@ -133,8 +133,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected JPanel panStatus = new JPanel();
     protected JPanel panButtons = new JPanel();
 
-    private UIUtil.FixedXPanel donePanel;
-
     /** The button group that is currently displayed */
     protected int currentButtonGroup = 0;
 
@@ -147,17 +145,17 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     protected StatusBarPhaseDisplay(IClientGUI cg) {
         super(cg);
-        clientgui = cg;
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), SBPD_KEY_CLEARBUTTON);
-        getActionMap().put(SBPD_KEY_CLEARBUTTON, new AbstractAction() {
+        clientGUI = cg;
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), SBPD_KEY_CLEAR_BUTTON);
+        getActionMap().put(SBPD_KEY_CLEAR_BUTTON, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (isIgnoringEvents()) {
                     return;
                 }
-                if (clientgui.isChatBoxActive()) {
-                    clientgui.clearChatBox();
-                } else if (clientgui.getClient().isMyTurn() || (e.getSource() instanceof MovementDisplay)) {
+                if (clientGUI.isChatBoxActive()) {
+                    clientGUI.clearChatBox();
+                } else if (clientGUI.getClient().isMyTurn() || (e.getSource() instanceof MovementDisplay)) {
                     // Users can draw movement envelope during the movement phase
                     // even if it's not their turn, so we always want to be able
                     // to clear. MovementDisplay.clear() can handle this case
@@ -181,21 +179,21 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         MegaMekGUI.getKeyDispatcher()
               .registerCommandAction(KeyCommandBind.PAUSE.cmd, this::pauseGameWhenOnlyBotUnitsRemain);
         MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.UNPAUSE.cmd,
-              () -> ((AbstractClient) clientgui.getClient()).sendUnpause());
+              () -> ((AbstractClient) clientGUI.getClient()).sendUnpause());
     }
 
     private void pauseGameWhenOnlyBotUnitsRemain() {
         if (isIgnoringEvents() || !isVisible()) {
             return;
         }
-        IGame game = getClientgui().getClient().getGame();
+        IGame game = getClientGUI().getClient().getGame();
         List<Player> nonBots = game.getPlayersList().stream().filter(p -> !p.isBot()).toList();
         boolean liveUnitsRemaining = nonBots.stream().anyMatch(p -> game.getEntitiesOwnedBy(p) > 0);
         if (liveUnitsRemaining) {
-            clientgui.getClient().sendChat("Pausing the game only works when only bot units remain.");
+            clientGUI.getClient().sendChat("Pausing the game only works when only bot units remain.");
         } else {
-            clientgui.getClient().sendChat("Requesting game pause.");
-            clientgui.getClient().sendPause();
+            clientGUI.getClient().sendChat("Requesting game pause.");
+            clientGUI.getClient().sendPause();
         }
     }
 
@@ -288,7 +286,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     }
 
     protected UIUtil.FixedXPanel setupDonePanel() {
-        donePanel = new UIUtil.FixedXPanel();
+        UIUtil.FixedXPanel donePanel = new UIUtil.FixedXPanel();
         donePanel.setPreferredSize(new Dimension(
               UIUtil.scaleForGUI(DONE_BUTTON_WIDTH + 5), MIN_BUTTON_SIZE.height * 2 + 5));
         donePanel.setOpaque(false);
@@ -335,13 +333,13 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     @Override
     public boolean shouldReceiveKeyCommands() {
-        return clientgui.getClient().isMyTurn()
-              && !clientgui.isChatBoxActive()
+        return clientGUI.getClient().isMyTurn()
+              && !clientGUI.isChatBoxActive()
               && !isIgnoringEvents() && isVisible();
     }
 
     public void startTimer() {
-        turnTimer = TurnTimer.init(this, clientgui.getClient());
+        turnTimer = TurnTimer.init(this, clientGUI.getClient());
     }
 
     public void stopTimer() {
@@ -358,8 +356,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     }
 
     /**
-     * @return True when there is a turn timer and it has expired, false when there was no turn timer or it has not yet
-     *       expired.
+     * @return True when there is a turn timer, and it has expired, false when there was no turn timer, or it has not
+     *       yet expired.
      */
     public boolean isTimerExpired() {
         return (turnTimer != null) && turnTimer.isTimerExpired();
@@ -368,10 +366,10 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     public String getRemainingPlayerWithTurns() {
         String result = "";
         int playerCountToShow = GUIP.getPlayersRemainingToShow();
-        IGame game = clientgui.getClient().getGame();
+        IGame game = clientGUI.getClient().getGame();
         List<String> nextPlayerNames = new ArrayList<>();
         int turnIndex = game.getTurnIndex();
-        if (clientgui.getClient().getGame().getPhase().isSimultaneous((Game) clientgui.getClient().getGame())) {
+        if (clientGUI.getClient().getGame().getPhase().isSimultaneous((Game) clientGUI.getClient().getGame())) {
             turnIndex--;
         }
         List<? extends PlayerTurn> gameTurns = game.getTurnsList();
@@ -388,7 +386,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     }
 
     public void setStatusBarWithNotDonePlayers() {
-        IGame game = clientgui.getClient().getGame();
+        IGame game = clientGUI.getClient().getGame();
         if (game.getPhase().isReport()) {
             int playerCountToShow = GUIP.getPlayersRemainingToShow();
             List<Player> remainingPlayers = game.getPlayersList().stream()
@@ -403,8 +401,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 if (remainingPlayers.size() > playerCountToShow) {
                     playersText += ", ...";
                 }
-                String msg_notdone = Messages.getString("StatusBarPhaseDisplay.notDone");
-                setStatusBarText(game.getPhase() + "  " + msg_notdone + " [" + playersText + "]");
+                String msgNotDone = Messages.getString("StatusBarPhaseDisplay.notDone");
+                setStatusBarText(game.getPhase() + "  " + msgNotDone + " [" + playersText + "]");
             } else {
                 setStatusBarText(game.getPhase().toString());
             }

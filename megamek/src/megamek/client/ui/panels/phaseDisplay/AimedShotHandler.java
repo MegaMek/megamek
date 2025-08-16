@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Arrays;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -124,11 +125,11 @@ public class AimedShotHandler implements ActionListener, ItemListener {
             }
 
             asd = new AimedShotDialog(
-                  this.firingDisplay.getClientgui().getFrame(),
+                  this.firingDisplay.getClientGUI().getFrame(),
                   Messages.getString("FiringDisplay.AimedShotDialog.title"),
                   Messages.getString("FiringDisplay.AimedShotDialog.message"),
                   options, enabled, aimingAt,
-                  (ClientGUI) this.firingDisplay.getClientgui(), this.firingDisplay.getTarget(),
+                  (ClientGUI) this.firingDisplay.getClientGUI(), this.firingDisplay.getTarget(),
                   this, this);
 
             asd.setVisible(true);
@@ -139,9 +140,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
     private boolean[] createEnabledMask(int length) {
         boolean[] mask = new boolean[length];
 
-        for (int i = 0; i < length; i++) {
-            mask[i] = true;
-        }
+        Arrays.fill(mask, true);
 
         int side = ComputeSideTable.sideTable(firingDisplay.ce(), firingDisplay.getTarget());
 
@@ -350,7 +349,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
 
     /**
      * Sets the aiming mode, depending on the target and the attacker. Against immobile meks, targeting computer aiming
-     * mode will be used if turned on. (This is a hack, but it's the resolution suggested by the bug submitter, and I
+     * mode will be used if turned on. This is a hack, but it's the resolution suggested by the bug submitter, and I
      * don't think it's half bad.
      */
 
@@ -389,11 +388,8 @@ public class AimedShotHandler implements ActionListener, ItemListener {
     }
 
     /**
-     * should aimned shoots be allowed with the passed weapon
+     * should aimed shots be allowed with the passed weapon
      *
-     * @param weapon
-     *
-     * @return
      */
     public boolean allowAimedShotWith(WeaponMounted weapon) {
         return Compute.allowAimedShotWith(weapon, aimingMode);

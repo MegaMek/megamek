@@ -73,8 +73,8 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
     // display frames
     private JSplitPane splitPane;
 
-    // The scrollpane containing the directory tree
-    private JScrollPane scrpTree;
+    // The scroll pane containing the directory tree
+    private JScrollPane scrollPaneTree;
 
     // directory selection tree
     protected JTree treeCategories;
@@ -162,18 +162,18 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
     protected void initialize() {
         // Set up the image list (right panel)
         setImageList(new AbstractIconList(new AbstractIconRenderer()));
-        final JScrollPane scrpImages = new JScrollPane(getImageList());
-        scrpImages.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        scrpImages.setMinimumSize(new Dimension(500, 240));
+        final JScrollPane scrollPaneImages = new JScrollPane(getImageList());
+        scrollPaneImages.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPaneImages.setMinimumSize(new Dimension(500, 240));
 
         // set up the directory tree (left panel)
         if (getTreeCategories() != null) {
             getTreeCategories().addTreeSelectionListener(this);
         }
-        scrpTree = new JScrollPane(getTreeCategories());
-        scrpTree.setBackground(UIManager.getColor("Table.background"));
+        scrollPaneTree = new JScrollPane(getTreeCategories());
+        scrollPaneTree.setBackground(UIManager.getColor("Table.background"));
 
-        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, scrpTree, scrpImages);
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, scrollPaneTree, scrollPaneImages);
         getSplitPane().setName("iconSplitPane");
         getSplitPane().setResizeWeight(0.5);
 
@@ -324,8 +324,8 @@ public abstract class abstractIconChooserPanel extends AbstractPanel implements 
         }
         setTreeCategories(newTree);
         getTreeCategories().addTreeSelectionListener(this);
-        scrpTree = new JScrollPane(getTreeCategories());
-        getSplitPane().setLeftComponent(scrpTree);
+        scrollPaneTree = new JScrollPane(getTreeCategories());
+        getSplitPane().setLeftComponent(scrollPaneTree);
         setSelection(getOriginalIcon());
     }
 

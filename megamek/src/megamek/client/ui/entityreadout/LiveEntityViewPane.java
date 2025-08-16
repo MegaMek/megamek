@@ -71,7 +71,7 @@ class LiveEntityViewPane extends EnhancedTabbedPane {
     }
 
     /**
-     * This purposefully does not set preferences, as it may be used on differing panes for differing uses and thus you
+     * This purposefully does not set preferences, as it may be used on differing panes for differing uses, and thus you
      * don't want to remember the selected tab between the different locations.
      */
     protected void initialize() {

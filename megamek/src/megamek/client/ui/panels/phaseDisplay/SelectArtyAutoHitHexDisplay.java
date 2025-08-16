@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -118,7 +118,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     private int allowedNumberOfHexes;
 
     /**
-     * Creates and lays out a new select designated hex phase display for the specified clientgui.getClient().
+     * Creates and lays out a new select designated hex phase display for the specified clientGUI.getClient().
      */
     public SelectArtyAutoHitHexDisplay(ClientGUI clientgui) {
         super(clientgui);
@@ -190,7 +190,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     private void beginMyTurn() {
         // Make sure we've got the correct local player
         player = clientgui.getClient().getLocalPlayer();
-        // By default, we should get 5 hexes per 4 mapsheets (4 mapsheets is 16*17*4 = 1088 hexes)
+        // By default, we should get 5 hexes per 4 map sheets (4 map sheets is 16*17*4 = 1088 hexes)
         Board board = game().getBoard();
         int preDesignateArea = game().getOptions().intOption(OptionsConstants.ADVCOMBAT_MAP_AREA_PREDESIGNATE);
         int hexesPer = game().getOptions().intOption(OptionsConstants.ADVCOMBAT_NUM_HEXES_PREDESIGNATE);

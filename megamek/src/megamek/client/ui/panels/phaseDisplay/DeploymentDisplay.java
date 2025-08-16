@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2006 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -85,7 +85,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         DEPLOY_LOAD("deployLoad"),
         DEPLOY_UNLOAD("deployUnload"),
         DEPLOY_REMOVE("deployRemove"),
-        DEPLOY_ASSAULTDROP("assaultDrop"),
+        DEPLOY_ASSAULT_DROP("assaultDrop"),
         DEPLOY_DOCK("deployDock");
 
         public final String cmd;
@@ -232,7 +232,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             setNextEnabled(true);
             clientgui.clearFieldOfFire();
             clientgui.clearTemporarySprites();
-            logger.error("DeploymentDisplay: Tried to select non-existent entity: " + en);
+            logger.error("DeploymentDisplay: Tried to select non-existent entity: {}", en);
             return;
         }
 
@@ -283,7 +283,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         boolean assaultDropOption = game.getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP);
         setAssaultDropEnabled(entity.canAssaultDrop() && assaultDropOption);
         if (!entity.canAssaultDrop() && assaultDropOption) {
-            buttons.get(DeployCommand.DEPLOY_ASSAULTDROP)
+            buttons.get(DeployCommand.DEPLOY_ASSAULT_DROP)
                   .setText(Messages.getString("DeploymentDisplay.AssaultDrop"));
             assaultDropPreference = false;
         }
@@ -351,7 +351,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Notify the player that the planned deployment is not possible if vertain circumstances are met. Returns true in
+     * Notify the player that the planned deployment is not possible if veteran circumstances are met. Returns true in
      * that case (cancel deployment), false if deployment can proceed.
      *
      * @return True to cancel deployment, false to proceed.
@@ -420,9 +420,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         disableButtons();
         clientgui.getClient().sendDeleteEntity(cen);
         // Also remove units that are carried by the present unit
-        for (Entity carried : game.getEntity(cen).getLoadedUnits()) {
-            clientgui.getClient().sendDeleteEntity(carried.getId());
+
+        Entity entity = game.getNextEntity(cen);
+
+        if (entity != null) {
+            for (Entity carried : entity.getLoadedUnits()) {
+                clientgui.getClient().sendDeleteEntity(carried.getId());
+            }
         }
+
         cen = Entity.NONE;
     }
 
@@ -710,7 +716,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(DeployCommand.DEPLOY_TURN.getCmd())) {
             turnMode = true;
         } else if (actionCmd.equals(DeployCommand.DEPLOY_LOAD.getCmd())) {
-            // What undeployed units can we load?
+            // What un-deployed units can we load?
             List<Entity> choices = getLoadableEntities();
 
             // Do we have anyone to load?
@@ -851,7 +857,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         }
                         setLoadEnabled(!getLoadableEntities().isEmpty());
                     } else {
-                        logger.error("Could not unload " + loaded.getShortName() + " from " + ce().getShortName());
+                        logger.error("Could not unload {} from {}", loaded.getShortName(), ce().getShortName());
                     }
                 }
             } else {
@@ -867,13 +873,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                   JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 remove();
             }
-        } else if (actionCmd.equals(DeployCommand.DEPLOY_ASSAULTDROP.getCmd())) {
+        } else if (actionCmd.equals(DeployCommand.DEPLOY_ASSAULT_DROP.getCmd())) {
             assaultDropPreference = !assaultDropPreference;
             if (assaultDropPreference) {
-                buttons.get(DeployCommand.DEPLOY_ASSAULTDROP)
+                buttons.get(DeployCommand.DEPLOY_ASSAULT_DROP)
                       .setText(Messages.getString("DeploymentDisplay.assaultDropOff"));
             } else {
-                buttons.get(DeployCommand.DEPLOY_ASSAULTDROP)
+                buttons.get(DeployCommand.DEPLOY_ASSAULT_DROP)
                       .setText(Messages.getString("DeploymentDisplay.assaultDrop"));
             }
         }
@@ -914,24 +920,27 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.clearFieldOfFire();
         clientgui.clearTemporarySprites();
         if (client.isMyTurn()) {
-            if (client.getGame().getTurn().isValidEntity(e, client.getGame())) {
-                if (ce() != null) {
-                    ce().setPosition(null);
-                    clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(ce()));
-                    // Unload any loaded units during this turn
-                    List<Integer> lobbyLoadedUnits = ce().getLoadedKeepers();
-                    for (Entity other : ce().getLoadedUnits()) {
-                        // Ignore units loaded before this turn
-                        if (!lobbyLoadedUnits.contains(other.getId())) {
-                            ce().unload(other);
-                            other.setTransportId(Entity.NONE);
-                            other.newRound(client.getGame().getRoundCount());
+            GameTurn currentTurn = client.getGame().getTurn();
+            if (currentTurn != null) {
+                if (currentTurn.isValidEntity(e, client.getGame())) {
+                    if (ce() != null) {
+                        ce().setPosition(null);
+                        clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(ce()));
+                        // Unload any loaded units during this turn
+                        List<Integer> lobbyLoadedUnits = ce().getLoadedKeepers();
+                        for (Entity other : ce().getLoadedUnits()) {
+                            // Ignore units loaded before this turn
+                            if (!lobbyLoadedUnits.contains(other.getId())) {
+                                ce().unload(other);
+                                other.setTransportId(Entity.NONE);
+                                other.newRound(client.getGame().getRoundCount());
+                            }
                         }
                     }
-                }
-                selectEntity(e.getId());
-                if (game.hasBoardLocation(e.getPosition(), e.getBoardId())) {
-                    clientgui.getBoardView(e).centerOnHex(e.getPosition());
+                    selectEntity(e.getId());
+                    if (game.hasBoardLocation(e.getPosition(), e.getBoardId())) {
+                        clientgui.getBoardView(e).centerOnHex(e.getPosition());
+                    }
                 }
             }
         } else {
@@ -969,8 +978,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     private void setAssaultDropEnabled(boolean enabled) {
-        buttons.get(DeployCommand.DEPLOY_ASSAULTDROP).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_ASSAULTDROP.getCmd(), enabled);
+        buttons.get(DeployCommand.DEPLOY_ASSAULT_DROP).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_ASSAULT_DROP.getCmd(), enabled);
     }
 
     /**

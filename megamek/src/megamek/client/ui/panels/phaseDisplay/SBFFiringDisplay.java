@@ -72,7 +72,6 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
         FIRE_UNIT("fireunit");
 
         private final String cmd;
-        private final Predicate<SBFFormation> isEligible;
         private int priority;
 
         FiringCommand(String c) {
@@ -81,7 +80,6 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
 
         FiringCommand(String c, Predicate<SBFFormation> isEligible) {
             cmd = c;
-            this.isEligible = isEligible;
             priority = ordinal();
         }
 
@@ -121,10 +119,10 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
         setupButtonPanel();
         registerKeyCommands();
         game().addGameListener(this);
-        //TODO: rather have clientgui take BVListeners and forward all events -> dont have to deal with changing
-        // boardviews
-        clientgui.boardViews().forEach(b -> b.addBoardViewListener(this));
-        targetDialog = new SBFTargetDialog(getClientgui().getFrame(), game(), this);
+        //TODO: rather have clientGUI take BVListeners and forward all events -> dont have to deal with changing
+        // BoardViews
+        clientGUI.boardViews().forEach(b -> b.addBoardViewListener(this));
+        targetDialog = new SBFTargetDialog(getClientGUI().getFrame(), game(), this);
     }
 
     @Override
@@ -149,13 +147,13 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
             currentFormation = formation.getId();
         }
         resetPlannedActions();
-        clientgui.selectForAction(formation);
+        clientGUI.selectForAction(formation);
         updateTargetingData();
         updateDonePanel();
     }
 
     protected boolean shouldPerformClearKeyCommand() {
-        return !clientgui.isChatBoxActive() && !isIgnoringEvents() && isVisible();
+        return !clientGUI.isChatBoxActive() && !isIgnoringEvents() && isVisible();
     }
 
     private void registerKeyCommands() {
@@ -193,11 +191,11 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
     }
 
     private void selectNextFormation() {
-        clientgui.getClient().getGame().getNextEligibleFormation(currentFormation).ifPresent(this::selectFormation);
+        clientGUI.getClient().getGame().getNextEligibleFormation(currentFormation).ifPresent(this::selectFormation);
     }
 
     private void selectPreviousFormation() {
-        clientgui.getClient().getGame().getPreviousEligibleFormation(currentFormation).ifPresent(this::selectFormation);
+        clientGUI.getClient().getGame().getPreviousEligibleFormation(currentFormation).ifPresent(this::selectFormation);
     }
 
     @Override
@@ -236,7 +234,7 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
             return;
         }
 
-        clientgui.getClient().sendAttackData(plannedActions, currentFormation);
+        clientGUI.getClient().sendAttackData(plannedActions, currentFormation);
         endMyTurn();
     }
 
@@ -253,21 +251,21 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
     @Override
     public void removeAllListeners() {
         game().removeGameListener(this);
-        clientgui.boardViews().forEach(b -> b.removeBoardViewListener(this));
+        clientGUI.boardViews().forEach(b -> b.removeBoardViewListener(this));
     }
 
     private void beginMyTurn() {
         initDonePanelForNewTurn();
         updateButtonStatus();
         if (GUIP.getAutoSelectNextUnit()) {
-            clientgui.getClient().getGame().getNextEligibleFormation().ifPresent(this::selectFormation);
+            clientGUI.getClient().getGame().getNextEligibleFormation().ifPresent(this::selectFormation);
         }
-        //            clientgui.bingMyTurn();
+        //            clientGUI.bingMyTurn();
         startTimer();
     }
 
     private SBFGame game() {
-        return clientgui.getClient().getGame();
+        return clientGUI.getClient().getGame();
     }
 
     private void updateButtonStatus() {

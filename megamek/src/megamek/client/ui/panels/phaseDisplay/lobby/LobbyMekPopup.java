@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
@@ -83,40 +84,40 @@ class LobbyMekPopup {
     static final String LMP_C3DISCONNECT = "C3DISCONNECT";
     static final String LMP_DEPLOY = "DEPLOY";
     static final String LMP_HEAT = "HEAT";
-    static final String LMP_HULLDOWN = "HULLDOWN";
+    static final String LMP_HULL_DOWN = "HULLDOWN";
     static final String LMP_PRONE = "PRONE";
     static final String LMP_STAND = "STAND";
-    static final String LMP_NOHIDE = "NOHIDE";
+    static final String LMP_NO_HIDE = "NOHIDE";
     static final String LMP_HIDE = "HIDE";
     static final String LMP_HIDDEN = "HIDDEN";
-    static final String LMP_FASSIGNONLY = "FASSIGNONLY";
-    static final String LMP_FASSIGN = "FASSIGN";
-    static final String LMP_RAPIDFIREMG_OFF = "RAPIDFIREMG_OFF";
-    static final String LMP_RAPIDFIREMG_ON = "RAPIDFIREMG_ON";
-    static final String LMP_HOTLOAD_OFF = "HOTLOAD_OFF";
-    static final String LMP_HOTLOAD_ON = "HOTLOAD_ON";
+    static final String LMP_F_ASSIGN_ONLY = "FASSIGNONLY";
+    static final String LMP_F_ASSIGN = "FASSIGN";
+    static final String LMP_RAPID_FIRE_MG_OFF = "RAPIDFIREMG_OFF";
+    static final String LMP_RAPID_FIRE_MG_ON = "RAPIDFIREMG_ON";
+    static final String LMP_HOT_LOAD_OFF = "HOTLOAD_OFF";
+    static final String LMP_HOT_LOAD_ON = "HOTLOAD_ON";
     static final String LMP_SWAP = "SWAP";
     static final String LMP_ASSIGN = "ASSIGN";
     static final String LMP_C3CONNECT = "C3CONNECT";
     static final String LMP_C3JOIN = "C3JOIN";
-    static final String LMP_C3FORMNHC3 = "C3FORMNHC3";
-    static final String LMP_C3FORMC3 = "C3FORMC3";
+    static final String LMP_C3_FORM_NHC3 = "C3FORMNHC3";
+    static final String LMP_C3_FORM_C3 = "C3FORMC3";
     static final String LMP_C3LM = "C3LM";
     static final String LMP_C3CM = "C3CM";
     static final String LMP_SQUADRON = "SQUADRON";
     static final String LMP_LOAD = "LOAD";
     static final String LMP_TOW = "TOW";
-    static final String LMP_FADDTO = "FADDTO";
-    static final String LMP_FREMOVE = "FREMOVE";
-    static final String LMP_FPROMOTE = "FPROMOTE";
-    static final String LMP_FRENAME = "FRENAME";
-    static final String LMP_FCREATESUB = "FCREATESUB";
-    static final String LMP_FCREATETOP = "FCREATETOP";
-    static final String LMP_FCREATEFROM = "FCREATEFROM";
-    static final String LMP_FCDELETEEMPTY = "FCDELETEEMPTY";
-    static final String LMP_SBFFORMATION = "SBFFORMATION";
+    static final String LMP_F_ADD_TO = "FADDTO";
+    static final String LMP_F_REMOVE = "FREMOVE";
+    static final String LMP_F_PROMOTE = "FPROMOTE";
+    static final String LMP_F_RENAME = "FRENAME";
+    static final String LMP_F_CREATE_SUB = "FCREATESUB";
+    static final String LMP_F_CREATE_TOP = "FCREATETOP";
+    static final String LMP_F_CREATE_FROM = "FCREATEFROM";
+    static final String LMP_FC_DELETE_EMPTY = "FCDELETEEMPTY";
+    static final String LMP_SBF_FORMATION = "SBFFORMATION";
     static final String LMP_DELETE = "DELETE";
-    static final String LMP_UNLOADALL = "UNLOADALL";
+    static final String LMP_UNLOAD_ALL = "UNLOADALL";
     static final String LMP_UNLOAD = "UNLOAD";
     static final String LMP_DETACH_FROM_TRACTOR = "DETACHFROMTRACTOR";
     static final String LMP_DETACH_TRAILER = "DETACHTRAILER";
@@ -129,20 +130,20 @@ class LobbyMekPopup {
     static final String LMP_COST = "COST";
     static final String LMP_VIEW = "VIEW";
     static final String LMP_MOVE_UP = "MOVE_UP";
-    static final String LMP_PRIO_TARGET = "PRIO_TARGET";
-    static final String LMP_ALPHASTRIKE = "ALPHASTRIKE";
+    static final String LMP_PRIORITY_TARGET = "PRIO_TARGET";
+    static final String LMP_ALPHA_STRIKE = "ALPHASTRIKE";
     static final String LMP_AUTOCONFIG = "AUTOCONFIG";
-    static final String LMP_RANDOMCONFIG = "RANDOMCONFIG";
-    static final String LMP_SAVECONFIG = "SAVECONFIG";
-    static final String LMP_APPLYCONFIG = "APPLYCONFIG";
+    static final String LMP_RANDOM_CONFIG = "RANDOMCONFIG";
+    static final String LMP_SAVE_CONFIG = "SAVECONFIG";
+    static final String LMP_APPLY_CONFIG = "APPLYCONFIG";
 
-    private static final String NOINFO = "|-1";
+    private static final String NO_INFO = "|-1";
 
-    static final String LMP_UNLOADALLFROMBAY = "UNLOADALLFROMBAY";
+    static final String LMP_UNLOAD_ALL_FROM_BAY = "UNLOADALLFROMBAY";
 
     static ScalingPopup getPopup(List<Entity> entities, List<Force> forces, ActionListener listener,
           ChatLounge lobby) {
-        ClientGUI clientGui = lobby.getClientgui();
+        ClientGUI clientGui = lobby.getClientGUI();
         Game game = lobby.game();
         var opts = game.getOptions();
 
@@ -174,8 +175,8 @@ class LobbyMekPopup {
         boolean noneEmbarked = joinedEntities.stream().allMatch(e -> e.getTransportId() == Entity.NONE);
         boolean anyTractor = joinedEntities.stream().anyMatch(e -> e.getTowing() != Entity.NONE);
         boolean anyTrailer = joinedEntities.stream().anyMatch(e -> e.getTowedBy() != Entity.NONE);
-        ;
-        boolean allProtomeks = !joinedEntities.isEmpty()
+
+        boolean allProtoMeks = !joinedEntities.isEmpty()
               && joinedEntities.stream().allMatch(e -> e instanceof ProtoMek);
         boolean anyRFMGOn = joinedEntities.stream().anyMatch(LobbyMekPopup::hasRapidFireMG);
         boolean anyRFMGOff = joinedEntities.stream().anyMatch(LobbyMekPopup::hasNormalFireMG);
@@ -183,9 +184,8 @@ class LobbyMekPopup {
         boolean anyHLOff = joinedEntities.stream().anyMatch(LobbyMekPopup::hasNonHotLoaded);
 
         boolean oneSelected = entities.size() == 1;
-        boolean hasjoinedEntities = !joinedEntities.isEmpty();
+        boolean hasJoinedEntities = !joinedEntities.isEmpty();
         boolean joinedOneEntitySelected = oneSelected && forces.isEmpty();
-        boolean canSeeAll = lobby.canSeeAll(joinedEntities);
 
         ScalingPopup popup = new ScalingPopup();
 
@@ -195,21 +195,21 @@ class LobbyMekPopup {
         String eIds = enToken(entities);
         String seIds = enToken(joinedEntities);
 
-        popup.add(menuItem("View...", LMP_VIEW + NOINFO + seIds, hasjoinedEntities, listener, KeyEvent.VK_V));
-        popup.add(menuItem("View BV Calculation...", LMP_BV + NOINFO + seIds, hasjoinedEntities, listener,
+        popup.add(menuItem("View...", LMP_VIEW + NO_INFO + seIds, hasJoinedEntities, listener, KeyEvent.VK_V));
+        popup.add(menuItem("View BV Calculation...", LMP_BV + NO_INFO + seIds, hasJoinedEntities, listener,
               KeyEvent.VK_B));
-        popup.add(menuItem("View Cost Calculation...", LMP_COST + NOINFO + seIds, hasjoinedEntities, listener));
+        popup.add(menuItem("View Cost Calculation...", LMP_COST + NO_INFO + seIds, hasJoinedEntities, listener));
         popup.add(ScalingPopup.spacer());
 
         if (joinedOneEntitySelected) {
             popup.add(
-                  menuItem("Configure...", LMP_CONFIGURE + NOINFO + eId, hasjoinedEntities, listener, KeyEvent.VK_C));
+                  menuItem("Configure...", LMP_CONFIGURE + NO_INFO + eId, hasJoinedEntities, listener, KeyEvent.VK_C));
         } else {
-            popup.add(menuItem("Configure...", LMP_CONFIGURE_ALL + NOINFO + seIds, hasjoinedEntities, listener,
+            popup.add(menuItem("Configure...", LMP_CONFIGURE_ALL + NO_INFO + seIds, hasJoinedEntities, listener,
                   KeyEvent.VK_C));
         }
-        popup.add(menuItem("Edit Damage...", LMP_DAMAGE + NOINFO + seIds, hasjoinedEntities, listener, KeyEvent.VK_E));
-        popup.add(menuItem("Set individual camo...", LMP_INDI_CAMO + NOINFO + seIds, hasjoinedEntities, listener,
+        popup.add(menuItem("Edit Damage...", LMP_DAMAGE + NO_INFO + seIds, hasJoinedEntities, listener, KeyEvent.VK_E));
+        popup.add(menuItem("Set individual camo...", LMP_INDI_CAMO + NO_INFO + seIds, hasJoinedEntities, listener,
               KeyEvent.VK_I));
 
         if (lobby.isForceView()) {
@@ -223,11 +223,11 @@ class LobbyMekPopup {
             popup.add(moveDn);
         }
 
-        popup.add(deployMenu(clientGui, hasjoinedEntities, listener, joinedEntities));
-        popup.add(randomizeMenu(hasjoinedEntities, listener, seIds));
-        popup.add(munitionsConfigMenu(hasjoinedEntities, listener, joinedEntities));
-        popup.add(swapPilotMenu(hasjoinedEntities, joinedEntities, clientGui, listener));
-        popup.add(prioTargetMenu(clientGui, hasjoinedEntities, listener, joinedEntities));
+        popup.add(deployMenu(clientGui, hasJoinedEntities, listener, joinedEntities));
+        popup.add(randomizeMenu(hasJoinedEntities, listener, seIds));
+        popup.add(munitionsConfigMenu(hasJoinedEntities, listener, joinedEntities));
+        popup.add(swapPilotMenu(hasJoinedEntities, joinedEntities, clientGui, listener));
+        popup.add(priorityTargetMenu(clientGui, hasJoinedEntities, listener, joinedEntities));
 
         if (optBurstMG || optLRMHotLoad) {
             popup.add(equipMenu(anyRFMGOn, anyRFMGOff, anyHLOn, anyHLOff, optLRMHotLoad, optBurstMG, listener, seIds));
@@ -242,16 +242,16 @@ class LobbyMekPopup {
 
         if (accessibleCarriers) {
             popup.add(
-                  menuItem("Disembark / leave from carriers", LMP_UNLOAD + NOINFO + seIds, !noneEmbarked, listener));
-            popup.add(menuItem("Offload all carried units", LMP_UNLOADALL + NOINFO + seIds, anyCarrier, listener));
+                  menuItem("Disembark / leave from carriers", LMP_UNLOAD + NO_INFO + seIds, !noneEmbarked, listener));
+            popup.add(menuItem("Offload all carried units", LMP_UNLOAD_ALL + NO_INFO + seIds, anyCarrier, listener));
         }
 
         if (accessibleTrailers) {
-            popup.add(menuItem("Detach from Tractor", LMP_DETACH_FROM_TRACTOR + NOINFO + seIds, anyTrailer, listener));
+            popup.add(menuItem("Detach from Tractor", LMP_DETACH_FROM_TRACTOR + NO_INFO + seIds, anyTrailer, listener));
         }
 
         if (accessibleTractors) {
-            popup.add(menuItem("Detach Trailer", LMP_DETACH_TRAILER + NOINFO + seIds, anyTractor, listener));
+            popup.add(menuItem("Detach Trailer", LMP_DETACH_TRAILER + NO_INFO + seIds, anyTractor, listener));
         }
 
         if (accessibleTransportBays) {
@@ -262,21 +262,21 @@ class LobbyMekPopup {
             popup.add(squadronMenu(clientGui, true, listener, joinedEntities));
         }
 
-        if (allProtomeks) {
-            popup.add(protoMenu(clientGui, allProtomeks, listener, joinedEntities));
+        if (allProtoMeks) {
+            popup.add(protoMenu(clientGui, true, listener, joinedEntities));
         }
 
-        popup.add(c3Menu(hasjoinedEntities, joinedEntities, clientGui, listener));
+        popup.add(c3Menu(hasJoinedEntities, joinedEntities, clientGui, listener));
         popup.add(forceMenu(lobby, entities, forces, listener));
 
         popup.add(ScalingPopup.spacer());
-        popup.add(menuItem("View AlphaStrike Stats", LMP_ALPHASTRIKE + NOINFO + seIds, true, listener));
+        popup.add(menuItem("View AlphaStrike Stats", LMP_ALPHA_STRIKE + NO_INFO + seIds, true, listener));
 
         if (oneSelected) {
             popup.add(exportEntitySpriteMenu(clientGui.getFrame(), entities.get(0)));
         }
 
-        popup.add(menuItem("Convert to SBF Formation", LMP_SBFFORMATION + "|" + foToken(forces) + eIds,
+        popup.add(menuItem("Convert to SBF Formation", LMP_SBF_FORMATION + "|" + foToken(forces) + eIds,
               lobby.isForceView(), listener));
         popup.add(ScalingPopup.spacer());
         popup.add(menuItem("Delete", LMP_DELETE + "|" + foToken(forces) + seIds,
@@ -292,19 +292,21 @@ class LobbyMekPopup {
           ActionListener listener) {
         JMenu menu = new JMenu("Force");
         if (!forces.isEmpty() || !entities.isEmpty()) {
-            menu.add(menuItem("Create Force from...", LMP_FCREATEFROM + "|" + foToken(forces) + enToken(entities), true,
+            menu.add(menuItem("Create Force from...",
+                  LMP_F_CREATE_FROM + "|" + foToken(forces) + enToken(entities),
+                  true,
                   listener));
         }
-        menu.add(menuItem("Add empty Force...", LMP_FCREATETOP + NOINFO + NOINFO, true, listener));
+        menu.add(menuItem("Add empty Force...", LMP_F_CREATE_TOP + NO_INFO + NO_INFO, true, listener));
 
         // If exactly one force is selected, offer force options
         if ((forces.size() == 1) && entities.isEmpty()) {
             Force force = forces.get(0);
             boolean editable = lobby.lobbyActions.isEditable(force);
             String fId = "|" + force.getId();
-            menu.add(menuItem("Add Subforce...", LMP_FCREATESUB + fId + NOINFO, editable, listener));
-            menu.add(menuItem("Rename", LMP_FRENAME + fId + NOINFO, editable, listener));
-            menu.add(menuItem("Promote to Top-Level Force", LMP_FPROMOTE + fId + NOINFO,
+            menu.add(menuItem("Add Sub force...", LMP_F_CREATE_SUB + fId + NO_INFO, editable, listener));
+            menu.add(menuItem("Rename", LMP_F_RENAME + fId + NO_INFO, editable, listener));
+            menu.add(menuItem("Promote to Top-Level Force", LMP_F_PROMOTE + fId + NO_INFO,
                   editable && !force.isTopLevel(), listener));
         }
 
@@ -316,14 +318,14 @@ class LobbyMekPopup {
                 addMenu.add(forceTreeMenu(force, lobby.game(), enToken(entities), listener));
             }
             menu.add(addMenu);
-            menu.add(menuItem("Remove from Force", LMP_FREMOVE + NOINFO + enToken(entities), true, listener));
+            menu.add(menuItem("Remove from Force", LMP_F_REMOVE + NO_INFO + enToken(entities), true, listener));
         }
 
         // If exactly one force is selected, offer force options
         if ((forces.size() == 1) && entities.isEmpty()) {
             Force force = forces.get(0);
             boolean editable = lobby.lobbyActions.isEditable(force);
-            menu.add(menuItem("Delete empty Force...", LMP_FCDELETEEMPTY + "|" + foToken(forces) + NOINFO,
+            menu.add(menuItem("Delete empty Force...", LMP_FC_DELETE_EMPTY + "|" + foToken(forces) + NO_INFO,
                   (editable && force.getChildCount() == 0), listener));
         }
 
@@ -335,7 +337,7 @@ class LobbyMekPopup {
         JMenuItem result;
         String item = "<HTML>" + force.getName() + idString(game, force.getId());
         if (force.getSubForces().isEmpty()) {
-            result = menuItem(item, LMP_FADDTO + "|" + force.getId() + enToken, true, listener);
+            result = menuItem(item, LMP_F_ADD_TO + "|" + force.getId() + enToken, true, listener);
         } else {
             result = new JMenu(item);
             for (Integer subForceId : force.getSubForces()) {
@@ -370,7 +372,7 @@ class LobbyMekPopup {
                       .forEach(e -> menu.add(menuItem(
                             "<HTML>" + e.getShortNameRaw() + idString(game, e.getId()) + " (Free Collars: "
                                   + ((Jumpship) e).getFreeDockingCollars() + ")",
-                            LMP_LOAD + "|" + e.getId() + ":-1" + enToken(entities), enabled, listener)));
+                            LMP_LOAD + "|" + e.getId() + ":-1" + enToken(entities), true, listener)));
             } else if (entities.stream().noneMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMEK))) {
                 // Standard loading, not ProtoMeks, not DropShip -> JumpShip
                 game.getEntitiesVector().stream()
@@ -379,7 +381,7 @@ class LobbyMekPopup {
                       .filter(e -> canLoadAll(e, entities))
                       .forEach(e -> menu.add(menuItem(
                             "<HTML>" + e.getShortNameRaw() + idString(game, e.getId()),
-                            LMP_LOAD + "|" + e.getId() + ":-1" + enToken(entities), enabled, listener)));
+                            LMP_LOAD + "|" + e.getId() + ":-1" + enToken(entities), true, listener)));
             }
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
@@ -402,7 +404,7 @@ class LobbyMekPopup {
                   .filter(tractor -> !tractor.equals(entity))
                   .forEach(tractor -> menu.add(menuItem("<HTML>" + tractor.getShortNameRaw() + idString(game,
                               tractor.getId()),
-                        LMP_TOW + "|" + tractor.getId() + ":-1|" + entity.getId(), enabled, listener
+                        LMP_TOW + "|" + tractor.getId() + ":-1|" + entity.getId(), true, listener
 
                   )));
         }
@@ -422,7 +424,11 @@ class LobbyMekPopup {
         }
 
         Game game = cg.getClient().getGame();
-        Entity entity = entities.stream().filter(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMEK)).findAny().get();
+
+        Optional<Entity> optionalEntity = entities.stream()
+              .filter(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMEK))
+              .findAny();
+        Entity entity = optionalEntity.orElse(null);
         List<Entity> loaders = game.getEntitiesVector();
 
         // Handle front and rear Magnetic Clamp Mounts
@@ -442,7 +448,7 @@ class LobbyMekPopup {
                 }
             }
             JMenu loaderMenu = new JMenu(loader.getShortName());
-            if ((front != null) && front.canLoad(entity)
+            if ((entity != null) && (front != null) && front.canLoad(entity)
                   && ((entity.getWeightClass() < EntityWeightClass.WEIGHT_SUPER_HEAVY)
                   || (rear == null) || rear.getLoadedUnits().isEmpty())) {
                 loaderMenu.add(menuItem("Onto Front", LMP_LOAD + "|" + loader.getId() + ":0" + enToken(entities),
@@ -481,7 +487,7 @@ class LobbyMekPopup {
         JMenu menu = new JMenu("Fighter Squadrons");
         boolean hasFighter = entities.stream().anyMatch(Entity::isFighter);
         if (enabled && hasFighter) {
-            menu.add(menuItem("Form Fighter Squadron", LMP_SQUADRON + NOINFO + enToken(entities), enabled, listener));
+            menu.add(menuItem("Form Fighter Squadron", LMP_SQUADRON + NO_INFO + enToken(entities), true, listener));
 
             // Join [Squadron] menu items
             cg.getClient().getGame().getEntitiesVector().stream()
@@ -489,7 +495,7 @@ class LobbyMekPopup {
                   .filter(e -> !entities.contains(e))
                   .filter(e -> canLoadAll(e, entities))
                   .forEach(e -> menu.add(menuItem("Join " + e.getShortName(),
-                        LMP_LOAD + "|" + e.getId() + ":-1" + enToken(entities), enabled, listener)));
+                        LMP_LOAD + "|" + e.getId() + ":-1" + enToken(entities), true, listener)));
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
         return menu;
@@ -498,12 +504,12 @@ class LobbyMekPopup {
     /**
      * Returns the "Priority Target" submenu, allowing to assign units as a strategic target to a local Princess bot.
      */
-    private static JMenu prioTargetMenu(ClientGUI cg, boolean enabled, ActionListener listener,
+    private static JMenu priorityTargetMenu(ClientGUI cg, boolean enabled, ActionListener listener,
           Collection<Entity> entities) {
         JMenu menu = new JMenu("Set Priority Target for");
         if (enabled && !cg.getLocalBots().isEmpty()) {
             for (String bot : cg.getLocalBots().keySet()) {
-                menu.add(menuItem(bot, LMP_PRIO_TARGET + "|" + bot + enToken(entities), enabled, listener));
+                menu.add(menuItem(bot, LMP_PRIORITY_TARGET + "|" + bot + enToken(entities), true, listener));
             }
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
@@ -530,27 +536,27 @@ class LobbyMekPopup {
                 boolean anyHidden = entities.stream().anyMatch(Entity::isHidden);
                 boolean anyNotHidden = entities.stream().anyMatch(e -> !e.isHidden());
                 menu.add(menuItem("Hidden", LMP_HIDDEN + "|" + LMP_HIDE + eIds, anyNotHidden, listener));
-                menu.add(menuItem("Not Hidden", LMP_HIDDEN + "|" + LMP_NOHIDE + eIds, anyHidden, listener));
+                menu.add(menuItem("Not Hidden", LMP_HIDDEN + "|" + LMP_NO_HIDE + eIds, anyHidden, listener));
                 menu.add(ScalingPopup.spacer());
             }
 
-            menu.add(menuItem("Standing", LMP_STAND + "|" + LMP_STAND + eIds, enabled, listener));
-            menu.add(menuItem("Prone", LMP_STAND + "|" + LMP_PRONE + eIds, enabled, listener));
+            menu.add(menuItem("Standing", LMP_STAND + "|" + LMP_STAND + eIds, true, listener));
+            menu.add(menuItem("Prone", LMP_STAND + "|" + LMP_PRONE + eIds, true, listener));
             if (clientGui.getClient().getGame().getOptions()
                   .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)) {
-                menu.add(menuItem("Hull-Down", LMP_STAND + "|" + LMP_HULLDOWN + eIds, enabled, listener));
+                menu.add(menuItem("Hull-Down", LMP_STAND + "|" + LMP_HULL_DOWN + eIds, true, listener));
             }
             menu.add(ScalingPopup.spacer());
 
             // Heat
             JMenu heatMenu = new JMenu("Heat at start");
-            heatMenu.add(menuItem("No heat", LMP_HEAT + "|0" + eIds, enabled, listener));
+            heatMenu.add(menuItem("No heat", LMP_HEAT + "|0" + eIds, true, listener));
             for (int i = 1; i < 11; i++) {
-                heatMenu.add(menuItem("Heat " + i, LMP_HEAT + "|" + i + eIds, enabled, listener));
+                heatMenu.add(menuItem("Heat " + i, LMP_HEAT + "|" + i + eIds, true, listener));
             }
             JMenu subHeatMenu = new JMenu("More heat");
             for (int i = 11; i < 41; i++) {
-                subHeatMenu.add(menuItem("Heat " + i, LMP_HEAT + "|" + i + eIds, enabled, listener));
+                subHeatMenu.add(menuItem("Heat " + i, LMP_HEAT + "|" + i + eIds, true, listener));
             }
             heatMenu.add(subHeatMenu);
             menu.add(heatMenu);
@@ -558,13 +564,13 @@ class LobbyMekPopup {
 
             // Late deployment
             JMenu lateMenu = new JMenu("Deployment round");
-            lateMenu.add(menuItem("At game start", LMP_DEPLOY + "|0" + eIds, enabled, listener));
+            lateMenu.add(menuItem("At game start", LMP_DEPLOY + "|0" + eIds, true, listener));
             for (int i = 1; i < 11; i++) {
-                lateMenu.add(menuItem("Before round " + i, LMP_DEPLOY + "|" + i + eIds, enabled, listener));
+                lateMenu.add(menuItem("Before round " + i, LMP_DEPLOY + "|" + i + eIds, true, listener));
             }
             JMenu veryLateMenu = new JMenu("Later");
             for (int i = 11; i < 41; i++) {
-                veryLateMenu.add(menuItem("Before round " + i, LMP_DEPLOY + "|" + i + eIds, enabled, listener));
+                veryLateMenu.add(menuItem("Before round " + i, LMP_DEPLOY + "|" + i + eIds, true, listener));
             }
 
             lateMenu.add(veryLateMenu);
@@ -584,9 +590,9 @@ class LobbyMekPopup {
         menu.setEnabled(enabled);
         menu.setMnemonic(KeyEvent.VK_R);
 
-        menu.add(menuItem("Name", LMP_NAME + NOINFO + eIds, enabled, listener, KeyEvent.VK_N));
-        menu.add(menuItem("Callsign", LMP_CALLSIGN + NOINFO + eIds, enabled, listener, KeyEvent.VK_C));
-        menu.add(menuItem("Skills", LMP_SKILLS + NOINFO + eIds, enabled, listener, KeyEvent.VK_S));
+        menu.add(menuItem("Name", LMP_NAME + NO_INFO + eIds, enabled, listener, KeyEvent.VK_N));
+        menu.add(menuItem("Callsign", LMP_CALLSIGN + NO_INFO + eIds, enabled, listener, KeyEvent.VK_C));
+        menu.add(menuItem("Skills", LMP_SKILLS + NO_INFO + eIds, enabled, listener, KeyEvent.VK_S));
         return menu;
     }
 
@@ -596,14 +602,14 @@ class LobbyMekPopup {
     private static JMenu munitionsConfigMenu(boolean enabled, ActionListener listener, Collection<Entity> entityCol) {
         JMenu menu = new JMenu("Configure Munitions");
         Entity first = (entityCol.isEmpty()) ? null : entityCol.iterator().next();
-        enabled &= (first != null && !entityCol.stream().anyMatch(e -> e.isEnemyOf(first)));
+        enabled &= (first != null && entityCol.stream().noneMatch(e -> e.isEnemyOf(first)));
         menu.setEnabled(enabled);
         String eIds = enToken(entityCol);
 
-        menu.add(menuItem("Autoconfig", LMP_AUTOCONFIG + NOINFO + eIds, enabled, listener, KeyEvent.VK_A));
-        menu.add(menuItem("Randomize", LMP_RANDOMCONFIG + NOINFO + eIds, enabled, listener, KeyEvent.VK_R));
-        menu.add(menuItem("Save config", LMP_SAVECONFIG + NOINFO + eIds, enabled, listener, KeyEvent.VK_S));
-        menu.add(menuItem("Apply config", LMP_APPLYCONFIG + NOINFO + eIds, enabled, listener, KeyEvent.VK_P));
+        menu.add(menuItem("Autoconfig", LMP_AUTOCONFIG + NO_INFO + eIds, enabled, listener, KeyEvent.VK_A));
+        menu.add(menuItem("Randomize", LMP_RANDOM_CONFIG + NO_INFO + eIds, enabled, listener, KeyEvent.VK_R));
+        menu.add(menuItem("Save config", LMP_SAVE_CONFIG + NO_INFO + eIds, enabled, listener, KeyEvent.VK_S));
+        menu.add(menuItem("Apply config", LMP_APPLY_CONFIG + NO_INFO + eIds, enabled, listener, KeyEvent.VK_P));
 
         return menu;
     }
@@ -615,13 +621,16 @@ class LobbyMekPopup {
 
         if (entities.stream().anyMatch(Entity::hasAnyC3System)) {
 
-            menu.add(menuItem("Disconnect", LMP_C3DISCONNECT + NOINFO + enToken(entities), enabled, listener));
+            menu.add(menuItem("Disconnect", LMP_C3DISCONNECT + NO_INFO + enToken(entities), enabled, listener));
 
             if (entities.stream().anyMatch(e -> e.hasC3MM() || e.hasC3M())) {
                 boolean allCM = entities.stream().allMatch(Entity::isC3CompanyCommander);
-                menu.add(menuItem("Set as C3 Company Master", LMP_C3CM + NOINFO + enToken(entities), !allCM, listener));
+                menu.add(menuItem("Set as C3 Company Master",
+                      LMP_C3CM + NO_INFO + enToken(entities),
+                      !allCM,
+                      listener));
                 boolean allLM = entities.stream().allMatch(Entity::isC3IndependentMaster);
-                menu.add(menuItem("Set as C3 Lance Master", LMP_C3LM + NOINFO + enToken(entities), !allLM, listener));
+                menu.add(menuItem("Set as C3 Lance Master", LMP_C3LM + NO_INFO + enToken(entities), !allLM, listener));
             }
 
             // Special treatment if exactly a C3SSSM is selected
@@ -629,9 +638,11 @@ class LobbyMekPopup {
                 long countM = entities.stream().filter(Entity::hasC3M).count();
                 long countS = entities.stream().filter(Entity::hasC3S).count();
                 if (countM == 1 && countS == 3) {
-                    Entity master = entities.stream().filter(Entity::hasC3M).findAny().get();
-                    menu.add(menuItem("Form C3 Lance", LMP_C3FORMC3 + "|" + master.getId() + enToken(entities), true,
-                          listener));
+                    Optional<Entity> optionalMaster = entities.stream().filter(Entity::hasC3M).findAny();
+                    optionalMaster.ifPresent(master -> menu.add(menuItem("Form C3 Lance",
+                          LMP_C3_FORM_C3 + "|" + master.getId() + enToken(entities),
+                          true,
+                          listener)));
                 }
             }
 
@@ -639,73 +650,84 @@ class LobbyMekPopup {
             if (entities.size() > 1 && entities.size() <= 6) {
                 Entity master = anyOneElement(entities);
                 if (entities.stream().allMatch(e -> C3Util.sameNhC3System(master, e))) {
-                    menu.add(menuItem("Form C3 Lance", LMP_C3FORMNHC3 + "|" + master.getId() + enToken(entities), true,
+                    menu.add(menuItem("Form C3 Lance",
+                          LMP_C3_FORM_NHC3 + "|" + master.getId() + enToken(entities),
+                          true,
                           listener));
                 }
             }
 
-            Entity entity = entities.stream().filter(Entity::hasAnyC3System).findAny().get();
+            Optional<Entity> c3Entity = entities.stream().filter(Entity::hasAnyC3System).findAny();
+
+            Entity entity = null;
+
+            if (c3Entity.isPresent()) {
+                entity = entities.stream().filter(e -> e.hasC3S() || e.hasNhC3()).findAny().orElse(c3Entity.get());
+            }
+
             // ideally, find one slave or C3i/NC3/Nova to get some connection options
-            entity = entities.stream().filter(e -> e.hasC3S() || e.hasNhC3()).findAny().orElse(entity);
             Game game = cg.getClient().getGame();
             ArrayList<String> usedNetIds = new ArrayList<>();
 
-            for (Entity other : cg.getClient().getEntitiesVector()) {
-                // ignore enemies and self; only link the same type of C3
-                if (entity.isEnemyOf(other) || entity.equals(other)
-                      || (entity.hasC3i() != other.hasC3i())
-                      || (entity.hasNavalC3() != other.hasNavalC3())
-                      || (entity.hasNovaCEWS() != other.hasNovaCEWS())
-                      || !other.hasAnyC3System() || other.hasC3S()) {
-                    continue;
-                }
-                // maximum depth of a c3 network is 2 levels.
-                Entity eCompanyMaster = other.getC3Master();
-                if ((eCompanyMaster != null) && (eCompanyMaster.getC3Master() != eCompanyMaster)) {
-                    continue;
-                }
-                int nodes = other.calculateFreeC3Nodes();
-                if (other.hasC3MM() && entity.hasC3M() && other.C3MasterIs(other)) {
-                    nodes = other.calculateFreeC3MNodes();
-                }
-                if (entity.C3MasterIs(other)) {
-                    nodes++;
-                }
-                if ((entity.hasNhC3()) && entity.onSameC3NetworkAs(other)) {
-                    nodes++;
-                }
+            if (entity != null) {
+                for (Entity other : cg.getClient().getEntitiesVector()) {
+                    // ignore enemies and self; only link the same type of C3
+                    if (entity.isEnemyOf(other) || entity.equals(other)
+                          || (entity.hasC3i() != other.hasC3i())
+                          || (entity.hasNavalC3() != other.hasNavalC3())
+                          || (entity.hasNovaCEWS() != other.hasNovaCEWS())
+                          || !other.hasAnyC3System() || other.hasC3S()) {
+                        continue;
+                    }
+                    // maximum depth of a c3 network is 2 levels.
+                    Entity eCompanyMaster = other.getC3Master();
+                    if ((eCompanyMaster != null) && (eCompanyMaster.getC3Master() != eCompanyMaster)) {
+                        continue;
+                    }
+                    int nodes = other.calculateFreeC3Nodes();
+                    if (other.hasC3MM() && entity.hasC3M() && other.C3MasterIs(other)) {
+                        nodes = other.calculateFreeC3MNodes();
+                    }
+                    if (entity.C3MasterIs(other)) {
+                        nodes++;
+                    }
+                    if ((entity.hasNhC3()) && entity.onSameC3NetworkAs(other)) {
+                        nodes++;
+                    }
 
-                if (other.hasNhC3()) {
-                    // Don't add the following checks to the line above
-                    if (!entity.onSameC3NetworkAs(other) && !usedNetIds.contains(other.getC3NetId())) {
-                        String item = "<HTML>Join " + other.getShortNameRaw() + idString(game, other.getId());
+                    if (other.hasNhC3()) {
+                        // Don't add the following checks to the line above
+                        if (!entity.onSameC3NetworkAs(other) && !usedNetIds.contains(other.getC3NetId())) {
+                            String item = "<HTML>Join " + other.getShortNameRaw() + idString(game, other.getId());
+                            item += " (" + other.getC3NetId() + ")";
+                            item += (nodes == 0 ? " - full" : " - " + nodes + " free spots");
+                            menu.add(menuItem(item, LMP_C3JOIN + "|" + other.getId() + enToken(entities), nodes != 0,
+                                  listener));
+                            usedNetIds.add(other.getC3NetId());
+                        }
+
+                    } else if (other.isC3CompanyCommander() && other.hasC3MM()) {
+                        String item = "<HTML>Connect to " + other.getShortNameRaw() + idString(game, other.getId());
                         item += " (" + other.getC3NetId() + ")";
                         item += (nodes == 0 ? " - full" : " - " + nodes + " free spots");
-                        menu.add(menuItem(item, LMP_C3JOIN + "|" + other.getId() + enToken(entities), nodes != 0,
+                        menu.add(menuItem(item, LMP_C3CONNECT + "|" + other.getId() + enToken(entities), nodes != 0,
                               listener));
-                        usedNetIds.add(other.getC3NetId());
-                    }
 
-                } else if (other.isC3CompanyCommander() && other.hasC3MM()) {
-                    String item = "<HTML>Connect to " + other.getShortNameRaw() + idString(game, other.getId());
-                    item += " (" + other.getC3NetId() + ")";
-                    item += (nodes == 0 ? " - full" : " - " + nodes + " free spots");
-                    menu.add(menuItem(item, LMP_C3CONNECT + "|" + other.getId() + enToken(entities), nodes != 0,
-                          listener));
-
-                } else if (other.isC3CompanyCommander() == entity.hasC3M()
-                      && !entity.isC3CompanyCommander()) {
-                    String item = "<HTML>Connect to " + other.getShortNameRaw() + idString(game, other.getId());
-                    item += " (" + other.getC3NetId() + ")";
-                    if (entity.C3MasterIs(other)) {
-                        item += " - already connected";
-                        nodes = 0;
-                    } else {
-                        item += (nodes == 0 ? " - full" : " - " + nodes + " free spots");
+                    } else if (other.isC3CompanyCommander() == entity.hasC3M()
+                          && !entity.isC3CompanyCommander()) {
+                        String item = "<HTML>Connect to " + other.getShortNameRaw() + idString(game, other.getId());
+                        item += " (" + other.getC3NetId() + ")";
+                        if (entity.C3MasterIs(other)) {
+                            item += " - already connected";
+                            nodes = 0;
+                        } else {
+                            item += (nodes == 0 ? " - full" : " - " + nodes + " free spots");
+                        }
+                        menu.add(menuItem(item, LMP_C3CONNECT + "|" + other.getId() + enToken(entities), nodes != 0,
+                              listener));
                     }
-                    menu.add(menuItem(item, LMP_C3CONNECT + "|" + other.getId() + enToken(entities), nodes != 0,
-                          listener));
                 }
+
             }
         }
         menu.setEnabled(enabled && menu.getItemCount() > 0);
@@ -741,10 +763,10 @@ class LobbyMekPopup {
             Force force = anyOneElement(forces);
             for (Player player : game.getPlayersList()) {
                 if (!player.isEnemyOf(gameForces.getOwner(force))) {
-                    String command = LMP_FASSIGNONLY + "|" + player.getId() + ":" + foToken(forces) + NOINFO;
+                    String command = LMP_F_ASSIGN_ONLY + "|" + player.getId() + ":" + foToken(forces) + NO_INFO;
                     fOnlyMenu.add(menuItem(player.getName(), command, true, listener));
                 }
-                String command = LMP_FASSIGN + "|" + player.getId() + ":" + foToken(forces) + NOINFO;
+                String command = LMP_F_ASSIGN + "|" + player.getId() + ":" + foToken(forces) + NO_INFO;
                 fFullMenu.add(menuItem(player.getName(), command, true, listener));
             }
             assignMenu.setEnabled(enabled && assignMenu.getItemCount() > 0);
@@ -755,7 +777,7 @@ class LobbyMekPopup {
     }
 
     /**
-     * @return the "Equipment" submenu, allowing hotloading LRMs and setting MGs to rapid fire mode
+     * @return the "Equipment" submenu, allowing hot loading LRMs and setting MGs to rapid fire mode
      */
     private static JMenu equipMenu(boolean anyRFOn, boolean anyRFOff, boolean anyHLOn,
           boolean anyHLOff, boolean optHL, boolean optRF,
@@ -763,15 +785,17 @@ class LobbyMekPopup {
         JMenu menu = new JMenu(Messages.getString("ChatLounge.Equipment"));
         menu.setEnabled(anyRFOff || anyRFOn || anyHLOff || anyHLOn);
         if (optRF) {
-            menu.add(menuItem(Messages.getString("ChatLounge.RapidFireToggleOn"), LMP_RAPIDFIREMG_ON + NOINFO + eIds,
+            menu.add(menuItem(Messages.getString("ChatLounge.RapidFireToggleOn"), LMP_RAPID_FIRE_MG_ON + NO_INFO + eIds,
                   anyRFOff, listener));
-            menu.add(menuItem(Messages.getString("ChatLounge.RapidFireToggleOff"), LMP_RAPIDFIREMG_OFF + NOINFO + eIds,
-                  anyRFOn, listener));
+            menu.add(menuItem(Messages.getString("ChatLounge.RapidFireToggleOff"),
+                  LMP_RAPID_FIRE_MG_OFF + NO_INFO + eIds,
+                  anyRFOn,
+                  listener));
         }
         if (optHL) {
-            menu.add(menuItem(Messages.getString("ChatLounge.HotLoadToggleOn"), LMP_HOTLOAD_ON + NOINFO + eIds,
+            menu.add(menuItem(Messages.getString("ChatLounge.HotLoadToggleOn"), LMP_HOT_LOAD_ON + NO_INFO + eIds,
                   anyHLOff, listener));
-            menu.add(menuItem(Messages.getString("ChatLounge.HotLoadToggleOff"), LMP_HOTLOAD_OFF + NOINFO + eIds,
+            menu.add(menuItem(Messages.getString("ChatLounge.HotLoadToggleOff"), LMP_HOT_LOAD_OFF + NO_INFO + eIds,
                   anyHLOn, listener));
         }
         return menu;
@@ -787,8 +811,8 @@ class LobbyMekPopup {
             for (Bay bay : entity.getTransportBays()) {
                 if (!bay.getLoadedUnits().isEmpty()) {
                     String label = "Bay #" + bay.getBayNumber() + " (" + bay.getLoadedUnits().size() + " units)";
-                    menu.add(menuItem(label, LMP_UNLOADALLFROMBAY + "|" + bay.getBayNumber() + enToken(entities),
-                          enabled, listener));
+                    menu.add(menuItem(label, LMP_UNLOAD_ALL_FROM_BAY + "|" + bay.getBayNumber() + enToken(entities),
+                          true, listener));
                 }
             }
         }

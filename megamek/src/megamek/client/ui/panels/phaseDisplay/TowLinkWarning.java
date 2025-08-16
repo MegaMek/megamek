@@ -151,20 +151,21 @@ public class TowLinkWarning {
 
         // Did we find a tractor?
         Set<Coords> validTractorCoords = new HashSet<>();
-        ;
+
         boolean useAdjacentHex = useAdjacentHexForTractor;
         if (closestDeployedTractor != null) {
             Set<Coords> possibleCoords = new HashSet<>();
             possibleCoords.add(closestDeployedTractor.getPosition());
             Entity testEntity = game.getEntity(closestDeployedTractor.getTowing());
             int count = 0;
-            do {
+
+            while ((testEntity != null) && (!testEntity.equals(deployingEntity)) && (count < MAX_SEARCH_DEPTH)) {
                 possibleCoords = getValidDeploymentCoords(testEntity, board, useAdjacentHex, possibleCoords);
                 testEntity = game.getEntity(testEntity.getTowing());
                 useAdjacentHex = !useAdjacentHex || testEntity instanceof LargeSupportTank;
                 count++;
             }
-            while ((testEntity != null) && (!testEntity.equals(deployingEntity)) && (count < MAX_SEARCH_DEPTH));
+
             if (count >= MAX_SEARCH_DEPTH) {
                 throw new StackOverflowError("Towing length too deep, could not path back to trailer");
             }
@@ -204,7 +205,7 @@ public class TowLinkWarning {
         }
 
         Set<Coords> validTrailerCoords = new HashSet<>();
-        ;
+
         // Did we find a trailer?
         if (closestDeployedTrailer != null) {
             Set<Coords> possibleCoords = new HashSet<>();
@@ -214,13 +215,15 @@ public class TowLinkWarning {
             useAdjacentHex = useAdjacentHex || closestDeployedTrailer instanceof LargeSupportTank;
             Entity testEntity = game.getEntity(closestDeployedTrailer.getTowedBy());
             int count = 0;
-            do {
+
+            while ((testEntity != null) && (deployingEntity.getTowedBy() != testEntity.getId()) && (count
+                  < MAX_SEARCH_DEPTH)) {
                 possibleCoords = getValidDeploymentCoords(testEntity, board, useAdjacentHex, possibleCoords);
                 useAdjacentHex = !useAdjacentHex || testEntity instanceof LargeSupportTank;
                 testEntity = game.getEntity(testEntity.getTowedBy());
                 count++;
-            } while ((testEntity != null) && (deployingEntity.getTowedBy() != testEntity.getId()) && (count
-                  < MAX_SEARCH_DEPTH));
+            }
+
             if (count >= MAX_SEARCH_DEPTH) {
                 throw new StackOverflowError("Towing length too deep, could not path back to tractor");
             }
@@ -273,10 +276,6 @@ public class TowLinkWarning {
     /**
      * When deploying a tractor, return the coords that would let it attach to its assigned trailer.
      *
-     * @param game
-     * @param tractor
-     * @param board
-     *
      * @return List of coords that a tractor could go, empty if there are none or if the tractor isn't a tractor or
      *       pulling anything
      */
@@ -319,10 +318,6 @@ public class TowLinkWarning {
 
     /**
      * When deploying a tractor, return the coords that would let it attach to its assigned trailer.
-     *
-     * @param game
-     * @param trailer
-     * @param board
      *
      * @return List of coords that a trailer could go, empty if there are none or if the trailer isn't a trailer or
      *       being pulled

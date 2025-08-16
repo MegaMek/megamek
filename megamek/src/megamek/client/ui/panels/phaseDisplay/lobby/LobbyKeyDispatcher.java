@@ -45,19 +45,13 @@ import megamek.client.ui.util.UIUtil;
  *
  * @author Simon (Juliez)
  */
-public class LobbyKeyDispatcher implements KeyEventDispatcher {
-
-    private ChatLounge lobby;
-
-    public LobbyKeyDispatcher(ChatLounge cl) {
-        lobby = cl;
-    }
+public record LobbyKeyDispatcher(ChatLounge lobby) implements KeyEventDispatcher {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent evt) {
 
-        // Don't consider hotkeys when the clientgui has a dialog visible and only react to key presses (not release)
-        if (((lobby.getClientgui() != null) && lobby.getClientgui().shouldIgnoreHotKeys())
+        // Don't consider hotkeys when the clientGUI has a dialog visible and only react to key presses (not release)
+        if (((lobby.getClientGUI() != null) && lobby.getClientGUI().shouldIgnoreHotKeys())
               || lobby.isIgnoringEvents()
               || UIUtil.isModalDialogDisplayed()
               || (evt.getID() != KeyEvent.KEY_PRESSED)) {

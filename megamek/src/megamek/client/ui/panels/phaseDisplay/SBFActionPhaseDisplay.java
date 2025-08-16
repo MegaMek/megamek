@@ -58,12 +58,12 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
     protected int currentFormation = Entity.NONE;
 
     protected MegaMekButton butSkipTurn;
-    protected final SBFClientGUI clientgui;
+    protected final SBFClientGUI clientGUI;
     protected final MegaMekController controller = MegaMekGUI.getKeyDispatcher();
 
-    protected SBFActionPhaseDisplay(SBFClientGUI cg) {
-        super(cg);
-        clientgui = cg;
+    protected SBFActionPhaseDisplay(SBFClientGUI sbfClientGUI) {
+        super(sbfClientGUI);
+        clientGUI = sbfClientGUI;
     }
 
     @Override
@@ -77,7 +77,7 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
         butSkipTurn.setToolTipText("<html><body>" + f + "</body></html>");
         addToDonePanel(donePanel, butSkipTurn);
 
-        if (clientgui != null) {
+        if (clientGUI != null) {
             butSkipTurn.addActionListener(new AbstractAction() {
 
                 @Override
@@ -85,9 +85,9 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
                     if (isIgnoringEvents()) {
                         return;
                     }
-                    if ((clientgui.getClient().isMyTurn())
-                          || (clientgui.getClient().getGame().getTurn() == null)
-                          || (clientgui.getClient().getGame().getPhase().isReport())) {
+                    if ((clientGUI.getClient().isMyTurn())
+                          || (clientGUI.getClient().getGame().getTurn() == null)
+                          || (clientGUI.getClient().getGame().getPhase().isReport())) {
                         // act like Done button
                         performDoneNoAction();
                         // When the turn is ended, we could miss a key release event
@@ -111,10 +111,10 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
     }
 
     public boolean shouldReceiveDoneKeyCommand() {
-        return ((clientgui.getClient().isMyTurn()
-              || (clientgui.getClient().getGame().getTurn() == null)
-              || (clientgui.getClient().getGame().getPhase().isReport())))
-              && !clientgui.isChatBoxActive()
+        return ((clientGUI.getClient().isMyTurn()
+              || (clientGUI.getClient().getGame().getTurn() == null)
+              || (clientGUI.getClient().getGame().getPhase().isReport())))
+              && !clientGUI.isChatBoxActive()
               && !isIgnoringEvents()
               && isVisible()
               && (butDone.isEnabled() || butSkipTurn.isEnabled());
@@ -140,40 +140,12 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
     abstract protected void updateDonePanel();
 
     /**
-     * @return true if a nag dialog should be shown when there is no action given to current unit.
-     * This is true if user option wants a nag
-     * they have not preemptively checked @butIgnoreNag
-     * the turn timer is not expired
-     */
-    //    protected boolean needNagForNoAction() {
-    //        return GUIP.getNagForNoAction() && !ignoreNoActionNag && !isTimerExpired();
-    //    }
-    //
-    //    protected boolean checkNagForNoAction(String title, String body) {
-    //        ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
-    //        if (nag.getAnswer()) {
-    //            // do they want to be bothered again?
-    //            if (!nag.getShowAgain()) {
-    //                GUIP.setNagForNoAction(false);
-    //            }
-    //        } else {
-    //            return true;
-    //        }
-    //
-    //        return false;
-    //    }
-
-
-    /**
      * set labels and enables on the done and skip buttons depending on the GUIP getNagForNoAction option
      *
-     * @param doneButtonLabel
-     * @param skipButtonLabel
-     * @param isDoingAction   true if user has entered actions for this turn, false if not.
+     * @param isDoingAction true if user has entered actions for this turn, false if not.
      */
     protected void updateDonePanelButtons(final String doneButtonLabel, final String skipButtonLabel,
-          final boolean isDoingAction,
-          @Nullable List<String> turnDetails) {
+          final boolean isDoingAction, @Nullable List<String> turnDetails) {
         if (isIgnoringEvents()) {
             return;
         }
@@ -193,7 +165,7 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
         butSkipTurn.setText("<html><b>" + skipButtonLabel + "</b></html>");
 
         if ((currentFormation == SBFFormation.NONE)
-              || getClientgui().getClient().getGame().getInGameObject(currentFormation).isEmpty()) {
+              || getClientGUI().getClient().getGame().getInGameObject(currentFormation).isEmpty()) {
             butDone.setEnabled(false);
             butSkipTurn.setEnabled(false);
         } else if (isDoingAction || ignoreNoActionNag) {
@@ -203,11 +175,6 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
             butDone.setEnabled(!GUIP.getNagForNoAction());
             butSkipTurn.setEnabled(true);
         }
-
-        //        TurnDetailsOverlay turnDetailsOverlay = clientgui.getBoardView().getTurnDetailsOverlay();
-        //        if (turnDetailsOverlay != null) {
-        //            turnDetailsOverlay.setLines(turnDetails);
-        //        }
     }
 
     private void adaptToGUIScale() {
@@ -215,7 +182,7 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Returns the formation that is currently selected for action (movement/firing etc), if any, as an optional. Note
+     * Returns the formation that is currently selected for action (movement/firing etc.), if any, as an optional. Note
      * that this can be empty in many cases. E.g., displays are active when it's not the player's turn. When the setting
      * to not auto-select a unit for the player is active, no unit may be selected even in a player's turn. Note that
      * this is not necessarily equal to the unit *viewed* in the unit display.
@@ -223,6 +190,6 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
      * @return The currently acting formation, if any
      */
     protected final Optional<SBFFormation> actingFormation() {
-        return clientgui.getClient().getGame().getFormation(currentFormation);
+        return clientGUI.getClient().getGame().getFormation(currentFormation);
     }
 }

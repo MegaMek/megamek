@@ -35,13 +35,9 @@ package megamek.client.ui.panels.alphaStrike;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.BoxLayout;
@@ -206,33 +202,6 @@ public class ConfigurableASCardPanel extends JPanel {
     private void copyCardToClipboard() {
         ImageSelection imgSel = new ImageSelection(cardPanel.getCardImage());
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imgSel, null);
-    }
-
-    static class ImageSelection implements Transferable {
-
-        private final Image image;
-
-        public ImageSelection(Image image) {
-            this.image = image;
-        }
-
-        @Override
-        public DataFlavor[] getTransferDataFlavors() {
-            return new DataFlavor[] { DataFlavor.imageFlavor };
-        }
-
-        @Override
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
-            return DataFlavor.imageFlavor.equals(flavor);
-        }
-
-        @Override
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-            if (!DataFlavor.imageFlavor.equals(flavor)) {
-                throw new UnsupportedFlavorException(flavor);
-            }
-            return image;
-        }
     }
 
     public void toggleMenu(boolean menuVisible) {

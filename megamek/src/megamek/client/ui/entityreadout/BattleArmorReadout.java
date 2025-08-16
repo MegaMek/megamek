@@ -125,20 +125,7 @@ class BattleArmorReadout extends GeneralEntityReadout {
     }
 
     private ViewElement[] createEquipmentTableRow(Mounted<?> mounted) {
-        String location = BattleArmor.getBaMountLocAbbr(mounted.getBaMountLoc());
-        if (mounted.isDWPMounted()) {
-            location = "DWP";
-        }
-        if (mounted.isAPMMounted()) {
-            Mounted<?> apMount = mounted.getLinkedBy();
-            if (apMount != null) {
-                location = BattleArmor.getBaMountLocAbbr(apMount.getBaMountLoc());
-            }
-            location += " (APM)";
-        }
-        if (mounted.isSquadSupportWeapon()) {
-            location = "SSWM";
-        }
+        String location = getLocation(mounted);
 
         String name = sanitizeMountedDesc(mounted) + quirkMarker(mounted);
         if (battleArmor.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
@@ -154,6 +141,24 @@ class BattleArmorReadout extends GeneralEntityReadout {
             nameElement = new DestroyedElement(name);
         }
         return new ViewElement[] { nameElement, new PlainElement(location) };
+    }
+
+    private static String getLocation(Mounted<?> mounted) {
+        String location = BattleArmor.getBaMountLocAbbr(mounted.getBaMountLoc());
+        if (mounted.isDWPMounted()) {
+            location = "DWP";
+        }
+        if (mounted.isAPMMounted()) {
+            Mounted<?> apMount = mounted.getLinkedBy();
+            if (apMount != null) {
+                location = BattleArmor.getBaMountLocAbbr(apMount.getBaMountLoc());
+            }
+            location += " (APM)";
+        }
+        if (mounted.isSquadSupportWeapon()) {
+            location = "SSWM";
+        }
+        return location;
     }
 
     private String sanitizeMountedDesc(Mounted<?> mounted) {

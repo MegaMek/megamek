@@ -60,7 +60,7 @@ public class MekTableASUnitEntry {
     static String fullEntry(AlphaStrikeElement element, ChatLounge lobby, boolean forceView, boolean compactView) {
         StringBuilder result = new StringBuilder("<HTML><NOBR>");
 
-        Client client = lobby.getClientgui().getClient();
+        Client client = lobby.getClientGUI().getClient();
         Game game = client.getGame();
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();

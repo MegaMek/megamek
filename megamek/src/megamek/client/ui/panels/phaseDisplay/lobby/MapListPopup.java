@@ -39,14 +39,15 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import megamek.client.ui.util.ScalingPopup;
+import megamek.client.ui.util.UIUtil;
 
 class MapListPopup {
 
     static final String MLP_BOARD = "BOARD";
     static final String MLP_SURPRISE = "SURPRISE";
 
-    static ScalingPopup mapListPopup(List<String> boards, int numButtons, ActionListener listener,
-          ChatLounge lobby, boolean enableRotation) {
+    static ScalingPopup mapListPopup(List<String> boards, int numButtons, ActionListener listener, ChatLounge lobby,
+          boolean enableRotation) {
 
         if (boards.isEmpty()) {
             return new ScalingPopup();
@@ -106,7 +107,7 @@ class MapListPopup {
             for (int i = 0; i < numB; i++) {
                 menu.add(menuItem("Board " + (i + 1),
                       MLP_BOARD + ":" + i + ":" + boards.get(0) + ":" + rotated,
-                      enabled,
+                      true,
                       listener));
             }
         }
@@ -126,7 +127,7 @@ class MapListPopup {
             // Since it's not visible to the player, the random board can already be chosen here
             int rnd = (int) (Math.random() * boards.size());
             for (int i = 0; i < numB; i++) {
-                menu.add(menuItem("Board " + (i + 1), MLP_BOARD + ":" + i + ":" + boards.get(rnd), enabled, listener));
+                menu.add(menuItem("Board " + (i + 1), MLP_BOARD + ":" + i + ":" + boards.get(rnd), true, listener));
             }
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
@@ -144,7 +145,7 @@ class MapListPopup {
         if (enabled) {
             for (int i = 0; i < numB; i++) {
                 menu.add(menuItem("Board " + (i + 1), MLP_SURPRISE + ":" + i + ":"
-                      + String.join("\n", boards), enabled, listener));
+                      + String.join("\n", boards), true, listener));
             }
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
@@ -169,13 +170,6 @@ class MapListPopup {
     private static JMenuItem menuItem(String text, String cmd, boolean enabled,
           ActionListener listener, int mnemonic) {
 
-        JMenuItem result = new JMenuItem(text);
-        result.setActionCommand(cmd);
-        result.addActionListener(listener);
-        result.setEnabled(enabled);
-        if (mnemonic != Integer.MIN_VALUE) {
-            result.setMnemonic(mnemonic);
-        }
-        return result;
+        return UIUtil.menuItem(text, cmd, enabled, listener, mnemonic);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -628,7 +628,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 // Use sendUpdate because we want the Game to allow us to change on Bot's
                 // behalf.
                 clientgui.chatlounge.sendProxyUpdates(updateEntities, client.getLocalPlayer());
-                // clientgui.chatlounge.sendUpdate(updateEntities);
+                // clientGUI.chatlounge.sendUpdate(updateEntities);
             }
         }
 
@@ -922,7 +922,6 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
      * @return {@link MunitionTree} of available options, null otherwise.
      */
     private @Nullable MunitionTree loadLoadout() {
-        MunitionTree mt = null;
         JFileChooser fc = new JFileChooser(Paths.get(MMConstants.USER_LOADOUTS_DIR).toAbsolutePath().toString());
         FileNameExtensionFilter adfFilter = new FileNameExtensionFilter("adf files (*.adf)", "adf");
         fc.addChoosableFileFilter(adfFilter);
@@ -936,11 +935,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             return null;
         }
 
-        if (fc.getSelectedFile() != null) {
-            String file = fc.getSelectedFile().getAbsolutePath();
-            mt = new MunitionTree(file);
-        }
-        return mt;
+        String file = fc.getSelectedFile().getAbsolutePath();
+        return new MunitionTree(file);
     }
 
     private void saveLoadout(MunitionTree source) {
@@ -956,13 +952,11 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             // No file selected? No loadout!
             return;
         }
-        if (fc.getSelectedFile() != null) {
-            String file = fc.getSelectedFile().getAbsolutePath();
-            if (!file.toLowerCase().endsWith(".adf")) {
-                file = file + ".adf";
-            }
-            source.writeToADFFilename(file);
+        String file = fc.getSelectedFile().getAbsolutePath();
+        if (!file.toLowerCase().endsWith(".adf")) {
+            file = file + ".adf";
         }
+        source.writeToADFFilename(file);
     }
 
     /**

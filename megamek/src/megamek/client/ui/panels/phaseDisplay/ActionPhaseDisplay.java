@@ -34,6 +34,7 @@ package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.io.Serial;
 import java.util.List;
 import javax.swing.AbstractAction;
 
@@ -82,6 +83,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
 
         if (clientgui != null) {
             butSkipTurn.addActionListener(new AbstractAction() {
+                @Serial
                 private static final long serialVersionUID = -5034474968902280850L;
 
                 @Override
@@ -247,9 +249,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     /**
      * set labels and enables on the done and skip buttons depending on the GUIP getNagForNoAction option
      *
-     * @param doneButtonLabel
-     * @param skipButtonLabel
-     * @param isDoingAction   true if user has entered actions for this turn, false if not.
+     * @param isDoingAction true if user has entered actions for this turn, false if not.
      */
     protected void updateDonePanelButtons(final String doneButtonLabel, final String skipButtonLabel,
           final boolean isDoingAction,
@@ -272,9 +272,9 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         }
         butSkipTurn.setText("<html><b>" + skipButtonLabel + "</b></html>");
 
-        // point blank shots don't have the "isMyTurn()" characteristic
+        // point-blank shots don't have the "isMyTurn()" characteristic
         if ((currentEntity == Entity.NONE)
-              || getClientgui().getClient().getGame().getInGameObject(currentEntity).isEmpty()
+              || getClientGUI().getClient().getGame().getInGameObject(currentEntity).isEmpty()
               || (!clientgui.getClient().isMyTurn() && !clientgui.isProcessingPointblankShot())) {
             butDone.setEnabled(false);
             butSkipTurn.setEnabled(false);

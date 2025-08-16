@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,6 +41,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -84,12 +85,13 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
         /**
          *
          */
+        @Serial
         private static final long serialVersionUID = -2004313765932049794L;
 
         /**
          * Specifies the width of text fields
          */
-        private static final int TEXTFIELD_COLS = 20;
+        private static final int TEXT_FIELD_COLS = 20;
 
         List<JButton> pathLbl = new ArrayList<>();
 
@@ -101,7 +103,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
 
         JButton addButton = new JButton(Messages.getString("SkinEditor.Add"));
 
-        boolean displayTiled = false;
+        boolean displayTiled;
 
         SkinSpecPanel skinPanel;
 
@@ -109,8 +111,6 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
          * Constructor for BorderElements that only have one image (like corners). The option to tile the image is not
          * present, nor are the add and remove buttons.
          *
-         * @param elementName
-         * @param imgPath
          */
         BorderElement(SkinSpecPanel skinPanel, String elementName, String imgPath) {
             super(new GridBagLayout());
@@ -126,7 +126,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
                   Configuration.widgetsDir().getPath()));
             newPathLbl.addActionListener(this);
             pathLbl.add(newPathLbl);
-            JTextField newPath = new JTextField(imgPath, TEXTFIELD_COLS);
+            JTextField newPath = new JTextField(imgPath, TEXT_FIELD_COLS);
             newPath.getDocument().addDocumentListener(this);
             path.add(newPath);
             JCheckBox newTiled = new JCheckBox(Messages.getString("SkinEditor.Tiled"), false);
@@ -143,9 +143,6 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
          * added for each entry to allow them to be removed. Remove buttons are enabled if there are more than one
          * image, otherwise if only one image is specified then the remove button is disabled.
          *
-         * @param elementName
-         * @param imgPath
-         * @param isTiled
          */
         BorderElement(SkinSpecPanel skinPanel, String elementName, List<String> imgPath,
               List<Boolean> isTiled) throws Exception {
@@ -157,9 +154,6 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
          * images to be added and each image path added has the option to be tiled or not. There is also a remove button
          * added for each entry to allow them to be removed.
          *
-         * @param elementName
-         * @param imgPath
-         * @param isTiled
          * @param removeEnabled Determines if remove buttons are enabled
          */
         BorderElement(SkinSpecPanel skinPanel, String elementName, List<String> imgPath,
@@ -198,7 +192,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
                   Configuration.widgetsDir().getPath()));
             newPathLbl.addActionListener(this);
             pathLbl.add(newPathLbl);
-            JTextField newPath = new JTextField(imgPath, TEXTFIELD_COLS);
+            JTextField newPath = new JTextField(imgPath, TEXT_FIELD_COLS);
             newPath.getDocument().addDocumentListener(this);
             path.add(newPath);
             JCheckBox newTiled = new JCheckBox(Messages.getString("SkinEditor.Tiled"), isTiled);
@@ -311,8 +305,8 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
                     }
                 }
                 // Did we press a tile button?
-                for (int i = 0; i < tiled.size(); i++) {
-                    if (e.getSource().equals(tiled.get(i))) {
+                for (JCheckBox jCheckBox : tiled) {
+                    if (e.getSource().equals(jCheckBox)) {
                         skinPanel.notifySkinChanges(false);
                         return;
                     }
@@ -323,7 +317,6 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
         /**
          * Handles the pressing of a pathLbl button: display the file chooser and update the path if a file is selected
          *
-         * @param pathIdx
          */
         private void chooseFile(int pathIdx) {
             int returnVal = fileChooser.showOpenDialog(this);
@@ -365,6 +358,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
      * @author arlith
      */
     private class BackgroundElement extends BorderElement {
+        @Serial
         private static final long serialVersionUID = 3448867645483831732L;
 
         BackgroundElement(SkinSpecPanel skinPanel, List<String> imgPath, List<Boolean> isTiled)
@@ -403,6 +397,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
         }
     }
 
+    @Serial
     private static final long serialVersionUID = -37452332974426228L;
 
     BorderElement tlCorner, trCorner, blCorner, brCorner;
@@ -469,7 +464,6 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
     /**
      * Update the given SkinSpecification based on the state of the UI elements.
      *
-     * @param skinSpec
      */
     public void updateSkinSpec(SkinSpecification skinSpec, boolean enableBorders, boolean enablePlain) {
         skinSpec.plain = enablePlain;
@@ -613,8 +607,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
         borderPanel.add(rightEdge, gbc);
         gbc.gridy++;
         gbc.gridx = 0;
-
-        gbc.gridx = gbc.gridy = 0;
+        gbc.gridy = 0;
         add(borderPanel, gbc);
 
         background = new BackgroundElement(this, skinSpec.backgrounds,
@@ -653,11 +646,11 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent actionEvent) {
         removeListeners();
         boolean notify = false;
-        if (e.getSource() instanceof JButton) {
-            if (addColor.equals(e.getSource())) {
+        if (actionEvent.getSource() instanceof JButton button) {
+            if (addColor.equals(actionEvent.getSource())) {
                 if (colorButtons.size() < SkinSpecification.MAX_NUM_COLORS) {
                     JButton colorButton = new JButton();
                     colorButton.setMaximumSize(new Dimension(14, 14));
@@ -667,18 +660,17 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
                     colorButtons.add(colorButton);
                     notify = true;
                 }
-            } else if (removeColor.equals(e.getSource())) {
+            } else if (removeColor.equals(actionEvent.getSource())) {
                 if (colorButtons.size() > 1) {
                     colorButtons.remove(colorButtons.size() - 1);
                     notify = true;
                 }
-            } else if (colorButtons.contains(e.getSource())) {
-                JButton colorButton = (JButton) e.getSource();
+            } else if (colorButtons.contains(button)) {
                 Color newColor = JColorChooser.showDialog(this,
                       Messages.getString("SkinEditor.ColorChoice"),
-                      colorButton.getBackground());
+                      button.getBackground());
                 if (newColor != null) {
-                    colorButton.setBackground(newColor);
+                    button.setBackground(newColor);
                     notify = true;
                 }
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,21 +30,30 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.entityreadout;
+package megamek.client.ui.panels.alphaStrike;
 
-class TooltippedLabelledLine extends LabeledLine {
+import java.awt.Image;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 
-    private final String tooltip;
+record ImageSelection(Image image) implements Transferable {
 
-    TooltippedLabelledLine(String label, String tooltip, String value) {
-        super(label, value);
-        this.tooltip = tooltip;
+    @Override
+    public DataFlavor[] getTransferDataFlavors() {
+        return new DataFlavor[] { DataFlavor.imageFlavor };
     }
 
     @Override
-    public String toHTML() {
-        return "%s: <B>%s</B><BR>".formatted(
-              ViewElement.asHtmlTooltip(label, tooltip),
-              value.toHTML());
+    public boolean isDataFlavorSupported(DataFlavor flavor) {
+        return DataFlavor.imageFlavor.equals(flavor);
+    }
+
+    @Override
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+        if (!DataFlavor.imageFlavor.equals(flavor)) {
+            throw new UnsupportedFlavorException(flavor);
+        }
+        return image;
     }
 }

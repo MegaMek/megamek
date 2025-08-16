@@ -104,22 +104,22 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
 
     // VTOL attacks, declared in the movement phase
     MOVE_STRAFE("moveStrafe", MovementDisplay.CMD_VTOL),
-    MOVE_BOMB("moveBomb", MovementDisplay.CMD_VTOL | MovementDisplay.CMD_AIRMEK),
+    MOVE_BOMB("moveBomb", MovementDisplay.CMD_VTOL | MovementDisplay.CMD_AIR_MEK),
 
     // Aero Movement
     MOVE_ACC("MoveAccelerate", MovementDisplay.CMD_AERO),
     MOVE_DEC("MoveDecelerate", MovementDisplay.CMD_AERO),
     MOVE_EVADE_AERO("MoveEvadeAero", MovementDisplay.CMD_AERO_BOTH),
-    MOVE_ACCN("MoveAccNext", MovementDisplay.CMD_AERO),
-    MOVE_DECN("MoveDecNext", MovementDisplay.CMD_AERO),
+    MOVE_ACCELERATION("MoveAccNext", MovementDisplay.CMD_AERO),
+    MOVE_DECELERATION("MoveDecNext", MovementDisplay.CMD_AERO),
     MOVE_ROLL("MoveRoll", MovementDisplay.CMD_AERO_BOTH),
     MOVE_LAUNCH("MoveLaunch", MovementDisplay.CMD_AERO_BOTH),
     MOVE_DOCK("MoveDock", MovementDisplay.CMD_AERO_BOTH),
     MOVE_RECOVER("MoveRecover", MovementDisplay.CMD_AERO_BOTH),
     MOVE_DROP("MoveDrop", MovementDisplay.CMD_AERO_BOTH),
     MOVE_DUMP("MoveDump", MovementDisplay.CMD_AERO_BOTH),
-    MOVE_RAM("MoveRam", MovementDisplay.CMD_AERO_BOTH | MovementDisplay.CMD_AIRMEK),
-    MOVE_HOVER("MoveHover", MovementDisplay.CMD_AERO | MovementDisplay.CMD_AIRMEK),
+    MOVE_RAM("MoveRam", MovementDisplay.CMD_AERO_BOTH | MovementDisplay.CMD_AIR_MEK),
+    MOVE_HOVER("MoveHover", MovementDisplay.CMD_AERO | MovementDisplay.CMD_AIR_MEK),
     MOVE_MANEUVER("MoveManeuver", MovementDisplay.CMD_AERO_BOTH),
     MOVE_JOIN("MoveJoin", MovementDisplay.CMD_AERO_BOTH),
     MOVE_FLY_OFF("MoveOff", MovementDisplay.CMD_AERO_BOTH),

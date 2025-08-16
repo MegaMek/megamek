@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,28 +32,19 @@
  */
 package megamek.client.ui.entityreadout;
 
-class TooltippedElement implements ViewElement {
+class ToolTippedLabelledLine extends LabeledLine {
 
-    private final String text;
     private final String tooltip;
 
-    TooltippedElement(String text, String tooltip) {
-        this.text = text;
+    ToolTippedLabelledLine(String label, String tooltip, String value) {
+        super(label, value);
         this.tooltip = tooltip;
     }
 
     @Override
-    public String toPlainText() {
-        return text;
-    }
-
-    @Override
     public String toHTML() {
-        return "<span title=\"" + tooltip + "\">" + text + "*</span>";
-    }
-
-    @Override
-    public String toDiscord() {
-        return text;
+        return "%s: <B>%s</B><BR>".formatted(
+              ViewElement.asHtmlTooltip(label, tooltip),
+              value.toHTML());
     }
 }

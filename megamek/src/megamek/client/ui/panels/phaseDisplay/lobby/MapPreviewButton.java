@@ -49,6 +49,7 @@ import java.awt.dnd.DnDConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.Serial;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -64,14 +65,14 @@ import megamek.logging.MMLogger;
 public class MapPreviewButton extends JButton {
     private static final MMLogger logger = MMLogger.create(MapPreviewButton.class);
 
+    @Serial
     private static final long serialVersionUID = -80635203255671654L;
 
     private final static Color INDEX_COLOR = new Color(100, 100, 100, 180);
     private Dimension currentPreviewSize;
     private Image scaledImage;
     private Image baseImage;
-    private ChatLounge lobby;
-    private MapButtonTransferHandler dndHandler;
+    private final ChatLounge lobby;
     private int index;
     private boolean isExample = false;
     private String boardName = "";
@@ -80,7 +81,7 @@ public class MapPreviewButton extends JButton {
     public MapPreviewButton(ChatLounge cl, int nr) {
         super("");
         lobby = cl;
-        dndHandler = new MapButtonTransferHandler(lobby, this);
+        MapButtonTransferHandler dndHandler = new MapButtonTransferHandler(lobby, this);
         index = nr;
         setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
         setTransferHandler(dndHandler);
@@ -180,27 +181,31 @@ public class MapPreviewButton extends JButton {
             double factorX = (double) optSize.width / baseImage.getWidth(null);
             double factorY = (double) optSize.height / baseImage.getHeight(null);
             double factor = Math.min(factorX, factorY);
-            int w = (int) (factor * baseImage.getWidth(null));
-            int h = (int) (factor * baseImage.getHeight(null));
-            scaledImage = baseImage.getScaledInstance(w, h, Image.SCALE_SMOOTH);
+            int width = (int) (factor * baseImage.getWidth(null));
+            int height = (int) (factor * baseImage.getHeight(null));
+            scaledImage = baseImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
             // Add the labels (index, name, example)
             BufferedImage drawableImage = ImageUtil.createAcceleratedImage(scaledImage);
-            Graphics g = drawableImage.getGraphics();
-            UIUtil.setHighQualityRendering(g);
-            if (lobby.isMultipleBoards()) {
-                drawIndex(g, w, h);
+
+            if (drawableImage != null) {
+                Graphics graphics = drawableImage.getGraphics();
+                UIUtil.setHighQualityRendering(graphics);
+                if (lobby.isMultipleBoards()) {
+                    drawIndex(graphics, width, height);
+                }
+                if (isExample && lobby.mapSettings.getMedium() != MapSettings.MEDIUM_SPACE) {
+                    drawExample(graphics, width, height);
+                }
+                if (lobby.mapSettings.getMedium() != MapSettings.MEDIUM_SPACE) {
+                    String text = cleanBoardName(getText(), lobby.mapSettings);
+                    drawMinimapLabel(text, width, height, graphics, lobby.hasInvalidBoard(getText()));
+                }
+                graphics.dispose();
+                // Store the image and notify other buttons to redraw with the calculated size
+                scaledImage = drawableImage;
             }
-            if (isExample && lobby.mapSettings.getMedium() != MapSettings.MEDIUM_SPACE) {
-                drawExample(g, w, h);
-            }
-            if (lobby.mapSettings.getMedium() != MapSettings.MEDIUM_SPACE) {
-                String text = cleanBoardName(getText(), lobby.mapSettings);
-                drawMinimapLabel(text, w, h, g, lobby.hasInvalidBoard(getText()));
-            }
-            g.dispose();
-            // Store the image and notify other buttons to redraw with the calculated size
-            scaledImage = drawableImage;
-            currentPreviewSize = new Dimension(w, h);
+
+            currentPreviewSize = new Dimension(width, height);
             revalidate();
             lobby.updateMapButtons(currentPreviewSize);
         }
@@ -241,14 +246,16 @@ public class MapPreviewButton extends JButton {
 
     /**
      * The TransferHandler manages drag-and-drop for the preview button. The preview buttons can import boards from
-     * other preview buttons and from the available bords list. They can also export boards (to other preview buttons).
+     * other preview buttons and from the available boards list. They can also export boards (to other preview
+     * buttons).
      */
     private static class MapButtonTransferHandler extends TransferHandler {
+        @Serial
         private static final long serialVersionUID = -1798418800717656572L;
 
         public final DataFlavor flavor = DataFlavor.stringFlavor;
-        private MapPreviewButton button;
-        private ChatLounge lobby;
+        private final MapPreviewButton button;
+        private final ChatLounge lobby;
 
         public MapButtonTransferHandler(ChatLounge cl, MapPreviewButton mpButton) {
             lobby = cl;

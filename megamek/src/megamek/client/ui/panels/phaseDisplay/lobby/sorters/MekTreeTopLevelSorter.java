@@ -42,13 +42,7 @@ import megamek.common.force.Force;
 import megamek.common.force.Forces;
 
 /** A Comparator for the top level entries of the Mek Tree (forces and force-less entities). */
-public class MekTreeTopLevelSorter implements Comparator<Object> {
-
-    private final Client client;
-
-    public MekTreeTopLevelSorter(Client client) {
-        this.client = client;
-    }
+public record MekTreeTopLevelSorter(Client client) implements Comparator<Object> {
 
     @Override
     public int compare(final Object a, final Object b) {

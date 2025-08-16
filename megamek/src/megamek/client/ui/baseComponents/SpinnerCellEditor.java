@@ -33,6 +33,7 @@
 package megamek.client.ui.baseComponents;
 
 import java.awt.Component;
+import java.io.Serial;
 import javax.swing.AbstractSpinnerModel;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JSpinner;
@@ -44,6 +45,7 @@ import javax.swing.JTextField;
  */
 public class SpinnerCellEditor extends DefaultCellEditor {
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = 7956499745127048276L;
     private final JSpinner spinner;
     //endregion Variable Declarations

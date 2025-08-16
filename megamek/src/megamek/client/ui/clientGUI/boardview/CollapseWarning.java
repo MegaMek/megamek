@@ -80,11 +80,11 @@ public final class CollapseWarning {
         return (isEnabled && isCFWarningPhase(gp));
     }
 
-    private static boolean toggleCFWarning() {
+    private static void toggleCFWarning() {
         // Toggle the GUI Preference setting for CF Warning setting.
         GUIPreferences GUIP = GUIPreferences.getInstance();
         GUIP.setShowCFWarnings(!GUIP.getShowCFWarnings());
-        return (GUIP.getShowCFWarnings());
+        GUIP.getShowCFWarnings();
     }
 
     public static List<BoardLocation> findCFWarningsMovement(Game game, Entity entity) {
@@ -236,7 +236,7 @@ public final class CollapseWarning {
         return totalWeight;
     }
 
-    protected static boolean isEntityPartOfWeight(Entity selected, Entity inHex) {
+    private static boolean isEntityPartOfWeight(Entity selected, Entity inHex) {
         return ((selected != inHex) && inHex.isGround() && !inHex.isAirborneVTOLorWIGE());
     }
 

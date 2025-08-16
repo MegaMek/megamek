@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,6 +41,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import megamek.codeUtilities.MathUtility;
 import megamek.logging.MMLogger;
 
 /**
@@ -65,10 +66,10 @@ public class AvailabilityRating {
     String faction = "General";
     int availability = 0;
     String ratings = null;
-    int ratingAdjustment = 0;
+    int ratingAdjustment;
     int era;
     int startYear;
-    String unitName = null;
+    String unitName;
 
     // Rating values indexed by equipment level names
     LinkedHashMap<String, Integer> ratingByLevel;
@@ -111,7 +112,7 @@ public class AvailabilityRating {
 
             // Simple availability will have either one or two values
             if (fields.length < 2 || fields.length > 3) {
-                logger.warn("Incorrect availability formatting for " + loggerData);
+                logger.warn("Availability Rating - Incorrect availability formatting for {}", loggerData);
                 return;
             }
 
@@ -131,23 +132,13 @@ public class AvailabilityRating {
                 fields[1] = fields[1].replace("-", "");
             }
 
-            try {
-                availability = Integer.parseInt(fields[1]);
-            } catch (NumberFormatException ex) {
-                availability = 0;
-                logger.warn(ex, "Incorrect availability formatting for " + loggerData);
-            }
+            availability = MathUtility.parseInt(fields[1], 0);
 
             // A third field will always be a year modifier
             if (fields.length > 2) {
-                try {
-                    startYear = Integer.parseInt(fields[2]);
-                    if (startYear < 0) {
-                        throw new NumberFormatException("Invalid year value.");
-                    }
-                } catch (NumberFormatException ex) {
-                    startYear = era;
-                    logger.warn(ex, "Could not parse start year for " + loggerData);
+                startYear = MathUtility.parseInt(fields[2], -1);
+                if (startYear < 0) {
+                    throw new NumberFormatException("Invalid year value.");
                 }
             }
 
@@ -161,16 +152,11 @@ public class AvailabilityRating {
                 subfields = fields[i].split(":");
 
                 if (subfields.length != 2) {
-                    logger.warn("Incorrect availability formatting for " + loggerData);
+                    logger.warn("Subfields - Incorrect availability formatting for {}", loggerData);
                     return;
                 }
 
-                try {
-                    avRating = Integer.parseInt(subfields[1]);
-                } catch (NumberFormatException ex) {
-                    avRating = 0;
-                    logger.warn(ex, "Incorrect availability formatting for " + loggerData);
-                }
+                avRating = MathUtility.parseInt(subfields[1], 0);
 
                 ratingByLevel.put(subfields[0], avRating);
 

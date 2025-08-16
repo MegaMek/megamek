@@ -69,7 +69,7 @@ public class DefaultsNode extends RulesetNode {
             }
         }
         for (ValueNode n : eschelonNodes) {
-            if ((fd.getEschelon() == null || n.predicates.containsKey("ifEschelon"))
+            if ((fd.getEchelon() == null || n.predicates.containsKey("ifEschelon"))
                   && n.matches(fd)) {
                 e = n;
                 break;
@@ -93,7 +93,7 @@ public class DefaultsNode extends RulesetNode {
             fd.setUnitType(ModelRecord.parseUnitType(ut.getContent()));
         }
         if (e != null) {
-            fd.setEschelon(Integer.parseInt(e.getContent()));
+            fd.setEchelon(Integer.parseInt(e.getContent()));
         }
         if (rs != null) {
             fd.setRankSystem(Integer.parseInt(rs.getContent()));
@@ -148,7 +148,7 @@ public class DefaultsNode extends RulesetNode {
                 case "unitType":
                     unitTypeNodes.add(ValueNode.createFromXml(wn));
                     break;
-                case "eschelon":
+                case "echelon":
                     eschelonNodes.add(ValueNode.createFromXml(wn));
                     break;
                 case "rankSystem":

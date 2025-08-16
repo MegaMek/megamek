@@ -70,30 +70,30 @@ class TriStateItemList {
             dlm.addElement(new TriStateItem("\u2610", q));
         }
         list.setModel(dlm);
-        inititalizeList(visibleRows);
+        initializeList(visibleRows);
     }
 
     TriStateItemList(List<String> content, int visibleRows) {
-        DefaultListModel<TriStateItem> dlma = new DefaultListModel<>();
+        DefaultListModel<TriStateItem> defaultListModel = new DefaultListModel<>();
         for (String desc : content) {
-            dlma.addElement(new TriStateItem("\u2610", desc));
+            defaultListModel.addElement(new TriStateItem("\u2610", desc));
         }
-        list.setModel(dlma);
-        inititalizeList(visibleRows);
+        list.setModel(defaultListModel);
+        initializeList(visibleRows);
     }
 
     TriStateItemList(Map<Integer, String> s, int visibleRows) {
-        DefaultListModel<TriStateItem> dlma = new DefaultListModel<>();
+        DefaultListModel<TriStateItem> defaultListModel = new DefaultListModel<>();
 
         for (Map.Entry<Integer, String> desc : s.entrySet()) {
-            dlma.addElement(new TriStateItem("\u2610", desc.getKey(), desc.getValue()));
+            defaultListModel.addElement(new TriStateItem("\u2610", desc.getKey(), desc.getValue()));
         }
 
-        list.setModel(dlma);
-        inititalizeList(visibleRows);
+        list.setModel(defaultListModel);
+        initializeList(visibleRows);
     }
 
-    private void inititalizeList(int visibleRows) {
+    private void initializeList(int visibleRows) {
         list.setVisibleRowCount(visibleRows);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setSelectionModel(new NoSelectionModel());

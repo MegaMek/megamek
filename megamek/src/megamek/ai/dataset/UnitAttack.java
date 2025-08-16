@@ -79,7 +79,7 @@ public class UnitAttack extends EntityDataMap<UnitAttack.Field> {
         GTA,
         TO_HIT,
         TURNS_TO_HIT,
-        SPOTTER_ID;
+        SPOTTER_ID
     }
 
     /**

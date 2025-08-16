@@ -36,7 +36,6 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JToggleButton;
 
-import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.UIUtil;
@@ -47,7 +46,6 @@ import megamek.common.annotations.Nullable;
  * A modal dialog for choosing one or more Entities. Can show stats in brief or in detail.
  */
 public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
-    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     /**
      * This creates a modal dialog to pick one or more entities.

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.client.event;
 
+import java.io.Serial;
+
 import megamek.common.Entity;
 import megamek.common.Mounted;
 
@@ -46,6 +48,7 @@ public class MekDisplayEvent extends java.util.EventObject {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -932419778029797238L;
 
     public static final int WEAPON_SELECTED = 0;

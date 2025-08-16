@@ -107,29 +107,29 @@ public final class TipUtil {
 
     // PRIVATE
 
-    private static String optionListFull(Enumeration<IOptionGroup> advGroups,
-          Function<String, Integer> counter, Function<IOptionGroup, String> namer) {
+    private static String optionListFull(Enumeration<IOptionGroup> advGroups, Function<String, Integer> counter,
+          Function<IOptionGroup, String> namer) {
         StringBuilder result = new StringBuilder();
 
         while (advGroups.hasMoreElements()) {
             IOptionGroup advGroup = advGroups.nextElement();
             if (counter.apply(advGroup.getKey()) > 0) {
                 // Group title
-                result.append("<I>" + namer.apply(advGroup) + ":</I><BR>");
+                result.append("<I>").append(namer.apply(advGroup)).append(":</I><BR>");
 
                 // Gather the group options
                 List<String> origList = new ArrayList<>();
-                for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements(); ) {
-                    IOption adv = advs.nextElement();
-                    if (adv != null && adv.booleanValue()) {
-                        origList.add(adv.getDisplayableNameWithValue());
+                for (Enumeration<IOption> advantages = advGroup.getOptions(); advantages.hasMoreElements(); ) {
+                    IOption advantage = advantages.nextElement();
+                    if (advantage != null && advantage.booleanValue()) {
+                        origList.add(advantage.getDisplayableNameWithValue());
                     }
                 }
 
                 // Arrange the options in lines according to length
                 List<String> advLines = UIUtil.arrangeInLines(origList, 40, " \u2B1D ", false);
                 for (String line : advLines) {
-                    result.append("&nbsp;&nbsp;" + line + "<BR>");
+                    result.append("&nbsp;&nbsp;").append(line).append("<BR>");
                 }
             }
         }
@@ -152,7 +152,7 @@ public final class TipUtil {
 
         // Arrange the option groups in lines according to length
         for (String line : UIUtil.arrangeInLines(origList, 40, "; ", true)) {
-            result.append(line + "<BR>");
+            result.append(line).append("<BR>");
         }
         return result.toString();
     }

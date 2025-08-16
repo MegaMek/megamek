@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -64,35 +64,25 @@ import megamek.common.util.fileUtils.MegaMekFile;
 class ExtraPanel extends PicMap implements ActionListener, ItemListener {
     private final UnitDisplayPanel unitDisplayPanel;
 
-    private JPanel panelMain;
-    private JScrollPane scrollPane;
-    private JLabel lblLastTarget;
-    private JLabel curSensorsL;
-    private JLabel narcLabel;
-    private JLabel unusedL;
-    private JLabel carrysL;
-    private JLabel heatL;
-    private JLabel sinksL;
-    private JTextArea unusedR;
-    private JTextArea carrysR;
-    private JTextArea heatR;
-    private JTextArea lastTargetR;
-    private JTextArea sinksR;
-    private JButton sinks2B;
-    private JButton dumpBombs;
-    private JButton unitReadout;
-    private JList<String> narcList;
+    private final JPanel panelMain;
+    private final JLabel curSensorsL;
+    private final JTextArea unusedR;
+    private final JTextArea carriesR;
+    private final JTextArea heatR;
+    private final JTextArea lastTargetR;
+    private final JTextArea sinksR;
+    private final JButton sinks2B;
+    private final JButton dumpBombs;
+    private final JButton unitReadout;
+    private final JList<String> narcList;
     private int myMekId;
 
-    private JComboBox<String> chSensors;
+    private final JComboBox<String> chSensors;
 
     private SliderDialog prompt;
 
     private int sinks;
     private boolean dontChange;
-
-    private int minTopMargin = 8;
-    private int minLeftMargin = 8;
 
     JButton activateHidden = new JButton(Messages.getString("MekDisplay.ActivateHidden.Label"));
 
@@ -102,13 +92,13 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         this.unitDisplayPanel = unitDisplayPanel;
         prompt = null;
 
-        narcLabel = new JLabel(Messages.getString("MekDisplay.AffectedBy"), SwingConstants.CENTER);
+        JLabel narcLabel = new JLabel(Messages.getString("MekDisplay.AffectedBy"), SwingConstants.CENTER);
         narcLabel.setOpaque(false);
         narcLabel.setForeground(Color.WHITE);
 
         narcList = new JList<>(new DefaultListModel<>());
 
-        unusedL = new JLabel(Messages.getString("MekDisplay.UnusedSpace"), SwingConstants.CENTER);
+        JLabel unusedL = new JLabel(Messages.getString("MekDisplay.UnusedSpace"), SwingConstants.CENTER);
         unusedL.setOpaque(false);
         unusedL.setForeground(Color.WHITE);
         unusedR = new JTextArea("", 2, 25);
@@ -116,15 +106,15 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         unusedR.setOpaque(false);
         unusedR.setForeground(Color.WHITE);
 
-        carrysL = new JLabel(Messages.getString("MekDisplay.Carryng"), SwingConstants.CENTER);
-        carrysL.setOpaque(false);
-        carrysL.setForeground(Color.WHITE);
-        carrysR = new JTextArea("", 4, 25);
-        carrysR.setEditable(false);
-        carrysR.setOpaque(false);
-        carrysR.setForeground(Color.WHITE);
+        JLabel carriesL = new JLabel(Messages.getString("MekDisplay.Carryng"), SwingConstants.CENTER);
+        carriesL.setOpaque(false);
+        carriesL.setForeground(Color.WHITE);
+        carriesR = new JTextArea("", 4, 25);
+        carriesR.setEditable(false);
+        carriesR.setOpaque(false);
+        carriesR.setForeground(Color.WHITE);
 
-        sinksL = new JLabel(
+        JLabel sinksL = new JLabel(
               Messages.getString("MekDisplay.activeSinksLabel"),
               SwingConstants.CENTER);
         sinksL.setOpaque(false);
@@ -143,7 +133,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         dumpBombs.setActionCommand("dumpBombs");
         dumpBombs.addActionListener(this);
 
-        heatL = new JLabel(Messages.getString("MekDisplay.HeatEffects"), SwingConstants.CENTER);
+        JLabel heatL = new JLabel(Messages.getString("MekDisplay.HeatEffects"), SwingConstants.CENTER);
         heatL.setOpaque(false);
         heatL.setForeground(Color.WHITE);
         heatR = new JTextArea("", 4, 25);
@@ -151,7 +141,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         heatR.setOpaque(false);
         heatR.setForeground(Color.WHITE);
 
-        lblLastTarget = new JLabel(Messages.getString("MekDisplay.LastTarget"),
+        JLabel lblLastTarget = new JLabel(Messages.getString("MekDisplay.LastTarget"),
               SwingConstants.CENTER);
         lblLastTarget.setForeground(Color.WHITE);
         lblLastTarget.setOpaque(false);
@@ -194,12 +184,12 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         unitReadout.addActionListener(this);
 
         // layout choice panel
-        GridBagLayout gridbag;
+        GridBagLayout gridBagLayout;
         GridBagConstraints c;
 
-        gridbag = new GridBagLayout();
+        gridBagLayout = new GridBagLayout();
         c = new GridBagConstraints();
-        panelMain = new JPanel(gridbag);
+        panelMain = new JPanel(gridBagLayout);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(5, 9, 1, 9);
@@ -216,7 +206,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         panelMain.add(narcLabel, c);
         c.gridy++;
         c.insets = new Insets(1, 9, 1, 9);
-        scrollPane = new JScrollPane(narcList);
+        JScrollPane scrollPane = new JScrollPane(narcList);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         panelMain.add(scrollPane, c);
 
@@ -226,9 +216,9 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         panelMain.add(unusedR, c);
 
         c.gridy++;
-        panelMain.add(carrysL, c);
+        panelMain.add(carriesL, c);
         c.gridy++;
-        panelMain.add(carrysR, c);
+        panelMain.add(carriesR, c);
 
         c.gridy++;
         panelMain.add(dumpBombs, c);
@@ -276,16 +266,17 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
     @Override
     public void onResize() {
-        int w = getSize().width;
-        Rectangle r = getContentBounds();
-        if (r == null) {
+        int width = getSize().width;
+        Rectangle contentBounds = getContentBounds();
+        if (contentBounds == null) {
             return;
         }
-        int dx = Math.round(((w - r.width) / 2));
+        int dx = Math.round(((width - contentBounds.width) / 2.0f));
+        int minLeftMargin = 8;
         if (dx < minLeftMargin) {
             dx = minLeftMargin;
         }
-        int dy = minTopMargin;
+        int dy = 8;
         setContentMargins(dx, dy, dx, dy);
     }
 
@@ -371,7 +362,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
         // Walk through the list of teams. There
         // can't be more teams than players.
-        StringBuffer buff;
+        StringBuilder buff;
         if (clientgui != null) {
             Game game = clientgui.getClient().getGame();
             GameOptions gameOptions = game.getOptions();
@@ -379,14 +370,14 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             for (Player player : game.getPlayersList()) {
                 int team = player.getTeam();
                 if (en.isNarcedBy(team) && !player.isObserver()) {
-                    buff = new StringBuffer(Messages.getString("MekDisplay.NARCedBy"));
+                    buff = new StringBuilder(Messages.getString("MekDisplay.NARCedBy"));
                     buff.append(player.getName())
                           .append(" [").append(Player.TEAM_NAMES[team]).append(']');
                     ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
                 }
 
                 if (en.isINarcedBy(team) && !player.isObserver()) {
-                    buff = new StringBuffer(Messages.getString("MekDisplay.INarcHoming"));
+                    buff = new StringBuilder(Messages.getString("MekDisplay.INarcHoming"));
                     buff.append(player.getName()).append(" [")
                           .append(Player.TEAM_NAMES[team]).append("] ")
                           .append(Messages.getString("MekDisplay.attached"))
@@ -396,23 +387,23 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             }
 
             if (en.isINarcedWith(INarcPod.ECM)) {
-                buff = new StringBuffer(Messages.getString("MekDisplay.iNarcECMPodAttached"));
+                buff = new StringBuilder(Messages.getString("MekDisplay.iNarcECMPodAttached"));
                 ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
             }
 
             if (en.isINarcedWith(INarcPod.HAYWIRE)) {
-                buff = new StringBuffer(Messages.getString("MekDisplay.iNarcHaywirePodAttached"));
+                buff = new StringBuilder(Messages.getString("MekDisplay.iNarcHaywirePodAttached"));
                 ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
             }
 
             if (en.isINarcedWith(INarcPod.NEMESIS)) {
-                buff = new StringBuffer(Messages.getString("MekDisplay.iNarcNemesisPodAttached"));
+                buff = new StringBuilder(Messages.getString("MekDisplay.iNarcNemesisPodAttached"));
                 ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
             }
 
             // Show inferno track.
             if (en.infernos.isStillBurning()) {
-                buff = new StringBuffer(Messages.getString("MekDisplay.InfernoBurnRemaining"));
+                buff = new StringBuilder(Messages.getString("MekDisplay.InfernoBurnRemaining"));
                 buff.append(en.infernos.getTurnsLeftToBurn());
                 ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
             }
@@ -422,7 +413,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                       .addElement(Messages.getString("MekDisplay.OnFire"));
             }
 
-            // Show electromagnic interference.
+            // Show electromagnetic interference.
             if (en.isSufferingEMI()) {
                 ((DefaultListModel<String>) narcList.getModel())
                       .addElement(Messages.getString("MekDisplay.IsEMId"));
@@ -486,7 +477,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             // Show jammed weapons.
             for (Mounted<?> weapon : en.getWeaponList()) {
                 if (weapon.isJammed()) {
-                    buff = new StringBuffer(weapon.getName());
+                    buff = new StringBuilder(weapon.getName());
                     buff.append(Messages.getString("MekDisplay.isJammed"));
                     ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
                 }
@@ -495,7 +486,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             // Show breached locations.
             for (int loc = 0; loc < en.locations(); loc++) {
                 if (en.getLocationStatus(loc) == ILocationExposureStatus.BREACHED) {
-                    buff = new StringBuffer(en.getLocationName(loc));
+                    buff = new StringBuilder(en.getLocationName(loc));
                     buff.append(Messages.getString("MekDisplay.Breached"));
                     ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
                 }
@@ -511,31 +502,31 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                 unused = Messages.getString("MekDisplay.None");
             }
             unusedR.setText(unused);
-            carrysR.setText(null);
+            carriesR.setText(null);
             // boolean hasText = false;
             for (Entity other : en.getLoadedUnits()) {
-                carrysR.append(other.getShortName());
-                carrysR.append("\n");
+                carriesR.append(other.getShortName());
+                carriesR.append("\n");
             }
 
             // Show club(s).
             for (Mounted<?> club : en.getClubs()) {
-                carrysR.append(club.getName());
-                carrysR.append("\n");
+                carriesR.append(club.getName());
+                carriesR.append("\n");
             }
 
             // show cargo.
             for (ICarryable cargo : en.getDistinctCarriedObjects()) {
-                carrysR.append(cargo.specificName());
-                carrysR.append("\n");
+                carriesR.append(cargo.specificName());
+                carriesR.append("\n");
             }
 
             // Show searchlight
             if (en.hasSearchlight()) {
                 if (en.isUsingSearchlight()) {
-                    carrysR.append(Messages.getString("MekDisplay.SearchlightOn"));
+                    carriesR.append(Messages.getString("MekDisplay.SearchlightOn"));
                 } else {
-                    carrysR.append(Messages.getString("MekDisplay.SearchlightOff"));
+                    carriesR.append(Messages.getString("MekDisplay.SearchlightOff"));
                 }
             }
 
@@ -543,9 +534,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             heatR.setText("");
             sinksR.setText("");
 
-            if (en instanceof Mek) {
-                Mek m = (Mek) en;
-
+            if (en instanceof Mek m) {
                 sinks2B.setEnabled(!dontChange);
                 sinks = m.getActiveSinksNextRound();
                 if (m.hasDoubleHeatSinks()) {
@@ -561,7 +550,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
                 boolean hasTSM = false;
                 boolean mtHeat = false;
-                if (((Mek) en).hasTSM(false)) {
+                if (m.hasTSM(false)) {
                     hasTSM = true;
                 }
 
@@ -635,14 +624,18 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         }
         if ((ev.getItemSelectable() == chSensors)) {
             int sensorIdx = chSensors.getSelectedIndex();
-            Entity en = clientgui.getClient().getGame().getEntity(myMekId);
-            Sensor s = en.getSensors().elementAt(sensorIdx);
-            en.setNextSensor(s);
-            refreshSensorChoices(en);
-            String sensorMsg = Messages.getString("MekDisplay.willSwitchAtEnd",
-                  "Active Sensors", s.getDisplayName());
-            clientgui.systemMessage(sensorMsg);
-            clientgui.getClient().sendSensorChange(myMekId, sensorIdx);
+            Entity entity = clientgui.getClient().getGame().getEntity(myMekId);
+
+            if (entity != null) {
+                Sensor sensor = entity.getSensors().elementAt(sensorIdx);
+                entity.setNextSensor(sensor);
+                refreshSensorChoices(entity);
+                String sensorMsg = Messages.getString("MekDisplay.willSwitchAtEnd",
+                      "Active Sensors",
+                      sensor.getDisplayName());
+                clientgui.systemMessage(sensorMsg);
+                clientgui.getClient().sendSensorChange(myMekId, sensorIdx);
+            }
         }
     }
 
@@ -653,20 +646,25 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             return;
         }
         if ("changeSinks".equals(ae.getActionCommand()) && !dontChange) {
-            prompt = new SliderDialog(clientgui.getFrame(),
-                  Messages.getString("MekDisplay.changeSinks"),
-                  Messages.getString("MekDisplay.changeSinks"), sinks,
-                  0, ((Mek) clientgui.getClient().getGame().getEntity(myMekId)).getNumberOfSinks());
-            if (!prompt.showDialog()) {
-                return;
-            }
-            clientgui.getMenuBar().actionPerformed(ae);
-            int numActiveSinks = prompt.getValue();
+            Entity mekEntity = clientgui.getClient().getGame().getEntity(myMekId);
 
-            ((Mek) clientgui.getClient().getGame().getEntity(myMekId))
-                  .setActiveSinksNextRound(numActiveSinks);
-            clientgui.getClient().sendSinksChange(myMekId, numActiveSinks);
-            displayMek(clientgui.getClient().getGame().getEntity(myMekId));
+            if (mekEntity instanceof Mek mek) {
+                prompt = new SliderDialog(clientgui.getFrame(),
+                      Messages.getString("MekDisplay.changeSinks"),
+                      Messages.getString("MekDisplay.changeSinks"), sinks,
+                      0, mek.getNumberOfSinks());
+
+                if (!prompt.showDialog()) {
+                    return;
+                }
+
+                clientgui.getMenuBar().actionPerformed(ae);
+                int numActiveSinks = prompt.getValue();
+
+                mek.setActiveSinksNextRound(numActiveSinks);
+                clientgui.getClient().sendSinksChange(myMekId, numActiveSinks);
+                displayMek(mek);
+            }
         } else if (activateHidden.equals(ae.getSource()) && !dontChange) {
             final GamePhase phase = comboActivateHiddenPhase.getSelectedItem();
             clientgui.getClient().sendActivateHidden(myMekId, (phase == null) ? GamePhase.UNKNOWN : phase);

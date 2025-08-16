@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -67,9 +67,9 @@ import megamek.common.moves.MoveStep;
 public class StepSprite extends Sprite {
 
     private final static GUIPreferences GUIP = GUIPreferences.getInstance();
-    private static AffineTransform shadowOffset = new AffineTransform();
-    private static AffineTransform upDownOffset = new AffineTransform();
-    private static AffineTransform stepOffset = new AffineTransform();
+    private static final AffineTransform shadowOffset = new AffineTransform();
+    private static final AffineTransform upDownOffset = new AffineTransform();
+    private static final AffineTransform stepOffset = new AffineTransform();
 
     static {
         shadowOffset.translate(-1, -1);
@@ -77,8 +77,8 @@ public class StepSprite extends Sprite {
         stepOffset.translate(1, 1);
     }
 
-    private MoveStep step;
-    private boolean isLastStep;
+    private final MoveStep step;
+    private final boolean isLastStep;
     private Image baseScaleImage;
 
     public StepSprite(BoardView boardView1, final MoveStep step,
@@ -385,22 +385,21 @@ public class StepSprite extends Sprite {
     private void drawActiveVectors(MoveStep step, Graphics graph) {
 
         /*
-         * TODO: it might be better to move this to the MovementSprite so
-         * that it is visible before first step and you can't see it for all
-         * entities
+         * TODO: it might be better to move this to the MovementSprite so that it is visible before first step and
+         *  you can't see it for all entities
          */
 
-        int[] activeXpos = { 39, 59, 59, 40, 19, 19 };
-        int[] activeYpos = { 20, 28, 52, 59, 52, 28 };
+        int[] activeXPos = { 39, 59, 59, 40, 19, 19 };
+        int[] activeYPos = { 20, 28, 52, 59, 52, 28 };
 
         int[] v = step.getVectors();
         for (int i = 0; i < 6; i++) {
             String active = Integer.toString(v[i]);
             graph.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12));
             graph.setColor(Color.darkGray);
-            graph.drawString(active, activeXpos[i], activeYpos[i]);
+            graph.drawString(active, activeXPos[i], activeYPos[i]);
             graph.setColor(Color.red);
-            graph.drawString(active, activeXpos[i] - 1, activeYpos[i] - 1);
+            graph.drawString(active, activeXPos[i] - 1, activeYPos[i] - 1);
         }
     }
 
@@ -434,9 +433,7 @@ public class StepSprite extends Sprite {
         }
 
         // Show WiGE descent bonus
-        for (int i = 0; i < step.getWiGEBonus(); i++) {
-            costStringBuf.append('+');
-        }
+        costStringBuf.append("+".repeat(Math.max(0, step.getWiGEBonus())));
 
         // If the step is dangerous, mark it.
         if (step.isDanger()) {
@@ -475,8 +472,8 @@ public class StepSprite extends Sprite {
         graph.drawString(costString, costX - 1, stepPos.y + 38);
     }
 
-    private void drawTMMAndRolls(MoveStep step, boolean jumped, Game game,
-          Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
+    private void drawTMMAndRolls(MoveStep step, boolean jumped, Game game, Point stepPos, Graphics graph, Color col,
+          boolean shiftFlag) {
 
         StringBuilder subscriptStringBuf = new StringBuilder();
 
@@ -499,16 +496,12 @@ public class StepSprite extends Sprite {
         }
 
         if (step.isUsingMASC() && !step.getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
-            if (step.isUsingSupercharger()) {
-                subscriptStringBuf.append(" M");
-            } else {
-                subscriptStringBuf.append(" M");
-            }
+            subscriptStringBuf.append(" M");
             subscriptStringBuf.append(step.getTargetNumberMASC());
             subscriptStringBuf.append('+');
         }
 
-        if (subscriptStringBuf.length() != 0) {
+        if (!subscriptStringBuf.isEmpty()) {
             // draw it below the main string.
             int subscriptY = stepPos.y + 39 + (graph.getFontMetrics(graph.getFont()).getHeight() / 2);
             String subscriptString = subscriptStringBuf.toString();

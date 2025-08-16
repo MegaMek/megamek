@@ -48,13 +48,7 @@ import megamek.common.Hex;
  *
  * @author Luana Coppio
  */
-public class RandomMinefieldDeploymentPlanner implements MinefieldDeploymentPlanner {
-
-    private final Board board;
-
-    public RandomMinefieldDeploymentPlanner(Board board) {
-        this.board = board;
-    }
+public record RandomMinefieldDeploymentPlanner(Board board) implements MinefieldDeploymentPlanner {
 
     @Override
     public Deque<Coords> getRandomMinefieldPositions(int numberOfCoords) {

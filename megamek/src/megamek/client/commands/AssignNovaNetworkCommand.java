@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -63,9 +63,12 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         super(
               clientGUI,
               "nova",
-              "This command allows you to link NovaCEWS units." +
-                    "\nDo not use this command unless you can link something." +
-                    "\nCall #nova for detailed help.");
+              """
+                    This command allows you to link NovaCEWS units.\
+                    
+                    Do not use this command unless you can link something.\
+                    
+                    Call #nova for detailed help.""");
     }
 
     /**
@@ -76,13 +79,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
     @Override
     public String run(String[] args) {
         if (args.length <= 1) {
-            String help = "#nova print : will print all of your current nova networks and unlinked units.\n";
-            help += "#nova print 5 : will print the network status for the Unit with ID 5.\n";
-            help += "#nova link 5 6 : will link the units with ID 5 and 6.\n+++Will Disconnect them from all prior nets.\n";
-            help += "#nova link 5 6 7 : will link the three units with ID 5 6 and 7.\n+++Will Disconnect them from all prior nets.\n";
-            help += "#nova unlink : will unlink all your novaCEWS units.\n";
-            help += "#nova unlink 5 : will unlink unit with ID 5 from all nova networks.\n";
-            return help;
+            return getString();
         }
 
         try {
@@ -127,6 +124,16 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         }
 
         return "Error parsing the command.";
+    }
+
+    private static String getString() {
+        String help = "#nova print : will print all of your current nova networks and unlinked units.\n";
+        help += "#nova print 5 : will print the network status for the Unit with ID 5.\n";
+        help += "#nova link 5 6 : will link the units with ID 5 and 6.\n+++Will Disconnect them from all prior nets.\n";
+        help += "#nova link 5 6 7 : will link the three units with ID 5 6 and 7.\n+++Will Disconnect them from all prior nets.\n";
+        help += "#nova unlink : will unlink all your novaCEWS units.\n";
+        help += "#nova unlink 5 : will unlink unit with ID 5 from all nova networks.\n";
+        return help;
     }
 
     private void setNewNetworkID(Entity ent, String net) {
@@ -271,7 +278,6 @@ public class AssignNovaNetworkCommand extends ClientCommand {
      * @param e       the entity.
      * @param planned set this to true if you want to calculate based on next turns net.
      *
-     * @return
      */
     private List<Entity> listNetwork(Entity e, boolean planned) {
         List<Entity> novaNetworkMembers = new LinkedList<>();

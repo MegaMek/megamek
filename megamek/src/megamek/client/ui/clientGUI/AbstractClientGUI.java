@@ -67,10 +67,10 @@ import megamek.common.preference.PreferenceManager;
 public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHandler {
 
     /** The smallest GUI scaling value; smaller will make text unreadable */
-    public static final float MIN_GUISCALE = 0.7f;
+    public static final float MIN_GUI_SCALE = 0.7f;
 
     /** The highest GUI scaling value; increase this for 16K monitors */
-    public static final float MAX_GUISCALE = 2.4f;
+    public static final float MAX_GUI_SCALE = 2.4f;
 
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
     protected static final ClientPreferences CP = PreferenceManager.getClientPreferences();
@@ -88,7 +88,7 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
     protected Map<String, ClientCommand> clientCommands = new HashMap<>();
 
     /**
-     * The boardviews of the game with the board ID as the map key
+     * The {@link megamek.client.ui.clientGUI.boardview.BoardView}'s of the game with the board ID as the map key
      */
     public final Map<Integer, IBoardView> boardViews = new HashMap<>();
 
@@ -265,11 +265,14 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
     }
 
     /**
-     * @return The currently shown boardview. If there is only a single boardview (no tabbed pane), this will be
-     *       returned. With multiple boardviews, the one in the currently selected tab is returned.
+     * @return The currently shown {@link megamek.client.ui.clientGUI.boardview.BoardView}. If there is only a single
+     *       {@link megamek.client.ui.clientGUI.boardview.BoardView} (no tabbed pane), this will be returned. With
+     *       multiple {@link megamek.client.ui.clientGUI.boardview.BoardView}'s, the one in the currently selected tab
+     *       is returned.
      *       <p>
      *       Unfortunately it is possible to have no selected tab in a JTabbedPane; also, theoretically, there could be
-     *       no boardview. Therefore the result is returned as an Optional.
+     *       no {@link megamek.client.ui.clientGUI.boardview.BoardView}. Therefore, the result is returned as an
+     *       Optional.
      */
     public Optional<IBoardView> getCurrentBoardView() {
         return boardViewsContainer.getCurrentBoardView();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -68,7 +68,7 @@ public class BotHelpCommand extends ClientCommand {
         StringBuilder commandList = new StringBuilder();
 
         for (ChatCommands cmdName : ChatCommands.values()) {
-            if (commandList.length() > 0) {
+            if (!commandList.isEmpty()) {
                 commandList.append(", ");
             }
             commandList.append(cmdName.getAbbreviation());

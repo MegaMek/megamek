@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,24 +49,22 @@ import megamek.common.util.ImageUtil;
 
 public class MovingEntitySprite extends Sprite {
 
-    private int facing;
+    private final int facing;
 
-    private Entity entity;
+    private final Entity entity;
 
-    private Rectangle modelRect;
+    private final int elevation;
 
-    private int elevation;
-
-    public MovingEntitySprite(BoardView boardView1, final Entity entity, final Coords position, final int facing,
+    public MovingEntitySprite(BoardView boardView, final Entity entity, final Coords position, final int facing,
           final int elevation) {
-        super(boardView1);
+        super(boardView);
         this.entity = entity;
         this.facing = facing;
         this.elevation = elevation;
 
         String shortName = entity.getShortName();
         Font font = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10);
-        modelRect = new Rectangle(47,
+        Rectangle modelRect = new Rectangle(47,
               55,
               bv.getPanel().getFontMetrics(font).stringWidth(shortName) + 1,
               bv.getPanel().getFontMetrics(font).getAscent());
@@ -90,35 +88,35 @@ public class MovingEntitySprite extends Sprite {
     }
 
     @Override
-    public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
+    public void drawOnto(Graphics graphics, int x, int y, ImageObserver observer) {
         // If this is an airborne unit, render the shadow.
         if (bv.useIsometric() && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
             Image shadow = bv.createShadowMask(bv.getTileManager().imageFor(entity, facing, -1));
             shadow = bv.getScaledImage(shadow, true);
 
-            g.drawImage(shadow, x, y + (int) (bv.DROP_SHADOW_DISTANCE * bv.getScale()), observer);
+            graphics.drawImage(shadow, x, y + (int) (bv.DROP_SHADOW_DISTANCE * bv.getScale()), observer);
         } else if (elevation > 0) {
             Image shadow = bv.createShadowMask(bv.getTilesetManager().imageFor(entity, facing, -1));
             shadow = bv.getScaledImage(shadow, true);
 
-            g.drawImage(shadow, x, y + (int) (elevation * BoardView.HEX_ELEV * bv.getScale()), observer);
+            graphics.drawImage(shadow, x, y + (int) (elevation * BoardView.HEX_ELEV * bv.getScale()), observer);
         }
         // submerged?
         if (bv.useIsometric() && ((elevation + entity.getHeight()) < 0)) {
-            Graphics2D g2 = (Graphics2D) g;
+            Graphics2D g2 = (Graphics2D) graphics;
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f));
             g2.drawImage(image, x, y - (int) (elevation * BoardView.HEX_ELEV * bv.getScale()), observer);
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         } else {
             // create final image
-            drawOnto(g, x, y, observer, false);
+            drawOnto(graphics, x, y, observer, false);
         }
         // If this is a submerged unit, render the shadow after the unit.
         if (bv.useIsometric() && (elevation < 0)) {
             Image shadow = bv.createShadowMask(bv.getTileManager().imageFor(entity, facing, -1));
             shadow = bv.getScaledImage(shadow, true);
 
-            g.drawImage(shadow, x, y, observer);
+            graphics.drawImage(shadow, x, y, observer);
         }
     }
 

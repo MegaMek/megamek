@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -145,9 +145,8 @@ class SearchableTable extends JTable {
 
     /**
      * When keys are pressed with focus on this table, they are added to a search buffer, which is then used to search
-     * on a predetrmined column for selection.
+     * on a predetermined column for selection.
      *
-     * @param search
      */
     protected void searchFor(String search) {
         int rows = getRowCount();

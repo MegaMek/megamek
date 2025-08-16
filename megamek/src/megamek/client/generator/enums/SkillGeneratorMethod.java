@@ -96,19 +96,13 @@ public enum SkillGeneratorMethod {
     //endregion Boolean Comparisons
 
     public AbstractSkillGenerator getGenerator() {
-        switch (this) {
-            case TOTAL_WARFARE:
-                return new TotalWarfareSkillGenerator();
-            case TAHARQA:
-                return new TaharqaSkillGenerator();
-            case CONSTANT:
-                return new ConstantSkillGenerator();
-            case MODIFIED_CONSTANT:
-                return new ModifiedConstantSkillGenerator();
-            case MODIFIED_TOTAL_WARFARE:
-            default:
-                return new ModifiedTotalWarfareSkillGenerator();
-        }
+        return switch (this) {
+            case TOTAL_WARFARE -> new TotalWarfareSkillGenerator();
+            case TAHARQA -> new TaharqaSkillGenerator();
+            case CONSTANT -> new ConstantSkillGenerator();
+            case MODIFIED_CONSTANT -> new ModifiedConstantSkillGenerator();
+            default -> new ModifiedTotalWarfareSkillGenerator();
+        };
     }
 
     @Override

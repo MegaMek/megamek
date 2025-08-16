@@ -37,7 +37,6 @@ import javax.swing.JFrame;
 import javax.swing.JToggleButton;
 
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.UIUtil;
@@ -56,28 +55,6 @@ import megamek.common.annotations.Nullable;
 public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
     final ClientGUI clientGUI;
     Entity firingEntity;
-
-    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-
-    /**
-     * This creates a modal dialog to pick one or more Targetable objects.
-     *
-     * @param frame         parent @JFrame that owns this dialog
-     * @param title         Resource key string only, plain text will result in NPE from Resources
-     * @param message       HTML or plain text message show at top of dialog
-     * @param targets       things to chose from
-     * @param isMultiSelect if true, allows user to select multiple items. if false first, item chosen will close the
-     *                      window
-     * @param clientGUI     Needed to look up details of some targetables such as buildings
-     */
-    protected TargetChoiceDialog(JFrame frame, String title, String message,
-          @Nullable List<Targetable> targets, boolean isMultiSelect,
-          ClientGUI clientGUI) {
-        super(frame, title, message, targets, isMultiSelect);
-        this.clientGUI = clientGUI;
-        // initialize must be called after all member variables set
-        initialize();
-    }
 
     /**
      * This creates a modal dialog to pick one or more Targetable objects.

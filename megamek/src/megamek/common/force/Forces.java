@@ -346,7 +346,7 @@ public final class Forces implements Serializable {
     }
 
     /**
-     * Returns a list of all subforces of the provided force, including subforces of subforces to any depth.
+     * Returns a list of all subForces of the provided force, including subForces of subForces to any depth.
      */
     public ArrayList<Force> getFullSubForces(Force force) {
         ArrayList<Force> result = new ArrayList<>();
@@ -504,10 +504,10 @@ public final class Forces implements Serializable {
                     return false;
                 }
             }
-            // check if subforces exist
+            // check if subForces exist
             // check if no subforce is contained twice
-            // check if subforces agree on the parent
-            // check if subforces and parents share teams
+            // check if subForces agree on the parent
+            // check if subForces and parents share teams
             for (int subforceId : entry.getValue().getSubForces()) {
                 if (!contains(subforceId)
                       || !subIds.add(subforceId)
@@ -582,7 +582,7 @@ public final class Forces implements Serializable {
 
             var subForceIds = new ArrayList<>(entry.getValue().getSubForces());
             for (int subforceId : subForceIds) {
-                // Remove nonexistent subforces
+                // Remove nonexistent subForces
                 if (!contains(subforceId)) {
                     entry.getValue().removeSubForce(subforceId);
                 }
@@ -593,7 +593,7 @@ public final class Forces implements Serializable {
                 // Correct parentID (the subforce's parent entry must be equal to the current
                 // force
                 getForce(subforceId).setParent(entry.getKey());
-                // Remove subforces from enemy forces
+                // Remove subForces from enemy forces
                 Player subFoOwner = game.getPlayer(getOwnerId(getForce(subforceId)));
                 Player foOwner = game.getPlayer(getOwnerId(entry.getValue()));
                 if (subFoOwner != null && subFoOwner.isEnemyOf(foOwner)) {
@@ -622,7 +622,7 @@ public final class Forces implements Serializable {
     }
 
     /**
-     * Removes the given forces and all their subforces from these Forces. Returns a list of affected surviving forces.
+     * Removes the given forces and all their subForces from these Forces. Returns a list of affected surviving forces.
      * This method does not check if the forces are empty.
      * <p>
      * NOTE: Any entities in the removed forces are NOT updated by this method! It is necessary to update any entities'
@@ -647,7 +647,7 @@ public final class Forces implements Serializable {
         return result;
     }
 
-    /** Returns a list of all forces and subforces in no particular order. */
+    /** Returns a list of all forces and subForces in no particular order. */
     public ArrayList<Force> getAllForces() {
         return new ArrayList<>(forces.values());
     }
@@ -680,7 +680,7 @@ public final class Forces implements Serializable {
     }
 
     /**
-     * Returns true when possibleSubForce is one of the subforces (in any depth) of the given force.
+     * Returns true when possibleSubForce is one of the subForces (in any depth) of the given force.
      */
     public boolean isSubForce(Force force, Force possibleSubForce) {
         return getFullSubForces(force).contains(possibleSubForce);
@@ -723,7 +723,7 @@ public final class Forces implements Serializable {
     }
 
     /**
-     * Changes the owner of the given force and all subforces to the given newOwner. Promotes the force to top-level if
+     * Changes the owner of the given force and all subForces to the given newOwner. Promotes the force to top-level if
      * the parent force is now an enemy force. Returns a list of affected forces.
      */
     public Set<Force> assignFullForces(Force force, Player newOwner) {
@@ -733,7 +733,7 @@ public final class Forces implements Serializable {
         ArrayList<Force> affected = getFullSubForces(force);
         affected.add(force);
         if (!getOwner(force).isEnemyOf(newOwner)) {
-            // If the force is a teammate of the new owner, all subforces are as well
+            // If the force is a teammate of the new owner, all subForces are as well
             // and they can be assigned with the simpler method, no dislodging necessary
             for (Force f : affected) {
                 result.addAll(assignForceOnly(f, newOwner));
@@ -760,7 +760,7 @@ public final class Forces implements Serializable {
     }
 
     /**
-     * Returns a list of all entities of the given force and all its subforces to any depth.
+     * Returns a list of all entities of the given force and all its subForces to any depth.
      */
     public List<ForceAssignable> getFullEntities(final @Nullable Force force) {
         final List<ForceAssignable> result = new ArrayList<>();
@@ -807,7 +807,7 @@ public final class Forces implements Serializable {
     }
 
     /**
-     * Moves up the given subforce in the list of subforces of its parent if possible. Returns true when an actual
+     * Moves up the given subforce in the list of subForces of its parent if possible. Returns true when an actual
      * change occurred.
      */
     public ArrayList<Force> moveUp(Force subForce) {
@@ -822,7 +822,7 @@ public final class Forces implements Serializable {
     }
 
     /**
-     * Moves down the given subforce in the list of subforces of its parent if possible. Returns true when an actual
+     * Moves down the given subforce in the list of subForces of its parent if possible. Returns true when an actual
      * change occurred.
      */
     public ArrayList<Force> moveDown(Force subForce) {

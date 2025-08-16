@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,6 +40,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractButton;
@@ -67,9 +68,8 @@ import javax.swing.table.TableColumnModel;
  */
 public class TableColumnManager implements MouseListener, ActionListener, TableColumnModelListener,
                                            PropertyChangeListener {
-    private JTable table;
+    private final JTable table;
     private TableColumnModel tcm;
-    private boolean menuPopup;
 
     private List<TableColumn> allColumns;
 
@@ -120,7 +120,6 @@ public class TableColumnManager implements MouseListener, ActionListener, TableC
             table.getTableHeader().addMouseListener(this);
         }
 
-        this.menuPopup = menuPopup;
     }
 
     /**
@@ -322,8 +321,7 @@ public class TableColumnManager implements MouseListener, ActionListener, TableC
      */
     @Override
     public void actionPerformed(ActionEvent event) {
-        if (event.getSource() instanceof AbstractButton) {
-            AbstractButton button = (AbstractButton) event.getSource();
+        if (event.getSource() instanceof AbstractButton button) {
             String column = event.getActionCommand();
 
             if (button.isSelected()) {
@@ -400,9 +398,10 @@ public class TableColumnManager implements MouseListener, ActionListener, TableC
 
     /*
      * Allows you to select a specific menu item when the popup is
-     * displayed. (ie. this is a bug? fix)
+     * displayed. (i.e. this is a bug? fix)
      */
     static class SelectPopupMenu extends JPopupMenu {
+        @Serial
         private static final long serialVersionUID = 2603169517151855563L;
 
         @Override

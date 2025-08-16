@@ -190,7 +190,7 @@ public abstract class AbstractWreckSprite extends Sprite {
     @Override
     public StringBuffer getTooltip() {
         StringBuffer result = new StringBuffer();
-        result.append(Messages.getString("BoardView1.Tooltip.Wreckof") + " ");
+        result.append(Messages.getString("BoardView1.Tooltip.Wreckof")).append(" ");
         result.append(entity.getChassis());
         result.append(MessageFormat.format(" ({0})", entity.getOwner().getName()));
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {

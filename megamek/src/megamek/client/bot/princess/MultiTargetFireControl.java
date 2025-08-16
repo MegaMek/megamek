@@ -142,10 +142,10 @@ public class MultiTargetFireControl extends FireControl {
 
         for (Targetable target : getTargetableEnemyEntities(shooter, owner.getGame(), owner.getFireControlState())) {
             WeaponFireInfo betterShot = null;
-            final int ownerID = (target instanceof Entity) ? ((Entity) target).getOwnerId() : -1;
+            final int ownerID = (target instanceof Entity) ? target.getOwnerId() : -1;
             if (owner.getHonorUtil().isEnemyBroken(target.getId(), ownerID,
                   owner.getBehaviorSettings().isForcedWithdrawal())) {
-                logger.info(target.getDisplayName() + " is broken - ignoring");
+                logger.info("{} is broken - ignoring", target.getDisplayName());
                 continue;
             }
 
@@ -220,7 +220,7 @@ public class MultiTargetFireControl extends FireControl {
     }
 
     protected FiringPlan calculateFiringPlan(Entity shooter, List<WeaponMounted> weaponList) {
-        FiringPlan retVal = new FiringPlan();
+        FiringPlan retVal;
 
         List<WeaponFireInfo> shotList = new ArrayList<>();
         for (WeaponMounted weapon : weaponList) {
@@ -301,7 +301,7 @@ public class MultiTargetFireControl extends FireControl {
 
         // initialize the backpack
         Map<Integer, Map<Integer, List<Integer>>> arcBackpack = new HashMap<>();
-        for (int x = 0; x <= arcShots.keySet().size(); x++) {
+        for (int x = 0; x <= arcShots.size(); x++) {
             arcBackpack.put(x, new HashMap<>());
 
             for (int y = 0; y <= heatCapacity; y++) {
@@ -309,9 +309,9 @@ public class MultiTargetFireControl extends FireControl {
             }
         }
 
-        double[][] damageBackpack = new double[arcShots.keySet().size() + 1][heatCapacity + 1];
-        Integer[] arcHeatKeyArray = new Integer[arcHeat.keySet().size()];
-        System.arraycopy(arcHeat.keySet().toArray(), 0, arcHeatKeyArray, 0, arcHeat.keySet().size());
+        double[][] damageBackpack = new double[arcShots.size() + 1][heatCapacity + 1];
+        Integer[] arcHeatKeyArray = new Integer[arcHeat.size()];
+        System.arraycopy(arcHeat.keySet().toArray(), 0, arcHeatKeyArray, 0, arcHeat.size());
 
         // now, we essentially solve the backpack problem, where the arcs are the items:
         // arc expected damage is the "value", and arc heat is the "weight", while the
@@ -395,9 +395,7 @@ public class MultiTargetFireControl extends FireControl {
         }
 
         if (alphaStrikeHeat < shooter.getHeatCapacity() - shooter.getHeat() + heatCapacityModifier) {
-            for (WeaponFireInfo shot : shotList) {
-                retVal.add(shot);
-            }
+            retVal.addAll(shotList);
 
             return retVal;
         }

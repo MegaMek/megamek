@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -59,12 +59,12 @@ import megamek.common.RangeType;
  *
  * @author Simon
  */
-public class FieldofFireSprite extends MovementEnvelopeSprite {
+public class FieldOfFireSprite extends MovementEnvelopeSprite {
     // ### Control values
 
     // thick border
-    private static final int borderW = 10;
-    private static final int borderOpac = 120;
+    private static final int borderWidth = 10;
+    private static final int borderOpacity = 120;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -102,39 +102,33 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     private Color fillColor;
     private final int rangeBracket;
 
-    public FieldofFireSprite(BoardView boardView1, int rangeBracket, Coords l,
+    public FieldOfFireSprite(BoardView boardView1, int rangeBracket, Coords l,
           int borders) {
         // the color of the super doesn't matter
         super(boardView1, Color.BLACK, l, borders);
         Color c = getFieldOfFireColor(rangeBracket);
-        fillColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), borderOpac);
+        fillColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), borderOpacity);
         this.rangeBracket = rangeBracket;
     }
 
     public static Color getFieldOfFireColor(int rangeBracket) {
         // colors for Min,S,M,L,E ranges
-        switch (rangeBracket) {
-            case RangeType.RANGE_MINIMUM:
-                return GUIP.getFieldOfFireMinColor();
-            case RangeType.RANGE_SHORT:
-                return GUIP.getFieldOfFireShortColor();
-            case RangeType.RANGE_MEDIUM:
-                return GUIP.getFieldOfFireMediumColor();
-            case RangeType.RANGE_LONG:
-                return GUIP.getFieldOfFireLongColor();
-            case RangeType.RANGE_EXTREME:
-                return GUIP.getFieldOfFireExtremeColor();
-            default:
-                return new Color(0, 0, 0);
-        }
+        return switch (rangeBracket) {
+            case RangeType.RANGE_MINIMUM -> GUIP.getFieldOfFireMinColor();
+            case RangeType.RANGE_SHORT -> GUIP.getFieldOfFireShortColor();
+            case RangeType.RANGE_MEDIUM -> GUIP.getFieldOfFireMediumColor();
+            case RangeType.RANGE_LONG -> GUIP.getFieldOfFireLongColor();
+            case RangeType.RANGE_EXTREME -> GUIP.getFieldOfFireExtremeColor();
+            default -> new Color(0, 0, 0);
+        };
     }
 
     protected void setFillColor(Color c) {
         fillColor = c;
     }
 
-    protected int getBorderOpac() {
-        return borderOpac;
+    protected int getBorderOpacity() {
+        return borderOpacity;
     }
 
     protected float getOldZoom() {
@@ -162,7 +156,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     }
 
     protected int getBorderW() {
-        return borderW;
+        return borderWidth;
     }
 
     @Override
@@ -176,7 +170,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
             return;
         }
 
-        // when the board is rezoomed, ditch all images
+        // when the board is re-zoomed, ditch all images
         if (bv.getScale() != oldZoom) {
             oldZoom = bv.getScale();
             images = new Image[64][COLORS_MAX];
@@ -197,41 +191,41 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         // borders that are present
         switch (bTypes[borders]) {
             case 1: // 2 adjacent borders
-                drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW),
-                      getHexCrossLine01(bDir[borders], borderW));
+                drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderWidth),
+                      getHexCrossLine01(bDir[borders], borderWidth));
                 break;
             case 2: // 3 adjacent borders
-                drawBorderXC(graph, getHexCrossArea012(bDir[borders], borderW),
-                      getHexCrossLine012(bDir[borders], borderW));
+                drawBorderXC(graph, getHexCrossArea012(bDir[borders], borderWidth),
+                      getHexCrossLine012(bDir[borders], borderWidth));
                 break;
             case 3: // 4 adjacent borders
-                drawBorderXC(graph, getHexCrossArea0123(bDir[borders], borderW),
-                      getHexCrossLine0123(bDir[borders], borderW));
+                drawBorderXC(graph, getHexCrossArea0123(bDir[borders], borderWidth),
+                      getHexCrossLine0123(bDir[borders], borderWidth));
                 break;
             case 4: // twice two adjacent borders
-                drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW),
-                      getHexCrossLine01(bDir[borders], borderW));
-                drawBorderXC(graph, getHexCrossArea01(bDir[borders] + 3, borderW),
-                      getHexCrossLine01(bDir[borders] + 3, borderW));
+                drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderWidth),
+                      getHexCrossLine01(bDir[borders], borderWidth));
+                drawBorderXC(graph, getHexCrossArea01(bDir[borders] + 3, borderWidth),
+                      getHexCrossLine01(bDir[borders] + 3, borderWidth));
                 break;
             case 5: // three adjacent borders and one lone
-                drawBorderXC(graph, getHexCrossArea012(bDir[borders], borderW),
-                      getHexCrossLine012(bDir[borders], borderW));
+                drawBorderXC(graph, getHexCrossArea012(bDir[borders], borderWidth),
+                      getHexCrossLine012(bDir[borders], borderWidth));
                 drawLoneBorder(graph, bDir[borders] + 4);
                 break;
             case 6: // two adjacent borders and one lone
-                drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW),
-                      getHexCrossLine01(bDir[borders], borderW));
+                drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderWidth),
+                      getHexCrossLine01(bDir[borders], borderWidth));
                 drawLoneBorder(graph, bDir[borders] + 3);
                 break;
-            case 7: // two adjacent borders and one lone (other hexface)
-                drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW),
-                      getHexCrossLine01(bDir[borders], borderW));
+            case 7: // two adjacent borders and one lone (other hex face)
+                drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderWidth),
+                      getHexCrossLine01(bDir[borders], borderWidth));
                 drawLoneBorder(graph, bDir[borders] + 4);
                 break;
             case 8:
-                drawBorderXC(graph, getHexCrossArea01234(bDir[borders], borderW),
-                      getHexCrossLine01234(bDir[borders], borderW));
+                drawBorderXC(graph, getHexCrossArea01234(bDir[borders], borderWidth),
+                      getHexCrossLine01234(bDir[borders], borderWidth));
                 break;
             default:
                 drawNormalBorders(graph);
@@ -253,7 +247,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     protected void drawLoneBorder(Graphics2D graph, int dir) {
         // 1) thick transparent border
         graph.setColor(fillColor);
-        graph.fill(getHexBorderArea(dir, CUT_BORDER, borderW));
+        graph.fill(getHexBorderArea(dir, CUT_BORDER, borderWidth));
 
         // 2) thin dashed line border
         graph.setColor(lineColor);
@@ -265,11 +259,11 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         for (int i = 0; i < 6; i++) {
             if ((borders & (1 << i)) != 0) {
                 // 1) thick transparent border
-                int cut = ((borders & (1 << ((i + 1) % 6))) == 0) ? CUT_RBORDER : CUT_RINSIDE;
-                cut |= ((borders & (1 << ((i + 5) % 6))) == 0) ? CUT_LBORDER : CUT_LINSIDE;
+                int cut = ((borders & (1 << ((i + 1) % 6))) == 0) ? CUT_RIGHT_BORDER : CUT_RIGHT_INSIDE;
+                cut |= ((borders & (1 << ((i + 5) % 6))) == 0) ? CUT_LEFT_BORDER : CUT_LEFT_INSIDE;
 
                 graph.setColor(fillColor);
-                graph.fill(getHexBorderArea(i, cut, borderW));
+                graph.fill(getHexBorderArea(i, cut, borderWidth));
 
                 // 2) thin dashed line border
                 graph.setColor(lineColor);

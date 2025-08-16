@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -853,7 +853,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                                   fRec));
                             numUnits.add(m_pFormationOptions.getIntegerOption("numOtherUnits"));
                         } else if (m_pFormationOptions.getBooleanOption("mekBA")) {
-                            // Make sure at least a number units equals to the number of BA points/squads
+                            // Make sure at least a number of units equals to the number of BA points/squads
                             // are omni
                             numUnits.set(0,
                                   Math.min(m_pFormationOptions.getIntegerOption("numOtherUnits"),
@@ -1301,8 +1301,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 case COL_WEIGHT -> 12;
                 case COL_UNIT -> 240;
                 case COL_BV -> 18;
-                case COL_CL_IS -> 20;
-                case COL_UNIT_ROLE -> 20;
+                case COL_CL_IS, COL_UNIT_ROLE -> 20;
                 default -> 0;
             };
         }

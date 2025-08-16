@@ -41,6 +41,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.Serial;
 import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -112,7 +113,7 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     /**
      * This allows Swing to create the dialog with another dialog as the parent. Which dialog swing renders on top is
      * somewhat undefined, depending on the window manager. This can cause problems in the case of modal dialogs that
-     * show up behind other dialogs and you cannot get to them.
+     * show up behind other dialogs, and you cannot get to them.
      *
      * @param dialog    Owning dialog, for dialogs on dialogs
      * @param frame     Owning frame
@@ -187,6 +188,7 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, CLOSE_ACTION);
         getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escape, CLOSE_ACTION);
         getRootPane().getActionMap().put(CLOSE_ACTION, new AbstractAction() {
+            @Serial
             private static final long serialVersionUID = 95171770700983453L;
 
             @Override

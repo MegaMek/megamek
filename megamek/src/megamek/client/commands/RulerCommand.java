@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -63,7 +63,7 @@ public class RulerCommand extends ClientCommand {
     public String run(String[] args) {
         try {
             int elev1 = 1, elev2 = 1;
-            Coords start = null, end = null;
+            Coords start, end;
             String toHit1 = "", toHit2 = "";
             ToHitData thd;
 

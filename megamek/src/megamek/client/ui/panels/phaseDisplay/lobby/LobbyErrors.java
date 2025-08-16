@@ -64,7 +64,7 @@ public final class LobbyErrors {
     private static final String FORCE_ATTACH_TOSUB = "Cannot attach a force to its own subforce.";
     private static final String PLAYER_DONE = "Cannot edit units while your status is Done.";
     private static final String SBF_CONVERSIONERROR = "At least some of the forces you selected cannot be " +
-          "converted to SBF Formations. Please select only the topmost forces to be converted, no subforces. " +
+          "converted to SBF Formations. Please select only the topmost forces to be converted, no subForces. " +
           "A converted force must conform to the rules given in Interstellar Operations. Conversion " +
           "will typically work with companies created in the Force Generator.";
     private static final String NO_DUAL_TOW = "Both units must have an open appropriate tow hitch.";

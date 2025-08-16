@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,7 +41,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Iterator;
+import java.io.Serial;
 import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -60,13 +60,14 @@ import megamek.client.ui.Messages;
  * @since June 15, 2003
  */
 public class UnitFailureDialog extends JDialog implements ActionListener, ListSelectionListener, KeyListener {
+    @Serial
     private static final long serialVersionUID = -7075012201265932299L;
 
-    private Map<String, String> hFailedFiles;
+    private final Map<String, String> hFailedFiles;
 
-    private JList<String> failedList;
+    private final JList<String> failedList;
 
-    private JTextArea reasonTextArea = new JTextArea("", 4, 20);
+    private final JTextArea reasonTextArea = new JTextArea("", 4, 20);
 
     public UnitFailureDialog(JFrame frame, Map<String, String> hff) {
         super(frame, Messages.getString("UnitFailureDialog.title"));
@@ -74,9 +75,9 @@ public class UnitFailureDialog extends JDialog implements ActionListener, ListSe
         hFailedFiles = hff;
         String[] failed = new String[hFailedFiles.size()];
         int i = 0;
-        Iterator<String> failedUnits = hFailedFiles.keySet().iterator();
-        while (failedUnits.hasNext()) {
-            failed[i++] = failedUnits.next();
+
+        for (String string : hFailedFiles.keySet()) {
+            failed[i++] = string;
         }
         failedList = new JList<>(failed);
 

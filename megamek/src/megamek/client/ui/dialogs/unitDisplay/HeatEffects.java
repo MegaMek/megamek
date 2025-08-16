@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,7 +38,7 @@ public class HeatEffects {
 
     public static String getHeatEffects(int heat, boolean mtHeat, boolean hasTSM) {
         String whichOne = "HeatEffects";
-        int maxheat = 30;
+        int maxHeat = 30;
         if (hasTSM) {
             whichOne += ".tsm";
         }
@@ -46,9 +46,9 @@ public class HeatEffects {
             if (heat >= 30) {
                 whichOne += ".mt";
             }
-            maxheat = 50;
+            maxHeat = 50;
         }
-        whichOne += "." + Math.min(maxheat, heat);
+        whichOne += "." + Math.min(maxHeat, heat);
         return Messages.getString(whichOne);
     }
 

@@ -42,18 +42,7 @@ import megamek.common.Terrains;
  *
  * @author arlith
  */
-class TerrainHelper implements Comparable<TerrainHelper> {
-
-    private final int terrainType;
-
-    TerrainHelper(int terrain) {
-        terrainType = terrain;
-    }
-
-    public int getTerrainType() {
-        return terrainType;
-    }
-
+record TerrainHelper(int terrainType) implements Comparable<TerrainHelper> {
     @Override
     public String toString() {
         return Terrains.getEditorName(terrainType);
@@ -71,16 +60,16 @@ class TerrainHelper implements Comparable<TerrainHelper> {
     @Override
     public boolean equals(Object other) {
         if (other instanceof Integer) {
-            return getTerrainType() == (Integer) other;
+            return terrainType() == (Integer) other;
         } else if (!(other instanceof TerrainHelper)) {
             return false;
         } else {
-            return getTerrainType() == ((TerrainHelper) other).getTerrainType();
+            return terrainType() == ((TerrainHelper) other).terrainType();
         }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getTerrainType());
+        return Objects.hash(terrainType());
     }
 }

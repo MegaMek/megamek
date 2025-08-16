@@ -44,7 +44,7 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.common.preference.PreferenceChangeEvent;
 
 /**
- * An overlay for the Boardview that displays info about the users turn, such as list of users Move or Attack commands
+ * An overlay for the BoardView that displays info about the users turn, such as list of users Move or Attack commands
  * for the current game situation
  */
 public class TurnDetailsOverlay extends AbstractBoardViewOverlay {
@@ -67,7 +67,7 @@ public class TurnDetailsOverlay extends AbstractBoardViewOverlay {
 
     public void setLines(List<String> newLines) {
         lines.clear();
-        if (newLines != null && newLines.size() != 0) {
+        if (newLines != null && !newLines.isEmpty()) {
             addHeader(lines);
             lines.addAll(newLines);
         }

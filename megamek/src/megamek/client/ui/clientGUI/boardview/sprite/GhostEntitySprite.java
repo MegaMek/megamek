@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,9 +44,9 @@ import megamek.common.util.ImageUtil;
 
 public class GhostEntitySprite extends Sprite {
 
-    private Entity entity;
+    private final Entity entity;
 
-    private Rectangle modelRect;
+    private final Rectangle modelRect;
 
     public GhostEntitySprite(BoardView boardView1, final Entity entity) {
         super(boardView1);

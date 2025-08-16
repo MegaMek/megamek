@@ -167,7 +167,7 @@ public class SummaryPanel extends PicMap {
      */
     public void displayMek(Entity entity) {
         Player localPlayer = unitDisplayPanel.getClientGUI().getClient().getLocalPlayer();
-        String txt = "";
+        String txt;
 
         if (entity == null) {
             txt = padLeft("No Unit");
@@ -210,7 +210,7 @@ public class SummaryPanel extends PicMap {
                 }
             }
 
-            String edgeTip = PilotToolTip.getCrewAdvs(entity, true).toString();
+            String edgeTip = PilotToolTip.getCrewAdvantages(entity, true).toString();
             col = UIUtil.tag("TD", "", edgeTip);
             row = UIUtil.tag("TR", "", col);
             rows += row;

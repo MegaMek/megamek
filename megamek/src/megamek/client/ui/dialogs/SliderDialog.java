@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,6 +37,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serial;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -53,15 +54,12 @@ import megamek.client.ui.Messages;
  * A simple prompt.
  */
 public class SliderDialog extends JDialog implements ActionListener, ChangeListener {
+    @Serial
     private static final long serialVersionUID = -7823206132140091543L;
-    private JButton butOk = new JButton(Messages.getString("Okay"));
-    private JButton butCancel = new JButton(Messages.getString("Cancel"));
-    private JSlider value;
-    private JLabel lblText = new JLabel();
+    private final JButton butOk = new JButton(Messages.getString("Okay"));
+    private final JSlider value;
     private boolean ok;
-    private JLabel minText = new JLabel();
-    private JLabel maxText = new JLabel();
-    private JLabel curText = new JLabel();
+    private final JLabel curText = new JLabel();
 
     public SliderDialog(JFrame parent, String title, String question,
           int defaultValue, int min, int max) {
@@ -74,13 +72,16 @@ public class SliderDialog extends JDialog implements ActionListener, ChangeListe
         getContentPane().setLayout(new BorderLayout());
         JPanel qp = new JPanel();
         qp.setLayout(new BorderLayout());
+        JLabel lblText = new JLabel();
         lblText.setText(question);
         qp.add(lblText, BorderLayout.NORTH);
         getContentPane().add(qp, BorderLayout.NORTH);
 
         JPanel sp1 = new JPanel();
         sp1.setLayout(new FlowLayout());
+        JLabel minText = new JLabel();
         minText.setText(String.valueOf(min));
+        JLabel maxText = new JLabel();
         maxText.setText(String.valueOf(max));
         curText.setText(String.valueOf(defaultValue));
         sp1.add(minText);
@@ -93,6 +94,7 @@ public class SliderDialog extends JDialog implements ActionListener, ChangeListe
         p.setLayout(new FlowLayout());
         butOk.addActionListener(this);
         p.add(butOk);
+        JButton butCancel = new JButton(Messages.getString("Cancel"));
         butCancel.addActionListener(this);
         p.add(butCancel);
         getContentPane().add(p, BorderLayout.SOUTH);

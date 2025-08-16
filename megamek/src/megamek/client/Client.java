@@ -782,7 +782,7 @@ public class Client extends AbstractClient {
 
                     if (crew != null) {
                         // Adjust the portrait size to the GUI scale and number of pilots
-                        float imgSize = UIUtil.scaleForGUI(PilotToolTip.PORTRAIT_BASESIZE);
+                        float imgSize = UIUtil.scaleForGUI(PilotToolTip.PORTRAIT_BASE_SIZE);
                         imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
                         Image portrait = crew.getPortrait(crewID).getBaseImage().getScaledInstance(-1, (int) imgSize,
                               Image.SCALE_SMOOTH);

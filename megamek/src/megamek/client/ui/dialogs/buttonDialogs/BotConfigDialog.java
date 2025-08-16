@@ -605,7 +605,7 @@ public class BotConfigDialog extends AbstractButtonDialog
     }
 
     /**
-     * Setup the slider panel with a dynamic title that changes when the slider is moved.
+     * Set up the slider panel with a dynamic title that changes when the slider is moved.
      */
     private JPanel buildSliderWithDynamicTitle(JSlider thisSlider, String minMsgProperty, String maxMsgProperty,
           String toolTip, String titleKey) {

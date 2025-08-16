@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Jay Lawson
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,6 +40,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +51,7 @@ import javax.swing.*;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.CloseAction;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
@@ -61,9 +63,10 @@ import megamek.common.weapons.InfantryAttack;
  * @author Jay Lawson (jaylawson39 at yahoo.com)
  */
 public class UnitEditorDialog extends JDialog {
+    @Serial
     private static final long serialVersionUID = 8144354264100884817L;
 
-    private Entity entity;
+    private final Entity entity;
 
     JPanel panArmor;
     JPanel panSystem;
@@ -86,7 +89,7 @@ public class UnitEditorDialog extends JDialog {
     Map<Integer, CheckCritPanel> lamAvionicsCrit;
     Map<Integer, CheckCritPanel> lamLandingGearCrit;
     CheckCritPanel[][] actuatorCrits;
-    CheckCritPanel turretlockCrit;
+    CheckCritPanel turretLockCrit;
     CheckCritPanel motiveCrit;
     CheckCritPanel[] stabilizerCrits;
     CheckCritPanel flightStabilizerCrit;
@@ -96,7 +99,7 @@ public class UnitEditorDialog extends JDialog {
     CheckCritPanel gearCrit;
     CheckCritPanel leftThrusterCrit;
     CheckCritPanel rightThrusterCrit;
-    CheckCritPanel kfboomCrit;
+    CheckCritPanel kfBoomCrit;
     CheckCritPanel dockCollarCrit;
     CheckCritPanel gravDeckCrit;
     JSpinner[] bayDamage;
@@ -129,7 +132,7 @@ public class UnitEditorDialog extends JDialog {
         JPanel panMain = new JPanel(new GridBagLayout());
         JPanel panButtons = new JPanel(new GridLayout(1, 2));
 
-        // TODO: protomeks
+        // TODO: ProtoMeks
         initArmorPanel();
         initSystemPanel();
         initEquipPanel();
@@ -402,7 +405,7 @@ public class UnitEditorDialog extends JDialog {
          * record sheets show (i.e. 3 for engines). If we want to switch this to
          * the actual number then we can, see
          * enginePart.updateConditionFromEntity in MekHQ for an example of how
-         * to retrieve all of the available system crits
+         * to retrieve all the available system crits
          */
         int centerEngineHits = 0;
         int leftEngineHits = 0;
@@ -625,7 +628,6 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.turretLock") + "</b><br></html>"),
               gridBagConstraints);
@@ -633,10 +635,10 @@ public class UnitEditorDialog extends JDialog {
         if (tank.isTurretLocked(0)) {
             lock = 1;
         }
-        turretlockCrit = new CheckCritPanel(1, lock);
+        turretLockCrit = new CheckCritPanel(1, lock);
         gridBagConstraints.gridx = 1;
         gridBagConstraints.weightx = 1.0;
-        panSystem.add(turretlockCrit, gridBagConstraints);
+        panSystem.add(turretLockCrit, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -766,7 +768,6 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" +
               Messages.getString("UnitEditorDialog.flightStabilizer") +
@@ -838,7 +839,6 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.avionics") + "</b><br></html>"),
               gridBagConstraints);
@@ -847,12 +847,12 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.weightx = 1.0;
         panSystem.add(avionicsCrit, gridBagConstraints);
 
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy++;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.fill = GridBagConstraints.NONE;
         if (aero instanceof Jumpship) {
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy++;
-            gridBagConstraints.weightx = 0.0;
-            gridBagConstraints.weighty = 0.0;
-            gridBagConstraints.fill = GridBagConstraints.NONE;
             panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.cic") + "</b><br></html>"),
                   gridBagConstraints);
             cicCrit = new CheckCritPanel(3, aero.getCICHits());
@@ -860,11 +860,6 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.weightx = 1.0;
             panSystem.add(cicCrit, gridBagConstraints);
         } else {
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy++;
-            gridBagConstraints.weightx = 0.0;
-            gridBagConstraints.weighty = 0.0;
-            gridBagConstraints.fill = GridBagConstraints.NONE;
             panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.fcs") + "</b><br></html>"),
                   gridBagConstraints);
             fcsCrit = new CheckCritPanel(3, aero.getFCSHits());
@@ -951,8 +946,7 @@ public class UnitEditorDialog extends JDialog {
             panSystem.add(rightThrusterCrit, gridBagConstraints);
         }
 
-        if (aero instanceof Jumpship) {
-            Jumpship js = (Jumpship) aero;
+        if (aero instanceof Jumpship js) {
             // Grav Decks
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy++;
@@ -1138,14 +1132,14 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.kfBoom") + "</b><br></html>"),
                   gridBagConstraints);
-            int kfboomHits = 0;
+            int kfBoomHits = 0;
             if (((Dropship) aero).isKFBoomDamaged()) {
-                kfboomHits = 1;
+                kfBoomHits = 1;
             }
-            kfboomCrit = new CheckCritPanel(1, kfboomHits);
+            kfBoomCrit = new CheckCritPanel(1, kfBoomHits);
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
-            panSystem.add(kfboomCrit, gridBagConstraints);
+            panSystem.add(kfBoomCrit, gridBagConstraints);
         }
 
         if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
@@ -1196,7 +1190,7 @@ public class UnitEditorDialog extends JDialog {
      * Applies the given number of total crits to a Super-Cooled Myomer (which is spread over 6 locations).
      */
     public void damageSCM(Entity entity, int eqNum, int hits) {
-        int nhits = 0;
+        int numHits = 0;
         Mounted<?> m = entity.getEquipment(eqNum);
         for (int loc = 0; loc < entity.locations(); loc++) {
             for (int i = 0; i < entity.getNumberOfCriticals(loc); i++) {
@@ -1207,10 +1201,10 @@ public class UnitEditorDialog extends JDialog {
                     continue;
                 }
 
-                if (nhits < hits) {
+                if (numHits < hits) {
                     cs.setHit(true);
                     cs.setDestroyed(true);
-                    nhits++;
+                    numHits++;
                 } else {
                     cs.setHit(false);
                     cs.setDestroyed(false);
@@ -1220,7 +1214,7 @@ public class UnitEditorDialog extends JDialog {
         }
     }
 
-    private void btnOkayActionPerformed(java.awt.event.ActionEvent evt) {
+    private void btnOkayActionPerformed(java.awt.event.ActionEvent actionEvent) {
         for (int i = 0; i < entity.locations(); i++) {
             if (null != spnInternal[i]) {
                 int internal = (Integer) spnInternal[i].getModel().getValue();
@@ -1368,8 +1362,7 @@ public class UnitEditorDialog extends JDialog {
                           protoCrits[loc].getHits());
                 }
             }
-        } else if (entity instanceof Tank) {
-            Tank tank = (Tank) entity;
+        } else if (entity instanceof Tank tank) {
             if (null != engineCrit) {
                 if (engineCrit.getHits() > 0) {
                     tank.engineHit();
@@ -1377,8 +1370,8 @@ public class UnitEditorDialog extends JDialog {
                     tank.engineFix();
                 }
             }
-            if (null != turretlockCrit) {
-                if (turretlockCrit.getHits() > 0) {
+            if (null != turretLockCrit) {
+                if (turretLockCrit.getHits() > 0) {
                     tank.lockTurret(0);
                 } else {
                     tank.unlockTurret();
@@ -1413,8 +1406,7 @@ public class UnitEditorDialog extends JDialog {
                     tank.clearStabiliserHit(loc);
                 }
             }
-        } else if (entity instanceof Aero) {
-            Aero aero = (Aero) entity;
+        } else if (entity instanceof Aero aero) {
             if (null != avionicsCrit) {
                 aero.setAvionicsHits(avionicsCrit.getHits());
             }
@@ -1445,8 +1437,8 @@ public class UnitEditorDialog extends JDialog {
             if ((null != dockCollarCrit) && (aero instanceof Dropship)) {
                 ((Dropship) aero).setDamageDockCollar(dockCollarCrit.getHits() > 0);
             }
-            if ((null != kfboomCrit) && (aero instanceof Dropship)) {
-                ((Dropship) aero).setDamageKFBoom(kfboomCrit.getHits() > 0);
+            if ((null != kfBoomCrit) && (aero instanceof Dropship)) {
+                ((Dropship) aero).setDamageKFBoom(kfBoomCrit.getHits() > 0);
             }
             // cargo bays and bay doors
             if ((aero instanceof Dropship) || (aero instanceof Jumpship)) {
@@ -1468,20 +1460,17 @@ public class UnitEditorDialog extends JDialog {
                         bay.setCurrentDoors(bay.getDoors());
                     }
                     // for ASF and SC bays, we have to update recovery slots as doors are changed
-                    if (bay instanceof ASFBay) {
-                        ASFBay a = (ASFBay) bay;
-                        a.initializeRecoverySlots();
+                    if (bay instanceof ASFBay asfBay) {
+                        asfBay.initializeRecoverySlots();
                     }
-                    if (bay instanceof SmallCraftBay) {
-                        SmallCraftBay s = (SmallCraftBay) bay;
-                        s.initializeRecoverySlots();
+                    if (bay instanceof SmallCraftBay smallCraftBay) {
+                        smallCraftBay.initializeRecoverySlots();
                     }
                     b++;
                 }
             }
             // Jumpship Docking Collars, KF Drive, Sail and Grav Decks
-            if (aero instanceof Jumpship) {
-                Jumpship js = (Jumpship) aero;
+            if (aero instanceof Jumpship jumpship) {
                 JSpinner collarCrit = collarDamage;
                 CheckCritPanel deckCrit = gravDeckCrit;
                 double damagedCollars = 0.0;
@@ -1489,7 +1478,7 @@ public class UnitEditorDialog extends JDialog {
                 if (null != collarCrit) {
                     damagedCollars = (aero.getDockingCollars().size() - (double) collarCrit.getModel().getValue());
                 }
-                // First, reset damaged collars to undamaged. Otherwise you get weirdness when
+                // First, reset damaged collars to undamaged. Otherwise, you get weirdness when
                 // running this dialogue multiple times
                 for (DockingCollar collar : aero.getDockingCollars()) {
                     collar.setDamaged(false);
@@ -1507,55 +1496,56 @@ public class UnitEditorDialog extends JDialog {
                     damagedDecks = deckCrit.getHits();
                 }
                 // reset all grav decks to undamaged
-                for (int i = 0; i < js.getTotalGravDeck(); i++) {
-                    js.setGravDeckDamageFlag(i, 0);
+                for (int i = 0; i < jumpship.getTotalGravDeck(); i++) {
+                    jumpship.setGravDeckDamageFlag(i, 0);
                 }
                 if (damagedDecks > 0) {
                     // loop through the grav decks from #1 and damage them
                     for (int i = 0; i < damagedDecks; i++) {
-                        js.setGravDeckDamageFlag(i, 1);
+                        jumpship.setGravDeckDamageFlag(i, 1);
                     }
                 }
                 // KF Drive and Sail
                 if (null != kfDamage) {
                     double kfIntegrity = (double) kfDamage.getModel().getValue();
-                    js.setKFIntegrity((int) kfIntegrity);
+                    jumpship.setKFIntegrity((int) kfIntegrity);
                 }
                 if (null != chargingSystemCrit) {
-                    js.setKFChargingSystemHit(chargingSystemCrit.getHits() > 0);
+                    jumpship.setKFChargingSystemHit(chargingSystemCrit.getHits() > 0);
                 }
                 if (null != driveCoilCrit) {
-                    js.setKFDriveCoilHit(driveCoilCrit.getHits() > 0);
+                    jumpship.setKFDriveCoilHit(driveCoilCrit.getHits() > 0);
                 }
                 if (null != driveControllerCrit) {
-                    js.setKFDriveControllerHit(driveControllerCrit.getHits() > 0);
+                    jumpship.setKFDriveControllerHit(driveControllerCrit.getHits() > 0);
                 }
                 if (null != fieldInitiatorCrit) {
-                    js.setKFFieldInitiatorHit(fieldInitiatorCrit.getHits() > 0);
+                    jumpship.setKFFieldInitiatorHit(fieldInitiatorCrit.getHits() > 0);
                 }
                 if (null != heliumTankCrit) {
-                    js.setKFHeliumTankHit(heliumTankCrit.getHits() > 0);
+                    jumpship.setKFHeliumTankHit(heliumTankCrit.getHits() > 0);
                 }
                 if (null != lfBatteryCrit) {
-                    js.setLFBatteryHit(lfBatteryCrit.getHits() > 0);
+                    jumpship.setLFBatteryHit(lfBatteryCrit.getHits() > 0);
                 }
                 if (null != sailDamage) {
                     double sailIntegrity = (double) sailDamage.getModel().getValue();
-                    js.setSailIntegrity((int) sailIntegrity);
+                    jumpship.setSailIntegrity((int) sailIntegrity);
                 }
             }
         }
 
     }
 
-    private class CheckCritPanel extends JPanel {
+    private static class CheckCritPanel extends JPanel {
 
         /**
          *
          */
+        @Serial
         private static final long serialVersionUID = 8662728291188274362L;
 
-        private ArrayList<JCheckBox> checks = new ArrayList<>();
+        private final ArrayList<JCheckBox> checks = new ArrayList<>();
 
         public CheckCritPanel(int crits, int current) {
             setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
@@ -1585,7 +1575,7 @@ public class UnitEditorDialog extends JDialog {
         }
 
         private void checkBoxes(ActionEvent evt) {
-            int hits = Integer.parseInt(evt.getActionCommand());
+            int hits = MathUtility.parseInt(evt.getActionCommand());
             boolean selected = checks.get(hits).isSelected();
             if (selected) {
                 // check all those up to this one

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,7 +43,6 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -106,6 +105,21 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
         clientGui = boardView.getClientgui();
         currentGame = Objects.requireNonNull(boardView.game);
         currentPhase = currentGame.getPhase();
+        // Detects phase and turn changes to display
+        // The active player has changed
+        GameListener gameListener = new GameListenerAdapter() {
+            @Override
+            public void gamePhaseChange(GamePhaseChangeEvent e) {
+                currentPhase = e.getNewPhase();
+                gameTurnOrPhaseChange();
+            }
+
+            @Override
+            public void gameTurnChange(GameTurnChangeEvent e) {
+                // The active player has changed
+                gameTurnOrPhaseChange();
+            }
+        };
         currentGame.addGameListener(gameListener);
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
         KeyBindParser.addPreferenceChangeListener(this);
@@ -189,7 +203,7 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
 
     /** Calculates the pixel size of the display from the necessary text lines. */
     private Rectangle getSize(List<String> lines, FontMetrics fm) {
-        List<String> cleanedLines = lines.stream().map(this::cleanedLine).collect(Collectors.toList());
+        List<String> cleanedLines = lines.stream().map(this::cleanedLine).toList();
         int width = cleanedLines.stream().mapToInt(fm::stringWidth).max().orElse(0);
         int height = fm.getHeight() * lines.size();
         return new Rectangle(width, height);
@@ -275,21 +289,6 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
         }
         return false;
     }
-
-    /** Detects phase and turn changes to display */
-    private final GameListener gameListener = new GameListenerAdapter() {
-        @Override
-        public void gamePhaseChange(GamePhaseChangeEvent e) {
-            currentPhase = e.getNewPhase();
-            gameTurnOrPhaseChange();
-        }
-
-        @Override
-        public void gameTurnChange(GameTurnChangeEvent e) {
-            // The active player has changed
-            gameTurnOrPhaseChange();
-        }
-    };
 
     protected void setDirty() {
         dirty = true;

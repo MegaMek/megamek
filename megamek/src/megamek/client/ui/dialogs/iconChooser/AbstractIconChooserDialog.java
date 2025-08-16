@@ -79,7 +79,7 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
      * @param name        the dialog's name
      * @param title       the dialog title resource string
      * @param chooser     the icon chooser display panel
-     * @param doubleClick whether double clicking closes the dialog or not
+     * @param doubleClick whether double-clicking closes the dialog or not
      */
     public AbstractIconChooserDialog(final JFrame frame, final boolean modal,
           final ResourceBundle resources, final String name,

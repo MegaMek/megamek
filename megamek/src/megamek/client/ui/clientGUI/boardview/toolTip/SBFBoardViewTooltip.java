@@ -44,15 +44,7 @@ import megamek.common.InGameObject;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.common.strategicBattleSystems.SBFUnitPlaceHolder;
 
-public class SBFBoardViewTooltip implements BoardViewTooltipProvider {
-
-    private final SBFGame game;
-    private final BoardView bv;
-
-    public SBFBoardViewTooltip(SBFGame game, BoardView bv) {
-        this.game = game;
-        this.bv = bv;
-    }
+public record SBFBoardViewTooltip(SBFGame game, BoardView bv) implements BoardViewTooltipProvider {
 
     @Override
     public String getTooltip(Point point, Coords movementTarget) {

@@ -54,13 +54,7 @@ import megamek.common.moves.MovePath;
  * @author Luana Coppio
  * @since 0.50.06
  */
-class FacingDiffCalculator {
-
-    private final int allowFacingTolerance;
-
-    FacingDiffCalculator(int allowFacingTolerance) {
-        this.allowFacingTolerance = allowFacingTolerance;
-    }
+record FacingDiffCalculator(int allowFacingTolerance) {
 
     /**
      * Calculates the difference between a unit's current facing and its optimal facing.

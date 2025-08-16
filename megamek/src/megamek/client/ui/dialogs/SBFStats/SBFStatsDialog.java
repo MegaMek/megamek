@@ -90,7 +90,7 @@ public class SBFStatsDialog extends AbstractDialog {
 
     /**
      * Creates a non-modal dialog that shows SBF Formation stats for the given forces. In the collection of Forces, each
-     * entry should be an company-sized force to convert to Strategic Battle Force. In other words, for a single
+     * entry should be a company-sized force to convert to Strategic Battle Force. In other words, for a single
      * formation, the force Collection should only contain a single force. That force might, for example, have three
      * sub-forces with 4 units each.
      *

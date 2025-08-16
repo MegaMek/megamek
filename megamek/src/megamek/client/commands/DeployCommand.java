@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -92,37 +92,36 @@ public class DeployCommand extends ClientCommand {
             minVertical = height / 5;
             maxVertical -= height / 5;
         }
-        switch (nDir) {
-            case 0: // Any
-                return deep + "Deploy nearly anywhere. MinX: " + (minHorizontal + 1)
-                      + " MinY: " + (minVertical + 1) + " MaxX: " + (maxHorizontal + 1)
-                      + " MaxY: " + (maxVertical + 1);
-            case 1: // NW
-                return deep + "Deploy NW.";
-            case 2: // N
-                return deep + "Deploy N.";
-            case 3: // NE
-                return deep + "Deploy NE.";
-            case 4: // E
-                return deep + "Deploy E.";
-            case 5: // SE
-                return deep + "Deploy SE.";
-            case 6: // S
-                return deep + "Deploy S.";
-            case 7: // SW
-                return deep + "Deploy SW.";
-            case 8: // W
-                return deep + "Deploy W.";
-            case 9: // Edge
-                return deep + "Deploy at any edge.";
-            case 10: // Centre
-                return deep + "Deploy in the center. MinX: "
-                      + (Math.max(minHorizontal, width / 3) + 1) + " MinY: "
-                      + (Math.max(minVertical, height / 3) + 1) + " MaxX: "
-                      + (Math.min(maxHorizontal, 2 * width / 3) + 1) + " MaxY: "
-                      + (Math.min(maxVertical, 2 * height / 3) + 1);
-            default:
-                return "Something went wrong, unknown deployment schema.";
-        }
+        return switch (nDir) {
+            case 0 -> // Any
+                  deep + "Deploy nearly anywhere. MinX: " + (minHorizontal + 1)
+                        + " MinY: " + (minVertical + 1) + " MaxX: " + (maxHorizontal + 1)
+                        + " MaxY: " + (maxVertical + 1);
+            case 1 -> // NW
+                  deep + "Deploy NW.";
+            case 2 -> // N
+                  deep + "Deploy N.";
+            case 3 -> // NE
+                  deep + "Deploy NE.";
+            case 4 -> // E
+                  deep + "Deploy E.";
+            case 5 -> // SE
+                  deep + "Deploy SE.";
+            case 6 -> // S
+                  deep + "Deploy S.";
+            case 7 -> // SW
+                  deep + "Deploy SW.";
+            case 8 -> // W
+                  deep + "Deploy W.";
+            case 9 -> // Edge
+                  deep + "Deploy at any edge.";
+            case 10 -> // Centre
+                  deep + "Deploy in the center. MinX: "
+                        + (Math.max(minHorizontal, width / 3) + 1) + " MinY: "
+                        + (Math.max(minVertical, height / 3) + 1) + " MaxX: "
+                        + (Math.min(maxHorizontal, 2 * width / 3) + 1) + " MaxY: "
+                        + (Math.min(maxVertical, 2 * height / 3) + 1);
+            default -> "Something went wrong, unknown deployment schema.";
+        };
     }
 }

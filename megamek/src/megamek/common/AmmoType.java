@@ -2270,7 +2270,7 @@ public class AmmoType extends EquipmentType {
      *       access/availability, not a hardcoded list of ammo types. As soon as the tech rules for munition variations
      *       are working completely then this will be removed.
      */
-    @Deprecated(since = "0.50.06", forRemoval = true)
+    @Deprecated(since = "0.50.06")
     public boolean notAllowedByClanRules() {
         return (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED) ||
               (munitionType.contains(AmmoType.Munitions.M_SWARM_I)) ||
@@ -3552,7 +3552,7 @@ public class AmmoType extends EquipmentType {
         // Create the munition types for vehicle flamers Tech Progression tweaked to
         // combine IntOps with TRO Prototypes/3145 NTNU RS
         // December 2021 - CGL requested we move this to Advanced for all fluid gun
-        // ammos.
+        // ammunition.
         munitions.add(COOLANT_MUNITION_MUTATOR);
         AmmoType.createMunitions(vehicleFlamerAmmos, munitions);
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -87,11 +87,9 @@ public class EntityEvaluationResponse {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof EntityEvaluationResponse)) {
+        if (!(o instanceof EntityEvaluationResponse that)) {
             return false;
         }
-
-        EntityEvaluationResponse that = (EntityEvaluationResponse) o;
 
         if (Double.compare(that.estimatedEnemyDamage, estimatedEnemyDamage) != 0) {
             return false;
@@ -99,23 +97,16 @@ public class EntityEvaluationResponse {
         if (Double.compare(that.myEstimatedDamage, myEstimatedDamage) != 0) {
             return false;
         }
-        if (Double.compare(that.myEstimatedPhysicalDamage, myEstimatedPhysicalDamage) != 0) {
-            return false;
-        }
 
-        return true;
+        return Double.compare(that.myEstimatedPhysicalDamage, myEstimatedPhysicalDamage) == 0;
     }
 
     @Override
     public int hashCode() {
         int result;
-        long temp;
-        temp = Double.doubleToLongBits(estimatedEnemyDamage);
-        result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(myEstimatedDamage);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(myEstimatedPhysicalDamage);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = Double.hashCode(estimatedEnemyDamage);
+        result = 31 * result + Double.hashCode(myEstimatedDamage);
+        result = 31 * result + Double.hashCode(myEstimatedPhysicalDamage);
         return result;
     }
 

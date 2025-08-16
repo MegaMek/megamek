@@ -79,7 +79,7 @@ public class RulesetNode {
     }
 
     /*
-     * Allow augmented to be passed separately so the eschelon entry in the ruleset
+     * Allow augmented to be passed separately so the echelon entry in the ruleset
      * TOC
      * can be passed without setting it in the fd.
      */
@@ -157,8 +157,8 @@ public class RulesetNode {
                     }
                     break;
                 case "ifEschelon":
-                    if (fd.getEschelon() == null ||
-                          !matches(fd.getEschelonCode(), predicates.getProperty((String) key))) {
+                    if (fd.getEchelon() == null ||
+                          !matches(fd.getEchelonCode(), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
@@ -226,10 +226,6 @@ public class RulesetNode {
     /**
      * Each csv field of property must be contained in the list for a match.
      *
-     * @param list
-     * @param property
-     *
-     * @return
      */
     public boolean collectionMatchesProperty(Collection<String> list, String property) {
         if (property.isBlank()) {
@@ -302,7 +298,7 @@ public class RulesetNode {
                             if (role != null) {
                                 fd.getRoles().add(role);
                             } else {
-                                logger.error("Force generator could not parse role " + p);
+                                logger.error("Force generator could not parse role {}", p);
                             }
                         }
                     }
@@ -312,7 +308,7 @@ public class RulesetNode {
                     if (null != ft) {
                         fd.setFormationType(ft);
                     } else {
-                        logger.warn("Could not parse formation type " + property);
+                        logger.warn("Could not parse formation type {}", property);
                     }
                     break;
                 case "flags":
@@ -378,8 +374,8 @@ public class RulesetNode {
                         }
                     }
                     break;
-                case "eschelon":
-                    fd.setEschelon(Integer.parseInt(property));
+                case "echelon":
+                    fd.setEchelon(Integer.parseInt(property));
                     break;
                 case "faction":
                     fd.setFaction(property);

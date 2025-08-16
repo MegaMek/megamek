@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -75,8 +75,6 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
     private static final MMLogger LOGGER = MMLogger.create(RandomMapDialog.class);
 
-    // External helpers.
-    private final JFrame parentFrame;
     private final IMapSettingsObserver mapSettingsObserver;
     private final Client client;
     private final GUIPreferences guip = GUIPreferences.getInstance();
@@ -94,7 +92,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
     // General map settings.
     private final JLabel mapSizeLabel = new JLabel(Messages.getString("RandomMapDialog.BoardSize"));
-    private final JLabel mapSizeSeperatorLabel = new JLabel("x");
+    private final JLabel mapSizeSeparatorLabel = new JLabel("x");
     private final JLabel mapThemeLabel = new JLabel(Messages.getString("RandomMapDialog.labTheme"));
     private final VerifiableTextField mapWidthField = new VerifiableTextField(4);
     private final VerifiableTextField mapHeightField = new VerifiableTextField(4);
@@ -124,7 +122,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
           MapSettings mapSettings) {
         super(parent, Messages.getString("RandomMapDialog.title"), true);
         this.mapSettings = mapSettings;
-        parentFrame = parent;
+        // External helpers.
         this.mapSettingsObserver = mapSettingsObserver;
         this.client = client;
         basicPanel = new RandomMapPanelBasicPanel(mapSettings);
@@ -143,7 +141,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         pack();
         validate();
         setSize(new Dimension(600, 600));
-        setLocationRelativeTo(parentFrame);
+        setLocationRelativeTo(parent);
 
         String closeAction = "closeAction";
         final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
@@ -249,7 +247,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         // Row 2, Column 3.
         constraints.gridx++;
-        panel.add(mapSizeSeperatorLabel, constraints);
+        panel.add(mapSizeSeparatorLabel, constraints);
 
         // Row 2, Column 4.
         constraints.gridx++;
@@ -276,7 +274,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     }
 
     private JPanel setupControlsPanel() {
-        JPanel outerpanel = new JPanel(new BorderLayout());
+        JPanel outerPanel = new JPanel(new BorderLayout());
 
         // The left-side panel contains only the Show on startup option
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
@@ -308,10 +306,10 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         cancelButton.setMnemonic(cancelButton.getText().charAt(0));
         panel.add(cancelButton);
 
-        outerpanel.add(leftPanel, BorderLayout.LINE_START);
-        outerpanel.add(panel, BorderLayout.CENTER);
+        outerPanel.add(leftPanel, BorderLayout.LINE_START);
+        outerPanel.add(panel, BorderLayout.CENTER);
 
-        return outerpanel;
+        return outerPanel;
     }
 
     private File fileBrowser(String title, String targetDir, String fileName, final String extension,
@@ -320,7 +318,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         // Create a new instance of the file chooser.
         JFileChooser fileChooser = new JFileChooser(targetDir);
 
-        // Only allow selectoin of one file.
+        // Only allow selection of one file.
         fileChooser.setMultiSelectionEnabled(false);
 
         // Give the file chooser a title.
@@ -355,7 +353,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
             option = fileChooser.showOpenDialog(null);
         }
 
-        // If the user did chose to open...
+        // If the user did choose to open...
         if (JFileChooser.APPROVE_OPTION == option) {
             // Get the file that was selected and return it.
             if (fileChooser.getSelectedFile().getPath().endsWith(extension)) {

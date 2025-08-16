@@ -284,7 +284,7 @@ public final class Eras {
                     case "flag":
                         flags.add(EraFlag.valueOf(wn.getTextContent().trim()));
                         break;
-                    case "mulid":
+                    case "mulID":
                         mulId = Integer.parseInt(wn.getTextContent().trim());
                         break;
                     case "icon":

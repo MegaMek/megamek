@@ -43,21 +43,26 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Memory class to store data for state processing and decision-making. The memory class is not much dissimilar from the
  * "Options" that many objects have, the difference is that the memory is supposed to be volatile, it is not saved
- * anywhere, it is just a temporary storage for the AI to use during the execution of the AI. The memory will usually
- * keep tabs on "things" that happened, so you can iteratively build on top of what happened in the past to determine
- * future events. One example would be to keep track of the last target that was attacked, so you can avoid attacking
- * the same twice in a roll, or maybe you have a penalty if you were shot at last turn by a specific weapon or in a
- * specific place, this avoids having to keep track of all this information in the object itself, adding an indefinite
- * amount of flags and toggles, and instead allowing for arbitrary information to be stored "on the fly" and used as
- * needed. And of course, to be forgotten when done with. To push anything into memory all you have to do is get a
- * reference to the memory and put the information in it. Every memory has to have a key, which is a string that
- * identifies the memory, and a value, which can be any object, but it is recommended to use the same type of object for
- * the same key, as the memory does not enforce any type of type safety, and you will have to remember the type of the
- * object you put in the memory when you get it back, otherwise you may get a ClassCastException if you try to do it by
- * hand, or an optional empty if you use the "get" method with the wrong type. The use of the memory is safe, the memory
- * will return an empty optional if the key is not found, and you can check if the key is present with "containsKey".
- * Requesting for a specific return type will also return an empty optional if the key is found but the type is not the
- * one you requested, which hardens even more the feature against clerical mistakes.
+ * anywhere, it is just a temporary storage for the AI to use during the execution of the AI.
+ * <p>
+ * The memory will usually keep tabs on "things" that happened, so you can iteratively build on top of what happened in
+ * the past to determine future events. One example would be to keep track of the last target that was attacked, so you
+ * can avoid attacking the same twice in a roll, or maybe you have a penalty if you were shot at last turn by a specific
+ * weapon or in a specific place, this avoids having to keep track of all this information in the object itself, adding
+ * an indefinite amount of flags and toggles, and instead allowing for arbitrary information to be stored "on the fly"
+ * and used as needed. And of course, to be forgotten when done with.
+ * <p>
+ * To push anything into memory all you have to do is get a reference to the memory and put the information in it. Every
+ * memory has to have a key, which is a string that identifies the memory, and a value, which can be any object, but it
+ * is recommended to use the same type of object for the same key, as the memory does not enforce any type of type
+ * safety, and you will have to remember the type of the object you put in the memory when you get it back, otherwise
+ * you may get a ClassCastException if you try to do it by hand, or an optional empty if you use the "get" method with
+ * the wrong type.
+ * <p>
+ * The use of the memory is safe, the memory will return an empty optional if the key is not found, and you can check if
+ * the key is present with "containsKey". Requesting for a specific return type will also return an empty optional if
+ * the key is found but the type is not the one you requested, which hardens even more the feature against clerical
+ * mistakes.
  *
  * @author Luana Coppio
  */

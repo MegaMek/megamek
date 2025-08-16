@@ -48,7 +48,7 @@ public class EntityFeatureUtils {
     private EntityFeatureUtils() {}
 
     /**
-     * Get the health stats of the front armor of a Entity unit in percent. (don't count internal)
+     * Get the health stats of the front armor of an Entity unit in percent. (don't count internal)
      *
      * @param unit The Entity unit
      *
@@ -59,7 +59,7 @@ public class EntityFeatureUtils {
     }
 
     /**
-     * Get the health stats of the front armor of a Entity unit.
+     * Get the health stats of the front armor of an Entity unit.
      *
      * @param unit The Entity unit
      *
@@ -70,7 +70,7 @@ public class EntityFeatureUtils {
     }
 
     /**
-     * Get the health stats of the back armor of a Entity unit in percent. (don't count internal)
+     * Get the health stats of the back armor of an Entity unit in percent. (don't count internal)
      *
      * @param unit The Entity unit
      *
@@ -81,7 +81,7 @@ public class EntityFeatureUtils {
     }
 
     /**
-     * Get the health stats of the back armor of a Entity unit in percent. (don't count internal)
+     * Get the health stats of the back armor of an Entity unit in percent. (don't count internal)
      *
      * @param unit The Entity unit
      *
@@ -92,7 +92,7 @@ public class EntityFeatureUtils {
     }
 
     /**
-     * Get the health stats of the overall armor of a Entity unit in percent. (don't count internal)
+     * Get the health stats of the overall armor of an Entity unit in percent. (don't count internal)
      *
      * @param unit The Entity unit
      *
@@ -103,7 +103,7 @@ public class EntityFeatureUtils {
     }
 
     /**
-     * Get the health stats of the overall armor of a Entity unit in percent. (don't count internal)
+     * Get the health stats of the overall armor of an Entity unit in percent. (don't count internal)
      *
      * @param unit The Entity unit
      *
@@ -114,7 +114,7 @@ public class EntityFeatureUtils {
     }
 
     /**
-     * Get the health stats of the left armor of a Entity unit in percent. (don't count internal)
+     * Get the health stats of the left armor of an Entity unit in percent. (don't count internal)
      *
      * @param unit The Entity unit
      *
@@ -125,7 +125,7 @@ public class EntityFeatureUtils {
     }
 
     /**
-     * Get the health stats of the left armor of a Entity unit in percent. (don't count internal)
+     * Get the health stats of the left armor of an Entity unit in percent. (don't count internal)
      *
      * @param unit The Entity unit
      *

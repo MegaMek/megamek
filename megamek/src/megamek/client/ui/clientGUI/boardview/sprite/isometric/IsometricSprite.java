@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,7 +30,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.clientGUI.boardview.sprite;
+package megamek.client.ui.clientGUI.boardview.sprite.isometric;
 
 import java.awt.*;
 import java.awt.image.ImageObserver;
@@ -38,6 +38,7 @@ import java.awt.image.ImageObserver;
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.sprite.HexSprite;
 import megamek.client.ui.util.EntityWreckHelper;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -52,9 +53,8 @@ import megamek.common.options.OptionsConstants;
 public class IsometricSprite extends HexSprite {
 
     Entity entity;
-    private Image radarBlipImage;
-    private Rectangle modelRect;
-    private int secondaryPos;
+    private final Image radarBlipImage;
+    private final int secondaryPos;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -65,7 +65,7 @@ public class IsometricSprite extends HexSprite {
         this.secondaryPos = secondaryPos;
         String shortName = entity.getShortName();
         Font font = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10);
-        modelRect = new Rectangle(47,
+        Rectangle modelRect = new Rectangle(47,
               55,
               bv.getPanel().getFontMetrics(font).stringWidth(shortName) + 1,
               bv.getPanel().getFontMetrics(font).getAscent());
@@ -134,7 +134,7 @@ public class IsometricSprite extends HexSprite {
             // Draw airborne units in 2 passes. Shadow is rendered
             // during the opaque pass, and the
             // Actual unit is rendered during the transparent pass.
-            // However the unit is always drawn
+            // However, the unit is always drawn
             // opaque.
             if (makeTranslucent) {
                 g.drawImage(image, p.x, p.y - (int) (bv.DROP_SHADOW_DISTANCE * bv.getScale()), this);
@@ -240,7 +240,6 @@ public class IsometricSprite extends HexSprite {
      * Used to determine if this EntitySprite is only detected by an enemies sensors and hence should only be a sensor
      * return.
      *
-     * @return
      */
     private boolean onlyDetectedBySensors() {
         boolean sensors = (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS) ||

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,8 +43,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import megamek.client.bot.BotClient;
-import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
-import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
+import megamek.client.bot.princess.geometry.ConvexBoardArea;
+import megamek.client.bot.princess.geometry.CoordFacingCombo;
 import megamek.common.*;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
@@ -111,9 +111,11 @@ public class PathEnumerator {
             return returnSet;
         }
         for (Integer id : getUnitPotentialLocations().keySet()) {
+            Entity entity = getGame().getEntity(id);
+
             if (groundOnly
-                  && getGame().getEntity(id) != null
-                  && getGame().getEntity(id).isAero()) {
+                  && entity != null
+                  && entity.isAero()) {
                 continue;
             }
 
@@ -215,9 +217,9 @@ public class PathEnumerator {
                     }
                 };
 
-                logger.debug("Unfiltered paths: " + paths.size());
+                logger.debug("Unfiltered paths: {}", paths.size());
                 paths = new ArrayList<>(filter.doFilter(paths));
-                logger.debug("Filtered out illegal paths: " + paths.size());
+                logger.debug("Filtered out illegal paths: {}", paths.size());
                 AeroGroundOffBoardFilter offBoardFilter = new AeroGroundOffBoardFilter();
                 paths = new ArrayList<>(offBoardFilter.doFilter(paths));
 
@@ -226,7 +228,7 @@ public class PathEnumerator {
                     paths.add(offBoardFilter.getShortestPath());
                 }
 
-                logger.debug("Filtered out off board paths: " + paths.size());
+                logger.debug("Filtered out off board paths: {}", paths.size());
 
                 // This is code useful for debugging, but puts out a lot of log entries, which
                 // slows things down.
@@ -450,10 +452,8 @@ public class PathEnumerator {
                 if (getGame().getBoard(path.getFinalBoardId()).getBuildingAt(c).getCurrentCF(c) >= path.getEntity()
                       .getWeight()) {
                     needsAdjust = true;
-                    break;
-                } else {
-                    break;
                 }
+                break;
             }
         }
         if (!needsAdjust) {
@@ -523,7 +523,7 @@ public class PathEnumerator {
     }
 
     private void LogAeroMoveLegalityEvaluation(String whyNot, MovePath path) {
-        logger.debug(path.length() + ":" + path + ":" + whyNot);
+        logger.debug("{}:{}:{}", path.length(), path, whyNot);
     }
 
     protected Map<Integer, List<BulldozerMovePath>> getLongRangePaths() {
@@ -570,10 +570,7 @@ public class PathEnumerator {
      * Find paths with a similar direction and step count to the provided path, within the selected unit's
      * already-computed unit paths.
      *
-     * @param moverId
-     * @param prunedPath
      *
-     * @return
      */
     protected List<MovePath> getSimilarUnitPaths(int moverId, BulldozerMovePath prunedPath) {
         int mpDelta = 2;

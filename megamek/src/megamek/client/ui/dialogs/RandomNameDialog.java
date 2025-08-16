@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002, 2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,7 +38,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.Iterator;
+import java.io.Serial;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -58,9 +58,10 @@ import megamek.common.enums.Gender;
  * The random names dialog allows the player to randomly assign names to pilots based on faction and gender.
  */
 public class RandomNameDialog extends JDialog implements ActionListener {
+    @Serial
     private static final long serialVersionUID = -2459992981678758743L;
     private Client client;
-    private ClientGUI clientgui;
+    private final ClientGUI clientgui;
     private List<Entity> units;
 
     private JComboBox<String> comboFaction;
@@ -132,8 +133,8 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         chPlayer.setEnabled(true);
         chPlayer.addItem(clientName);
 
-        for (Iterator<AbstractClient> i = clientgui.getLocalBots().values().iterator(); i.hasNext(); ) {
-            chPlayer.addItem(i.next().getName());
+        for (AbstractClient abstractClient : clientgui.getLocalBots().values()) {
+            chPlayer.addItem(abstractClient.getName());
         }
         if (chPlayer.getItemCount() == 1) {
             chPlayer.setEnabled(false);
@@ -177,7 +178,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
                 c = client;
             }
             saveSettings();
-            // go through all of the units provided for this player and assign random names
+            // go through all the units provided for this player and assign random names
             for (Entity ent : units) {
                 if (ent.getOwnerId() == c.getLocalPlayer().getId()) {
                     for (int i = 0; i < ent.getCrew().getSlotCount(); i++) {

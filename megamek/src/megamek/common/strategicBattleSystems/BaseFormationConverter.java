@@ -123,7 +123,7 @@ public abstract class BaseFormationConverter<T extends SBFFormation> {
     /**
      * Returns an SBF Formation formed from the given force. When the force cannot be converted to an SBF Formation
      * according to the rules, returns null. The given force must be approximately company-shaped to work, i.e. it has
-     * to contain some subforces with some entities in each subforce but no further subforces.
+     * to contain some subForces with some entities in each subforce but no further subForces.
      */
     public abstract T convert();
 

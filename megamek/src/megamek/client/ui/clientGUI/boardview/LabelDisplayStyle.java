@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -48,19 +48,13 @@ public enum LabelDisplayStyle {
     public final String description;
 
     public LabelDisplayStyle next() {
-        switch (this) {
-            case FULL:
-                return ABBREV;
-            case ABBREV:
-                return CHASSIS;
-            case CHASSIS:
-                return NICKNAME;
-            case NICKNAME:
-                return ONLY_NICKNAME;
-            case ONLY_NICKNAME:
-                return ONLY_STATUS;
-            default:
-                return FULL;
-        }
+        return switch (this) {
+            case FULL -> ABBREV;
+            case ABBREV -> CHASSIS;
+            case CHASSIS -> NICKNAME;
+            case NICKNAME -> ONLY_NICKNAME;
+            case ONLY_NICKNAME -> ONLY_STATUS;
+            default -> FULL;
+        };
     }
 }

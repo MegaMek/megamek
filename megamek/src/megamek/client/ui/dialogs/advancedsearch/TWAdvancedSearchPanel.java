@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2002, 2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,6 +41,7 @@ import javax.swing.JTabbedPane;
 
 import com.formdev.flatlaf.extras.components.FlatTriStateCheckBox;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.advancedsearch.exceptions.FilterParsingException;
 
 /**
  * Panel that allows the user to create a unit filter.
@@ -60,8 +61,6 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
     private final QuirksSearchTab quirkPanel;
     private final TransportsSearchTab transportsPanel;
     private final WeaponSearchTab weaponEqPanel;
-
-    private boolean isCanceled = true;
 
     /**
      * Constructs a new advanced search panel for Total Warfare values
@@ -83,7 +82,7 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
 
         addTab(msg_unitType, new StandardScrollPane(unitTypePanel));
         addTab(msg_base, new StandardScrollPane(basePanel));
-        // The weapon panel must manage its own scrollpane!
+        // The weapon panel must manage its own scroll pane!
         addTab(msg_weaponEq, weaponEqPanel);
         addTab(msg_transports, new StandardScrollPane(transportsPanel));
         addTab(msg_quirkType, new StandardScrollPane(quirkPanel));
@@ -103,11 +102,7 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         weaponEqPanel.txtWEEqExp.setText(mekFilter.getEquipmentExpression());
         weaponEqPanel.adaptTokenButtons();
         setVisible(true);
-        if (isCanceled) {
-            mekFilter = currFilter;
-        } else {
-            updateMekSearchFilter();
-        }
+        mekFilter = currFilter;
         return mekFilter;
     }
 
@@ -116,7 +111,7 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
             mekFilter = new MekSearchFilter(mekFilter);
             mekFilter.createFilterExpressionFromTokens(weaponEqPanel.filterTokens);
             updateMekSearchFilter();
-        } catch (MekSearchFilter.FilterParsingException e) {
+        } catch (FilterParsingException e) {
             JOptionPane.showMessageDialog(this,
                   "Error parsing filter expression!\n\n" + e.msg,
                   "Filter Expression Parsing Error",
@@ -161,7 +156,7 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         mekFilter.iPatchwork = basePanel.cPatchwork.getSelectedIndex();
 
         mekFilter.source = basePanel.tSource.getText();
-        mekFilter.mulid = basePanel.tMULId.getText();
+        mekFilter.mulID = basePanel.tMULId.getText();
 
         mekFilter.sStartYear = basePanel.tStartYear.getText();
         mekFilter.sEndYear = basePanel.tEndYear.getText();
@@ -179,7 +174,7 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         basePanel.listGyroType.toIntegerResultLists(mekFilter.gyroType, mekFilter.gyroTypeExclude);
         basePanel.listTechLevel.toIntegerResultLists(mekFilter.techLevel, mekFilter.techLevelExclude);
         basePanel.listTechBase.toStringResultLists(mekFilter.techBase, mekFilter.techBaseExclude);
-        basePanel.listMoveMode.toStringResultLists(mekFilter.movemodes, mekFilter.movemodeExclude);
+        basePanel.listMoveMode.toStringResultLists(mekFilter.moveModes, mekFilter.moveModeExclude);
     }
 
     private void updateTransports() {
@@ -249,12 +244,12 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         mekFilter.sStartSuperHeavyVehicleUnits = transportsPanel.tStartSuperHeavyVehicleUnits.getText();
         mekFilter.sEndSuperHeavyVehicleUnits = transportsPanel.tEndSuperHeavyVehicleUnits.getText();
 
-        mekFilter.sStartDropshuttleBays = transportsPanel.tStartDropshuttleBays.getText();
-        mekFilter.sEndDropshuttleBays = transportsPanel.tEndDropshuttleBays.getText();
-        mekFilter.sStartDropshuttleDoors = transportsPanel.tStartDropshuttleDoors.getText();
-        mekFilter.sEndDropshuttleDoors = transportsPanel.tEndDropshuttleDoors.getText();
-        mekFilter.sStartDropshuttleUnits = transportsPanel.tStartDropshuttleUnits.getText();
-        mekFilter.sEndDropshuttleUnits = transportsPanel.tEndDropshuttleUnits.getText();
+        mekFilter.sStartDropShuttleBays = transportsPanel.tStartDropShuttleBays.getText();
+        mekFilter.sEndDropShuttleBays = transportsPanel.tEndDropShuttleBays.getText();
+        mekFilter.sStartDropShuttleDoors = transportsPanel.tStartDropShuttleDoors.getText();
+        mekFilter.sEndDropShuttleDoors = transportsPanel.tEndDropShuttleDoors.getText();
+        mekFilter.sStartDropShuttleUnits = transportsPanel.tStartDropShuttleUnits.getText();
+        mekFilter.sEndDropShuttleUnits = transportsPanel.tEndDropShuttleUnits.getText();
 
         mekFilter.sStartDockingCollars = transportsPanel.tStartDockingCollars.getText();
         mekFilter.sEndDockingCollars = transportsPanel.tEndDockingCollars.getText();

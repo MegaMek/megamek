@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,7 +35,6 @@ package megamek.client.ui.clientGUI.boardview.sprite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
 
@@ -51,38 +50,29 @@ import megamek.common.Entity;
  * Sprite and info for movement vector (AT2 advanced movement). Does not actually use the image buffer as this can be
  * horribly inefficient for long diagonal lines.
  * <p>
- * Appears as an arrow pointing to the hex this entity will move to based on current movement vectors.
+ * Appears as angle arrow pointing to the hex this entity will move to based on current movement vectors.
  * <p>
  * TODO: Different color depending upon whether
  * entity has already moved this turn
  */
 public class MovementSprite extends Sprite {
 
-    private Point a;
-    private Point t;
-    private double an;
+    private final double angle;
     private StraightArrowPolygon movePoly;
     private Color moveColor;
 
-    // private MovementVector mv;
-    private int[] vectors;
-
-    private Coords start;
-    private Coords end;
-    private Entity en;
+    private final Coords start;
+    private final Coords end;
     private int vel;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    public MovementSprite(BoardView boardView1, Entity e, int[] v, Color col, boolean isCurrent) {
-        // this.mv = en.getMV();
-
-        super(boardView1);
-        en = e;
-        vectors = v;// en.getVectors();
+    public MovementSprite(BoardView boardView, Entity entity, int[] v, Color color, boolean isCurrent) {
+        super(boardView);
+        // private MovementVector mv;
         // get the starting and ending position
-        start = en.getPosition();
-        end = Compute.getFinalPosition(start, vectors);
+        start = entity.getPosition();
+        end = Compute.getFinalPosition(start, v);
 
         // what is the velocity
         vel = 0;
@@ -92,11 +82,10 @@ public class MovementSprite extends Sprite {
 
         // color?
         // player colors
-        moveColor = en.getOwner().getColour().getColour();
-        // TODO: Its not going transparent. Oh well, it is a minor issue at
-        // the moment
+        moveColor = entity.getOwner().getColour().getColour();
+        // TODO: Its not going transparent. Oh well, it is a minor issue at the moment
         /*
-         * if (isCurrent) { int colour = col.getRGB(); int transparency =
+         * if (isCurrent) { int colour = color.getRGB(); int transparency =
          * GUIPreferences.getInstance().getInt(GUIPreferences.
          * ADVANCED_ATTACK_ARROW_TRANSPARENCY); moveColor = new Color(colour
          * | (transparency << 24), true); }
@@ -108,15 +97,14 @@ public class MovementSprite extends Sprite {
             moveColor = new Color(colour | (transparency << 24), true);
         }
         // dark gray if done
-        if (en.isDone()) {
+        if (entity.isDone()) {
             int colour = 0x696969; // gray
             int transparency = GUIP.getAttackArrowTransparency();
             moveColor = new Color(colour | (transparency << 24), true);
         }
 
-        // moveColor = PlayerColors.getColor(en.getOwner().getColorIndex());
         // angle of line connecting two hexes
-        an = (start.radian(end) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
+        angle = (start.radian(end) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
         makePoly();
 
         // set bounds
@@ -132,8 +120,8 @@ public class MovementSprite extends Sprite {
 
     private void makePoly() {
         // make a polygon
-        a = bv.getHexLocation(start);
-        t = bv.getHexLocation(end);
+        Point a = bv.getHexLocation(start);
+        Point t = bv.getHexLocation(end);
         // OK, that is actually not good. I do not like hard coded figures.
         // HEX_W/2 - x distance in pixels from origin of hex bounding box to
         // the center of hex.
@@ -141,16 +129,16 @@ public class MovementSprite extends Sprite {
         // the center of hex.
         // 18 - is actually 36/2 - we do not want arrows to start and end
         // directly
-        // in the centes of hex and hiding mek under.
+        // in the centers of hex and hiding mek under.
 
-        a.x = a.x + (int) ((HexTileset.HEX_W / 2) * bv.getScale())
-              + (int) Math.round(Math.cos(an) * (int) (18 * bv.getScale()));
-        t.x = (t.x + (int) ((HexTileset.HEX_W / 2) * bv.getScale()))
-              - (int) Math.round(Math.cos(an) * (int) (18 * bv.getScale()));
-        a.y = a.y + (int) ((HexTileset.HEX_H / 2) * bv.getScale())
-              + (int) Math.round(Math.sin(an) * (int) (18 * bv.getScale()));
-        t.y = (t.y + (int) ((HexTileset.HEX_H / 2) * this.bv.getScale()))
-              - (int) Math.round(Math.sin(an) * (int) (18 * bv.getScale()));
+        a.x = a.x + (int) ((HexTileset.HEX_W / 2.0f) * bv.getScale())
+              + (int) Math.round(Math.cos(angle) * (int) (18 * bv.getScale()));
+        t.x = (t.x + (int) ((HexTileset.HEX_W / 2.0f) * bv.getScale()))
+              - (int) Math.round(Math.cos(angle) * (int) (18 * bv.getScale()));
+        a.y = a.y + (int) ((HexTileset.HEX_H / 2.0f) * bv.getScale())
+              + (int) Math.round(Math.sin(angle) * (int) (18 * bv.getScale()));
+        t.y = (t.y + (int) ((HexTileset.HEX_H / 2.0f) * this.bv.getScale()))
+              - (int) Math.round(Math.sin(angle) * (int) (18 * bv.getScale()));
         movePoly = new StraightArrowPolygon(a, t, (int) (4 * bv.getScale()),
               (int) (8 * bv.getScale()), false);
     }
@@ -186,14 +174,7 @@ public class MovementSprite extends Sprite {
             return;
         }
 
-        Polygon drawPoly = new Polygon(movePoly.xpoints, movePoly.ypoints,
-              movePoly.npoints);
-        drawPoly.translate(x, y);
-
-        g.setColor(moveColor);
-        g.fillPolygon(drawPoly);
-        g.setColor(Color.gray.darker());
-        g.drawPolygon(drawPoly);
+        AttackSprite.createPolygon(g, x, y, movePoly, moveColor);
 
     }
 

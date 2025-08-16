@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -97,7 +97,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
     private final JTabbedPane panOptions = new JTabbedPane();
 
-    /** Panel that holds all of the options found via search */
+    /** Panel that holds all the options found via search */
     private final JPanel panSearchOptions = new JPanel();
 
     /** Text field that contains text to search on */
@@ -129,7 +129,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     public GameOptionsDialog(ClientGUI cg) {
         super(cg.getFrame(), "GameOptionsDialog", "GameOptionsDialog.title");
         clientGui = cg;
-        init(cg.getFrame(), (GameOptions) cg.getClient().getGame().getOptions());
+        init(cg.getFrame(), cg.getClient().getGame().getOptions());
     }
 
     /**
@@ -855,7 +855,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
      */
     public void setEditable(boolean editable) {
 
-        // Set enabled state of all of the option components in the dialog.
+        // Set enabled state of all the option components in the dialog.
         for (List<DialogOptionComponentYPanel> comps : optionComps.values()) {
             for (DialogOptionComponentYPanel comp : comps) {
                 comp.setEditable(editable);

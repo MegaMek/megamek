@@ -40,13 +40,7 @@ import megamek.common.Entity;
  *
  * @author Luana Coppio
  */
-public class CoverageValidator {
-
-    private final Princess owner;
-
-    public CoverageValidator(Princess owner) {
-        this.owner = owner;
-    }
+public record CoverageValidator(Princess owner) {
 
     /**
      * Validates if the unit has coverage from at least one ally.

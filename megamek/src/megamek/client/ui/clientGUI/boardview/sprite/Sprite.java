@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -55,7 +55,7 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
     // Set this to true if you don't want the sprite to be drawn.
     protected boolean hidden = false;
 
-    Sprite(BoardView boardView1) {
+    protected Sprite(BoardView boardView1) {
         bv = boardView1;
     }
 
@@ -70,8 +70,8 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
      * necessary functionality.
      */
     @Override
-    public boolean imageUpdate(Image image, int infoflags, int x, int y, int width, int height) {
-        if (infoflags == ImageObserver.ALLBITS) {
+    public boolean imageUpdate(Image image, int informationFlags, int x, int y, int width, int height) {
+        if (informationFlags == ImageObserver.ALLBITS) {
             prepare();
             bv.repaint();
             return false;
@@ -156,14 +156,14 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
      * Compares two sprites for purposes of draw ordering.
      */
     @Override
-    public int compareTo(Sprite o) {
-        if (equals(o)) {
+    public int compareTo(Sprite sprite) {
+        if (equals(sprite)) {
             return 0;
-        } else if (getSpritePriority() == o.getSpritePriority()) {
+        } else if (getSpritePriority() == sprite.getSpritePriority()) {
             // For use in a TreeSet, must not return 0 for equal priority as long as the objects aren't equal
-            return hashCode() - o.hashCode();
+            return hashCode() - sprite.hashCode();
         } else {
-            return getSpritePriority() - o.getSpritePriority();
+            return getSpritePriority() - sprite.getSpritePriority();
         }
     }
 

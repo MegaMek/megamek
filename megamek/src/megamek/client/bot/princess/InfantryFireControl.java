@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 20019-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -280,15 +280,9 @@ public class InfantryFireControl extends FireControl {
         // cycle through my field guns
         for (final WeaponMounted weapon : shooter.getWeaponList()) {
             if (weaponIsAppropriate(weapon, firingPlanType)) {
-                WeaponFireInfo bestShoot = null;
-
-                final WeaponFireInfo shoot = buildWeaponFireInfo(shooter, shooterState, target, targetState, weapon,
-                      null, game, true);
                 // Choose best expected damage shot, not best to-hit
-                if (null == bestShoot ||
-                      (shoot.getExpectedDamage() > bestShoot.getExpectedDamage())) {
-                    bestShoot = shoot;
-                }
+                WeaponFireInfo bestShoot = buildWeaponFireInfo(shooter, shooterState, target, targetState, weapon,
+                      null, game, true);
 
                 // If best shot can hit, use it.
                 if (bestShoot != null && 0 < bestShoot.getProbabilityToHit()) {
@@ -312,17 +306,11 @@ public class InfantryFireControl extends FireControl {
         boolean weaponIsLegAttack = (weapon.getType()).getInternalName().equals(Infantry.LEG_ATTACK);
         boolean weaponIsFieldGuns = weapon.getLocation() == Infantry.LOC_FIELD_GUNS;
 
-        switch (firingPlanType) {
-            case FieldGuns:
-                return weaponIsFieldGuns;
-            case Swarm:
-                return weaponIsSwarm;
-            case Leg:
-                return weaponIsLegAttack;
-            case Standard:
-                return !weaponIsFieldGuns && !weaponIsSwarm && !weaponIsLegAttack;
-            default:
-                return false;
-        }
+        return switch (firingPlanType) {
+            case FieldGuns -> weaponIsFieldGuns;
+            case Swarm -> weaponIsSwarm;
+            case Leg -> weaponIsLegAttack;
+            case Standard -> !weaponIsFieldGuns && !weaponIsSwarm && !weaponIsLegAttack;
+        };
     }
 }

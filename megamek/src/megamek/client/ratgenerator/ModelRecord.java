@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -92,7 +93,7 @@ public class ModelRecord extends AbstractUnitRecord {
     private MekSummary mekSummary;
 
     private boolean primitive;
-    private boolean retrotech;
+    private boolean retroTech;
     private boolean starLeague;
     private boolean mixedTech;
 
@@ -103,10 +104,10 @@ public class ModelRecord extends AbstractUnitRecord {
     private boolean remoteDrone;
     private boolean robotDrone;
 
-    private EnumSet<MissionRole> roles;
-    private ArrayList<String> deployedWith;
-    private ArrayList<String> requiredUnits;
-    private ArrayList<String> excludedFactions;
+    private final EnumSet<MissionRole> roles;
+    private final ArrayList<String> deployedWith;
+    private final ArrayList<String> requiredUnits;
+    private final ArrayList<String> excludedFactions;
     private int networkMask;
 
     private double flakBVProportion;
@@ -161,11 +162,6 @@ public class ModelRecord extends AbstractUnitRecord {
         return isTripod;
     }
 
-    @Override
-    public boolean isClan() {
-        return clan;
-    }
-
     /**
      * @return true, if unit is base IS tech and mounts Clan tech equipment
      */
@@ -196,14 +192,13 @@ public class ModelRecord extends AbstractUnitRecord {
      *
      * @return true, if unit contains both primitive and advanced tech
      */
-    public boolean isRetrotech() {
-        return retrotech;
+    public boolean isRetroTech() {
+        return retroTech;
     }
 
     /**
      * Unit has advanced IS-base technology
      *
-     * @return
      */
     public boolean isSL() {
         return starLeague;
@@ -343,8 +338,7 @@ public class ModelRecord extends AbstractUnitRecord {
                 if (mr != null) {
                     roles.add(mr);
                 } else {
-                    logger.error("Could not parse mission role for "
-                          + getChassis() + " " + getModel() + ": " + role);
+                    logger.error("Could not parse mission role for {} {}: {}", getChassis(), getModel(), role);
                 }
             }
         }
@@ -364,9 +358,7 @@ public class ModelRecord extends AbstractUnitRecord {
     public void setExcludedFactions(String excludedFactions) {
         this.excludedFactions.clear();
         String[] fields = excludedFactions.split(",");
-        for (String faction : fields) {
-            this.excludedFactions.add(faction);
-        }
+        this.excludedFactions.addAll(Arrays.asList(fields));
     }
 
     public boolean factionIsExcluded(FactionRecord checkFaction) {
@@ -495,13 +487,13 @@ public class ModelRecord extends AbstractUnitRecord {
               unitType != UnitType.WARSHIP) {
             basePrimitive = isUnitPrimitive(unitData);
         }
-        // If the unit is not Clan or primitive, then check for if it is lostech
+        // If the unit is not Clan or primitive, then check for if it is los tech
         // (advanced)
         if (!clan &&
               !basePrimitive &&
               unitType <= UnitType.AEROSPACEFIGHTER &&
               unitType != UnitType.INFANTRY) {
-            losTech = unitHasLostech(unitData, false);
+            losTech = unitHasLosTech(unitData, false);
         }
 
         for (int i = 0; i < unitData.getEquipmentNames().size(); i++) {
@@ -518,7 +510,7 @@ public class ModelRecord extends AbstractUnitRecord {
                 continue;
             }
 
-            // Only check for lostech equipment if it hasn't already been found
+            // Only check for los tech equipment if it hasn't already been found
             if (!losTech && !eq.isAvailableIn(3000, false)) {
                 losTech = true;
             }
@@ -728,7 +720,7 @@ public class ModelRecord extends AbstractUnitRecord {
         // Categorize by technology type
         starLeague = losTech && !clan;
         primitive = basePrimitive && !losTech && !clan;
-        retrotech = basePrimitive && (losTech || clan);
+        retroTech = basePrimitive && (losTech || clan);
 
     }
 
@@ -879,13 +871,11 @@ public class ModelRecord extends AbstractUnitRecord {
               (unitData.getCockpitType() == Mek.COCKPIT_PRIMITIVE ||
                     unitData.getCockpitType() == Mek.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
             return true;
-        } else if ((unitType == UnitType.CONV_FIGHTER ||
-              unitType == UnitType.AEROSPACEFIGHTER) &&
-              unitData.getCockpitType() == Aero.COCKPIT_PRIMITIVE) {
-            return true;
+        } else {
+            return (unitType == UnitType.CONV_FIGHTER ||
+                  unitType == UnitType.AEROSPACEFIGHTER) &&
+                  unitData.getCockpitType() == Aero.COCKPIT_PRIMITIVE;
         }
-
-        return false;
     }
 
     /**
@@ -897,7 +887,7 @@ public class ModelRecord extends AbstractUnitRecord {
      *
      * @return true if unit has at least one piece of basic technology
      */
-    private boolean unitHasLostech(MekSummary unitData, boolean starLeagueOnly) {
+    private boolean unitHasLosTech(MekSummary unitData, boolean starLeagueOnly) {
 
         // Some units are always considered advanced
         if (unitType == UnitType.BATTLE_ARMOR ||
@@ -936,7 +926,7 @@ public class ModelRecord extends AbstractUnitRecord {
             }
         }
 
-        // Structure. Star League is limited endosteel.
+        // Structure. Star League is limited endo steel.
         if (unitType == UnitType.MEK) {
             if (starLeagueOnly &&
                   unitData.getInternalsType() == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
@@ -966,18 +956,16 @@ public class ModelRecord extends AbstractUnitRecord {
         if (unitType == UnitType.MEK) {
             if (starLeagueOnly && checkCockpit == Mek.COCKPIT_COMMAND_CONSOLE) {
                 return true;
-            } else if (checkCockpit != Mek.COCKPIT_STANDARD &&
-                  checkCockpit != Mek.COCKPIT_PRIMITIVE &&
-                  checkCockpit != Mek.COCKPIT_INDUSTRIAL &&
-                  checkCockpit != Mek.COCKPIT_PRIMITIVE_INDUSTRIAL) {
-                return true;
+            } else {
+                return checkCockpit != Mek.COCKPIT_STANDARD &&
+                      checkCockpit != Mek.COCKPIT_PRIMITIVE &&
+                      checkCockpit != Mek.COCKPIT_INDUSTRIAL &&
+                      checkCockpit != Mek.COCKPIT_PRIMITIVE_INDUSTRIAL;
             }
         } else if (unitType == UnitType.CONV_FIGHTER ||
               unitType == UnitType.AEROSPACEFIGHTER) {
-            if (checkCockpit != Aero.COCKPIT_STANDARD &&
-                  checkCockpit != Aero.COCKPIT_PRIMITIVE) {
-                return true;
-            }
+            return checkCockpit != Aero.COCKPIT_STANDARD &&
+                  checkCockpit != Aero.COCKPIT_PRIMITIVE;
         }
 
         return false;

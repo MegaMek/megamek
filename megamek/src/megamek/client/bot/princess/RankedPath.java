@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,9 +46,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @since 12/5/13 10:19 AM
  */
 public class RankedPath implements Comparable<RankedPath> {
-    private MovePath path;
-    private double rank;
-    private String reason;
+    private final MovePath path;
+    private final double rank;
+    private final String reason;
     private final transient Map<String, Double> scores = new HashMap<>();
 
     // the expected damage resulting from the calculation of this ranked path
@@ -76,9 +76,6 @@ public class RankedPath implements Comparable<RankedPath> {
 
     public Map<String, Double> getScores() {
         return scores;
-    }
-
-    public RankedPath() {
     }
 
     public RankedPath(double r, MovePath p, String reason) {

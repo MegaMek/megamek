@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,10 +34,10 @@
 package megamek.client.ui.dialogs.customMek;
 
 import java.awt.GridBagLayout;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.swing.JLabel;
@@ -62,14 +62,15 @@ import megamek.common.options.WeaponQuirks;
  * @since 2012-03-05
  */
 public class QuirksPanel extends JPanel {
+    @Serial
     private static final long serialVersionUID = -8360885055638738148L;
-    private Entity entity;
+    private final Entity entity;
     private List<DialogOptionComponentYPanel> quirkComps;
-    private HashMap<Integer, ArrayList<DialogOptionComponentYPanel>> h_wpnQuirkComps = new HashMap<>();
-    private HashMap<Integer, WeaponQuirks> h_wpnQuirks;
-    private Quirks quirks;
-    private boolean editable;
-    private DialogOptionListener parent;
+    private final HashMap<Integer, ArrayList<DialogOptionComponentYPanel>> h_wpnQuirkComps = new HashMap<>();
+    private final HashMap<Integer, WeaponQuirks> h_wpnQuirks;
+    private final Quirks quirks;
+    private final boolean editable;
+    private final DialogOptionListener parent;
 
     public QuirksPanel(Entity entity, Quirks quirks, boolean editable, DialogOptionListener parent,
           HashMap<Integer, WeaponQuirks> h_wpnQuirks) {
@@ -106,9 +107,7 @@ public class QuirksPanel extends JPanel {
 
         // now for weapon quirks
         Set<Integer> set = h_wpnQuirks.keySet();
-        Iterator<Integer> iter = set.iterator();
-        while (iter.hasNext()) {
-            int key = iter.next();
+        for (int key : set) {
             Mounted<?> m = entity.getEquipment(key);
             WeaponQuirks wpnQuirks = h_wpnQuirks.get(key);
             JLabel labWpn = new JLabel(m.getName() + " ("
@@ -143,20 +142,19 @@ public class QuirksPanel extends JPanel {
 
     public void setQuirks() {
         IOption option;
-        for (final Object newVar : quirkComps) {
-            DialogOptionComponentYPanel comp = (DialogOptionComponentYPanel) newVar;
-            option = comp.getOption();
-            if ((comp.getValue() == Messages.getString("CustomMekDialog.None"))) {
+        for (final DialogOptionComponentYPanel newVar : quirkComps) {
+            option = newVar.getOption();
+            if ((newVar.getValue() == Messages.getString("CustomMekDialog.None"))) {
                 entity.getQuirks().getOption(option.getName()).setValue("None");
             } else if (option.getName().equals("internal_bomb")) {
                 // Need to set the quirk, and only then force re-computing bomb bay space for
                 // Aero-derived units
-                entity.getQuirks().getOption(option.getName()).setValue(comp.getValue());
+                entity.getQuirks().getOption(option.getName()).setValue(newVar.getValue());
                 if (entity.isAero()) {
                     ((Aero) entity).autoSetMaxBombPoints();
                 }
             } else {
-                entity.getQuirks().getOption(option.getName()).setValue(comp.getValue());
+                entity.getQuirks().getOption(option.getName()).setValue(newVar.getValue());
             }
         }
         // now for weapon quirks
@@ -164,13 +162,12 @@ public class QuirksPanel extends JPanel {
         for (Integer key : set) {
             Mounted<?> m = entity.getEquipment(key);
             ArrayList<DialogOptionComponentYPanel> wpnQuirkComps = h_wpnQuirkComps.get(key);
-            for (final Object newVar : wpnQuirkComps) {
-                DialogOptionComponentYPanel comp = (DialogOptionComponentYPanel) newVar;
-                option = comp.getOption();
-                if ((comp.getValue() == Messages.getString("CustomMekDialog.None"))) {
+            for (final DialogOptionComponentYPanel newVar : wpnQuirkComps) {
+                option = newVar.getOption();
+                if ((newVar.getValue() == Messages.getString("CustomMekDialog.None"))) {
                     m.getQuirks().getOption(option.getName()).setValue("None");
                 } else {
-                    m.getQuirks().getOption(option.getName()).setValue(comp.getValue());
+                    m.getQuirks().getOption(option.getName()).setValue(newVar.getValue());
                 }
             }
         }

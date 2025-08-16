@@ -59,7 +59,7 @@ public class ServerLobbyHelper {
     /**
      * Returns true when the given new force (that is not part of the given game's forces) can be integrated into game's
      * forces without error; i.e.: if the force's parent exists or it is top-level, if it has no entities and no
-     * subforces, if the client sending it is the owner
+     * subForces, if the client sending it is the owner
      */
     static boolean isNewForceValid(Game game, Force force) {
         return (force.isTopLevel() || game.getForces().contains(force.getParentId()))
@@ -288,7 +288,7 @@ public class ServerLobbyHelper {
         // Get the local (server) forces
         var serverForces = new HashSet<Force>();
         forceList.stream().map(f -> forces.getForce(f.getId())).forEach(serverForces::add);
-        // Remove redundant forces (subforces of others in the list)
+        // Remove redundant forces (subForces of others in the list)
         Set<Force> allSubForces = new HashSet<>();
         serverForces.stream().map(forces::getFullSubForces).forEach(allSubForces::addAll);
         serverForces.removeIf(allSubForces::contains);

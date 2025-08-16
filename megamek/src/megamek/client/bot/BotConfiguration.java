@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -59,14 +59,11 @@ public class BotConfiguration {
             // do nothing
         }
 
-        switch (difficulty) {
-            case 1:
-                return 8;
-            case 2:
-                return 9;
-            default:
-                return 10;
-        }
+        return switch (difficulty) {
+            case 1 -> 8;
+            case 2 -> 9;
+            default -> 10;
+        };
     }
 
     public boolean isForcedIndividual() {

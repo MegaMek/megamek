@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -65,7 +66,7 @@ import megamek.logging.MMLogger;
  * <p>
  * The Ethnic Code is an Integer identifying the ethnic group from the historicalEthnicity.csv file the name is from
  * <p>
- * The Name is a String containing either a male/female first name or a surname, dependant on the origin file.
+ * The Name is a String containing either a male/female first name or a surname, dependent on the origin file.
  * <p>
  * The Weight is an Integer that is used to set the generation chance of the name. The higher the number, the more
  * common the name is.
@@ -101,9 +102,10 @@ import megamek.logging.MMLogger;
  * @author Jay Lawson (original version)
  */
 public class RandomNameGenerator implements Serializable {
-    private static final MMLogger logger = MMLogger.create(RandomNameGenerator.class);
+    private static final MMLogger LOGGER = MMLogger.create(RandomNameGenerator.class);
 
     // region Variable Declarations
+    @Serial
     private static final long serialVersionUID = 5765118329881301375L;
 
     private static RandomNameGenerator rng; // This is using a singleton, because only a single usage of this class is
@@ -293,7 +295,7 @@ public class RandomNameGenerator implements Serializable {
     // region Getters and Setters
 
     /**
-     * @return the list of potential keys to generate the name from - this MUST NOT be modified once it has been gotten
+     * @return the set of potential keys to generate the name from - this MUST NOT be modified once it has been gotten
      */
     public Set<String> getFactions() {
         return (factionEthnicCodes == null) ? null : factionEthnicCodes.keySet();
@@ -361,7 +363,7 @@ public class RandomNameGenerator implements Serializable {
         }
 
         try (InputStream is = new FileInputStream(file);
-              Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
+              Scanner input = new Scanner(is, StandardCharsets.UTF_8)) {
             while (input.hasNextLine()) {
                 final String[] values = input.nextLine().split(",");
                 if (values.length >= 2) {
@@ -369,7 +371,7 @@ public class RandomNameGenerator implements Serializable {
                 }
             }
         } catch (Exception e) {
-            logger.error(e, "Failed to parse historical ethnicity file " + file);
+            LOGGER.error(e, "Failed to parse historical ethnicity file {}", file);
         }
     }
 
@@ -384,7 +386,7 @@ public class RandomNameGenerator implements Serializable {
               factionGivenNamesLoadMap, factionEthnicCodesLoadMap);
 
         if (factionGivenNamesLoadMap.isEmpty() || factionEthnicCodesLoadMap.isEmpty()) {
-            logger.error("No faction files found!");
+            LOGGER.error("No faction files found!");
 
             // We will create a general list where everything is weighted at one to allow
             // players to
@@ -431,7 +433,7 @@ public class RandomNameGenerator implements Serializable {
         }
 
         final String[] filenames = file.list();
-        if ((filenames != null) && (filenames.length > 0)) {
+        if (filenames != null) {
             for (final String filename : filenames) {
                 if (!filename.endsWith(".csv")) {
                     continue;
@@ -453,7 +455,7 @@ public class RandomNameGenerator implements Serializable {
         factionEthnicCodesLoadMap.putIfAbsent(key, new HashMap<>());
 
         try (InputStream is = new FileInputStream(file);
-              Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
+              Scanner input = new Scanner(is, StandardCharsets.UTF_8)) {
             while (input.hasNextLine()) {
                 final String[] values = input.nextLine().split(",");
                 final int ethnicCode = Integer.parseInt(values[0]);
@@ -470,12 +472,12 @@ public class RandomNameGenerator implements Serializable {
                 if (!factionGivenNamesLoadMap.get(key).get(ethnicCode).isEmpty()) {
                     factionEthnicCodesLoadMap.get(key).put(ethnicCode, Integer.parseInt(values[2]));
                 } else {
-                    logger
-                          .error("There are no possible options for " + ethnicCode + " for file " + file);
+                    LOGGER
+                          .error("There are no possible options for {} for file {}", ethnicCode, file);
                 }
             }
         } catch (Exception e) {
-            logger.error(e, "Failed to parse " + file);
+            LOGGER.error(e, "Failed to parse {}", file);
         }
     }
 
@@ -533,21 +535,21 @@ public class RandomNameGenerator implements Serializable {
         int lineNumber = 0;
 
         try (InputStream is = new FileInputStream(file);
-              Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
+              Scanner input = new Scanner(is, StandardCharsets.UTF_8)) {
             input.nextLine(); // this is used to skip over the header line
 
             while (input.hasNextLine()) {
                 lineNumber++;
                 final String[] values = input.nextLine().split(",");
                 if (values.length < 3) {
-                    logger.error("Not enough fields in " + file + " on " + lineNumber);
+                    LOGGER.error("Not enough fields in {} on {}", file, lineNumber);
                     continue;
                 }
 
                 map.get(Integer.parseInt(values[0])).put(values[1], Integer.parseInt(values[2]));
             }
         } catch (IOException e) {
-            logger.error(e, "Could not find " + file + "!");
+            LOGGER.error(e, "Could not find {}!", file);
         }
     }
     // endregion Initialization

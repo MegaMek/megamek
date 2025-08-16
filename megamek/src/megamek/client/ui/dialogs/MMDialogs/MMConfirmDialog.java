@@ -40,6 +40,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -82,13 +83,10 @@ public class MMConfirmDialog {
 
     private static class ConfirmDialog extends ClientDialog {
 
+        @Serial
         private static final long serialVersionUID = -2877691301521648979L;
 
         private boolean userResponse = false;
-
-        private JPanel panButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        private JButton butYes = new DialogButton(Messages.getString("Yes"));
-        private JButton butNo = new DialogButton(Messages.getString("No"));
 
         public ConfirmDialog(JFrame owner, String title, String message) {
             super(owner, title, true);
@@ -99,8 +97,11 @@ public class MMConfirmDialog {
                     super.windowClosed(e);
                 }
             });
+            JPanel panButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
             add(panButtons, BorderLayout.PAGE_END);
+            JButton butYes = new DialogButton(Messages.getString("Yes"));
             panButtons.add(butYes);
+            JButton butNo = new DialogButton(Messages.getString("No"));
             panButtons.add(butNo);
             butYes.addActionListener(e -> respondYes());
             butNo.addActionListener(e -> respondNo());

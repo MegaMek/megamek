@@ -64,7 +64,8 @@ public class BoardViewsContainer {
     private final JTabbedPane mapTabPane = new JTabbedPane();
 
     /**
-     * The boardview components of the game with the board ID as the map value. Used to retrieve the active boardview
+     * The {@link megamek.client.ui.clientGUI.boardview.BoardView} components of the game with the board ID as the map
+     * value. Used to retrieve the active {@link megamek.client.ui.clientGUI.boardview.BoardView}
      */
     protected final Map<Component, Integer> shownBoardViews = new HashMap<>();
 
@@ -78,7 +79,7 @@ public class BoardViewsContainer {
      */
     public BoardViewsContainer(AbstractClientGUI clientGUI) {
         this.clientGUI = Objects.requireNonNull(clientGUI);
-        mapTabPane.addChangeListener(this::updateBoardviewKeyStatus);
+        mapTabPane.addChangeListener(this::updateBoardViewKeyStatus);
     }
 
     /**
@@ -138,18 +139,19 @@ public class BoardViewsContainer {
     }
 
     /**
-     * Returns the currently shown boardview. If there is only a single boardview (no tabbed pane), this will be
-     * returned. With multiple boardviews, the one in the currently selected tab is returned.
+     * Returns the currently shown {@link megamek.client.ui.clientGUI.boardview.BoardView}. If there is only a single
+     * {@link megamek.client.ui.clientGUI.boardview.BoardView} (no tabbed pane), this will be returned. With multiple
+     * {@link megamek.client.ui.clientGUI.boardview.BoardView}'s, the one in the currently selected tab is returned.
      * <p>
      * Unfortunately it is possible to have no selected tab in a JTabbedPane; also, theoretically, there could be no
-     * boardview. Therefore the result is returned as an Optional.
+     * {@link megamek.client.ui.clientGUI.boardview.BoardView}. Therefore, the result is returned as an Optional.
      *
-     * @return The currently shown boardview, if any
+     * @return The currently shown {@link megamek.client.ui.clientGUI.boardview.BoardView}, if any
      */
     public Optional<IBoardView> getCurrentBoardView() {
         if ((clientGUI.boardViews.size() > 1)) {
             Component shownComponent = mapTabPane.getSelectedComponent();
-            // The components that the tabbed pane shows are JScrollPanes that wrap the boardviews
+            // The components that the tabbed pane shows are JScrollPanes that wrap the board views
             if ((shownComponent != null) && shownBoardViews.containsKey(shownComponent)) {
                 int boardId = shownBoardViews.get(shownComponent);
                 return Optional.of(boardView(boardId));
@@ -188,14 +190,15 @@ public class BoardViewsContainer {
     }
 
     /**
-     * Sets the boardviews that are not shown to ignore key presses from the MegamekController (Key Dispatcher) and the
-     * currently shown boardview to accept them.
+     * Sets the {@link megamek.client.ui.clientGUI.boardview.BoardView}'s that are not shown to ignore key presses from
+     * the MegamekController (Key Dispatcher) and the currently shown
+     * {@link megamek.client.ui.clientGUI.boardview.BoardView} to accept them.
      *
      * @param changeEvent The changeEvent (not used)
      */
-    private void updateBoardviewKeyStatus(ChangeEvent changeEvent) {
+    private void updateBoardViewKeyStatus(ChangeEvent changeEvent) {
         if (clientGUI.boardViews.size() > 1) {
-            // Set all boardviews to ignore key presses
+            // Set all board views to ignore key presses
             for (IBoardView boardView : clientGUI.boardViews()) {
                 if (boardView instanceof BoardView bv) {
                     bv.setShouldIgnoreKeys(true);

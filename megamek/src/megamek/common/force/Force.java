@@ -177,19 +177,19 @@ public final class Force implements Serializable {
 
     /**
      * Returns the number of direct children of this force, i.e. the number of direct members + the number of direct
-     * subforces.
+     * subForces.
      */
     public int getChildCount() {
         return entities.size() + subForces.size();
     }
 
-    /** Returns true if the force contains neither units nor subforces. */
+    /** Returns true if the force contains neither units nor subForces. */
     public boolean isEmpty() {
         return getChildCount() == 0;
     }
 
     /**
-     * Returns the id of the entity at the provided index from the list of direct members of this force (not subforces).
+     * Returns the id of the entity at the provided index from the list of direct members of this force (not subForces).
      * Indices outside of 0 ... entityCount() - 1 will result in an exception.
      */
     public int getEntityId(int index) {
@@ -197,7 +197,7 @@ public final class Force implements Serializable {
     }
 
     /**
-     * Returns the id of the force at the provided index from the list of subforces of this force. Indices outside of 0
+     * Returns the id of the force at the provided index from the list of subForces of this force. Indices outside of 0
      * ... subForceCount() - 1 will result in an exception.
      */
     public int getSubForceId(int index) {
@@ -229,14 +229,14 @@ public final class Force implements Serializable {
     }
 
     /**
-     * Returns true if the provided force is among this force's direct subforces.
+     * Returns true if the provided force is among this force's direct subForces.
      */
     public boolean containsSubForce(Force force) {
         return subForces.contains(force.getId());
     }
 
     /**
-     * Returns the index of the provided force in the list of direct subforces of this force. Returns -1 if the force is
+     * Returns the index of the provided force in the list of direct subForces of this force. Returns -1 if the force is
      * no direct subforce of this force.
      */
     public int subForceIndex(Force force) {
@@ -268,7 +268,7 @@ public final class Force implements Serializable {
         entities.remove((Integer) id);
     }
 
-    /** Removes the given id from the list of (direct) subforces. */
+    /** Removes the given id from the list of (direct) subForces. */
     void removeSubForce(int id) {
         subForces.remove((Integer) id);
     }

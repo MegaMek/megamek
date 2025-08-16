@@ -92,7 +92,7 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
         ARMOR_RIGHT_P,
         ARMOR_BACK_P,
         ROLE,
-        WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE;
+        WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -65,34 +65,33 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
 
     private final Color color;
     private final Facing facing;
-    private final String modifier;
     private final StringDrawer modifierText;
 
     /**
-     * @param boardView The BoardView
-     * @param mp        The movepath to the present hex
+     * @param boardView The {@link BoardView}
+     * @param movePath  The {@link MovePath} to the present hex
      */
-    public MovementModifierEnvelopeSprite(BoardView boardView, MovePath mp) {
-        super(boardView, mp.getFinalCoords());
+    public MovementModifierEnvelopeSprite(BoardView boardView, MovePath movePath) {
+        super(boardView, movePath.getFinalCoords());
 
-        facing = Facing.valueOfInt(mp.getFinalFacing());
+        facing = Facing.valueOfInt(movePath.getFinalFacing());
 
-        int modi = Compute.getTargetMovementModifier(mp.getHexesMoved(),
-              mp.isJumping(),
-              mp.getEntity() instanceof VTOL
-                    || (mp.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_WALK)
-                    || (mp.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_RUN)
-                    || (mp.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT),
+        int movementModifier = Compute.getTargetMovementModifier(movePath.getHexesMoved(),
+              movePath.isJumping(),
+              movePath.getEntity() instanceof VTOL
+                    || (movePath.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_WALK)
+                    || (movePath.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_RUN)
+                    || (movePath.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT),
               boardView.game).getValue();
         //Add evasion bonus for 'Mek with dual cockpit
-        if (mp.getEntity().getCrew().getCrewType().equals(CrewType.DUAL)
-              && mp.getEntity().getCrew().hasDedicatedPilot()
-              && !mp.isJumping() && mp.getHexesMoved() > 0) {
-            modi++;
+        if (movePath.getEntity().getCrew().getCrewType().equals(CrewType.DUAL)
+              && movePath.getEntity().getCrew().hasDedicatedPilot()
+              && !movePath.isJumping() && movePath.getHexesMoved() > 0) {
+            movementModifier++;
         }
-        float hue = 0.7f - 0.15f * modi;
+        float hue = 0.7f - 0.15f * movementModifier;
         color = new Color(Color.HSBtoRGB(hue, 1, 1));
-        modifier = String.format("%+d", modi);
+        String modifier = String.format("%+d", movementModifier);
         modifierText = new StringDrawer(modifier).center().color(fontColor);
     }
 

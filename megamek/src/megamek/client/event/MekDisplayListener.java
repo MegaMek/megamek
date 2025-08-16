@@ -53,5 +53,5 @@ public interface MekDisplayListener extends java.util.EventListener {
      *
      * @param b an event
      */
-    public void weaponSelected(MekDisplayEvent b);
+    void weaponSelected(MekDisplayEvent b);
 }

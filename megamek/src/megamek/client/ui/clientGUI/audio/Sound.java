@@ -41,9 +41,7 @@ import megamek.common.annotations.Nullable;
 /**
  * Contains a sound Clip to allow for managing playback
  */
-public class Sound {
-    private final Clip clip;
-
+public record Sound(Clip clip) {
     public Sound(@Nullable final Clip clip) {
         this.clip = clip;
     }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ package megamek.client.ui.dialogs;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serial;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -55,16 +56,14 @@ import megamek.common.SpecialHexDisplay;
  * @author arlith
  */
 public class NoteDialog extends JDialog implements ActionListener {
+    @Serial
     private static final long serialVersionUID = -3126840102187553386L;
 
-    private JLabel noteLbl, visibilityLbl;
+    private final JComboBox<String> visibility = new JComboBox<>();
 
-    private JComboBox<String> visibility = new JComboBox<>();
+    private final JTextArea noteText = new JTextArea("");
 
-    private JTextArea noteText = new JTextArea("");
-
-    private JButton butDone = new JButton(Messages.getString("NoteDialog.Done"));
-    private JButton butCancel = new JButton(Messages.getString("NoteDialog.Cancel"));
+    private final JButton butDone = new JButton(Messages.getString("NoteDialog.Done"));
 
     boolean accepted = false;
 
@@ -75,6 +74,7 @@ public class NoteDialog extends JDialog implements ActionListener {
         this.note = note;
         setResizable(false);
         butDone.addActionListener(this);
+        JButton butCancel = new JButton(Messages.getString("NoteDialog.Cancel"));
         butCancel.addActionListener(this);
 
         JPanel layout;
@@ -83,8 +83,8 @@ public class NoteDialog extends JDialog implements ActionListener {
         noteText.setMinimumSize(new Dimension(getWidth(), 200));
         noteText.setPreferredSize(new Dimension(getWidth(), 200));
 
-        noteLbl = new JLabel(Messages.getString("NoteDialog.note"));
-        visibilityLbl = new JLabel(Messages.getString("NoteDialog.visibility"));
+        JLabel noteLbl = new JLabel(Messages.getString("NoteDialog.note"));
+        JLabel visibilityLbl = new JLabel(Messages.getString("NoteDialog.visibility"));
 
         visibility.addItem(Messages.getString("NoteDialog.owner"));
         visibility.addItem(Messages.getString("NoteDialog.team"));

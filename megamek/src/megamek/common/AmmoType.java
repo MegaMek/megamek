@@ -2270,7 +2270,7 @@ public class AmmoType extends EquipmentType {
      *       access/availability, not a hardcoded list of ammo types. As soon as the tech rules for munition variations
      *       are working completely then this will be removed.
      */
-    @Deprecated(since = "0.50.06", forRemoval = true)
+    @Deprecated(since = "0.50.06")
     public boolean notAllowedByClanRules() {
         return (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED) ||
               (munitionType.contains(AmmoType.Munitions.M_SWARM_I)) ||

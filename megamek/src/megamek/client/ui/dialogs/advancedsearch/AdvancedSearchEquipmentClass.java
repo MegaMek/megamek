@@ -34,7 +34,7 @@ package megamek.client.ui.dialogs.advancedsearch;
 
 import java.util.Locale;
 
-enum AdvancedSearchEquipmentClass {
+public enum AdvancedSearchEquipmentClass {
     EMPTY,
     AUTOCANNON,
     RAC,
@@ -138,10 +138,9 @@ enum AdvancedSearchEquipmentClass {
                   || name.contains("charger")
                   || name.contains("tsm"))
                   && !name.contains("vest") && !name.contains("suit");
-        } else if (name.contains(name().toLowerCase(Locale.ROOT)) && !name.contains("ammo")) {
-            return true;
+        } else {
+            return name.contains(name().toLowerCase(Locale.ROOT)) && !name.contains("ammo");
         }
-        return false;
     }
 
     @Override

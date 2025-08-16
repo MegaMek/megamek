@@ -362,7 +362,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         }
     }
 
-    private MouseListener treeMouseListener = new MouseAdapter() {
+    private final MouseListener treeMouseListener = new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent evt) {
             showPopup(evt);
@@ -380,8 +380,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                     return;
                 }
                 Object node = path.getLastPathComponent();
-                if (node instanceof ForceDescriptor) {
-                    final ForceDescriptor fd = (ForceDescriptor) node;
+                if (node instanceof ForceDescriptor fd) {
                     JPopupMenu menu = new JPopupMenu();
 
                     JMenuItem item = new JMenuItem("Add to game");
@@ -397,7 +396,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         }
     };
 
-    private MouseListener tableMouseListener = new MouseAdapter() {
+    private final MouseListener tableMouseListener = new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent evt) {
             showPopup(evt);
@@ -414,10 +413,10 @@ public class ForceGeneratorViewUi implements ActionListener {
                     JPopupMenu menu = new JPopupMenu();
 
                     List<Integer> entities = LobbyUtility.getSelectedEntities(tblChosen);
-                    int[] ents = entities.stream().mapToInt(Integer::intValue).toArray();
+                    int[] entityIDs = entities.stream().mapToInt(Integer::intValue).toArray();
 
                     JMenuItem item = new JMenuItem("Remove");
-                    item.addActionListener(ev -> modelChosen.removeEntities(ents));
+                    item.addActionListener(ev -> modelChosen.removeEntities(entityIDs));
                     menu.add(item);
 
                     // All command strings should follow the layout COMMAND|INFO|ID1,ID2,I3...
@@ -425,14 +424,14 @@ public class ForceGeneratorViewUi implements ActionListener {
                     String eIds = LobbyUtility.enToken(entities);
 
                     String msg_view = Messages.getString("RandomArmyDialog.View");
-                    String msg_viewbv = Messages.getString("RandomArmyDialog.ViewBV");
-                    String msg_viewcost = Messages.getString("RandomArmyDialog.ViewCost");
+                    String msgViewBV = Messages.getString("RandomArmyDialog.ViewBV");
+                    String msgViewCost = Messages.getString("RandomArmyDialog.ViewCost");
 
                     menu.add(
                           UIUtil.menuItem(msg_view, FGV_VIEW + eIds, true, ForceGeneratorViewUi.this, KeyEvent.VK_V));
                     menu.add(
-                          UIUtil.menuItem(msg_viewbv, FGV_BV + eIds, true, ForceGeneratorViewUi.this, KeyEvent.VK_B));
-                    menu.add(UIUtil.menuItem(msg_viewcost, FGV_COST + eIds, true, ForceGeneratorViewUi.this,
+                          UIUtil.menuItem(msgViewBV, FGV_BV + eIds, true, ForceGeneratorViewUi.this, KeyEvent.VK_B));
+                    menu.add(UIUtil.menuItem(msgViewCost, FGV_COST + eIds, true, ForceGeneratorViewUi.this,
                           Integer.MIN_VALUE));
 
                     menu.show(evt.getComponent(), evt.getX(), evt.getY());
@@ -450,22 +449,26 @@ public class ForceGeneratorViewUi implements ActionListener {
             command = st.nextToken();
         }
 
-        if (command.equals(FGV_VIEW)) {
-            // The entities list may be empty
-            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
-            LobbyUtility.mekReadoutAction(entities, true, true, clientGui.getFrame());
-        } else if (command.equals(FGV_BV)) {
-            // The entities list may be empty
-            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
-            LobbyUtility.mekBVAction(entities, true, true, clientGui.getFrame());
-        } else if (command.equals(FGV_COST)) {
-            // The entities list may be empty
-            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
-            LobbyUtility.mekCostAction(entities, true, true, clientGui.getFrame());
+        switch (command) {
+            case FGV_VIEW -> {
+                // The entities list may be empty
+                Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
+                LobbyUtility.mekReadoutAction(entities, true, true, clientGui.getFrame());
+            }
+            case FGV_BV -> {
+                // The entities list may be empty
+                Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
+                LobbyUtility.mekBVAction(entities, true, true, clientGui.getFrame());
+            }
+            case FGV_COST -> {
+                // The entities list may be empty
+                Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
+                LobbyUtility.mekCostAction(entities, true, true, clientGui.getFrame());
+            }
         }
     }
 
-    private KeyListener tableKeyListener = new KeyListener() {
+    private final KeyListener tableKeyListener = new KeyListener() {
         @Override
         public void keyTyped(KeyEvent evt) {
 
@@ -485,8 +488,8 @@ public class ForceGeneratorViewUi implements ActionListener {
     };
 
     static class ForceTreeModel implements TreeModel {
-        private ForceDescriptor root;
-        private ArrayList<TreeModelListener> listeners;
+        private final ForceDescriptor root;
+        private final ArrayList<TreeModelListener> listeners;
 
         public ForceTreeModel(ForceDescriptor root) {
             this.root = root;
@@ -589,7 +592,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                     try {
                         clientGui.loadPreviewImage(this, fd.getEntity());
                     } catch (NullPointerException ex) {
-                        logger.warn("No image found for " + fd.getEntity().getShortNameRaw());
+                        logger.warn("No image found for {}", fd.getEntity().getShortNameRaw());
                     }
                 }
             } else {
@@ -618,7 +621,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         public static final int NUM_COLS = 5;
 
         private List<Entity> entities = new ArrayList<>();
-        private Set<String> entityIds = new HashSet<>();
+        private final Set<String> entityIds = new HashSet<>();
 
         public boolean hasEntity(final @Nullable Entity en) {
             return (en != null) && entityIds.contains(en.getExternalIdAsString());
@@ -696,27 +699,20 @@ public class ForceGeneratorViewUi implements ActionListener {
 
         @Override
         public String getColumnName(int column) {
-            switch (column) {
-                case COL_ENTITY:
-                    return Messages.getString("RandomArmyDialog.colUnit");
-                case COL_MOVE:
-                    return Messages.getString("RandomArmyDialog.colMove");
-                case COL_BV:
-                    return Messages.getString("RandomArmyDialog.colBV");
-                case COL_TECH_BASE:
-                    return Messages.getString("RandomArmyDialog.colTechBase");
-                case COL_UNIT_ROLE:
-                    return Messages.getString("RandomArmyDialog.colUnitRole");
-                default:
-                    return "??";
-            }
+            return switch (column) {
+                case COL_ENTITY -> Messages.getString("RandomArmyDialog.colUnit");
+                case COL_MOVE -> Messages.getString("RandomArmyDialog.colMove");
+                case COL_BV -> Messages.getString("RandomArmyDialog.colBV");
+                case COL_TECH_BASE -> Messages.getString("RandomArmyDialog.colTechBase");
+                case COL_UNIT_ROLE -> Messages.getString("RandomArmyDialog.colUnitRole");
+                default -> "??";
+            };
         }
 
         public MekSummary getUnitAt(int row) {
             Entity e = entities.get(row);
-            MekSummary ms = mscInstance.getMek(e.getShortNameRaw());
 
-            return ms;
+            return mscInstance.getMek(e.getShortNameRaw());
         }
     }
 }

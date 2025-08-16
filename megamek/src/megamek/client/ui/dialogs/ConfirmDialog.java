@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -55,7 +55,7 @@ public class ConfirmDialog extends JDialog {
 
     @Serial
     private static final long serialVersionUID = -8491332593940944224L;
-    private final GridBagLayout gridbag = new GridBagLayout();
+    private final GridBagLayout gridBagLayout = new GridBagLayout();
     private final GridBagConstraints gridBagConstraints = new GridBagConstraints();
 
     private final boolean useCheckbox;
@@ -66,8 +66,8 @@ public class ConfirmDialog extends JDialog {
     JButton butNo;
     JButton defaultButton;
 
-    private static final String YESACTION = "YesAction";
-    private static final String NOACTION = "NoAction";
+    private static final String YES_ACTION = "YesAction";
+    private static final String NO_ACTION = "NoAction";
 
     boolean confirmation;
 
@@ -112,7 +112,7 @@ public class ConfirmDialog extends JDialog {
         super.setResizable(false);
         useCheckbox = includeCheckbox;
 
-        setLayout(gridbag);
+        setLayout(gridBagLayout);
         addQuestion(question);
         setupButtons();
         addInputs();
@@ -139,13 +139,12 @@ public class ConfirmDialog extends JDialog {
         butYes = new JButton(yesAction);
         butYes.setText(Messages.getString("Yes"));
         butYes.setMnemonic(KeyEvent.VK_Y);
-        KeyStroke ks = null;
-        ks = KeyStroke.getKeyStroke(KeyEvent.VK_Y, 0);
+        KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_Y, 0);
 
         InputMap imap = butYes.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap amap = butYes.getActionMap();
-        imap.put(ks, YESACTION);
-        amap.put(YESACTION, yesAction);
+        ActionMap actionMap = butYes.getActionMap();
+        imap.put(ks, YES_ACTION);
+        actionMap.put(YES_ACTION, yesAction);
 
         Action noAction = new AbstractAction() {
             @Serial
@@ -162,9 +161,9 @@ public class ConfirmDialog extends JDialog {
         butNo.setMnemonic(KeyEvent.VK_N);
         ks = KeyStroke.getKeyStroke(KeyEvent.VK_N, 0);
         imap = butNo.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        amap = butNo.getActionMap();
-        imap.put(ks, NOACTION);
-        amap.put(NOACTION, noAction);
+        actionMap = butNo.getActionMap();
+        imap.put(ks, NO_ACTION);
+        actionMap.put(NO_ACTION, noAction);
     }
 
     private void addQuestion(String question) {
@@ -173,7 +172,7 @@ public class ConfirmDialog extends JDialog {
         questionLabel.setOpaque(false);
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.insets = new Insets(5, 5, 5, 5);
-        gridbag.setConstraints(questionLabel, gridBagConstraints);
+        gridBagLayout.setConstraints(questionLabel, gridBagConstraints);
         add(questionLabel);
     }
 
@@ -186,24 +185,24 @@ public class ConfirmDialog extends JDialog {
             botherCheckbox = new JCheckBox(Messages.getString("ConfirmDialog.dontBother"));
 
             gridBagConstraints.gridy = y++;
-            gridbag.setConstraints(botherCheckbox, gridBagConstraints);
+            gridBagLayout.setConstraints(botherCheckbox, gridBagConstraints);
             add(botherCheckbox);
         }
 
-        GridBagLayout buttonGridbag = new GridBagLayout();
+        GridBagLayout buttonGridBag = new GridBagLayout();
         GridBagConstraints bc = new GridBagConstraints();
-        panButtons.setLayout(buttonGridbag);
+        panButtons.setLayout(buttonGridBag);
         bc.insets = new Insets(5, 5, 5, 5);
         bc.ipadx = 20;
         bc.ipady = 5;
-        buttonGridbag.setConstraints(butYes, bc);
+        buttonGridBag.setConstraints(butYes, bc);
         panButtons.add(butYes);
-        buttonGridbag.setConstraints(butNo, bc);
+        buttonGridBag.setConstraints(butNo, bc);
         panButtons.add(butNo);
 
         gridBagConstraints.gridy = y;
 
-        gridbag.setConstraints(panButtons, gridBagConstraints);
+        gridBagLayout.setConstraints(panButtons, gridBagConstraints);
         add(panButtons);
     }
 

@@ -67,7 +67,7 @@ public class EntityViewPane extends EnhancedTabbedPane {
     }
 
     /**
-     * This purposefully does not set preferences, as it may be used on differing panes for differing uses and thus you
+     * This purposefully does not set preferences, as it may be used on differing panes for differing uses, and thus you
      * don't want to remember the selected tab between the different locations.
      */
     protected void initialize() {
@@ -104,7 +104,7 @@ public class EntityViewPane extends EnhancedTabbedPane {
      * in as asUnit saves the time for AS conversion.
      *
      * @param entity the entity to update to, or null if the panels are to be emptied.
-     * @param asUnit the Alpha Strike unit corresponding to entity (may be a MekSummary)
+     * @param asUnit the Alpha Strike unit corresponding to entity (maybe a MekSummary)
      */
     public void updateDisplayedEntity(@Nullable Entity entity, @Nullable ASCardDisplayable asUnit) {
         if (entity == null) {

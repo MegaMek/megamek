@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serial;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -52,13 +53,12 @@ import megamek.codeUtilities.StringUtility;
  * Ask for the setting for a vibrabomb.
  */
 public class VibrabombSettingDialog extends JDialog implements ActionListener {
+    @Serial
     private static final long serialVersionUID = -7642956136536119067L;
-    private GridBagLayout gridbag = new GridBagLayout();
-    private GridBagConstraints c = new GridBagConstraints();
-    private JButton butOk = new JButton(Messages.getString("Okay"));
-    private JTextField fldSetting = new JTextField("20", 2);
+    private final JButton butOk = new JButton(Messages.getString("Okay"));
+    private final JTextField fldSetting = new JTextField("20", 2);
     private int setting;
-    private JFrame frame;
+    private final JFrame frame;
 
     public VibrabombSettingDialog(JFrame p) {
         super(p, Messages.getString("VibrabombSettingDialog.title"), true);
@@ -66,25 +66,27 @@ public class VibrabombSettingDialog extends JDialog implements ActionListener {
         frame = p;
         butOk.addActionListener(this);
         JLabel labMessage = new JLabel(Messages.getString("VibrabombSettingDialog.selectSetting"));
-        getContentPane().setLayout(gridbag);
-        c.fill = GridBagConstraints.VERTICAL;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(labMessage, c);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        getContentPane().setLayout(gridBagLayout);
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.VERTICAL;
+        gridBagConstraints.insets = new Insets(1, 1, 1, 1);
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        gridBagLayout.setConstraints(labMessage, gridBagConstraints);
         getContentPane().add(labMessage);
-        c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(fldSetting, c);
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagLayout.setConstraints(fldSetting, gridBagConstraints);
         getContentPane().add(fldSetting);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.CENTER;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(butOk, c);
+        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagLayout.setConstraints(butOk, gridBagConstraints);
         getContentPane().add(butOk);
         pack();
         setLocation(p.getLocation().x + p.getSize().width / 2 - getSize().width

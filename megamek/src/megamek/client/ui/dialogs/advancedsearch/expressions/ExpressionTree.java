@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,26 +30,40 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.dialogs.advancedsearch;
+package megamek.client.ui.dialogs.advancedsearch.expressions;
 
-import java.awt.Component;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
+/**
+ * This class allows to create a tree where the leaf nodes contain names and quantities of pieces of equipment while the
+ * non-leaf nodes contain boolean operations (AND and OR).
+ *
+ * @author Arlith
+ */
+public class ExpressionTree {
+    private final ExpNode root;
 
-class TechBaseRenderer extends DefaultTableCellRenderer {
+    public ExpressionTree() {
+        root = new ExpNode();
+    }
 
-    TechBaseRenderer() {
-        super();
-        setHorizontalAlignment(SwingConstants.CENTER);
+    /**
+     * Deep copy constructor. New instantiations of all state variables are created.
+     *
+     * @param expressionTree The <code>ExpressionTree</code> to create a copy of.
+     */
+    public ExpressionTree(ExpressionTree expressionTree) {
+        root = new ExpNode(expressionTree.root);
+    }
+
+    public ExpressionTree(ExpNode rootNode) {
+        root = rootNode;
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-          int row, int column) {
-        if (value.equals("Inner Sphere")) {
-            value = "IS";
-        }
-        return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    public String toString() {
+        return root.children.isEmpty() ? "" : root.toString();
+    }
+
+    public ExpNode getRoot() {
+        return root;
     }
 }

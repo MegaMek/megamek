@@ -34,9 +34,9 @@
 package megamek.client.ui.dialogs.minimap;
 
 import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.FACING_ARROW;
-import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_BASERECT;
+import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_BASE_RECT;
 import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_CX;
-import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_SYMBOLSIZE;
+import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_SYMBOL_SIZE;
 import static megamek.common.Terrains.BUILDING;
 import static megamek.common.Terrains.FUEL_TANK;
 
@@ -86,7 +86,7 @@ import megamek.common.preference.PreferenceManager;
 /**
  * This class is WIP, commiting just to have an artifact.
  */
-public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter {
+public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter {
     private final Client client;
     private final IGame game;
     private final List<Blip> removedUnits;
@@ -97,11 +97,7 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
 
     private record Blip(int x, int y, String code, IFF iff, Color color, int round) {}
 
-    ;
-
     private record Line(int x1, int y1, int x2, int y2, Color color, int round) {}
-
-    ;
 
     // add listener for mouse click and drag, so it changes the value of the xOffset and yOffset  for painting the map
     private int initialClickX;
@@ -134,7 +130,7 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
     private final int leftMargin = 3;
 
 
-    public BoardviewlessMinimapPanel(Client client) {
+    public BoardViewLessMinimapPanel(Client client) {
         super(new BorderLayout(), true);
         this.client = client;
         this.game = client.getGame();
@@ -305,22 +301,6 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
             g2d.drawLine(p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset);
         }
         lines.removeIf(line -> line.round < currentRound - 4);
-        // 4) Draw attack lines
-
-        //        for (var line : attackLines) {
-        //            var delta = Math.max(1, (game.getCurrentRound() + 1 - line.round) * 2);
-        //            var newColor = new Color(line.color.getRed(),
-        //                line.color.getGreen(),
-        //                line.color.getBlue(),
-        //                (int) (line.color.getAlpha() / (double) delta));
-        //            if (!g2d.getColor().equals(newColor)) {
-        //                g2d.setColor(newColor);
-        //            }
-        //            var p1 = this.projectToView(line.x1, line.y1);
-        //            var p2 = this.projectToView(line.x2, line.y2);
-        //            g2d.drawLine(p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset);
-        //            drawArrowHead(g2d, p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset, size, 30);
-        //        }
         g2d.dispose();
 
 
@@ -352,7 +332,7 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
             }
         }
 
-        // 8) Draw artillery autohit hexes
+        // 8) Draw artillery auto hit hexes
         Player localPlayer = client.getLocalPlayer();
         if (localPlayer != null) {
             for (BoardLocation autoHitHex : localPlayer.getArtyAutoHitHexes()) {
@@ -421,7 +401,7 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
               (int) (color.getAlpha() / alphaDivisor));
     }
 
-    /** Draws a red crosshair for artillery autohit hexes (predesignated only). */
+    /** Draws a red crosshair for artillery auto hit hexes (predesignated only). */
     private void drawAutoHit(Graphics g, Coords hex) {
         int baseX = (hex.getX() * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin + HEX_SIDE[zoom] + xOffset;
         int baseY = (((2 * hex.getY()) + 1 + (hex.getX() % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin + yOffset;
@@ -434,7 +414,7 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
         g.drawLine(baseX, baseY + unitSize + 1, baseX, (baseY + unitSize) - 3);
     }
 
-    /** Draws the symbol for a single entity. Checks visibility in double blind. */
+    /** Draws the symbol for a single entity. Checks visibility in double-blind. */
     private void paintUnit(Graphics g, Entity entity) {
         int x = entity.getPosition().getX();
         int y = entity.getPosition().getY();
@@ -500,11 +480,11 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
         // White border to set off the icon from the background
         g2.setStroke(new BasicStroke(outerBorderWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
         g2.setColor(Color.BLACK);
-        g2.draw(STRAT_BASERECT);
+        g2.draw(STRAT_BASE_RECT);
 
         // Black background to fill forms like the DropShip
         g2.setColor(fontColor);
-        g2.fill(STRAT_BASERECT);
+        g2.fill(STRAT_BASE_RECT);
 
         // Set a thin brush for filled areas (leave a thick brush for line symbols
         if ((entity instanceof Mek) || (entity instanceof ProtoMek)
@@ -536,7 +516,7 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
                 int stringWidth = currentMetrics.stringWidth(s);
                 GlyphVector gv = font.createGlyphVector(fontContext, s);
                 g2.fill(gv.getOutline((int) STRAT_CX - (float) stringWidth / 2,
-                      (float) STRAT_SYMBOLSIZE.getHeight() / 3.0f));
+                      (float) STRAT_SYMBOL_SIZE.getHeight() / 3.0f));
             }
         } else if (entity instanceof MekWarrior) {
             g2.setColor(fontColor);
@@ -548,7 +528,7 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
 
         // Rectangle border for all units
         g2.setColor(borderColor);
-        g2.draw(STRAT_BASERECT);
+        g2.draw(STRAT_BASE_RECT);
 
         // Draw Facing Arrow
         if (facing > -1) {
@@ -564,7 +544,7 @@ public class BoardviewlessMinimapPanel extends JPanel implements OverlayPainter 
     }
 
 
-    /** Draws the symbol for a single entity. Checks visibility in double blind. */
+    /** Draws the symbol for a single entity. Checks visibility in double-blind. */
     private void paintSensor(Graphics g, Entity entity) {
 
         if (EntityVisibilityUtils.onlyDetectedBySensors(client.getLocalPlayer(), entity)) {

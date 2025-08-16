@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,6 +42,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import javax.swing.*;
 
 import megamek.client.ui.Messages;
@@ -54,15 +55,16 @@ import megamek.client.ui.clientGUI.GUIPreferences;
  * @author suvarov454@sourceforge.net
  */
 public class ChoiceDialog extends JDialog implements ActionListener {
+    @Serial
     private static final long serialVersionUID = 3093043054221558221L;
 
     private boolean confirm;
 
-    private JPanel panButtons = new JPanel();
-    private JButton butSelectAll = new JButton(Messages.getString("ChoiceDialog.SelectAll"));
-    private JButton butClearAll = new JButton(Messages.getString("ChoiceDialog.ClearAll"));
-    private JButton butOK = new JButton(Messages.getString("Okay"));
-    private JButton butCancel = new JButton(Messages.getString("Cancel"));
+    private final JPanel panButtons = new JPanel();
+    private final JButton butSelectAll = new JButton(Messages.getString("ChoiceDialog.SelectAll"));
+    private final JButton butClearAll = new JButton(Messages.getString("ChoiceDialog.ClearAll"));
+    private final JButton butOK = new JButton(Messages.getString("Okay"));
+    private final JButton butCancel = new JButton(Messages.getString("Cancel"));
 
     /**
      * The checkboxes for available choices.
@@ -86,8 +88,8 @@ public class ChoiceDialog extends JDialog implements ActionListener {
 
         this.maxChoices = max;
 
-        GridBagLayout gridbag = new GridBagLayout();
-        getContentPane().setLayout(gridbag);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        getContentPane().setLayout(gridBagLayout);
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridwidth = 1;
@@ -123,9 +125,9 @@ public class ChoiceDialog extends JDialog implements ActionListener {
 
                 // Place the choice area in the center
                 // of another panel that is scrolled.
-                JPanel scrollee = new JPanel(new GridBagLayout());
-                scrollee.add(choiceArea, center);
-                JScrollPane scroller = new JScrollPane(scrollee);
+                JPanel scrolled = new JPanel(new GridBagLayout());
+                scrolled.add(choiceArea, center);
+                JScrollPane scroller = new JScrollPane(scrolled);
                 getContentPane().add(scroller, c);
 
                 // Restore the saved value of c.fill.
@@ -187,16 +189,11 @@ public class ChoiceDialog extends JDialog implements ActionListener {
 
         pack();
         Dimension size = getSize();
-        boolean updateSize = false;
         if (size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
             size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
         }
         if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
             size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
-        }
-        if (updateSize) {
-            setSize(size);
-            size = getSize();
         }
         setLocation(parent.getLocation().x + parent.getSize().width / 2
               - size.width / 2, parent.getLocation().y
@@ -208,24 +205,24 @@ public class ChoiceDialog extends JDialog implements ActionListener {
         butCancel.addActionListener(this);
 
         // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panButtons.setLayout(gridbag);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        panButtons.setLayout(gridBagLayout);
 
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(10, 5, 5, 5);
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.fill = GridBagConstraints.VERTICAL;
-        c.ipadx = 20;
-        c.ipady = 5;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new Insets(10, 5, 5, 5);
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.fill = GridBagConstraints.VERTICAL;
+        gridBagConstraints.ipadx = 20;
+        gridBagConstraints.ipady = 5;
 
-        c.gridwidth = 1;
-        gridbag.setConstraints(butOK, c);
+        gridBagConstraints.gridwidth = 1;
+        gridBagLayout.setConstraints(butOK, gridBagConstraints);
         panButtons.add(butOK);
 
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(butCancel, c);
+        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        gridBagLayout.setConstraints(butCancel, gridBagConstraints);
         panButtons.add(butCancel);
     }
 
@@ -234,14 +231,14 @@ public class ChoiceDialog extends JDialog implements ActionListener {
             return;
         }
         if (countChoices() >= maxChoices) {
-            for (int loop = 0; loop < checkboxes.length; loop++) {
-                if (!checkboxes[loop].isSelected()) {
-                    checkboxes[loop].setEnabled(false);
+            for (AbstractButton checkbox : checkboxes) {
+                if (!checkbox.isSelected()) {
+                    checkbox.setEnabled(false);
                 }
             }
         } else {
-            for (int loop = 0; loop < checkboxes.length; loop++) {
-                checkboxes[loop].setEnabled(true);
+            for (AbstractButton checkbox : checkboxes) {
+                checkbox.setEnabled(true);
             }
         }
     }
@@ -311,9 +308,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
         } else if (e.getSource().equals(butOK)) {
             confirm = true;
             setVisible(false);
-        } else if (e.getSource().equals(checkboxes)) {
-
-        } else {
+        } else if (!e.getSource().equals(checkboxes)) {
             confirm = false;
             setVisible(false);
         }
@@ -338,7 +333,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
      *       <code>int</code> indexes from the input array that match the selected choices is returned.
      */
     public int[] getChoices() {
-        int[] retval = null;
+        int[] retVal = null;
 
         // Did the player make a choice?
         if (checkboxes != null && confirm) {
@@ -358,23 +353,23 @@ public class ChoiceDialog extends JDialog implements ActionListener {
             // Do we need to shrink the array?
             if (checkboxes.length == index) {
                 // No, the player selected all choices.
-                retval = temp;
+                retVal = temp;
             } else if (index > 0) {
                 // Yup. Create an array and copy the values from temp.
-                retval = new int[index];
-                System.arraycopy(temp, 0, retval, 0, index);
+                retVal = new int[index];
+                System.arraycopy(temp, 0, retVal, 0, index);
             }
             // If 0 == index, then we want to return a null array.
         }
 
-        return retval;
+        return retVal;
     }
 
     public int countChoices() {
         int index = 0;
         if (checkboxes != null) {
-            for (int loop = 0; loop < checkboxes.length; loop++) {
-                if (checkboxes[loop].isSelected()) {
+            for (AbstractButton checkbox : checkboxes) {
+                if (checkbox.isSelected()) {
                     index++;
                 }
             }

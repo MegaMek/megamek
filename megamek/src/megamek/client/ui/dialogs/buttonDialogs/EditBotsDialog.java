@@ -84,18 +84,18 @@ public class EditBotsDialog extends AbstractButtonDialog {
     private List<Player> ghostAndBotPlayers;
 
     /** Maps a ghost player to the combobox that sets its replacement */
-    private Map<Player, JComboBox<String>> ghostChoosers = new HashMap<>();
+    private final Map<Player, JComboBox<String>> ghostChoosers = new HashMap<>();
 
     /** Maps a bot player to the combobox that allows it to be edited or kicked */
-    private Map<Player, JComboBox<String>> localBotChoosers = new HashMap<>();
+    private final Map<Player, JComboBox<String>> localBotChoosers = new HashMap<>();
     /** Maps a bot player to the combobox that allows it to be kicked */
-    private Map<Player, JComboBox<String>> remoteBotChoosers = new HashMap<>();
+    private final Map<Player, JComboBox<String>> remoteBotChoosers = new HashMap<>();
 
     /** Maps a ghost player to the config button for the bot settings */
-    private Map<Player, JButton> configButtons = new HashMap<>();
+    private final Map<Player, JButton> configButtons = new HashMap<>();
 
     /** Maps a ghost player to bot settings chosen for it */
-    private Map<Player, BehaviorSettings> botConfigs = new HashMap<>();
+    private final Map<Player, BehaviorSettings> botConfigs = new HashMap<>();
     private final static String LOCAL = Messages.getString("EditBotsDialog.local");
     private final static String REMOTE = Messages.getString("EditBotsDialog.remote");
 
@@ -189,9 +189,8 @@ public class EditBotsDialog extends AbstractButtonDialog {
                 gridPanel.add(restoreButton(player, savedSettingsExist));
             } else if (clientGui.getClient().isLocalBot(player)) {
                 AbstractClient bot = clientGui.getClient().getBotClient(player);
-                if (bot instanceof Princess) {
+                if (bot instanceof Princess princess) {
                     gridPanel.add(new JLabel(LOCAL + " Princess"));
-                    Princess princess = (Princess) bot;
                     try {
                         // Copy to protect the current settings
                         botConfigs.put(player, princess.getBehaviorSettings().getCopy());

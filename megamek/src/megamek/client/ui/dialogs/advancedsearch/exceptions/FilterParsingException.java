@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,26 +30,12 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.dialogs.advancedsearch;
+package megamek.client.ui.dialogs.advancedsearch.exceptions;
 
-import java.awt.Component;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
+public class FilterParsingException extends Exception {
+    public String msg;
 
-class TechBaseRenderer extends DefaultTableCellRenderer {
-
-    TechBaseRenderer() {
-        super();
-        setHorizontalAlignment(SwingConstants.CENTER);
-    }
-
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-          int row, int column) {
-        if (value.equals("Inner Sphere")) {
-            value = "IS";
-        }
-        return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    FilterParsingException(String m) {
+        msg = m;
     }
 }

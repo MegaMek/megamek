@@ -77,24 +77,16 @@ class BoardTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int column) {
-        switch (column) {
-            case COL_NAME:
-                return Messages.getString("AdvancedSearchMapDialog.boardTableModel.name");
-            case COL_SIZE:
-                return Messages.getString("AdvancedSearchMapDialog.boardTableModel.size");
-            default:
-                return "??";
-        }
+        return switch (column) {
+            case COL_NAME -> Messages.getString("AdvancedSearchMapDialog.boardTableModel.name");
+            case COL_SIZE -> Messages.getString("AdvancedSearchMapDialog.boardTableModel.size");
+            default -> "??";
+        };
     }
 
     @Override
     public Class<?> getColumnClass(int c) {
         return getValueAt(0, c).getClass();
-    }
-
-    @Override
-    public boolean isCellEditable(int row, int col) {
-        return false;
     }
 
     @Override
@@ -109,7 +101,7 @@ class BoardTableModel extends AbstractTableModel {
         String value = "";
 
         if (col == COL_NAME) {
-            value = path.substring(path.lastIndexOf("\\") + 1, path.length());
+            value = path.substring(path.lastIndexOf("\\") + 1);
             value = value.substring(0, value.lastIndexOf(".board"));
             value = value.replace(width + "x" + height, "").trim();
         } else if (col == COL_SIZE) {

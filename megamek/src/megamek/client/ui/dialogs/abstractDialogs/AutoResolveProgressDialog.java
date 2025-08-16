@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -184,10 +184,7 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
     }
 
     public static int clamp(long value, int min, int max) {
-        if (min > max) {
-            throw new IllegalArgumentException(min + " > " + max);
-        }
-        return (int) Math.min(max, Math.max(value, min));
+        return AutoResolveChanceDialog.clamp(value, min, max);
     }
 
     /**
@@ -264,7 +261,6 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
                                 logger.info("Tick");
                                 setProgress(i++ % 100);
                                 if (i > 4800) {
-                                    // its been at least an hour!
                                     throw new TimeoutException("Timeout");
                                 }
                             }

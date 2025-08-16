@@ -42,11 +42,10 @@ import megamek.common.annotations.Nullable;
 /**
  * FontDisplay is a display wrapper around a Font, primarily to be used in ComboBoxes. This is largely for performance
  * reasons, as it doesn't require recalculating the font and/ or proper name each time.
+ *
+ * @param font region Variable Declarations
  */
-public class FontDisplay {
-    //region Variable Declarations
-    private final Font font;
-    private final String displayName;
+public record FontDisplay(Font font, String displayName) {
     //endregion Variable Declarations
 
     //region Constructors
@@ -54,16 +53,7 @@ public class FontDisplay {
         this(Font.decode(familyName).deriveFont(Font.PLAIN, 12f), familyName);
     }
 
-    public FontDisplay(final Font font, final String displayName) {
-        this.font = font;
-        this.displayName = displayName;
-    }
     //endregion Constructors
-
-    //region Getters/Setters
-    public Font getFont() {
-        return font;
-    }
     //endregion Getters/Setters
 
     public static List<FontDisplay> getSortedFontDisplays() {
@@ -82,7 +72,7 @@ public class FontDisplay {
         } else if (this == other) {
             return true;
         } else if (other instanceof FontDisplay) {
-            return getFont().equals(((FontDisplay) other).getFont());
+            return font().equals(((FontDisplay) other).font());
         } else {
             return false;
         }

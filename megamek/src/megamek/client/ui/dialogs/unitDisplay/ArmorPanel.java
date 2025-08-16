@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -70,7 +70,7 @@ class ArmorPanel extends PicMap {
     private int minBottomMargin;
     private int minRightMargin;
 
-    private UnitDisplayPanel unitDisplayPanel;
+    private final UnitDisplayPanel unitDisplayPanel;
 
     private static final int minTankTopMargin = 8;
     private static final int minTankLeftMargin = 8;

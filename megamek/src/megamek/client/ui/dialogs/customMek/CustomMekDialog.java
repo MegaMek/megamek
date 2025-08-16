@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -979,7 +979,7 @@ public class CustomMekDialog extends AbstractButtonDialog
                     // we need to determine whether this aero is airborne or not in order for prohibited terrain and
                     // stacking to work right in the deployment phase. This is very tricky because in atmosphere,
                     // zero altitude does not necessarily mean grounded
-                    if (altitude <= 0) {
+                    if (altitude == 0) {
                         a.land();
                     } else {
                         a.liftOff(altitude);
@@ -1179,29 +1179,29 @@ public class CustomMekDialog extends AbstractButtonDialog
         final boolean hasStealth = entities.stream().allMatch(Entity::hasStealth);
 
         boolean eligibleForOffBoard = true;
-        int bh = 0;
-        int bw = 0;
+        int boardHeight;
+        int boardWeight;
         if (this.clientGUI != null) {
-            bh = clientGUI.getClient().getMapSettings().getBoardHeight();
-            bw = clientGUI.getClient().getMapSettings().getBoardWidth();
+            boardHeight = clientGUI.getClient().getMapSettings().getBoardHeight();
+            boardWeight = clientGUI.getClient().getMapSettings().getBoardWidth();
         } else {
-            bh = client.getMapSettings().getBoardHeight();
-            bw = client.getMapSettings().getBoardWidth();
+            boardHeight = client.getMapSettings().getBoardHeight();
+            boardWeight = client.getMapSettings().getBoardWidth();
         }
-        int x = Math.min(entity.getStartingAnyNWx(false) + 1, bw);
-        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(x, 0, bw, 1);
+        int x = Math.min(entity.getStartingAnyNWx(false) + 1, boardWeight);
+        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(x, 0, boardWeight, 1);
         spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);
         spinStartingAnyNWx.setValue(x);
-        int y = Math.min(entity.getStartingAnyNWy(false) + 1, bh);
-        SpinnerNumberModel mStartingAnyNWy = new SpinnerNumberModel(y, 0, bh, 1);
+        int y = Math.min(entity.getStartingAnyNWy(false) + 1, boardHeight);
+        SpinnerNumberModel mStartingAnyNWy = new SpinnerNumberModel(y, 0, boardHeight, 1);
         spinStartingAnyNWy = new JSpinner(mStartingAnyNWy);
         spinStartingAnyNWy.setValue(y);
-        x = Math.min(entity.getStartingAnySEx(false) + 1, bw);
-        SpinnerNumberModel mStartingAnySEx = new SpinnerNumberModel(x, 0, bw, 1);
+        x = Math.min(entity.getStartingAnySEx(false) + 1, boardWeight);
+        SpinnerNumberModel mStartingAnySEx = new SpinnerNumberModel(x, 0, boardWeight, 1);
         spinStartingAnySEx = new JSpinner(mStartingAnySEx);
         spinStartingAnySEx.setValue(x);
-        y = Math.min(entity.getStartingAnySEy(false) + 1, bh);
-        SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(y, 0, bh, 1);
+        y = Math.min(entity.getStartingAnySEy(false) + 1, boardHeight);
+        SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(y, 0, boardHeight, 1);
         spinStartingAnySEy = new JSpinner(mStartingAnySEy);
         spinStartingAnySEy.setValue(y);
         for (Entity e : entities) {

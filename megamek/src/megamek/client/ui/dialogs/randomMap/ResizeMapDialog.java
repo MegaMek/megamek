@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,6 +51,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.Serial;
 import java.util.Set;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -74,10 +75,9 @@ import megamek.logging.MMLogger;
 public class ResizeMapDialog extends JDialog implements ActionListener, KeyListener {
     private static final MMLogger logger = MMLogger.create(ResizeMapDialog.class);
 
+    @Serial
     private static final long serialVersionUID = 7758433698878123806L;
 
-    // External helpers.
-    private final JFrame PARENT;
     private final IMapSettingsObserver MAP_SETTINGS_OBSERVER;
     private final Client CLIENT;
 
@@ -128,7 +128,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
           MapSettings mapSettings) {
         super(parent, Messages.getString("ExpandMapDialog.title"), true);
         this.mapSettings = mapSettings;
-        PARENT = parent;
+        // External helpers.
         MAP_SETTINGS_OBSERVER = mapSettingsObserver;
         CLIENT = client;
         basicPanel = new RandomMapPanelBasicPanel(mapSettings);
@@ -161,7 +161,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         pack();
         validate();
         setSize(new Dimension(600, 600));
-        setLocationRelativeTo(PARENT);
+        setLocationRelativeTo(parent);
     }
 
     private void initGUI() {
@@ -390,7 +390,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
             option = fileChooser.showOpenDialog(null);
         }
 
-        // If the user did chose to open...
+        // If the user did choose to open...
         if (JFileChooser.APPROVE_OPTION == option) {
             // Get the file that was selected and return it.
             return fileChooser.getSelectedFile();

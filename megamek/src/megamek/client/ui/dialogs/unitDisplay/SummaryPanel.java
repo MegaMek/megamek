@@ -167,7 +167,7 @@ public class SummaryPanel extends PicMap {
      */
     public void displayMek(Entity entity) {
         Player localPlayer = unitDisplayPanel.getClientGUI().getClient().getLocalPlayer();
-        String txt = "";
+        String txt;
 
         if (entity == null) {
             txt = padLeft("No Unit");

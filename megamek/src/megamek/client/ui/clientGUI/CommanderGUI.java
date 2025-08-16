@@ -52,7 +52,7 @@ import megamek.client.ui.clientGUI.audio.SoundType;
 import megamek.client.ui.clientGUI.overlay.ChatOverlay;
 import megamek.client.ui.dialogs.BotCommands.BotCommandsPanel;
 import megamek.client.ui.dialogs.miniReport.MiniReportDisplayPanel;
-import megamek.client.ui.dialogs.minimap.BoardviewlessMinimapPanel;
+import megamek.client.ui.dialogs.minimap.BoardViewLessMinimapPanel;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.RawImagePanel;
@@ -73,7 +73,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
     private final MegaMekController controller;
     private final Map<String, AbstractClient> localBots;
     private final JFrame frame;
-    private BoardviewlessMinimapPanel minimap;
+    private BoardViewLessMinimapPanel minimap;
     private boolean isLoading;
     private JProgressBar progressBar;
     private boolean alive = true;
@@ -150,7 +150,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         progressBar.setIndeterminate(true);
         progressBar.setStringPainted(true);
         progressBar.setVisible(true);
-        minimap = new BoardviewlessMinimapPanel(client);
+        minimap = new BoardViewLessMinimapPanel(client);
         var chatOverlay = new ChatOverlay(8);
         minimap.addOverlay(chatOverlay);
         centerPanel.add(splashImage, BorderLayout.CENTER);

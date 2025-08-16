@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,7 +43,7 @@ public class PrincessHelpDialog extends AbstractHelpDialog {
         super(frame, "BoardEditorHelpDialog3", Messages.getString("BotConfigDialog.princessHelpPath"));
         // keep it from being zero-sized when first opened by a player:
         setMinimumSize(new Dimension(400, 400));
-        // The BotConfigDialog is modal and would block this non-modal help window, therfore unblock it:
+        // The BotConfigDialog is modal and would block this non-modal help window, therefore unblock it:
         setModalExclusionType(ModalExclusionType.TOOLKIT_EXCLUDE);
     }
 }

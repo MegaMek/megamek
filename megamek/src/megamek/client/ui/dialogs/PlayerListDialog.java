@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,6 +39,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.List;
@@ -58,13 +59,14 @@ import megamek.common.Team;
 
 public class PlayerListDialog extends JDialog implements ActionListener {
 
+    @Serial
     private static final long serialVersionUID = 7270469195373150106L;
 
-    private JList<String> playerList = new JList<>(new DefaultListModel<>());
+    private final JList<String> playerList = new JList<>(new DefaultListModel<>());
 
-    private Client client;
-    private JButton butOkay;
-    private boolean modal;
+    private final Client client;
+    private final JButton butOkay;
+    private final boolean modal;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     public PlayerListDialog(JFrame parent, Client client, boolean modal) {
@@ -125,7 +127,7 @@ public class PlayerListDialog extends JDialog implements ActionListener {
         ((DefaultListModel<String>) playerList.getModel()).removeAllElements();
 
         for (Player player : sortedPlayerList(client.getGame())) {
-            StringBuffer playerDisplay = new StringBuffer(String.format("%-12s", player.getName()));
+            StringBuilder playerDisplay = new StringBuilder(String.format("%-12s", player.getName()));
 
             // Append team information
             if (displayTeam) {

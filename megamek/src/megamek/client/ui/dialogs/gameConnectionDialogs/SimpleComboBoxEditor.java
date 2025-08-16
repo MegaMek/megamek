@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,26 +30,39 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.dialogs.advancedsearch;
+package megamek.client.ui.dialogs.gameConnectionDialogs;
 
 import java.awt.Component;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
+import java.io.Serial;
+import javax.swing.ComboBoxEditor;
+import javax.swing.JTextField;
 
-class TechBaseRenderer extends DefaultTableCellRenderer {
+/**
+ * We need a way to access the action map for a JComboBox editor, so that we can have it fire an action when enter is
+ * pressed. This simple class allows this.
+ */
+public class SimpleComboBoxEditor extends JTextField implements ComboBoxEditor {
 
-    TechBaseRenderer() {
-        super();
-        setHorizontalAlignment(SwingConstants.CENTER);
+    @Serial
+    private static final long serialVersionUID = 4496820410417436582L;
+
+    @Override
+    public Component getEditorComponent() {
+        return this;
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-          int row, int column) {
-        if (value.equals("Inner Sphere")) {
-            value = "IS";
+    public void setItem(Object anObject) {
+        if (anObject != null) {
+            setText(anObject.toString());
+        } else {
+            setText(null);
         }
-        return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     }
+
+    @Override
+    public Object getItem() {
+        return getText();
+    }
+
 }

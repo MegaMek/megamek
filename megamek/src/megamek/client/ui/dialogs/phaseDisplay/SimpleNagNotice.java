@@ -47,7 +47,7 @@ import megamek.common.preference.PreferenceManager;
 
 /**
  * This is a class to display a simple modal info dialog using JOptionPane. When a preference key is given by an
- * implementing class, the dialog will show a "Dont show again" checkbox and the dialog will autmatically store the
+ * implementing class, the dialog will show a "Don't show again" checkbox and the dialog will automatically store the
  * result of the checkbox and act accordingly.
  */
 public abstract class SimpleNagNotice {
@@ -67,7 +67,7 @@ public abstract class SimpleNagNotice {
 
     /**
      * Override this method to provide the (localized) message to show in the notice. The message will be shown as HTML
-     * and HTML and BODY tags will be added. Therefore, HTML tags can be used in the message but it should not include
+     * and HTML and BODY tags will be added. Therefore, HTML tags can be used in the message, but it should not include
      * HTML, HEAD or BODY tags.
      *
      * @return A message to show in the dialog.
@@ -83,11 +83,11 @@ public abstract class SimpleNagNotice {
 
     /**
      * This method may be overridden to provide a non-empty and unique key String for the Client Preferences. When this
-     * is done, a "Dont show again" checkbox will be shown and the result will be stored in the Client Preferences using
-     * the given key. When this is done and the checkbox is activated, this notice will no longer be shown when show()
-     * is called.
+     * is done, a "Don't show again" checkbox will be shown and the result will be stored in the Client Preferences
+     * using the given key. When this is done and the checkbox is activated, this notice will no longer be shown when
+     * show() is called.
      *
-     * @return A key to store a "Dont show again" value in the Client Preferences
+     * @return A key to store a "Don't show again" value in the Client Preferences
      */
     protected String preferenceKey() {
         return "";

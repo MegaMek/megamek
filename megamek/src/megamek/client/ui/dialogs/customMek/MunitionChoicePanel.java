@@ -45,7 +45,6 @@ import javax.swing.JPanel;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -78,11 +77,6 @@ public class MunitionChoicePanel extends JPanel {
     JLabel labHotLoad = new JLabel(Messages.getString("CustomMekDialog.switchToHotLoading"));
 
     JCheckBox chHotLoad = new JCheckBox();
-
-    public MunitionChoicePanel(AmmoMounted ammoMounted, ArrayList<AmmoType> vTypes,
-          List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels, Entity entity, ClientGUI clientGUI) {
-        this(ammoMounted, vTypes, weaponAmmoChoicePanels, entity, clientGUI.getClient().getGame());
-    }
 
     public MunitionChoicePanel(AmmoMounted ammoMounted, ArrayList<AmmoType> vTypes,
           List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels, Entity entity, Game game) {

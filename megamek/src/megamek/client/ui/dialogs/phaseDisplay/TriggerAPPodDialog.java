@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,6 +43,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -61,45 +62,35 @@ import megamek.common.Mounted;
 import megamek.common.actions.TriggerAPPodAction;
 
 /**
- * A dialog displayed to the player when they have an opportunity to trigger an Anti-Personell Pod on one of their
+ * A dialog displayed to the player when they have an opportunity to trigger an Anti-Personal Pod on one of their
  * units.
  */
 public class TriggerAPPodDialog extends JDialog implements ActionListener {
+    @Serial
     private static final long serialVersionUID = -9009039614015364943L;
-    private JButton butOkay = new JButton(Messages.getString("Okay"));
-    private JTextArea labMessage;
 
     /**
      * The <code>FirePodTracker</code>s for the entity's active AP Pods.
      */
-    private ArrayList<TriggerPodTracker> trackers = new ArrayList<>();
+    private final ArrayList<TriggerPodTracker> trackers = new ArrayList<>();
 
     /**
      * The <code>int</code> ID of the entity that can fire AP Pods.
      */
-    private int entityId = Entity.NONE;
+    private final int entityId;
 
     /**
-     * A helper class to track when a AP Pod has been selected to be triggered.
+     * A helper class to track when an AP Pod has been selected to be triggered.
+     *
+     * @param podNum   The equipment number of the AP Pod that this is listening to.
+     * @param checkbox The <code>JCheckBox</code> being tracked.
      */
-    private class TriggerPodTracker {
-
-        /**
-         * The equipment number of the AP Pod that this is listening to.
-         */
-        private int podNum = Entity.NONE;
-
-        /**
-         * The <code>JCheckBox</code> being tracked.
-         */
-        private JCheckBox checkbox;
+    private record TriggerPodTracker(JCheckBox checkbox, int podNum) {
 
         /**
          * Create a tracker.
          */
-        public TriggerPodTracker(JCheckBox box, int pod) {
-            podNum = pod;
-            checkbox = box;
+        private TriggerPodTracker {
         }
 
         /**
@@ -131,7 +122,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
         super(parent, Messages.getString("TriggerAPPodDialog.title"), true);
         entityId = entity.getId();
 
-        labMessage = new JTextArea(Messages.getString("TriggerAPPodDialog.selectPodsToTrigger",
+        JTextArea labMessage = new JTextArea(Messages.getString("TriggerAPPodDialog.selectPodsToTrigger",
               entity.getDisplayName()));
         labMessage.setEditable(false);
         labMessage.setOpaque(false);
@@ -146,16 +137,15 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
             if (mount.getType().hasFlag(MiscType.F_AP_POD)) {
 
                 // Create a checkbox for the pod, and add it to the panel.
-                StringBuffer message = new StringBuffer();
-                message.append(entity.getLocationName(mount.getLocation()))
-                      .append(' ')
-                      .append(mount.getName());
-                JCheckBox pod = new JCheckBox(message.toString());
+                String message = entity.getLocationName(mount.getLocation())
+                      + ' '
+                      + mount.getName();
+                JCheckBox pod = new JCheckBox(message);
                 panPods.add(pod);
 
                 // Can the entity fire the pod?
                 if (mount.canFire()) {
-                    // Yup. Add a traker for this pod.
+                    // Yup. Add a tracker for this pod.
                     TriggerPodTracker tracker = new TriggerPodTracker(pod,
                           entity.getEquipmentNum(mount));
                     trackers.add(tracker);
@@ -169,22 +159,23 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
         } // Look at the next piece of equipment.
 
         // OK button.
+        JButton butOkay = new JButton(Messages.getString("Okay"));
         butOkay.addActionListener(this);
 
         // layout
-        GridBagLayout gridbag = new GridBagLayout();
+        GridBagLayout gridBagLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        getContentPane().setLayout(gridbag);
+        getContentPane().setLayout(gridBagLayout);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 10, 10, 10);
         c.weightx = 1.0;
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(labMessage, c);
+        gridBagLayout.setConstraints(labMessage, c);
         getContentPane().add(labMessage);
 
-        gridbag.setConstraints(panPods, c);
+        gridBagLayout.setConstraints(panPods, c);
         getContentPane().add(panPods);
 
         c.weightx = 1.0;
@@ -192,7 +183,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
         c.fill = GridBagConstraints.VERTICAL;
         c.ipadx = 20;
         c.ipady = 5;
-        gridbag.setConstraints(butOkay, c);
+        gridBagLayout.setConstraints(butOkay, c);
         getContentPane().add(butOkay);
 
         addWindowListener(new WindowAdapter() {
@@ -204,16 +195,11 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
 
         pack();
         Dimension size = getSize();
-        boolean updateSize = false;
         if (size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
             size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
         }
         if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
             size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
-        }
-        if (updateSize) {
-            setSize(size);
-            size = getSize();
         }
         setResizable(false);
         setLocation(parent.getLocation().x + parent.getSize().width / 2

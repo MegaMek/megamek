@@ -186,8 +186,6 @@ public class ASAdvancedSearchPanel extends JPanel {
     JToggleButton unitRoleTransport = new JToggleButton(UnitRole.TRANSPORT.toString());
     JToggleButton unitRoleNone = new JToggleButton(UnitRole.NONE.toString());
 
-    private final JButton btnClear = new JButton(Messages.getString("MekSelectorDialog.ClearTab"));
-
     public ASAdvancedSearchPanel() {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         add(unitTypePanel());
@@ -222,6 +220,7 @@ public class ASAdvancedSearchPanel extends JPanel {
         add(simplePanel(useAbility1, ability1));
         add(simplePanel(useAbility2, ability2));
         add(new DottedSeparator());
+        JButton btnClear = new JButton(Messages.getString("MekSelectorDialog.ClearTab"));
         add(simplePanel(btnClear));
         initializeCombos();
         updateEnabled();
@@ -293,15 +292,13 @@ public class ASAdvancedSearchPanel extends JPanel {
                     || mekSummary.getFrontArc().hasSUA(ability1.getSelectedItem())
                     || mekSummary.getRearArc().hasSUA(ability1.getSelectedItem()))))) {
             return false;
-        } else if (useAbility2.isSelected() &&
-              !(mekSummary.getSpecialAbilities().hasSUA(ability2.getSelectedItem())
-                    || (mekSummary.usesArcs() && (mekSummary.getLeftArc().hasSUA(ability2.getSelectedItem())
-                    || mekSummary.getRightArc().hasSUA(ability2.getSelectedItem())
-                    || mekSummary.getFrontArc().hasSUA(ability2.getSelectedItem())
-                    || mekSummary.getRearArc().hasSUA(ability2.getSelectedItem()))))) {
-            return false;
         } else {
-            return true;
+            return !useAbility2.isSelected() ||
+                  (mekSummary.getSpecialAbilities().hasSUA(ability2.getSelectedItem())
+                        || (mekSummary.usesArcs() && (mekSummary.getLeftArc().hasSUA(ability2.getSelectedItem())
+                        || mekSummary.getRightArc().hasSUA(ability2.getSelectedItem())
+                        || mekSummary.getFrontArc().hasSUA(ability2.getSelectedItem())
+                        || mekSummary.getRearArc().hasSUA(ability2.getSelectedItem()))));
         }
     }
 

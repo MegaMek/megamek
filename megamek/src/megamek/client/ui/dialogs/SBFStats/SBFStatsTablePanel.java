@@ -118,10 +118,10 @@ public class SBFStatsTablePanel {
         addGroupName(summaryPanel, formation.getName());
         addGridElement(summaryPanel, formation.getType().toString(), UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getSize() + "", UIUtil.uiDarkBlue());
-        addGridElement(summaryPanel, formation.getMovement() + formation.getMovementCode() + "", UIUtil.uiDarkBlue());
+        addGridElement(summaryPanel, formation.getMovement() + formation.getMovementCode(), UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getJumpMove() + "", UIUtil.uiDarkBlue());
         addGridElement(summaryPanel,
-              formation.getTrspMovement() + formation.getTrspMovementCode() + "",
+              formation.getTrspMovement() + formation.getTrspMovementCode(),
               UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getTmm() + "", UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getTactics() + "", UIUtil.uiDarkBlue());
@@ -129,7 +129,7 @@ public class SBFStatsTablePanel {
         addGridElement(summaryPanel, formation.getSkill() + "", UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getPointValue() + "", UIUtil.uiDarkBlue());
         addGridElement(summaryPanel,
-              formation.getSpecialsDisplayString(", ", formation) + "",
+              formation.getSpecialsDisplayString(", ", formation),
               UIUtil.uiDarkBlue(),
               FlowLayout.LEFT);
         addConversionInfo(summaryPanel, (FlexibleCalculationReport) formation.getConversionReport(), parent);

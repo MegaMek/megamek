@@ -52,7 +52,6 @@ import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.ChatCommands;
 import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.audio.AudioService;
 import megamek.client.ui.clientGUI.audio.SoundType;
 import megamek.client.ui.util.KeyCommandBind;
@@ -80,7 +79,6 @@ public class BotCommandsPanel extends JPanel {
     // This latch is used only to change the state of the button from pause to continue and back
     private boolean pauseLatch = false;
     private JButton pauseContinue;
-    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     /**
      * Bot Commands Panel constructor.
@@ -198,9 +196,7 @@ public class BotCommandsPanel extends JPanel {
         setMiscButton(
               Messages.getString("BotCommandPanel.Victory.title"),
               Messages.getString("BotCommandPanel.Victory.tooltip"),
-              evt -> {
-                  client.sendChat("/victory");
-              });
+              evt -> client.sendChat("/victory"));
     }
 
     /**

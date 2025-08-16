@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.io.Serial;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -48,6 +49,7 @@ import megamek.server.Server;
 
 /** The Connect to game (as Bot or Player) dialog */
 public class ConnectDialog extends AbstractGameConnectionDialog {
+    @Serial
     private static final long serialVersionUID = 5895056240077042429L;
 
     private String serverAddress;

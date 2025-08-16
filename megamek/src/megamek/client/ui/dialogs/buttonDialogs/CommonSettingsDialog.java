@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -90,6 +90,7 @@ import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.PlayerColour;
 import megamek.client.ui.widget.SkinXMLHandler;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.Configuration;
 import megamek.common.KeyBindParser;
 import megamek.common.MapSettings;
@@ -166,8 +167,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         @Override
         public void mouseDragged(MouseEvent e) {
             Object src = e.getSource();
-            if (mouseDragging && (src instanceof JList)) {
-                JList<?> srcList = (JList<?>) src;
+            if (mouseDragging && (src instanceof JList<?> srcList)) {
                 DefaultListModel<?> srcModel = (DefaultListModel<?>) srcList.getModel();
                 int currentIndex = srcList.locationToIndex(e.getPoint());
                 if (currentIndex != dragSourceIndex) {
@@ -211,7 +211,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           "CommonSettingsDialog.highQualityGraphics"));
     private final JCheckBox chkHighPerformanceGraphics = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.highPerformanceGraphics"));
-    private final JCheckBox showWpsinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsinTT"));
+    private final JCheckBox showWpsInTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsinTT"));
     private final JCheckBox showWpsLocinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsLocinTT"));
     private final JCheckBox showArmorMiniVisTT = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.showArmorMiniVisTT"));
@@ -220,7 +220,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private MMComboBox<WeaponSortOrder> comboDefaultWeaponSortOrder;
     private JTextField tooltipDelay;
     private JTextField tooltipDismissDelay;
-    private JTextField tooltipDistSupression;
+    private JTextField tooltipDistSuppression;
     private JComboBox<String> unitStartChar;
     private JTextField maxPathfinderTime;
     private final JCheckBox getFocus = new JCheckBox(Messages.getString("CommonSettingsDialog.getFocus"));
@@ -257,7 +257,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private JTextField stampFormat;
     private final JCheckBox enableExperimentalBotFeatures = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.enableExperimentalBotFeatures"));
-    private final JCheckBox defaultAutoejectDisabled = new JCheckBox(Messages.getString(
+    private final JCheckBox defaultAutoEjectDisabled = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.defaultAutoejectDisabled"));
     private final JCheckBox useAverageSkills =
           new JCheckBox(Messages.getString("CommonSettingsDialog.useAverageSkills"));
@@ -275,7 +275,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           "CommonSettingsDialog.startSearchlightsOn"));
     private final JCheckBox showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel"));
     private final JCheckBox showDamageDecal = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageDecal"));
-    private final JCheckBox showMapsheets = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapsheets"));
+    private final JCheckBox showMapSheets = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapsheets"));
     private final JCheckBox aOHexShadows = new JCheckBox(Messages.getString("CommonSettingsDialog.aOHexSHadows"));
     private final JCheckBox floatingIso = new JCheckBox(Messages.getString("CommonSettingsDialog.floatingIso"));
     private final JCheckBox mmSymbol = new JCheckBox(Messages.getString("CommonSettingsDialog.mmSymbol"));
@@ -296,7 +296,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final JCheckBox useAutoCenter = new JCheckBox(Messages.getString("CommonSettingsDialog.useAutoCenter"));
     private final JCheckBox useAutoSelectNext = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.useAutoSelectNext"));
-    private final JCheckBox levelhighlight = new JCheckBox(Messages.getString("CommonSettingsDialog.levelHighlight"));
+    private final JCheckBox levelHighlight = new JCheckBox(Messages.getString("CommonSettingsDialog.levelHighlight"));
     private final JCheckBox shadowMap = new JCheckBox(Messages.getString("CommonSettingsDialog.useShadowMap"));
     private final JCheckBox hexInclines = new JCheckBox(Messages.getString("CommonSettingsDialog.useInclines"));
     private final JCheckBox mouseWheelZoom = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoom"));
@@ -327,8 +327,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private JTextField moveFontSize;
     private final JComboBox<String> fontStyleChooserMoveFont = new JComboBox<>();
 
-    private ColourSelectorButton csbFireSolnCanSeeColor;
-    private ColourSelectorButton csbFireSolnNoSeeColor;
+    private ColourSelectorButton csbFireSolutionCanSeeColor;
+    private ColourSelectorButton csbFireSolutionNoSeeColor;
     private ColourSelectorButton csbFieldOfFireMinColor;
     private ColourSelectorButton csbFieldOfFireShortColor;
     private ColourSelectorButton csbFieldOfFireMediumColor;
@@ -343,7 +343,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private ColourSelectorButton csbLowFoliageColor;
     private ColourSelectorButton csbBoardTextColor;
     private ColourSelectorButton csbBoardSpaceTextColor;
-    private ColourSelectorButton csbMapsheetColor;
+    private ColourSelectorButton csbMapSheetColor;
     private JSpinner attackArrowTransparency;
     private JSpinner ecmTransparency;
     private JSpinner movePathPersistenceOnMiniMap;
@@ -377,7 +377,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     private JLabel stampFormatLabel;
     private JLabel gameLogFilenameLabel;
-    private JLabel autoResolveLogFilenameLabel;
 
     private final JCheckBox gameSummaryBV =
           new JCheckBox(Messages.getString("CommonSettingsDialog.gameSummaryBV.name"));
@@ -403,7 +402,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> targetingPhaseCommands;
 
     // Unit Display order
-    private DefaultListModel<String> unitDisplayNonTabbed = new DefaultListModel<>();
+    private final DefaultListModel<String> unitDisplayNonTabbed = new DefaultListModel<>();
     private final StatusBarPhaseDisplay.CommandComparator cmdComp = new StatusBarPhaseDisplay.CommandComparator();
     private final PhaseCommandListMouseAdapter cmdMouseAdaptor = new PhaseCommandListMouseAdapter();
 
@@ -423,7 +422,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private ColourSelectorButton csbUnitTooltipBlockFGColor;
     private ColourSelectorButton csbUnitTooltipTerrainFGColor;
     private ColourSelectorButton csbUnitTooltipBGColor;
-    private ColourSelectorButton csbUnitTooltipLightBGColor;
     private ColourSelectorButton csbUnitTooltipBuildingBGColor;
     private ColourSelectorButton csbUnitTooltipAltBGColor;
     private ColourSelectorButton csbUnitTooltipBlockBGColor;
@@ -446,7 +444,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private JTextField unitDisplayHeatLevel4Text;
     private JTextField unitDisplayHeatLevel5Text;
     private JTextField unitDisplayHeatLevel6Text;
-    private JComboBox<String> unitTooltipSeenbyCbo;
+    private JComboBox<String> unitTooltipSeenByCbo;
     private JTextField unitDisplayWeaponListHeightText;
 
     private ColourSelectorButton csbUnitTooltipArmorMiniIntact;
@@ -510,9 +508,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final JCheckBox planetaryConditionsShowIndicators = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.planetaryConditionsShowIndicators"));
     private JSpinner planetaryConditionsBackgroundTransparency;
-    private JLabel traceOverlayTransparencyLabel;
     private JSlider traceOverlayTransparencySlider;
-    private JLabel traceOverlayScaleLabel;
     private JSlider traceOverlayScaleSlider;
     private JSlider traceOverlayOriginXSlider;
     private JSlider traceOverlayOriginYSlider;
@@ -528,14 +524,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog
      */
     private Map<String, JTextField> cmdKeyMap;
 
-    /** Maps command strings to a Integer for updating the key for the command. */
+    /** Maps command strings to an Integer for updating the key for the command. */
     private Map<String, Integer> cmdKeyCodeMap;
 
     private ClientGUI clientgui = null;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
-    private static final UnitDisplayOrderPreferences UDOP = UnitDisplayOrderPreferences.getInstance();
+    private static final UnitDisplayOrderPreferences UNIT_DISPLAY_ORDER_PREFERENCES = UnitDisplayOrderPreferences.getInstance();
     private static final ButtonOrderPreferences BOP = ButtonOrderPreferences.getInstance();
 
     private static final String[] LOCALE_CHOICES = { "en", "de", "ru", "es" };
@@ -550,7 +546,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private boolean savedAOHexShadows;
     private boolean savedShadowMap;
     private boolean savedHexInclines;
-    private boolean savedLevelhighlight;
+    private boolean savedLevelHighlight;
     private boolean savedFloatingIso;
     private boolean savedMmSymbol;
     private boolean savedDrawFacingArrowsOnMiniMap;
@@ -574,7 +570,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     HashMap<String, String> savedAdvancedOpt = new HashMap<>();
 
     /**
-     * Constructs the Client Settings Dialog with a clientgui (used within the client, i.e. in lobby and game).
+     * Constructs the Client Settings Dialog with a {@link ClientGUI} (used within the client, i.e. in lobby and game).
      */
     public CommonSettingsDialog(JFrame owner, ClientGUI cg) {
         this(owner);
@@ -582,7 +578,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     }
 
     /**
-     * Constructs the Client Settings Dialog without a clientgui (used in the main menu and board editor).
+     * Constructs the Client Settings Dialog without a {@link ClientGUI} (used in the main menu and board editor).
      */
     public CommonSettingsDialog(JFrame owner) {
         super(owner, true, "ClientSettings", "CommonSettingsDialog.title");
@@ -806,18 +802,18 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               Messages.getString("CommonSettingsDialog.highQualityGraphics.tooltip")));
         comps.add(checkboxEntry(chkHighPerformanceGraphics,
               Messages.getString("CommonSettingsDialog.highPerformanceGraphics.tooltip")));
-        showMapsheets.addItemListener(this);
+        showMapSheets.addItemListener(this);
         row = new ArrayList<>();
-        row.add(showMapsheets);
-        csbMapsheetColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.MapSheetColor"));
-        csbMapsheetColor.setColour(GUIP.getMapsheetColor());
-        row.add(csbMapsheetColor);
+        row.add(showMapSheets);
+        csbMapSheetColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.MapSheetColor"));
+        csbMapSheetColor.setColour(GUIP.getMapsheetColor());
+        row.add(csbMapSheetColor);
         comps.add(row);
 
         comps.add(checkboxEntry(aOHexShadows, null));
         comps.add(checkboxEntry(shadowMap, null));
         comps.add(checkboxEntry(hexInclines, null));
-        comps.add(checkboxEntry(levelhighlight, null));
+        comps.add(checkboxEntry(levelHighlight, null));
         comps.add(checkboxEntry(floatingIso, null));
         comps.add(checkboxEntry(darkenMapAtNight, null));
         darkenMapAtNight.setSelected(GUIP.getDarkenMapAtNight());
@@ -968,14 +964,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         addLineSpacer(comps);
 
         row = new ArrayList<>();
-        csbFireSolnCanSeeColor = new ColourSelectorButton(Messages.getString(
+        csbFireSolutionCanSeeColor = new ColourSelectorButton(Messages.getString(
               "CommonSettingsDialog.colors.FireSolnCanSeeColor"));
-        csbFireSolnCanSeeColor.setColour(GUIP.getFireSolnCanSeeColor());
-        row.add(csbFireSolnCanSeeColor);
-        csbFireSolnNoSeeColor = new ColourSelectorButton(Messages.getString(
+        csbFireSolutionCanSeeColor.setColour(GUIP.getFireSolnCanSeeColor());
+        row.add(csbFireSolutionCanSeeColor);
+        csbFireSolutionNoSeeColor = new ColourSelectorButton(Messages.getString(
               "CommonSettingsDialog.colors.FireSolnNoSeeColor"));
-        csbFireSolnNoSeeColor.setColour(GUIP.getFireSolnNoSeeColor());
-        row.add(csbFireSolnNoSeeColor);
+        csbFireSolutionNoSeeColor.setColour(GUIP.getFireSolnNoSeeColor());
+        row.add(csbFireSolutionNoSeeColor);
         comps.add(row);
 
         row = new ArrayList<>();
@@ -1174,16 +1170,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         row.add(tooltipDismissDelay);
         comps.add(row);
 
-        tooltipDistSupression = new JTextField(4);
-        tooltipDistSupression.setMaximumSize(new Dimension(150, 40));
-        tooltipDistSupression.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDistSuppression.tooltip"));
-        JLabel tooltipDistSupressionLabel =
+        tooltipDistSuppression = new JTextField(4);
+        tooltipDistSuppression.setMaximumSize(new Dimension(150, 40));
+        tooltipDistSuppression.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDistSuppression.tooltip"));
+        JLabel tooltipDistSuppressionLabel =
               new JLabel(Messages.getString("CommonSettingsDialog.tooltipDistSuppression"));
-        tooltipDistSupressionLabel.setToolTipText(Messages.getString(
+        tooltipDistSuppressionLabel.setToolTipText(Messages.getString(
               "CommonSettingsDialog.tooltipDistSuppression.tooltip"));
         row = new ArrayList<>();
-        row.add(tooltipDistSupressionLabel);
-        row.add(tooltipDistSupression);
+        row.add(tooltipDistSuppressionLabel);
+        row.add(tooltipDistSuppression);
         comps.add(row);
 
         JLabel unitTooltipFontSizeModLabel =
@@ -1205,7 +1201,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         row.add(unitTooltipFontSizeModCbo);
         comps.add(row);
 
-        comps.add(checkboxEntry(showWpsinTT, null));
+        comps.add(checkboxEntry(showWpsInTT, null));
         comps.add(checkboxEntry(showWpsLocinTT, null));
         comps.add(checkboxEntry(showPilotPortraitTT, null));
 
@@ -1364,17 +1360,17 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         addLineSpacer(comps);
 
-        JLabel unitTooltipSeenbyLabel = new JLabel(Messages.getString("CommonSettingsDialog.seenby.label"));
-        unitTooltipSeenbyCbo = new JComboBox<>();
-        unitTooltipSeenbyCbo.addItem(Messages.getString("CommonSettingsDialog.seenby.Someone"));
-        unitTooltipSeenbyCbo.addItem(Messages.getString("CommonSettingsDialog.seenby.Team"));
-        unitTooltipSeenbyCbo.addItem(Messages.getString("CommonSettingsDialog.seenby.Player"));
-        unitTooltipSeenbyCbo.addItem(Messages.getString("CommonSettingsDialog.seenby.PlayerDetailed"));
-        unitTooltipSeenbyCbo.setSelectedIndex(GUIP.getUnitToolTipSeenByResolution());
-        unitTooltipSeenbyCbo.setMaximumSize(new Dimension(300, 60));
+        JLabel unitTooltipSeenByLabel = new JLabel(Messages.getString("CommonSettingsDialog.seenby.label"));
+        unitTooltipSeenByCbo = new JComboBox<>();
+        unitTooltipSeenByCbo.addItem(Messages.getString("CommonSettingsDialog.seenby.Someone"));
+        unitTooltipSeenByCbo.addItem(Messages.getString("CommonSettingsDialog.seenby.Team"));
+        unitTooltipSeenByCbo.addItem(Messages.getString("CommonSettingsDialog.seenby.Player"));
+        unitTooltipSeenByCbo.addItem(Messages.getString("CommonSettingsDialog.seenby.PlayerDetailed"));
+        unitTooltipSeenByCbo.setSelectedIndex(GUIP.getUnitToolTipSeenByResolution());
+        unitTooltipSeenByCbo.setMaximumSize(new Dimension(300, 60));
         row = new ArrayList<>();
-        row.add(unitTooltipSeenbyLabel);
-        row.add(unitTooltipSeenbyCbo);
+        row.add(unitTooltipSeenByLabel);
+        row.add(unitTooltipSeenByCbo);
         comps.add(row);
 
         JLabel phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevels"));
@@ -1455,12 +1451,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         JLabel orderLabel = new JLabel(Messages.getString("CommonSettingsDialog.orderLabel") + ": ");
         row.add(orderLabel);
 
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_A1));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_B1));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_C1));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_A2));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_B2));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_C2));
+        unitDisplayNonTabbed.addElement(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A1));
+        unitDisplayNonTabbed.addElement(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B1));
+        unitDisplayNonTabbed.addElement(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C1));
+        unitDisplayNonTabbed.addElement(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A2));
+        unitDisplayNonTabbed.addElement(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B2));
+        unitDisplayNonTabbed.addElement(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C2));
 
         JList<String> listUnitDisplayNonTabbed = new JList<>(unitDisplayNonTabbed);
         listUnitDisplayNonTabbed.setLayoutOrientation(JList.HORIZONTAL_WRAP);
@@ -1682,7 +1678,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         addSpacer(comps, 1);
 
-        traceOverlayTransparencyLabel = new JLabel(Messages.getString("CommonSettingsDialog.TraceOverlayTransparency"));
+        JLabel traceOverlayTransparencyLabel = new JLabel(Messages.getString(
+              "CommonSettingsDialog.TraceOverlayTransparency"));
         traceOverlayTransparencyLabel.setToolTipText(
               Messages.getString(
                     "CommonSettingsDialog.TraceOverlayTransparency.tooltip"));
@@ -1712,7 +1709,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         addSpacer(comps, 1);
 
-        traceOverlayScaleLabel = new JLabel(Messages.getString("CommonSettingsDialog.TraceOverlayScale"));
+        JLabel traceOverlayScaleLabel = new JLabel(Messages.getString("CommonSettingsDialog.TraceOverlayScale"));
         traceOverlayScaleLabel.setToolTipText(Messages.getString("CommonSettingsDialog.TraceOverlayScale.tooltip"));
 
         row = new ArrayList<>();
@@ -1735,7 +1732,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         traceOverlayScaleSlider.setMaximumSize(new Dimension(1000, 100));
         traceOverlayScaleSlider.addChangeListener(this);
         traceOverlayScaleSlider.setToolTipText(Messages.getString("CommonSettingsDialog.TraceOverlayScale.tooltip"));
-        traceOverlayScaleSlider.setValue((int) GUIP.getTraceOverlayScale());
+        traceOverlayScaleSlider.setValue(GUIP.getTraceOverlayScale());
 
         row = new ArrayList<>();
         row.add(Box.createRigidArea(new Dimension(4, 0)));
@@ -1975,7 +1972,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             userDirHelp.addActionListener(e -> new HelpDialog(helpTitle, helpFile, getFrame()).setVisible(true));
         } catch (MalformedURLException e) {
             logger.error(e,
-                  "Could not find the user data directory readme file at " + MMConstants.USER_DIR_README_FILE);
+                  "Could not find the user data directory readme file at {}", MMConstants.USER_DIR_README_FILE);
         }
         row = new ArrayList<>();
         row.add(userDirLabel);
@@ -2102,7 +2099,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         row.add(unitStartChar);
         comps.add(row);
 
-        comps.add(checkboxEntry(defaultAutoejectDisabled, null));
+        comps.add(checkboxEntry(defaultAutoEjectDisabled, null));
         comps.add(checkboxEntry(useAverageSkills, null));
         comps.add(checkboxEntry(useGPinUnitSelection,
               "This changes the BV/PV displayed in the unit selection list. It does not change the pilot/gunnery of the mek once selected. Request restart of Megamek."));
@@ -2121,7 +2118,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         row.add(gameLogFilename);
         comps.add(row);
 
-        autoResolveLogFilenameLabel = new JLabel(Messages.getString("CommonSettingsDialog.autoResolveLogFileName"));
+        JLabel autoResolveLogFilenameLabel = new JLabel(Messages.getString("CommonSettingsDialog.autoResolveLogFileName"));
         autoResolveLogFilename = new JTextField(15);
         autoResolveLogFilename.setMaximumSize(new Dimension(250, 40));
         row = new ArrayList<>();
@@ -2209,8 +2206,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             showWrecks.setSelected(GUIP.getShowWrecks());
             tooltipDelay.setText(Integer.toString(GUIP.getTooltipDelay()));
             tooltipDismissDelay.setText(Integer.toString(GUIP.getTooltipDismissDelay()));
-            tooltipDistSupression.setText(Integer.toString(GUIP.getTooltipDistSuppression()));
-            showWpsinTT.setSelected(GUIP.getShowWpsInTT());
+            tooltipDistSuppression.setText(Integer.toString(GUIP.getTooltipDistSuppression()));
+            showWpsInTT.setSelected(GUIP.getShowWpsInTT());
             showWpsLocinTT.setSelected(GUIP.getShowWpsLocinTT());
             showArmorMiniVisTT.setSelected(GUIP.getShowArmorMiniVisTT());
             showPilotPortraitTT.setSelected(GUIP.getShowPilotPortraitTT());
@@ -2256,7 +2253,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             showIPAddressesInChat.setSelected(CLIENT_PREFERENCES.getShowIPAddressesInChat());
             startSearchlightsOn.setSelected(CLIENT_PREFERENCES.getStartSearchlightsOn());
 
-            defaultAutoejectDisabled.setSelected(CLIENT_PREFERENCES.defaultAutoejectDisabled());
+            defaultAutoEjectDisabled.setSelected(CLIENT_PREFERENCES.defaultAutoejectDisabled());
             useAverageSkills.setSelected(CLIENT_PREFERENCES.useAverageSkills());
             useGPinUnitSelection.setSelected(CLIENT_PREFERENCES.useGPinUnitSelection());
             generateNames.setSelected(CLIENT_PREFERENCES.generateNames());
@@ -2273,7 +2270,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             }
             displayLocale.setSelectedIndex(index);
 
-            showMapsheets.setSelected(GUIP.getShowMapSheets());
+            showMapSheets.setSelected(GUIP.getShowMapSheets());
             chkHighQualityGraphics.setSelected(GUIP.getHighQualityGraphics());
             chkHighPerformanceGraphics.setSelected(GUIP.getHighPerformanceGraphics());
             showDamageLevel.setSelected(GUIP.getShowDamageLevel());
@@ -2285,7 +2282,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             drawSensorRangeOnMiniMap.setSelected(GUIP.getDrawSensorRangeOnMiniMap());
             paintBordersOnMiniMap.setSelected(GUIP.paintBorders());
             showUnitDisplayNamesOnMinimap.setSelected(GUIP.showUnitDisplayNamesOnMinimap());
-            levelhighlight.setSelected(GUIP.getLevelHighlight());
+            levelHighlight.setSelected(GUIP.getLevelHighlight());
             shadowMap.setSelected(GUIP.getShadowMap());
             hexInclines.setSelected(GUIP.getHexInclines());
             useSoftCenter.setSelected(GUIP.getSoftCenter());
@@ -2295,7 +2292,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             teamColoring.setSelected(GUIP.getTeamColoring());
 
             File dir = Configuration.hexesDir();
-            tileSets = new ArrayList<>(Arrays.asList(Objects.requireNonNull(dir.list((direc, name) -> name.endsWith(
+            tileSets = new ArrayList<>(Arrays.asList(Objects.requireNonNull(dir.list((directory, name) -> name.endsWith(
                   ".tileset")))));
             tileSets.addAll(userDataFiles(Configuration.hexesDir(), ".tileset"));
             tileSetChoice.removeAllItems();
@@ -2372,7 +2369,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             savedAOHexShadows = GUIP.getAOHexShadows();
             savedShadowMap = GUIP.getShadowMap();
             savedHexInclines = GUIP.getHexInclines();
-            savedLevelhighlight = GUIP.getLevelHighlight();
+            savedLevelHighlight = GUIP.getLevelHighlight();
             savedFloatingIso = GUIP.getFloatingIso();
             savedMmSymbol = GUIP.getMmSymbol();
             savedDrawFacingArrowsOnMiniMap = GUIP.getDrawFacingArrowsOnMiniMap();
@@ -2421,7 +2418,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setAOHexShadows(savedAOHexShadows);
         GUIP.setShadowMap(savedShadowMap);
         GUIP.setHexInclines(savedHexInclines);
-        GUIP.setLevelHighlight(savedLevelhighlight);
+        GUIP.setLevelHighlight(savedLevelHighlight);
         GUIP.setFloatingIso(savedFloatingIso);
         GUIP.setMmSymbol(savedMmSymbol);
         GUIP.setDrawSensorRangeOnMiniMap(savedDrawSensorRangeOnMiniMap);
@@ -2463,8 +2460,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         csbMoveBackColor.setColour(GUIP.getMoveBackColor());
         csbMoveSprintColor.setColour(GUIP.getMoveSprintColor());
 
-        csbFireSolnCanSeeColor.setColour(GUIP.getFireSolnCanSeeColor());
-        csbFireSolnNoSeeColor.setColour(GUIP.getFireSolnNoSeeColor());
+        csbFireSolutionCanSeeColor.setColour(GUIP.getFireSolnCanSeeColor());
+        csbFireSolutionNoSeeColor.setColour(GUIP.getFireSolnNoSeeColor());
         csbFieldOfFireMinColor.setColour(GUIP.getFieldOfFireMinColor());
         csbFieldOfFireShortColor.setColour(GUIP.getFieldOfFireShortColor());
         csbFieldOfFireMediumColor.setColour(GUIP.getFieldOfFireMediumColor());
@@ -2482,7 +2479,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         csbBoardTextColor.setColour(GUIP.getBoardTextColor());
         csbBoardSpaceTextColor.setColour(GUIP.getBoardSpaceTextColor());
         csbLowFoliageColor.setColour(GUIP.getLowFoliageColor());
-        csbMapsheetColor.setColour(GUIP.getMapsheetColor());
+        csbMapSheetColor.setColour(GUIP.getMapsheetColor());
 
         attackArrowTransparency.setValue(GUIP.getAttackArrowTransparency());
         ecmTransparency.setValue(GUIP.getECMTransparency());
@@ -2505,12 +2502,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         }
 
         unitDisplayNonTabbed.clear();
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_A1));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_B1));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_C1));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_A2));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_B2));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplayPanel.NON_TABBED_C2));
+        unitDisplayNonTabbed.addElement(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A1));
+        unitDisplayNonTabbed.addElement(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B1));
+        unitDisplayNonTabbed.addElement(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C1));
+        unitDisplayNonTabbed.addElement(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A2));
+        unitDisplayNonTabbed.addElement(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B2));
+        unitDisplayNonTabbed.addElement(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C2));
 
         unitDisplayAutoDisplayReportCombo.setSelectedItem(GUIP.getUnitDisplayAutoDisplayReportPhase());
         unitDisplayAutoDisplayNonReportCombo.setSelectedItem(GUIP.getUnitDisplayAutoDisplayNonReportPhase());
@@ -2542,7 +2539,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         unitDisplayHeatLevel1Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue5()));
         unitDisplayHeatLevel1Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue6()));
 
-        unitTooltipSeenbyCbo.setSelectedIndex(GUIP.getUnitToolTipSeenByResolution());
+        unitTooltipSeenByCbo.setSelectedIndex(GUIP.getUnitToolTipSeenByResolution());
         unitDisplayWeaponListHeightText.setText(String.format("%d", GUIP.getUnitDisplayWeaponListHeight()));
 
         unitDisplayMekArmorLargeFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMekArmorLargeFontSize()));
@@ -2602,7 +2599,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         planetaryConditionsBackgroundTransparency.setValue(GUIP.getPlanetaryConditionsBackgroundTransparency());
 
         traceOverlayTransparencySlider.setValue(GUIP.getTraceOverlayTransparency());
-        traceOverlayScaleSlider.setValue((int) GUIP.getTraceOverlayScale());
+        traceOverlayScaleSlider.setValue(GUIP.getTraceOverlayScale());
         traceOverlayOriginXSlider.setValue(GUIP.getTraceOverlayOriginX());
         traceOverlayOriginYSlider.setValue(GUIP.getTraceOverlayOriginY());
         traceOverlayImageFile.setText(GUIP.getTraceOverlayImageFile());
@@ -2636,7 +2633,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setNagForOddSizedBoard(nagForOddSizedBoard.isSelected());
         GUIP.setShowMoveStep(animateMove.isSelected());
         GUIP.setShowWrecks(showWrecks.isSelected());
-        GUIP.setShowWpsInTT(showWpsinTT.isSelected());
+        GUIP.setShowWpsInTT(showWpsInTT.isSelected());
         GUIP.setShowWpsLocinTT(showWpsLocinTT.isSelected());
         GUIP.setShowArmorMiniVisTT(showArmorMiniVisTT.isSelected());
         GUIP.setShowPilotPortraitTT(showPilotPortraitTT.isSelected());
@@ -2662,8 +2659,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setMoveBackColor(csbMoveBackColor.getColour());
         GUIP.setMoveSprintColor(csbMoveSprintColor.getColour());
 
-        GUIP.setFireSolutionCanSeeColor(csbFireSolnCanSeeColor.getColour());
-        GUIP.setFireSolutionNoSeeColor(csbFireSolnNoSeeColor.getColour());
+        GUIP.setFireSolutionCanSeeColor(csbFireSolutionCanSeeColor.getColour());
+        GUIP.setFireSolutionNoSeeColor(csbFireSolutionNoSeeColor.getColour());
         GUIP.setFieldOfFireMinColor(csbFieldOfFireMinColor.getColour());
         GUIP.setFieldOfFireShortColor(csbFieldOfFireShortColor.getColour());
         GUIP.setBoardFieldOfFireMediumColor(csbFieldOfFireMediumColor.getColour());
@@ -2681,7 +2678,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setBoardTextColor(csbBoardTextColor.getColour());
         GUIP.setBoardSpaceTextColor(csbBoardSpaceTextColor.getColour());
         GUIP.setLowFoliageColor(csbLowFoliageColor.getColour());
-        GUIP.setMapSheetColor(csbMapsheetColor.getColour());
+        GUIP.setMapSheetColor(csbMapSheetColor.getColour());
 
         GUIP.setAttackArrowTransparency((Integer) attackArrowTransparency.getValue());
         GUIP.setECMTransparency((Integer) ecmTransparency.getValue());
@@ -2689,16 +2686,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setDrawSensorRangeOnMiniMap(drawSensorRangeOnMiniMap.isSelected());
         GUIP.setPaintBorders(paintBordersOnMiniMap.isSelected());
         GUIP.setShowUnitDisplayNamesOnMinimap(showUnitDisplayNamesOnMinimap.isSelected());
-        try {
-            GUIP.setButtonsPerRow(Integer.parseInt(buttonsPerRow.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "okAction");
-        }
-        try {
-            GUIP.setPlayersRemainingToShow(Integer.parseInt(playersRemainingToShow.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "okAction");
-        }
+        GUIP.setButtonsPerRow(MathUtility.parseInt(buttonsPerRow.getText(), 5));
+        GUIP.setPlayersRemainingToShow(MathUtility.parseInt(playersRemainingToShow.getText(), 2));
 
         GUIP.setTMMPipMode(tmmPipModeCbo.getSelectedIndex());
         GUIP.setDarkenMapAtNight(darkenMapAtNight.isSelected());
@@ -2709,31 +2698,23 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setShowBombMisses(bombsDisplayMisses.isSelected());
         GUIP.setShowBombDrifts(bombsDisplayDrifts.isSelected());
 
-        GUIP.setMoveFontType(fontTypeChooserMoveFont.getSelectedItem().toString());
-        try {
-            GUIP.setMoveFontSize(Integer.parseInt(moveFontSize.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "okAction");
+        Object selectedChooserMoveFond = fontTypeChooserMoveFont.getSelectedItem();
+        if (selectedChooserMoveFond != null) {
+            GUIP.setMoveFontType(fontTypeChooserMoveFont.getSelectedItem().toString());
+            GUIP.setMoveFontSize(MathUtility.parseInt(moveFontSize.getText(), 12));
         }
-        GUIP.setMoveFontStyle(fontStyleChooserMoveFont.getSelectedIndex());
 
-        try {
-            GUIP.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "okAction");
-        }
-        try {
-            GUIP.setTooltipDismissDelay(Integer.parseInt(tooltipDismissDelay.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "okAction");
-        }
-        try {
-            GUIP.setTooltipDistSuppression(Integer.parseInt(tooltipDistSupression.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "okAction");
-        }
+        GUIP.setMoveFontStyle(fontStyleChooserMoveFont.getSelectedIndex());
+        GUIP.setTooltipDelay(MathUtility.parseInt(tooltipDelay.getText(), 250));
+        GUIP.setTooltipDismissDelay(MathUtility.parseInt(tooltipDismissDelay.getText(), 250));
+        GUIP.setTooltipDistSuppression(MathUtility.parseInt(tooltipDistSuppression.getText(), 250));
+
         GUIP.setValue(GUIPreferences.GUI_SCALE, (float) (guiScale.getValue()) / 10);
-        CLIENT_PREFERENCES.setUnitStartChar(((String) unitStartChar.getSelectedItem()).charAt(0));
+
+        Object unitSelected = unitStartChar.getSelectedItem();
+        if (unitSelected instanceof String unitStart) {
+            CLIENT_PREFERENCES.setUnitStartChar(unitStart.charAt(0));
+        }
 
         GUIP.setMouseWheelZoom(mouseWheelZoom.isSelected());
         GUIP.setMouseWheelZoomFlip(mouseWheelZoomFlip.isSelected());
@@ -2749,11 +2730,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setSoundBingFilenameMyTurn(tfSoundMuteMyTurnFileName.getText());
         GUIP.setSoundBingFilenameOthersTurn(tfSoundMuteOthersFileName.getText());
 
-        try {
-            CLIENT_PREFERENCES.setMaxPathfinderTime(Integer.parseInt(maxPathfinderTime.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "okAction");
-        }
+        CLIENT_PREFERENCES.setMaxPathfinderTime(MathUtility.parseInt(maxPathfinderTime.getText(), 500));
 
         GUIP.setGetFocus(getFocus.isSelected());
 
@@ -2769,7 +2746,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         CLIENT_PREFERENCES.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
         CLIENT_PREFERENCES.setStartSearchlightsOn(startSearchlightsOn.isSelected());
         CLIENT_PREFERENCES.setEnableExperimentalBotFeatures(enableExperimentalBotFeatures.isSelected());
-        CLIENT_PREFERENCES.setDefaultAutoejectDisabled(defaultAutoejectDisabled.isSelected());
+        CLIENT_PREFERENCES.setDefaultAutoejectDisabled(defaultAutoEjectDisabled.isSelected());
         CLIENT_PREFERENCES.setUseAverageSkills(useAverageSkills.isSelected());
         CLIENT_PREFERENCES.setUseGpInUnitSelection(useGPinUnitSelection.isSelected());
         CLIENT_PREFERENCES.setGenerateNames(generateNames.isSelected());
@@ -2782,11 +2759,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         }
 
         CLIENT_PREFERENCES.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale.getSelectedIndex()]);
-        GUIP.setShowMapSheets(showMapsheets.isSelected());
+        GUIP.setShowMapSheets(showMapSheets.isSelected());
         GUIP.setAOHexShadows(aOHexShadows.isSelected());
         GUIP.setFloatingIso(floatingIso.isSelected());
         GUIP.setMmSymbol(mmSymbol.isSelected());
-        GUIP.setLevelHighlight(levelhighlight.isSelected());
+        GUIP.setLevelHighlight(levelHighlight.isSelected());
         GUIP.setShadowMap(shadowMap.isSelected());
         GUIP.setHexInclines(hexInclines.isSelected());
         GUIP.setSoftCenter(useSoftCenter.isSelected());
@@ -2947,44 +2924,44 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
             if ((s > UnitDisplayPanel.NON_TABBED_ZERO_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ZERO_INDEX)
-                  .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_A1)))) {
+                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A1)))) {
                 unitDisplayNonTabbedChanged = true;
-                UDOP.setValue(UnitDisplayPanel.NON_TABBED_A1,
+                UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_A1,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ZERO_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_ONE_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ONE_INDEX)
-                  .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_B1)))) {
+                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B1)))) {
                 unitDisplayNonTabbedChanged = true;
-                UDOP.setValue(UnitDisplayPanel.NON_TABBED_B1,
+                UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_B1,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_ONE_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_TWO_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_TWO_INDEX)
-                  .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_C1)))) {
+                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C1)))) {
                 unitDisplayNonTabbedChanged = true;
-                UDOP.setValue(UnitDisplayPanel.NON_TABBED_C1,
+                UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_C1,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_TWO_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_THREE_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_THREE_INDEX)
-                  .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_A2)))) {
+                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A2)))) {
                 unitDisplayNonTabbedChanged = true;
-                UDOP.setValue(UnitDisplayPanel.NON_TABBED_A2,
+                UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_A2,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_THREE_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_FOUR_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FOUR_INDEX)
-                  .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_B2)))) {
+                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B2)))) {
                 unitDisplayNonTabbedChanged = true;
-                UDOP.setValue(UnitDisplayPanel.NON_TABBED_B2,
+                UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_B2,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FOUR_INDEX));
             }
             if ((s > UnitDisplayPanel.NON_TABBED_FIVE_INDEX)
                   && (!unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FIVE_INDEX)
-                  .equals(UDOP.getString(UnitDisplayPanel.NON_TABBED_C2)))) {
+                  .equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C2)))) {
                 unitDisplayNonTabbedChanged = true;
-                UDOP.setValue(UnitDisplayPanel.NON_TABBED_C2,
+                UNIT_DISPLAY_ORDER_PREFERENCES.setValue(UnitDisplayPanel.NON_TABBED_C2,
                       unitDisplayNonTabbed.get(UnitDisplayPanel.NON_TABBED_FIVE_INDEX));
             }
 
@@ -3015,71 +2992,22 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setUnitDisplayHeatColorLevel5(csbUnitDisplayHeatLevel5.getColour());
         GUIP.setUnitDisplayHeatColorLevel6(csbUnitDisplayHeatLevel6.getColour());
         GUIP.setUnitDisplayHeatColorLevelOverHeat(csbUnitDisplayHeatLevelOverheat.getColour());
+        GUIP.setUnitDisplayHeatColorValue1(MathUtility.parseInt(unitDisplayHeatLevel1Text.getText()));
+        GUIP.setUnitDisplayHeatColorValue2(MathUtility.parseInt(unitDisplayHeatLevel2Text.getText()));
+        GUIP.setUnitDisplayHeatColorValue3(MathUtility.parseInt(unitDisplayHeatLevel3Text.getText()));
+        GUIP.setUnitDisplayHeatColorValue4(MathUtility.parseInt(unitDisplayHeatLevel4Text.getText()));
+        GUIP.setUnitDisplayHeatColorValue5(MathUtility.parseInt(unitDisplayHeatLevel5Text.getText()));
+        GUIP.setUnitDisplayHeatColorValue6(MathUtility.parseInt(unitDisplayHeatLevel6Text.getText()));
 
-        try {
-            GUIP.setUnitDisplayHeatColorValue1(Integer.parseInt(unitDisplayHeatLevel1Text.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "okAction");
-        }
-        try {
-            GUIP.setUnitDisplayHeatColorValue2(Integer.parseInt(unitDisplayHeatLevel2Text.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "okAction");
-        }
-        try {
-            GUIP.setUnitDisplayHeatColorValue3(Integer.parseInt(unitDisplayHeatLevel3Text.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "okAction");
-        }
-        try {
-            GUIP.setUnitDisplayHeatColorValue4(Integer.parseInt(unitDisplayHeatLevel4Text.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "okAction");
-        }
-        try {
-            GUIP.setUnitDisplayHeatColorValue5(Integer.parseInt(unitDisplayHeatLevel5Text.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "okAction");
-        }
-        try {
-            GUIP.setUnitDisplayHeatColorValue6(Integer.parseInt(unitDisplayHeatLevel6Text.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "okAction");
-        }
+        GUIP.setUnitToolTipSeenByResolution(unitTooltipSeenByCbo.getSelectedIndex());
+        GUIP.setUnitDisplayWeaponListHeight(MathUtility.parseInt(unitDisplayWeaponListHeightText.getText()));
 
-        GUIP.setUnitToolTipSeenByResolution(unitTooltipSeenbyCbo.getSelectedIndex());
-        try {
-            GUIP.setUnitDisplayWeaponListHeight(Integer.parseInt(unitDisplayWeaponListHeightText.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "");
-        }
+        GUIP.setUnitDisplayMekArmorLargeFontSize(MathUtility.parseInt(unitDisplayMekArmorLargeFontSizeText.getText()));
+        GUIP.setUnitDisplayMekArmorMediumFontSize(MathUtility.parseInt(unitDisplayMekArmorMediumFontSizeText.getText()));
 
-        try {
-            GUIP.setUnitDisplayMekArmorLargeFontSize(Integer.parseInt(unitDisplayMekArmorLargeFontSizeText.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "");
-        }
-        try {
-            GUIP.setUnitDisplayMekArmorMediumFontSize(
-                  Integer.parseInt(unitDisplayMekArmorMediumFontSizeText.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "");
-        }
-        try {
-            GUIP.setUnitDisplayMekArmorSmallFontSize(Integer.parseInt(unitDisplayMekArmorSmallFontSizeText.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "");
-        }
-        try {
-            GUIP.setUnitDisplayMekLargeFontSize(Integer.parseInt(unitDisplayMekLargeFontSizeText.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "");
-        }
-        try {
-            GUIP.setUnitDisplayMekMediumFontSize(Integer.parseInt(unitDisplayMekMediumFontSizeText.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "");
-        }
+        GUIP.setUnitDisplayMekArmorSmallFontSize(MathUtility.parseInt(unitDisplayMekArmorSmallFontSizeText.getText()));
+        GUIP.setUnitDisplayMekLargeFontSize(MathUtility.parseInt(unitDisplayMekLargeFontSizeText.getText()));
+        GUIP.setUnitDisplayMekMediumFontSize(MathUtility.parseInt(unitDisplayMekMediumFontSizeText.getText()));
 
         GUIP.setUnitToolTipFGColor(csbUnitTooltipFGColor.getColour());
         GUIP.setUnitTooltipLightFGColor(csbUnitTooltipLightFGColor.getColour());
@@ -3105,23 +3033,24 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setUnitToolTipArmorMiniCriticalChar(unitTooltipArmorMiniCriticalCharText.getText());
         GUIP.setUnitTooltipArmorMiniDestroyedChar(unitTooltipArmorMiniDestroyedCharText.getText());
         GUIP.setUnitTooltipArmorMiniCapArmorChar(unitTooltipArmorMiniCapArmorCharText.getText());
-        try {
-            GUIP.setUnitTooltipArmorMiniUnitsPerBlock(
-                  Integer.parseInt(unitTooltipArmorMiniUnitsPerBlockText.getText()));
-        } catch (Exception ex) {
-            logger.error(ex, "");
-        }
-        try {
-            GUIP.setUnitToolTipFontSize((String) unitTooltipFontSizeModCbo.getSelectedItem());
-        } catch (Exception ex) {
-            logger.error(ex, "");
+        GUIP.setUnitTooltipArmorMiniUnitsPerBlock(MathUtility.parseInt(unitTooltipArmorMiniUnitsPerBlockText.getText()));
+
+        Object unitToolTipFontSize = unitTooltipFontSizeModCbo.getSelectedItem();
+
+        if (unitToolTipFontSize instanceof String fontSize) {
+            GUIP.setUnitToolTipFontSize(fontSize);
         }
 
         GUIP.setReportLinkColor(csbReportLinkColor.getColour());
         GUIP.setReportSuccessColor(csbReportSuccessColor.getColour());
         GUIP.setReportMissColor(csbReportMissColor.getColour());
         GUIP.setReportInfoColo(csbReportInfoColor.getColour());
-        GUIP.setReportFontType(fontTypeChooserReportFont.getSelectedItem().toString());
+
+        Object fontTypeChooserReport = fontTypeChooserReportFont.getSelectedItem();
+        if (fontTypeChooserReport instanceof String fontTypeChosen) {
+            GUIP.setReportFontType(fontTypeChosen);
+        }
+
         GUIP.setMiniReportShowSprites(showReportSprites.isSelected());
 
         GUIP.setUnitOverviewTextShadowColor(csbUnitOverviewTextShadowColor.getColour());
@@ -3185,8 +3114,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             GUIP.setShadowMap(shadowMap.isSelected());
         } else if (source.equals(hexInclines)) {
             GUIP.setHexInclines(hexInclines.isSelected());
-        } else if (source.equals(levelhighlight)) {
-            GUIP.setLevelHighlight(levelhighlight.isSelected());
+        } else if (source.equals(levelHighlight)) {
+            GUIP.setLevelHighlight(levelHighlight.isSelected());
         } else if (source.equals(floatingIso)) {
             GUIP.setFloatingIso(floatingIso.isSelected());
         } else if (source.equals(mmSymbol)) {
@@ -3238,7 +3167,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     }
 
     /**
-     * Creates a panel with a box for all of the commands that can be bound to keys.
+     * Creates a panel with a box for all the commands that can be bound to keys.
      */
     private JPanel getKeyBindPanel() {
         JPanel outer = new JPanel();
@@ -3386,8 +3315,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
                         key.setText("");
                         modifiers.setText("");
                         cmdKeyCodeMap.put(kcb.cmd, 0);
-                        markDuplicateBinds();
-                        evt.consume();
                     } else {
                         // Don't consume this event if modifiers are held (-> enable button mnemonics)
                         if (evt.getModifiersEx() != 0) {
@@ -3395,9 +3322,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
                         }
                         key.setText(KeyEvent.getKeyText(evt.getKeyCode()));
                         cmdKeyCodeMap.put(kcb.cmd, evt.getKeyCode());
-                        markDuplicateBinds();
-                        evt.consume();
                     }
+                    markDuplicateBinds();
+                    evt.consume();
                 }
 
                 @Override
@@ -3420,7 +3347,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             gbc.gridx = 0;
             gbc.gridy++;
 
-            // deactivate TABbing through fields here so TAB can be caught as a keybind
+            // deactivate TAB-bing through fields here so TAB can be caught as a keybind
             modifiers.setFocusTraversalKeysEnabled(false);
             key.setFocusTraversalKeysEnabled(false);
         }
@@ -3440,11 +3367,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     }
 
     private JCheckBox createOnOffCheckBox(boolean b) {
-        JCheckBox chkb = new JCheckBox();
-        chkb.setEnabled(true);
-        chkb.setSelected(b);
+        JCheckBox checkBox = new JCheckBox();
+        checkBox.setEnabled(true);
+        checkBox.setSelected(b);
 
-        return chkb;
+        return checkBox;
     }
 
     private JPanel aiDisplayPanel() {
@@ -3672,29 +3599,29 @@ public class CommonSettingsDialog extends AbstractButtonDialog
                         || duplicates.get(keyStroke).isExclusive
                         || duplicates.get(keyStroke).isMenuBar)) {
                 // Mark the current kcb and the one that was already in the keyMap as duplicate
-                markTextfield(cmdModifierMap.get(kcb.cmd), "This keybind is a duplicate and will not work correctly.");
-                markTextfield(cmdKeyMap.get(kcb.cmd), "This keybind is a duplicate and will not work correctly.");
-                markTextfield(cmdModifierMap.get(duplicates.get(keyStroke).cmd),
+                markTextField(cmdModifierMap.get(kcb.cmd), "This keybind is a duplicate and will not work correctly.");
+                markTextField(cmdKeyMap.get(kcb.cmd), "This keybind is a duplicate and will not work correctly.");
+                markTextField(cmdModifierMap.get(duplicates.get(keyStroke).cmd),
                       "This keybind is a duplicate and will not work correctly.");
-                markTextfield(cmdKeyMap.get(duplicates.get(keyStroke).cmd),
+                markTextField(cmdKeyMap.get(duplicates.get(keyStroke).cmd),
                       "This keybind is a duplicate and will not work correctly.");
                 isCorrect = false;
             }
             // Check for standard copy/paste keys
             if (keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK)) ||
                   keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK))) {
-                markTextfield(cmdModifierMap.get(kcb.cmd), "Ctrl-C / Ctrl-V cannot be used");
-                markTextfield(cmdKeyMap.get(kcb.cmd), "Ctrl-C / Ctrl-V cannot be used");
+                markTextField(cmdModifierMap.get(kcb.cmd), "Ctrl-C / Ctrl-V cannot be used");
+                markTextField(cmdKeyMap.get(kcb.cmd), "Ctrl-C / Ctrl-V cannot be used");
                 isCorrect = false;
             }
             if (isCorrect) {
-                markTextfield(cmdModifierMap.get(kcb.cmd), null);
-                markTextfield(cmdKeyMap.get(kcb.cmd), null);
+                markTextField(cmdModifierMap.get(kcb.cmd), null);
+                markTextField(cmdKeyMap.get(kcb.cmd), null);
             }
         }
     }
 
-    private void markTextfield(JTextField field, String errorMsg) {
+    private void markTextField(JTextField field, String errorMsg) {
         field.setForeground(errorMsg != null ? GUIP.getWarningColor() : null);
         field.setToolTipText(errorMsg);
     }
@@ -3789,7 +3716,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private JPanel createSettingsPanel(List<List<Component>> comps) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        Box innerpanel = new Box(BoxLayout.PAGE_AXIS);
+        Box innerPanel = new Box(BoxLayout.PAGE_AXIS);
         for (List<Component> cs : comps) {
             Box subPanel = new Box(BoxLayout.LINE_AXIS);
             for (Component c : cs) {
@@ -3802,11 +3729,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog
                 }
             }
             subPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            innerpanel.add(subPanel);
+            innerPanel.add(subPanel);
         }
-        innerpanel.add(Box.createVerticalGlue());
-        innerpanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        panel.add(innerpanel, BorderLayout.PAGE_START);
+        innerPanel.add(Box.createVerticalGlue());
+        innerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        panel.add(innerPanel, BorderLayout.PAGE_START);
         return panel;
     }
 
@@ -3885,7 +3812,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     public static List<String> userDataFiles(File relativePath, String fileEnding) {
         List<String> result = new ArrayList<>();
         File dir = new File(Configuration.userdataDir(), relativePath.toString());
-        String[] userDataFiles = dir.list((direc, name) -> name.endsWith(fileEnding));
+        String[] userDataFiles = dir.list((directory, name) -> name.endsWith(fileEnding));
         if (userDataFiles != null) {
             result.addAll(Arrays.asList(userDataFiles));
         }
@@ -3894,7 +3821,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     public static List<String> filteredFiles(File path, String fileEnding) {
         List<String> result = new ArrayList<>();
-        String[] userDataFiles = path.list((direc, name) -> name.endsWith(fileEnding));
+        String[] userDataFiles = path.list((directory, name) -> name.endsWith(fileEnding));
         if (userDataFiles != null) {
             Arrays.stream(userDataFiles).map(file -> path + "/" + file).forEach(result::add);
         }
@@ -3903,13 +3830,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     public static List<String> filteredFilesWithSubDirs(File path, String fileEnding) {
         if (!path.exists()) {
-            logger.warn("Path " + path + " does not exist.");
+            logger.warn("Path {} does not exist.", path);
             return new ArrayList<>();
         }
         try (Stream<Path> entries = Files.walk(path.toPath())) {
             return entries.map(Objects::toString).filter(name -> name.endsWith(fileEnding)).collect(toList());
         } catch (IOException e) {
-            logger.warn(e, "Error while reading " + fileEnding + " files from " + path);
+            logger.warn("Error while reading {} files from {}", fileEnding, path);
             return new ArrayList<>();
         }
     }
@@ -3918,7 +3845,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
      * Shows a file chooser for selecting a user directory and sets the given text field to the result if one was
      * chosen. This is for use with settings dialogs (also used in MML and MHQ)
      *
-     * @param userDirTextField The textfield showing the user dir for manual change
+     * @param userDirTextField The {@link JTextField} showing the user dir for manual change
      * @param parent           The parent JFrame of the settings dialog
      */
     public static void fileChooseUserDir(JTextField userDirTextField, JFrame parent) {

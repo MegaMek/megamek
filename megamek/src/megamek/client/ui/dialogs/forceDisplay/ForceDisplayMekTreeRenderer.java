@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -68,24 +68,19 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
           "unknown_unit.gif").toString();
 
     private ClientGUI clientGUI;
-    private Client client;
-    private boolean isSelected;
-    private Color selectionColor = Color.BLUE;
+    private final Client client;
     private Entity entity;
     private Player localPlayer;
-    private JTree tree;
-    private int row;
 
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
           boolean leaf, int row, boolean hasFocus) {
 
-        isSelected = sel;
         localPlayer = client.getLocalPlayer();
-        selectionColor = UIManager.getColor("Tree.selectionBackground");
+        Color selectionColor = UIManager.getColor("Tree.selectionBackground");
         setOpaque(true);
 
-        if (isSelected) {
+        if (sel) {
             setBackground(new Color(selectionColor.getRGB()));
         } else {
             setForeground(null);
@@ -96,7 +91,6 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
             Font scaledFont = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
             setFont(scaledFont);
             entity = (Entity) value;
-            this.row = row;
             Player owner = entity.getOwner();
             setText(ForceDisplayMekCellFormatter.formatUnitCompact(entity, client, row));
             int size = UIUtil.scaleForGUI(20);
@@ -118,11 +112,10 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
                 setIconTextGap(UIUtil.scaleForGUI(10));
                 setIcon(image, size);
             }
-        } else if (value instanceof Force) {
+        } else if (value instanceof Force force) {
             entity = null;
             Font scaledFont = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 3));
             setFont(scaledFont);
-            Force force = (Force) value;
             setText(ForceDisplayMekCellFormatter.formatForceCompact(force, client));
             setIcon(null);
         }
@@ -153,7 +146,6 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
     ForceDisplayMekTreeRenderer(Client client, JTree tree) {
         this.clientGUI = null;
         this.client = client;
-        this.tree = tree;
     }
 
     ForceDisplayMekTreeRenderer(ClientGUI clientGUI, JTree tree) {

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,6 +39,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serial;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -58,16 +59,15 @@ import megamek.common.Player;
  */
 public class ScenarioDialog extends JDialog implements ActionListener {
 
+    @Serial
     private static final long serialVersionUID = -5682593522064612790L;
     private static final int T_ME = 0;
     public static final int T_BOT = 2;
-    public static final int T_OBOT = 3;
-    private Player[] m_players;
-    private JLabel[] m_labels;
+    public static final int T_OTHER_BOT = 3;
+    private final Player[] m_players;
     @SuppressWarnings("rawtypes")
-    private JComboBox[] m_typeChoices;
-    private JButton[] m_camoButtons;
-    private JFrame m_frame;
+    private final JComboBox[] m_typeChoices;
+    private final JFrame m_frame;
 
     public boolean bSet;
     public int[] playerTypes;
@@ -78,9 +78,9 @@ public class ScenarioDialog extends JDialog implements ActionListener {
         super(frame, Messages.getString("MegaMek.ScenarioDialog.title"), true);
         m_frame = frame;
         m_players = pa;
-        m_labels = new JLabel[pa.length];
+        JLabel[] m_labels = new JLabel[pa.length];
         m_typeChoices = new JComboBox[pa.length];
-        m_camoButtons = new JButton[pa.length];
+        JButton[] m_camoButtons = new JButton[pa.length];
         playerTypes = new int[pa.length];
         final PlayerColour[] colours = PlayerColour.values();
         for (int x = 0; x < pa.length; x++) {

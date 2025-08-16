@@ -33,6 +33,7 @@
  */
 package megamek.common;
 
+import static megamek.testUtilities.MMTestUtilities.getEntityForUnitTesting;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -45,7 +46,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -92,18 +92,8 @@ class ComputeECMTest {
         when(mockGame.getHex(any(Coords.class), anyInt())).thenCallRealMethod();
         when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
 
-        File f;
-        MekFileParser mfp;
-        Entity archer;
-
-        try {
-            f = new File("data/mekfiles/meks/3039u/Archer ARC-2R.mtf");
-            mfp = new MekFileParser(f);
-            archer = mfp.getEntity();
-        } catch (Exception exc) {
-            fail(exc.getMessage());
-            return;
-        }
+        Entity archer = getEntityForUnitTesting("Archer ARC-2R", false);
+        assertNotNull(archer, "Archer ARC-2R not found");
 
         MiscType.initializeTypes();
 

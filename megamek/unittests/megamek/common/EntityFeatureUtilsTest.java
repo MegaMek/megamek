@@ -32,8 +32,10 @@
  */
 package megamek.common;
 
+import static megamek.testUtilities.MMTestUtilities.getEntityForUnitTesting;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -77,33 +79,56 @@ public class EntityFeatureUtilsTest {
     @BeforeAll
     static void setUp() {
         // Initialize any necessary data or configurations here
-        warship = (Warship) mekSummaryCache.getMek("Aegis Heavy Cruiser (2372)").loadEntity();
-        spaceStation = (SpaceStation) mekSummaryCache.getMek("Crucible Station").loadEntity();
-        jumpship = (Jumpship) mekSummaryCache.getMek("Explorer JumpShip").loadEntity();
-        superHeavyTank = (SuperHeavyTank) mekSummaryCache.getMek("Devastator II Superheavy Tank").loadEntity();
-        supportTank = (SupportTank) mekSummaryCache.getMek("Air Car").loadEntity();
+        warship = (Warship) getEntityForUnitTesting("Aegis Heavy Cruiser (2372)", true);
+        assertNotNull(warship, "Aegis Heavy Cruiser (2372) not found");
+        spaceStation = (SpaceStation) getEntityForUnitTesting("Crucible Station", true);
+        assertNotNull(spaceStation, "Crucible Station not found");
+        jumpship = (Jumpship) getEntityForUnitTesting("Explorer JumpShip", true);
+        assertNotNull(jumpship, "Explorer JumpShip not found");
+        superHeavyTank = (SuperHeavyTank) getEntityForUnitTesting("Devastator II Superheavy Tank ", true);
+        assertNotNull(superHeavyTank, "Devastator II Superheavy Tank not found");
+        supportTank = (SupportTank) getEntityForUnitTesting("Air Car", true);
+        assertNotNull(supportTank, "Air Car not found");
 
-        vtol = (VTOL) mekSummaryCache.getMek("Cobra Transport VTOL").loadEntity();
-        supportVtol = (SupportVTOL) mekSummaryCache.getMek("SOAR VTOL").loadEntity();
-        tank = (Tank) mekSummaryCache.getMek("Bulldog Medium Tank").loadEntity();
-        mek = (Mek) mekSummaryCache.getMek("Sun Cobra").loadEntity();
-        protoMek = (ProtoMek) mekSummaryCache.getMek("Centaur").loadEntity();
+        vtol = (VTOL) getEntityForUnitTesting("Cobra Transport VTOL", true);
+        assertNotNull(vtol, "Cobra Transport VTOL not found");
+        supportVtol = (SupportVTOL) getEntityForUnitTesting("SOAR VTOL", true);
+        assertNotNull(supportVtol, "SOAR VTOL not found");
+        tank = (Tank) getEntityForUnitTesting("Bulldog Medium Tank", true);
+        assertNotNull(tank, "Bulldog Medium Tank not found");
+        mek = (Mek) getEntityForUnitTesting("Sun Cobra", false);
+        assertNotNull(mek, "Sun Cobra not found");
+        protoMek = (ProtoMek) getEntityForUnitTesting("Centaur", true);
+        assertNotNull(protoMek, "Centaur not found");
 
-        infantry = (Infantry) mekSummaryCache.getMek("Fast Recon Cavalry Point").loadEntity();
-        battleArmor = (BattleArmor) mekSummaryCache.getMek("Hantu AIX-210(Sqd5)").loadEntity();
-        aeroSpaceFighter = (AeroSpaceFighter) mekSummaryCache.getMek("Cheetah F-11").loadEntity();
-        convFighter = (ConvFighter) mekSummaryCache.getMek("Boeing Jump Bomber").loadEntity();
-        tripodMek = (TripodMek) mekSummaryCache.getMek("Triskelion TRK-4V").loadEntity();
+        infantry = (Infantry) getEntityForUnitTesting("Fast Recon Cavalry Point", true);
+        assertNotNull(infantry, "Fast Recon Cavalry Point not found");
+        battleArmor = (BattleArmor) getEntityForUnitTesting("Hantu AIX-210(Sqd5)", true);
+        assertNotNull(battleArmor, "Hantu AIX-210(Sqd5) not found");
+        aeroSpaceFighter = (AeroSpaceFighter) getEntityForUnitTesting("Cheetah F-11", true);
+        assertNotNull(aeroSpaceFighter, "Cheetah F-11 not found");
+        convFighter = (ConvFighter) getEntityForUnitTesting("Boeing Jump Bomber", true);
+        assertNotNull(convFighter, "Boeing Jump Bomber not found");
+        tripodMek = (TripodMek) getEntityForUnitTesting("Triskelion TRK-4V", false);
+        assertNotNull(tripodMek, "Triskelion TRK-4V not found");
 
-        quadVee = (QuadVee) mekSummaryCache.getMek("Boreas C").loadEntity();
-        quadMek = (QuadMek) mekSummaryCache.getMek("Great Turtle GTR-1").loadEntity();
-        largeSupportTank = (LargeSupportTank) mekSummaryCache.getMek("Dromedary Water Transport").loadEntity();
-        fixedWingSupport = (FixedWingSupport) mekSummaryCache.getMek("Mosquito Light Fighter").loadEntity();
-        dropship = (Dropship) mekSummaryCache.getMek("Princess Luxury Liner").loadEntity();
+        quadVee = (QuadVee) getEntityForUnitTesting("Boreas C", false);
+        assertNotNull(quadVee, "Boreas C not found");
+        quadMek = (QuadMek) getEntityForUnitTesting("Great Turtle GTR-1", false);
+        assertNotNull(quadMek, "Great Turtle GTR-1 not found");
+        largeSupportTank = (LargeSupportTank) getEntityForUnitTesting("Dromedary Water Transport", true);
+        assertNotNull(largeSupportTank, "Dromedary Water Transport not found");
+        fixedWingSupport = (FixedWingSupport) getEntityForUnitTesting("Mosquito Light Fighter", true);
+        assertNotNull(fixedWingSupport, "Mosquito Light Fighter not found");
+        dropship = (Dropship) getEntityForUnitTesting("Princess Luxury Liner", true);
+        assertNotNull(dropship, "Princess Luxury Liner not found");
 
-        gunEmplacement = (GunEmplacement) mekSummaryCache.getMek("Medium Blaze Turret (3025)").loadEntity();
-        smallCraft = (SmallCraft) mekSummaryCache.getMek("Mowang Courier (Clandestine)").loadEntity();
-        landAirMek = (LandAirMek) mekSummaryCache.getMek("Shadow Hawk LAM SHD-X2").loadEntity();
+        gunEmplacement = (GunEmplacement) getEntityForUnitTesting("Medium Blaze Turret 3025", true);
+        assertNotNull(gunEmplacement, "Medium Blaze Turret 3025 not found");
+        smallCraft = (SmallCraft) getEntityForUnitTesting("Mowang Courier (Clandestine)", true);
+        assertNotNull(smallCraft, "Mowang Courier (Clandestine) not found");
+        landAirMek = (LandAirMek) getEntityForUnitTesting("Shadow Hawk LAM SHD-X2", false);
+        assertNotNull(landAirMek, "Shadow Hawk LAM SHD-X2 not found");
     }
 
     /**

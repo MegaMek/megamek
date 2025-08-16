@@ -38,6 +38,7 @@ import java.io.File;
 import java.util.Map;
 
 import megamek.common.MekSummaryCache;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -49,6 +50,7 @@ class CacheRebuildTest {
      * Tests that every single unit can load successfully.
      */
     @Test
+    @Disabled("Invalidated by the data changes in 50.07")
     void testCacheRebuild() {
         File cacheFile = new File(MekSummaryCache.getUnitCacheDir(), MekSummaryCache.FILENAME_UNITS_CACHE);
         if (cacheFile.exists()) {

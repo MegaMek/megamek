@@ -32,9 +32,11 @@
  */
 package megamek.common.autoresolve.damage;
 
+import static megamek.testUtilities.MMTestUtilities.getEntityForUnitTesting;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -42,7 +44,15 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
-import megamek.common.*;
+import megamek.common.Crew;
+import megamek.common.CrewType;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.HitData;
+import megamek.common.IArmorState;
+import megamek.common.IEntityRemovalConditions;
+import megamek.common.Mek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,8 +86,8 @@ class DamageApplierChooserTest {
     public void setup() throws IOException {
         entities = new EnumMap<>(MekType.class);
         for (var mek : MekType.values()) {
-            var entity = MekSummary.loadEntity(mek.getMekFullName());
-            assert entity != null;
+            Entity entity = getEntityForUnitTesting(mek.getMekFullName(), false);
+            assertNotNull(entity, mek.getMekFullName() + " not found");
             entity.setCrew(new Crew(CrewType.SINGLE));
             entity.calculateBattleValue();
             entities.put(mek, entity);

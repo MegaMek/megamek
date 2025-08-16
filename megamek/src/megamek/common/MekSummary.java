@@ -31,7 +31,6 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-
 package megamek.common;
 
 import java.awt.Image;
@@ -1356,6 +1355,42 @@ public class MekSummary implements Serializable, ASCardDisplayable {
             }
         } catch (Exception ex) {
             logger.error("", ex);
+        }
+        return null;
+    }
+
+    /**
+     * Loads an {@link Entity} directly from the specified unit file.
+     *
+     * <p>Attempts to parse the file using {@code MekFileParser} and retrieve an entity object. If the file does not
+     * contain a valid entity, or an error occurs while reading or parsing, this method logs the error and returns
+     * {@code null}.</p>
+     *
+     * <p><b>Usage:</b> This method is intended for use in tests, so we can easily load in units without needing to
+     * substantiate the entire unit cache.</p>
+     *
+     * @param unitFile the file containing the unit data to load
+     *
+     * @return the loaded {@link Entity}, or {@code null} if loading failed
+     *
+     * @author Illiani
+     * @since 0.50.07
+     */
+    public static @Nullable Entity loadEntity(File unitFile) {
+        try {
+            Entity entity = new MekFileParser(unitFile).getEntity();
+            if (entity != null) {
+                return entity;
+            } else {
+                String message = String.format("MekSummary entry not found for %s", unitFile.getAbsolutePath());
+                // As this method is intended for use in tests, we can't rely on the log, so we include a system
+                // print. This ensures we can easily spot if errors occur and why.
+                System.out.println(message);
+                logger.error(message);
+            }
+        } catch (Exception ex) {
+            logger.error("", ex);
+            System.out.println(ex);
         }
         return null;
     }

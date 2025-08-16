@@ -865,7 +865,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
         store.setDefault(DEFAULT_WEAPON_SORT_ORDER, WeaponSortOrder.DEFAULT.name());
-        store.setDefault(SHOW_DAMAGE_LEVEL, false);
+        store.setDefault(SHOW_DAMAGE_LEVEL, true);
         store.setDefault(SHOW_DAMAGE_DECAL, true);
         store.setDefault(SKIN_FILE, "BW - Default.xml");
         store.setDefault(SOFT_CENTER, false);

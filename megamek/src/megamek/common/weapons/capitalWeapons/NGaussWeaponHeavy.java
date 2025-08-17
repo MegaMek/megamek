@@ -60,7 +60,7 @@ public class NGaussWeaponHeavy extends NGaussWeapon {
         longRange = 36;
         extremeRange = 48;
         tonnage = 7000;
-        bv = 6048;
+        bv = 6048.0;
         cost = 50050000;
         shortAV = 30;
         medAV = 30;

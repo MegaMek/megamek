@@ -56,7 +56,7 @@ public class NPPCWeaponHeavy extends NPPCWeapon {
         longRange = 39;
         extremeRange = 52;
         tonnage = 3000.0;
-        bv = 3780;
+        bv = 3780.0;
         cost = 9050000;
         shortAV = 15;
         medAV = 15;

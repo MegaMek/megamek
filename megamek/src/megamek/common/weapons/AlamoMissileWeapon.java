@@ -34,9 +34,9 @@
 
 package megamek.common.weapons;
 
+import megamek.common.TechAdvancement;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.BombType.BombTypeEnum;
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 
 /**
@@ -60,7 +60,7 @@ public class AlamoMissileWeapon extends CapitalMissileWeapon {
         tonnage = 0;
         criticals = 0;
         hittable = false;
-        bv = 0;
+        bv = 0.0;
         cost = 0;
         shortAV = 10;
         medAV = 10;

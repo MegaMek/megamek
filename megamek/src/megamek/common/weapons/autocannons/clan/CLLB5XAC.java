@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.autocannons.clan;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.autocannons.LBXACWeapon;
 
 /**
@@ -61,7 +61,7 @@ public class CLLB5XAC extends LBXACWeapon {
         extremeRange = 30;
         tonnage = 7.0;
         criticals = 4;
-        bv = 93;
+        bv = 93.0;
         cost = 250000;
         shortAV = getBaseAeroDamage();
         medAV = shortAV;

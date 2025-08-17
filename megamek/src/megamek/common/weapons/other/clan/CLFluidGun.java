@@ -53,7 +53,7 @@ public class CLFluidGun extends FluidGunWeapon {
         mediumRange = 2;
         longRange = 3;
         extremeRange = 4;
-        bv = 6;
+        bv = 6.0;
         heat = 0;
         criticals = 2;
         svslots = 1;

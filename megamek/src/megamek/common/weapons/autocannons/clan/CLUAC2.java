@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.autocannons.clan;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.autocannons.UACWeapon;
 
 /**
@@ -61,7 +61,7 @@ public class CLUAC2 extends UACWeapon {
         extremeRange = 36;
         tonnage = 5.0;
         criticals = 2;
-        bv = 62;
+        bv = 62.0;
         cost = 120000;
         shortAV = 3;
         medAV = 3;

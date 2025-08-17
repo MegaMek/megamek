@@ -60,7 +60,7 @@ public class CapMissTeleBarracudaWeapon extends CapitalMissileWeapon {
         this.longRange = 40;
         this.extremeRange = 50;
         this.tonnage = 100.0;
-        this.bv = 461;
+        this.bv = 461.0;
         this.cost = 100000;
         this.flags = flags.or(F_MISSILE);
         this.atClass = CLASS_TELE_MISSILE;

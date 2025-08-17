@@ -58,7 +58,7 @@ public class CLUAC10 extends UACWeapon {
         this.extremeRange = 24;
         this.tonnage = 10.0;
         this.criticals = 4;
-        this.bv = 210;
+        this.bv = 210.0;
         this.cost = 320000;
         this.shortAV = 15;
         this.medAV = 15;

@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.autocannons.clan;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.SimpleTechLevel;
+import megamek.common.equipment.AmmoType;
 import megamek.common.weapons.autocannons.ACWeapon;
 
 /**
@@ -61,7 +61,7 @@ public class CLImprovedAC5 extends ACWeapon {
         extremeRange = 24;
         tonnage = 7.0;
         criticals = 2;
-        bv = 70;
+        bv = 70.0;
         cost = 125000;
         shortAV = 5;
         medAV = 5;

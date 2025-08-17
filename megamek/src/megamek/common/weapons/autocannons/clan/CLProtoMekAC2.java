@@ -64,7 +64,7 @@ public class CLProtoMekAC2 extends ProtoMekACWeapon {
         extremeRange = 30;
         tonnage = 3.5;
         criticals = 2;
-        bv = 34;
+        bv = 34.0;
         cost = 95000;
         shortAV = 2;
         medAV = 2;

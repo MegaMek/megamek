@@ -59,7 +59,7 @@ public class CLUAC5 extends UACWeapon {
         extremeRange = 28;
         tonnage = 7.0;
         criticals = 3;
-        bv = 122;
+        bv = 122.0;
         cost = 200000;
         shortAV = 7;
         medAV = 7;

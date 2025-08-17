@@ -60,7 +60,7 @@ public class NGaussWeaponMedium extends NGaussWeapon {
         longRange = 39;
         extremeRange = 52;
         tonnage = 5500;
-        bv = 5040;
+        bv = 5040.0;
         cost = 30350000;
         shortAV = 25;
         medAV = 25;

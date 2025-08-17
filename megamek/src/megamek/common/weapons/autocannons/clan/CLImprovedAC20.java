@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.autocannons.clan;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.SimpleTechLevel;
+import megamek.common.equipment.AmmoType;
 import megamek.common.weapons.autocannons.ACWeapon;
 
 /**
@@ -60,7 +60,7 @@ public class CLImprovedAC20 extends ACWeapon {
         extremeRange = 12;
         tonnage = 13.0;
         criticals = 9;
-        bv = 178;
+        bv = 178.0;
         cost = 300000;
         explosive = true; // when firing incendiary ammo
         shortAV = 20;

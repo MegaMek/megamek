@@ -34,9 +34,9 @@
 
 package megamek.common.weapons.other.clan;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
-import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.AmmoWeapon;
 
 /**
@@ -67,7 +67,7 @@ public class CLAMS extends AmmoWeapon {
         ammoType = AmmoType.AmmoTypeEnum.AMS;
         tonnage = 0.5;
         criticals = 1;
-        bv = 32;
+        bv = 32.0;
         flags = flags.or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC).or(F_MEK_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON)
               .or(F_PROTO_WEAPON);
         setModes(new String[] { "On", "Off" });

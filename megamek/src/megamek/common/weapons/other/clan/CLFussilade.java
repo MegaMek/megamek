@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.other.clan;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.SimpleTechLevel;
-import megamek.common.equipment.WeaponType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.CLIATMWeapon;
 
 /**
@@ -70,7 +70,7 @@ public class CLFussilade extends CLIATMWeapon {
         cost = 100000;
         tonnage = 1.5;
         criticals = 1;
-        bv = 11;
+        bv = 11.0;
         rulesRefs = "65, IO";
         techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)

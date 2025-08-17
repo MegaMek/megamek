@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.autocannons;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.NailRivetGunHandler;
@@ -64,7 +64,7 @@ public abstract class NailRivetGunWeapon extends AmmoWeapon {
         extremeRange = 1;
         tonnage = 0.5;
         criticals = 1;
-        bv = 1;
+        bv = 1.0;
         cost = 7000;
     }
 

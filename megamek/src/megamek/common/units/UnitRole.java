@@ -229,19 +229,19 @@ public enum UnitRole {
                       || unit.hasSUA(BattleForceSUA.LMAS)) {
                     score++;
                 }
-                if (unit.getStandardDamage().S.damage > unit.getStandardDamage().M.damage) {
+                if (unit.getStandardDamage().S().damage > unit.getStandardDamage().M().damage) {
                     score++;
-                } else if (unit.getStandardDamage().S.damage > unit.getStandardDamage().L.damage) {
+                } else if (unit.getStandardDamage().S().damage > unit.getStandardDamage().L().damage) {
                     score += 0.5;
                 }
                 break;
             case BRAWLER:
                 /* Not too slow, preference for medium range */
                 score += Math.min(0, speed - 8);
-                if (unit.getStandardDamage().M.damage >= unit.getStandardDamage().S.damage) {
+                if (unit.getStandardDamage().M().damage >= unit.getStandardDamage().S().damage) {
                     score += 0.5;
                 }
-                if (unit.getStandardDamage().M.damage > unit.getStandardDamage().L.damage) {
+                if (unit.getStandardDamage().M().damage > unit.getStandardDamage().L().damage) {
                     score += 0.5;
                 }
                 break;
@@ -254,13 +254,13 @@ public enum UnitRole {
                  * juggernaut.
                  */
                 score += Math.min(0, unit.getFullArmor() - (unit.getSize() + 4));
-                if (Math.max(unit.getStandardDamage().S.damage,
-                      unit.getStandardDamage().M.damage) * 2 >= unit.getFullArmor()) {
+                if (Math.max(unit.getStandardDamage().S().damage,
+                      unit.getStandardDamage().M().damage) * 2 >= unit.getFullArmor()) {
                     score++;
                 }
-                if (unit.getStandardDamage().S.damage > unit.getStandardDamage().M.damage) {
+                if (unit.getStandardDamage().S().damage > unit.getStandardDamage().M().damage) {
                     score++;
-                } else if (unit.getStandardDamage().S.damage > unit.getStandardDamage().L.damage) {
+                } else if (unit.getStandardDamage().S().damage > unit.getStandardDamage().L().damage) {
                     score += 0.5;
                 }
                 if (unit.hasSUA(BattleForceSUA.MEL)
@@ -279,7 +279,7 @@ public enum UnitRole {
                 break;
             case MISSILE_BOAT:
                 /* Any artillery piece or can do damage by indirect fire at long range */
-                return (unit.getStandardDamage().L.damage > 0 && unit.hasSUA(BattleForceSUA.IF))
+                return (unit.getStandardDamage().L().damage > 0 && unit.hasSUA(BattleForceSUA.IF))
                       || unit.hasSUA(BattleForceSUA.ARTAIS)
                       || unit.hasSUA(BattleForceSUA.ARTAC)
                       || unit.hasSUA(BattleForceSUA.ARTBA)
@@ -316,9 +316,9 @@ public enum UnitRole {
                 if (unit.hasSUA(BattleForceSUA.ECM)) {
                     score++;
                 }
-                if (unit.getStandardDamage().S.damage > unit.getStandardDamage().M.damage) {
+                if (unit.getStandardDamage().S().damage > unit.getStandardDamage().M().damage) {
                     score++;
-                } else if (unit.getStandardDamage().S.damage > unit.getStandardDamage().L.damage) {
+                } else if (unit.getStandardDamage().S().damage > unit.getStandardDamage().L().damage) {
                     score += 0.5;
                 }
                 break;
@@ -330,58 +330,58 @@ public enum UnitRole {
                     score += Math.min(0, speed - 9) * 0.5;
                 }
                 score += Math.min(0, unit.getFullArmor() - 4) + Math.min(0, 8 - unit.getFullArmor());
-                if (unit.getStandardDamage().M.damage >= unit.getStandardDamage().S.damage) {
+                if (unit.getStandardDamage().M().damage >= unit.getStandardDamage().S().damage) {
                     score += 0.5;
                 }
-                if (unit.getStandardDamage().M.damage > unit.getStandardDamage().L.damage) {
+                if (unit.getStandardDamage().M().damage > unit.getStandardDamage().L().damage) {
                     score += 0.5;
                 }
                 break;
             case SNIPER:
                 /* Can do damage at long range without LRMs */
-                return unit.getStandardDamage().L.damage - unit.getLRM().L.damage > 0;
+                return unit.getStandardDamage().L().damage - unit.getLRM().L().damage > 0;
             case STRIKER:
                 /* Fast and light-medium armor, preference for short range */
                 score += Math.min(0, speed - 9) * 0.5;
                 score -= Math.max(0, unit.getFullArmor() - 5);
-                if (unit.getStandardDamage().S.damage > unit.getStandardDamage().M.damage) {
+                if (unit.getStandardDamage().S().damage > unit.getStandardDamage().M().damage) {
                     score++;
-                } else if (unit.getStandardDamage().S.damage > unit.getStandardDamage().L.damage) {
+                } else if (unit.getStandardDamage().S().damage > unit.getStandardDamage().L().damage) {
                     score += 0.5;
                 }
                 break;
             case ATTACK_FIGHTER:
                 /* Slow, preference for short range */
                 score -= Math.max(0, speed - 5);
-                if (unit.getStandardDamage().S.damage > unit.getStandardDamage().M.damage) {
+                if (unit.getStandardDamage().S().damage > unit.getStandardDamage().M().damage) {
                     score++;
-                } else if (unit.getStandardDamage().S.damage > unit.getStandardDamage().L.damage) {
+                } else if (unit.getStandardDamage().S().damage > unit.getStandardDamage().L().damage) {
                     score += 0.5;
                 }
                 break;
             case DOGFIGHTER:
                 /* Medium speed, preference for medium range */
                 score += Math.min(0, speed - 5) + Math.min(0, 7 - speed) * 0.5;
-                if (unit.getStandardDamage().M.damage >= unit.getStandardDamage().S.damage) {
+                if (unit.getStandardDamage().M().damage >= unit.getStandardDamage().S().damage) {
                     score += 0.5;
                 }
-                if (unit.getStandardDamage().M.damage > unit.getStandardDamage().L.damage) {
+                if (unit.getStandardDamage().M().damage > unit.getStandardDamage().L().damage) {
                     score += 0.5;
                 }
                 break;
             case FAST_DOGFIGHTER:
                 /* Fast with preference for medium range */
                 score += Math.min(0, speed - 7) + Math.min(0, 9 - speed) * 0.5;
-                if (unit.getStandardDamage().M.damage >= unit.getStandardDamage().S.damage) {
+                if (unit.getStandardDamage().M().damage >= unit.getStandardDamage().S().damage) {
                     score += 0.5;
                 }
-                if (unit.getStandardDamage().M.damage > unit.getStandardDamage().L.damage) {
+                if (unit.getStandardDamage().M().damage > unit.getStandardDamage().L().damage) {
                     score += 0.5;
                 }
                 break;
             case FIRE_SUPPORT:
                 /* Not too slow and can do damage at long range */
-                if (unit.getStandardDamage().L.damage < 0.5) {
+                if (unit.getStandardDamage().L().damage < 0.5) {
                     return false;
                 }
                 score += Math.min(0, speed - 5) + Math.min(0, 7 - speed);
@@ -389,10 +389,10 @@ public enum UnitRole {
             case INTERCEPTOR:
                 /* Very fast, preference for damage at medium range */
                 score += Math.min(0, speed - 10);
-                if (unit.getStandardDamage().M.damage >= unit.getStandardDamage().S.damage) {
+                if (unit.getStandardDamage().M().damage >= unit.getStandardDamage().S().damage) {
                     score += 0.5;
                 }
-                if (unit.getStandardDamage().M.damage > unit.getStandardDamage().L.damage) {
+                if (unit.getStandardDamage().M().damage > unit.getStandardDamage().L().damage) {
                     score += 0.5;
                 }
                 break;

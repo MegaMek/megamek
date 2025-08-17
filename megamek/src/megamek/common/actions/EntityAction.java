@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,11 +38,11 @@ import megamek.client.Client;
 import megamek.client.ui.clientGUI.boardview.overlay.TurnDetailsOverlay;
 import megamek.client.ui.clientGUI.tooltip.EntityActionLog;
 import megamek.client.ui.dialogs.AccessibilityDialog;
-import megamek.common.units.Entity;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.game.Game;
 import megamek.common.game.InGameObject;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.units.Entity;
 
 /**
  * This interface is implemented by all actions that game units - not restricted to Entity! - can perform, such as

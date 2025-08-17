@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,14 +44,19 @@ import megamek.common.annotations.Nullable;
 
 /**
  * Represents an AlphaStrike damage value combination of between 1 and 4 damage values which typically correspond to
- * S/M/L/E ranges. Each damage value is an ASDamage field and they can be directly accessed as S, M, L and E. The
+ * S/M/L/E ranges. Each damage value is an ASDamage field, and they can be directly accessed as S, M, L and E. The
  * ASDamage fields store integer damage values with the option of being minimal damage. The ASDamageVector remembers how
  * many damage values are used and if it is special damage (using - for no damage) or standard damage (using 0 for no
  * damage) and toString() writes the damage values accordingly. ASDamageVector is immutable.
  *
+ * @param rangeBands The number of damage values used by this damage vector. 2 indicates that only the S and M damage
+ *                   values are used, as with SRM. 4 indicates all S/M/L/E damage values are used such as with Aero.
+ * @param isStandard True for standard damage that uses 0 (e.g. 2/2/0), false for specials that use a dash (AC2/2/-)
+ *
  * @author Simon (Juliez)
  */
-public class ASDamageVector implements Serializable {
+public record ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int rangeBands, boolean isStandard)
+      implements Serializable {
 
     /**
      * A constant that represents zero damage, written as 0/0/0/0 in toString(). May be used as a return value instead
@@ -64,22 +69,8 @@ public class ASDamageVector implements Serializable {
      * A constant that represents zero damage as special damage, written as -/-/-/- in toString(). May be used as a
      * return value instead of null.
      */
-    public static final ASDamageVector ZEROSPECIAL = new ASDamageVector(ASDamage.ZERO, ASDamage.ZERO,
+    public static final ASDamageVector ZERO_SPECIAL = new ASDamageVector(ASDamage.ZERO, ASDamage.ZERO,
           ASDamage.ZERO, ASDamage.ZERO, 4, false);
-
-    /**
-     * The number of damage values used by this damage vector. 2 indicates that only the S and M damage values are used,
-     * as with SRM. 4 indicates all S/M/L/E damage values are used such as with Aero.
-     */
-    public final int rangeBands;
-
-    public final ASDamage S;
-    public final ASDamage M;
-    public final ASDamage L;
-    public final ASDamage E;
-
-    /** True for standard damage that uses 0 (e.g. 2/2/0), false for specials that use a dash (AC2/2/-) */
-    private final boolean isStandard;
 
     /** Returns true if this ASDamageVector represents any damage at any range, minimal or 1 or more. */
     public boolean hasDamage() {
@@ -252,7 +243,7 @@ public class ASDamageVector implements Serializable {
      */
     public static ASDamageVector createUpRndDmgMinus(@Nullable List<Double> values, int ranges) {
         if (values == null) {
-            return ZEROSPECIAL;
+            return ZERO_SPECIAL;
         }
         List<Double> copy = new ArrayList<>(values);
         while (copy.size() < 4) {
@@ -290,13 +281,13 @@ public class ASDamageVector implements Serializable {
      * Construct an ASDamageVector from ASDamage values. Damage is set to 0 for unused ranges. When std is true, creates
      * a standard damage type vector that uses "0" for zero damage, otherwise prints "-" for zero damage.
      */
-    public ASDamageVector(ASDamage s, ASDamage m, ASDamage l, ASDamage e, int ranges, boolean std) {
-        rangeBands = MathUtility.clamp(ranges, 1, 4);
-        S = (s == null) ? new ASDamage(0) : s;
-        M = (rangeBands < 2) || (m == null) ? new ASDamage(0) : m;
-        L = (rangeBands < 3) || (l == null) ? new ASDamage(0) : l;
-        E = (rangeBands < 4) || (e == null) ? new ASDamage(0) : e;
-        isStandard = std;
+    public ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int rangeBands, boolean isStandard) {
+        this.rangeBands = MathUtility.clamp(rangeBands, 1, 4);
+        this.S = (S == null) ? new ASDamage(0) : S;
+        this.M = (this.rangeBands < 2) || (M == null) ? new ASDamage(0) : M;
+        this.L = (this.rangeBands < 3) || (L == null) ? new ASDamage(0) : L;
+        this.E = (this.rangeBands < 4) || (E == null) ? new ASDamage(0) : E;
+        this.isStandard = isStandard;
     }
 
     @Override

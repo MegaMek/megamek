@@ -59,7 +59,7 @@ public class ISMekMortar4 extends MekMortarWeapon {
         mediumRange = 14;
         longRange = 21;
         extremeRange = 28;
-        bv = 26;
+        bv = 26.0;
         heat = 5;
         criticals = 3;
         tonnage = 7;

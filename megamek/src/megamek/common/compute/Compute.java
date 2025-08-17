@@ -37,8 +37,6 @@ package megamek.common.compute;
 import java.util.*;
 
 import megamek.common.*;
-import megamek.common.interfaces.ILocationExposureStatus;
-import megamek.common.interfaces.ITechnology.TechRating;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
@@ -51,6 +49,8 @@ import megamek.common.enums.BasementType;
 import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
+import megamek.common.interfaces.ITechnology.TechRating;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
@@ -865,8 +865,8 @@ public class Compute {
         if (entity.isLocationProhibited(dest)
               && !((entity instanceof Tank)
               && destHex.containsTerrain(Terrains.WATER)
-              && ((entity.movementMode == EntityMovementMode.TRACKED)
-              || (entity.movementMode == EntityMovementMode.WHEELED)))) {
+              && ((entity.getMovementMode() == EntityMovementMode.TRACKED)
+              || (entity.getMovementMode() == EntityMovementMode.WHEELED)))) {
             return false;
         }
 
@@ -5343,7 +5343,7 @@ public class Compute {
         // for advanced movement, it must be aligned with largest vector
         if (game.useVectorMove()) {
             for (int h : attacker.getHeading()) {
-                if (h == attacker.facing) {
+                if (h == attacker.getFacing()) {
                     rightFacing = true;
                     break;
                 }
@@ -5386,7 +5386,7 @@ public class Compute {
             reason.append("defender is not in hex passed through by attacker this turn");
         }
         // the defender must weight 10000+ tons
-        else if (defender.weight < 10000) {
+        else if (defender.getWeight() < 10000) {
             reason.append("the defender weighs less than 10,000 tons");
         }
 
@@ -5410,8 +5410,8 @@ public class Compute {
               || (defender.braceLocation() != Entity.LOC_NONE)) {
             toHit.addModifier(-4, "immobile");
         }
-        if (defender.weight < 100000) {
-            int penalty = (int) Math.ceil((100000 - defender.weight) / 10000);
+        if (defender.getWeight() < 100000) {
+            int penalty = (int) Math.ceil((100000 - defender.getWeight()) / 10000);
             toHit.addModifier(penalty, "defender weight");
         }
 
@@ -5727,10 +5727,10 @@ public class Compute {
 
         if ((game.getEntity(entityId) instanceof QuadMek)
               && ((KickAttackAction.toHit(game, entityId, target,
-              KickAttackAction.LEFTMULE).getValue() != TargetRoll.IMPOSSIBLE) ||
+              KickAttackAction.LEFT_MULE).getValue() != TargetRoll.IMPOSSIBLE) ||
               (KickAttackAction
                     .toHit(game, entityId, target,
-                          KickAttackAction.RIGHTMULE)
+                          KickAttackAction.RIGHT_MULE)
                     .getValue() != TargetRoll.IMPOSSIBLE))) {
             return true;
         }
@@ -6336,7 +6336,7 @@ public class Compute {
                 totalDmg += type.getRackSize();
             } else if (type.getDamage() == WeaponType.DAMAGE_SPECIAL) {// Handle dive bomb attacks here!
                 if (type instanceof DiveBombAttack) {
-                    totalDmg += weapon.getEntity().bombList.stream().mapToInt(Mounted::getExplosionDamage).sum();
+                    totalDmg += weapon.getEntity().getBombs().stream().mapToInt(Mounted::getExplosionDamage).sum();
                 }
                 if (type instanceof ISBAPopUpMineLauncher) {
                     totalDmg += 4;

@@ -34,7 +34,6 @@
 package megamek.common.alphaStrike.conversion;
 
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.equipment.MiscType.*;
 import static megamek.common.alphaStrike.ASUnitType.BA;
 import static megamek.common.alphaStrike.ASUnitType.BM;
 import static megamek.common.alphaStrike.ASUnitType.CI;
@@ -44,11 +43,12 @@ import static megamek.common.alphaStrike.ASUnitType.MS;
 import static megamek.common.alphaStrike.ASUnitType.PM;
 import static megamek.common.alphaStrike.ASUnitType.SV;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
+import static megamek.common.equipment.MiscType.*;
 
 import java.util.Arrays;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.*;
+import megamek.common.CriticalSlot;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.BattleForceSUA;
@@ -532,14 +532,14 @@ public class ASSpecialAbilityConverter {
         if ((equipment.getType() instanceof MiscType) && equipment.getType().hasFlag(F_BOOBY_TRAP)) {
             return true;
         }
-        // Oneshot weapons internally have normal ammo allocated to them which must
+        // One shot weapons internally have normal ammo allocated to them which must
         // be disqualified as explosive; such ammo has no location
         return equipment.getType().isExplosive(null) && (equipment.getExplosionDamage() > 0)
               && (equipment.getLocation() != Entity.LOC_NONE);
     }
 
     protected void finalizeSpecials() {
-        // For MHQ, the values may contain decimals, but the the final MHQ value is
+        // For MHQ, the values may contain decimals, but the final MHQ value is
         // rounded down to an int.
         if (element.getSUA(MHQ) instanceof Double) {
             double mhqValue = (double) element.getSUA(MHQ);
@@ -619,9 +619,9 @@ public class ASSpecialAbilityConverter {
     /**
      * Adds the sua(s) to the element and writes a report line for each, if it is not yet present.
      */
-    protected void assign(Mounted<?> equipment, BattleForceSUA firstSua, BattleForceSUA... moreSuas) {
+    protected void assign(Mounted<?> equipment, BattleForceSUA firstSua, BattleForceSUA... moreSUAs) {
         assign(equipment.getType().getName(), firstSua);
-        Arrays.stream(moreSuas).forEach(sua -> assign(equipment.getType().getName(), sua));
+        Arrays.stream(moreSUAs).forEach(sua -> assign(equipment.getType().getName(), sua));
     }
 
     /**

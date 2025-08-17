@@ -4970,7 +4970,7 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasWorkingMisc(String name) {
         for (MiscMounted m : miscList) {
-            if (m.isReady() && m.getType().internalName.equalsIgnoreCase(name)) {
+            if (m.isReady() && m.getType().getInternalName().equalsIgnoreCase(name)) {
                 return true;
             }
         }
@@ -5111,7 +5111,7 @@ public abstract class Entity extends TurnOrdered
 
         // Coolant Pod
         for (AmmoMounted m : getAmmo()) {
-            if (m.getType().ammoType == AmmoType.AmmoTypeEnum.COOLANT_POD) {
+            if (m.getType().getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) {
                 capacity += sinks;
                 sb.append(", ").append(capacity).append(" with Coolant Pod");
                 break;

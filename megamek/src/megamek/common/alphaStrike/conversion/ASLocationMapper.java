@@ -43,7 +43,7 @@ import megamek.common.units.*;
 
 /**
  * This class provides AlphaStrike conversion utilities for converting all sorts of locations of TW units to the damage
- * conversion location index. Not useful for anything outside of AlphaStrike conversion.
+ * conversion location index. Not useful for anything outside AlphaStrike conversion.
  */
 public class ASLocationMapper {
 
@@ -122,7 +122,7 @@ public class ASLocationMapper {
      * @param loc   The conversion location index, see locations[] in ASDamageConverter
      * @param mount the weapon
      *
-     * @return The value multiplier, 1 meaning "counts for this location", 0 meaning "doesnt count"
+     * @return The value multiplier, 1 meaning "counts for this location", 0 meaning "doesn't count"
      */
     public static double damageLocationMultiplierForSpecials(Entity en, int loc, Mounted<?> mount) {
         if (en.isFighter() || en.isProtoMek() || en.isMek()) {
@@ -186,25 +186,17 @@ public class ASLocationMapper {
 
     private static double getWarShipLocationMultiplier(int index, int location) {
         // ASC p. 103
-        switch (location) {
-            case Warship.LOC_NOSE:
-            case Warship.LOC_FLS:
-            case Warship.LOC_FRS:
-                return (index == 0) ? 1 : 0;
-            case Warship.LOC_LBS:
-            case Warship.LOC_ALS:
-                return (index == 1) ? 1 : 0;
-            case Warship.LOC_RBS:
-            case Warship.LOC_ARS:
-                return (index == 2) ? 1 : 0;
-            case Warship.LOC_AFT:
-                return (index == 3) ? 1 : 0;
-            default:
-                return 0;
-        }
+        return switch (location) {
+            case Warship.LOC_NOSE, Warship.LOC_FLS, Warship.LOC_FRS -> (index == 0) ? 1 : 0;
+            case Warship.LOC_LBS, Warship.LOC_ALS -> (index == 1) ? 1 : 0;
+            case Warship.LOC_RBS, Warship.LOC_ARS -> (index == 2) ? 1 : 0;
+            case Warship.LOC_AFT -> (index == 3) ? 1 : 0;
+            default -> 0;
+        };
     }
 
-    private static double getJumpShipLocationMultiplier(Jumpship en, int index, int location, boolean rearMounted) {
+    private static double getJumpShipLocationMultiplier(Jumpship jumpship, int index, int location,
+          boolean rearMounted) {
         switch (index) {
             case 0:
                 if (location == Jumpship.LOC_NOSE) {

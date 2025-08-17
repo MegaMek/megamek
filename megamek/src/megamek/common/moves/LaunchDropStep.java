@@ -35,9 +35,9 @@ package megamek.common.moves;
 import java.util.EnumSet;
 import java.util.Set;
 
-import megamek.common.units.Entity;
 import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.units.Entity;
 
 /**
  * This class handles the launch and drop step of a unit. It is used in the MoveStep compilation to calculate the
@@ -58,7 +58,7 @@ class LaunchDropStep implements PhasePass {
     @Override
     public PhasePassResult preCompilation(final MoveStep moveStep, final Game game, final Entity entity, MoveStep prev,
           final CachedEntityState cachedEntityState) {
-        moveStep.setHasEverUnloaded(true);
+        moveStep.setUnloaded(true);
         moveStep.setMp(0);
         return PhasePassResult.BREAK;
     }

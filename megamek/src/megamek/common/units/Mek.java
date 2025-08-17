@@ -65,7 +65,6 @@ import megamek.common.loaders.MtfFile;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
@@ -1204,38 +1203,18 @@ public abstract class Mek extends Entity {
 
         if (!mpCalculationSetting.ignoreWeather && (game != null)) {
             if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
-                switch (game.getPlanetaryConditions().getAtmosphere()) {
-                    case Atmosphere.VACUUM:
-                    case Atmosphere.TRACE:
-                        bonus = 0;
-                        break;
-                    case Atmosphere.THIN:
-                        bonus = 1;
-                        break;
-                    case Atmosphere.VERY_HIGH:
-                        bonus = 3;
-                        break;
-                    case Atmosphere.STANDARD:
-                    case Atmosphere.HIGH:
-                    default:
-                        bonus = 2;
-                        break;
-                }
+                bonus = switch (game.getPlanetaryConditions().getAtmosphere()) {
+                    case VACUUM, TRACE -> 0;
+                    case THIN -> 1;
+                    case VERY_HIGH -> 3;
+                    default -> 2;
+                };
             } else {
-                switch (game.getPlanetaryConditions().getAtmosphere()) {
-                    case Atmosphere.VACUUM:
-                    case Atmosphere.TRACE:
-                    case Atmosphere.THIN:
-                        bonus = 0;
-                        break;
-                    case Atmosphere.HIGH:
-                    case Atmosphere.VERY_HIGH:
-                        bonus = 2;
-                        break;
-                    case Atmosphere.STANDARD:
-                    default:
-                        bonus = 1;
-                }
+                bonus = switch (game.getPlanetaryConditions().getAtmosphere()) {
+                    case VACUUM, TRACE, THIN -> 0;
+                    case HIGH, VERY_HIGH -> 2;
+                    default -> 1;
+                };
             }
         } else {
             bonus = getPartialWingJumpWeightClassBonus();
@@ -1270,23 +1249,12 @@ public abstract class Mek extends Entity {
     private int getPartialWingHeatBonus() {
         int bonus;
         if (game != null) {
-            switch (game.getPlanetaryConditions().getAtmosphere()) {
-                case Atmosphere.VACUUM:
-                    bonus = 0;
-                    break;
-                case Atmosphere.TRACE:
-                    bonus = 1;
-                    break;
-                case Atmosphere.THIN:
-                    bonus = 2;
-                    break;
-                case Atmosphere.STANDARD:
-                case Atmosphere.HIGH:
-                case Atmosphere.VERY_HIGH:
-                default:
-                    bonus = 3;
-                    break;
-            }
+            bonus = switch (game.getPlanetaryConditions().getAtmosphere()) {
+                case VACUUM -> 0;
+                case TRACE -> 1;
+                case THIN -> 2;
+                default -> 3;
+            };
         } else {
             bonus = 3;
         }

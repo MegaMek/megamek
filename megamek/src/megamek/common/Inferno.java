@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+  Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,37 +31,33 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
+package megamek.common;
 
+import java.io.Serializable;
 
-package megamek.common.actions;
+/**
+ * This class defines the effects of a single hit by an Inferno round.
+ */
+public class Inferno implements Serializable {
+    private static final long serialVersionUID = 1799687411697517801L;
+    private int heatPerRound;
+    private int burnRoundsPerHit;
 
-import java.io.Serial;
-
-import megamek.client.ui.Messages;
-import megamek.common.game.Game;
-import megamek.common.units.Entity;
-
-public class SpotAction extends AbstractEntityAction {
-
-    /**
-     *
-     */
-    @Serial
-    private static final long serialVersionUID = 3629300334304478911L;
-    private final int targetId;
-
-    public SpotAction(int entityId, int targetId) {
-        super(entityId);
-        this.targetId = targetId;
+    public Inferno() {
+        heatPerRound = 6;
+        burnRoundsPerHit = 3;
     }
 
-    public int getTargetId() {
-        return targetId;
+    public Inferno(int heat, int rounds) {
+        this.heatPerRound = heat;
+        this.burnRoundsPerHit = rounds;
     }
 
-    @Override
-    public String toSummaryString(final Game game) {
-        Entity target = game.getEntity(this.getTargetId());
-        return Messages.getString("BoardView1.SpotAction", (target != null) ? target.getShortName() : "");
+    public int getHeatPerRound() {
+        return heatPerRound;
+    }
+
+    public int getBurnRoundsPerHit() {
+        return burnRoundsPerHit;
     }
 }

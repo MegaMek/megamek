@@ -49,8 +49,8 @@ final class ASSizeConverter {
      * Determines the element's size, AlphaStrike Companion, p.92
      */
     static int convertSize(ASConverter.ConversionData conversionData) {
-        Entity entity = conversionData.entity;
-        CalculationReport report = conversionData.conversionReport;
+        Entity entity = conversionData.entity();
+        CalculationReport report = conversionData.conversionReport();
 
         if ((entity instanceof Tank) && entity.isSupportVehicle()) {
             if (entity.getWeight() < 5) {

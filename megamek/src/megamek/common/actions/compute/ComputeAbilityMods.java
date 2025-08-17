@@ -41,20 +41,20 @@ import static megamek.common.units.Terrains.RUBBLE;
 import static megamek.common.units.Terrains.SWAMP;
 
 import megamek.client.ui.Messages;
-import megamek.common.units.Crew;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityMovementType;
-import megamek.common.game.Game;
 import megamek.common.Hex;
-import megamek.common.equipment.Mounted;
-import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.equipment.WeaponType;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
+import megamek.common.units.Crew;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
 class ComputeAbilityMods {
@@ -88,11 +88,11 @@ class ComputeAbilityMods {
                   (attacker.moved == EntityMovementType.MOVE_RUN)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.StableWeapon"));
             }
-            // +1 for a Misrepaired Weapon - See StratOps Partial Repairs
+            // +1 for a Mis-repaired Weapon - See StratOps Partial Repairs
             if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPAIRED)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.MisrepairedWeapon"));
             }
-            // +1 for a Misreplaced Weapon - See StratOps Partial Repairs
+            // +1 for a Mis-replaced Weapon - See StratOps Partial Repairs
             if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPLACED)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.MisreplacedWeapon"));
             }
@@ -115,46 +115,47 @@ class ComputeAbilityMods {
 
 
         if (weapon != null) {
-            WeaponType wtype = weapon.getType();
+            WeaponType weaponType = weapon.getType();
 
             // Unofficial weapon class specialist - Does not have an unspecialized penalty
-            if (attacker.hasAbility(OptionsConstants.UNOFF_GUNNERY_LASER) && wtype.hasFlag(WeaponType.F_ENERGY)) {
+            if (attacker.hasAbility(OptionsConstants.UNOFF_GUNNERY_LASER) && weaponType.hasFlag(WeaponType.F_ENERGY)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunLSkill"));
             }
 
             if (attacker.hasAbility(OptionsConstants.UNOFF_GUNNERY_BALLISTIC)
-                  && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                  && weaponType.hasFlag(WeaponType.F_BALLISTIC)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunBSkill"));
             }
 
-            if (attacker.hasAbility(OptionsConstants.UNOFF_GUNNERY_MISSILE) && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            if (attacker.hasAbility(OptionsConstants.UNOFF_GUNNERY_MISSILE)
+                  && weaponType.hasFlag(WeaponType.F_MISSILE)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunMSkill"));
             }
 
             // Is the pilot a weapon specialist?
-            if ((wtype instanceof BayWeapon) && isSpecialistForAllBayWeapons(attacker, weapon)) {
+            if ((weaponType instanceof BayWeapon) && isSpecialistForAllBayWeapons(attacker, weapon)) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.WeaponSpec"));
 
-            } else if (attacker.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, wtype.getName())) {
+            } else if (attacker.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, weaponType.getName())) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.WeaponSpec"));
 
             } else if (attacker.hasAbility(OptionsConstants.GUNNERY_SPECIALIST)) {
                 // aToW style gunnery specialist: -1 to specialized weapon and +1 to all other weapons
                 // Note that weapon specialist supersedes gunnery specialization, so if you have a specialization in
                 // Medium Lasers and a Laser specialization, you only get the -2 specialization mod
-                if (wtype.hasFlag(WeaponType.F_ENERGY)) {
+                if (weaponType.hasFlag(WeaponType.F_ENERGY)) {
                     if (attacker.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_ENERGY)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.EnergySpec"));
                     } else {
                         toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
                     }
-                } else if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                } else if (weaponType.hasFlag(WeaponType.F_BALLISTIC)) {
                     if (attacker.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_BALLISTIC)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BallisticSpec"));
                     } else {
                         toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
                     }
-                } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
+                } else if (weaponType.hasFlag(WeaponType.F_MISSILE)) {
                     if (attacker.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_MISSILE)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MissileSpec"));
                     } else {
@@ -171,7 +172,7 @@ class ComputeAbilityMods {
                       .getOptions()
                       .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
                       .equals(Crew.ENVSPC_FOG)
-                      && wtype.hasFlag(WeaponType.F_ENERGY)
+                      && weaponType.hasFlag(WeaponType.F_ENERGY)
                       && !targetEntity.isSpaceborne()
                       && conditions.getFog().isFogHeavy()) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.FogSpec"));
@@ -213,7 +214,7 @@ class ComputeAbilityMods {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
-                    if (conditions.getWeather().isIceStorm() && wtype.hasFlag(WeaponType.F_MISSILE)) {
+                    if (conditions.getWeather().isIceStorm() && weaponType.hasFlag(WeaponType.F_MISSILE)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
@@ -227,11 +228,11 @@ class ComputeAbilityMods {
                       .getOptions()
                       .stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
                       .equals(Crew.ENVSPC_WIND)) {
-                    if (conditions.getWind().isModerateGale() && wtype.hasFlag(WeaponType.F_MISSILE)) {
+                    if (conditions.getWind().isModerateGale() && weaponType.hasFlag(WeaponType.F_MISSILE)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
-                    if (wtype.hasFlag(WeaponType.F_MISSILE) && wtype.hasFlag(WeaponType.F_BALLISTIC)
+                    if (weaponType.hasFlag(WeaponType.F_MISSILE) && weaponType.hasFlag(WeaponType.F_BALLISTIC)
                           && conditions.getWind().isStrongGaleOrStorm()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
                     }

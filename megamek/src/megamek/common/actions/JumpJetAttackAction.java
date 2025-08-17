@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,10 @@
 
 package megamek.common.actions;
 
-import megamek.common.*;
+import java.io.Serial;
+
+import megamek.common.Hex;
+import megamek.common.ToHitData;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscType;
@@ -53,6 +56,7 @@ import megamek.common.units.Targetable;
  * The attacker kicks the target.
  */
 public class JumpJetAttackAction extends PhysicalAttackAction {
+    @Serial
     private static final long serialVersionUID = 5068155731614378911L;
     public static final int BOTH = 0;
     public static final int LEFT = 1;

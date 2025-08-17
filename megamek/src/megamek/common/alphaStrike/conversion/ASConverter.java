@@ -100,7 +100,7 @@ public final class ASConverter {
 
         Objects.requireNonNull(entity);
         if (!canConvert(entity)) {
-            logger.error("Cannot convert this type of Entity: " + entity.getShortName());
+            logger.error("Cannot convert this type of Entity: {}", entity.getShortName());
             return null;
         }
 
@@ -185,21 +185,12 @@ public final class ASConverter {
     /**
      * A helper class that stores the entity to be converted, the resulting ASElement and the conversion report.
      */
-    static class ConversionData {
-        final Entity entity;
-        final AlphaStrikeElement element;
-        final CalculationReport conversionReport;
-
-        public ConversionData(Entity entity, AlphaStrikeElement element, CalculationReport conversionReport) {
-            this.entity = entity;
-            this.element = element;
-            this.conversionReport = conversionReport;
-        }
+    record ConversionData(Entity entity, AlphaStrikeElement element, CalculationReport conversionReport) {
     }
 
     /**
      * Returns true if the given entity can be converted to AlphaStrike. This is only false for entities of some special
-     * types such as TeleMissile. GunEmplacement is being allowed conversion as of 50.02 even though its not currently
+     * types such as TeleMissile. GunEmplacement is being allowed conversion as of 50.02 even though it's not currently
      * officially supported in rules as written, but it generates a valid unit that can be used in auto-resolution and
      * other parts of the game. (Luana Coppio) Also returns false if entity is null.
      */

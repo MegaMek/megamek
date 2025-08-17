@@ -60,7 +60,7 @@ public class NGaussWeaponLight extends NGaussWeapon {
         longRange = 40;
         extremeRange = 56;
         tonnage = 4500;
-        bv = 3024;
+        bv = 3024.0;
         cost = 20300000;
         shortAV = 15;
         medAV = 15;

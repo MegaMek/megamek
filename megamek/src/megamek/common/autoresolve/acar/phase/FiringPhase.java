@@ -193,17 +193,17 @@ public class FiringPhase extends PhaseHandler {
 
             var wasPreviousTarget = f.getId() == previousTargetId;
 
-            if (distance < 42 && dmg.L.hasDamage() && distance >= 24) {
+            if (distance < 42 && dmg.L().hasDamage() && distance >= 24) {
                 if (wasPreviousTarget) {
                     priorityTarget = Optional.of(f);
                 }
                 pickTarget.add(f);
-            } else if (dmg.M.hasDamage() && distance >= 6) {
+            } else if (dmg.M().hasDamage() && distance >= 6) {
                 if (wasPreviousTarget) {
                     priorityTarget = Optional.of(f);
                 }
                 pickTarget.add(f);
-            } else if (dmg.S.hasDamage() && distance >= 0) {
+            } else if (dmg.S().hasDamage() && distance >= 0) {
                 if (wasPreviousTarget) {
                     priorityTarget = Optional.of(f);
                 }

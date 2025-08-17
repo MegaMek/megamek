@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,7 +38,9 @@ import java.io.Serial;
 import java.util.Enumeration;
 
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.Player;
+import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;

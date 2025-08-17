@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.capitalWeapons;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
 
 /**
  * @author Jay Lawson
@@ -59,7 +59,7 @@ public class MassDriverLight extends MassDriverWeapon {
         this.mediumRange = 24;
         this.longRange = 40;
         this.tonnage = 30000;
-        this.bv = 7056;
+        this.bv = 7056.0;
         this.cost = 150000000;
         this.shortAV = 60;
         this.medAV = 60;

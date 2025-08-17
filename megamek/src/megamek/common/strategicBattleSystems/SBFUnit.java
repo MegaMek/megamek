@@ -303,7 +303,7 @@ public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatt
             return sua.toString();
         } else if (sua == FLK) {
             ASDamageVector flkDamage = specialAbilities.getFLK();
-            return sua.toString() + flkDamage.M.damage + "/" + flkDamage.L.damage;
+            return sua.toString() + flkDamage.M().damage + "/" + flkDamage.L().damage;
         } else if (sua.isTransport()) {
             String result = sua + suaObject.toString();
             BattleForceSUA door = sua.getDoor();

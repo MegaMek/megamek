@@ -34,6 +34,7 @@
 
 package megamek.common.actions;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -41,6 +42,7 @@ import java.io.Serializable;
  */
 public abstract class AbstractEntityAction implements Serializable, EntityAction {
 
+    @Serial
     private static final long serialVersionUID = -758003433608975464L;
     private final int entityId;
 

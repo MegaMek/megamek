@@ -42,9 +42,7 @@ import java.util.EnumSet;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.CalledShot;
-import megamek.common.game.Game;
 import megamek.common.LosEffects;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
@@ -52,11 +50,13 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.common.weapons.attacks.InfantryAttack;
 
-class ComputeAttackerToHitMods {
+public class ComputeAttackerToHitMods {
 
     /**
      * Convenience method that compiles the ToHit modifiers applicable to the attacker's condition Attacker has damaged
@@ -70,10 +70,10 @@ class ComputeAttackerToHitMods {
      * @param toHit             The running total ToHitData for this WeaponAttackAction
      * @param aimingAt          An int value representing the location being aimed at
      * @param aimingMode        An int value that determines the reason aiming is allowed
-     * @param wtype             The WeaponType of the weapon being used
+     * @param weaponType        The WeaponType of the weapon being used
      * @param weapon            The Mounted weapon being used
      * @param weaponId          The id number of the weapon being used - used by some external calculations
-     * @param atype             The AmmoType being used for this attack
+     * @param ammoType          The AmmoType being used for this attack
      * @param munition          Long indicating the munition type flag being used, if applicable
      * @param isFlakAttack      flag that indicates whether the attacker is using Flak against an airborne target
      * @param isHaywireINarced  flag that indicates whether the attacker is affected by an iNarc Haywire pod
@@ -81,9 +81,9 @@ class ComputeAttackerToHitMods {
      * @param isWeaponFieldGuns flag that indicates whether the attack is being made with infantry field guns
      * @param usesAmmo          flag that indicates if the WeaponType being used is ammo-fed
      */
-    static ToHitData compileAttackerToHitMods(Game game, Entity attacker, Targetable target, LosEffects los,
-          ToHitData toHit, int aimingAt, AimingMode aimingMode, WeaponType wtype, Mounted<?> weapon, int weaponId,
-          AmmoType atype, EnumSet<AmmoType.Munitions> munition, boolean isFlakAttack, boolean isHaywireINarced,
+    public static ToHitData compileAttackerToHitMods(Game game, Entity attacker, Targetable target, LosEffects los,
+          ToHitData toHit, int aimingAt, AimingMode aimingMode, WeaponType weaponType, Mounted<?> weapon, int weaponId,
+          AmmoType ammoType, EnumSet<AmmoType.Munitions> munition, boolean isFlakAttack, boolean isHaywireINarced,
           boolean isNemesisConfused, boolean isWeaponFieldGuns, boolean usesAmmo) {
 
         if (toHit == null) {
@@ -268,16 +268,16 @@ class ComputeAttackerToHitMods {
         } else {
             // LB-X cluster, HAG flak, flak ammo ineligible for TC bonus
             boolean usesLBXCluster = usesAmmo
-                  && (atype != null)
-                  && (atype.getAmmoType() == AC_LBX || atype.getAmmoType() == AC_LBX_THB)
+                  && (ammoType != null)
+                  && (ammoType.getAmmoType() == AC_LBX || ammoType.getAmmoType() == AC_LBX_THB)
                   && munition.contains(AmmoType.Munitions.M_CLUSTER);
-            boolean usesHAGFlak = usesAmmo && (atype != null) && (atype.getAmmoType() == HAG) && isFlakAttack;
-            boolean isSBGauss = usesAmmo && (atype != null) && (atype.getAmmoType() == SBGAUSS);
-            boolean isFlakAmmo = usesAmmo && (atype != null) && (munition.contains(AmmoType.Munitions.M_FLAK));
+            boolean usesHAGFlak = usesAmmo && (ammoType != null) && (ammoType.getAmmoType() == HAG) && isFlakAttack;
+            boolean isSBGauss = usesAmmo && (ammoType != null) && (ammoType.getAmmoType() == SBGAUSS);
+            boolean isFlakAmmo = usesAmmo && (ammoType != null) && (munition.contains(AmmoType.Munitions.M_FLAK));
             if (attacker.hasTargComp()
-                  && (wtype != null)
-                  && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
-                  && !wtype.hasAnyFlag(WeaponType.F_CWS, WeaponType.F_TASER)
+                  && (weaponType != null)
+                  && weaponType.hasFlag(WeaponType.F_DIRECT_FIRE)
+                  && !weaponType.hasAnyFlag(WeaponType.F_CWS, WeaponType.F_TASER)
                   && (!usesAmmo || !(usesLBXCluster || usesHAGFlak || isSBGauss || isFlakAmmo))) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TComp"));
             }
@@ -295,7 +295,7 @@ class ComputeAttackerToHitMods {
             toHit.append(Compute.getDamageWeaponMods(attacker, weapon));
         }
 
-        // Vehicle criticals
+        // Vehicle critical slots
         if (attacker instanceof Tank tank) {
             int sensorHits = tank.getSensorHits();
             if (sensorHits > 0) {
@@ -311,8 +311,8 @@ class ComputeAttackerToHitMods {
     }
 
     /**
-     * Convenience method that compiles the ToHit modifiers applicable to the attacker's crew/pilot Pilot wounded? Has
-     * an SPA? You'll find that here. Defender's a superheavy mek? Using a weapon with a TH penalty? Those are in other
+     * Convenience method that compiles the ToHit modifiers applicable to the attacker's crew/pilot wounded? Has an SPA?
+     * You'll find that here. Defender's a superheavy mek? Using a weapon with a TH penalty? Those are in other
      * methods.
      *
      * @param game     The current {@link Game}
@@ -320,7 +320,7 @@ class ComputeAttackerToHitMods {
      * @param toHit    The running total ToHitData for this WeaponAttackAction
      * @param weapon   The weapon being used (it's type should be WeaponType!)
      */
-    static ToHitData compileCrewToHitMods(Game game, Entity attacker, ToHitData toHit, Mounted<?> weapon) {
+    public static ToHitData compileCrewToHitMods(Game game, Entity attacker, ToHitData toHit, Mounted<?> weapon) {
 
         if (attacker == null) {
             // These checks won't work without a valid attacker
@@ -334,7 +334,7 @@ class ComputeAttackerToHitMods {
 
         // Now for modifiers affecting the attacker's crew
 
-        // Bonuses for dual cockpits, etc
+        // Bonuses for dual cockpits, etc.
         // Bonus to gunnery if both crew members are active; a pilot who takes the gunner's role get +1.
         if ((attacker instanceof Mek mek) && (mek.getCockpitType() == Mek.COCKPIT_DUAL)) {
             if (!attacker.getCrew().isActive(attacker.getCrew().getCrewType().getGunnerPos())) {

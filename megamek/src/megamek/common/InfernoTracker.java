@@ -48,33 +48,6 @@ public class InfernoTracker implements Serializable, RoundUpdated {
     private static final long serialVersionUID = -5256053831078922473L;
 
     /**
-     * This class defines the effects of a single hit by an Inferno round.
-     */
-    static class Inferno implements Serializable {
-        private static final long serialVersionUID = 1799687411697517801L;
-        private int heatPerRound;
-        private int burnRoundsPerHit;
-
-        public Inferno() {
-            heatPerRound = 6;
-            burnRoundsPerHit = 3;
-        }
-
-        public Inferno(int heat, int rounds) {
-            this.heatPerRound = heat;
-            this.burnRoundsPerHit = rounds;
-        }
-
-        public int getHeatPerRound() {
-            return heatPerRound;
-        }
-
-        public int getBurnRoundsPerHit() {
-            return burnRoundsPerHit;
-        }
-    }
-
-    /**
      * The number of turns of standard Inferno burn remaining.
      */
     private int turnsLeftToBurn = 0;

@@ -56,7 +56,7 @@ public class NPPCWeaponLight extends NPPCWeapon {
         longRange = 33;
         extremeRange = 44;
         tonnage = 1400.0;
-        bv = 1659;
+        bv = 1659.0;
         cost = 2000000;
         shortAV = 7;
         medAV = 7;

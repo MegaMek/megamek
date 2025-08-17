@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,8 +34,11 @@
 
 package megamek.common.actions;
 
+import java.io.Serial;
+
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeSideTable;
@@ -56,12 +59,13 @@ import megamek.common.units.Targetable;
  * The attacker kicks the target.
  */
 public class KickAttackAction extends PhysicalAttackAction {
+    @Serial
     private static final long serialVersionUID = 1697321306815235635L;
     public static final int BOTH = 0;
     public static final int LEFT = 1;
     public static final int RIGHT = 2;
-    public static final int LEFTMULE = 3;
-    public static final int RIGHTMULE = 4;
+    public static final int LEFT_MULE = 3;
+    public static final int RIGHT_MULE = 4;
 
     private int leg;
 
@@ -94,7 +98,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             return 0; // Non-'Meks can't kick, so can't deal damage this way.
         }
         int[] kickLegs = new int[2];
-        if (entity.entityIsQuad() && (leg != LEFTMULE) && (leg != RIGHTMULE)) {
+        if (entity.entityIsQuad() && (leg != LEFT_MULE) && (leg != RIGHT_MULE)) {
             kickLegs[0] = Mek.LOC_RARM;
             kickLegs[1] = Mek.LOC_LARM;
         } else {
@@ -102,7 +106,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             kickLegs[1] = Mek.LOC_LLEG;
         }
 
-        final int legLoc = ((leg == RIGHT) || (leg == RIGHTMULE)) ? kickLegs[0]
+        final int legLoc = ((leg == RIGHT) || (leg == RIGHT_MULE)) ? kickLegs[0]
               : kickLegs[1];
         int damage = (int) Math.floor(entity.getWeight() / 5.0);
         float multiplier = 1.0f;
@@ -177,8 +181,8 @@ public class KickAttackAction extends PhysicalAttackAction {
         int mule = 0;
         int[] kickLegs = new int[2];
         if (ae.entityIsQuad()) {
-            if ((leg == KickAttackAction.LEFTMULE)
-                  || (leg == KickAttackAction.RIGHTMULE)) {
+            if ((leg == KickAttackAction.LEFT_MULE)
+                  || (leg == KickAttackAction.RIGHT_MULE)) {
                 kickLegs[0] = Mek.LOC_RLEG;
                 kickLegs[1] = Mek.LOC_LLEG;
                 mule = 1; // To-hit modifier
@@ -190,18 +194,18 @@ public class KickAttackAction extends PhysicalAttackAction {
             kickLegs[0] = Mek.LOC_RLEG;
             kickLegs[1] = Mek.LOC_LLEG;
         }
-        final int legLoc = ((leg == KickAttackAction.RIGHTMULE) || (leg == KickAttackAction.RIGHT)) ? kickLegs[0]
+        final int legLoc = ((leg == KickAttackAction.RIGHT_MULE) || (leg == KickAttackAction.RIGHT)) ? kickLegs[0]
               : kickLegs[1];
 
         ToHitData toHit;
 
         // arguments legal?
-        // By allowing mulekicks, this gets a little more complicated :(
+        // By allowing mule kicks, this gets a little more complicated :(
         if ((leg != KickAttackAction.RIGHT) && (leg != KickAttackAction.LEFT)
-              && (leg != KickAttackAction.RIGHTMULE)
-              && (leg != KickAttackAction.LEFTMULE)) {
+              && (leg != KickAttackAction.RIGHT_MULE)
+              && (leg != KickAttackAction.LEFT_MULE)) {
             throw new IllegalArgumentException(
-                  "Leg must be one of LEFT, RIGHT, LEFTMULE, or RIGHTMULE");
+                  "Leg must be one of LEFT, RIGHT, LEFT_MULE, or RIGHT_MULE");
         }
 
         // check if all legs are present & working
@@ -290,7 +294,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             toHit.addModifier(3, "Stomping Infantry");
         }
 
-        // Mulekick?
+        // Mule kick?
         if (mule != 0) {
             toHit.addModifier(mule, "Quad Mek making a mule kick");
         }

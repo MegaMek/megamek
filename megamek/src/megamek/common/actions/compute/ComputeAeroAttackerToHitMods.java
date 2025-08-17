@@ -36,7 +36,8 @@ import java.util.EnumSet;
 import java.util.function.Predicate;
 
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.ToHitData;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
@@ -58,35 +59,36 @@ import megamek.common.units.Jumpship;
 import megamek.common.units.Targetable;
 import megamek.common.units.Warship;
 
-class ComputeAeroAttackerToHitMods {
+public class ComputeAeroAttackerToHitMods {
 
     /**
      * Convenience method that compiles the ToHit modifiers applicable to the attacker's condition, if the attacker is
      * an aero Attacker has damaged sensors? You'll find that here. Defender's a superheavy mek? Using a weapon with a
      * TH penalty? Those are in other methods.
      *
-     * @param game                The current {@link Game}
-     * @param attacker            The Entity making this attack
-     * @param target              The Targetable object being attacked
-     * @param ttype               The targetable object type
-     * @param toHit               The running total ToHitData for this WeaponAttackAction
-     * @param aimingAt            An int value representing the location being aimed at
-     * @param aimingMode          An int value that determines the reason aiming is allowed
-     * @param eistatus            An int value representing the ei cockpit/pilot upgrade status
-     * @param wtype               The WeaponType of the weapon being used
-     * @param weapon              The Mounted weapon being used
-     * @param atype               The AmmoType being used for this attack
-     * @param munition            Long indicating the munition type flag being used, if applicable
-     * @param isArtilleryIndirect flag that indicates whether this is an indirect-fire artillery attack
-     * @param isFlakAttack        flag that indicates whether the attacker is using Flak against an airborne target
-     * @param isNemesisConfused   flag that indicates whether the attack is affected by an iNarc Nemesis pod
-     * @param isStrafing          flag that indicates whether this is an aero strafing attack
-     * @param usesAmmo            flag that indicates if the WeaponType being used is ammo-fed
+     * @param game                 The current {@link Game}
+     * @param attacker             The Entity making this attack
+     * @param target               The Targetable object being attacked
+     * @param targetableTargetType The targetable object type
+     * @param toHit                The running total ToHitData for this WeaponAttackAction
+     * @param aimingAt             An int value representing the location being aimed at
+     * @param aimingMode           An int value that determines the reason aiming is allowed
+     * @param eiPilotUpgradeStatus An int value representing the ei cockpit/pilot upgrade status
+     * @param weaponType           The WeaponType of the weapon being used
+     * @param weapon               The Mounted weapon being used
+     * @param ammoType             The AmmoType being used for this attack
+     * @param munition             Long indicating the munition type flag being used, if applicable
+     * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
+     * @param isFlakAttack         flag that indicates whether the attacker is using Flak against an airborne target
+     * @param isNemesisConfused    flag that indicates whether the attack is affected by an iNarc Nemesis pod
+     * @param isStrafing           flag that indicates whether this is an aero strafing attack
+     * @param usesAmmo             flag that indicates if the WeaponType being used is ammo-fed
      */
-    static ToHitData compileAeroAttackerToHitMods(Game game, Entity attacker, Targetable target, int ttype,
-          ToHitData toHit, int aimingAt, AimingMode aimingMode, int eistatus, WeaponType wtype, WeaponMounted weapon,
-          AmmoType atype, EnumSet<AmmoType.Munitions> munition, boolean isArtilleryIndirect, boolean isFlakAttack,
-          boolean isNemesisConfused, boolean isStrafing, boolean usesAmmo) {
+    public static ToHitData compileAeroAttackerToHitMods(Game game, Entity attacker, Targetable target,
+          int targetableTargetType, ToHitData toHit, int aimingAt, AimingMode aimingMode, int eiPilotUpgradeStatus,
+          WeaponType weaponType, WeaponMounted weapon, AmmoType ammoType, EnumSet<AmmoType.Munitions> munition,
+          boolean isArtilleryIndirect, boolean isFlakAttack, boolean isNemesisConfused, boolean isStrafing,
+          boolean usesAmmo) {
 
         if (toHit == null) {
             // Without valid toHit data, the rest of this will fail
@@ -94,13 +96,13 @@ class ComputeAeroAttackerToHitMods {
         }
 
         Entity te = null;
-        if (ttype == Targetable.TYPE_ENTITY) {
+        if (targetableTargetType == Targetable.TYPE_ENTITY) {
             // Some of these weapons only target valid entities
             te = (Entity) target;
         }
 
-        boolean isBombing = (wtype != null) &&
-              (wtype.hasFlag(WeaponType.F_ALT_BOMB) || wtype.hasFlag(WeaponType.F_DIVE_BOMB));
+        boolean isBombing = (weaponType != null) &&
+              (weaponType.hasFlag(WeaponType.F_ALT_BOMB) || weaponType.hasFlag(WeaponType.F_DIVE_BOMB));
 
         // Generic modifiers that apply to airborne and ground attackers
 
@@ -116,7 +118,7 @@ class ComputeAeroAttackerToHitMods {
 
         // Secondary targets modifier, if this is not a iNarc Nemesis confused attack
         // Also does not apply to attacks that are intrinsically multi-target (altitude bombing and strafing)
-        if (!isNemesisConfused && wtype != null && !wtype.hasFlag(WeaponType.F_ALT_BOMB) && !isStrafing) {
+        if (!isNemesisConfused && weaponType != null && !weaponType.hasFlag(WeaponType.F_ALT_BOMB) && !isStrafing) {
             toHit.append(Compute.getSecondaryTargetMod(game, attacker, target));
         }
 
@@ -132,21 +134,23 @@ class ComputeAeroAttackerToHitMods {
                 toHit.addModifier(3, Messages.getString("WeaponAttackAction.AimWithTCompOnly"));
             }
         } else if (attacker.hasTargComp()
-              && (wtype != null)
-              && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
-              && !wtype.hasFlag(WeaponType.F_CWS)
-              && !wtype.hasFlag(WeaponType.F_TASER)) {
+              && (weaponType != null)
+              && weaponType.hasFlag(WeaponType.F_DIRECT_FIRE)
+              && !weaponType.hasFlag(WeaponType.F_CWS)
+              && !weaponType.hasFlag(WeaponType.F_TASER)) {
 
             // LB-X cluster, HAG flak, flak ammo ineligible for TC bonus
             boolean usesLBXCluster = usesAmmo &&
-                  (atype != null) &&
-                  (atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX ||
-                        atype.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX_THB) &&
+                  (ammoType != null) &&
+                  (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX ||
+                        ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX_THB) &&
                   munition.contains(AmmoType.Munitions.M_CLUSTER);
-            boolean usesHAGFlak = usesAmmo && (atype != null) && (atype.getAmmoType() == AmmoType.AmmoTypeEnum.HAG)
+            boolean usesHAGFlak = usesAmmo && (ammoType != null) && (ammoType.getAmmoType()
+                  == AmmoType.AmmoTypeEnum.HAG)
                   && isFlakAttack;
-            boolean isSBGauss = usesAmmo && (atype != null) && (atype.getAmmoType() == AmmoType.AmmoTypeEnum.SBGAUSS);
-            boolean isFlakAmmo = usesAmmo && (atype != null) && (munition.contains(AmmoType.Munitions.M_FLAK));
+            boolean isSBGauss = usesAmmo && (ammoType != null) && (ammoType.getAmmoType()
+                  == AmmoType.AmmoTypeEnum.SBGAUSS);
+            boolean isFlakAmmo = usesAmmo && (ammoType != null) && (munition.contains(AmmoType.Munitions.M_FLAK));
             if (!usesAmmo || !(usesLBXCluster || usesHAGFlak || isSBGauss || isFlakAmmo)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TComp"));
             }
@@ -159,9 +163,9 @@ class ComputeAeroAttackerToHitMods {
             // check for heavy gauss rifle on fighter or small craft
             // Arguably a weapon effect, except that it only applies when used by a fighter (isn't recoil fun?)
             // So it's here instead of with other weapon mods that apply across the board
-            if ((wtype != null)
-                  && ((wtype.ammoType == AmmoType.AmmoTypeEnum.GAUSS_HEAVY)
-                  || (wtype.ammoType == AmmoType.AmmoTypeEnum.IGAUSS_HEAVY))
+            if ((weaponType != null)
+                  && ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.GAUSS_HEAVY)
+                  || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.IGAUSS_HEAVY))
                   && !(attacker instanceof Dropship)
                   && !(attacker instanceof Jumpship)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.FighterHeavyGauss"));
@@ -226,7 +230,7 @@ class ComputeAeroAttackerToHitMods {
                 // TW p.243
                 if (isBombing) {
                     toHit.addModifier(2, Messages.getString("WeaponAttackAction.Bombing"));
-                    if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                    if (weaponType.hasFlag(WeaponType.F_ALT_BOMB)) {
                         toHit.addModifier(attacker.getAltitude(),
                               Messages.getString("WeaponAttackAction.BombAltitude"));
                     }
@@ -242,7 +246,7 @@ class ComputeAeroAttackerToHitMods {
                         // Nap-of-Earth terrain effects
                         Coords prevCoords = attacker.passedThroughPrevious(target.getPosition());
                         Hex prevHex = game.getHex(prevCoords, attacker.getPassedThroughBoardId());
-                        toHit.append(Compute.getStrafingTerrainModifier(game, eistatus, prevHex));
+                        toHit.append(Compute.getStrafingTerrainModifier(game, eiPilotUpgradeStatus, prevHex));
                     }
 
                 } else { // Striking
@@ -313,10 +317,10 @@ class ComputeAeroAttackerToHitMods {
 
             // targeting mods for evasive action by large craft
             // Per TW, this does not apply when firing Capital Missiles
-            if (aero.isEvading() && (wtype != null)
-                  && (!(wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE ||
-                  wtype.getAtClass() == WeaponType.CLASS_AR10 ||
-                  wtype.getAtClass() == WeaponType.CLASS_TELE_MISSILE))) {
+            if (aero.isEvading() && (weaponType != null)
+                  && (!(weaponType.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE ||
+                  weaponType.getAtClass() == WeaponType.CLASS_AR10 ||
+                  weaponType.getAtClass() == WeaponType.CLASS_TELE_MISSILE))) {
                 toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeEvading"));
             }
 
@@ -333,29 +337,29 @@ class ComputeAeroAttackerToHitMods {
             }
 
             // check for particular kinds of weapons in weapon bays
-            if (attacker.usesWeaponBays() && (wtype != null) && (weapon != null)) {
+            if (attacker.usesWeaponBays() && (weaponType != null) && (weapon != null)) {
 
                 // any heavy lasers
-                if (wtype.hasFlag(WeaponTypeFlag.HEAVY_LASER)) {
+                if (weaponType.hasFlag(WeaponTypeFlag.HEAVY_LASER)) {
                     toHit.addModifier(+1, Messages.getString("WeaponAttackAction.HeavyLaserInBay"));
                 }
 
                 // barracuda missiles
-                else if (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE) {
+                else if (weaponType.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE) {
                     if (bayHasOnlyAmmoType(weapon, t -> t.getAmmoType() == AmmoType.AmmoTypeEnum.BARRACUDA)) {
                         toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Barracuda"));
                     }
                 }
 
                 // barracuda missiles in an AR10 launcher (must all be barracuda)
-                else if (wtype.getAtClass() == WeaponType.CLASS_AR10) {
+                else if (weaponType.getAtClass() == WeaponType.CLASS_AR10) {
                     if (bayHasOnlyAmmoType(weapon, t -> t.hasFlag(AmmoType.F_AR10_BARRACUDA))) {
                         toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Barracuda"));
                     }
                 }
 
                 // LBX cluster
-                else if (wtype.getAtClass() == WeaponType.CLASS_LBX_AC) {
+                else if (weaponType.getAtClass() == WeaponType.CLASS_LBX_AC) {
                     if (bayHasOnlyAmmoType(weapon, t -> t.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER))) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.ClusterAmmo"));
                     }

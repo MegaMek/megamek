@@ -36,6 +36,7 @@
 package megamek.common.comparators;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
@@ -67,20 +68,20 @@ public class WeaponComparatorBV implements Comparator<Mounted<?>> {
                 }
             }
             // sort heat 0 weapons at the very end
-            if (weap1.heat == weap2.heat && weap1.heat == 0) {
+            if (weap1.getHeat() == weap2.getHeat() && weap1.getHeat() == 0) {
                 return 0;
-            } else if (weap2.heat == 0) {
+            } else if (weap2.getHeat() == 0) {
                 return -1;
-            } else if (weap1.heat == 0) {
+            } else if (weap1.getHeat() == 0) {
                 return 1;
             }
             // if same BV, lower heat first
-            if (weap1.bv == weap2.bv) {
-                return weap1.heat - weap2.heat;
+            if (Objects.equals(weap1.getBV(), weap2.getBV())) {
+                return weap1.getHeat() - weap2.getHeat();
             }
             // otherwise, higher BV first
-            return Double.valueOf(weap2.bv - weap1.bv).intValue();
+            return Double.valueOf(weap2.getBV() - weap1.getBV()).intValue();
         }
-        throw new ClassCastException("Passed Mounteds are not Weapons");
+        throw new ClassCastException("Passed Mounted are not Weapons");
     }
 }

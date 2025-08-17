@@ -37,7 +37,7 @@ import static megamek.common.equipment.AmmoType.AmmoTypeEnum.*;
 import java.util.EnumSet;
 
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
@@ -51,7 +51,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 
-class ComputeTargetToHitMods {
+public class ComputeTargetToHitMods {
 
     /**
      * Convenience method that compiles the ToHit modifiers applicable to the defender's condition and actions -4 for
@@ -68,23 +68,23 @@ class ComputeTargetToHitMods {
      * @param aimingMode          An int value that determines the reason aiming is allowed - used by immobile target
      *                            calculations
      * @param distance            The distance in hexes from attacker to target
-     * @param wtype               The WeaponType of the weapon being used
+     * @param weaponType          The WeaponType of the weapon being used
      * @param weapon              The Mounted weapon being used
-     * @param atype               The AmmoType being used for this attack
+     * @param ammoType            The AmmoType being used for this attack
      * @param munition            Long indicating the munition type flag being used, if applicable
      * @param isArtilleryDirect   flag that indicates whether this is a direct-fire artillery attack
      * @param isArtilleryIndirect flag that indicates whether this is an indirect-fire artillery attack
      * @param isAttackerInfantry  flag that indicates whether the attacker is an infantry/BA unit
      * @param exchangeSwarmTarget flag that indicates whether this is the secondary target of Swarm LRMs
      * @param isIndirect          flag that indicates whether this is an indirect attack (LRM, mortar...)
-     * @param isPointBlankShot    flag that indicates whether or not this is a PBS by a hidden unit
-     * @param usesAmmo            flag that indicates whether or not the WeaponType being used is ammo-fed
+     * @param isPointBlankShot    flag that indicates whether this is a PBS by a hidden unit
+     * @param usesAmmo            flag that indicates whether the WeaponType being used is ammo-fed
      */
-    static ToHitData compileTargetToHitMods(Game game, Entity attacker, Targetable target,
-          ToHitData toHit, int aimingAt, AimingMode aimingMode, int distance, WeaponType wtype, WeaponMounted weapon,
-          AmmoType atype, EnumSet<AmmoType.Munitions> munition, boolean isArtilleryDirect, boolean isArtilleryIndirect,
-          boolean isAttackerInfantry, boolean exchangeSwarmTarget, boolean isIndirect, boolean isPointBlankShot,
-          boolean usesAmmo) {
+    public static ToHitData compileTargetToHitMods(Game game, Entity attacker, Targetable target,
+          ToHitData toHit, int aimingAt, AimingMode aimingMode, int distance, WeaponType weaponType,
+          WeaponMounted weapon, AmmoType ammoType, EnumSet<AmmoType.Munitions> munition, boolean isArtilleryDirect,
+          boolean isArtilleryIndirect, boolean isAttackerInfantry, boolean exchangeSwarmTarget, boolean isIndirect,
+          boolean isPointBlankShot, boolean usesAmmo) {
 
         if (attacker == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
@@ -165,15 +165,15 @@ class ComputeTargetToHitMods {
                     bapMod = 1;
                 }
                 int tcMod = 0;
-                boolean isLBX = (atype != null)
-                      && atype.getAmmoType().isAnyOf(AC_LBX, AC_LBX_THB)
+                boolean isLBX = (ammoType != null)
+                      && ammoType.getAmmoType().isAnyOf(AC_LBX, AC_LBX_THB)
                       && munition.contains(AmmoType.Munitions.M_CLUSTER);
 
                 if (attacker.hasTargComp()
-                      && (wtype != null)
-                      && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
-                      && !wtype.hasAnyFlag(WeaponType.F_CWS, WeaponType.F_TASER)
-                      && (atype != null)
+                      && (weaponType != null)
+                      && weaponType.hasFlag(WeaponType.F_DIRECT_FIRE)
+                      && !weaponType.hasAnyFlag(WeaponType.F_CWS, WeaponType.F_TASER)
+                      && (ammoType != null)
                       && !(usesAmmo && isLBX)) {
                     tcMod = 2;
                 }
@@ -200,9 +200,9 @@ class ComputeTargetToHitMods {
             ToHitData thTemp = Compute.getTargetMovementModifier(game, target.getId());
             toHit.append(thTemp);
 
-            // semiguided ammo negates this modifier, if TAG succeeded
-            if ((atype != null)
-                  && atype.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, NLRM, MEK_MORTAR)
+            // semi-guided ammo negates this modifier, if TAG succeeded
+            if ((ammoType != null)
+                  && ammoType.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, NLRM, MEK_MORTAR)
                   && munition.contains(AmmoType.Munitions.M_SEMIGUIDED)
                   && (entityTarget.getTaggedBy() != WeaponAttackAction.UNASSIGNED)) {
                 int nAdjust = thTemp.getValue();
@@ -212,8 +212,8 @@ class ComputeTargetToHitMods {
             }
 
             // precision ammo reduces this modifier
-            else if ((atype != null)
-                  && atype.getAmmoType().isAnyOf(AC, LAC, AC_IMP, PAC)
+            else if ((ammoType != null)
+                  && ammoType.getAmmoType().isAnyOf(AC, LAC, AC_IMP, PAC)
                   && munition.contains(AmmoType.Munitions.M_PRECISION)) {
                 int nAdjust = Math.min(2, thTemp.getValue());
                 if (nAdjust > 0) {
@@ -245,11 +245,11 @@ class ComputeTargetToHitMods {
         }
 
         // target immobile
-        boolean mekMortarMunitionsIgnoreImmobile = (wtype != null)
-              && wtype.hasFlag(WeaponType.F_MEK_MORTAR)
-              && (atype != null)
+        boolean mekMortarMunitionsIgnoreImmobile = (weaponType != null)
+              && weaponType.hasFlag(WeaponType.F_MEK_MORTAR)
+              && (ammoType != null)
               && munition.contains(AmmoType.Munitions.M_AIRBURST);
-        if (wtype != null && !(wtype instanceof ArtilleryCannonWeapon) && !mekMortarMunitionsIgnoreImmobile) {
+        if (weaponType != null && !(weaponType instanceof ArtilleryCannonWeapon) && !mekMortarMunitionsIgnoreImmobile) {
             ToHitData immobileMod;
             // grounded dropships are treated as immobile as well for purpose of the mods
             if (entityTarget instanceof Dropship && !entityTarget.isAirborne() && !entityTarget.isSpaceborne()) {

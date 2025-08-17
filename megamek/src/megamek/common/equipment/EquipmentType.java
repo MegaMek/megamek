@@ -39,14 +39,14 @@ import java.io.FileWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import megamek.common.units.Entity;
-import megamek.common.interfaces.ITechnology;
 import megamek.common.RangeType;
-import megamek.common.util.RoundWeight;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
+import megamek.common.interfaces.ITechnology;
+import megamek.common.units.Entity;
+import megamek.common.util.RoundWeight;
 import megamek.common.util.YamlEncDec;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.defensivePods.BPodWeapon;
@@ -173,7 +173,7 @@ public class EquipmentType implements ITechnology {
 
     protected long subType = 0;
 
-    protected double bv = 0; // battle value point system
+    public double bv = 0; // battle value point system
     protected double cost = 0; // The C-Bill cost of the item.
 
     // For equipment that cannot be pod-mounted on an Omni unit
@@ -201,7 +201,7 @@ public class EquipmentType implements ITechnology {
     /**
      * Keeps track of page numbers for rules references.
      */
-    public String rulesRefs = "";
+    protected String rulesRefs = "";
 
     /** Creates new EquipmentType */
     public EquipmentType() {
@@ -640,7 +640,7 @@ public class EquipmentType implements ITechnology {
      *
      * @param modes non null, non empty list of available mode names.
      */
-    protected void setModes(String... modes) {
+    public void setModes(String... modes) {
         Vector<EquipmentMode> newModes = new Vector<>(modes.length);
         for (String mode : modes) {
             newModes.addElement(EquipmentMode.getMode(mode));

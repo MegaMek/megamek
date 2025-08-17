@@ -48,8 +48,8 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.Configuration;
 import megamek.common.Hex;
 import megamek.common.IdealHex;
+import megamek.common.Inferno;
 import megamek.common.InfernoTracker;
-import megamek.common.loaders.MapSettings;
 import megamek.common.Player;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.annotations.Nullable;
@@ -58,6 +58,7 @@ import megamek.common.equipment.FuelTank;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 import megamek.common.hexArea.HexArea;
+import megamek.common.loaders.MapSettings;
 import megamek.common.units.Building;
 import megamek.common.units.Entity;
 import megamek.common.units.Terrain;
@@ -1265,7 +1266,7 @@ public class Board implements Serializable {
      *
      * @throws IllegalArgumentException if the hits number is negative
      */
-    public void addInfernoTo(Coords coords, InfernoTracker.Inferno round, int hits) {
+    public void addInfernoTo(Coords coords, Inferno round, int hits) {
         // Make sure the # of hits is valid.
         if (hits < 0) {
             throw new IllegalArgumentException("Board can't track negative hits. ");

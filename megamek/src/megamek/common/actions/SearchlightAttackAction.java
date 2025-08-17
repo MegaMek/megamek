@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,17 +35,18 @@
 
 package megamek.common.actions;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.client.ui.Messages;
-import megamek.common.compute.ComputeArc;
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.LosEffects;
 import megamek.common.Report;
+import megamek.common.board.Coords;
+import megamek.common.compute.ComputeArc;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 
@@ -57,6 +58,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 6699459935811592434L;
 
     // default to attacking an entity
@@ -88,7 +90,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
             return false;
         }
 
-        // can't searchlight if target is outside of the front firing arc
+        // can't searchlight if target is outside the front firing arc
         if (!ComputeArc.isInArc(attacker.getPosition(),
               attacker.getSecondaryFacing(),
               target,
@@ -99,12 +101,11 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         // can't light up more than once per round
         for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements(); ) {
             EntityAction action = actions.nextElement();
-            if (action instanceof SearchlightAttackAction) {
-                SearchlightAttackAction act = (SearchlightAttackAction) action;
-                if (act == exempt) {
+            if (action instanceof SearchlightAttackAction searchlightAttackAction) {
+                if (searchlightAttackAction == exempt) {
                     break; // 1st in list is OK
                 }
-                if (act.getEntityId() == attackerId) {
+                if (searchlightAttackAction.getEntityId() == attackerId) {
                     return false; // can only declare searchlight once!
                 }
             }
@@ -136,7 +137,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         final Entity attacker = getEntity(game);
         final Coords apos = attacker.getPosition();
         final Targetable target = getTarget(game);
-        final Coords tpos = target.getPosition();
+        final Coords targetPosition = target.getPosition();
 
         if (attacker.usedSearchlight()) {
             r = new Report(3450);
@@ -148,7 +149,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         }
         attacker.setUsedSearchlight(true);
 
-        ArrayList<Coords> in = Coords.intervening(apos, tpos); // nb includes
+        ArrayList<Coords> in = Coords.intervening(apos, targetPosition); // nb includes
         // attacker &
         // target
         for (Coords c : in) {
@@ -181,9 +182,9 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         final Entity attacker = getEntity(game);
         final Coords apos = attacker.getPosition();
         final Targetable target = getTarget(game);
-        final Coords tpos = target.getPosition();
+        final Coords targetPosition = target.getPosition();
 
-        ArrayList<Coords> intervening = Coords.intervening(apos, tpos);
+        ArrayList<Coords> intervening = Coords.intervening(apos, targetPosition);
         for (Coords c : intervening) {
             if (game.getBoard().contains(c)) {
                 hexesAdded |= game.addIlluminatedPosition(c);
@@ -199,11 +200,10 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         final Entity attacker = getEntity(game);
         final Coords apos = attacker.getPosition();
         final Targetable target = getTarget(game);
-        final Coords tpos = target.getPosition();
+        final Coords targetPosition = target.getPosition();
 
-        ArrayList<Coords> in = Coords.intervening(apos, tpos); // nb includes
-        // attacker &
-        // target
+        ArrayList<Coords> in = Coords.intervening(apos, targetPosition); // nb includes
+        // attacker & target
         for (Coords c : in) {
             for (Entity en : game.getEntitiesVector(c)) {
                 LosEffects los = LosEffects.calculateLOS(game, attacker, en);

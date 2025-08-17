@@ -53,15 +53,15 @@ import java.util.Map;
 import java.util.Objects;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.units.Entity;
-import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponType;
 import megamek.common.alphaStrike.ASArcSummary;
 import megamek.common.alphaStrike.ASArcs;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Entity;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
 public class ASArcedDamageConverter extends ASAeroDamageConverter {
@@ -74,7 +74,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
         for (int index = 0; index < locationNames.length; index++) {
             locations[index] = new ASArcSummary();
         }
-        // Flatten the weaponlist as weapon bays are not relevant for AS conversion
+        // Flatten the weapon list as weapon bays are not relevant for AS conversion
         List<WeaponMounted> flattenedWeaponList = new ArrayList<>();
         for (WeaponMounted weapon : entity.getWeaponList()) {
             if (weapon.getType() instanceof BayWeapon) {
@@ -217,7 +217,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
         for (Mounted<?> weapon : collectedWeapons.keySet()) {
             WeaponType weaponType = (WeaponType) weapon.getType();
             double locationMultiplier = ASLocationMapper.damageLocationMultiplier(entity, location, weapon);
-            if (!countsforSpecial(weapon, dmgType) || (locationMultiplier == 0)) {
+            if (!countsForSpecial(weapon, dmgType) || (locationMultiplier == 0)) {
                 continue;
             }
             double dmgS = determineSpecialsDamage(weaponType, weapon.getLinkedBy(), SHORT_RANGE, dmgType);

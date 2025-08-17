@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,15 +36,15 @@ package megamek.common.actions;
 
 import java.io.Serial;
 
+import megamek.common.Hex;
+import megamek.common.enums.BuildingType;
+import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.Hex;
 import megamek.common.units.Mek;
 import megamek.common.units.Terrains;
 import megamek.common.units.TripodMek;
-import megamek.common.enums.BuildingType;
-import megamek.common.options.OptionsConstants;
 
 /**
  * The entity tries to find a club.

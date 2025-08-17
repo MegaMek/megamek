@@ -11682,10 +11682,10 @@ public class TWGameManager extends AbstractGameManager {
         if (te != null) {
             throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
         }
-        String legName = (kaa.getLeg() == KickAttackAction.LEFT) || (kaa.getLeg() == KickAttackAction.LEFTMULE) ?
+        String legName = (kaa.getLeg() == KickAttackAction.LEFT) || (kaa.getLeg() == KickAttackAction.LEFT_MULE) ?
               "Left " :
               "Right ";
-        if ((kaa.getLeg() == KickAttackAction.LEFTMULE) || (kaa.getLeg() == KickAttackAction.RIGHTMULE)) {
+        if ((kaa.getLeg() == KickAttackAction.LEFT_MULE) || (kaa.getLeg() == KickAttackAction.RIGHT_MULE)) {
             legName = legName.concat("rear ");
         } else if (ae instanceof QuadMek) {
             legName = legName.concat("front ");
@@ -11873,7 +11873,7 @@ public class TWGameManager extends AbstractGameManager {
                 int leg = switch (kaa.getLeg()) {
                     case KickAttackAction.LEFT -> (ae instanceof QuadMek) ? Mek.LOC_LARM : Mek.LOC_LLEG;
                     case KickAttackAction.RIGHT -> (ae instanceof QuadMek) ? Mek.LOC_RARM : Mek.LOC_RLEG;
-                    case KickAttackAction.LEFTMULE -> Mek.LOC_LLEG;
+                    case KickAttackAction.LEFT_MULE -> Mek.LOC_LLEG;
                     default -> Mek.LOC_RLEG;
                 };
                 damage = checkForSpikes(te, hit.getLocation(), damage, ae, leg);

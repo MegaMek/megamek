@@ -56,7 +56,7 @@ public class NPPCWeaponMedium extends NPPCWeapon {
         longRange = 36;
         extremeRange = 48;
         tonnage = 1800.0;
-        bv = 2268;
+        bv = 2268.0;
         cost = 3250000;
         shortAV = 9;
         medAV = 9;

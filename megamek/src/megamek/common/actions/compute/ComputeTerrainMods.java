@@ -43,7 +43,9 @@ import static megamek.common.ToHitData.SIDE_REAR;
 import static megamek.common.ToHitData.SIDE_RIGHT;
 
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.LosEffects;
+import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeECM;
 import megamek.common.compute.ComputeSideTable;
@@ -61,7 +63,7 @@ import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
 
-class ComputeTerrainMods {
+public class ComputeTerrainMods {
 
     /**
      * Convenience method that compiles the ToHit modifiers applicable to the terrain and line of sight (LOS) Woods
@@ -72,7 +74,7 @@ class ComputeTerrainMods {
      * @param game             The current {@link Game}
      * @param attacker         The Entity making this attack
      * @param target           The Targetable object being attacked
-     * @param ttype            The targetable object type
+     * @param targetType       The targetable object type
      * @param aElev            An int value representing the attacker's elevation
      * @param tElev            An int value representing the target's elevation
      * @param targEl           An int value representing the target's relative elevation
@@ -80,20 +82,20 @@ class ComputeTerrainMods {
      * @param los              The calculated LOS between attacker and target
      * @param toHit            The running total ToHitData for this WeaponAttackAction
      * @param losMods          A cached set of LOS-related modifiers
-     * @param eistatus         An int value representing the ei cockpit/pilot upgrade status
-     * @param wtype            The WeaponType of the weapon being used
+     * @param eiPilotStatus    An int value representing the ei cockpit/pilot upgrade status
+     * @param weaponType       The WeaponType of the weapon being used
      * @param weapon           The Mounted weapon being used
      * @param weaponId         The id number of the weapon being used - used by some external calculations
-     * @param atype            The AmmoType being used for this attack
+     * @param ammoType         The AmmoType being used for this attack
      * @param inSameBuilding   flag that indicates whether this attack originates from within the same building
      * @param isIndirect       flag that indicates whether this is an indirect attack (LRM, mortar...)
-     * @param isPointBlankShot flag that indicates whether or not this is a PBS by a hidden unit
+     * @param isPointBlankShot flag that indicates whether this is a PBS by a hidden unit
      * @param underWater       flag that indicates whether the weapon being used is underwater
      */
-    static ToHitData compileTerrainAndLosToHitMods(Game game, Entity attacker, Targetable target, int ttype,
+    public static ToHitData compileTerrainAndLosToHitMods(Game game, Entity attacker, Targetable target, int targetType,
           int aElev, int tElev, int targEl, int distance, LosEffects los, ToHitData toHit, ToHitData losMods,
-          int eistatus, WeaponType wtype, WeaponMounted weapon, int weaponId, AmmoType atype, AmmoMounted ammo,
-          boolean isAttackerInfantry, boolean inSameBuilding, boolean isIndirect,
+          int eiPilotStatus, WeaponType weaponType, WeaponMounted weapon, int weaponId, AmmoType ammoType,
+          AmmoMounted ammo, boolean isAttackerInfantry, boolean inSameBuilding, boolean isIndirect,
           boolean isPointBlankShot, boolean underWater) {
 
         if (attacker == null || target == null) {
@@ -112,11 +114,12 @@ class ComputeTerrainMods {
         // will cause the shot to fail)
         // Don't apply this to bomb attacks either, which are going to be at 0 range of necessity
         // Also don't apply to ADA Missiles (range computed separately)
-        boolean isBombAttack = (wtype != null) && wtype.hasAnyFlag(WeaponType.F_ALT_BOMB, WeaponType.F_DIVE_BOMB);
-        boolean isADA = (atype != null) && atype.getMunitionType().contains(AmmoType.Munitions.M_ADA);
+        boolean isBombAttack = (weaponType != null) && weaponType.hasAnyFlag(WeaponType.F_ALT_BOMB,
+              WeaponType.F_DIVE_BOMB);
+        boolean isADA = (ammoType != null) && ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA);
 
         if (((los.getThruBldg() == null) || !los.getTargetPosition().equals(attacker.getPosition())) &&
-              ((wtype != null) && !isBombAttack && !isADA) && (weaponId > WeaponType.WEAPON_NA)) {
+              ((weaponType != null) && !isBombAttack && !isADA) && (weaponId > WeaponType.WEAPON_NA)) {
             toHit.append(Compute.getRangeMods(game, attacker, weapon, ammo, target));
         }
 
@@ -131,23 +134,23 @@ class ComputeTerrainMods {
         // BMM p. 31, semi-guided indirect missile attacks vs tagged targets ignore
         // terrain modifiers
         boolean semiGuidedIndirectVsTaggedTarget = isIndirect
-              && (atype != null)
-              && atype.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)
+              && (ammoType != null)
+              && ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)
               && Compute.isTargetTagged(target, game);
 
         // TW p.111
-        boolean indirectMortarWithoutSpotter = (wtype != null)
-              && wtype.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT)
+        boolean indirectMortarWithoutSpotter = (weaponType != null)
+              && weaponType.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT)
               && isIndirect
               && (Compute.findSpotter(game, attacker, target) == null);
 
         // Base terrain calculations, not applicable when delivering minefields or bombs
         // also not applicable in pointblank shots from hidden units
-        if ((ttype != Targetable.TYPE_MINEFIELD_DELIVER)
+        if ((targetType != Targetable.TYPE_MINEFIELD_DELIVER)
               && !isPointBlankShot
               && !semiGuidedIndirectVsTaggedTarget
               && !indirectMortarWithoutSpotter) {
-            toHit.append(Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, underWater));
+            toHit.append(Compute.getTargetTerrainModifier(game, target, eiPilotStatus, inSameBuilding, underWater));
         }
 
         // Target's hex
@@ -155,7 +158,7 @@ class ComputeTerrainMods {
         boolean targetInFortifiedHex = (targetHex != null) && targetHex.containsTerrain(Terrains.FORTIFIED);
 
         // Fortified/Dug-In Infantry
-        if ((target instanceof Infantry infantry) && (wtype != null) && !wtype.hasFlag(WeaponType.F_FLAMER)) {
+        if ((target instanceof Infantry infantry) && (weaponType != null) && !weaponType.hasFlag(WeaponType.F_FLAMER)) {
             if (targetInFortifiedHex || (infantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.DugInInf"));
             }
@@ -262,7 +265,7 @@ class ComputeTerrainMods {
 
         // To-hit table changes with no to-hit modifiers
 
-        // Aeros in air-to-air combat can hit above and below
+        // Aero's in air-to-air combat can hit above and below
         if (Compute.isAirToAir(game, attacker, target)) {
             int altitudeDelta = attacker.getAltitude() - target.getAltitude();
 

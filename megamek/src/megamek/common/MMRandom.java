@@ -59,7 +59,7 @@ public abstract class MMRandom {
     /**
      * Gives you the type asked for, defaulting to SunRandom if there are any errors.
      */
-    static MMRandom generate(int type) {
+    public static MMRandom generate(int type) {
         logger.info("Generating RNG type #" + type);
         try {
             switch (type) {

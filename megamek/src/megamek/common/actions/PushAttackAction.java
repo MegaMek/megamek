@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,7 +37,9 @@ package megamek.common.actions;
 import java.io.Serial;
 
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.Hex;
+import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
@@ -66,7 +68,13 @@ public class PushAttackAction extends DisplacementAttackAction {
     }
 
     public ToHitData toHit(Game game) {
-        return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()));
+        Targetable target = game.getTarget(getTargetType(), getTargetId());
+
+        if (target == null) {
+            return null;
+        }
+
+        return toHit(game, getEntityId(), target);
     }
 
     /**
@@ -176,7 +184,7 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is a passenger.");
         }
 
-        // Can't target a entity conducting a swarm attack.
+        // Can't target an entity conducting a swarm attack.
         if (Entity.NONE != te.getSwarmTargetId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is swarming a Mek.");
         }

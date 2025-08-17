@@ -34,8 +34,6 @@
 package megamek.common.alphaStrike.conversion;
 
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.equipment.MiscType.F_EMERGENCY_COOLANT_SYSTEM;
-import static megamek.common.equipment.MiscType.F_RADICAL_HEATSINK;
 import static megamek.common.alphaStrike.AlphaStrikeElement.EXTREME_RANGE;
 import static megamek.common.alphaStrike.AlphaStrikeElement.LONG_RANGE;
 import static megamek.common.alphaStrike.AlphaStrikeElement.MEDIUM_RANGE;
@@ -44,6 +42,8 @@ import static megamek.common.alphaStrike.AlphaStrikeElement.RANGE_BAND_MEDIUM;
 import static megamek.common.alphaStrike.AlphaStrikeElement.RANGE_BAND_SHORT;
 import static megamek.common.alphaStrike.AlphaStrikeElement.SHORT_RANGE;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
+import static megamek.common.equipment.MiscType.F_EMERGENCY_COOLANT_SYSTEM;
+import static megamek.common.equipment.MiscType.F_RADICAL_HEATSINK;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -414,7 +414,7 @@ public class ASDamageConverter {
         // Low ammo count
         double damageModifier = ammoModifier.getOrDefault(weaponType, 1d);
 
-        // Oneshot or Fusillade
+        // One shot or Fusillade
         if (weaponType.hasFlag(WeaponType.F_ONESHOT) && !(weaponType instanceof CLFussilade)) {
             damageModifier *= .1;
         }
@@ -728,7 +728,7 @@ public class ASDamageConverter {
         for (Mounted<?> weapon : weaponsList) {
             WeaponType weaponType = (WeaponType) weapon.getType();
             double locationMultiplier = ASLocationMapper.damageLocationMultiplier(entity, location, weapon);
-            if (!countsforSpecial(weapon, dmgType) || (locationMultiplier == 0)) {
+            if (!countsForSpecial(weapon, dmgType) || (locationMultiplier == 0)) {
                 continue;
             }
             // STD means a turret's standard damage, this may use Artemis, TOR also, all
@@ -821,7 +821,7 @@ public class ASDamageConverter {
         return vector.toString();
     }
 
-    protected boolean countsforSpecial(Mounted<?> weapon, BattleForceSUA dmgType) {
+    protected boolean countsForSpecial(Mounted<?> weapon, BattleForceSUA dmgType) {
         WeaponType weaponType = (WeaponType) weapon.getType();
         return switch (dmgType) {
             case LRM -> !MountedHelper.isAnyArtemis(weapon.getLinkedBy()) &&

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,8 +34,11 @@
 
 package megamek.common.actions;
 
+import java.io.Serial;
+
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeSideTable;
@@ -57,6 +60,7 @@ import megamek.logging.MMLogger;
 public class PunchAttackAction extends PhysicalAttackAction {
     private static final MMLogger logger = MMLogger.create(PunchAttackAction.class);
 
+    @Serial
     private static final long serialVersionUID = 3684646558944678180L;
     public static final int BOTH = 0;
     public static final int LEFT = 1;
@@ -123,11 +127,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
     /**
      * punches are impossible when physical attacks are impossible, or a retractable blade is extended
      *
-     * @param game   The current {@link Game}
-     * @param ae
-     * @param target
-     *
-     * @return
+     * @param game The current {@link Game}
      */
     protected static String toHitIsImpossible(Game game, Entity ae, Targetable target, int arm) {
         String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(game, ae, target);
@@ -199,7 +199,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
             return "Cannot punch with shield in active mode";
         }
 
-        if (!((Mek) ae).canFireWeapon(armLoc)) {
+        if (!ae.canFireWeapon(armLoc)) {
             return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
         }
 
@@ -298,14 +298,14 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
 
         if (ae.hasFunctionalArmAES(armLoc)) {
-            toHit.addModifier(-1, "AES modifer");
+            toHit.addModifier(-1, "AES modifier");
         }
 
         // Claws replace Actuators, but they are Equipment vs System as they
         // take up multiple crits.
         // Rules state +1 bth with claws and if claws are critted then you get
         // the normal +1 bth for missing hand actuator.
-        // Damn if you do damned if you dont. --Torren.
+        // Damned if you do damned if you dont. --Torren.
         final boolean hasClaws = ((Mek) ae).hasClaw(armLoc);
         final boolean hasLowerArmActuator = ae.hasSystem(Mek.ACTUATOR_LOWER_ARM, armLoc);
         final boolean hasHandActuator = ae.hasSystem(Mek.ACTUATOR_HAND, armLoc);
@@ -328,7 +328,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
               && (((arm == PunchAttackAction.RIGHT) && ae.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA))
               || ((arm == PunchAttackAction.LEFT)
               && ae.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)))) {
-            toHit.addModifier(-1, "Battlefist");
+            toHit.addModifier(-1, "BattleFist");
         }
 
         // elevation

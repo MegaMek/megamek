@@ -56,7 +56,7 @@ public class CLMekMortar2 extends MekMortarWeapon {
         mediumRange = 14;
         longRange = 21;
         extremeRange = 28;
-        bv = 14;
+        bv = 14.0;
         heat = 2;
         criticals = 1;
         tonnage = 2.5;

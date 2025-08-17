@@ -44,16 +44,16 @@ import java.util.stream.Collectors;
 
 import megamek.common.CalledShot;
 import megamek.common.CriticalSlot;
-import megamek.common.units.Entity;
-import megamek.common.interfaces.PhaseUpdated;
-import megamek.common.interfaces.RoundUpdated;
-import megamek.common.util.RoundWeight;
-import megamek.common.units.Tank;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.GamePhase;
+import megamek.common.interfaces.PhaseUpdated;
+import megamek.common.interfaces.RoundUpdated;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
+import megamek.common.units.Entity;
+import megamek.common.units.Tank;
+import megamek.common.util.RoundWeight;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
@@ -590,7 +590,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public void setUsedThisRound(boolean usedThisRound) {
         this.usedThisRound = usedThisRound;
         if (usedThisRound) {
-            phase = entity.game.getPhase();
+            phase = entity.getGame().getPhase();
         } else {
             phase = GamePhase.UNKNOWN;
         }
@@ -1390,8 +1390,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public String getQuirkList(String sep) {
         if ((null == entity) ||
-              (null == entity.game) ||
-              !entity.game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+              (null == entity.getGame()) ||
+              !entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return "";
         }
 

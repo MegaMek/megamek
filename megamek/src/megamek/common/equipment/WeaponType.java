@@ -37,10 +37,10 @@ package megamek.common.equipment;
 import java.util.List;
 
 import megamek.common.RangeType;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.artillery.*;
@@ -601,18 +601,20 @@ public class WeaponType extends EquipmentType {
     protected int damageLong;
     protected int explosionDamage = 0;
 
-    public int rackSize; // or AC size, or whatever
-    public AmmoTypeEnum ammoType;
+    protected int rackSize; // or AC size, or whatever
+    protected AmmoTypeEnum ammoType;
 
-    public int minimumRange;
-    public int shortRange;
-    public int mediumRange;
-    public int longRange;
-    public int extremeRange;
-    public int waterShortRange;
-    public int waterMediumRange;
-    public int waterLongRange;
-    public int waterExtremeRange;
+    protected int minimumRange;
+    protected int shortRange;
+    protected int mediumRange;
+    protected int longRange;
+    protected int extremeRange;
+    protected int waterShortRange;
+    protected int waterMediumRange;
+    protected int waterLongRange;
+    protected int waterExtremeRange;
+
+    protected Double bv;
 
     // the class of weapon for infantry damage
     public int infDamageClass = WEAPON_DIRECT_FIRE;
@@ -977,6 +979,13 @@ public class WeaponType extends EquipmentType {
      */
     public EquipmentType getBayType() {
         return getBayType(false);
+    }
+
+    /**
+     * @return BV of the weapon
+     */
+    public Double getBV() {
+        return bv;
     }
 
     // Probably not the best place for this

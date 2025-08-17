@@ -38,14 +38,14 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
 import java.util.HashMap;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.units.Entity;
-import megamek.common.units.LandAirMek;
 import megamek.common.MPCalculationSetting;
-import megamek.common.units.Mek;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.units.Entity;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Mek;
 import megamek.common.units.QuadVee;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 
 public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
 
@@ -96,8 +96,7 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
             assign("BattleMek", SRCH);
         }
 
-        if (entity instanceof LandAirMek) {
-            LandAirMek lam = (LandAirMek) entity;
+        if (entity instanceof LandAirMek lam) {
             double bombs = entity.countWorkingMisc(MiscType.F_BOMB_BAY);
             int bombValue = ASConverter.roundUp(bombs / 5);
             if (bombValue > 0) {

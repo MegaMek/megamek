@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,9 +34,12 @@
 
 package megamek.common.actions;
 
+import java.io.Serial;
+
 public class RepairWeaponMalfunctionAction extends AbstractEntityAction {
+    @Serial
     private static final long serialVersionUID = 7947928598199505776L;
-    private int weaponId;
+    private final int weaponId;
 
     public RepairWeaponMalfunctionAction(int entityId, int weaponId) {
         super(entityId);

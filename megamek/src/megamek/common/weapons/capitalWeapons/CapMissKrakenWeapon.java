@@ -57,7 +57,7 @@ public class CapMissKrakenWeapon extends CapitalMissileWeapon {
         this.longRange = 34;
         this.extremeRange = 46;
         this.tonnage = 190.0;
-        this.bv = 1914;
+        this.bv = 1914.0;
         this.cost = 455000;
         this.flags = flags.or(F_MISSILE);
         this.atClass = CLASS_CAPITAL_MISSILE;

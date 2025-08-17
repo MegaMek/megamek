@@ -34,16 +34,16 @@
 
 package megamek.common.weapons.mortars;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.HexTarget;
-import megamek.common.equipment.Mounted;
 import megamek.common.SimpleTechLevel;
-import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Coords;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.VGLWeaponHandler;
@@ -73,7 +73,7 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
         flags = flags.or(F_MEK_WEAPON).or(F_PROTO_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
               .or(F_BALLISTIC).or(F_ONESHOT).or(F_VGL);
         explosive = false;
-        bv = 15;
+        bv = 15.0;
         cost = 10000;
         rulesRefs = "315, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS

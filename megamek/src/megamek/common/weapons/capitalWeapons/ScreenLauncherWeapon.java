@@ -34,11 +34,11 @@
 
 package megamek.common.weapons.capitalWeapons;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.ScreenLauncherHandler;
@@ -63,7 +63,7 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
         this.longRange = 9;
         this.extremeRange = 12;
         this.tonnage = 40.0;
-        this.bv = 160;
+        this.bv = 160.0;
         this.cost = 250000;
         this.shortAV = 15;
         this.maxRange = RANGE_SHORT;

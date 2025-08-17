@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2004 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,7 +39,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import megamek.common.*;
+import megamek.common.Player;
+import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.Mounted;
@@ -88,7 +89,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
 
     /**
      * Returns the list of Counter Equipment used against this physical attack This is for AMS assignment to manual
-     * tele-operated missiles
+     * teleoperated missiles
      */
     public List<WeaponMounted> getCounterEquipment() {
         if (vCounterEquipment == null) {
@@ -99,7 +100,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
 
     /**
      * Adds 'm' to the list of Counter Equipment used against this physical attack This is for AMS assignment to manual
-     * tele-operated missiles
+     * teleoperated missiles
      */
     public void addCounterEquipment(WeaponMounted m) {
         if (vCounterEquipment == null) {

@@ -35,14 +35,14 @@ package megamek.common.alphaStrike;
 
 import java.util.List;
 
-import megamek.common.game.AbstractGame;
-import megamek.common.board.Board;
-import megamek.common.game.GameTurn;
-import megamek.common.game.InGameObject;
 import megamek.common.Player;
 import megamek.common.Report;
-import megamek.common.interfaces.ReportEntry;
+import megamek.common.board.Board;
 import megamek.common.enums.GamePhase;
+import megamek.common.game.AbstractGame;
+import megamek.common.game.GameTurn;
+import megamek.common.game.InGameObject;
+import megamek.common.interfaces.ReportEntry;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
@@ -53,9 +53,7 @@ import megamek.common.options.OptionsConstants;
  */
 public class ASGame extends AbstractGame {
 
-    private GameOptions options = new GameOptions();
-    private GamePhase phase = GamePhase.UNKNOWN;
-    private GamePhase lastPhase = GamePhase.UNKNOWN;
+    private final GamePhase phase = GamePhase.UNKNOWN;
     private Board board = new Board();
 
     @Override
@@ -85,7 +83,6 @@ public class ASGame extends AbstractGame {
 
     @Override
     public void setLastPhase(GamePhase lastPhase) {
-        this.lastPhase = lastPhase;
     }
 
     @Override
@@ -108,25 +105,20 @@ public class ASGame extends AbstractGame {
 
     @Override
     public boolean isCurrentPhasePlayable() {
-        switch (phase) {
-            case INITIATIVE:
-            case END:
-            case TARGETING:
-                return false;
-            case PHYSICAL:
-            case OFFBOARD:
-            case OFFBOARD_REPORT:
-            case DEPLOYMENT:
-            case PREMOVEMENT:
-            case MOVEMENT:
-            case PREFIRING:
-            case FIRING:
-            case DEPLOY_MINEFIELDS:
-            case SET_ARTILLERY_AUTOHIT_HEXES:
-                return hasMoreTurns();
-            default:
-                return true;
-        }
+        return switch (phase) {
+            case INITIATIVE, END, TARGETING -> false;
+            case PHYSICAL,
+                 OFFBOARD,
+                 OFFBOARD_REPORT,
+                 DEPLOYMENT,
+                 PREMOVEMENT,
+                 MOVEMENT,
+                 PREFIRING,
+                 FIRING,
+                 DEPLOY_MINEFIELDS,
+                 SET_ARTILLERY_AUTOHIT_HEXES -> hasMoreTurns();
+            default -> true;
+        };
     }
 
     @Override
@@ -161,5 +153,17 @@ public class ASGame extends AbstractGame {
 
     private boolean isSupportedUnitType(InGameObject object) {
         return object instanceof AlphaStrikeElement;
+    }
+
+    public void setOptions(GameOptions options) {
+    }
+
+    @Override
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 }

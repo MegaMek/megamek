@@ -38,7 +38,14 @@ import java.text.NumberFormat;
 import java.util.*;
 
 import megamek.client.bot.princess.coverage.Builder;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.HexTarget;
+import megamek.common.LosEffects;
+import megamek.common.Messages;
+import megamek.common.Player;
+import megamek.common.RangeType;
+import megamek.common.TargetRollModifier;
+import megamek.common.ToHitData;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
@@ -1128,7 +1135,7 @@ public class FireControl {
 
         // Is the weapon loaded?
         AmmoMounted firingAmmo = (ammo == null) ? weapon.getLinkedAmmo() : ammo;
-        if (AmmoType.AmmoTypeEnum.NA != (weapon.getType()).ammoType) {
+        if (AmmoType.AmmoTypeEnum.NA != (weapon.getType()).getAmmoType()) {
             if (null == firingAmmo) {
                 return new ToHitData(TH_WEAPON_NO_AMMO);
             }

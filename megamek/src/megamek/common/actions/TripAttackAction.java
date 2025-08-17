@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,11 @@
 
 package megamek.common.actions;
 
-import megamek.common.*;
+import java.io.Serial;
+
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.equipment.Mounted;
@@ -50,6 +54,7 @@ import megamek.common.units.Targetable;
  * The attacker kicks the target.
  */
 public class TripAttackAction extends PhysicalAttackAction {
+    @Serial
     private static final long serialVersionUID = -8639566786588420601L;
 
     public TripAttackAction(int entityId, int targetId) {
@@ -89,7 +94,7 @@ public class TripAttackAction extends PhysicalAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                  && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                  && ((target.getOwnerId() == ae.getOwnerId())
                   || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
                   && (ae.getOwner().getTeam() != Player.TEAM_NONE)
                   && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {

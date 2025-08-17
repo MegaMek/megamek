@@ -63,16 +63,14 @@ import megamek.common.loaders.MekSummary;
 
 /**
  * This class prints a collection of one or more Alpha Strike cards. The cards to be printed can be created from either
- * an {@link megamek.common.alphaStrike.AlphaStrikeElement} or a {@link MekSummary}. It shows a progress
- * bar dialog but the printing happens in the background and the calling window is not blocked.
+ * an {@link megamek.common.alphaStrike.AlphaStrikeElement} or a {@link MekSummary}. It shows a progress bar dialog but
+ * the printing happens in the background and the calling window is not blocked.
  */
 public class ASCardPrinter implements Printable {
 
     private final JFrame parent;
     private final List<CardSlot> cardSlots = new ArrayList<>();
     private ProgressPopup progressPopup;
-    private int row;
-    private int column;
     private AffineTransform baseTransform;
 
     // The column and row count depend on the page format of a given print job and are set anew for each print call
@@ -80,9 +78,9 @@ public class ASCardPrinter implements Printable {
     private int rowCount = 4;
 
     /**
-     * Creates a new ASCardPrinter object for the given ASCardDisplayable elements (either
-     * {@link megamek.common.alphaStrike.AlphaStrikeElement} or {@link MekSummary}. The parent is used
-     * for the progress dialog. Print the cards by calling {@link #printCards()}.
+     * Creates a new ASCardPrinter object for the given ASCardDisplayable elements either
+     * {@link megamek.common.alphaStrike.AlphaStrikeElement} or {@link MekSummary}. The parent is used for the progress
+     * dialog. Print the cards by calling {@link #printCards()}.
      */
     public ASCardPrinter(Collection<? extends ASCardDisplayable> elements, JFrame parent) {
         Font userSelectedFont = userSelectedFont();
@@ -98,7 +96,7 @@ public class ASCardPrinter implements Printable {
     }
 
     /**
-     * Starts a printing process for the carsd of this ASCardPrinter. This will display the usual printer selection
+     * Starts a printing process for the cards of this ASCardPrinter. This will display the usual printer selection
      * dialog and a progress dialog. Printing itself happens in the background and the progress dialog can be closed.
      */
     public void printCards() {
@@ -121,7 +119,7 @@ public class ASCardPrinter implements Printable {
         }
 
         @Override
-        protected Void doInBackground() throws Exception {
+        protected Void doInBackground() {
             try {
                 job.print();
             } catch (PrinterException ex) {
@@ -203,11 +201,11 @@ public class ASCardPrinter implements Printable {
         return cardSlots.size() > pageStartSlotIndex(pageIndex);
     }
 
-    /** Sets the translate in the given g2D to the given card slot, going down the first column, then the second... */
+    /** Sets the translation in the given g2D to the given card slot, going down the first column, then the second... */
     private void goToPrintSlot(int slot, Graphics2D g2D) {
         g2D.setTransform(baseTransform);
-        column = slot / rowCount;
-        row = slot - column * rowCount;
+        int column = slot / rowCount;
+        int row = slot - column * rowCount;
         g2D.translate(-ASCard.WIDTH * columnCount / 2 + ASCard.WIDTH * column, ASCard.HEIGHT * row);
     }
 

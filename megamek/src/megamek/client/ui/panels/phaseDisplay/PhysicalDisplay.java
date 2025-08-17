@@ -64,7 +64,7 @@ import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.IndexedRadioButton;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
-import megamek.common.*;
+import megamek.common.ToHitData;
 import megamek.common.actions.*;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -859,16 +859,16 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
         if (game.getEntity(currentEntity) instanceof QuadMek) {
             rightRearLeg = KickAttackAction.toHit(clientgui.getClient()
-                  .getGame(), currentEntity, target, KickAttackAction.RIGHTMULE);
+                  .getGame(), currentEntity, target, KickAttackAction.RIGHT_MULE);
             leftRearLeg = KickAttackAction.toHit(clientgui.getClient()
-                  .getGame(), currentEntity, target, KickAttackAction.LEFTMULE);
+                  .getGame(), currentEntity, target, KickAttackAction.LEFT_MULE);
             if (value > rightRearLeg.getValue()) {
                 value = rightRearLeg.getValue();
-                attackSide = KickAttackAction.RIGHTMULE;
+                attackSide = KickAttackAction.RIGHT_MULE;
                 attackLeg = rightRearLeg;
             }
             if (value > leftRearLeg.getValue()) {
-                attackSide = KickAttackAction.LEFTMULE;
+                attackSide = KickAttackAction.LEFT_MULE;
                 attackLeg = leftRearLeg;
             }
         }
@@ -1531,11 +1531,11 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                 ToHitData rightRearLeg = KickAttackAction.toHit(clientgui.getClient().getGame(),
                       currentEntity,
                       target,
-                      KickAttackAction.RIGHTMULE);
+                      KickAttackAction.RIGHT_MULE);
                 ToHitData leftRearLeg = KickAttackAction.toHit(clientgui.getClient().getGame(),
                       currentEntity,
                       target,
-                      KickAttackAction.LEFTMULE);
+                      KickAttackAction.LEFT_MULE);
                 canKick |= (leftRearLeg.getValue() != TargetRoll.IMPOSSIBLE) ||
                       (rightRearLeg.getValue() != TargetRoll.IMPOSSIBLE);
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,10 @@
 
 package megamek.common.actions;
 
-import megamek.common.*;
+import java.io.Serial;
+
+import megamek.common.CriticalSlot;
+import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
@@ -52,8 +55,9 @@ import megamek.logging.MMLogger;
  * The attacker brushes the target off.
  */
 public class BrushOffAttackAction extends AbstractAttackAction {
-    private static final MMLogger logger = MMLogger.create(BrushOffAttackAction.class);
+    private static final MMLogger LOGGER = MMLogger.create(BrushOffAttackAction.class);
 
+    @Serial
     private static final long serialVersionUID = -7455082808488032572L;
     public static final int BOTH = 0;
     public static final int LEFT = 1;
@@ -76,7 +80,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
     }
 
     /**
-     * Damage that the specified mek does with a brush off attack. This equals the damage done by a punch from the same
+     * Damage that the specified mek does with a brush-off attack. This equals the damage done by a punch from the same
      * arm.
      *
      * @param entity - the <code>Entity</code> brushing off the swarm.
@@ -85,7 +89,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      *               <code>BrushOffAttackAction.LEFT</code>.
      *
      * @return the <code>int</code> amount of damage caused by the attack. If the attack hits, the swarming infantry
-     *       takes the damage; if the attack misses, the entity deals the damage to themself.
+     *       takes the damage; if the attack misses, the entity deals the damage to themselves.
      */
     public static int getDamageFor(Entity entity, int arm) {
         return PunchAttackAction.getDamageFor(entity, arm, false, false);
@@ -116,25 +120,23 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      *
      * @return the <code>ToHitData</code> containing the target roll.
      */
-    public static ToHitData toHit(Game game, int attackerId,
-          Targetable target, int arm) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target, int arm) {
         final Entity ae = game.getEntity(attackerId);
         int targetId = Entity.NONE;
         Entity te = null;
         if (ae == null) {
-            logger.error("Attacker not valid");
+            LOGGER.error("Attacker not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
         }
         if (target == null) {
-            logger.error("target not valid");
+            LOGGER.error("target not valid");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
             targetId = target.getId();
         }
-        final int armLoc = (arm == BrushOffAttackAction.RIGHT) ? Mek.LOC_RARM
-              : Mek.LOC_LARM;
+        final int armLoc = (arm == BrushOffAttackAction.RIGHT) ? Mek.LOC_RARM : Mek.LOC_LARM;
         ToHitData toHit;
 
         // non-meks can't BrushOff
@@ -148,7 +150,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
               && (arm != BrushOffAttackAction.LEFT)) {
             throw new IllegalArgumentException("Arm must be LEFT or RIGHT");
         }
-        if (((targetId != ae.getSwarmAttackerId()) || (te == null) || !(te instanceof Infantry))
+        if (((targetId != ae.getSwarmAttackerId()) || !(te instanceof Infantry))
               && (target.getTargetType() != Targetable.TYPE_INARC_POD)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "Can only brush off swarming infantry or iNarc Pods");
@@ -197,7 +199,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
 
-        // Can't target woods or a building with a brush off attack.
+        // Can't target woods or a building with a brush-off attack.
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)
               || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
               || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
@@ -220,14 +222,14 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         }
 
         if (ae.hasFunctionalArmAES(armLoc)) {
-            toHit.addModifier(-1, "AES modifer");
+            toHit.addModifier(-1, "AES modifier");
         }
 
         // Claws replace Actuators, but they are Equipment vs System as they
         // take up multiple crits.
         // Rules state +1 bth with claws and if claws are critted then you get
         // the normal +1 bth for missing hand actuator.
-        // Damn if you do damned if you dont. --Torren.
+        // Damn if you do damn if you don't. --Torren.
         final boolean hasClaws = ((Mek) ae).hasClaw(armLoc);
         final boolean hasLowerArmActuator = ae.hasSystem(Mek.ACTUATOR_LOWER_ARM, armLoc);
         final boolean hasHandActuator = ae.hasSystem(Mek.ACTUATOR_HAND, armLoc);

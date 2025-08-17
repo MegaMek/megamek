@@ -33,18 +33,18 @@
 package megamek.common.actions.compute;
 
 import megamek.client.ui.Messages;
+import megamek.common.ToHitData;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.equipment.AmmoType;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Targetable;
-import megamek.common.ToHitData;
 import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 
-class ComputeEnvironmentalToHitMods {
+public class ComputeEnvironmentalToHitMods {
 
     /**
      * Convenience method that compiles the ToHit modifiers applicable to the weather or other special environmental
@@ -53,13 +53,13 @@ class ComputeEnvironmentalToHitMods {
      * @param game                The current {@link Game}
      * @param attacker            The attacking entity
      * @param target              The Targetable object being attacked
-     * @param wtype               The WeaponType of the weapon being used
-     * @param atype               The AmmoType being used for this attack
+     * @param weaponType          The WeaponType of the weapon being used
+     * @param ammoType            The AmmoType being used for this attack
      * @param toHit               The running total ToHitData for this WeaponAttackAction
      * @param isArtilleryIndirect flag that indicates whether this is an indirect-fire artillery attack
      */
-    static ToHitData compileEnvironmentalToHitMods(Game game, Entity attacker, Targetable target, WeaponType wtype,
-          AmmoType atype, ToHitData toHit, boolean isArtilleryIndirect) {
+    public static ToHitData compileEnvironmentalToHitMods(Game game, Entity attacker, Targetable target,
+          WeaponType weaponType, AmmoType ammoType, ToHitData toHit, boolean isArtilleryIndirect) {
 
         PlanetaryConditions conditions = game.getPlanetaryConditions();
 
@@ -70,16 +70,16 @@ class ComputeEnvironmentalToHitMods {
 
         // Night combat modifiers
         if (!isArtilleryIndirect) {
-            toHit.append(AbstractAttackAction.nightModifiers(game, target, atype, attacker, true));
+            toHit.append(AbstractAttackAction.nightModifiers(game, target, ammoType, attacker, true));
         }
 
         TargetRoll weatherToHitMods = new TargetRoll();
 
-        boolean isEnergy = (wtype != null) && wtype.hasFlag(WeaponType.F_ENERGY);
-        boolean isMissile = (wtype != null) && wtype.hasFlag(WeaponType.F_MISSILE);
-        boolean isDirectFireBallistic = (wtype != null) &&
-              wtype.hasFlag(WeaponType.F_BALLISTIC) &&
-              wtype.hasFlag(WeaponType.F_DIRECT_FIRE);
+        boolean isEnergy = (weaponType != null) && weaponType.hasFlag(WeaponType.F_ENERGY);
+        boolean isMissile = (weaponType != null) && weaponType.hasFlag(WeaponType.F_MISSILE);
+        boolean isDirectFireBallistic = (weaponType != null) &&
+              weaponType.hasFlag(WeaponType.F_BALLISTIC) &&
+              weaponType.hasFlag(WeaponType.F_DIRECT_FIRE);
 
         if (!attacker.isSpaceborne()) {
             // weather mods

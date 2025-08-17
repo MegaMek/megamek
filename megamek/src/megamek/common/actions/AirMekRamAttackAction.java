@@ -33,9 +33,12 @@
 
 package megamek.common.actions;
 
+import java.io.Serial;
 import java.util.Enumeration;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.GunEmplacement;
@@ -57,12 +60,13 @@ import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
 
 /**
- * Ram attack by an airborne LAM in airmek mode. This is treated like a charge in the movement path, but has significant
- * difference in the way damage is calculated and in the final locations.
+ * Ram attack by an airborne LAM in air mek mode. This is treated like a charge in the movement path, but has
+ * significant difference in the way damage is calculated and in the final locations.
  *
  * @author Neoancient
  */
 public class AirMekRamAttackAction extends DisplacementAttackAction {
+    @Serial
     private static final long serialVersionUID = 5110608317218688433L;
 
     public AirMekRamAttackAction(Entity attacker, Targetable target) {
@@ -80,8 +84,15 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
      */
     public ToHitData toHit(Game game) {
         final Entity entity = game.getEntity(getEntityId());
-        return toHit(game, game.getTarget(getTargetType(), getTargetId()),
-              entity.getPosition(), entity.getElevation(), entity.moved);
+        if (entity != null) {
+            return toHit(game,
+                  game.getTarget(getTargetType(), getTargetId()),
+                  entity.getPosition(),
+                  entity.getElevation(),
+                  entity.moved);
+        }
+
+        return new ToHitData();
     }
 
     /**
@@ -104,13 +115,13 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
         }
 
         if (!(ae instanceof LandAirMek) || !ae.isAirborneVTOLorWIGE()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is not airborne airmek");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is not airborne AirMek");
         }
 
-        int targetId = Entity.NONE;
-        Entity te = null;
+        int targetId;
+        Entity targetEntity;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            te = (Entity) target;
+            targetEntity = (Entity) target;
             targetId = target.getId();
         } else {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid Target");
@@ -119,7 +130,7 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                  && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                  && ((target.getOwnerId() == ae.getOwnerId())
                   || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
                   && (ae.getOwner().getTeam() != Player.TEAM_NONE)
                   && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
@@ -138,49 +149,49 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
               + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
         Building bldg = game.getBoard().getBuildingAt(getTargetPos());
-        ToHitData toHit = null;
+        ToHitData toHit;
         boolean targIsBuilding = ((getTargetType() == Targetable.TYPE_FUEL_TANK)
               || (getTargetType() == Targetable.TYPE_BUILDING));
 
-        boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
+        boolean inSameBuilding = Compute.isInSameBuilding(game, ae, targetEntity);
 
         // can't target yourself
-        if (ae.equals(te)) {
+        if (ae.equals(targetEntity)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "You can't target yourself");
         }
 
         // Can't target a transported entity.
-        if (Entity.NONE != te.getTransportId()) {
+        if (Entity.NONE != targetEntity.getTransportId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "Target is a passenger.");
         }
 
-        // Can't target a entity conducting a swarm attack.
-        if (Entity.NONE != te.getSwarmTargetId()) {
+        // Can't target an entity conducting a swarm attack.
+        if (Entity.NONE != targetEntity.getSwarmTargetId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "Target is swarming a Mek.");
         }
 
         // Cannot target infantry
-        if (te instanceof Infantry) {
+        if (targetEntity instanceof Infantry) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "Target is infantry.");
         }
 
         // Cannot target protomek
-        if (te instanceof ProtoMek) {
+        if (targetEntity instanceof ProtoMek) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "Target is protomek.");
         }
 
         // check range
         if (src.distance(target.getPosition()) > 1) {
-            if (null != te.getSecondaryPositions()) {
+            if (null != targetEntity.getSecondaryPositions()) {
                 boolean inSecondaryRange = false;
-                for (int i : te.getSecondaryPositions().keySet()) {
-                    if (null != te.getSecondaryPositions().get(i)) {
-                        if (src.distance(te.getSecondaryPositions().get(i)) < 2) {
+                for (int i : targetEntity.getSecondaryPositions().keySet()) {
+                    if (null != targetEntity.getSecondaryPositions().get(i)) {
+                        if (src.distance(targetEntity.getSecondaryPositions().get(i)) < 2) {
                             inSecondaryRange = true;
                             break;
                         }
@@ -204,7 +215,7 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
         }
 
         // can't attack mek making a different displacement attack
-        if (te.hasDisplacementAttack()) {
+        if (targetEntity.hasDisplacementAttack()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "Target is already making a charge/DFA attack");
         }
@@ -212,28 +223,28 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
         // target must have moved already
         // errata: immobile units can be targeted, even when they haven't moved
         // yet
-        if (!te.isDone() && !te.isImmobile()) {
+        if (!targetEntity.isDone() && !targetEntity.isImmobile()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "Target must be done with movement");
         }
 
         // can't attack the target of another displacement attack
-        if (te.isTargetOfDisplacementAttack()
-              && (te.findTargetedDisplacement().getEntityId() != ae.getId())) {
+        if (targetEntity.isTargetOfDisplacementAttack()
+              && (targetEntity.findTargetedDisplacement().getEntityId() != ae.getId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "Target is the target of another charge/DFA");
         }
 
         // Can't target units in buildings (from the outside).
         if ((null != bldg) && (!targIsBuilding)
-              && Compute.isInBuilding(game, te)) {
+              && Compute.isInBuilding(game, targetEntity)) {
             if (!Compute.isInBuilding(game, ae)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                       "Target is inside building");
             } else if (!game.getBoard().getBuildingAt(ae.getPosition())
                   .equals(bldg)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                      "Target is inside differnt building");
+                      "Target is inside different building");
             }
         }
 
@@ -265,7 +276,7 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
         toHit.append(Compute.getAttackerTerrainModifier(game, ae.getId()));
 
         // target terrain
-        toHit.append(Compute.getTargetTerrainModifier(game, te, 0,
+        toHit.append(Compute.getTargetTerrainModifier(game, targetEntity, 0,
               inSameBuilding));
 
         // attacker is spotting
@@ -273,38 +284,38 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
             toHit.addModifier(+1, "attacker is spotting");
         }
         // piloting skill differential
-        if (ae.getCrew().getPiloting() != te.getCrew().getPiloting()) {
+        if (ae.getCrew().getPiloting() != targetEntity.getCrew().getPiloting()) {
             toHit.addModifier(ae.getCrew().getPiloting()
-                  - te.getCrew().getPiloting(), "piloting skill differential");
+                  - targetEntity.getCrew().getPiloting(), "piloting skill differential");
         }
 
         // target prone
-        if (te.isProne()) {
+        if (targetEntity.isProne()) {
             toHit.addModifier(-2, "target prone and adjacent");
         }
 
         // water partial cover?
-        if ((te.height() > 0) && (te.getElevation() == -1)
-              && (targHex.terrainLevel(Terrains.WATER) == te.height())) {
+        if ((targetEntity.height() > 0) && (targetEntity.getElevation() == -1)
+              && (targHex.terrainLevel(Terrains.WATER) == targetEntity.height())) {
             toHit.addModifier(1, "target has partial cover");
         }
 
         // target immobile
-        toHit.append(Compute.getImmobileMod(te));
+        toHit.append(Compute.getImmobileMod(targetEntity));
 
-        Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
+        Compute.modifyPhysicalBTHForAdvantages(ae, targetEntity, toHit, game);
 
         // evading bonuses (
-        if (te.isEvading()) {
-            toHit.addModifier(te.getEvasionBonus(), "target is evading");
+        if (targetEntity.isEvading()) {
+            toHit.addModifier(targetEntity.getEvasionBonus(), "target is evading");
         }
 
         // determine hit direction
-        toHit.setSideTable(te.sideTable(src));
+        toHit.setSideTable(targetEntity.sideTable(src));
 
         // all rams resolved against full-body table, against meks in water partial cover
-        if ((targHex.terrainLevel(Terrains.WATER) == te.height())
-              && (te.getElevation() == -1) && (te.height() > 0)) {
+        if ((targHex.terrainLevel(Terrains.WATER) == targetEntity.height())
+              && (targetEntity.getElevation() == -1) && (targetEntity.height() > 0)) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         } else {
             toHit.setHitTable(ToHitData.HIT_NORMAL);
@@ -330,30 +341,34 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
     /**
      * Checks if a ram can hit the target, taking account of movement
      */
-    public ToHitData toHit(Game game, MovePath md) {
-        final Entity ae = game.getEntity(getEntityId());
+    public ToHitData toHit(Game game, MovePath movePath) {
+        final Entity attackingEntity = game.getEntity(getEntityId());
         final Targetable target = getTarget(game);
-        Coords ramSrc = ae.getPosition();
-        int ramEl = ae.getElevation();
+        Coords ramSrc = null;
+        int ramEl = 0;
+
+        if (attackingEntity != null) {
+            ramSrc = attackingEntity.getPosition();
+            ramEl = attackingEntity.getElevation();
+        }
+
         MoveStep ramStep = null;
 
         // let's just check this
-        if (!md.contains(MoveStepType.CHARGE)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                  "Ram action not found in movement path");
+        if (!movePath.contains(MoveStepType.CHARGE)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Ram action not found in movement path");
         }
 
         // no evading
-        if (md.contains(MoveStepType.EVADE)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                  "No evading while charging");
+        if (movePath.contains(MoveStepType.EVADE)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "No evading while charging");
         }
 
         // determine last valid step
-        md.compile(game, ae);
-        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
+        movePath.compile(game, attackingEntity);
+        for (final Enumeration<MoveStep> i = movePath.getSteps(); i.hasMoreElements(); ) {
             final MoveStep step = i.nextElement();
-            if (step.getMovementType(md.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
+            if (step.getMovementType(movePath.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
                 break;
             }
             if (step.getType() == MoveStepType.CHARGE) {
@@ -369,12 +384,10 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
         if ((ramStep != null)) {
             isReachable = target.getPosition().equals(ramStep.getPosition());
             if (!isReachable && (target instanceof Entity)
-                  && (null != ((Entity) target).getSecondaryPositions())) {
-                for (int i : ((Entity) target).getSecondaryPositions().keySet()) {
-                    if (null != ((Entity) target).getSecondaryPositions()
-                          .get(i)) {
-                        isReachable = ((Entity) target).getSecondaryPositions()
-                              .get(i).equals(ramStep.getPosition());
+                  && (null != target.getSecondaryPositions())) {
+                for (int i : target.getSecondaryPositions().keySet()) {
+                    if (null != target.getSecondaryPositions().get(i)) {
+                        isReachable = target.getSecondaryPositions().get(i).equals(ramStep.getPosition());
                         if (isReachable) {
                             break;
                         }
@@ -387,7 +400,7 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
                   "Could not reach target with movement");
         }
 
-        if (!md.getSecondLastStep().isLegalEndPos()) {
+        if (!movePath.getSecondLastStep().isLegalEndPos()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                   "Violation of stacking limit in second last step");
         }
@@ -401,7 +414,7 @@ public class AirMekRamAttackAction extends DisplacementAttackAction {
     }
 
     /**
-     * Damage that an airmek does with a successful ram. Assumes that delta_distance is correct.
+     * Damage that an AirMek does with a successful ram. Assumes that delta_distance is correct.
      */
     public static int getDamageFor(Entity entity) {
         return AirMekRamAttackAction.getDamageFor(entity, entity.delta_distance);

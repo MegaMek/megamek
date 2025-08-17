@@ -39,11 +39,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import megamek.common.IGame;
-import megamek.common.InGameObject;
+import megamek.common.game.IGame;
+import megamek.common.game.InGameObject;
 import megamek.common.Player;
-import megamek.common.ReportEntry;
-import megamek.common.TurnOrdered;
+import megamek.common.interfaces.ReportEntry;
+import megamek.common.turns.TurnOrdered;
 import megamek.common.actions.EntityAction;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;

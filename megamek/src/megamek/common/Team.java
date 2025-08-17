@@ -43,6 +43,10 @@ import java.util.Objects;
 
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.common.annotations.Nullable;
+import megamek.common.game.Game;
+import megamek.common.game.IGame;
+import megamek.common.turns.TurnOrdered;
+import megamek.common.turns.TurnVectors;
 
 /**
  * The Team class holds information about a team. It holds the initiative for the team, and contains a list of players

@@ -35,7 +35,11 @@
 
 package megamek.common;
 
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 
 /**
  * Contains some constants representing equipment/unit tech levels

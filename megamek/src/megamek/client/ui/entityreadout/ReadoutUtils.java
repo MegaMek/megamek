@@ -40,10 +40,12 @@ import java.util.Collections;
 import java.util.List;
 
 import megamek.client.ui.Messages;
-import megamek.common.*;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.WeaponMounted;
+import megamek.common.bays.Bay;
+import megamek.common.equipment.*;
+import megamek.common.interfaces.ITechnology;
+import megamek.common.units.Entity;
+import megamek.common.units.InfantryCompartment;
+import megamek.common.units.Mek;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**

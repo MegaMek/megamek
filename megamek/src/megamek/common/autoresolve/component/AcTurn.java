@@ -32,7 +32,7 @@
  */
 package megamek.common.autoresolve.component;
 
-import megamek.common.AbstractPlayerTurn;
+import megamek.common.game.AbstractPlayerTurn;
 import megamek.common.autoresolve.acar.SimulationContext;
 
 public abstract class AcTurn extends AbstractPlayerTurn {

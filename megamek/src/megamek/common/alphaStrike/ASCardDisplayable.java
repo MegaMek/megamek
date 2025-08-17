@@ -41,9 +41,9 @@ import static megamek.common.alphaStrike.BattleForceSUA.VLG;
 import java.util.Arrays;
 import java.util.Map;
 
-import megamek.common.BTObject;
-import megamek.common.CombatRole;
+import megamek.common.interfaces.CombatRole;
 import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
+import megamek.common.units.BTObject;
 
 /**
  * This interface is implemented by classes that can be displayed on an AlphaStrike card

@@ -34,12 +34,12 @@
 
 package megamek.common.weapons.prototypes;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.PrototypeRLHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.prototype.PrototypeRLHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -69,7 +69,7 @@ public abstract class PrototypeRLWeapon extends MissileWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game,
      * megamek.server.Server)
      */
     @Override

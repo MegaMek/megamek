@@ -37,15 +37,15 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import megamek.client.bot.PhysicalOption;
-import megamek.common.BipedMek;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mek;
-import megamek.common.Targetable;
+import megamek.common.units.BipedMek;
+import megamek.common.compute.Compute;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.TripodMek;
+import megamek.common.units.TripodMek;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
@@ -90,9 +90,9 @@ public class PhysicalInfo {
     /**
      * Constructor including the shooter and target's state information.
      *
-     * @param shooter            The {@link megamek.common.Entity} doing the attacking.
+     * @param shooter            The {@link megamek.common.units.Entity} doing the attacking.
      * @param shooterState       The current {@link megamek.client.bot.princess.EntityState} of the attacker.
-     * @param target             The {@link megamek.common.Targetable} of the attack.
+     * @param target             The {@link megamek.common.units.Targetable} of the attack.
      * @param targetState        The current {@link megamek.client.bot.princess.EntityState} of the target.
      * @param physicalAttackType The type of attack being made.
      * @param game               The current {@link Game}
@@ -135,8 +135,8 @@ public class PhysicalInfo {
     /**
      * Basic constructor.
      *
-     * @param shooter            The {@link megamek.common.Entity} doing the attacking.
-     * @param target             The {@link megamek.common.Targetable} of the attack.
+     * @param shooter            The {@link megamek.common.units.Entity} doing the attacking.
+     * @param target             The {@link Targetable} of the attack.
      * @param physicalAttackType The type of attack being made.
      * @param game               The current {@link Game}
      * @param owner              The owning {@link Princess} bot.

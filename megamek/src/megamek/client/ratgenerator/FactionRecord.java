@@ -40,7 +40,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import megamek.common.UnitType;
+import megamek.common.units.UnitType;
 import megamek.common.annotations.Nullable;
 import megamek.common.universe.DateRangeDeserializer;
 import megamek.common.universe.Faction2;

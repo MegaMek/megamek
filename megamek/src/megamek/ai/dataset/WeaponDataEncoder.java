@@ -35,8 +35,8 @@ package megamek.ai.dataset;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
+import megamek.common.compute.Compute;
+import megamek.common.units.Entity;
 import megamek.common.equipment.WeaponMounted;
 import megamek.logging.MMLogger;
 

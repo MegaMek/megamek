@@ -32,13 +32,13 @@
  */
 package megamek.common.autoresolve.damage;
 
-import megamek.common.Aero;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.Infantry;
-import megamek.common.Mek;
-import megamek.common.Tank;
+import megamek.common.units.Aero;
+import megamek.common.compute.Compute;
+import megamek.common.units.Entity;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
 
 /**
  * @author Luana Coppio

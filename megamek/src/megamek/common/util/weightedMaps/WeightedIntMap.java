@@ -33,7 +33,7 @@
 
 package megamek.common.util.weightedMaps;
 
-import megamek.common.Compute;
+import megamek.common.compute.Compute;
 import megamek.common.annotations.Nullable;
 
 /**

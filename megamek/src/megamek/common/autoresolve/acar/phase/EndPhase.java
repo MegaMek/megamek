@@ -36,7 +36,7 @@ package megamek.common.autoresolve.acar.phase;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import megamek.common.IEntityRemovalConditions;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.MoraleCheckAction;
 import megamek.common.autoresolve.acar.action.RecoveringNerveAction;

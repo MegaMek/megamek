@@ -36,14 +36,23 @@ package megamek.common.weapons.lrms;
 
 import java.io.Serial;
 
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.equipment.AmmoType;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.*;
+import megamek.common.weapons.handlers.*;
+import megamek.common.weapons.handlers.lrm.LRMAntiTSMHandler;
+import megamek.common.weapons.handlers.lrm.LRMDeadFireHandler;
+import megamek.common.weapons.handlers.lrm.LRMFollowTheLeaderHandler;
+import megamek.common.weapons.handlers.lrm.LRMFragHandler;
+import megamek.common.weapons.handlers.lrm.LRMHandler;
+import megamek.common.weapons.handlers.lrm.LRMScatterableHandler;
+import megamek.common.weapons.handlers.lrm.LRMSmokeWarheadHandler;
+import megamek.common.weapons.handlers.lrm.LRMSwarmHandler;
+import megamek.common.weapons.handlers.lrm.LRMSwarmIHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 

@@ -34,7 +34,7 @@
 
 package megamek.common.autoresolve.acar.report;
 
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.common.autoresolve.component.Formation;
 
 public interface IDeploymentReport {

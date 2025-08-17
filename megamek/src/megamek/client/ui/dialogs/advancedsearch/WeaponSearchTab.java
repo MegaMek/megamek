@@ -60,12 +60,12 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.util.FlatLafStyleBuilder;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
-import megamek.common.EquipmentTypeLookup;
-import megamek.common.MiscType;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.MiscType;
 import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.annotations.Nullable;
 
 class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, FocusListener {

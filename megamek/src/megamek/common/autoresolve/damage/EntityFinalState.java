@@ -33,7 +33,7 @@
 package megamek.common.autoresolve.damage;
 
 
-import megamek.common.IEntityRemovalConditions;
+import megamek.common.interfaces.IEntityRemovalConditions;
 
 public enum EntityFinalState {
     ANY(false, false, false, false),

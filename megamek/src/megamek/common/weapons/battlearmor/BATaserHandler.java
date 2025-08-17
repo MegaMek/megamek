@@ -39,7 +39,16 @@ import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AmmoWeaponHandler;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.rolls.Roll;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
+import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class BATaserHandler extends AmmoWeaponHandler {

@@ -55,11 +55,11 @@ import megamek.client.ui.widget.picmap.PMSimpleLabel;
 import megamek.client.ui.widget.picmap.PMSimplePolygonArea;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
-import megamek.common.Aero;
+import megamek.common.units.Aero;
 import megamek.common.Configuration;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.SmallCraft;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.SmallCraft;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**

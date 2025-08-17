@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import megamek.common.BoardLocation;
+import megamek.common.board.BoardLocation;
 import megamek.common.Player;
 import megamek.common.actions.EntityAction;
 import megamek.logging.MMLogger;

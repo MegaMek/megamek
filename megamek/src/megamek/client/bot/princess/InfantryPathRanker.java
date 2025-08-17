@@ -35,10 +35,10 @@ package megamek.client.bot.princess;
 import java.util.List;
 
 import megamek.client.bot.princess.FireControl.FireControlType;
-import megamek.common.Coords;
-import megamek.common.EjectedCrew;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.board.Coords;
+import megamek.common.units.EjectedCrew;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;

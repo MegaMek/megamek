@@ -41,9 +41,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Entity;
-import megamek.common.IAero;
-import megamek.common.IGame;
+import megamek.common.units.Entity;
+import megamek.common.units.IAero;
+import megamek.common.game.IGame;
 import megamek.common.Player;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;

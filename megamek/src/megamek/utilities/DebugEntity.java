@@ -39,12 +39,12 @@ import java.awt.datatransfer.StringSelection;
 import java.util.List;
 
 import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.FighterSquadron;
-import megamek.common.Infantry;
-import megamek.common.Mek;
-import megamek.common.ProtoMek;
-import megamek.common.Transporter;
+import megamek.common.units.Entity;
+import megamek.common.units.FighterSquadron;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.equipment.Transporter;
 import megamek.common.equipment.WeaponMounted;
 
 /**

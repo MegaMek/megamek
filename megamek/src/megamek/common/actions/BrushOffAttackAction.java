@@ -35,7 +35,17 @@
 package megamek.common.actions;
 
 import megamek.common.*;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
 /**

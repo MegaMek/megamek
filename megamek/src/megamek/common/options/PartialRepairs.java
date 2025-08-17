@@ -36,14 +36,14 @@ package megamek.common.options;
 
 import java.io.Serial;
 
-import megamek.common.Aero;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.Jumpship;
-import megamek.common.Mek;
-import megamek.common.Tank;
-import megamek.common.Warship;
+import megamek.common.units.Aero;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
+import megamek.common.units.Warship;
 
 /**
  * Contains the options for partial repair properties

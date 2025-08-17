@@ -39,8 +39,8 @@ import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import megamek.common.Entity;
-import megamek.common.jacksonadapters.MMUReader;
+import megamek.common.units.Entity;
+import megamek.common.jacksonAdapters.MMUReader;
 
 /**
  * This class is used for parsing C3 network information from MM V2 scenarios (.mms) into an intermediate ParsedC3Info

@@ -47,10 +47,15 @@ import java.util.stream.Collectors;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.*;
+import megamek.common.interfaces.ITechManager;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
+import megamek.common.units.QuadVee;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;

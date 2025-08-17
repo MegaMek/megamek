@@ -36,12 +36,12 @@ package megamek.common.cost;
 import java.util.ArrayList;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.Engine;
-import megamek.common.EntityMovementMode;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.RoundWeight;
-import megamek.common.Tank;
+import megamek.common.equipment.Engine;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.util.RoundWeight;
+import megamek.common.units.Tank;
 import megamek.common.equipment.ArmorType;
 import megamek.common.verifier.SupportVeeStructure;
 import megamek.common.verifier.TestEntity;

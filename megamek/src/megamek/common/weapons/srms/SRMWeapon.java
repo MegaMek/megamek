@@ -36,13 +36,21 @@ package megamek.common.weapons.srms;
 
 import java.io.Serial;
 
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.*;
+import megamek.common.weapons.handlers.*;
+import megamek.common.weapons.handlers.srm.SRMAXHandler;
+import megamek.common.weapons.handlers.srm.SRMAntiTSMHandler;
+import megamek.common.weapons.handlers.srm.SRMDeadFireHandler;
+import megamek.common.weapons.handlers.srm.SRMFragHandler;
+import megamek.common.weapons.handlers.srm.SRMHandler;
+import megamek.common.weapons.handlers.srm.SRMInfernoHandler;
+import megamek.common.weapons.handlers.srm.SRMSmokeWarheadHandler;
+import megamek.common.weapons.handlers.srm.SRMTandemChargeHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 

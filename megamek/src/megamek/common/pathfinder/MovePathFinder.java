@@ -35,13 +35,13 @@ package megamek.common.pathfinder;
 
 import java.util.*;
 
-import megamek.common.Board;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
 import megamek.common.Facing;
-import megamek.common.Game;
-import megamek.common.Tank;
+import megamek.common.game.Game;
+import megamek.common.units.Tank;
 import megamek.common.annotations.Nullable;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;

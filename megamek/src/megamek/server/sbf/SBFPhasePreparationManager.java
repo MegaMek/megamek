@@ -34,7 +34,7 @@
 package megamek.server.sbf;
 
 import megamek.MegaMek;
-import megamek.common.InGameObject;
+import megamek.common.game.InGameObject;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFFormation;

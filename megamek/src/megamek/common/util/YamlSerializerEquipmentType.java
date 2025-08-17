@@ -44,16 +44,16 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
-import megamek.common.AmmoType;
-import megamek.common.EquipmentMode;
-import megamek.common.EquipmentType;
-import megamek.common.ITechnology.AvailabilityValue;
-import megamek.common.ITechnology.Era;
-import megamek.common.ITechnology.Faction;
-import megamek.common.MiscType;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.interfaces.ITechnology.AvailabilityValue;
+import megamek.common.interfaces.ITechnology.Era;
+import megamek.common.interfaces.ITechnology.Faction;
+import megamek.common.equipment.MiscType;
 import megamek.common.TechAdvancement;
 import megamek.common.TechAdvancement.AdvancementPhase;
-import megamek.common.WeaponType;
+import megamek.common.equipment.WeaponType;
 import megamek.logging.MMLogger;
 
 /**

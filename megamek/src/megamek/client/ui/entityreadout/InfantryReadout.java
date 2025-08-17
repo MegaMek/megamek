@@ -38,10 +38,10 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import megamek.client.ui.Messages;
-import megamek.common.EquipmentType;
-import megamek.common.Infantry;
-import megamek.common.InfantryMount;
-import megamek.common.Mounted;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.units.Infantry;
+import megamek.common.units.InfantryMount;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;

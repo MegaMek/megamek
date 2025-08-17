@@ -44,9 +44,18 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.Sensor;
+import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
-import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.common.planetaryconditions.Weather;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.Weather;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Targetable;
+import megamek.common.units.Terrains;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.FieldSource;
 

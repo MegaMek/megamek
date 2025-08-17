@@ -48,7 +48,25 @@ import java.util.regex.Pattern;
 
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
-import megamek.common.ITechnology.TechBase;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.interfaces.ITechnology.TechBase;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityFluff;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
+import megamek.common.units.QuadVee;
+import megamek.common.units.TripodMek;
+import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
 
 /**

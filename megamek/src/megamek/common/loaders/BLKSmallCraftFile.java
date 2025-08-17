@@ -34,15 +34,15 @@
 
 package megamek.common.loaders;
 
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.IArmorState;
-import megamek.common.LocationFullException;
-import megamek.common.Mounted;
-import megamek.common.SmallCraft;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.IArmorState;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.SmallCraft;
 import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestEntity;
 import megamek.logging.MMLogger;

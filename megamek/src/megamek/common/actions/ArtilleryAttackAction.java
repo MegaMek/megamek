@@ -37,18 +37,18 @@ package megamek.common.actions;
 import java.io.Serializable;
 import java.util.Vector;
 
-import megamek.common.Board;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.EquipmentType;
-import megamek.common.Game;
+import megamek.common.board.Board;
+import megamek.common.compute.Compute;
+import megamek.common.board.Coords;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.game.Game;
 import megamek.common.RangeType;
-import megamek.common.Targetable;
-import megamek.common.WeaponType;
+import megamek.common.units.Targetable;
+import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.weapons.bayweapons.capital.CapitalMissileBayWeapon;
+import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 
 /**
  * ArtilleryAttackAction Holds the data needed for an artillery attack in flight.

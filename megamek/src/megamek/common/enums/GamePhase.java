@@ -36,7 +36,7 @@ package megamek.common.enums;
 import java.util.ResourceBundle;
 
 import megamek.MegaMek;
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 
 public enum GamePhase {

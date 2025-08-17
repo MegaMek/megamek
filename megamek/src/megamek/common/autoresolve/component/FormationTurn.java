@@ -32,8 +32,8 @@
  */
 package megamek.common.autoresolve.component;
 
-import megamek.common.IGame;
-import megamek.common.InGameObject;
+import megamek.common.game.IGame;
+import megamek.common.game.InGameObject;
 import megamek.common.autoresolve.acar.SimulationContext;
 
 public class FormationTurn extends AcTurn {

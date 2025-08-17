@@ -49,7 +49,23 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.compute.ComputeECM;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.INarcPod;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
+import megamek.common.units.Targetable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

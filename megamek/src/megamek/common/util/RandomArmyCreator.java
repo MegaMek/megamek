@@ -41,11 +41,11 @@ import java.util.List;
 
 import megamek.client.ui.dialogs.advancedsearch.ASAdvancedSearchPanel;
 import megamek.client.ui.dialogs.advancedsearch.MekSearchFilter;
-import megamek.common.Compute;
-import megamek.common.MekSummary;
-import megamek.common.MekSummaryCache;
+import megamek.common.compute.Compute;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.TechConstants;
-import megamek.common.UnitType;
+import megamek.common.units.UnitType;
 
 public class RandomArmyCreator {
     /**

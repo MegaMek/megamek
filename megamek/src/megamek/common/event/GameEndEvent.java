@@ -34,7 +34,7 @@
 
 package megamek.common.event;
 
-import megamek.common.Game;
+import megamek.common.game.Game;
 
 /**
  * Instances of this class are sent when the game finished

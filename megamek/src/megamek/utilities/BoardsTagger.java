@@ -34,7 +34,7 @@
 package megamek.utilities;
 
 import static java.util.stream.Collectors.toSet;
-import static megamek.common.Terrains.*;
+import static megamek.common.units.Terrains.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -56,11 +56,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import megamek.common.Board;
-import megamek.common.Building;
+import megamek.common.board.Board;
+import megamek.common.units.Building;
 import megamek.common.Configuration;
 import megamek.common.Hex;
-import megamek.common.Terrains;
+import megamek.common.units.Terrains;
 import megamek.common.enums.BuildingType;
 import megamek.logging.MMLogger;
 

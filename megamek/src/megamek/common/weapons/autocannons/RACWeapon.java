@@ -34,15 +34,15 @@
 
 package megamek.common.weapons.autocannons;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.Mounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.RACHandler;
-import megamek.common.weapons.UltraWeaponHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.RACHandler;
+import megamek.common.weapons.handlers.UltraWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -69,7 +69,7 @@ public abstract class RACWeapon extends UACWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game,
      * megamek.server.Server)
      */
     @Override

@@ -36,6 +36,8 @@ package megamek.common;
 
 import java.util.Random;
 
+import megamek.common.rolls.MMRoll;
+import megamek.common.rolls.Roll;
 import megamek.logging.MMLogger;
 
 /**

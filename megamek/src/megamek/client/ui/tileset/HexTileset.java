@@ -50,12 +50,12 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import megamek.client.ui.util.ImageCache;
-import megamek.common.Board;
+import megamek.common.board.Board;
 import megamek.common.Configuration;
 import megamek.common.Hex;
-import megamek.common.IGame;
-import megamek.common.Terrain;
-import megamek.common.Terrains;
+import megamek.common.game.IGame;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 import megamek.common.event.GameBoardChangeEvent;

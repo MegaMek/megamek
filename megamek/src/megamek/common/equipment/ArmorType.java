@@ -43,6 +43,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import megamek.common.*;
+import megamek.common.interfaces.ITechnology;
+import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.SmallCraft;
 
 public class ArmorType extends MiscType {
 

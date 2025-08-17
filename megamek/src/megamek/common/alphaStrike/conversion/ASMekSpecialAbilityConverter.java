@@ -38,13 +38,13 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
 import java.util.HashMap;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.Entity;
-import megamek.common.LandAirMek;
+import megamek.common.units.Entity;
+import megamek.common.units.LandAirMek;
 import megamek.common.MPCalculationSetting;
-import megamek.common.Mek;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.QuadVee;
+import megamek.common.units.Mek;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.QuadVee;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {

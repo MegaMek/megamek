@@ -43,10 +43,10 @@ import java.util.List;
 import java.util.Objects;
 
 import megamek.client.bot.princess.MinefieldUtil;
-import megamek.common.Coords;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Tank;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
+import megamek.common.units.Infantry;
+import megamek.common.units.Tank;
 import megamek.common.annotations.Nullable;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;

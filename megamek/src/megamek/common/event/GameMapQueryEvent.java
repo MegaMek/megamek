@@ -34,7 +34,7 @@
 
 package megamek.common.event;
 
-import megamek.common.MapSettings;
+import megamek.common.loaders.MapSettings;
 
 /**
  * Instances of this class are sent when Client is asked for the Map

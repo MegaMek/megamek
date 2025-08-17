@@ -35,7 +35,8 @@ package megamek.common.alphaStrike;
 
 import java.util.Arrays;
 
-import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.units.*;
 
 /** Represents the AlphaStrike Element Types (ASC, page 91) */
 public enum ASUnitType {

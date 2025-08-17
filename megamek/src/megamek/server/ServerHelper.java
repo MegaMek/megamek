@@ -40,7 +40,21 @@ import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.Minefield;
+import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**

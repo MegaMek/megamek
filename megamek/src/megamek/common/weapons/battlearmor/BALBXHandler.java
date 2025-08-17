@@ -36,14 +36,14 @@ package megamek.common.weapons.battlearmor;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Game;
-import megamek.common.Infantry;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.units.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.handlers.WeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class BALBXHandler extends WeaponHandler {
@@ -58,7 +58,7 @@ public class BALBXHandler extends WeaponHandler {
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
+     * @see megamek.common.weapons.handlers.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {

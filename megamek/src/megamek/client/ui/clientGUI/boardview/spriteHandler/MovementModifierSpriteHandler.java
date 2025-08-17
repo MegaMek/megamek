@@ -37,7 +37,7 @@ import java.util.Collection;
 import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.MovementModifierEnvelopeSprite;
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.moves.MovePath;
 

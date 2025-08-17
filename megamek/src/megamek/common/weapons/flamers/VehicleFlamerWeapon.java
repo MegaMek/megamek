@@ -38,14 +38,14 @@
  */
 package megamek.common.weapons.flamers;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.VehicleFlamerCoolHandler;
-import megamek.common.weapons.VehicleFlamerHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.VehicleFlamerCoolHandler;
+import megamek.common.weapons.handlers.VehicleFlamerHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**

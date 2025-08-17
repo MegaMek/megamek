@@ -36,9 +36,9 @@ package megamek.common.verifier;
 
 import java.util.EnumMap;
 
-import megamek.common.Entity;
-import megamek.common.ITechnology;
-import megamek.common.MiscType;
+import megamek.common.units.Entity;
+import megamek.common.interfaces.ITechnology;
+import megamek.common.equipment.MiscType;
 
 public class SupportVeeStructure extends Structure {
 

@@ -89,9 +89,16 @@ import megamek.client.ui.util.UIUtil.TipLabel;
 import megamek.client.ui.util.UIUtil.TipTextField;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.containers.MunitionTree;
+import megamek.common.equipment.Briefcase;
+import megamek.common.equipment.ICarryable;
+import megamek.common.interfaces.IStartingPositions;
+import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 import megamek.server.ServerBoardHelper;
 
 /**

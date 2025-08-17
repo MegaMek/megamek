@@ -43,7 +43,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import megamek.common.UnitRole;
+import megamek.common.units.UnitRole;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 

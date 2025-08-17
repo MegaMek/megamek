@@ -33,8 +33,8 @@
 
 package megamek.common.miscGear;
 
-import megamek.common.EquipmentTypeLookup;
-import megamek.common.MiscType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.MiscType;
 import megamek.common.SimpleTechLevel;
 
 public class AntiMekGear extends MiscType {

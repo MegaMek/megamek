@@ -52,7 +52,18 @@ import megamek.client.ui.util.UIUtil;
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityVisibilityUtils;
+import megamek.common.units.Targetable;
 
 public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 

@@ -34,7 +34,7 @@
 
 package megamek.common.copy;
 
-import megamek.common.Crew;
+import megamek.common.units.Crew;
 
 /**
  * @author Luana Coppio

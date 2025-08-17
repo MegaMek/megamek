@@ -38,7 +38,26 @@ import java.util.List;
 
 import megamek.client.ui.Messages;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.BoardHelper;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.board.CrossBoardAttackHelper;
+import megamek.common.board.FloorTarget;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
+import megamek.common.game.IGame;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Building;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 import megamek.server.SmokeCloud;
 
 /**

@@ -43,12 +43,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import megamek.common.IGame;
-import megamek.common.PlanetaryConditionsUsing;
+import megamek.common.game.IGame;
+import megamek.common.interfaces.PlanetaryConditionsUsing;
 import megamek.common.actions.EntityAction;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 
 /**
  * This is a helper class used by GameManagers (not Clients) to create packets to send to the Clients.

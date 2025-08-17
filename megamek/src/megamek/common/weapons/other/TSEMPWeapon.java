@@ -34,11 +34,11 @@
 
 package megamek.common.weapons.other;
 
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.TSEMPHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.TSEMPHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 

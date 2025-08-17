@@ -49,7 +49,7 @@ import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.logging.MMLogger;

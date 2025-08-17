@@ -34,19 +34,19 @@
 
 package megamek.common.weapons.mortars;
 
-import megamek.common.AmmoType;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.equipment.AmmoType;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 import megamek.common.HexTarget;
-import megamek.common.Mounted;
+import megamek.common.equipment.Mounted;
 import megamek.common.SimpleTechLevel;
-import megamek.common.Targetable;
+import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.VGLWeaponHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.VGLWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -94,7 +94,7 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,

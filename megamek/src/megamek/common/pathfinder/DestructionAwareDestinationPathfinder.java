@@ -43,8 +43,15 @@ import java.util.TreeSet;
 
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.*;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Terrains;
 
 /**
  * Handles the generation of ground-based move paths that contain information relating to the destruction of terrain

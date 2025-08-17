@@ -36,14 +36,14 @@ package megamek.common.weapons.autocannons;
 
 import java.io.Serial;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.Mounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.HVACWeaponHandler;
-import megamek.common.weapons.RapidfireHVACWeaponHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.HVACWeaponHandler;
+import megamek.common.weapons.handlers.RapidfireHVACWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**

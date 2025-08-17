@@ -53,7 +53,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.MMConstants;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.common.annotations.Nullable;
-import megamek.common.jacksonadapters.ColorDeserializer;
+import megamek.common.jacksonAdapters.ColorDeserializer;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 

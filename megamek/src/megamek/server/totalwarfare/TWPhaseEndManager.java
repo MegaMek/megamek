@@ -33,7 +33,7 @@
 
 package megamek.server.totalwarfare;
 
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.enums.GamePhase;

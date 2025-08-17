@@ -33,11 +33,11 @@
 
 package megamek.server.trigger;
 
-import megamek.common.EjectedCrew;
-import megamek.common.Game;
-import megamek.common.GunEmplacement;
-import megamek.common.IGame;
-import megamek.common.TeleMissile;
+import megamek.common.units.EjectedCrew;
+import megamek.common.game.Game;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.game.IGame;
+import megamek.common.equipment.TeleMissile;
 import megamek.logging.MMLogger;
 
 /**

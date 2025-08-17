@@ -40,7 +40,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import megamek.common.AmmoType.AmmoTypeEnum;
+import megamek.common.board.Coords;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.rolls.TargetRoll;
 
 /**
  * ArtilleryTracker - one held by every entity, it holds a list of the artillery weapons an entity controls, and the

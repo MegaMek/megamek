@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import megamek.common.eras.Eras;
+import megamek.common.interfaces.ITechnology;
+import megamek.common.units.Entity;
 
 /**
  * Determines tech level dates based on tech progression of components.

@@ -34,16 +34,16 @@
 
 package megamek.common.weapons.lrms;
 
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mounted;
+import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.StreakLRMHandler;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Entity;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.lrm.StreakLRMHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**

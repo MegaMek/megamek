@@ -38,8 +38,14 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 import megamek.common.*;
-import megamek.common.InfantryTransporter.PlatoonType;
+import megamek.common.units.DropshuttleBay;
+import megamek.common.units.Entity;
+import megamek.common.units.InfantryTransporter.PlatoonType;
 import megamek.common.annotations.Nullable;
+import megamek.common.bays.*;
+import megamek.common.units.NavalRepairFacility;
+import megamek.common.units.ReinforcedRepairFacility;
+import megamek.common.util.RoundWeight;
 
 /**
  * Construction data used by transport bays for meks, vees, and aerospace units.

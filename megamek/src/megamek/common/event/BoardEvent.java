@@ -35,7 +35,7 @@
 
 package megamek.common.event;
 
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 /**
  * Instances of this class are sent as a result of Board change

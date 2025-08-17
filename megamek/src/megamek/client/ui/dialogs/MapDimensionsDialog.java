@@ -43,7 +43,7 @@ import javax.swing.*;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.common.MapSettings;
+import megamek.common.loaders.MapSettings;
 
 /**
  * Display a small dialog with adjustable settings for the dimensions of the playing board

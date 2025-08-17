@@ -36,8 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.client.ui.SharedUtility;
-import megamek.common.BattleArmor;
-import megamek.common.EntityMovementMode;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.GameBoardTestCase;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

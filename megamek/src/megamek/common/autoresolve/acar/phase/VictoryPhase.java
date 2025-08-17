@@ -33,9 +33,9 @@
 
 package megamek.common.autoresolve.acar.phase;
 
-import megamek.common.Entity;
-import megamek.common.IAero;
-import megamek.common.IEntityRemovalConditions;
+import megamek.common.units.Entity;
+import megamek.common.units.IAero;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.report.IVictoryPhaseReporter;

@@ -37,11 +37,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.Aero;
-import megamek.common.Entity;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
 import megamek.common.Messages;
-import megamek.common.Mounted;
-import megamek.common.SmallCraft;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.SmallCraft;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestSmallCraft;
 

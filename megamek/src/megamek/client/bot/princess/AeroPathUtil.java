@@ -39,12 +39,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import megamek.client.commands.ClientCommand;
-import megamek.common.Coords;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IAero;
-import megamek.common.UnitType;
+import megamek.common.board.Coords;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.units.IAero;
+import megamek.common.units.UnitType;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.logging.MMLogger;

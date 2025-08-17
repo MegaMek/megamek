@@ -37,8 +37,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import megamek.common.EquipmentType;
-import megamek.common.WeaponType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.bayweapons.BayWeapon;
 

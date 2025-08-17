@@ -38,15 +38,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.Entity;
-import megamek.common.EntityFluff;
-import megamek.common.GunEmplacement;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityFluff;
+import megamek.common.equipment.GunEmplacement;
 import megamek.common.Messages;
-import megamek.common.Mounted;
-import megamek.common.SuperHeavyTank;
-import megamek.common.Tank;
-import megamek.common.Transporter;
-import megamek.common.VTOL;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.SuperHeavyTank;
+import megamek.common.units.Tank;
+import megamek.common.equipment.Transporter;
+import megamek.common.units.VTOL;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestTank;
 

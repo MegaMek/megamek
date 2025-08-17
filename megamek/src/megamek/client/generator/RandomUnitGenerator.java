@@ -58,8 +58,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import megamek.common.Configuration;
-import megamek.common.MekSummary;
-import megamek.common.MekSummaryCache;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.logging.MMLogger;
 
 /**

@@ -46,7 +46,7 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.TargetRoll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.util.FiringSolution;
 
 /**

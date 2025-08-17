@@ -35,13 +35,13 @@ package megamek.common.alphaStrike;
 
 import java.util.List;
 
-import megamek.common.AbstractGame;
-import megamek.common.Board;
-import megamek.common.GameTurn;
-import megamek.common.InGameObject;
+import megamek.common.game.AbstractGame;
+import megamek.common.board.Board;
+import megamek.common.game.GameTurn;
+import megamek.common.game.InGameObject;
 import megamek.common.Player;
 import megamek.common.Report;
-import megamek.common.ReportEntry;
+import megamek.common.interfaces.ReportEntry;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IGameOptions;

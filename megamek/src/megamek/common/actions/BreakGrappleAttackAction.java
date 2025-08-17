@@ -34,12 +34,12 @@
 
 package megamek.common.actions;
 
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mek;
-import megamek.common.ProtoMek;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;
 

@@ -35,6 +35,8 @@
 
 package megamek.common;
 
+import megamek.common.board.Coords;
+
 /**
  * Represents a hex, not in the game but in an ideal coordinate system. Used for Compute.intervening() calculations and
  * a few others. This ideal hex is 2.0 units tall. Tries to keep a cache of IdealHexes requested, as intervening() sure

@@ -34,9 +34,9 @@
 
 package megamek.common.board.postprocess;
 
-import megamek.common.Board;
-import megamek.common.Coords;
-import megamek.common.hexarea.HexArea;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.hexArea.HexArea;
 
 public class HexLevelPostProcessor implements BoardProcessor {
 

@@ -50,8 +50,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import megamek.common.ForceAssignable;
-import megamek.common.IGame;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.game.IGame;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;

@@ -35,7 +35,19 @@
 package megamek.common.actions;
 
 import megamek.common.*;
+import megamek.common.compute.ComputeSideTable;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
 
 /**
  * The attacker kicks the target.

@@ -38,7 +38,7 @@ package megamek.client.bot.princess;
  */
 public class ProbabilityCalculator {
     //How likely am I to hit a certain location with weapons fire, given what direction the fire is coming from
-    //Order is: LOC_HEAD,LOC_CT,LOC_RT,LOC_LT,LOC_RARM,LOC_LARM,LOC_RLEG,LOC_LLEG Defined in megamek.common.Mek
+    //Order is: LOC_HEAD,LOC_CT,LOC_RT,LOC_LT,LOC_RARM,LOC_LARM,LOC_RLEG,LOC_LLEG Defined in megamek.common.units.Mek
     public static final double[] hitProbabilitiesFront = { 1d / 36, 7d / 36, 5d / 36, 5d / 36, 5d / 36, 5d / 36,
                                                            4d / 36, 4d / 36 };
     public static final double[] hitProbabilitiesRightSide = { 1d / 36, 5d / 36, 7d / 36, 4d / 36, 7d / 36, 3d / 36,
@@ -47,13 +47,13 @@ public class ProbabilityCalculator {
                                                               3d / 36, 7d / 36 };
 
     //How likely am I to hit a certain location with a punch, given what direction the fire is coming from
-    //Order is: LOC_HEAD,LOC_CT,LOC_RT,LOC_LT,LOC_RARM,LOC_LARM,LOC_RLEG,LOC_LLEG Defined in megamek.common.Mek
+    //Order is: LOC_HEAD,LOC_CT,LOC_RT,LOC_LT,LOC_RARM,LOC_LARM,LOC_RLEG,LOC_LLEG Defined in megamek.common.units.Mek
     public static final double[] hitProbabilitiesPunchFront = { 1d / 6, 1d / 6, 1d / 6, 1d / 6, 1d / 6, 1d / 6, 0, 0 };
     public static final double[] hitProbabilitiesPunchRightSide = { 1d / 6, 1d / 6, 2d / 6, 0, 2d / 6, 0, 0, 0 };
     public static final double[] hitProbabilitiesPunchLeftSide = { 1d / 6, 1d / 6, 0, 2d / 6, 0, 2d / 6, 0, 0 };
 
     //How likely am I to hit a certain location with a punch, given what direction the fire is coming from
-    //Order is: LOC_HEAD,LOC_CT,LOC_RT,LOC_LT,LOC_RARM,LOC_LARM,LOC_RLEG,LOC_LLEG Defined in megamek.common.Mek
+    //Order is: LOC_HEAD,LOC_CT,LOC_RT,LOC_LT,LOC_RARM,LOC_LARM,LOC_RLEG,LOC_LLEG Defined in megamek.common.units.Mek
     public static final double[] hitProbabilitiesKickFront = { 0, 0, 0, 0, 0, 0, 3d / 6, 3d / 6 };
     public static final double[] hitProbabilitiesKickRightSide = { 0, 0, 0, 0, 0, 0, 1d, 0 };
     public static final double[] hitProbabilitiesKickLeftSide = { 0, 0, 0, 0, 0, 0, 0, 1d };

@@ -44,13 +44,23 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Coords;
+import megamek.common.board.FloorTarget;
+import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.MPBoosters;
+import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.Minefield;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
-import megamek.common.planetaryconditions.Atmosphere;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.Atmosphere;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
 /**

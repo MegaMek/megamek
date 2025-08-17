@@ -35,10 +35,10 @@ package megamek.common.autoresolve.damage;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Crew;
-import megamek.common.Infantry;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
+import megamek.common.units.Crew;
+import megamek.common.units.Infantry;
 
 /**
  * @author Luana Coppio

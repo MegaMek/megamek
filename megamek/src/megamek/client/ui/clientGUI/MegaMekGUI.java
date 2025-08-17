@@ -34,7 +34,7 @@
  */
 package megamek.client.ui.clientGUI;
 
-import static megamek.common.Compute.d6;
+import static megamek.common.compute.Compute.d6;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -103,9 +103,18 @@ import megamek.client.ui.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.SkinnedJPanel;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.KeyBindParser;
+import megamek.common.Player;
 import megamek.common.annotations.Nullable;
-import megamek.common.jacksonadapters.BotParser;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.game.GameType;
+import megamek.common.game.IGame;
+import megamek.common.interfaces.PlanetaryConditionsUsing;
+import megamek.common.jacksonAdapters.BotParser;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -118,6 +127,7 @@ import megamek.common.util.ImageUtil;
 import megamek.common.util.ManagedVolatileImage;
 import megamek.common.util.TipOfTheDay;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.weapons.handlers.WeaponOrderHandler;
 import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
 import megamek.server.Server;

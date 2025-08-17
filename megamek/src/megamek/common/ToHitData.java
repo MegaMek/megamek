@@ -38,6 +38,12 @@ package megamek.common;
 
 import java.util.List;
 
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+
 /**
  * Contains the to-hit number and a short description of how it was reached
  */

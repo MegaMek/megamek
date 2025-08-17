@@ -37,12 +37,18 @@ import java.util.Objects;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
-import megamek.common.*;
 import megamek.common.alphaStrike.ASArcs;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.EscapePods;
+import megamek.common.equipment.TeleMissile;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
 /**

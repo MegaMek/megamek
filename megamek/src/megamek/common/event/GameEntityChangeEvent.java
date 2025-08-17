@@ -36,8 +36,8 @@ package megamek.common.event;
 
 import java.util.Vector;
 
-import megamek.common.Entity;
-import megamek.common.UnitLocation;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitLocation;
 
 /**
  * Instances of this class are sent game entity is changed

@@ -34,14 +34,14 @@
 
 package megamek.common.actions;
 
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
+import megamek.common.units.Entity;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.game.Game;
+import megamek.common.units.Infantry;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.weapons.infantry.InfantryWeapon;
 

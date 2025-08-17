@@ -34,10 +34,10 @@
 
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
-import megamek.common.BombType.BombTypeEnum;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.BombType.BombTypeEnum;
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 
 /**
  * @author Jay Lawson

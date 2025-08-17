@@ -39,9 +39,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-import megamek.common.Entity;
-import megamek.common.ForceAssignable;
-import megamek.common.IGame;
+import megamek.common.units.Entity;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.game.IGame;
 import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;

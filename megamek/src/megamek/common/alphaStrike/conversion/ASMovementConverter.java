@@ -39,6 +39,16 @@ import java.util.Map;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.MiscType;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.QuadVee;
+import megamek.common.units.Warship;
 
 final class ASMovementConverter {
 

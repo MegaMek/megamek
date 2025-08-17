@@ -40,10 +40,18 @@ import java.util.Enumeration;
 import java.util.List;
 
 import megamek.common.*;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.TeleMissile;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.AttackHandler;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
+import megamek.common.weapons.handlers.AttackHandler;
 
 /**
  * Represents one tele-controlled missile attack

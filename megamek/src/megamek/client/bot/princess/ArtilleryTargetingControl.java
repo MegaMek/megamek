@@ -33,10 +33,10 @@
 
 package megamek.client.bot.princess;
 
-import static megamek.common.AmmoType.FLARE_MUNITIONS;
-import static megamek.common.AmmoType.MINE_MUNITIONS;
-import static megamek.common.AmmoType.SMOKE_MUNITIONS;
-import static megamek.common.AmmoType.isAmmoValid;
+import static megamek.common.equipment.AmmoType.FLARE_MUNITIONS;
+import static megamek.common.equipment.AmmoType.MINE_MUNITIONS;
+import static megamek.common.equipment.AmmoType.SMOKE_MUNITIONS;
+import static megamek.common.equipment.AmmoType.isAmmoValid;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -50,11 +50,21 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import megamek.common.*;
-import megamek.common.AmmoType.Munitions;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.BombType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 
 /**
  * This class handles the creation of firing plans for indirect-fire artillery and other weapons that get used during

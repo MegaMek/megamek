@@ -55,7 +55,7 @@ import megamek.client.ui.util.verifier.VerifyInRange;
 import megamek.client.ui.util.verifier.VerifyIsInteger;
 import megamek.client.ui.util.verifier.VerifyIsPositiveInteger;
 import megamek.client.ui.widget.VerifiableTextField;
-import megamek.common.MapSettings;
+import megamek.common.loaders.MapSettings;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.BoardUtilities;
 import megamek.logging.MMLogger;

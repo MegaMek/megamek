@@ -37,7 +37,7 @@ package megamek.common.event;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 /**
  * Instances of this class are sent when entity is added to game

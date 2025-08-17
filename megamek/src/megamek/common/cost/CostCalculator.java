@@ -39,12 +39,12 @@ import java.util.Map;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
-import megamek.common.AmmoType;
-import megamek.common.Bay;
-import megamek.common.Entity;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.StandardSeatCargoBay;
+import megamek.common.equipment.AmmoType;
+import megamek.common.bays.Bay;
+import megamek.common.units.Entity;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.bays.StandardSeatCargoBay;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.weapons.infantry.InfantryWeapon;

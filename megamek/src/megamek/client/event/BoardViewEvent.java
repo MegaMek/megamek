@@ -38,9 +38,9 @@ import java.io.Serial;
 import java.util.EventObject;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.common.BoardLocation;
-import megamek.common.Coords;
-import megamek.common.Entity;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 
 /**
  * Instances of this class are sent as a result of changes in BoardView

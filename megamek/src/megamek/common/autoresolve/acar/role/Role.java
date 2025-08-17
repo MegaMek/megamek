@@ -34,7 +34,7 @@
 
 package megamek.common.autoresolve.acar.role;
 
-import megamek.common.UnitRole;
+import megamek.common.units.UnitRole;
 import megamek.common.alphaStrike.ASRange;
 
 public interface Role {

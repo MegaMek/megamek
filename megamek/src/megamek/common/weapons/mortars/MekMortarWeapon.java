@@ -34,21 +34,21 @@
 
 package megamek.common.weapons.mortars;
 
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Game;
+import megamek.common.equipment.AmmoType;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.MekMortarAirburstHandler;
-import megamek.common.weapons.MekMortarAntiPersonnelHandler;
-import megamek.common.weapons.MekMortarFlareHandler;
-import megamek.common.weapons.MekMortarHandler;
-import megamek.common.weapons.MekMortarSmokeHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.mekMortar.MekMortarAirburstHandler;
+import megamek.common.weapons.handlers.mekMortar.MekMortarAntiPersonnelHandler;
+import megamek.common.weapons.handlers.mekMortar.MekMortarFlareHandler;
+import megamek.common.weapons.handlers.mekMortar.MekMortarHandler;
+import megamek.common.weapons.handlers.mekMortar.MekMortarSmokeHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**

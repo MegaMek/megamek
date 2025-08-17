@@ -37,7 +37,7 @@ import java.util.Map;
 
 import megamek.client.AbstractClient;
 import megamek.client.IClient;
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 import megamek.common.Player;
 
 public class SimulatedClient implements IClient {

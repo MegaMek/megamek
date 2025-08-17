@@ -38,8 +38,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.*;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.bays.SuperHeavyVehicleBay;
+import megamek.common.bays.ASFBay;
+import megamek.common.bays.BattleArmorBay;
+import megamek.common.bays.Bay;
+import megamek.common.bays.HeavyVehicleBay;
+import megamek.common.bays.InfantryBay;
+import megamek.common.bays.LightVehicleBay;
+import megamek.common.bays.MekBay;
+import megamek.common.bays.ProtoMekBay;
+import megamek.common.bays.SmallCraftBay;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.InfantryTransporter;
+import megamek.common.units.UnitType;
 
 /**
  * Generates drop-ships and jump ships to fulfill transport requirements for a unit.

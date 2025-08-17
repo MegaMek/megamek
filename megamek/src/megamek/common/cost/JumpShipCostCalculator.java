@@ -34,10 +34,10 @@
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.BattleArmorBay;
-import megamek.common.Bay;
-import megamek.common.InfantryBay;
-import megamek.common.Jumpship;
+import megamek.common.bays.BattleArmorBay;
+import megamek.common.bays.Bay;
+import megamek.common.bays.InfantryBay;
+import megamek.common.units.Jumpship;
 import megamek.common.equipment.ArmorType;
 
 public class JumpShipCostCalculator {

@@ -37,9 +37,9 @@ import static megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip.ownerCo
 
 import java.util.function.Consumer;
 
-import megamek.common.IGame;
-import megamek.common.Roll;
-import megamek.common.TargetRoll;
+import megamek.common.game.IGame;
+import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.strategicBattleSystems.SBFUnit;

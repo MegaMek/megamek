@@ -45,11 +45,11 @@ import static megamek.common.alphaStrike.BattleForceSUA.REL;
 import static megamek.common.alphaStrike.BattleForceSUA.TOR;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.Aero;
-import megamek.common.Entity;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;

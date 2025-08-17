@@ -46,7 +46,15 @@ import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
+import megamek.common.rolls.PilotingRollData;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 
 /**
  * Hex represents a single hex on the board.

@@ -39,8 +39,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.Game;
-import megamek.common.IAero;
+import megamek.common.game.Game;
+import megamek.common.units.IAero;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;

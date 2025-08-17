@@ -38,18 +38,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentType;
 import megamek.common.Messages;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
 import megamek.common.TechConstants;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
-import megamek.common.weapons.InfantryAttack;
+import megamek.common.weapons.attacks.InfantryAttack;
 
 /**
  * Creates a TRO template model for BattleArmor.

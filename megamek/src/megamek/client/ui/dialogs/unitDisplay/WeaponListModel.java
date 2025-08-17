@@ -40,12 +40,12 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 
 import megamek.client.ui.Messages;
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
+import megamek.common.equipment.AmmoType;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 

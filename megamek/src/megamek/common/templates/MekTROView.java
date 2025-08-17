@@ -37,6 +37,15 @@ import java.text.NumberFormat;
 import java.util.StringJoiner;
 
 import megamek.common.*;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityFluff;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadVee;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestMek;
 

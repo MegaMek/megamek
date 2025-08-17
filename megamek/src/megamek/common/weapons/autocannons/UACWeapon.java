@@ -34,14 +34,14 @@
 
 package megamek.common.weapons.autocannons;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.UltraWeaponHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.UltraWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -66,7 +66,7 @@ public abstract class UACWeapon extends AmmoWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,

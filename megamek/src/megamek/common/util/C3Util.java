@@ -40,8 +40,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 
 public class C3Util {
 

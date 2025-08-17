@@ -34,7 +34,7 @@
 
 package megamek.common.loaders;
 
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 /**
  * Classes implementing this interface are expected to be able to return a mek with the getMek method or throw an

@@ -44,12 +44,12 @@ import java.util.Map;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.sprite.StepSprite;
-import megamek.common.Board;
-import megamek.common.Compute;
-import megamek.common.ComputeECM;
-import megamek.common.Coords;
+import megamek.common.board.Board;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeECM;
+import megamek.common.board.Coords;
 import megamek.common.ECMInfo;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.annotations.Nullable;
@@ -58,7 +58,7 @@ import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.IlluminationLevel;
+import megamek.common.planetaryConditions.IlluminationLevel;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.logging.MMLogger;
 

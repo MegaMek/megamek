@@ -33,7 +33,7 @@
 
 package megamek.server;
 
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 import megamek.common.Player;
 import megamek.common.enums.GamePhase;
 import megamek.common.net.enums.PacketCommand;

@@ -37,11 +37,11 @@ package megamek.common.weapons.infantry;
 
 import java.util.Vector;
 
-import megamek.common.Building;
-import megamek.common.ComputeSideTable;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.Game;
+import megamek.common.units.Building;
+import megamek.common.compute.ComputeSideTable;
+import megamek.common.units.Entity;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.game.Game;
 import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.ToHitData;

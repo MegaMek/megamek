@@ -37,7 +37,16 @@ package megamek.common.actions;
 
 import megamek.client.ui.Messages;
 import megamek.common.*;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
 /**

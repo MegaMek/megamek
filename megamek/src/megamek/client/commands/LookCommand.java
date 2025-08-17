@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.common.Hex;
 
 public class LookCommand extends ClientCommand {

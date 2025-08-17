@@ -34,8 +34,8 @@
 package megamek.common.alphaStrike.conversion;
 
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.MiscType.F_EMERGENCY_COOLANT_SYSTEM;
-import static megamek.common.MiscType.F_RADICAL_HEATSINK;
+import static megamek.common.equipment.MiscType.F_EMERGENCY_COOLANT_SYSTEM;
+import static megamek.common.equipment.MiscType.F_RADICAL_HEATSINK;
 import static megamek.common.alphaStrike.AlphaStrikeElement.EXTREME_RANGE;
 import static megamek.common.alphaStrike.AlphaStrikeElement.LONG_RANGE;
 import static megamek.common.alphaStrike.AlphaStrikeElement.MEDIUM_RANGE;
@@ -53,7 +53,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.*;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;
@@ -61,9 +60,20 @@ import megamek.common.alphaStrike.ASSpecialAbilityCollection;
 import megamek.common.alphaStrike.ASTurretSummary;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.MountedHelper;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.interfaces.ITechnology;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.common.weapons.other.CLFussilade;
+import megamek.common.weapons.other.clan.CLFussilade;
 
 public class ASDamageConverter {
 

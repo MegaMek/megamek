@@ -34,7 +34,7 @@
 
 package megamek.common.weapons.lrms;
 
-import megamek.common.AmmoType;
+import megamek.common.equipment.AmmoType;
 
 /**
  * @author Sebastian Brocks

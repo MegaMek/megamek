@@ -32,7 +32,7 @@
  */
 package megamek.client.generator;
 
-import megamek.common.Compute;
+import megamek.common.compute.Compute;
 import megamek.common.enums.Gender;
 
 /**

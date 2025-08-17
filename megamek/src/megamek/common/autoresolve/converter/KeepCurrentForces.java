@@ -38,7 +38,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 

@@ -34,10 +34,10 @@ package megamek.ai.dataset;
 
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.INarcPod;
-import megamek.common.UnitRole;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.equipment.INarcPod;
+import megamek.common.units.UnitRole;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;

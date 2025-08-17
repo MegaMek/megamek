@@ -61,8 +61,20 @@ import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**

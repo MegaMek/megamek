@@ -36,17 +36,20 @@ package megamek.common.weapons;
 
 import java.io.Serializable;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.TargetRoll;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
-import megamek.common.weapons.bayweapons.SubCapLaserBayWeapon;
+import megamek.common.weapons.bayweapons.capital.CapitalLaserBayWeapon;
+import megamek.common.weapons.bayweapons.subCapital.SubCapLaserBayWeapon;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.lrm.LRMSwarmHandler;
+import megamek.common.weapons.handlers.WeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**

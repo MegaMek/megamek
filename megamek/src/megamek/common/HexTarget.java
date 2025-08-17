@@ -38,6 +38,12 @@ import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
+
 public class HexTarget implements Targetable {
     @Serial
     private static final long serialVersionUID = -5742445409423125942L;

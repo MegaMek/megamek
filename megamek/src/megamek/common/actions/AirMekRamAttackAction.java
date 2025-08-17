@@ -36,10 +36,25 @@ package megamek.common.actions;
 import java.util.Enumeration;
 
 import megamek.common.*;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Building;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.Infantry;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Targetable;
+import megamek.common.units.Terrains;
 
 /**
  * Ram attack by an airborne LAM in airmek mode. This is treated like a charge in the movement path, but has significant

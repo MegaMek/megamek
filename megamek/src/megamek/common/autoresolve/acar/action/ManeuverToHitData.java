@@ -33,7 +33,7 @@
 
 package megamek.common.autoresolve.acar.action;
 
-import megamek.common.TargetRoll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.autoresolve.component.EngagementControl;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.internationalization.I18n;

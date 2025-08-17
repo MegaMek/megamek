@@ -49,7 +49,16 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.templates.TROView;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityFluff;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
 import megamek.logging.MMLogger;
 
 /**

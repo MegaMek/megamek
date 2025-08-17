@@ -34,7 +34,7 @@ package megamek.common.event;
 
 import java.util.Enumeration;
 
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 public interface PostGameResolution {
     Enumeration<Entity> getEntities();

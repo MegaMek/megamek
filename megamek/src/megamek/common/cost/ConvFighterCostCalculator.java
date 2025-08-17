@@ -34,7 +34,7 @@
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.ConvFighter;
+import megamek.common.units.ConvFighter;
 import megamek.common.equipment.ArmorType;
 import megamek.common.verifier.TestEntity;
 

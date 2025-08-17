@@ -38,10 +38,17 @@ import java.util.Enumeration;
 
 import megamek.client.ui.Messages;
 import megamek.common.*;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.*;
 
 /**
  * Represents one unit charging another. Stores information about where the target is supposed to be for the charge to

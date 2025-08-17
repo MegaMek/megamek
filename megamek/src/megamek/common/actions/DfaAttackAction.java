@@ -40,10 +40,26 @@ import java.util.Enumeration;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
+import megamek.common.units.Targetable;
 
 /**
  * @author Ben
@@ -219,7 +235,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         int targetId;
         Entity te;
 
-        if (target.getTargetType() == megamek.common.Targetable.TYPE_ENTITY) {
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
             targetId = target.getId();
         } else {

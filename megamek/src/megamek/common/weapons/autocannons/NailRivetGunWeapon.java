@@ -34,13 +34,13 @@
 
 package megamek.common.weapons.autocannons;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.NailRivetGunHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.NailRivetGunHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -73,7 +73,7 @@ public abstract class NailRivetGunWeapon extends AmmoWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game,
      * megamek.server.Server)
      */
     @Override

@@ -34,7 +34,7 @@
 
 package megamek.common.actions;
 
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 /**
  * @author Ben

@@ -33,8 +33,8 @@
 
 package megamek.common.autoresolve.acar.handler;
 
-import megamek.common.BoardLocation;
-import megamek.common.Compute;
+import megamek.common.board.BoardLocation;
+import megamek.common.compute.Compute;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.MoveToCoverAction;
 import megamek.common.autoresolve.acar.report.IMovementReport;

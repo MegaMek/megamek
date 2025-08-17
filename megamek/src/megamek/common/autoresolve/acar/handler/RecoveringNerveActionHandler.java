@@ -33,7 +33,7 @@
 
 package megamek.common.autoresolve.acar.handler;
 
-import megamek.common.Compute;
+import megamek.common.compute.Compute;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.RecoveringNerveAction;
 import megamek.common.autoresolve.acar.action.RecoveringNerveActionToHitData;

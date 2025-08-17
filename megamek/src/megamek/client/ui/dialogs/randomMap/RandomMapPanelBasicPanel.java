@@ -46,7 +46,7 @@ import javax.swing.SpringLayout;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.widget.CheckpointComboBox;
-import megamek.common.MapSettings;
+import megamek.common.loaders.MapSettings;
 import megamek.logging.MMLogger;
 
 /**

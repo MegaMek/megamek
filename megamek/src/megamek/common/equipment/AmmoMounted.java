@@ -38,13 +38,8 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
-import megamek.common.AmmoType;
-import megamek.common.BombType;
-import megamek.common.BombType.BombTypeEnum;
-import megamek.common.Entity;
-import megamek.common.HandheldWeapon;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
+import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.units.Entity;
 
 public class AmmoMounted extends Mounted<AmmoType> {
 

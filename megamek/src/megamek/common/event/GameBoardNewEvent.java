@@ -34,8 +34,8 @@
 
 package megamek.common.event;
 
-import megamek.common.Board;
-import megamek.common.Game;
+import megamek.common.board.Board;
+import megamek.common.game.Game;
 
 /**
  * Instances of this class are sent when the new board for game is set

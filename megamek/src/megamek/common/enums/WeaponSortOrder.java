@@ -37,12 +37,12 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import megamek.MegaMek;
-import megamek.common.Entity;
-import megamek.common.WeaponComparatorArc;
-import megamek.common.WeaponComparatorCustom;
-import megamek.common.WeaponComparatorDamage;
-import megamek.common.WeaponComparatorNum;
-import megamek.common.WeaponComparatorRange;
+import megamek.common.units.Entity;
+import megamek.common.comparators.WeaponComparatorArc;
+import megamek.common.comparators.WeaponComparatorCustom;
+import megamek.common.comparators.WeaponComparatorDamage;
+import megamek.common.comparators.WeaponComparatorNum;
+import megamek.common.comparators.WeaponComparatorRange;
 import megamek.common.equipment.WeaponMounted;
 import megamek.logging.MMLogger;
 

@@ -36,8 +36,8 @@
 package megamek.common.actions;
 
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 
 public class SpotAction extends AbstractEntityAction {
 

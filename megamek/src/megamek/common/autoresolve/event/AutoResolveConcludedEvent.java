@@ -41,9 +41,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import megamek.common.Entity;
-import megamek.common.IEntityRemovalConditions;
-import megamek.common.IGame;
+import megamek.common.units.Entity;
+import megamek.common.interfaces.IEntityRemovalConditions;
+import megamek.common.game.IGame;
 import megamek.common.annotations.Nullable;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.event.PostGameResolution;

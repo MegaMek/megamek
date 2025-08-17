@@ -34,7 +34,7 @@
 
 package megamek.common.autoresolve.acar.report;
 
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 

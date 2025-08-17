@@ -34,7 +34,7 @@
 package megamek.common.alphaStrike.conversion;
 
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.MiscType.*;
+import static megamek.common.equipment.MiscType.*;
 import static megamek.common.alphaStrike.ASUnitType.BA;
 import static megamek.common.alphaStrike.ASUnitType.BM;
 import static megamek.common.alphaStrike.ASUnitType.CI;
@@ -52,8 +52,21 @@ import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.bays.*;
+import megamek.common.equipment.DockingCollar;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.Sensor;
+import megamek.common.equipment.Transporter;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
+import megamek.common.units.Entity;
+import megamek.common.units.InfantryCompartment;
+import megamek.common.units.NavalRepairFacility;
+import megamek.common.units.Tank;
+import megamek.common.weapons.capitalWeapons.ScreenLauncherWeapon;
 
 public class ASSpecialAbilityConverter {
 

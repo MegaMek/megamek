@@ -34,12 +34,17 @@
 
 package megamek.common.actions;
 
-import static megamek.common.QuadVee.CONV_MODE_VEHICLE;
+import static megamek.common.units.QuadVee.CONV_MODE_VEHICLE;
 
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.*;
 
 public class PhysicalAttackAction extends AbstractAttackAction {
     private static final long serialVersionUID = -4702357516725749181L;

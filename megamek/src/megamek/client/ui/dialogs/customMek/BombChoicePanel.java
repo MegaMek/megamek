@@ -52,9 +52,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import megamek.common.BombLoadout;
-import megamek.common.BombType.BombTypeEnum;
-import megamek.common.IBomber;
+import megamek.common.equipment.BombLoadout;
+import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.units.IBomber;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)

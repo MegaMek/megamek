@@ -33,8 +33,8 @@
 
 package megamek.common.verifier;
 
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.equipment.EquipmentType;
 
 public class Structure {
 

@@ -68,7 +68,7 @@ import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.Configuration;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;

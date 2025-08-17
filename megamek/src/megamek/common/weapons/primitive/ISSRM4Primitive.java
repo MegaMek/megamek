@@ -35,13 +35,13 @@
 
 package megamek.common.weapons.primitive;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.SRMHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.srm.SRMHandler;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 

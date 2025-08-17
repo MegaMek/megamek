@@ -34,17 +34,17 @@
 
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.Entity;
-import megamek.common.EquipmentTypeLookup;
-import megamek.common.Game;
-import megamek.common.Mounted;
+import megamek.common.units.Entity;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.game.Game;
+import megamek.common.equipment.Mounted;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.CapitalMissileBayHandler;
-import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
-import megamek.common.weapons.TeleMissileHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBayHandler;
+import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBearingsOnlyHandler;
+import megamek.common.weapons.handlers.TeleMissileHandler;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -95,7 +95,7 @@ public class AR10BayWeapon extends AmmoBayWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,

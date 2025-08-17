@@ -33,7 +33,7 @@
 
 package megamek.common.autoresolve.acar.handler;
 
-import megamek.common.IEntityRemovalConditions;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.WithdrawAction;
 import megamek.common.autoresolve.acar.report.IWithdrawReporter;

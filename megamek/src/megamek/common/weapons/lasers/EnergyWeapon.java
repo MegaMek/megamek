@@ -34,15 +34,16 @@
 
 package megamek.common.weapons.lasers;
 
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.EnergyWeaponHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.EnergyWeaponHandler;
 import megamek.common.weapons.Weapon;
+import megamek.common.weapons.lasers.innerSphere.ISBombastLaser;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**

@@ -35,7 +35,12 @@ package megamek.common;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Mek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

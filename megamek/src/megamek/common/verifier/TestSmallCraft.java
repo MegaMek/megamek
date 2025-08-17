@@ -39,11 +39,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import megamek.common.*;
-import megamek.common.AmmoType.AmmoTypeEnum;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.bays.Bay;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.MiscTypeFlag;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.interfaces.ITechManager;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.SmallCraft;
 import megamek.common.util.StringUtil;
 
 /**

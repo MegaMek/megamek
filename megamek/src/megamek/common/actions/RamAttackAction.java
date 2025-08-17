@@ -38,10 +38,23 @@ import java.util.Enumeration;
 import java.util.Objects;
 
 import megamek.common.*;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.FighterSquadron;
+import megamek.common.units.IAero;
+import megamek.common.units.Jumpship;
+import megamek.common.units.SpaceStation;
+import megamek.common.units.Targetable;
+import megamek.common.units.Warship;
 
 /**
  * Represents one unit charging another. Stores information about where the target is supposed to be for the charge to

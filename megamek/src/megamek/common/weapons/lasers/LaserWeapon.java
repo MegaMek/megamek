@@ -36,19 +36,19 @@ package megamek.common.weapons.lasers;
 
 import java.util.Collections;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.options.IGameOptions;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.EnergyWeaponHandler;
-import megamek.common.weapons.InsulatedLaserWeaponHandler;
-import megamek.common.weapons.PulseLaserWeaponHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.EnergyWeaponHandler;
+import megamek.common.weapons.handlers.InsulatedLaserWeaponHandler;
+import megamek.common.weapons.handlers.PulseLaserWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**

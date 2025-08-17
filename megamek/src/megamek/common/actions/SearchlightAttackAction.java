@@ -40,14 +40,14 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.client.ui.Messages;
-import megamek.common.ComputeArc;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.compute.ComputeArc;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 import megamek.common.LosEffects;
 import megamek.common.Report;
-import megamek.common.Tank;
-import megamek.common.Targetable;
+import megamek.common.units.Tank;
+import megamek.common.units.Targetable;
 
 /**
  * Used for aiming a searchlight at a target.

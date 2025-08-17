@@ -36,13 +36,13 @@ package megamek.common.pathfinder;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.Entity;
-import megamek.common.EquipmentFlag;
+import megamek.common.units.Entity;
+import megamek.common.equipment.EquipmentFlag;
 import megamek.common.MPCalculationSetting;
-import megamek.common.Mek;
-import megamek.common.MiscType;
-import megamek.common.QuadMek;
-import megamek.common.TripodMek;
+import megamek.common.units.Mek;
+import megamek.common.equipment.MiscType;
+import megamek.common.units.QuadMek;
+import megamek.common.units.TripodMek;
 
 /**
  * A transient class used to lazy-load "calculated" information from an entity

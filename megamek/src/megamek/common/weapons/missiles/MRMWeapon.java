@@ -34,15 +34,15 @@
 
 package megamek.common.weapons.missiles;
 
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.MRMHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.MRMHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**

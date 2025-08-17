@@ -93,7 +93,7 @@ import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Configuration;
 import megamek.common.KeyBindParser;
-import megamek.common.MapSettings;
+import megamek.common.loaders.MapSettings;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.ClientPreferences;

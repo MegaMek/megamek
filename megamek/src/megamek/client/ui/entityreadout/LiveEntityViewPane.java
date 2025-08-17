@@ -43,8 +43,8 @@ import megamek.client.ui.dialogs.unitSelectorDialogs.EntityReadoutPanel;
 import megamek.client.ui.panels.alphaStrike.ConfigurableASCardPanel;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.EnhancedTabbedPane;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.templates.TROView;
 

@@ -34,14 +34,14 @@
 
 package megamek.common.weapons.bombs;
 
-import megamek.common.AmmoType;
-import megamek.common.BombType.BombTypeEnum;
-import megamek.common.Game;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.PrototypeRLHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.prototype.PrototypeRLHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 

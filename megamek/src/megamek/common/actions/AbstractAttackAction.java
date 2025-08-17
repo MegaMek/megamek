@@ -37,17 +37,17 @@ package megamek.common.actions;
 import java.util.Enumeration;
 
 import megamek.client.Client;
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mek;
-import megamek.common.Mounted;
-import megamek.common.Targetable;
+import megamek.common.equipment.AmmoType;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.units.Mek;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.IlluminationLevel;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.IlluminationLevel;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 
 /**
  * Abstract superclass for any action where an entity is attacking another entity.

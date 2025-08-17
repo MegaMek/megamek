@@ -42,9 +42,29 @@ import java.util.Map;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.ECMInfo;
+import megamek.common.actions.compute.ComputeAeroAttackerToHitMods;
+import megamek.common.actions.compute.ComputeAttackerToHitMods;
+import megamek.common.actions.compute.ComputeEnvironmentalToHitMods;
+import megamek.common.actions.compute.ComputeTargetToHitMods;
+import megamek.common.actions.compute.ComputeTerrainMods;
+import megamek.common.actions.compute.ComputeToHit;
+import megamek.common.game.Game;
+import megamek.common.Hex;
+import megamek.common.LosEffects;
+import megamek.common.ToHitData;
+import megamek.common.board.CrossBoardAttackHelper;
+import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.BombLoadout;
+import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Targetable;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
 /**

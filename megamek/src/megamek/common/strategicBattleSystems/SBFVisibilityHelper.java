@@ -44,9 +44,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import megamek.common.InGameObject;
+import megamek.common.game.InGameObject;
 import megamek.common.Player;
-import megamek.common.ServerOnly;
+import megamek.common.interfaces.ServerOnly;
 import megamek.common.Team;
 import megamek.common.options.SBFRuleOptions;
 import megamek.logging.MMLogger;

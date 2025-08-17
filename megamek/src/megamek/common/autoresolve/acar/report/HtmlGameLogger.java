@@ -42,7 +42,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import megamek.common.GameLog;
+import megamek.common.game.GameLog;
 import megamek.common.Report;
 import megamek.logging.MMLogger;
 

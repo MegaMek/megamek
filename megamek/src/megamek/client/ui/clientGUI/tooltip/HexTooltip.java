@@ -50,8 +50,17 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
-import megamek.common.planetaryconditions.IlluminationLevel;
+import megamek.common.equipment.FuelTank;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.Minefield;
+import megamek.common.game.Game;
+import megamek.common.planetaryConditions.IlluminationLevel;
+import megamek.common.units.Building;
+import megamek.common.units.BuildingTarget;
+import megamek.common.units.Terrains;
 
 
 public final class HexTooltip {

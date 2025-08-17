@@ -33,11 +33,11 @@
 
 package megamek.common.weapons.missiles;
 
-import megamek.common.AmmoType;
-import megamek.common.Mounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
-public abstract class Thunderbolt15Weapon extends ThunderBoltWeapon {
+public abstract class Thunderbolt15Weapon extends ThunderboltWeapon {
 
     public Thunderbolt15Weapon() {
         super();

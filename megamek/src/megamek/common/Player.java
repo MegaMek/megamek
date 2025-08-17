@@ -41,10 +41,19 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import megamek.client.ui.util.PlayerColour;
-import megamek.common.hexarea.BorderHexArea;
-import megamek.common.hexarea.HexArea;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.Minefield;
+import megamek.common.game.IGame;
+import megamek.common.game.InGameObject;
+import megamek.common.hexArea.BorderHexArea;
+import megamek.common.hexArea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
+import megamek.common.turns.TurnOrdered;
+import megamek.common.units.Entity;
+import megamek.common.units.MekWarrior;
 
 /**
  * Represents a player in the game.
@@ -813,7 +822,7 @@ public final class Player extends TurnOrdered {
      *
      * @param fleeArea The new flee area.
      *
-     * @see megamek.common.hexarea.BorderHexArea
+     * @see megamek.common.hexArea.BorderHexArea
      */
     public void setFleeZone(HexArea fleeArea) {
         this.fleeArea = fleeArea;

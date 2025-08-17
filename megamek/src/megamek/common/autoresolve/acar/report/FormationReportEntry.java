@@ -35,7 +35,7 @@ package megamek.common.autoresolve.acar.report;
 
 import megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 import megamek.common.autoresolve.component.Formation;
 
 public class FormationReportEntry extends PublicReportEntry {

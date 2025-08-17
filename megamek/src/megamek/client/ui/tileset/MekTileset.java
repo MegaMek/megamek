@@ -46,7 +46,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.HandheldWeapon;
+import megamek.common.equipment.TeleMissile;
+import megamek.common.units.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.fileUtils.StandardTextfileStreamTokenizer;

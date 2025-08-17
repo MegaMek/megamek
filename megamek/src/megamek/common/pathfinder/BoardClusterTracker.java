@@ -42,14 +42,14 @@ import java.util.Map;
 import java.util.Set;
 
 import megamek.client.bot.princess.CardinalEdge;
-import megamek.common.Board;
-import megamek.common.Building;
+import megamek.common.board.Board;
+import megamek.common.units.Building;
 import megamek.common.BulldozerMovePath;
-import megamek.common.Coords;
-import megamek.common.Entity;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 import megamek.common.Hex;
-import megamek.common.MiscType;
-import megamek.common.Terrains;
+import megamek.common.equipment.MiscType;
+import megamek.common.units.Terrains;
 import megamek.common.util.BoardUtilities;
 
 /**

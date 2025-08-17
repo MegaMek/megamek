@@ -45,8 +45,8 @@ import javax.swing.text.html.StyleSheet;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Report;
-import megamek.common.ReportEntry;
-import megamek.common.Roll;
+import megamek.common.interfaces.ReportEntry;
+import megamek.common.rolls.Roll;
 
 public class SBFReportEntry implements ReportEntry {
 

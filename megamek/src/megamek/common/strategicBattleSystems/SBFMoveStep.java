@@ -35,7 +35,7 @@ package megamek.common.strategicBattleSystems;
 
 import java.io.Serializable;
 
-import megamek.common.BoardLocation;
+import megamek.common.board.BoardLocation;
 
 public abstract class SBFMoveStep implements Serializable {
 

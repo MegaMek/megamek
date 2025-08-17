@@ -36,13 +36,13 @@ package megamek.common.actions;
 
 import java.io.Serial;
 
-import megamek.common.BipedMek;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 import megamek.common.Hex;
-import megamek.common.Mek;
-import megamek.common.Terrains;
-import megamek.common.TripodMek;
+import megamek.common.units.Mek;
+import megamek.common.units.Terrains;
+import megamek.common.units.TripodMek;
 import megamek.common.enums.BuildingType;
 import megamek.common.options.OptionsConstants;
 

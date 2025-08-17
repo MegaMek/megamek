@@ -34,7 +34,7 @@
 package megamek.common.autoresolve.acar.report;
 
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Roll;
+import megamek.common.rolls.Roll;
 
 public class RollReportEntry extends PublicReportEntry {
 

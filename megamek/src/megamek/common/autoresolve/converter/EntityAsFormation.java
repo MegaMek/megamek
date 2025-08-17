@@ -35,8 +35,8 @@ package megamek.common.autoresolve.converter;
 import java.util.ArrayList;
 
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
+import megamek.common.units.Entity;
+import megamek.common.equipment.GunEmplacement;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;

@@ -36,7 +36,7 @@ package megamek.client.bot.princess;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.common.moves.MovePath;
 
 /**

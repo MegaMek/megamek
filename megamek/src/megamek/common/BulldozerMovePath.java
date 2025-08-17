@@ -42,8 +42,14 @@ import java.util.Map;
 
 import megamek.client.bot.princess.FireControl;
 import megamek.client.bot.princess.MinefieldUtil;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.pathfinder.BoardClusterTracker.MovementType;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Terrains;
 
 /**
  * An extension of the MovePath class that stores information about terrain that needs to be destroyed in order to move

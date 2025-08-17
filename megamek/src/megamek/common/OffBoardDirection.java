@@ -35,6 +35,8 @@
 
 package megamek.common;
 
+import megamek.common.board.Board;
+
 /**
  * This interface represents Off-Board Directions
  */

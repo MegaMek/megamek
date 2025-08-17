@@ -57,11 +57,11 @@ import megamek.client.ratgenerator.Ruleset.ProgressListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.Entity;
-import megamek.common.EntityWeightClass;
-import megamek.common.Game;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.game.Game;
 import megamek.common.Player;
-import megamek.common.UnitType;
+import megamek.common.units.UnitType;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 

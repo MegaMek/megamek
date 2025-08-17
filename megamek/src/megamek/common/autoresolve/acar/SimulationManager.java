@@ -37,10 +37,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import megamek.common.BoardLocation;
-import megamek.common.IGame;
+import megamek.common.board.BoardLocation;
+import megamek.common.game.IGame;
 import megamek.common.Player;
-import megamek.common.ReportEntry;
+import megamek.common.interfaces.ReportEntry;
 import megamek.common.autoresolve.acar.action.Action;
 import megamek.common.autoresolve.acar.action.MoraleCheckAction;
 import megamek.common.autoresolve.acar.action.MoveAction;

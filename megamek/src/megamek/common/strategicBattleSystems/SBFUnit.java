@@ -54,8 +54,8 @@ import megamek.common.alphaStrike.ASSpecialAbilityCollection;
 import megamek.common.alphaStrike.ASSpecialAbilityCollector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
-import megamek.common.jacksonadapters.SBFUnitDeserializer;
-import megamek.common.jacksonadapters.SBFUnitSerializer;
+import megamek.common.jacksonAdapters.SBFUnitDeserializer;
+import megamek.common.jacksonAdapters.SBFUnitSerializer;
 
 /**
  * Represents an SBF Unit (Ground SBF Unit or Aerospace Flight) which contains between 1 and 6 AlphaStrike elements and

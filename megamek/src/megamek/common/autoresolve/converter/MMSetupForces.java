@@ -38,12 +38,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import megamek.common.Entity;
-import megamek.common.EntitySelector;
-import megamek.common.Game;
-import megamek.common.InGameObject;
+import megamek.common.units.Entity;
+import megamek.common.units.EntitySelector;
+import megamek.common.game.Game;
+import megamek.common.game.InGameObject;
 import megamek.common.Player;
-import megamek.common.ProtoMek;
+import megamek.common.units.ProtoMek;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.copy.CrewRefBreak;

@@ -40,7 +40,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.Player;
 import org.junit.jupiter.api.Test;
 

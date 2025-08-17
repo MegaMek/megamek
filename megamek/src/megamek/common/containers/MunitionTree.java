@@ -50,10 +50,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import megamek.common.AmmoType;
-import megamek.common.BombType.BombTypeEnum;
-import megamek.common.Entity;
-import megamek.common.Mounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.units.Entity;
+import megamek.common.equipment.Mounted;
 import megamek.logging.MMLogger;
 
 public class MunitionTree {

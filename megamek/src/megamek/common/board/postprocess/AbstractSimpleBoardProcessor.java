@@ -33,7 +33,7 @@
 
 package megamek.common.board.postprocess;
 
-import megamek.common.Board;
+import megamek.common.board.Board;
 import megamek.common.Hex;
 
 /**

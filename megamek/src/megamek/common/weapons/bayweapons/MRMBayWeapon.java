@@ -34,12 +34,12 @@
 
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.EquipmentTypeLookup;
-import megamek.common.Game;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.MissileBayWeaponHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.MissileBayWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**

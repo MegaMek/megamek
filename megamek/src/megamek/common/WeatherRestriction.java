@@ -36,11 +36,11 @@ package megamek.common;
 
 import java.util.HashMap;
 
-import megamek.common.planetaryconditions.Atmosphere;
-import megamek.common.planetaryconditions.Fog;
-import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.common.planetaryconditions.Weather;
-import megamek.common.planetaryconditions.Wind;
+import megamek.common.planetaryConditions.Atmosphere;
+import megamek.common.planetaryConditions.Fog;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.Weather;
+import megamek.common.planetaryConditions.Wind;
 
 /**
  * This class contains data and logic for temperature restrictions.

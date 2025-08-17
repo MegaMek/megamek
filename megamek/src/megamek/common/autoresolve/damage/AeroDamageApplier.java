@@ -32,15 +32,15 @@
  */
 package megamek.common.autoresolve.damage;
 
-import static megamek.common.Compute.randomInt;
+import static megamek.common.compute.Compute.randomInt;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.Aero;
-import megamek.common.Compute;
+import megamek.common.units.Aero;
+import megamek.common.compute.Compute;
 import megamek.common.HitData;
-import megamek.common.IEntityRemovalConditions;
+import megamek.common.interfaces.IEntityRemovalConditions;
 
 /**
  * Applies damage to an Aero entity.

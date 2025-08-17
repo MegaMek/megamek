@@ -35,8 +35,8 @@ package megamek.common.autoresolve.acar.report;
 
 import java.util.function.Consumer;
 
-import megamek.common.IGame;
-import megamek.common.Roll;
+import megamek.common.game.IGame;
+import megamek.common.rolls.Roll;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.strategicBattleSystems.SBFFormation;

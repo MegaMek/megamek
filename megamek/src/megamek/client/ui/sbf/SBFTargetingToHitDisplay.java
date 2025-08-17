@@ -37,7 +37,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Compute;
+import megamek.common.compute.Compute;
 import megamek.common.TargetRollModifier;
 import megamek.common.strategicBattleSystems.SBFToHitData;
 

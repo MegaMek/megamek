@@ -40,6 +40,15 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.*;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.LargeSupportTank;
+import megamek.common.units.Tank;
+import megamek.common.units.VTOL;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.weapons.infantry.InfantryWeapon;

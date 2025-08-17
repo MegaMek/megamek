@@ -36,7 +36,19 @@ package megamek.common.actions;
 
 import megamek.client.ui.Messages;
 import megamek.common.*;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
+import megamek.common.compute.ComputeSideTable;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
+import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
 /**

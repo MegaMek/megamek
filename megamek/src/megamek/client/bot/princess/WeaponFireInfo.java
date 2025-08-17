@@ -33,9 +33,9 @@
  */
 package megamek.client.bot.princess;
 
-import static megamek.common.AmmoType.FLARE_MUNITIONS;
-import static megamek.common.AmmoType.MINE_MUNITIONS;
-import static megamek.common.AmmoType.SMOKE_MUNITIONS;
+import static megamek.common.equipment.AmmoType.FLARE_MUNITIONS;
+import static megamek.common.equipment.AmmoType.MINE_MUNITIONS;
+import static megamek.common.equipment.AmmoType.SMOKE_MUNITIONS;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -50,15 +50,29 @@ import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.BombMounted;
+import megamek.common.equipment.BombType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.AreaEffectHelper;
-import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.units.BuildingTarget;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
+import megamek.common.units.Terrains;
+import megamek.common.weapons.handlers.AreaEffectHelper;
+import megamek.common.weapons.handlers.AreaEffectHelper.DamageFalloff;
+import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.infantry.InfantryWeaponHandler;
 import megamek.logging.MMLogger;
@@ -107,10 +121,10 @@ public class WeaponFireInfo {
     /**
      * Basic constructor.
      *
-     * @param shooter The {@link megamek.common.Entity} doing the attacking.
-     * @param target  The {@link megamek.common.Targetable} of the attack.
-     * @param weapon  The {@link megamek.common.Mounted} weapon used for the attack.
-     * @param ammo    The {@link megamek.common.Mounted} ammo to use for the attack; may be null.
+     * @param shooter The {@link Entity} doing the attacking.
+     * @param target  The {@link Targetable} of the attack.
+     * @param weapon  The {@link Mounted} weapon used for the attack.
+     * @param ammo    The {@link Mounted} ammo to use for the attack; may be null.
      * @param game    The current {@link Game}
      * @param guess   Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
@@ -127,11 +141,11 @@ public class WeaponFireInfo {
     /**
      * Constructor including the shooter and target's state information.
      *
-     * @param shooter      The {@link megamek.common.Entity} doing the attacking.
+     * @param shooter      The {@link Entity} doing the attacking.
      * @param shooterState The current {@link megamek.client.bot.princess.EntityState} of the attacker.
-     * @param target       The {@link megamek.common.Targetable} of the attack.
+     * @param target       The {@link Targetable} of the attack.
      * @param targetState  The current {@link megamek.client.bot.princess.EntityState} of the target.
-     * @param weapon       The {@link megamek.common.Mounted} weapon used for the attack.
+     * @param weapon       The {@link Mounted} weapon used for the attack.
      * @param game         The current {@link Game}
      * @param guess        Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
@@ -150,11 +164,11 @@ public class WeaponFireInfo {
     /**
      * Constructor for aerospace units performing Strike attacks.
      *
-     * @param shooter               The {@link megamek.common.Entity} doing the attacking.
+     * @param shooter               The {@link Entity} doing the attacking.
      * @param shooterPath           The {@link MovePath} of the attacker.
-     * @param target                The {@link megamek.common.Targetable} of the attack.
+     * @param target                The {@link Targetable} of the attack.
      * @param targetState           The current {@link megamek.client.bot.princess.EntityState} of the target.
-     * @param weapon                The {@link megamek.common.Mounted} weapon used for the attack.
+     * @param weapon                The {@link Mounted} weapon used for the attack.
      * @param game                  The current {@link Game}
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
      * @param guess                 Set TRUE to estimate the chance to hit rather than doing the full calculation.
@@ -180,12 +194,12 @@ public class WeaponFireInfo {
      * This constructs a WeaponFireInfo using the best guess of how likely an aerospace unit using a strike attack will
      * hit, without actually constructing the {@link WeaponAttackAction}
      *
-     * @param shooter               The {@link megamek.common.Entity} doing the attacking.
+     * @param shooter               The {@link Entity} doing the attacking.
      * @param shooterState          The current {@link megamek.client.bot.princess.EntityState} of the attacker.
      * @param shooterPath           The {@link MovePath} of the attacker.
-     * @param target                The {@link megamek.common.Targetable} of the attack.
+     * @param target                The {@link Targetable} of the attack.
      * @param targetState           The current {@link megamek.client.bot.princess.EntityState} of the target.
-     * @param weapon                The {@link megamek.common.Mounted} weapon used for the attack.
+     * @param weapon                The {@link Mounted} weapon used for the attack.
      * @param game                  The current {@link Game}
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
      * @param guess                 Set TRUE to estimate the chance to hit rather than going through the full

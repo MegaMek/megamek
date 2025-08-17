@@ -33,8 +33,8 @@
 
 package megamek.common.autoresolve.acar.handler;
 
-import megamek.common.Compute;
-import megamek.common.Roll;
+import megamek.common.compute.Compute;
+import megamek.common.rolls.Roll;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.MoraleCheckAction;
 import megamek.common.autoresolve.acar.action.RecoveringNerveAction;

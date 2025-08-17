@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import megamek.common.equipment.Mounted;
+
 public class CriticalSlot implements Serializable {
     private static final long serialVersionUID = -8744251501251495923L;
     public static final int TYPE_SYSTEM = 0;

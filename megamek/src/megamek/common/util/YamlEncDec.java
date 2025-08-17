@@ -41,10 +41,10 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
-import megamek.common.MiscType;
-import megamek.common.WeaponType;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.WeaponType;
 import megamek.logging.MMLogger;
 
 public class YamlEncDec {

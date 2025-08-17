@@ -35,7 +35,7 @@ package megamek.server.scriptedevent;
 
 import java.util.Map;
 
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.logging.MMLogger;
 import megamek.server.trigger.Trigger;

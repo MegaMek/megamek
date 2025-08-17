@@ -43,8 +43,18 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.dialogs.phaseDisplay.AimedShotDialog;
 import megamek.client.ui.widget.IndexedRadioButton;
 import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.units.Entity;
+import megamek.common.units.LargeSupportTank;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.SuperHeavyTank;
+import megamek.common.units.Tank;
 
 public class AimedShotHandler implements ActionListener, ItemListener {
     private final FiringDisplay firingDisplay;

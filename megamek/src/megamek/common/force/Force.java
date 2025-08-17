@@ -40,8 +40,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import megamek.common.ForceAssignable;
-import megamek.common.Game;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;

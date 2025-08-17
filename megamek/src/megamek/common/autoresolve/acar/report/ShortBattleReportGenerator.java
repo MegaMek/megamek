@@ -39,11 +39,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import megamek.common.Board;
-import megamek.common.Entity;
+import megamek.common.board.Board;
+import megamek.common.units.Entity;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.utilities.BoardsTagger;
 
 

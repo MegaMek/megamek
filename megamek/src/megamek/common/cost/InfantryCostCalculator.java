@@ -34,8 +34,8 @@
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.EquipmentType;
-import megamek.common.Infantry;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.units.Infantry;
 
 public class InfantryCostCalculator {
 

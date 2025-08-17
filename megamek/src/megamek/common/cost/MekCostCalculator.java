@@ -35,10 +35,10 @@ package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CriticalSlot;
-import megamek.common.EquipmentType;
-import megamek.common.LandAirMek;
-import megamek.common.Mek;
-import megamek.common.QuadVee;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadVee;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
 

@@ -33,7 +33,7 @@
 
 package megamek.common.autoresolve.acar.report;
 
-import megamek.common.Roll;
+import megamek.common.rolls.Roll;
 import megamek.common.autoresolve.component.Formation;
 
 public class DummyMoraleReporter implements IMoraleReporter {

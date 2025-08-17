@@ -35,8 +35,8 @@ package megamek.common.autoresolve.converter;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.units.Entity;
+import megamek.common.game.IGame;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 

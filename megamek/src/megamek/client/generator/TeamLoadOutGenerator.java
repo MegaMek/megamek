@@ -42,14 +42,31 @@ import java.util.*;
 
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.dialogs.unitSelectorDialogs.AbstractUnitSelectorDialog;
-import megamek.common.*;
-import megamek.common.BombType.BombTypeEnum;
-import megamek.common.ITechnology.Faction;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ITechnology.Faction;
+import megamek.common.loaders.MapSettings;
+import megamek.common.SimpleTechLevel;
+import megamek.common.Team;
+import megamek.common.TechConstants;
+import megamek.common.compute.Compute;
 import megamek.common.containers.MunitionTree;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.BombLoadout;
+import megamek.common.equipment.BombType;
+import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.BTObject;
+import megamek.common.units.Entity;
+import megamek.common.units.IBomber;
+import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
+import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
 
 /**

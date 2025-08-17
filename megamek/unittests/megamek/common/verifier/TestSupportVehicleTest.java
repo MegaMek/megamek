@@ -32,15 +32,15 @@
  */
 package megamek.common.verifier;
 
-import static megamek.common.EquipmentType.T_ARMOR_FERRO_FIBROUS;
+import static megamek.common.equipment.EquipmentType.T_ARMOR_FERRO_FIBROUS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import megamek.common.EquipmentType;
-import megamek.common.ITechnology;
-import megamek.common.MiscType;
-import megamek.common.SupportTank;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.interfaces.ITechnology;
+import megamek.common.equipment.MiscType;
+import megamek.common.units.SupportTank;
 import megamek.common.equipment.ArmorType;
 import megamek.common.verifier.TestSupportVehicle.ChassisModification;
 import org.junit.jupiter.api.BeforeAll;

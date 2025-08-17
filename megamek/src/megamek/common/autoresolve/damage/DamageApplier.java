@@ -36,12 +36,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import megamek.common.Compute;
-import megamek.common.Crew;
+import megamek.common.compute.Compute;
+import megamek.common.units.Crew;
 import megamek.common.CriticalSlot;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.HitData;
-import megamek.common.IEntityRemovalConditions;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.logging.MMLogger;
 
 /**

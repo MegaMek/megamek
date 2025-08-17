@@ -39,7 +39,17 @@ import static java.util.stream.Collectors.toList;
 import java.io.Serial;
 import java.util.List;
 
-import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
 

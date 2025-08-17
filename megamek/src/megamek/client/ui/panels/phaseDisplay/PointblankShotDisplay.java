@@ -57,14 +57,23 @@ import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.logging.MMLogger;
 
 /**

@@ -34,14 +34,14 @@
 
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.weapons.AmmoBayWeaponHandler;
-import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.handlers.AmmoBayWeaponHandler;
+import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -82,7 +82,7 @@ public abstract class AmmoBayWeapon extends BayWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,

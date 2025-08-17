@@ -47,8 +47,8 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.buttons.ButtonEsc;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.DeploymentElevationType;
-import megamek.common.ElevationOption;
+import megamek.common.board.DeploymentElevationType;
+import megamek.common.board.ElevationOption;
 
 /**
  * This dialog allows selecting an elevation (or altitude) during deployment.

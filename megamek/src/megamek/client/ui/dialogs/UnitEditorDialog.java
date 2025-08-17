@@ -52,9 +52,18 @@ import javax.swing.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.bays.ASFBay;
+import megamek.common.bays.Bay;
+import megamek.common.bays.SmallCraftBay;
+import megamek.common.equipment.DockingCollar;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.InfantryAttack;
+import megamek.common.units.*;
+import megamek.common.weapons.attacks.InfantryAttack;
 
 /**
  * This dialog will allow the user to edit the damage and status characteristics of a unit. This is designed for use in

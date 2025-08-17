@@ -54,10 +54,10 @@ import megamek.client.ui.widget.picmap.PMSimpleLabel;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
 import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.FighterSquadron;
-import megamek.common.Game;
-import megamek.common.IAero;
+import megamek.common.units.Entity;
+import megamek.common.units.FighterSquadron;
+import megamek.common.game.Game;
+import megamek.common.units.IAero;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 

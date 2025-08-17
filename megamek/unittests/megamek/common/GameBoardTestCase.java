@@ -45,8 +45,17 @@ import java.util.Vector;
 import java.util.function.Function;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
 import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;

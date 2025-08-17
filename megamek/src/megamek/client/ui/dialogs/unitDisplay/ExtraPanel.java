@@ -53,9 +53,21 @@ import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Coords;
+import megamek.common.compute.ComputeECM;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.INarcPod;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.Sensor;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**

@@ -37,7 +37,7 @@ import java.util.Optional;
 
 import megamek.client.bot.Messages;
 import megamek.client.bot.princess.Princess;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.BooleanArgument;

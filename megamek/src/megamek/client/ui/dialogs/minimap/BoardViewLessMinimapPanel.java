@@ -37,8 +37,8 @@ import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.FACING_ARROW;
 import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_BASE_RECT;
 import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_CX;
 import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_SYMBOL_SIZE;
-import static megamek.common.Terrains.BUILDING;
-import static megamek.common.Terrains.FUEL_TANK;
+import static megamek.common.units.Terrains.BUILDING;
+import static megamek.common.units.Terrains.FUEL_TANK;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -72,6 +72,9 @@ import megamek.client.ui.clientGUI.overlay.OverlayPanel;
 import megamek.common.*;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityRemoveEvent;
@@ -79,9 +82,12 @@ import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.game.Game;
+import megamek.common.game.IGame;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.*;
 
 /**
  * This class is WIP, commiting just to have an artifact.

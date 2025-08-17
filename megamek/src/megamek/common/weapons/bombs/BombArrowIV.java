@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.bombs;
 
-import megamek.common.AmmoType;
-import megamek.common.BombType.BombTypeEnum;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.BombType.BombTypeEnum;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 
 /**

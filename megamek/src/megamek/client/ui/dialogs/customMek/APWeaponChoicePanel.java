@@ -42,13 +42,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import megamek.client.ui.GBC;
-import megamek.common.BattleArmor;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.LocationFullException;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
+import megamek.common.units.Entity;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.logging.MMLogger;
 

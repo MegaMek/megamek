@@ -37,9 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.common.GameBoardTestCase;
-import megamek.common.Infantry;
+import megamek.common.units.Infantry;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

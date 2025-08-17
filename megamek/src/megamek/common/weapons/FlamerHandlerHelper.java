@@ -34,11 +34,11 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
+import megamek.common.units.Entity;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.Report;
-import megamek.common.WeaponType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.ArmorType;
 
 /**

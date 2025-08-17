@@ -36,8 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.ai.utility.Memory;
-import megamek.common.Entity;
-import megamek.common.InitiativeRoll;
+import megamek.common.units.Entity;
+import megamek.common.game.InitiativeRoll;
 import megamek.common.ToHitData;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;

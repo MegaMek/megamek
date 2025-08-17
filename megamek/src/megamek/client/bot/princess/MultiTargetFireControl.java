@@ -38,10 +38,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.Targetable;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Targetable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;

@@ -32,7 +32,7 @@
  */
 package megamek.common.autoresolve;
 
-import megamek.common.Board;
+import megamek.common.board.Board;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.SimulationOptions;
@@ -46,7 +46,7 @@ import megamek.common.autoresolve.acar.phase.VictoryPhase;
 import megamek.common.autoresolve.converter.SetupForces;
 import megamek.common.autoresolve.event.AutoResolveConcludedEvent;
 import megamek.common.options.AbstractOptions;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 
 
 /**

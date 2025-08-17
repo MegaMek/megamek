@@ -44,17 +44,27 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import megamek.common.*;
-import megamek.common.ITechnology.AvailabilityValue;
-import megamek.common.ITechnology.TechBase;
+import megamek.common.interfaces.ITechManager;
+import megamek.common.interfaces.ITechnology;
+import megamek.common.interfaces.ITechnology.AvailabilityValue;
+import megamek.common.interfaces.ITechnology.TechBase;
 import megamek.common.annotations.Nullable;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.WeaponMounted;
+import megamek.common.bays.Bay;
+import megamek.common.bays.CrewQuartersCargoBay;
+import megamek.common.bays.FirstClassQuartersCargoBay;
+import megamek.common.bays.SecondClassQuartersCargoBay;
+import megamek.common.bays.StandardSeatCargoBay;
+import megamek.common.bays.SteerageQuartersCargoBay;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.*;
+import megamek.common.interfaces.ITechnologyDelegator;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.*;
+import megamek.common.util.RoundWeight;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
-import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
+import megamek.common.weapons.lasers.clan.CLChemicalLaserWeapon;
 import megamek.logging.MMLogger;
 
 /**

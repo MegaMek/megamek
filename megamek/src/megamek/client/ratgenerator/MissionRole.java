@@ -36,9 +36,9 @@ package megamek.client.ratgenerator;
 import java.util.Collection;
 import java.util.HashSet;
 
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
-import megamek.common.UnitType;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.UnitType;
 
 /**
  * Used to adjust availability to conform to a particular mission role.

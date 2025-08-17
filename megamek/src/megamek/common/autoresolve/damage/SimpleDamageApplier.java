@@ -32,9 +32,9 @@
  */
 package megamek.common.autoresolve.damage;
 
-import megamek.common.Compute;
-import megamek.common.Crew;
-import megamek.common.Entity;
+import megamek.common.compute.Compute;
+import megamek.common.units.Crew;
+import megamek.common.units.Entity;
 
 /**
  * @author Luana Coppio

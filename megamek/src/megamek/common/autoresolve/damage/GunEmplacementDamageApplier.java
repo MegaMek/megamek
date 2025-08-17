@@ -33,7 +33,7 @@
 package megamek.common.autoresolve.damage;
 
 
-import megamek.common.GunEmplacement;
+import megamek.common.equipment.GunEmplacement;
 
 public record GunEmplacementDamageApplier(GunEmplacement entity, EntityFinalState entityFinalState)
       implements DamageApplier<GunEmplacement> {

@@ -43,11 +43,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.JPanel;
 
-import megamek.common.AmmoType.AmmoTypeEnum;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.LocationFullException;
-import megamek.common.Mounted;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.logging.MMLogger;

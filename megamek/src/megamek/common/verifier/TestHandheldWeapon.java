@@ -36,11 +36,11 @@ package megamek.common.verifier;
 import java.util.HashSet;
 import java.util.Set;
 
-import megamek.common.AmmoType;
-import megamek.common.AmmoType.AmmoTypeEnum;
-import megamek.common.Entity;
-import megamek.common.HandheldWeapon;
-import megamek.common.MiscType;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.units.Entity;
+import megamek.common.equipment.HandheldWeapon;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.options.OptionsConstants;
 import org.apache.commons.lang3.tuple.Pair;

@@ -42,14 +42,28 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import megamek.common.*;
-import megamek.common.AmmoType.AmmoTypeEnum;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.bays.Bay;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.MiscTypeFlag;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.interfaces.ITechManager;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
+import megamek.common.units.NavalRepairFacility;
+import megamek.common.units.Warship;
+import megamek.common.util.RoundWeight;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
+import megamek.common.weapons.capitalWeapons.ScreenLauncherWeapon;
 
 /**
  * Validation and construction data for advanced aerospace units (jump ships, warships, space stations)

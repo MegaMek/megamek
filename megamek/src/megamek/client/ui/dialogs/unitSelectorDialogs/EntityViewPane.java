@@ -41,7 +41,7 @@ import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.panels.alphaStrike.ConfigurableASCardPanel;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.EnhancedTabbedPane;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;

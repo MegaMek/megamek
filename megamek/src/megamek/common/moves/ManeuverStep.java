@@ -35,8 +35,8 @@ package megamek.common.moves;
 import java.util.EnumSet;
 import java.util.Set;
 
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 import megamek.common.ManeuverType;
 import megamek.common.pathfinder.CachedEntityState;
 

@@ -1,0 +1,83 @@
+/*
+  Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
+package megamek.common.weapons.lasers.clan;
+
+import megamek.common.weapons.lasers.PulseLaserWeapon;
+
+/**
+ * @author Andrew Hunter
+ * @since Sep 12, 2004
+ */
+public class CLPulseLaserLarge extends PulseLaserWeapon {
+    private static final long serialVersionUID = 608317914802476438L;
+
+    public CLPulseLaserLarge() {
+        super();
+        name = "Large Pulse Laser";
+        setInternalName("CLLargePulseLaser");
+        addLookupName("Clan Pulse Large Laser");
+        addLookupName("Clan Large Pulse Laser");
+        sortingName = "Laser Pulse D";
+        heat = 10;
+        damage = 10;
+        toHitModifier = -2;
+        shortRange = 6;
+        mediumRange = 14;
+        longRange = 20;
+        extremeRange = 30;
+        waterShortRange = 4;
+        waterMediumRange = 10;
+        waterLongRange = 14;
+        waterExtremeRange = 21;
+        tonnage = 6.0;
+        criticals = 2;
+        bv = 265;
+        cost = 175000;
+        shortAV = 10;
+        medAV = 10;
+        longAV = 10;
+        maxRange = RANGE_LONG;
+        rulesRefs = "226, TM";
+        techAdvancement.setTechBase(TechBase.CLAN)
+              .setIntroLevel(false)
+              .setUnofficial(false)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
+              .setClanAdvancement(2820, 2824, 2831, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, false, false, false)
+              .setPrototypeFactions(Faction.CCY)
+              .setProductionFactions(Faction.CCY);
+    }
+}

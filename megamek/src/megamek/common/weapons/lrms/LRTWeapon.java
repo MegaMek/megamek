@@ -34,21 +34,21 @@
 
 package megamek.common.weapons.lrms;
 
-import static megamek.common.MountedHelper.isArtemisIV;
-import static megamek.common.MountedHelper.isArtemisProto;
-import static megamek.common.MountedHelper.isArtemisV;
+import static megamek.common.equipment.MountedHelper.isArtemisIV;
+import static megamek.common.equipment.MountedHelper.isArtemisProto;
+import static megamek.common.equipment.MountedHelper.isArtemisV;
 
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.MissileWeaponHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.MissileWeaponHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 

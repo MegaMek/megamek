@@ -41,10 +41,10 @@ import java.util.Set;
 
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.client.bot.princess.FireControl;
-import megamek.common.Coords;
-import megamek.common.Game;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
 import megamek.common.Hex;
-import megamek.common.Terrains;
+import megamek.common.units.Terrains;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.logging.MMLogger;

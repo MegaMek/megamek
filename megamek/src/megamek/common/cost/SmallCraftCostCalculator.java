@@ -34,7 +34,7 @@
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.SmallCraft;
+import megamek.common.units.SmallCraft;
 import megamek.common.equipment.ArmorType;
 import megamek.common.verifier.TestSmallCraft;
 

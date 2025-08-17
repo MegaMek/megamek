@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import megamek.codeUtilities.MathUtility;
+import megamek.common.board.BoardDimensions;
 import org.junit.jupiter.api.Test;
 
 class BoardDimensionsTests {

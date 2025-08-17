@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.Configuration;
-import megamek.common.MekSummaryCache;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.logging.MMLogger;
 
 /**

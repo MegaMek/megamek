@@ -40,17 +40,13 @@ import java.util.Objects;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.ComputeArc;
-import megamek.common.Entity;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
+import megamek.common.units.Entity;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.handlers.WeaponHandler;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 
 public class WeaponMounted extends Mounted<WeaponType> {

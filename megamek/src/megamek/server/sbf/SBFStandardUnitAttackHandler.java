@@ -37,8 +37,8 @@ import static megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip.ownerCo
 
 import java.util.List;
 
-import megamek.common.Compute;
-import megamek.common.Roll;
+import megamek.common.compute.Compute;
+import megamek.common.rolls.Roll;
 import megamek.common.actions.sbf.SBFStandardUnitAttack;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationReportEntry;

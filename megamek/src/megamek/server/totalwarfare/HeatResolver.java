@@ -38,9 +38,27 @@ import java.util.Vector;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.Hex;
+import megamek.common.Report;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.PilotingRollData;
+import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Aero;
+import megamek.common.units.ConvFighter;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.FighterSquadron;
+import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
 

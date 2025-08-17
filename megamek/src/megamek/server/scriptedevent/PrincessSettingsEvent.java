@@ -34,9 +34,9 @@
 package megamek.server.scriptedevent;
 
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.Player;
-import megamek.common.jacksonadapters.PrincessSettingsBuilder;
+import megamek.common.jacksonAdapters.PrincessSettingsBuilder;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.server.IGameManager;

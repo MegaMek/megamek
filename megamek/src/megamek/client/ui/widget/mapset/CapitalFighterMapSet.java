@@ -53,9 +53,9 @@ import megamek.client.ui.widget.picmap.PMPicArea;
 import megamek.client.ui.widget.picmap.PMSimpleLabel;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
-import megamek.common.Aero;
+import megamek.common.units.Aero;
 import megamek.common.Configuration;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 

@@ -34,7 +34,7 @@
 
 package megamek.common.weapons.autocannons;
 
-import megamek.common.AmmoType;
+import megamek.common.equipment.AmmoType;
 
 /**
  * @since Sep 25, 2004

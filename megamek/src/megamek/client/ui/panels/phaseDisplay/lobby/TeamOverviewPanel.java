@@ -72,7 +72,15 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.TableColumnManager;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.*;
+import megamek.common.game.Game;
+import megamek.common.loaders.MapSettings;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.FighterSquadron;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
 
 /**
  * A JPanel that holds a table giving an overview of the current relative strength of the teams of the game. The table

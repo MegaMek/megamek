@@ -44,8 +44,24 @@ import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.BuildingTarget;
+import megamek.common.units.EjectedCrew;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
+import megamek.common.units.Targetable;
+import megamek.common.units.Terrains;
 
 public final class PhysicalCalculator {
     private PhysicalCalculator() {

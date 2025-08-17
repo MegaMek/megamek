@@ -33,7 +33,7 @@
 
 package megamek.common.autoresolve.acar.action;
 
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.handler.MoveToCoverActionHandler;

@@ -34,8 +34,8 @@
 
 package megamek.common.autoresolve.acar.report;
 
-import megamek.common.Roll;
-import megamek.common.TargetRoll;
+import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 

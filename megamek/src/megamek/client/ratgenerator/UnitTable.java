@@ -41,10 +41,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import megamek.common.Compute;
-import megamek.common.EntityMovementMode;
-import megamek.common.MekSummary;
+import megamek.common.compute.Compute;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.loaders.MekSummary;
 import megamek.common.annotations.Nullable;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
 
 /**
@@ -78,10 +80,10 @@ public class UnitTable {
      * it to the cache. This method is provided as a convenience for when there are no excluded roles.
      *
      * @param faction          The faction the table filters for
-     * @param unitType         {@link megamek.common.UnitType} constant with the type of unit
+     * @param unitType         {@link UnitType} constant with the type of unit
      * @param year             the game year
      * @param rating           the unit's equipment rating; if null, the table is not adjusted for unit rating.
-     * @param weightClasses    a collection of {@link megamek.common.EntityWeightClass} constants to include in the
+     * @param weightClasses    a collection of {@link EntityWeightClass} constants to include in the
      *                         table; if null or empty all weight classes are included
      * @param networkMask      One of the {@link ModelRecord} NETWORK constants, for filtering various C3 systems
      * @param movementModes    the movement modes covered by the table, null/empty for all modes
@@ -115,10 +117,10 @@ public class UnitTable {
      * Overloaded method, with additional argument for excluded roles
      *
      * @param faction          The faction the table filters for
-     * @param unitType         {@link megamek.common.UnitType} constant with the type of unit
+     * @param unitType         {@link UnitType} constant with the type of unit
      * @param year             the game year
      * @param rating           the unit's equipment rating; if null, the table is not adjusted for unit rating.
-     * @param weightClasses    collection of {@link megamek.common.EntityWeightClass} constants to include in the table;
+     * @param weightClasses    collection of {@link EntityWeightClass} constants to include in the table;
      *                         if null or empty all weight classes are included
      * @param networkMask      One of the {@link ModelRecord} NETWORK constants, for filtering various C3 systems
      * @param movementModes    the movement modes covered by the table, null/empty for all modes

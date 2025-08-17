@@ -59,14 +59,14 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Mek;
-import megamek.common.Mounted;
-import megamek.common.QuadMek;
-import megamek.common.WeaponType;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.QuadMek;
+import megamek.common.equipment.WeaponType;
 import megamek.common.actions.TriggerBPodAction;
 
 /**

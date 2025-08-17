@@ -50,7 +50,7 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.KeyBindParser;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;

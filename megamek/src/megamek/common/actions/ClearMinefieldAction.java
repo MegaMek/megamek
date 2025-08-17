@@ -35,7 +35,7 @@
 
 package megamek.common.actions;
 
-import megamek.common.Minefield;
+import megamek.common.equipment.Minefield;
 
 public class ClearMinefieldAction extends AbstractEntityAction {
     /**

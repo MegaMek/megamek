@@ -34,7 +34,7 @@
 
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.EquipmentTypeLookup;
+import megamek.common.equipment.EquipmentTypeLookup;
 
 /**
  * @author Jay Lawson

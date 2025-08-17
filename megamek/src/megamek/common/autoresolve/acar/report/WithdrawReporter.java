@@ -35,7 +35,7 @@ package megamek.common.autoresolve.acar.report;
 
 import java.util.function.Consumer;
 
-import megamek.common.IGame;
+import megamek.common.game.IGame;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.component.Formation;
 

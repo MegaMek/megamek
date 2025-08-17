@@ -58,7 +58,7 @@ import megamek.MMConstants;
 import megamek.client.ui.util.ImageAtlasMap;
 import megamek.client.ui.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;

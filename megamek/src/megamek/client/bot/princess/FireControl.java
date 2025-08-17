@@ -39,7 +39,6 @@ import java.util.*;
 
 import megamek.client.bot.princess.coverage.Builder;
 import megamek.common.*;
-import megamek.common.BombType.BombTypeEnum;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
@@ -49,17 +48,23 @@ import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.BombMounted;
-import megamek.common.equipment.WeaponMounted;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
+import megamek.common.equipment.*;
+import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
-import megamek.common.planetaryconditions.IlluminationLevel;
-import megamek.common.weapons.StopSwarmAttack;
+import megamek.common.planetaryConditions.IlluminationLevel;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.*;
 import megamek.common.weapons.Weapon;
+import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
 import megamek.logging.MMLogger;
@@ -1089,10 +1094,10 @@ public class FireControl {
      *
      * @param shooter               The {@link Entity} doing the shooting.
      * @param shooterState          The {@link EntityState} of the unit doing the shooting.
-     * @param target                The {@link megamek.common.Targetable} being shot at.
+     * @param target                The {@link Targetable} being shot at.
      * @param targetState           The {@link megamek.client.bot.princess.EntityState} of the unit being shot at.
      * @param flightPath            The path the shooter is taking.
-     * @param weapon                The weapon being fired as a {@link megamek.common.Mounted} object.
+     * @param weapon                The weapon being fired as a {@link Mounted} object.
      * @param ammo                  Ammo to use (usually null because Aerospace aren't allowed as many alt munitions)
      * @param game                  The current {@link Game}
      * @param assumeUnderFlightPlan Set TRUE to assume that the target falls under the given flight path.

@@ -49,6 +49,10 @@ import javax.swing.text.html.StyleSheet;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
+import megamek.common.interfaces.ReportEntry;
+import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**

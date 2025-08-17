@@ -33,13 +33,13 @@
 
 package megamek.common.autoresolve.acar.phase;
 
-import static megamek.common.Board.*;
+import static megamek.common.board.Board.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import megamek.common.BoardLocation;
-import megamek.common.Compute;
-import megamek.common.Coords;
+import megamek.common.board.BoardLocation;
+import megamek.common.compute.Compute;
+import megamek.common.board.Coords;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.report.DeploymentReport;
 import megamek.common.autoresolve.acar.report.IDeploymentReport;

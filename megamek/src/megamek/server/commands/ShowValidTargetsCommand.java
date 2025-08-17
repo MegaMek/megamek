@@ -35,9 +35,9 @@ package megamek.server.commands;
 
 import java.util.List;
 
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.LosEffects;
-import megamek.common.TargetRoll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;

@@ -40,6 +40,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import megamek.common.interfaces.ITechnology;
+
 /**
  * Handles the progression of technology through prototype, production, extinction and reintroduction phases. Calculates
  * current rules level for IS or Clan.

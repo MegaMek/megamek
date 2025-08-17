@@ -41,8 +41,8 @@ import javax.swing.JPanel;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.Mounted;
+import megamek.common.units.Entity;
+import megamek.common.equipment.Mounted;
 
 public class RapidFireMGPanel extends JPanel {
     @Serial

@@ -53,9 +53,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.Entity;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
+import megamek.common.units.Entity;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.alphaStrike.ASArcSummary;
 import megamek.common.alphaStrike.ASArcs;
 import megamek.common.alphaStrike.ASDamageVector;

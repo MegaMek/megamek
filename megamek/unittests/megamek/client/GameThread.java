@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 import io.sentry.Sentry;
 import io.sentry.transport.ReusableCountLatch;
 import megamek.client.bot.princess.Princess;
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.event.GameListenerAdapter;
 import megamek.logging.MMLogger;

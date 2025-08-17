@@ -40,7 +40,7 @@ import java.awt.image.BufferedImage;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Coords;
+import megamek.common.board.Coords;
 
 /**
  * Sprite for a cursor. Just a hexagon outline in a specified color.

@@ -33,11 +33,13 @@
 
 package megamek.common.alphaStrike.conversion;
 
-import static megamek.common.MiscType.F_HEAD_TURRET;
-import static megamek.common.MiscType.F_QUAD_TURRET;
-import static megamek.common.MiscType.F_SHOULDER_TURRET;
+import static megamek.common.equipment.MiscType.F_HEAD_TURRET;
+import static megamek.common.equipment.MiscType.F_QUAD_TURRET;
+import static megamek.common.equipment.MiscType.F_SHOULDER_TURRET;
 
-import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.*;
 
 /**
  * This class provides AlphaStrike conversion utilities for converting all sorts of locations of TW units to the damage

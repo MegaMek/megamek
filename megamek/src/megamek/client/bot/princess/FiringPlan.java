@@ -41,10 +41,10 @@ import java.util.Set;
 import java.util.Vector;
 
 import megamek.codeUtilities.StringUtility;
-import megamek.common.AmmoType;
-import megamek.common.Mounted;
-import megamek.common.Targetable;
-import megamek.common.WeaponType;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Targetable;
+import megamek.common.equipment.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;

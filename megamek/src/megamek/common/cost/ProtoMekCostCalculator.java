@@ -34,9 +34,9 @@
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.Mounted;
-import megamek.common.ProtoMek;
-import megamek.common.WeaponType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.ProtoMek;
+import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.ArmorType;
 
 public class ProtoMekCostCalculator {

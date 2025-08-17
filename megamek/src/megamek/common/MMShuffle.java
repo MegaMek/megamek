@@ -35,6 +35,8 @@
 
 package megamek.common;
 
+import megamek.common.rolls.Roll;
+
 /**
  * Subclass of the roll tracker for <code>Pool36Random</code> "entropy" sources
  *

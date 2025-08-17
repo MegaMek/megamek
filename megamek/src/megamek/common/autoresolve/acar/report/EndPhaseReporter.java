@@ -38,9 +38,9 @@ import static megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip.ownerCo
 import java.util.Map;
 import java.util.function.Consumer;
 
-import megamek.common.Entity;
-import megamek.common.IEntityRemovalConditions;
-import megamek.common.IGame;
+import megamek.common.units.Entity;
+import megamek.common.interfaces.IEntityRemovalConditions;
+import megamek.common.game.IGame;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.strategicBattleSystems.SBFUnit;

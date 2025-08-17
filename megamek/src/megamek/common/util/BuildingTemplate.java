@@ -37,8 +37,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import megamek.common.Building;
-import megamek.common.Coords;
+import megamek.common.units.Building;
+import megamek.common.board.Coords;
 import megamek.common.enums.BuildingType;
 
 /**

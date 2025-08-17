@@ -39,15 +39,15 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashSet;
 
-import megamek.common.BattleArmorBay;
-import megamek.common.Bay;
-import megamek.common.DropshuttleBay;
-import megamek.common.InfantryBay;
-import megamek.common.InfantryTransporter.PlatoonType;
-import megamek.common.Jumpship;
-import megamek.common.MekBay;
-import megamek.common.NavalRepairFacility;
+import megamek.common.bays.BattleArmorBay;
+import megamek.common.bays.Bay;
+import megamek.common.bays.InfantryBay;
+import megamek.common.bays.MekBay;
 import megamek.common.loaders.BLKFile.ParsedBayInfo;
+import megamek.common.units.DropshuttleBay;
+import megamek.common.units.InfantryTransporter.PlatoonType;
+import megamek.common.units.Jumpship;
+import megamek.common.units.NavalRepairFacility;
 import org.junit.jupiter.api.Test;
 
 class BLKFileTest {

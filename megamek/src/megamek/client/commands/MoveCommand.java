@@ -35,9 +35,9 @@ package megamek.client.commands;
 
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.ManeuverType;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;

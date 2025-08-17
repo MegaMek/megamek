@@ -59,8 +59,8 @@ import megamek.client.ui.widget.picmap.PMSimplePolygonArea;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
 import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.Mek;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 

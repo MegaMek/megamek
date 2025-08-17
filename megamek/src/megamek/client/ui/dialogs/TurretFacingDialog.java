@@ -56,10 +56,10 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Hex;
-import megamek.common.Mek;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.Tank;
+import megamek.common.units.Mek;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Tank;
 
 /**
  * @author beerockxs

@@ -39,13 +39,23 @@ import java.util.Enumeration;
 import java.util.List;
 
 import megamek.client.Client;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.MPCalculationSetting;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.EscapePods;
+import megamek.common.equipment.TeleMissile;
+import megamek.common.game.Game;
 import megamek.common.internationalization.I18n;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.PilotingRollData;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.*;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 

@@ -36,8 +36,19 @@ package megamek.common.alphaStrike.conversion;
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
+import megamek.common.units.Warship;
 import megamek.logging.MMLogger;
 
 final class ASArmStrConverter {

@@ -36,6 +36,17 @@
 package megamek.server;
 
 import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.Mounted;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
 import megamek.common.util.StringUtil;
 
 public abstract class UnitStatusFormatter {

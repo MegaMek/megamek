@@ -34,7 +34,7 @@
 
 package megamek.common.weapons.artillery;
 
-import megamek.common.AmmoType;
+import megamek.common.equipment.AmmoType;
 import megamek.common.SimpleTechLevel;
 
 /**

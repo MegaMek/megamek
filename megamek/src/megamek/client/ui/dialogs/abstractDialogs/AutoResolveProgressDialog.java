@@ -53,17 +53,17 @@ import javax.swing.SwingWorker;
 
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.RawImagePanel;
-import megamek.common.Board;
-import megamek.common.Compute;
+import megamek.common.board.Board;
+import megamek.common.compute.Compute;
 import megamek.common.Configuration;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.Player;
 import megamek.common.autoresolve.Resolver;
 import megamek.common.autoresolve.acar.SimulationOptions;
 import megamek.common.autoresolve.converter.SetupForces;
 import megamek.common.autoresolve.event.AutoResolveConcludedEvent;
 import megamek.common.internationalization.I18n;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
 import org.apache.commons.lang3.time.StopWatch;
 

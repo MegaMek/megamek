@@ -38,9 +38,19 @@ import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.InfantryMount;
 import megamek.common.weapons.DamageType;
-import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.handlers.WeaponHandler;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -67,7 +77,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
+     * @see megamek.common.weapons.handlers.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
@@ -77,7 +87,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.weapons.WeaponHandler#calcnCluster()
+     * @see megamek.common.weapons.handlers.WeaponHandler#calcnCluster()
      */
     @Override
     protected int calcnCluster() {
@@ -87,7 +97,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
+     * @see megamek.common.weapons.handlers.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {

@@ -51,10 +51,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
-import megamek.common.BoardLocation;
-import megamek.common.Deployable;
-import megamek.common.Entity;
-import megamek.common.ForceAssignable;
+import megamek.common.board.BoardLocation;
+import megamek.common.units.Deployable;
+import megamek.common.units.Entity;
+import megamek.common.interfaces.ForceAssignable;
 import megamek.common.Player;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASSpecialAbilityCollection;
@@ -62,8 +62,8 @@ import megamek.common.alphaStrike.ASSpecialAbilityCollector;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.enums.GamePhase;
 import megamek.common.force.Force;
-import megamek.common.jacksonadapters.SBFFormationDeserializer;
-import megamek.common.jacksonadapters.SBFFormationSerializer;
+import megamek.common.jacksonAdapters.SBFFormationDeserializer;
+import megamek.common.jacksonAdapters.SBFFormationSerializer;
 
 /**
  * Represents a Strategic Battle Force Formation composed of one or more SBF Units.

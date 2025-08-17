@@ -38,8 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.Report;
-import megamek.common.ReportEntry;
-import megamek.common.Roll;
+import megamek.common.interfaces.ReportEntry;
+import megamek.common.rolls.Roll;
 
 
 public class PublicReportEntry implements ReportEntry {

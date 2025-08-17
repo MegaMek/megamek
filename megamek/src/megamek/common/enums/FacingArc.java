@@ -34,9 +34,9 @@ package megamek.common.enums;
 
 import java.util.function.Function;
 
-import megamek.common.Coords;
-import megamek.common.Targetable;
-import megamek.common.UnitPosition;
+import megamek.common.board.Coords;
+import megamek.common.units.Targetable;
+import megamek.common.units.UnitPosition;
 
 /**
  * All the different possible facing arcs

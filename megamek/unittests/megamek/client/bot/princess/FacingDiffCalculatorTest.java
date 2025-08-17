@@ -36,9 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import megamek.common.BipedMek;
-import megamek.common.Coords;
-import megamek.common.Mek;
+import megamek.common.units.BipedMek;
+import megamek.common.board.Coords;
+import megamek.common.units.Mek;
 import megamek.common.moves.MovePath;
 import org.junit.jupiter.api.Test;
 

@@ -35,8 +35,8 @@
 
 package megamek.common.loaders;
 
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
+import megamek.common.units.Entity;
+import megamek.common.equipment.GunEmplacement;
 import megamek.common.util.BuildingBlock;
 
 /**

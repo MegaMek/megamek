@@ -34,10 +34,10 @@
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.BattleArmorBay;
-import megamek.common.Bay;
-import megamek.common.Dropship;
-import megamek.common.InfantryBay;
+import megamek.common.bays.BattleArmorBay;
+import megamek.common.bays.Bay;
+import megamek.common.units.Dropship;
+import megamek.common.bays.InfantryBay;
 
 public class DropShipCostCalculator {
 

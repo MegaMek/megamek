@@ -38,12 +38,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import megamek.common.Board;
+import megamek.common.board.Board;
 import megamek.common.BulldozerMovePath;
-import megamek.common.Coords;
-import megamek.common.EntityMovementMode;
+import megamek.common.board.Coords;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.Hex;
-import megamek.common.Terrains;
+import megamek.common.units.Terrains;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;

@@ -34,7 +34,7 @@
 
 package megamek.common.event;
 
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 /**
  * Instances of this class are sent when entity is removed

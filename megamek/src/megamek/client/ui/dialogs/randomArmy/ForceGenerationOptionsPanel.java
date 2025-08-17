@@ -57,10 +57,10 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.AnalyzeFormationDialog;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
-import megamek.common.MekSummary;
-import megamek.common.UnitType;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.loaders.MekSummary;
+import megamek.common.units.UnitType;
 
 /**
  * Panel that allows choice of year, faction, rating, unit type

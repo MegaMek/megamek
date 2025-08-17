@@ -35,7 +35,7 @@ package megamek.client.bot.princess;
 
 import java.util.Set;
 
-import megamek.common.Targetable;
+import megamek.common.units.Targetable;
 
 /**
  * @author Deric Page (deric dot page at usa dot net)

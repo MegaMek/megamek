@@ -34,7 +34,7 @@
 
 package megamek.common.autoresolve.acar.board;
 
-import megamek.common.Board;
+import megamek.common.board.Board;
 
 public class Board1D {
 

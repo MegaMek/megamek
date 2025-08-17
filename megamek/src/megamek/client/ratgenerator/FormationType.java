@@ -32,7 +32,7 @@
  */
 package megamek.client.ratgenerator;
 
-import static megamek.common.UnitRole.*;
+import static megamek.common.units.UnitRole.*;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -41,8 +41,17 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.WeaponType;
+import megamek.common.loaders.MekSummary;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.UnitRole;
+import megamek.common.units.UnitType;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.autocannons.LBXACWeapon;

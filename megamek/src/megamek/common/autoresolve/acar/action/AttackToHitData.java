@@ -35,8 +35,8 @@ package megamek.common.autoresolve.acar.action;
 
 import java.util.List;
 
-import megamek.common.InGameObject;
-import megamek.common.TargetRoll;
+import megamek.common.game.InGameObject;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.internationalization.I18n;

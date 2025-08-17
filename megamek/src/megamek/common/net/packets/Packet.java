@@ -51,13 +51,25 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.BoardDimensions;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.equipment.Flare;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.Minefield;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.GameTurn;
+import megamek.common.game.InGameObject;
+import megamek.common.loaders.MapSettings;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.options.GameOptions;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFReportEntry;
 import megamek.common.strategicBattleSystems.SBFTurn;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitLocation;
 import megamek.server.SmokeCloud;
 
 /**
@@ -284,7 +296,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return a List of {@link megamek.common.Building}'s value of the object at the specified index
+     * @return a List of {@link Building}'s value of the object at the specified index
      */
     public List<Building> getBuildingList(int index) {
         Object object = getObject(index);
@@ -341,7 +353,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return a Vector of {@link megamek.common.Coords}'s value of the object at the specified index
+     * @return a Vector of {@link Coords}'s value of the object at the specified index
      */
     public Vector<Coords> getCoordsVector(int index) {
         Object object = getObject(index);

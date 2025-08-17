@@ -55,11 +55,14 @@ import megamek.client.ui.widget.picmap.PMMultiLineLabel;
 import megamek.client.ui.widget.picmap.PMSimpleLabel;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.common.*;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.GunEmplacement;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.units.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**

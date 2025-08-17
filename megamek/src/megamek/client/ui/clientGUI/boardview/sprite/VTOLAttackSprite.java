@@ -44,10 +44,10 @@ import java.util.List;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.HexDrawUtilities;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IBomber;
-import megamek.common.VTOL;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+import megamek.common.units.IBomber;
+import megamek.common.units.VTOL;
 
 /**
  * @author Neoancient

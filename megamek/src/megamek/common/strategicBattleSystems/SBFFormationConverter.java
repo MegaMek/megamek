@@ -36,9 +36,9 @@ package megamek.common.strategicBattleSystems;
 import java.util.ArrayList;
 
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
-import megamek.common.Entity;
-import megamek.common.ForceAssignable;
-import megamek.common.Game;
+import megamek.common.units.Entity;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.game.Game;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.force.Force;

@@ -33,7 +33,7 @@
 package megamek.common.autoresolve.damage;
 
 
-import static megamek.common.Compute.rollD6;
+import static megamek.common.compute.Compute.rollD6;
 import static megamek.common.CriticalSlot.TYPE_SYSTEM;
 import static megamek.common.autoresolve.damage.EntityFinalState.ANY;
 import static megamek.common.autoresolve.damage.EntityFinalState.CREW_AND_ENTITY_MUST_SURVIVE;
@@ -44,14 +44,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import megamek.common.AmmoType;
-import megamek.common.Compute;
+import megamek.common.equipment.AmmoType;
+import megamek.common.compute.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.HitData;
-import megamek.common.IEntityRemovalConditions;
-import megamek.common.Mek;
-import megamek.common.QuadMek;
-import megamek.common.TargetRoll;
+import megamek.common.interfaces.IEntityRemovalConditions;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.util.weightedMaps.WeightedDoubleMap;
 

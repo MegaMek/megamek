@@ -39,7 +39,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.common.board.Coords;
+import megamek.common.compute.ComputeArc;
 import megamek.common.enums.FacingArc;
+import megamek.common.units.UnitPosition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 

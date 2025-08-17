@@ -45,6 +45,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import megamek.common.loaders.MapSettings;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 

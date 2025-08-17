@@ -35,8 +35,8 @@ package megamek.common.strategicBattleSystems;
 
 import java.util.List;
 
-import megamek.common.InGameObject;
-import megamek.common.TargetRoll;
+import megamek.common.game.InGameObject;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.TargetRollModifier;
 import megamek.common.actions.sbf.SBFAttackAction;
 import megamek.common.actions.sbf.SBFStandardUnitAttack;

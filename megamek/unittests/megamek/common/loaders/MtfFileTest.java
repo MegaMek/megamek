@@ -40,15 +40,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import megamek.common.BipedMek;
+import megamek.common.units.BipedMek;
 import megamek.common.CriticalSlot;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.EquipmentTypeLookup;
-import megamek.common.Mek;
-import megamek.common.Mounted;
-import megamek.common.TripodMek;
+import megamek.common.equipment.Engine;
+import megamek.common.units.Entity;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.units.Mek;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.TripodMek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

@@ -36,13 +36,13 @@ package megamek.common.weapons.missiles;
 
 import java.io.Serial;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.server.totalwarfare.TWGameManager;

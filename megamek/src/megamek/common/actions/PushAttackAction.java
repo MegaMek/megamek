@@ -38,7 +38,17 @@ import java.io.Serial;
 
 import megamek.client.ui.Messages;
 import megamek.common.*;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Building;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
+import megamek.common.units.Terrains;
 
 /**
  * The attacker pushes the target.

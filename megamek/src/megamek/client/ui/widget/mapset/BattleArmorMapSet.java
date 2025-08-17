@@ -53,9 +53,9 @@ import megamek.client.ui.widget.picmap.PMAreasGroup;
 import megamek.client.ui.widget.picmap.PMPicArea;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
-import megamek.common.BattleArmor;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.Configuration;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**

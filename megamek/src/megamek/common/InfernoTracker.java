@@ -36,6 +36,8 @@ package megamek.common;
 
 import java.io.Serializable;
 
+import megamek.common.interfaces.RoundUpdated;
+
 /**
  * This class records and defines the effects of hits by Inferno rounds on units and hexes. It does not *apply* the
  * effect, it just defines it. <p> It makes use of an inner class to define an Inferno round. This inner class should

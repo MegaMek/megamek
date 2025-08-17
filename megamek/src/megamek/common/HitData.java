@@ -34,6 +34,9 @@
 
 package megamek.common;
 
+import megamek.common.equipment.AmmoType;
+import megamek.common.units.Entity;
+
 /**
  * This is a result from the hit chart.
  */

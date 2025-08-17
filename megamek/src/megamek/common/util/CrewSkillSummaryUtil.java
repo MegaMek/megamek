@@ -36,9 +36,9 @@ package megamek.common.util;
 import java.text.MessageFormat;
 
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.Infantry;
-import megamek.common.Tank;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Tank;
 import megamek.common.options.OptionsConstants;
 
 public class CrewSkillSummaryUtil {

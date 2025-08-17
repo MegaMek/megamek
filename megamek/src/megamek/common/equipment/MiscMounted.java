@@ -34,13 +34,9 @@
 package megamek.common.equipment;
 
 import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.Mek;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.common.Messages;
-import megamek.common.MiscType;
-import megamek.common.MiscTypeFlag;
-import megamek.common.Mounted;
 
 public class MiscMounted extends Mounted<MiscType> {
 

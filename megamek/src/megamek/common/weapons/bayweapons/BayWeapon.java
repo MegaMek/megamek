@@ -34,18 +34,18 @@
 
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.weapons.ArtilleryBayWeaponIndirectFireHandler;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.BayWeaponHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponIndirectFireHandler;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.BayWeaponHandler;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalwarfare.TWGameManager;
 

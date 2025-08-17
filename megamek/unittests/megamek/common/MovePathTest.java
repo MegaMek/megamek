@@ -42,10 +42,13 @@ import static org.mockito.Mockito.when;
 
 import java.util.Vector;
 
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
 import org.junit.jupiter.api.Test;
 
 /**

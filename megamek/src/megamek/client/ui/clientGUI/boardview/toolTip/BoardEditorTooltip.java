@@ -48,11 +48,11 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.Board;
-import megamek.common.Coords;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.Hex;
-import megamek.common.Terrain;
-import megamek.common.Terrains;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 
 /**
  * This class is a {@link BoardViewTooltipProvider} that is tailored to the Board Editor and lists detailed terrain info

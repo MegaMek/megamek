@@ -51,12 +51,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.Aero;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.Jumpship;
-import megamek.common.Mounted;
-import megamek.common.SmallCraft;
+import megamek.common.units.Aero;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.SmallCraft;
 import megamek.common.alphaStrike.ASArcs;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.WeaponMounted;

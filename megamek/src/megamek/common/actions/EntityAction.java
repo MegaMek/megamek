@@ -38,9 +38,9 @@ import megamek.client.Client;
 import megamek.client.ui.clientGUI.boardview.overlay.TurnDetailsOverlay;
 import megamek.client.ui.clientGUI.tooltip.EntityActionLog;
 import megamek.client.ui.dialogs.AccessibilityDialog;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.InGameObject;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.game.InGameObject;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.strategicBattleSystems.SBFFormation;
 

@@ -40,13 +40,24 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.*;
-import megamek.common.AmmoType.AmmoTypeEnum;
+import megamek.common.equipment.*;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.annotations.Nullable;
-import megamek.common.equipment.ArmorType;
+import megamek.common.bays.BattleArmorBay;
+import megamek.common.bays.Bay;
+import megamek.common.bays.InfantryBay;
+import megamek.common.interfaces.ITechManager;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.InfantryCompartment;
+import megamek.common.units.LargeSupportTank;
+import megamek.common.units.SuperHeavyTank;
+import megamek.common.units.Tank;
+import megamek.common.units.VTOL;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
-import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
+import megamek.common.weapons.lasers.clan.CLChemicalLaserWeapon;
 
 /**
  * @author Reinhard Vicinus

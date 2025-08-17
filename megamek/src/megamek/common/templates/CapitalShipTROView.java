@@ -39,12 +39,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import megamek.common.Aero;
-import megamek.common.Entity;
-import megamek.common.Jumpship;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
 import megamek.common.Messages;
-import megamek.common.Mounted;
-import megamek.common.Warship;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.Warship;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAdvancedAerospace;
 

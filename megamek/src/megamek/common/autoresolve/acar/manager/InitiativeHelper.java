@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import megamek.common.AbstractGame;
+import megamek.common.game.AbstractGame;
 import megamek.common.Player;
 import megamek.common.Team;
 import megamek.common.autoresolve.acar.SimulationManager;

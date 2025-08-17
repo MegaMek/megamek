@@ -38,7 +38,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Map;
 
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.options.OptionsConstants;

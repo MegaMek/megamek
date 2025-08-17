@@ -59,10 +59,11 @@ import megamek.MMConstants;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.alphaStrike.ASCardDisplayable;
+import megamek.common.loaders.MekSummary;
 
 /**
  * This class prints a collection of one or more Alpha Strike cards. The cards to be printed can be created from either
- * an {@link megamek.common.alphaStrike.AlphaStrikeElement} or a {@link megamek.common.MekSummary}. It shows a progress
+ * an {@link megamek.common.alphaStrike.AlphaStrikeElement} or a {@link MekSummary}. It shows a progress
  * bar dialog but the printing happens in the background and the calling window is not blocked.
  */
 public class ASCardPrinter implements Printable {
@@ -80,7 +81,7 @@ public class ASCardPrinter implements Printable {
 
     /**
      * Creates a new ASCardPrinter object for the given ASCardDisplayable elements (either
-     * {@link megamek.common.alphaStrike.AlphaStrikeElement} or {@link megamek.common.MekSummary}. The parent is used
+     * {@link megamek.common.alphaStrike.AlphaStrikeElement} or {@link MekSummary}. The parent is used
      * for the progress dialog. Print the cards by calling {@link #printCards()}.
      */
     public ASCardPrinter(Collection<? extends ASCardDisplayable> elements, JFrame parent) {

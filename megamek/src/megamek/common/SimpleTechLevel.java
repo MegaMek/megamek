@@ -35,6 +35,7 @@ package megamek.common;
 import java.util.HashMap;
 import java.util.Map;
 
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 
 /**

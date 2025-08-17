@@ -38,8 +38,8 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.Game;
-import megamek.common.IAero;
+import megamek.common.game.Game;
+import megamek.common.units.IAero;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;

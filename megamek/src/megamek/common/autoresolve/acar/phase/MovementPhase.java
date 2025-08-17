@@ -39,9 +39,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
+import megamek.common.compute.Compute;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 import megamek.common.alphaStrike.ASRange;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.Action;

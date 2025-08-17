@@ -35,6 +35,15 @@
 package megamek.common.loaders;
 
 import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.util.BuildingBlock;
 
 /**

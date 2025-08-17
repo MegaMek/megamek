@@ -35,9 +35,9 @@ package megamek.common.scenario;
 
 import java.io.IOException;
 
-import megamek.common.GameType;
-import megamek.common.IGame;
-import megamek.common.jacksonadapters.BotParser;
+import megamek.common.game.GameType;
+import megamek.common.game.IGame;
+import megamek.common.jacksonAdapters.BotParser;
 import megamek.server.IGameManager;
 
 public interface Scenario {

@@ -65,7 +65,7 @@ import megamek.client.ui.clientGUI.GUIPreferences;
  */
 public class EnhancedTabbedPane extends JTabbedPane {
 
-    private static record TabRestorationInfo(
+    private record TabRestorationInfo(
           String title,
           Icon icon,
           Component contentPane, // The component returned by getComponentAt(originalIndex)

@@ -36,9 +36,9 @@ import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 import java.util.ArrayList;
 
-import megamek.common.Entity;
-import megamek.common.ForceAssignable;
-import megamek.common.UnitRole;
+import megamek.common.units.Entity;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.units.UnitRole;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;

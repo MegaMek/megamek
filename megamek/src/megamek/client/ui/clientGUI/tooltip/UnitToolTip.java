@@ -38,7 +38,7 @@ import static megamek.client.ui.clientGUI.tooltip.TipUtil.getOptionList;
 import static megamek.client.ui.util.UIUtil.DOT_SPACER;
 import static megamek.client.ui.util.UIUtil.ECM_SIGN;
 import static megamek.client.ui.util.UIUtil.repeat;
-import static megamek.common.LandAirMek.CONV_MODE_FIGHTER;
+import static megamek.common.units.LandAirMek.CONV_MODE_FIGHTER;
 
 import java.awt.Color;
 import java.text.MessageFormat;
@@ -57,16 +57,21 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.info.WeaponInfo;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.*;
-import megamek.common.BombType.BombTypeEnum;
+import megamek.common.board.Board;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.*;
+import megamek.common.equipment.BombType.BombTypeEnum;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.WeaponMounted;
+import megamek.common.game.Game;
+import megamek.common.game.InGameObject;
+import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
+import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
 public final class UnitToolTip {

@@ -38,6 +38,17 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
 import megamek.common.util.BuildingBlock;
 import megamek.logging.MMLogger;
 

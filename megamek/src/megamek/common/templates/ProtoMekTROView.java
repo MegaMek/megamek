@@ -40,14 +40,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.EntityFluff;
-import megamek.common.EquipmentType;
+import megamek.common.equipment.AmmoType;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityFluff;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.Messages;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.ProtoMek;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.ProtoMek;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestProtoMek;
 

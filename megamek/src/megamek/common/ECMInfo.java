@@ -38,6 +38,9 @@ package megamek.common;
 import java.util.Comparator;
 import java.util.Objects;
 
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
+
 /**
  * A class that keeps track of information related to an ECM field.
  *

@@ -35,7 +35,7 @@ package megamek.client.ratgenerator;
 
 import java.util.HashSet;
 
-import megamek.common.UnitType;
+import megamek.common.units.UnitType;
 
 /**
  * Base functionality for chassis and model records for RAT generator.

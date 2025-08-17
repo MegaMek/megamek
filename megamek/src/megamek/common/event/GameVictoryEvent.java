@@ -38,9 +38,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IEntityRemovalConditions;
+import megamek.common.units.Entity;
+import megamek.common.game.Game;
+import megamek.common.interfaces.IEntityRemovalConditions;
 
 /**
  * An event that is fired at the end of the victory phase, before the game state is reset. It can be used to retrieve

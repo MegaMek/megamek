@@ -38,8 +38,8 @@ import java.util.Collections;
 import java.util.Optional;
 
 import megamek.codeUtilities.ObjectUtility;
-import megamek.common.Compute;
-import megamek.common.Roll;
+import megamek.common.compute.Compute;
+import megamek.common.rolls.Roll;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;
 import megamek.common.alphaStrike.AlphaStrikeElement;

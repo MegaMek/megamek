@@ -34,14 +34,14 @@
 
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Game;
+import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.weapons.AdvancedSRMHandler;
-import megamek.common.weapons.AttackHandler;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.srm.AdvancedSRMHandler;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 

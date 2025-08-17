@@ -34,19 +34,19 @@
 
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.EquipmentTypeLookup;
-import megamek.common.Game;
+import megamek.common.equipment.AmmoType;
+import megamek.common.units.Entity;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.weapons.ArtilleryBayWeaponDirectFireHandler;
-import megamek.common.weapons.ArtilleryBayWeaponDirectHomingHandler;
-import megamek.common.weapons.ArtilleryBayWeaponIndirectFireHandler;
-import megamek.common.weapons.ArtilleryBayWeaponIndirectHomingHandler;
-import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDirectFireHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDirectHomingHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponIndirectFireHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponIndirectHomingHandler;
+import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -79,7 +79,7 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game,
      * megamek.server.Server)
      */
     @Override

@@ -40,7 +40,18 @@ import static megamek.common.options.OptionsConstants.*;
 import java.io.Serial;
 import java.util.List;
 
-import megamek.common.*;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.units.Aero;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Tank;
+import megamek.common.units.VTOL;
+import megamek.common.units.Warship;
 
 /**
  * Contains the options determining Unit Quirks of a unit (but not weapon quirks). When changing this, note that all

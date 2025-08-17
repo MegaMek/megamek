@@ -39,8 +39,9 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import megamek.common.*;
-import megamek.common.InfantryTransporter.PlatoonType;
+import megamek.common.units.Entity;
+import megamek.common.units.InfantryTransporter.PlatoonType;
+import megamek.common.bays.*;
 import org.junit.jupiter.api.Test;
 
 class BayDataTest {

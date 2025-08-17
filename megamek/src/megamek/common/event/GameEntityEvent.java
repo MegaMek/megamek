@@ -34,7 +34,7 @@
 
 package megamek.common.event;
 
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 
 /**
  * Instances of descendant classes are sent as a result of Game changes related to entities such as

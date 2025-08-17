@@ -44,7 +44,7 @@ import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Entity;
+import megamek.common.units.Entity;
 import megamek.common.moves.MovePath.MoveStepType;
 import megamek.common.moves.MoveStep;
 

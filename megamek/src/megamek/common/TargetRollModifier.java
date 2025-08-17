@@ -36,6 +36,8 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.Objects;
 
+import megamek.common.rolls.TargetRoll;
+
 /**
  * This class represents individual modifiers for a {@link TargetRoll}. Each modifier has a value, the actual modifier
  * like +1 or -2 or one of the finalizers like {@link TargetRoll#AUTOMATIC_FAIL}, a description (attacker jumped) and

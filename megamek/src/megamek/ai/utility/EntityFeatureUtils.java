@@ -36,7 +36,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-import megamek.common.*;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
+import megamek.common.units.SpaceStation;
+import megamek.common.units.SuperHeavyTank;
+import megamek.common.units.Tank;
+import megamek.common.units.Warship;
 
 /**
  * Utility class for calculating multiple features from entities.

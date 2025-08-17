@@ -34,12 +34,12 @@
 
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.EquipmentTypeLookup;
-import megamek.common.Game;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.ACBayHandler;
-import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.handlers.ac.ACBayHandler;
+import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -71,7 +71,7 @@ public class GaussBayWeapon extends AmmoBayWeapon {
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
+     * megamek.common.actions.WeaponAttackAction, megamek.common.game.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,

@@ -42,7 +42,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.Board;
+import megamek.common.board.Board;
 import megamek.common.Configuration;
 import megamek.logging.MMLogger;
 

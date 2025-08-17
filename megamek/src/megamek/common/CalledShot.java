@@ -36,6 +36,11 @@ package megamek.common;
 import java.io.Serializable;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.Targetable;
 
 /**
  * Some static methods for called shots

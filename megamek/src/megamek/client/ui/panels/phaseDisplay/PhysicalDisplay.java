@@ -66,11 +66,27 @@ import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.turns.CounterGrappleTurn;
+import megamek.common.units.BipedMek;
+import megamek.common.units.BuildingTarget;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
+import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
 public class PhysicalDisplay extends AttackPhaseDisplay {

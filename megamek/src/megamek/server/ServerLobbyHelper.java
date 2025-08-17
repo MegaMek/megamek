@@ -41,9 +41,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import megamek.common.Entity;
-import megamek.common.ForceAssignable;
-import megamek.common.Game;
+import megamek.common.units.Entity;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;

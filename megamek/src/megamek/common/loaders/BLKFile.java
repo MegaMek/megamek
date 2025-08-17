@@ -44,13 +44,12 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import megamek.common.exceptions.LocationFullException;
 import megamek.common.QuirkEntry;
-import megamek.common.bays.SuperHeavyVehicleBay;
 import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.*;
 import megamek.common.equipment.*;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
@@ -1194,10 +1193,10 @@ public class BLKFile {
         if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY) {
             name += ":Body";
         }
-        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
+        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LEFT_ARM) {
             name += ":LA";
         }
-        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
+        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RIGHT_ARM) {
             name += ":RA";
         }
         if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {

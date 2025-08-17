@@ -34,7 +34,7 @@
 
 package megamek.common.loaders;
 
-import megamek.common.*;
+import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
@@ -201,10 +201,10 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
                     mountLoc = BattleArmor.MOUNT_LOC_BODY;
                     saEquip[x] = saEquip[x].replace(":Body", "");
                 } else if (saEquip[x].contains(":LA")) {
-                    mountLoc = BattleArmor.MOUNT_LOC_LARM;
+                    mountLoc = BattleArmor.MOUNT_LOC_LEFT_ARM;
                     saEquip[x] = saEquip[x].replace(":LA", "");
                 } else if (saEquip[x].contains(":RA")) {
-                    mountLoc = BattleArmor.MOUNT_LOC_RARM;
+                    mountLoc = BattleArmor.MOUNT_LOC_RIGHT_ARM;
                     saEquip[x] = saEquip[x].replace(":RA", "");
                 } else if (saEquip[x].contains(":TU")) {
                     mountLoc = BattleArmor.MOUNT_LOC_TURRET;

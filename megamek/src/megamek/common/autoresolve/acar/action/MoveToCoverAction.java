@@ -33,30 +33,16 @@
 
 package megamek.common.autoresolve.acar.action;
 
-import megamek.common.board.Coords;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.handler.MoveToCoverActionHandler;
+import megamek.common.board.Coords;
 
-public class MoveToCoverAction implements Action {
-
-    private final int formationId;
-    private final int targetFormationId;
-    private final Coords destination;
-
-    public MoveToCoverAction(int formationId, int targetFormationId, Coords destination) {
-        this.formationId = formationId;
-        this.targetFormationId = targetFormationId;
-        this.destination = destination;
-    }
+public record MoveToCoverAction(int formationId, int targetFormationId, Coords destination) implements Action {
 
     @Override
     public int getEntityId() {
         return formationId;
-    }
-
-    public int getTargetFormationId() {
-        return targetFormationId;
     }
 
     @Override
@@ -67,10 +53,6 @@ public class MoveToCoverAction implements Action {
     @Override
     public boolean isDataValid(SimulationContext context) {
         return context.getFormation(formationId).isPresent();
-    }
-
-    public Coords getDestination() {
-        return destination;
     }
 
     @Override

@@ -173,7 +173,7 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
     }
 
     protected double weaponHeat(WeaponMounted weapon) {
-        WeaponType wType = (WeaponType) weapon.getType();
+        WeaponType wType = weapon.getType();
         double weaponHeat = wType.getHeat();
 
         if (weapon.isOneShot()) {
@@ -246,16 +246,14 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
             return false;
         } else if ((eType instanceof PPCWeapon) && (mounted.getLinkedBy() == null)) {
             return false;
-        } else if ((eType instanceof WeaponType) && ((((WeaponType) eType).getAmmoType()
-              == AmmoType.AmmoTypeEnum.AC_ROTARY)
-              || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.AC)
-              || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP)
-              || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.AC_PRIMITIVE)
-              || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.PAC)
-              || (((WeaponType) eType).getAmmoType() == AmmoType.AmmoTypeEnum.LAC))) {
-            return false;
+        } else {
+            return (!(eType instanceof WeaponType)) || ((((WeaponType) eType).getAmmoType()
+                  != AmmoType.AmmoTypeEnum.AC_ROTARY)
+                  && (((WeaponType) eType).getAmmoType() != AmmoType.AmmoTypeEnum.AC)
+                  && (((WeaponType) eType).getAmmoType() != AmmoType.AmmoTypeEnum.AC_IMP)
+                  && (((WeaponType) eType).getAmmoType() != AmmoType.AmmoTypeEnum.AC_PRIMITIVE)
+                  && (((WeaponType) eType).getAmmoType() != AmmoType.AmmoTypeEnum.PAC)
+                  && (((WeaponType) eType).getAmmoType() != AmmoType.AmmoTypeEnum.LAC));
         }
-
-        return true;
     }
 }

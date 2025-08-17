@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.bays;
 
+import java.io.Serial;
+
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.InfantryTransporter;
@@ -43,10 +45,11 @@ import megamek.common.units.InfantryTransporter;
  * Marines count as crew and should have at least steerage quarters.
  */
 public final class InfantryBay extends Bay implements InfantryTransporter {
+    @Serial
     private static final long serialVersionUID = 946578184870030662L;
 
     // This represents the "factory setting" of the bay, and is used primarily by the construction rules.
-    // In practice we support loading any type of infantry into the bay as long as there is room to avoid
+    // In practice, we support loading any type of infantry into the bay as long as there is room to avoid
     // the headache of having to do formal reconfigurations.
     private PlatoonType platoonType = PlatoonType.FOOT;
 
@@ -62,8 +65,7 @@ public final class InfantryBay extends Bay implements InfantryTransporter {
      * Create a space for the given tonnage of troops. This is the total tonnage of the bay; the amount of space taken
      * up by a given unit depends on the PlatoonType.
      *
-     * @param space     - The number of platoons (or squads for mechanized) of the designated type this bay can carry.
-     * @param bayNumber
+     * @param space - The number of platoons (or squads for mechanized) of the designated type this bay can carry.
      */
     public InfantryBay(double space, int doors, int bayNumber, PlatoonType bayType) {
         // We need to track by total tonnage rather than individual platoons
@@ -73,7 +75,7 @@ public final class InfantryBay extends Bay implements InfantryTransporter {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
-        currentdoors = doors;
+        currentDoors = doors;
         this.platoonType = bayType;
     }
 

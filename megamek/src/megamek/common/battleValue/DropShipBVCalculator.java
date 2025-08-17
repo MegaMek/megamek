@@ -77,29 +77,29 @@ public class DropShipBVCalculator extends LargeAeroBVCalculator {
     @Override
     protected int bvLocation(Mounted<?> equipment) {
         if (equipment.getLocation() == Dropship.LOC_NOSE) {
-            return BVLOC_NOSE;
+            return BV_LOC_NOSE;
         } else if ((equipment.getLocation() == Dropship.LOC_LWING) && !equipment.isRearMounted()) {
-            return BVLOC_LEFT;
+            return BV_LOC_LEFT;
         } else if ((equipment.getLocation() == Dropship.LOC_LWING) && equipment.isRearMounted()) {
-            return BVLOC_LEFT_AFT;
+            return BV_LOC_LEFT_AFT;
         } else if (equipment.getLocation() == Dropship.LOC_AFT) {
-            return BVLOC_AFT;
+            return BV_LOC_AFT;
         } else if ((equipment.getLocation() == Dropship.LOC_RWING) && equipment.isRearMounted()) {
-            return BVLOC_RIGHT_AFT;
+            return BV_LOC_RIGHT_AFT;
         } else {
-            return BVLOC_RIGHT;
+            return BV_LOC_RIGHT;
         }
     }
 
     @Override
     protected String arcName(int bvLocation) {
         return switch (bvLocation) {
-            case BVLOC_NOSE -> entity.getLocationName(Dropship.LOC_NOSE);
-            case BVLOC_LEFT -> entity.getLocationName(Dropship.LOC_LWING);
-            case BVLOC_LEFT_AFT -> entity.getLocationName(Dropship.LOC_LWING) + " (R)";
-            case BVLOC_AFT -> entity.getLocationName(Dropship.LOC_AFT);
-            case BVLOC_RIGHT_AFT -> entity.getLocationName(Dropship.LOC_RWING) + " (R)";
-            case BVLOC_RIGHT -> entity.getLocationName(Dropship.LOC_RWING);
+            case BV_LOC_NOSE -> entity.getLocationName(Dropship.LOC_NOSE);
+            case BV_LOC_LEFT -> entity.getLocationName(Dropship.LOC_LWING);
+            case BV_LOC_LEFT_AFT -> entity.getLocationName(Dropship.LOC_LWING) + " (R)";
+            case BV_LOC_AFT -> entity.getLocationName(Dropship.LOC_AFT);
+            case BV_LOC_RIGHT_AFT -> entity.getLocationName(Dropship.LOC_RWING) + " (R)";
+            case BV_LOC_RIGHT -> entity.getLocationName(Dropship.LOC_RWING);
             default -> "Error: Unexpected location value.";
         };
     }

@@ -10118,7 +10118,7 @@ public class TWGameManager extends AbstractGameManager {
                 // Add each coords that is within arc/range as protected
                 int maxDist = 3;
                 if (e instanceof BattleArmor) {
-                    int numTroopers = ((BattleArmor) e).getNumberActiverTroopers();
+                    int numTroopers = ((BattleArmor) e).getNumberActiveTroopers();
                     // Anything above is the same as the default
                     maxDist = switch (numTroopers) {
                         case 1 -> 1;
@@ -18689,7 +18689,7 @@ public class TWGameManager extends AbstractGameManager {
         } else if (rollValue <= 6) {
             if (entity instanceof BattleArmor myBA) {
                 // It takes 50% casualties, rounded up.
-                int numDeaths = (int) (Math.ceil((myBA.getNumberActiverTroopers()) / 2.0));
+                int numDeaths = (int) (Math.ceil((myBA.getNumberActiveTroopers()) / 2.0));
                 for (int x = 0; x < numDeaths; x++) {
                     vDesc.addAll(applyCriticalHit(entity, 0, null, false, 0, false));
                 }
@@ -18728,7 +18728,7 @@ public class TWGameManager extends AbstractGameManager {
         } else if (rollValue <= 10) {
             if (entity instanceof BattleArmor myBA) {
                 // It takes 25% casualties, rounded up.
-                int numDeaths = (int) (Math.ceil(((myBA.getNumberActiverTroopers())) / 4.0));
+                int numDeaths = (int) (Math.ceil(((myBA.getNumberActiveTroopers())) / 4.0));
                 for (int x = 0; x < numDeaths; x++) {
                     vDesc.addAll(applyCriticalHit(entity, 0, null, false, 0, false));
                 }

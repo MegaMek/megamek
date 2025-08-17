@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2002-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,15 +34,16 @@
 
 package megamek.common.battleArmor;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.units.Mek;
-import megamek.common.loaders.MekFileParser;
-import megamek.common.equipment.Transporter;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.Transporter;
+import megamek.common.game.Game;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 
 /**
  * Represents a set of handles on an OmniMek used by Battle Armor units equipped with Boarding Claws to attach
@@ -51,6 +52,7 @@ import megamek.common.annotations.Nullable;
  * @see MekFileParser#postLoadInit
  */
 public class BattleArmorHandles implements Transporter {
+    @Serial
     private static final long serialVersionUID = -7149931565043762975L;
 
     /** The troopers being carried. */
@@ -123,19 +125,14 @@ public class BattleArmorHandles implements Transporter {
         if (carriedBA == null) {
             return false;
         } else {
-            int tloc = BattleArmor.LOC_SQUAD;
-            switch (loc) {
-                case Mek.LOC_CT:
-                    tloc = isRear ? BattleArmor.LOC_TROOPER_5 : BattleArmor.LOC_TROOPER_6;
-                    break;
-                case Mek.LOC_LT:
-                    tloc = isRear ? BattleArmor.LOC_TROOPER_4 : BattleArmor.LOC_TROOPER_2;
-                    break;
-                case Mek.LOC_RT:
-                    tloc = isRear ? BattleArmor.LOC_TROOPER_3 : BattleArmor.LOC_TROOPER_1;
-                    break;
-            }
-            return (carriedBA.locations() > tloc) && (carriedBA.getInternal(tloc) > 0);
+            int trooperLocation = BattleArmor.LOC_SQUAD;
+            trooperLocation = switch (loc) {
+                case Mek.LOC_CT -> isRear ? BattleArmor.LOC_TROOPER_5 : BattleArmor.LOC_TROOPER_6;
+                case Mek.LOC_LT -> isRear ? BattleArmor.LOC_TROOPER_4 : BattleArmor.LOC_TROOPER_2;
+                case Mek.LOC_RT -> isRear ? BattleArmor.LOC_TROOPER_3 : BattleArmor.LOC_TROOPER_1;
+                default -> trooperLocation;
+            };
+            return (carriedBA.locations() > trooperLocation) && (carriedBA.getInternal(trooperLocation) > 0);
         }
     }
 

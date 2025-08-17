@@ -52,12 +52,12 @@ import megamek.common.weapons.bayweapons.BayWeapon;
 
 public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
 
-    protected static final int BVLOC_NOSE = 0;
-    protected static final int BVLOC_LEFT = 1;
-    protected static final int BVLOC_LEFT_AFT = 2;
-    protected static final int BVLOC_AFT = 3;
-    protected static final int BVLOC_RIGHT_AFT = 4;
-    protected static final int BVLOC_RIGHT = 5;
+    protected static final int BV_LOC_NOSE = 0;
+    protected static final int BV_LOC_LEFT = 1;
+    protected static final int BV_LOC_LEFT_AFT = 2;
+    protected static final int BV_LOC_AFT = 3;
+    protected static final int BV_LOC_RIGHT_AFT = 4;
+    protected static final int BV_LOC_RIGHT = 5;
 
     protected int nominalNoseLocation;
     protected int nominalLeftLocation;
@@ -89,7 +89,7 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
         for (AmmoMounted ammo : List.copyOf(entity.getAmmo())) {
             AmmoType ammoType = ammo.getType();
 
-            // don't count depleted ammo, AMS and oneshot ammo
+            // don't count depleted ammo, AMS and one shot ammo
             if (ammoCounts(ammo)) {
                 // Ammo may be loaded in multi-ton increments
                 int ratio = Math.max(1, ammo.getUsableShotsLeft() / ammoType.getShots());
@@ -109,32 +109,32 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
         }
 
         for (Mounted<?> weapon : List.copyOf(entity.getTotalWeaponList())) {
-            WeaponType wtype = (WeaponType) weapon.getType();
+            WeaponType weaponType = (WeaponType) weapon.getType();
 
             if (weapon.isDestroyed() ||
-                  wtype.hasFlag(WeaponType.F_AMS) ||
-                  wtype.hasFlag(WeaponType.F_B_POD) ||
-                  wtype.hasFlag(WeaponType.F_M_POD) ||
-                  wtype instanceof BayWeapon ||
+                  weaponType.hasFlag(WeaponType.F_AMS) ||
+                  weaponType.hasFlag(WeaponType.F_B_POD) ||
+                  weaponType.hasFlag(WeaponType.F_M_POD) ||
+                  weaponType instanceof BayWeapon ||
                   weapon.isWeaponGroup()) {
                 continue;
             }
 
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
-            if (!((wtype.hasFlag(WeaponType.F_ENERGY) &&
-                  !((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.PLASMA) ||
-                        (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.VEHICLE_FLAMER) ||
-                        (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.HEAVY_FLAMER) ||
-                        (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.CHEMICAL_LASER))) ||
-                  wtype.hasFlag(WeaponType.F_ONESHOT) ||
-                  wtype.hasFlag(WeaponType.F_INFANTRY) ||
-                  (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.NA))) {
-                String key = bvLocation(weapon) + ":" + wtype.getAmmoType() + ":" + wtype.getRackSize();
+            if (!((weaponType.hasFlag(WeaponType.F_ENERGY) &&
+                  !((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.PLASMA) ||
+                        (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.VEHICLE_FLAMER) ||
+                        (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.HEAVY_FLAMER) ||
+                        (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.CHEMICAL_LASER))) ||
+                  weaponType.hasFlag(WeaponType.F_ONESHOT) ||
+                  weaponType.hasFlag(WeaponType.F_INFANTRY) ||
+                  (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.NA))) {
+                String key = bvLocation(weapon) + ":" + weaponType.getAmmoType() + ":" + weaponType.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(entity));
+                    weaponsForExcessiveAmmo.put(key, weaponType.getBV(entity));
                 } else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(entity) + weaponsForExcessiveAmmo.get(key));
+                    weaponsForExcessiveAmmo.put(key, weaponType.getBV(entity) + weaponsForExcessiveAmmo.get(key));
                 }
             }
         }
@@ -209,12 +209,12 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
         double weaponsBVRight = processWeaponSection(false, rightFilter, false);
         double weaponsBVAftLeft = processWeaponSection(false, leftAftFilter, false);
         double weaponsBVAftRight = processWeaponSection(false, rightAftFilter, false);
-        bvPerArc.put(BVLOC_NOSE, weaponsBVFront);
-        bvPerArc.put(BVLOC_LEFT, weaponsBVLeft);
-        bvPerArc.put(BVLOC_RIGHT, weaponsBVRight);
-        bvPerArc.put(BVLOC_AFT, weaponsBVRear);
-        bvPerArc.put(BVLOC_LEFT_AFT, weaponsBVAftLeft);
-        bvPerArc.put(BVLOC_RIGHT_AFT, weaponsBVAftRight);
+        bvPerArc.put(BV_LOC_NOSE, weaponsBVFront);
+        bvPerArc.put(BV_LOC_LEFT, weaponsBVLeft);
+        bvPerArc.put(BV_LOC_RIGHT, weaponsBVRight);
+        bvPerArc.put(BV_LOC_AFT, weaponsBVRear);
+        bvPerArc.put(BV_LOC_LEFT_AFT, weaponsBVAftLeft);
+        bvPerArc.put(BV_LOC_RIGHT_AFT, weaponsBVAftRight);
         final double maxBV = bvPerArc.values().stream().mapToDouble(bv -> bv).max().orElse(0);
         for (Map.Entry<Integer, Double> entry : bvPerArc.entrySet()) {
             if (entry.getValue() == maxBV) {

@@ -33,30 +33,16 @@
 
 package megamek.common.autoresolve.acar.action;
 
-import megamek.common.board.Coords;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.handler.MoveActionHandler;
+import megamek.common.board.Coords;
 
-public class MoveAction implements Action {
-
-    private final int formationId;
-    private final int targetFormationId;
-    private final Coords destination;
-
-    public MoveAction(int formationId, int targetFormationId, Coords destination) {
-        this.formationId = formationId;
-        this.targetFormationId = targetFormationId;
-        this.destination = destination;
-    }
+public record MoveAction(int formationId, int targetFormationId, Coords destination) implements Action {
 
     @Override
     public int getEntityId() {
         return formationId;
-    }
-
-    public int getTargetFormationId() {
-        return targetFormationId;
     }
 
     @Override
@@ -67,10 +53,6 @@ public class MoveAction implements Action {
     @Override
     public boolean isDataValid(SimulationContext context) {
         return context.getFormation(formationId).isPresent();
-    }
-
-    public Coords getDestination() {
-        return destination;
     }
 
     @Override

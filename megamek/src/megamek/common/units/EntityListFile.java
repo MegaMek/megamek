@@ -1172,9 +1172,9 @@ public class EntityListFile {
                 for (Mounted<?> m : entity.getEquipment()) {
                     if (m.getType().hasFlag(MiscType.F_BA_MEA)) {
                         Mounted<?> manipulator = null;
-                        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
+                        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LEFT_ARM) {
                             manipulator = ba.getLeftManipulator();
-                        } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
+                        } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RIGHT_ARM) {
                             manipulator = ba.getRightManipulator();
                         }
                         output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_BA_MEA + ' ');

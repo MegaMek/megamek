@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,23 +36,25 @@ package megamek.common.bays;
 
 import static java.util.stream.Collectors.toList;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.interfaces.ITechnology;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.equipment.Transporter;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ITechnology;
+import megamek.common.units.Entity;
 
 /**
  * Represents a volume of space set aside for carrying cargo of some sort aboard large spacecraft and mobile structures
  */
 public class Bay implements Transporter, ITechnology {
+    @Serial
     private static final long serialVersionUID = -9056450317468016272L;
 
     public static final String FIELD_SEPARATOR = ":";
@@ -63,7 +65,7 @@ public class Bay implements Transporter, ITechnology {
     protected int minDoors = 0;
     protected int doors = 1;
     protected int doorsNext = 1;
-    protected int currentdoors = doors;
+    protected int currentDoors = doors;
     protected int unloadedThisTurn = 0;
     protected int loadedThisTurn = 0;
     protected List<Integer> recoverySlots = new ArrayList<>();
@@ -102,7 +104,7 @@ public class Bay implements Transporter, ITechnology {
         currentSpace = space;
         this.doors = doors;
         doorsNext = doors;
-        this.currentdoors = doors;
+        this.currentDoors = doors;
         this.bayNumber = bayNumber;
         damage = 0;
     }
@@ -150,16 +152,16 @@ public class Bay implements Transporter, ITechnology {
     public void setDoors(int d) {
         doors = d;
         doorsNext = d;
-        currentdoors = d;
+        currentDoors = d;
     }
 
     public int getCurrentDoors() {
         // defense against invalid values
-        return Math.min(doors, Math.max(currentdoors, 0));
+        return Math.min(doors, Math.max(currentDoors, 0));
     }
 
     public void setCurrentDoors(int d) {
-        currentdoors = d;
+        currentDoors = d;
     }
 
     // for setting doors after this launch
@@ -172,7 +174,7 @@ public class Bay implements Transporter, ITechnology {
     }
 
     public void resetDoors() {
-        doorsNext = currentdoors;
+        doorsNext = currentDoors;
     }
 
     public void resetCounts() {
@@ -201,7 +203,7 @@ public class Bay implements Transporter, ITechnology {
 
     @Override
     public boolean canLoad(Entity unit) {
-        return (getUnused() >= spaceForUnit(unit)) && (currentdoors > loadedThisTurn);
+        return (getUnused() >= spaceForUnit(unit)) && (currentDoors > loadedThisTurn);
     }
 
     /**
@@ -209,7 +211,7 @@ public class Bay implements Transporter, ITechnology {
      *       doors, not if it has units left to unload or the status of those.
      */
     public boolean canUnloadUnits() {
-        return currentdoors > unloadedThisTurn;
+        return currentDoors > unloadedThisTurn;
     }
 
     @Override
@@ -265,7 +267,7 @@ public class Bay implements Transporter, ITechnology {
 
     /** @return A (possibly empty) list of units from this bay that can be unloaded on the ground. */
     public List<Entity> getUnloadableUnits() {
-        // TODO: we need to handle aeros and VTOLs differently
+        // TODO: we need to handle aerospace and VTOLs differently
         // TODO: shouldn't this check the entity state like wasLoadedThisTurn()? It is equal to getLoadedUnits()
         return troops.stream().map(game::getEntity).filter(Objects::nonNull).collect(toList());
     }
@@ -425,7 +427,7 @@ public class Bay implements Transporter, ITechnology {
     }
 
     /**
-     * Some bays (dropshuttle and repair facility) have a maximum number per armor facing.
+     * Some bays (drop-shuttle and repair facility) have a maximum number per armor facing.
      *
      * @return The facing of the bay, or Entity.LOC_NONE if the bay does not require a facing.
      */

@@ -36,15 +36,12 @@ package megamek.common.autoresolve.acar.report;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import megamek.common.game.IGame;
 import megamek.common.alphaStrike.ASRange;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.component.Formation;
+import megamek.common.game.IGame;
 
-public class MovementReport implements IMovementReport {
-
-    private final IGame game;
-    private final Consumer<PublicReportEntry> reportConsumer;
+public record MovementReport(IGame game, Consumer<PublicReportEntry> reportConsumer) implements IMovementReport {
 
     private static final Map<ASRange, String> reportRangeClosingIn = Map.of(
           ASRange.SHORT, "acar.movementPhase.advancingDetailed",
@@ -61,11 +58,6 @@ public class MovementReport implements IMovementReport {
           ASRange.EXTREME, "acar.range.extreme",
           ASRange.HORIZON, "acar.range.beyondVisual"
     );
-
-    private MovementReport(IGame game, Consumer<PublicReportEntry> reportConsumer) {
-        this.reportConsumer = reportConsumer;
-        this.game = game;
-    }
 
     public static IMovementReport create(SimulationManager manager) {
         if (manager.isLogSuppressed()) {

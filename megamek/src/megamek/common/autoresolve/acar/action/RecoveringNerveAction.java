@@ -37,13 +37,7 @@ import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.handler.RecoveringNerveActionHandler;
 
-public class RecoveringNerveAction implements Action {
-
-    private final int formationId;
-
-    public RecoveringNerveAction(int formationId) {
-        this.formationId = formationId;
-    }
+public record RecoveringNerveAction(int formationId) implements Action {
 
     @Override
     public int getEntityId() {

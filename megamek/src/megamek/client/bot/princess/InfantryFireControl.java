@@ -35,18 +35,18 @@ package megamek.client.bot.princess;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.common.Hex;
+import megamek.common.RangeType;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.Hex;
-import megamek.common.units.Infantry;
-import megamek.common.RangeType;
-import megamek.common.units.Targetable;
-import megamek.common.equipment.WeaponType;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
@@ -135,7 +135,7 @@ public class InfantryFireControl extends FireControl {
                 if (shooter.isConventionalInfantry()) {
                     infantryCount = shooter.getInternal(Infantry.LOC_INFANTRY);
                 } else if (shooter instanceof BattleArmor) {
-                    infantryCount = ((BattleArmor) shooter).getNumberActiverTroopers();
+                    infantryCount = ((BattleArmor) shooter).getNumberActiveTroopers();
                 }
 
                 maxInfantryWeaponDamage += ((InfantryWeapon) weaponType).getInfantryDamage()

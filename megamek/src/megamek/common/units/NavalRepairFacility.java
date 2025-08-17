@@ -36,11 +36,11 @@ package megamek.common.units;
 
 import java.text.DecimalFormat;
 
-import megamek.common.util.RoundWeight;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.bays.Bay;
 import megamek.common.bays.UnitBay;
+import megamek.common.util.RoundWeight;
 
 /**
  * Standard naval repair facilities for space stations (jumpships and warships can also carry a single facility). See
@@ -97,7 +97,7 @@ public class NavalRepairFacility extends UnitBay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
-        currentdoors = doors;
+        currentDoors = doors;
         this.facing = facing;
         this.pressurized = pressurized;
         this.arts = arts;

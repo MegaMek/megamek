@@ -51,7 +51,6 @@ import javax.xml.parsers.DocumentBuilder;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.CriticalSlot;
-import megamek.common.exceptions.LocationFullException;
 import megamek.common.OffBoardDirection;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
@@ -61,6 +60,7 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.Gender;
 import megamek.common.equipment.*;
 import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -2639,9 +2639,9 @@ public class MULParser {
                   .append(meaMountLoc).append("\n");
             return;
         }
-        if (meaMountLoc == BattleArmor.MOUNT_LOC_LARM) {
+        if (meaMountLoc == BattleArmor.MOUNT_LOC_LEFT_ARM) {
             mountedManip = ((BattleArmor) entity).getLeftManipulator();
-        } else if (meaMountLoc == BattleArmor.MOUNT_LOC_RARM) {
+        } else if (meaMountLoc == BattleArmor.MOUNT_LOC_RIGHT_ARM) {
             mountedManip = ((BattleArmor) entity).getRightManipulator();
         }
 

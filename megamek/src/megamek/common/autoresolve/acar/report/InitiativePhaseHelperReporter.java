@@ -41,15 +41,8 @@ import megamek.common.Team;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
 
-public class InitiativePhaseHelperReporter implements IInitiativePhaseHelperReporter {
-
-    private final Consumer<PublicReportEntry> reportConsumer;
-    private final SimulationContext context;
-
-    private InitiativePhaseHelperReporter(SimulationContext context, Consumer<PublicReportEntry> reportConsumer) {
-        this.reportConsumer = reportConsumer;
-        this.context = context;
-    }
+public record InitiativePhaseHelperReporter(SimulationContext context, Consumer<PublicReportEntry> reportConsumer)
+      implements IInitiativePhaseHelperReporter {
 
     public static IInitiativePhaseHelperReporter create(SimulationManager manager) {
         if (manager.isLogSuppressed()) {

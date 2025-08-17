@@ -32,7 +32,6 @@
  */
 package megamek.common.autoresolve;
 
-import megamek.common.board.Board;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.SimulationOptions;
@@ -45,6 +44,7 @@ import megamek.common.autoresolve.acar.phase.StartingScenarioPhase;
 import megamek.common.autoresolve.acar.phase.VictoryPhase;
 import megamek.common.autoresolve.converter.SetupForces;
 import megamek.common.autoresolve.event.AutoResolveConcludedEvent;
+import megamek.common.board.Board;
 import megamek.common.options.AbstractOptions;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 
@@ -72,9 +72,8 @@ public class Resolver {
      * @param suppressLog         whether to suppress log output, important to keep memory usage low during parallel
      *                            simulation
      */
-    public Resolver(SetupForces setupForces,
-          AbstractOptions gameOptions, Board board, PlanetaryConditions planetaryConditions,
-          boolean suppressLog) {
+    public Resolver(SetupForces setupForces, AbstractOptions gameOptions, Board board,
+          PlanetaryConditions planetaryConditions, boolean suppressLog) {
         this.options = new SimulationOptions(gameOptions);
         this.setupForces = setupForces;
         this.board = board;

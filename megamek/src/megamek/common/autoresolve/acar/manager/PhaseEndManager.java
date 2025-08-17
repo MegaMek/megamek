@@ -50,8 +50,6 @@ public class PhaseEndManager implements SimulationManagerHelper {
 
     public void managePhase() {
         switch (simulationManager.getGame().getPhase()) {
-            case STARTING_SCENARIO:
-                break;
             case INITIATIVE:
                 simulationManager.getGame().setupDeployment();
                 simulationManager.resetFormations();
@@ -67,7 +65,7 @@ public class PhaseEndManager implements SimulationManagerHelper {
                 phaseCleanup();
                 simulationManager.changePhase(GamePhase.SBF_DETECTION);
                 break;
-            case SBF_DETECTION: // this is being used just as a "pre movement phase", we dont actually handle sbf detection
+            case SBF_DETECTION: // this is being used just as a "pre movement phase", we don't actually handle sbf detection
                 simulationManager.getActionsProcessor().handleActions();
                 phaseCleanup();
                 // Print the movement phase header before entering in it

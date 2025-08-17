@@ -36,15 +36,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.ai.utility.Memory;
-import megamek.common.units.Entity;
-import megamek.common.game.InitiativeRoll;
 import megamek.common.ToHitData;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.autoresolve.acar.role.Role;
+import megamek.common.game.InitiativeRoll;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
+import megamek.common.units.Entity;
 
 
 public class Formation extends SBFFormation {
@@ -61,7 +61,7 @@ public class Formation extends SBFFormation {
     private InitiativeRoll initiativeRoll = new InitiativeRoll();
     private Role role;
     private Entity entity;
-    private List<Integer> beingTargetedBy = new ArrayList<>();
+    private final List<Integer> beingTargetedBy = new ArrayList<>();
     private int startingSize;
 
     public void addBeingTargetedBy(Formation formation) {

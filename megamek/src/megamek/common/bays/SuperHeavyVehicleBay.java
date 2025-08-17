@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.bays;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.units.Entity;
@@ -45,6 +47,7 @@ import megamek.common.units.Tank;
  * spacecraft or other units.
  */
 public final class SuperHeavyVehicleBay extends UnitBay {
+    @Serial
     private static final long serialVersionUID = 3490408642054662664L;
 
     /**
@@ -59,13 +62,13 @@ public final class SuperHeavyVehicleBay extends UnitBay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
-        currentdoors = doors;
+        currentDoors = doors;
     }
 
     @Override
     public boolean canLoad(Entity unit) {
         boolean loadableQuadVee = (unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_VEHICLE);
-        return (getUnused() >= 1) && (currentdoors >= loadedThisTurn)
+        return (getUnused() >= 1) && (currentDoors >= loadedThisTurn)
               && (unit.getWeight() <= 200) && ((unit instanceof Tank) || loadableQuadVee);
     }
 

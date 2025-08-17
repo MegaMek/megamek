@@ -50,8 +50,8 @@ import megamek.common.units.Warship;
 
 public class WarShipBVCalculator extends JumpShipBVCalculator {
 
-    protected static final int BVLOC_LEFT_BROADSIDE = 6;
-    protected static final int BVLOC_RIGHT_BROADSIDE = 7;
+    protected static final int BV_LOC_LEFT_BROADSIDE = 6;
+    protected static final int BV_LOC_RIGHT_BROADSIDE = 7;
 
     protected static final int[] nextLocationCW = { 5, 0, 6, 2, 3, 7, 1, 4 };
     protected static final int[] nextLocationCCW = { 1, 6, 3, 4, 7, 0, 2, 5 };
@@ -71,21 +71,21 @@ public class WarShipBVCalculator extends JumpShipBVCalculator {
     @Override
     protected int bvLocation(Mounted<?> equipment) {
         if (equipment.getLocation() == Jumpship.LOC_NOSE) {
-            return BVLOC_NOSE;
+            return BV_LOC_NOSE;
         } else if (equipment.getLocation() == Jumpship.LOC_FLS) {
-            return BVLOC_LEFT;
+            return BV_LOC_LEFT;
         } else if (equipment.getLocation() == Jumpship.LOC_ALS) {
-            return BVLOC_LEFT_AFT;
+            return BV_LOC_LEFT_AFT;
         } else if (equipment.getLocation() == Jumpship.LOC_AFT) {
-            return BVLOC_AFT;
+            return BV_LOC_AFT;
         } else if (equipment.getLocation() == Jumpship.LOC_ARS) {
-            return BVLOC_RIGHT_AFT;
+            return BV_LOC_RIGHT_AFT;
         } else if (equipment.getLocation() == Jumpship.LOC_FRS) {
-            return BVLOC_RIGHT;
+            return BV_LOC_RIGHT;
         } else if (equipment.getLocation() == Warship.LOC_LBS) {
-            return BVLOC_LEFT_BROADSIDE;
+            return BV_LOC_LEFT_BROADSIDE;
         } else {
-            return BVLOC_RIGHT_BROADSIDE;
+            return BV_LOC_RIGHT_BROADSIDE;
         }
     }
 
@@ -108,10 +108,10 @@ public class WarShipBVCalculator extends JumpShipBVCalculator {
         double weaponsBVAftRight = processWeaponSection(false, rightAftFilter, false);
         double weaponsBVRightBroadside = processWeaponSection(false, rightBroadsideFilter, false);
         double weaponsBVLeftBroadside = processWeaponSection(false, leftBroadsideFilter, false);
-        bvPerArc.put(BVLOC_NOSE, weaponsBVFront);
-        bvPerArc.put(BVLOC_AFT, weaponsBVRear);
-        bvPerArc.put(BVLOC_LEFT_BROADSIDE, weaponsBVLeftBroadside);
-        bvPerArc.put(BVLOC_RIGHT_BROADSIDE, weaponsBVRightBroadside);
+        bvPerArc.put(BV_LOC_NOSE, weaponsBVFront);
+        bvPerArc.put(BV_LOC_AFT, weaponsBVRear);
+        bvPerArc.put(BV_LOC_LEFT_BROADSIDE, weaponsBVLeftBroadside);
+        bvPerArc.put(BV_LOC_RIGHT_BROADSIDE, weaponsBVRightBroadside);
         final double maxBV = bvPerArc.values().stream().mapToDouble(bv -> bv).max().orElse(0);
         for (Map.Entry<Integer, Double> entry : bvPerArc.entrySet()) {
             if (entry.getValue() == maxBV) {
@@ -119,10 +119,10 @@ public class WarShipBVCalculator extends JumpShipBVCalculator {
                 break;
             }
         }
-        bvPerArc.put(BVLOC_LEFT, weaponsBVLeft);
-        bvPerArc.put(BVLOC_RIGHT, weaponsBVRight);
-        bvPerArc.put(BVLOC_LEFT_AFT, weaponsBVAftLeft);
-        bvPerArc.put(BVLOC_RIGHT_AFT, weaponsBVAftRight);
+        bvPerArc.put(BV_LOC_LEFT, weaponsBVLeft);
+        bvPerArc.put(BV_LOC_RIGHT, weaponsBVRight);
+        bvPerArc.put(BV_LOC_LEFT_AFT, weaponsBVAftLeft);
+        bvPerArc.put(BV_LOC_RIGHT_AFT, weaponsBVAftRight);
         int firstAdjacentArc = getAdjacentLocationCCW(nominalNoseLocation);
         int secondAdjacentArc = getAdjacentLocationCW(nominalNoseLocation);
         if (bvPerArc.get(firstAdjacentArc) > bvPerArc.get(secondAdjacentArc)) {
@@ -185,25 +185,17 @@ public class WarShipBVCalculator extends JumpShipBVCalculator {
 
     @Override
     protected String arcName(int bvLocation) {
-        switch (bvLocation) {
-            case BVLOC_NOSE:
-                return entity.getLocationName(Jumpship.LOC_NOSE);
-            case BVLOC_LEFT:
-                return entity.getLocationName(Jumpship.LOC_FLS);
-            case BVLOC_LEFT_AFT:
-                return entity.getLocationName(Jumpship.LOC_ALS);
-            case BVLOC_AFT:
-                return entity.getLocationName(Jumpship.LOC_AFT);
-            case BVLOC_RIGHT_AFT:
-                return entity.getLocationName(Jumpship.LOC_ARS);
-            case BVLOC_RIGHT:
-                return entity.getLocationName(Jumpship.LOC_FRS);
-            case BVLOC_LEFT_BROADSIDE:
-                return entity.getLocationName(Warship.LOC_LBS);
-            case BVLOC_RIGHT_BROADSIDE:
-                return entity.getLocationName(Warship.LOC_RBS);
-        }
-        return "Error: Unexpected location value.";
+        return switch (bvLocation) {
+            case BV_LOC_NOSE -> entity.getLocationName(Jumpship.LOC_NOSE);
+            case BV_LOC_LEFT -> entity.getLocationName(Jumpship.LOC_FLS);
+            case BV_LOC_LEFT_AFT -> entity.getLocationName(Jumpship.LOC_ALS);
+            case BV_LOC_AFT -> entity.getLocationName(Jumpship.LOC_AFT);
+            case BV_LOC_RIGHT_AFT -> entity.getLocationName(Jumpship.LOC_ARS);
+            case BV_LOC_RIGHT -> entity.getLocationName(Jumpship.LOC_FRS);
+            case BV_LOC_LEFT_BROADSIDE -> entity.getLocationName(Warship.LOC_LBS);
+            case BV_LOC_RIGHT_BROADSIDE -> entity.getLocationName(Warship.LOC_RBS);
+            default -> "Error: Unexpected location value.";
+        };
     }
 
     @Override

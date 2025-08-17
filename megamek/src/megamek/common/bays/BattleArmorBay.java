@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.bays;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.battleArmor.BattleArmor;
@@ -46,6 +48,7 @@ import megamek.common.units.InfantryTransporter;
  * structures
  */
 public final class BattleArmorBay extends Bay implements InfantryTransporter {
+    @Serial
     private static final long serialVersionUID = 7091227399812361916L;
 
     private boolean isClan = false;
@@ -63,11 +66,7 @@ public final class BattleArmorBay extends Bay implements InfantryTransporter {
      * Create a space for the given tonnage of troops. For this class, only the weight of the troops (and their
      * equipment) are considered; if you'd like to think that they are stacked like lumber, be my guest.
      *
-     * @param space     The weight of troops (in tons) this space can carry.
-     * @param doors
-     * @param bayNumber
-     * @param isClan
-     * @param isComStar
+     * @param space The weight of troops (in tons) this space can carry.
      */
     public BattleArmorBay(double space, int doors, int bayNumber, boolean isClan, boolean isComStar) {
         totalSpace = space;
@@ -78,7 +77,7 @@ public final class BattleArmorBay extends Bay implements InfantryTransporter {
         this.bayNumber = bayNumber;
         this.isClan = isClan;
         this.isComStar = isComStar;
-        currentdoors = doors;
+        currentDoors = doors;
     }
 
     /**
@@ -92,12 +91,8 @@ public final class BattleArmorBay extends Bay implements InfantryTransporter {
     @Override
     public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit.
-        boolean result = false;
-
         // Only Battle Armor squads
-        if (unit instanceof BattleArmor) {
-            result = true;
-        }
+        boolean result = unit instanceof BattleArmor;
 
         // We must have enough space for the new troops.
         // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.

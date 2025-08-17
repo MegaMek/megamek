@@ -331,7 +331,7 @@ public abstract class BVCalculator {
 
     /**
      * Returns true when the given location is valid for armor BV calculations. Returns true by default. Override to
-     * exclude locations, e.g. hull on Aeros.
+     * exclude locations, e.g. hull on AeroSpace.
      *
      * @param location The location to check
      *
@@ -441,7 +441,7 @@ public abstract class BVCalculator {
     }
 
     /**
-     * @return The base factor to multiply armor by, i.e. 25 for capital aerosapce and 2.5 for all others.
+     * @return The base factor to multiply armor by, i.e. 25 for capital aerospace and 2.5 for all others.
      */
     protected double armorFactor() {
         return 2.5;
@@ -833,8 +833,7 @@ public abstract class BVCalculator {
         }
 
         // The weapon can be a Vibroblade (MiscType)
-        if (weapon.getType() instanceof WeaponType) {
-            WeaponType weaponType = (WeaponType) weapon.getType();
+        if (weapon.getType() instanceof WeaponType weaponType) {
 
             // PPC with Capacitor
             if ((weapon.getLinkedBy() != null) && (weaponType.hasFlag(WeaponType.F_PPC))) {
@@ -969,7 +968,7 @@ public abstract class BVCalculator {
 
         // We iterate over a copy to avoid any risk of ConcurrentModificationException
         for (Mounted<?> misc : List.copyOf(entity.getMisc())) {
-            MiscType mtype = (MiscType) misc.getType();
+            MiscType miscType = (MiscType) misc.getType();
 
             // Don't count destroyed equipment
             if (misc.isDestroyed()) {
@@ -983,33 +982,33 @@ public abstract class BVCalculator {
                 continue;
             }
 
-            if ((mtype.hasFlag(MiscType.F_ECM) && !mtype.hasFlag(MiscType.F_WATCHDOG)) ||
-                  mtype.hasFlag(MiscType.F_AP_POD) ||
-                  mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY) ||
-                  mtype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING) ||
-                  mtype.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER) ||
-                  mtype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER) ||
-                  mtype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER) ||
-                  mtype.hasFlag(MiscType.F_CHAFF_POD) ||
-                  mtype.hasFlag(MiscType.F_BULLDOZER) ||
-                  mtype.hasFlag(MiscType.F_BAP) ||
-                  mtype.hasFlag(MiscType.F_TARGCOMP) ||
-                  mtype.hasFlag(MiscType.F_SPIKES) ||
-                  mtype.hasFlag(MiscType.F_MINESWEEPER) ||
-                  mtype.hasFlag(MiscType.F_HARJEL_II) ||
-                  mtype.hasFlag(MiscType.F_HARJEL_III) ||
-                  mtype.hasFlag(MiscType.F_MASS) ||
-                  mtype.hasFlag(MiscType.F_MINE) ||
-                  mtype.isShield() ||
-                  offensiveEquipmentBV(mtype, misc.getLocation()) == 0) {
+            if ((miscType.hasFlag(MiscType.F_ECM) && !miscType.hasFlag(MiscType.F_WATCHDOG)) ||
+                  miscType.hasFlag(MiscType.F_AP_POD) ||
+                  miscType.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY) ||
+                  miscType.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING) ||
+                  miscType.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER) ||
+                  miscType.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER) ||
+                  miscType.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER) ||
+                  miscType.hasFlag(MiscType.F_CHAFF_POD) ||
+                  miscType.hasFlag(MiscType.F_BULLDOZER) ||
+                  miscType.hasFlag(MiscType.F_BAP) ||
+                  miscType.hasFlag(MiscType.F_TARGCOMP) ||
+                  miscType.hasFlag(MiscType.F_SPIKES) ||
+                  miscType.hasFlag(MiscType.F_MINESWEEPER) ||
+                  miscType.hasFlag(MiscType.F_HARJEL_II) ||
+                  miscType.hasFlag(MiscType.F_HARJEL_III) ||
+                  miscType.hasFlag(MiscType.F_MASS) ||
+                  miscType.hasFlag(MiscType.F_MINE) ||
+                  miscType.isShield() ||
+                  offensiveEquipmentBV(miscType, misc.getLocation()) == 0) {
                 continue;
             }
 
-            double bv = offensiveEquipmentBV(mtype, misc.getLocation());
-            if ((mtype.hasFlag(MiscType.F_CLUB) || mtype.hasFlag(MiscType.F_HAND_WEAPON)) &&
+            double bv = offensiveEquipmentBV(miscType, misc.getLocation());
+            if ((miscType.hasFlag(MiscType.F_CLUB) || miscType.hasFlag(MiscType.F_HAND_WEAPON)) &&
                   entity.hasFunctionalArmAES(misc.getLocation())) {
                 bv *= 1.25;
-            } else if (mtype.hasFlag(MiscType.F_WATCHDOG)) {
+            } else if (miscType.hasFlag(MiscType.F_WATCHDOG)) {
                 bv = 7;
             }
 
@@ -1175,7 +1174,7 @@ public abstract class BVCalculator {
         for (AmmoMounted ammo : List.copyOf(entity.getAmmo())) {
             AmmoType ammoType = ammo.getType();
 
-            // don't count depleted ammo, AMS and oneshot ammo
+            // don't count depleted ammo, AMS and one shot ammo
             if (ammoCounts(ammo)) {
                 String key = ammoType.getAmmoType() + ":" + ammoType.getRackSize();
                 if (!keys.contains(key)) {
@@ -1191,31 +1190,31 @@ public abstract class BVCalculator {
         }
 
         for (WeaponMounted weapon : List.copyOf(entity.getTotalWeaponList())) {
-            WeaponType wtype = weapon.getType();
+            WeaponType weaponType = weapon.getType();
 
             if (weapon.isDestroyed() ||
-                  wtype.hasFlag(WeaponType.F_B_POD) ||
-                  wtype.hasFlag(WeaponType.F_M_POD) ||
-                  wtype instanceof BayWeapon ||
+                  weaponType.hasFlag(WeaponType.F_B_POD) ||
+                  weaponType.hasFlag(WeaponType.F_M_POD) ||
+                  weaponType instanceof BayWeapon ||
                   weapon.isWeaponGroup()) {
                 continue;
             }
 
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
-            if (!((wtype.hasFlag(WeaponType.F_ENERGY) &&
-                  !((wtype.getAmmoType() == AmmoType.AmmoTypeEnum.PLASMA) ||
-                        (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.VEHICLE_FLAMER) ||
-                        (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.HEAVY_FLAMER) ||
-                        (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.CHEMICAL_LASER))) ||
-                  wtype.hasFlag(WeaponType.F_ONESHOT) ||
-                  wtype.hasFlag(WeaponType.F_INFANTRY) ||
-                  (wtype.getAmmoType() == AmmoType.AmmoTypeEnum.NA))) {
-                String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
+            if (!((weaponType.hasFlag(WeaponType.F_ENERGY) &&
+                  !((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.PLASMA) ||
+                        (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.VEHICLE_FLAMER) ||
+                        (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.HEAVY_FLAMER) ||
+                        (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.CHEMICAL_LASER))) ||
+                  weaponType.hasFlag(WeaponType.F_ONESHOT) ||
+                  weaponType.hasFlag(WeaponType.F_INFANTRY) ||
+                  (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.NA))) {
+                String key = weaponType.getAmmoType() + ":" + weaponType.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(entity));
+                    weaponsForExcessiveAmmo.put(key, weaponType.getBV(entity));
                 } else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(entity) + weaponsForExcessiveAmmo.get(key));
+                    weaponsForExcessiveAmmo.put(key, weaponType.getBV(entity) + weaponsForExcessiveAmmo.get(key));
                 }
             }
         }
@@ -1297,10 +1296,11 @@ public abstract class BVCalculator {
         if (((entity instanceof Infantry) && (!((Infantry) entity).canMakeAntiMekAttacks())) ||
               (entity instanceof ProtoMek)) {
             piloting = 5;
-        } else if (entity.isConventionalInfantry() && !((Infantry) entity).hasAntiMekGear()) {
+        } else if (entity.isConventionalInfantry()
+              && (entity instanceof Infantry)
+              && !((Infantry) entity).hasAntiMekGear()) {
             piloting = Infantry.ANTI_MEK_SKILL_NO_GEAR;
-        } else if (entity.getCrew() instanceof LAMPilot) {
-            LAMPilot lamPilot = (LAMPilot) entity.getCrew();
+        } else if (entity.getCrew() instanceof LAMPilot lamPilot) {
             gunnery = (lamPilot.getGunneryMek() + lamPilot.getGunneryAero()) / 2;
             piloting = (lamPilot.getPilotingMek() + lamPilot.getPilotingAero()) / 2;
         }
@@ -1379,7 +1379,7 @@ public abstract class BVCalculator {
         bvReport.startTentativeSection();
         bvReport.addLine("TAG Bonus (" + tagCount + " Tag" + (tagCount == 1 ? "" : "s") + "):", "", "");
         // In the lobby, bombs are represented as a bombChoices array, only later is it
-        // real Mounteds.
+        // real Mounted.
         boolean hasGuided = false;
 
         for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
@@ -1387,8 +1387,8 @@ public abstract class BVCalculator {
                 continue;
             }
             for (Mounted<?> mounted : otherEntity.getAmmo()) {
-                AmmoType atype = (AmmoType) mounted.getType();
-                EnumSet<AmmoType.Munitions> munitionType = atype.getMunitionType();
+                AmmoType ammoType = (AmmoType) mounted.getType();
+                EnumSet<AmmoType.Munitions> munitionType = ammoType.getMunitionType();
                 if ((mounted.getUsableShotsLeft() > 0) &&
                       ((munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED)) ||
                             (munitionType.contains(AmmoType.Munitions.M_HOMING)))) {
@@ -1405,22 +1405,23 @@ public abstract class BVCalculator {
                     hasGuided = true;
                 }
             }
-            if (otherEntity instanceof IBomber) {
-                IBomber asBomber = (IBomber) otherEntity;
+            if (otherEntity instanceof IBomber asBomber) {
                 BombType bomb = BombType.createBombByType(BombTypeEnum.HOMING);
-                int homingCount = asBomber.getBombChoices().getCount(BombTypeEnum.HOMING);
-                if (homingCount > 0) {
-                    adjustedBV += bomb.getBV(otherEntity) * homingCount * tagCount;
-                    bvReport.addLine("- " + bomb.getName(),
-                          "+ " +
-                                tagCount +
-                                " x " +
-                                formatForReport(bomb.getBV(otherEntity)) +
-                                " (" +
-                                otherEntity.getShortName() +
-                                ")",
-                          "= " + formatForReport(adjustedBV));
-                    hasGuided = true;
+                if (bomb != null) {
+                    int homingCount = asBomber.getBombChoices().getCount(BombTypeEnum.HOMING);
+                    if (homingCount > 0) {
+                        adjustedBV += bomb.getBV(otherEntity) * homingCount * tagCount;
+                        bvReport.addLine("- " + bomb.getName(),
+                              "+ " +
+                                    tagCount +
+                                    " x " +
+                                    formatForReport(bomb.getBV(otherEntity)) +
+                                    " (" +
+                                    otherEntity.getShortName() +
+                                    ")",
+                              "= " + formatForReport(adjustedBV));
+                        hasGuided = true;
+                    }
                 }
             }
         }
@@ -1435,8 +1436,7 @@ public abstract class BVCalculator {
               .filter(Objects::nonNull)
               .filter(t -> t.hasFlag(WeaponType.F_TAG))
               .count();
-        if (entity instanceof IBomber) {
-            IBomber asBomber = (IBomber) entity;
+        if (entity instanceof IBomber asBomber) {
             tagCount += asBomber.getBombChoices().getCount(BombTypeEnum.HOMING);
         }
         return tagCount;
@@ -1446,10 +1446,9 @@ public abstract class BVCalculator {
         bvReport.startTentativeSection();
         bvReport.addLine("External Stores:", "", "");
         // In the lobby, bombs are represented as a bombChoices array, only later is it
-        // real Mounteds.
+        // real Mounted.
         boolean hasBombs = false;
-        if (entity instanceof IBomber) {
-            IBomber asBomber = (IBomber) entity;
+        if (entity instanceof IBomber asBomber) {
             for (BombType bombType : BombType.allBombTypes()) {
                 int bombCount = asBomber.getBombChoices().getCount(bombType.getBombType());
                 double bombTypeBV = bombType.getBV(entity);
@@ -1475,27 +1474,15 @@ public abstract class BVCalculator {
     }
 
     private double armorMultiplier(int location) {
-        double armorMultiplier;
-        switch (entity.getArmorType(location)) {
-            case EquipmentType.T_ARMOR_HARDENED:
-                armorMultiplier = 2.0;
-                break;
-            case EquipmentType.T_ARMOR_REACTIVE:
-            case EquipmentType.T_ARMOR_REFLECTIVE:
-            case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
-                armorMultiplier = 1.5;
-                break;
-            case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
-            case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
-                armorMultiplier = 1.2;
-                break;
-            case EquipmentType.T_ARMOR_HEAT_DISSIPATING:
-                armorMultiplier = 1.1;
-                break;
-            default:
-                armorMultiplier = 1.0;
-                break;
-        }
+        double armorMultiplier = switch (entity.getArmorType(location)) {
+            case EquipmentType.T_ARMOR_HARDENED -> 2.0;
+            case EquipmentType.T_ARMOR_REACTIVE,
+                 EquipmentType.T_ARMOR_REFLECTIVE,
+                 EquipmentType.T_ARMOR_BALLISTIC_REINFORCED -> 1.5;
+            case EquipmentType.T_ARMOR_FERRO_LAMELLOR, EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION -> 1.2;
+            case EquipmentType.T_ARMOR_HEAT_DISSIPATING -> 1.1;
+            default -> 1.0;
+        };
 
         if (hasBlueShield) {
             armorMultiplier += 0.2;

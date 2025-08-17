@@ -1074,10 +1074,10 @@ public class ASDamageConverter {
             if (weapon.getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY) {
                 desc.append(" (Body)");
             }
-            if (weapon.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
+            if (weapon.getBaMountLoc() == BattleArmor.MOUNT_LOC_LEFT_ARM) {
                 desc.append(" (Left arm)");
             }
-            if (weapon.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
+            if (weapon.getBaMountLoc() == BattleArmor.MOUNT_LOC_RIGHT_ARM) {
                 desc.append(" (Right arm)");
             }
             if (weapon.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {

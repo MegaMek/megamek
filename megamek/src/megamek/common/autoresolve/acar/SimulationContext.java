@@ -45,12 +45,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import megamek.common.interfaces.IEntityRemovalConditions;
-import megamek.common.game.IGame;
-import megamek.common.game.InGameObject;
-import megamek.common.interfaces.PlanetaryConditionsUsing;
 import megamek.common.Player;
-import megamek.common.interfaces.ReportEntry;
 import megamek.common.Team;
 import megamek.common.annotations.Nullable;
 import megamek.common.autoresolve.acar.action.Action;
@@ -70,6 +65,11 @@ import megamek.common.enums.SkillLevel;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
+import megamek.common.game.IGame;
+import megamek.common.game.InGameObject;
+import megamek.common.interfaces.IEntityRemovalConditions;
+import megamek.common.interfaces.PlanetaryConditionsUsing;
+import megamek.common.interfaces.ReportEntry;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.units.BTObject;
@@ -108,7 +108,7 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
     private final Map<Integer, Integer> unitsPerPlayerAtStart = new HashMap<>();
     private int lastEntityId;
     /**
-     * Report and turnlist
+     * Report and turn list
      */
     private final List<AcTurn> turnList = new ArrayList<>();
     protected final ConcurrentHashMap<Integer, InGameObject> inGameObjects = new ConcurrentHashMap<>();
@@ -403,7 +403,7 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
 
     @Override
     public List<InGameObject> getGraveyard() {
-        return new ArrayList<InGameObject>(graveyard);
+        return new ArrayList<>(graveyard);
     }
 
     public List<Entity> getRetreatingUnits() {
@@ -678,7 +678,7 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
     }
 
     /**
-     * Clears and re-calculates the deployment table, i.e. assembles all units/objects in the game that are undeployed
+     * Clears and re-calculates the deployment table, i.e. assembles all units/objects in the game that are un-deployed
      * (that includes returning units or reinforcements) together with the game round that they are supposed to deploy
      * on. This method can be called at any time in the game and will assemble deployment according to the present game
      * state.

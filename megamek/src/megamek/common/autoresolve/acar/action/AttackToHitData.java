@@ -35,11 +35,11 @@ package megamek.common.autoresolve.acar.action;
 
 import java.util.List;
 
-import megamek.common.game.InGameObject;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.component.Formation;
+import megamek.common.game.InGameObject;
 import megamek.common.internationalization.I18n;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
 public class AttackToHitData extends TargetRoll {
@@ -147,8 +147,8 @@ public class AttackToHitData extends TargetRoll {
 
     /**
      * Returns a list of target IDs of all the targets of all attacks that the attacker of the given attack is
-     * performing this round. The result can be empty (the unit isn't attacking anything or it is not the firing phase),
-     * it can have one or two entries.
+     * performing this round. The result can be empty (the unit isn't attacking anything, or it is not the firing
+     * phase), it can have one or two entries.
      *
      * @param unit The attacker to check attacks for
      * @param game The game

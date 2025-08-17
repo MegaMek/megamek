@@ -39,13 +39,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-import megamek.common.units.Entity;
-import megamek.common.interfaces.ForceAssignable;
-import megamek.common.game.IGame;
 import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.IGame;
 import megamek.common.icons.Camouflage;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
@@ -164,7 +164,7 @@ public abstract class ForceConsolidation {
         for (var entityId : forceRep.entities()) {
             var entity = (Entity) game.getEntityFromAllSources(entityId);
             if (entity == null) {
-                logger.error("Entity id " + entityId + " not found in game, could not load at " + forceRep);
+                logger.error("Entity id {} not found in game, could not load at {}", entityId, forceRep);
                 continue;
             }
             forces.addEntity(entity, newForceId);

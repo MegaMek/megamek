@@ -93,37 +93,31 @@ public class JumpShipBVCalculator extends LargeAeroBVCalculator {
     @Override
     protected int bvLocation(Mounted<?> equipment) {
         if (equipment.getLocation() == Jumpship.LOC_NOSE) {
-            return BVLOC_NOSE;
+            return BV_LOC_NOSE;
         } else if (equipment.getLocation() == Jumpship.LOC_FLS) {
-            return BVLOC_LEFT;
+            return BV_LOC_LEFT;
         } else if (equipment.getLocation() == Jumpship.LOC_ALS) {
-            return BVLOC_LEFT_AFT;
+            return BV_LOC_LEFT_AFT;
         } else if (equipment.getLocation() == Jumpship.LOC_AFT) {
-            return BVLOC_AFT;
+            return BV_LOC_AFT;
         } else if (equipment.getLocation() == Jumpship.LOC_ARS) {
-            return BVLOC_RIGHT_AFT;
+            return BV_LOC_RIGHT_AFT;
         } else {
-            return BVLOC_RIGHT;
+            return BV_LOC_RIGHT;
         }
     }
 
     @Override
     protected String arcName(int bvLocation) {
-        switch (bvLocation) {
-            case BVLOC_NOSE:
-                return entity.getLocationName(Jumpship.LOC_NOSE);
-            case BVLOC_LEFT:
-                return entity.getLocationName(Jumpship.LOC_FLS);
-            case BVLOC_LEFT_AFT:
-                return entity.getLocationName(Jumpship.LOC_ALS);
-            case BVLOC_AFT:
-                return entity.getLocationName(Jumpship.LOC_AFT);
-            case BVLOC_RIGHT_AFT:
-                return entity.getLocationName(Jumpship.LOC_ARS);
-            case BVLOC_RIGHT:
-                return entity.getLocationName(Jumpship.LOC_FRS);
-        }
-        return "Error: Unexpected location value.";
+        return switch (bvLocation) {
+            case BV_LOC_NOSE -> entity.getLocationName(Jumpship.LOC_NOSE);
+            case BV_LOC_LEFT -> entity.getLocationName(Jumpship.LOC_FLS);
+            case BV_LOC_LEFT_AFT -> entity.getLocationName(Jumpship.LOC_ALS);
+            case BV_LOC_AFT -> entity.getLocationName(Jumpship.LOC_AFT);
+            case BV_LOC_RIGHT_AFT -> entity.getLocationName(Jumpship.LOC_ARS);
+            case BV_LOC_RIGHT -> entity.getLocationName(Jumpship.LOC_FRS);
+            default -> "Error: Unexpected location value.";
+        };
     }
 
     @Override

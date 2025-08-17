@@ -38,22 +38,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
-import megamek.common.units.Entity;
-import megamek.common.units.IAero;
-import megamek.common.game.IGame;
 import megamek.common.Player;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
+import megamek.common.game.IGame;
+import megamek.common.units.Entity;
+import megamek.common.units.IAero;
 
-public class VictoryPhaseReporter implements IVictoryPhaseReporter {
-
-    private final IGame game;
-    private final Consumer<PublicReportEntry> reportConsumer;
-
-    private VictoryPhaseReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) {
-        this.reportConsumer = reportConsumer;
-        this.game = game;
-    }
+public record VictoryPhaseReporter(IGame game, Consumer<PublicReportEntry> reportConsumer)
+      implements IVictoryPhaseReporter {
 
     public static IVictoryPhaseReporter create(SimulationManager manager) {
         if (manager.isLogSuppressed()) {

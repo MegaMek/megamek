@@ -33,12 +33,15 @@
 
 package megamek.common.bays;
 
+import java.io.Serial;
+
 import megamek.common.TechAdvancement;
 
 /**
  * Support vehicle ejection seats.
  */
 public final class EjectionSeatCargoBay extends StandardSeatCargoBay {
+    @Serial
     private static final long serialVersionUID = 8916801835963112628L;
 
     /**

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2022-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,10 +34,13 @@
 
 package megamek.common.battleArmor;
 
+import java.io.Serial;
+
 import megamek.common.units.Entity;
 import megamek.common.units.Tank;
 
 public class BattleArmorHandlesTank extends BattleArmorHandles {
+    @Serial
     private static final long serialVersionUID = 1031947858009941399L;
 
     @Override
@@ -46,24 +49,25 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
         if (carriedBA == null) {
             return false;
         } else {
-            int tloc = BattleArmor.LOC_SQUAD;
-            int tloc2 = BattleArmor.LOC_SQUAD;
-            switch (loc) {
-                case Tank.LOC_REAR:
-                    tloc = BattleArmor.LOC_TROOPER_5;
-                    tloc2 = BattleArmor.LOC_TROOPER_6;
-                    break;
-                case Tank.LOC_LEFT:
-                    tloc = BattleArmor.LOC_TROOPER_3;
-                    tloc2 = BattleArmor.LOC_TROOPER_4;
-                    break;
-                case Tank.LOC_RIGHT:
-                    tloc = BattleArmor.LOC_TROOPER_1;
-                    tloc2 = BattleArmor.LOC_TROOPER_2;
-                    break;
-            }
-            return ((carriedBA.locations() > tloc) && (carriedBA.getInternal(tloc) > 0))
-                  || ((carriedBA.locations() > tloc2) && (carriedBA.getInternal(tloc2) > 0));
+            int troopLocation1 = BattleArmor.LOC_SQUAD;
+            int troopLocation2 = BattleArmor.LOC_SQUAD;
+            troopLocation2 = switch (loc) {
+                case Tank.LOC_REAR -> {
+                    troopLocation1 = BattleArmor.LOC_TROOPER_5;
+                    yield BattleArmor.LOC_TROOPER_6;
+                }
+                case Tank.LOC_LEFT -> {
+                    troopLocation1 = BattleArmor.LOC_TROOPER_3;
+                    yield BattleArmor.LOC_TROOPER_4;
+                }
+                case Tank.LOC_RIGHT -> {
+                    troopLocation1 = BattleArmor.LOC_TROOPER_1;
+                    yield BattleArmor.LOC_TROOPER_2;
+                }
+                default -> troopLocation2;
+            };
+            return ((carriedBA.locations() > troopLocation1) && (carriedBA.getInternal(troopLocation1) > 0))
+                  || ((carriedBA.locations() > troopLocation2) && (carriedBA.getInternal(troopLocation2) > 0));
         }
     }
 }

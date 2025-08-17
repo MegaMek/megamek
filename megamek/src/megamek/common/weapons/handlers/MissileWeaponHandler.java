@@ -39,7 +39,10 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.HitData;
+import megamek.common.RangeType;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
@@ -603,7 +606,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     int dist = target.getPosition().distance(pdEnt.getPosition());
                     int minApdsMod = -4;
                     if (pdEnt instanceof BattleArmor) {
-                        int numTroopers = ((BattleArmor) pdEnt).getNumberActiverTroopers();
+                        int numTroopers = ((BattleArmor) pdEnt).getNumberActiveTroopers();
                         switch (numTroopers) {
                             case 1:
                                 minApdsMod = -2;

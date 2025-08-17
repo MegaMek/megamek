@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,17 +34,20 @@
 
 package megamek.common.bays;
 
+import java.io.Serial;
+
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechAdvancement;
 import megamek.common.units.Entity;
 import megamek.common.units.QuadVee;
-import megamek.common.SimpleTechLevel;
 import megamek.common.units.Tank;
-import megamek.common.TechAdvancement;
 
 /**
  * Represents a Transport Bay (TM p.239) for carrying light vehicles (not heavier than 50t) aboard large spacecraft or
  * other units.
  */
 public final class LightVehicleBay extends UnitBay {
+    @Serial
     private static final long serialVersionUID = -1587851184051479305L;
 
     /**
@@ -59,13 +62,13 @@ public final class LightVehicleBay extends UnitBay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
-        currentdoors = doors;
+        currentDoors = doors;
     }
 
     @Override
     public boolean canLoad(Entity unit) {
         boolean loadableQuadVee = (unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_VEHICLE);
-        return (getUnused() >= 1) && (currentdoors >= loadedThisTurn)
+        return (getUnused() >= 1) && (currentDoors >= loadedThisTurn)
               && (unit.getWeight() <= 50) && ((unit instanceof Tank) || loadableQuadVee);
     }
 

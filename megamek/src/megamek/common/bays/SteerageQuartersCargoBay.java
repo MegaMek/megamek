@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,12 +34,15 @@
 
 package megamek.common.bays;
 
+import java.io.Serial;
+
 import megamek.common.units.Entity;
 
 /**
  * Represents a (cramped) volume of space set aside for carrying a mobile structure or spacecraft's crew
  */
 public final class SteerageQuartersCargoBay extends Bay {
+    @Serial
     private static final long serialVersionUID = 4161027191694822726L;
 
     private double weight = 0;
@@ -59,12 +62,12 @@ public final class SteerageQuartersCargoBay extends Bay {
      * @param weight The weight of troops (in tons) this space can carry.
      */
     public SteerageQuartersCargoBay(double weight, int doors) {
-        totalSpace = ((int) weight) / 5;
+        totalSpace = Math.floor(weight / 5);
         this.weight = weight;
-        currentSpace = ((int) weight) / 5;
+        currentSpace = Math.floor(weight / 5);
         this.minDoors = 0;
         this.doors = doors;
-        currentdoors = doors;
+        currentDoors = doors;
     }
 
     /**

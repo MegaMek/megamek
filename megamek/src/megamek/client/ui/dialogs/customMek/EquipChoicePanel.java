@@ -57,7 +57,9 @@ import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
@@ -535,9 +537,9 @@ public class EquipChoicePanel extends JPanel {
                 continue;
             }
             Mounted<?> currentManipulator;
-            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LEFT_ARM) {
                 currentManipulator = ((BattleArmor) entity).getLeftManipulator();
-            } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
+            } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RIGHT_ARM) {
                 currentManipulator = ((BattleArmor) entity).getRightManipulator();
             } else {
                 // We can only have MEA's in an arm

@@ -37,22 +37,14 @@ import static megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip.ownerCo
 
 import java.util.function.Consumer;
 
+import megamek.common.autoresolve.acar.SimulationManager;
+import megamek.common.autoresolve.component.Formation;
 import megamek.common.game.IGame;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.autoresolve.acar.SimulationManager;
-import megamek.common.autoresolve.component.Formation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
-public class AttackReporter implements IAttackReporter {
-
-    private final IGame game;
-    private final Consumer<PublicReportEntry> reportConsumer;
-
-    private AttackReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) {
-        this.reportConsumer = reportConsumer;
-        this.game = game;
-    }
+public record AttackReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) implements IAttackReporter {
 
     public static IAttackReporter create(SimulationManager manager) {
         if (manager.isLogSuppressed()) {
@@ -120,7 +112,7 @@ public class AttackReporter implements IAttackReporter {
 
     @Override
     public void reportCriticalCheck() {
-        // Called before rolling criticals
+        // Called before rolling critical slots
         reportConsumer.accept(new PublicReportEntry("acar.firingPhase.internalDamageRoll").indent(3));
     }
 

@@ -32,10 +32,10 @@
  */
 package megamek.common.autoresolve.damage;
 
-import megamek.common.units.Aero;
 import megamek.common.compute.Compute;
-import megamek.common.units.Entity;
 import megamek.common.equipment.GunEmplacement;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
@@ -48,8 +48,8 @@ public class DamageApplierChooser {
 
     /**
      * Choose the correct DamageHandler for the given entity. A damage handler is a class that handles applying damage
-     * on an entity, be it a Mek, Infantry, etc. It can damage internal, armor, cause criticals, kill crew, set limbs as
-     * blown-off, can even destroy the entity,
+     * on an entity, be it a Mek, Infantry, etc. It can damage internal, armor, cause critical slots, kill crew, set
+     * limbs as blown-off, can even destroy the entity,
      *
      * @param entity the entity to choose the handler for
      *
@@ -61,9 +61,9 @@ public class DamageApplierChooser {
 
     /**
      * Choose the correct DamageHandler for the given entity. A damage handler is a class that handles applying damage
-     * on an entity, be it a Mek, Infantry, etc. It can damage internal, armor, cause criticals, kill crew, set limbs as
-     * blown-off, can even destroy the entity, This one also accepts parameters to indicate if the crew must survive and
-     * if the entity must survive.
+     * on an entity, be it a Mek, Infantry, etc. It can damage internal, armor, cause critical slots, kill crew, set
+     * limbs as blown-off, can even destroy the entity, This one also accepts parameters to indicate if the crew must
+     * survive and if the entity must survive.
      *
      * @param entity           the entity to choose the handler for
      * @param entityFinalState if the crew must survive and/or entity must survive

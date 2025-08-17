@@ -39,11 +39,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import megamek.common.board.Board;
-import megamek.common.units.Entity;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
+import megamek.common.board.Board;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.Entity;
 import megamek.utilities.BoardsTagger;
 
 
@@ -151,7 +151,7 @@ public class ShortBattleReportGenerator {
           "acar.report.casualties.mutual"
     };
 
-    private static final String[] CASUALTY_ONESIDED_KEYS = {
+    private static final String[] CASUALTY_ONE_SIDED_KEYS = {
           "acar.report.casualties.onesided",
           "acar.report.casualties.minimal"
     };
@@ -412,7 +412,7 @@ public class ShortBattleReportGenerator {
 
         String casualtyKey;
         if (oneSided) {
-            casualtyKey = selectRandom(CASUALTY_ONESIDED_KEYS);
+            casualtyKey = selectRandom(CASUALTY_ONE_SIDED_KEYS);
         } else if (casualtyRate > 0.5) {
             casualtyKey = selectRandom(CASUALTY_DEVASTATING_KEYS);
         } else {

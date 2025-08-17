@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,12 +34,15 @@
 
 package megamek.common.bays;
 
+import java.io.Serial;
+
 import megamek.common.units.Entity;
 
 /**
  * Represents a standard support vehicle crew seat.
  */
 public class StandardSeatCargoBay extends Bay {
+    @Serial
     private static final long serialVersionUID = 4161027191694822726L;
 
     protected double weight = 0;
@@ -60,7 +63,7 @@ public class StandardSeatCargoBay extends Bay {
     public StandardSeatCargoBay(double space) {
         totalSpace = currentSpace = space;
         weight = space * 0.075;
-        doors = currentdoors = 0;
+        doors = currentDoors = 0;
     }
 
     /**

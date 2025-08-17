@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,12 +34,15 @@
 
 package megamek.common.bays;
 
+import java.io.Serial;
+
 import megamek.common.units.Entity;
 
 /**
  * Represents a volume of space set aside for carrying a mobile structure or spacecraft's crew
  */
 public final class CrewQuartersCargoBay extends Bay {
+    @Serial
     private static final long serialVersionUID = 4161027191694822726L;
 
     private double weight = 0;
@@ -59,12 +62,12 @@ public final class CrewQuartersCargoBay extends Bay {
      * @param weight The weight of troops (in tons) this space can carry.
      */
     public CrewQuartersCargoBay(double weight, int doors) {
-        totalSpace = (int) weight / 7;
+        totalSpace = Math.floor(weight / 7);
         this.weight = weight;
-        currentSpace = (int) weight / 7;
+        currentSpace = Math.floor(weight / 7);
         this.minDoors = 0;
         this.doors = doors;
-        currentdoors = doors;
+        currentDoors = doors;
     }
 
     /**
@@ -93,10 +96,7 @@ public final class CrewQuartersCargoBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showRecovery) {
-        StringBuffer returnString = new StringBuffer("Crew Quarters ("
-              + getCurrentDoors() + " doors) - ");
-        returnString.append((int) currentSpace);
-        return returnString.toString();
+        return "Crew Quarters (" + getCurrentDoors() + " doors) - " + (int) currentSpace;
     }
 
     @Override

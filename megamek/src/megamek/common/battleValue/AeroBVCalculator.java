@@ -83,7 +83,7 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
 
         // We iterate over a copy to avoid any risk of ConcurrentModificationException
         List<Mounted<?>> equipmentCopy = new ArrayList<>(aero.getEquipment());
-        Set<AmmoType> ammos = new HashSet<>();
+        Set<AmmoType> ammoTypes = new HashSet<>();
 
         for (Mounted<?> mounted : equipmentCopy) {
             if (!countsAsExplosive(mounted)) {
@@ -98,7 +98,7 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
 
             EquipmentType eType = mounted.getType();
             if (eType instanceof AmmoType) {
-                if (ammos.add((AmmoType) eType)) {
+                if (ammoTypes.add((AmmoType) eType)) {
                     defensiveValue -= 15;
                     bvReport.addLine("- " + equipmentDescriptor(mounted),
                           "- 15",

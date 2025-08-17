@@ -99,10 +99,8 @@ public class StandardUnitAttack extends AbstractAttackAction {
         } else if ((getUnitNumber() >= possibleAttacker.get().getUnits().size())
               || (getUnitNumber() < 0)) {
             return false;
-        } else if (possibleTarget.get().getUnits().isEmpty()) {
-            return false;
+        } else {
+            return !possibleTarget.get().getUnits().isEmpty();
         }
-
-        return true;
     }
 }

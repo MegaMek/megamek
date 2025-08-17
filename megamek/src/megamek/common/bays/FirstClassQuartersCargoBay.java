@@ -34,12 +34,15 @@
 
 package megamek.common.bays;
 
+import java.io.Serial;
+
 import megamek.common.units.Entity;
 
 /**
  * Represents a volume of space set aside for carrying crew or passengers in more luxury than standard quarters.
  */
 public final class FirstClassQuartersCargoBay extends Bay {
+    @Serial
     private static final long serialVersionUID = 4161027191694822726L;
 
     private double weight = 0;
@@ -59,12 +62,12 @@ public final class FirstClassQuartersCargoBay extends Bay {
      * @param weight The weight of troops (in tons) this space can carry.
      */
     public FirstClassQuartersCargoBay(double weight, int doors) {
-        totalSpace = (int) weight / 10;
+        totalSpace = Math.floor(weight / 10);
         this.weight = weight;
-        currentSpace = (int) weight / 10;
+        currentSpace = Math.floor(weight / 10);
         this.minDoors = 0;
         this.doors = doors;
-        currentdoors = doors;
+        currentDoors = doors;
     }
 
     /**
@@ -93,10 +96,7 @@ public final class FirstClassQuartersCargoBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showRecovery) {
-        StringBuffer returnString = new StringBuffer("1st Class Quarters ("
-              + getCurrentDoors() + " doors) - ");
-        returnString.append((int) currentSpace);
-        return returnString.toString();
+        return "1st Class Quarters (" + getCurrentDoors() + " doors) - " + (int) currentSpace;
     }
 
     @Override

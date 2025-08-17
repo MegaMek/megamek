@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.bays;
 
+import java.io.Serial;
+
 import megamek.common.units.Entity;
 
 /**
@@ -41,6 +43,7 @@ import megamek.common.units.Entity;
  */
 
 public final class LivestockCargoBay extends Bay {
+    @Serial
     private static final long serialVersionUID = 4161027191694822726L;
 
     private double weight = 0;
@@ -57,8 +60,7 @@ public final class LivestockCargoBay extends Bay {
      * Create a space for the given tonnage of troops. For this class, only the weight of the troops (and their
      * equipment) are considered; if you'd like to think that they are stacked like lumber, be my guest.
      *
-     * @param space     The weight of troops (in tons) this space can carry.
-     * @param bayNumber
+     * @param space The weight of troops (in tons) this space can carry.
      */
     public LivestockCargoBay(double space, int doors, int bayNumber) {
         totalSpace = space;
@@ -66,7 +68,7 @@ public final class LivestockCargoBay extends Bay {
         currentSpace = space;
         this.doors = doors;
         this.bayNumber = bayNumber;
-        currentdoors = doors;
+        currentDoors = doors;
     }
 
     /**
@@ -85,7 +87,7 @@ public final class LivestockCargoBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showRecovery) {
-        StringBuffer returnString = new StringBuffer("Livestock Cargo Space "
+        StringBuilder returnString = new StringBuilder("Livestock Cargo Space "
               + numDoorsString() + " - ");
 
         if (getUnused() != Math.round(getUnused())) {

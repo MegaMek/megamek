@@ -35,20 +35,12 @@ package megamek.common.autoresolve.acar.report;
 
 import java.util.function.Consumer;
 
-import megamek.common.game.IGame;
-import megamek.common.rolls.Roll;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.component.Formation;
+import megamek.common.game.IGame;
+import megamek.common.rolls.Roll;
 
-public class MoraleReporter implements IMoraleReporter {
-
-    private final IGame game;
-    private final Consumer<PublicReportEntry> reportConsumer;
-
-    private MoraleReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) {
-        this.game = game;
-        this.reportConsumer = reportConsumer;
-    }
+public record MoraleReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) implements IMoraleReporter {
 
     public static IMoraleReporter create(SimulationManager manager) {
         if (manager.isLogSuppressed()) {

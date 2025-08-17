@@ -39,7 +39,7 @@ import megamek.common.autoresolve.acar.action.ActionHandler;
 import megamek.logging.MMLogger;
 
 public record ActionsProcessor(SimulationManager simulationManager) implements SimulationManagerHelper {
-    private static final MMLogger logger = MMLogger.create(ActionsProcessor.class);
+    private static final MMLogger LOGGER = MMLogger.create(ActionsProcessor.class);
 
     public void handleActions() {
         addNewHandlers();
@@ -56,7 +56,7 @@ public record ActionsProcessor(SimulationManager simulationManager) implements S
             if (actionHandler != null) {
                 game().addActionHandler(actionHandler);
             } else {
-                logger.error("Action " + action + " has no handler");
+                LOGGER.error("Action {} has no handler", action);
             }
         }
     }

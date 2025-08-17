@@ -38,8 +38,6 @@ import java.util.Collections;
 import java.util.Optional;
 
 import megamek.codeUtilities.ObjectUtility;
-import megamek.common.compute.Compute;
-import megamek.common.rolls.Roll;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -49,6 +47,8 @@ import megamek.common.autoresolve.acar.action.StandardUnitAttack;
 import megamek.common.autoresolve.acar.report.AttackReporter;
 import megamek.common.autoresolve.acar.report.IAttackReporter;
 import megamek.common.autoresolve.component.Formation;
+import megamek.common.compute.Compute;
+import megamek.common.rolls.Roll;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.util.weightedMaps.WeightedDoubleMap;
 
@@ -67,7 +67,7 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
     }
 
     private int getFormationId() {
-        return ((StandardUnitAttack) getAction()).getEntityId();
+        return getAction().getEntityId();
     }
 
     @Override
@@ -133,7 +133,7 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
 
             // a single element can only cause damage to a single element at a time
             // so here we try to hit one, if it has armor we apply damage to its armor, if
-            // the armor is 0 and it has structure and there is damage left we hit its structure,
+            // the armor is 0, and it has structure and there is damage left we hit its structure,
             // we then stop here.
             for (AlphaStrikeElement element : elements) {
                 var elementStructure = element.getCurrentStructure();

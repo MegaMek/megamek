@@ -37,13 +37,7 @@ import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.handler.MoraleCheckActionHandler;
 
-public class MoraleCheckAction implements Action {
-
-    private final int formationId;
-
-    public MoraleCheckAction(int formationId) {
-        this.formationId = formationId;
-    }
+public record MoraleCheckAction(int formationId) implements Action {
 
     @Override
     public int getEntityId() {

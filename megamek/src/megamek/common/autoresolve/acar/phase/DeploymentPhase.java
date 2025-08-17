@@ -37,21 +37,19 @@ import static megamek.common.board.Board.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import megamek.common.board.BoardLocation;
-import megamek.common.compute.Compute;
-import megamek.common.board.Coords;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.report.DeploymentReport;
 import megamek.common.autoresolve.acar.report.IDeploymentReport;
 import megamek.common.autoresolve.component.Formation;
+import megamek.common.board.BoardLocation;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 
 public class DeploymentPhase extends PhaseHandler {
     private final int boardNorthSide;
     private final int boardOneThird;
     private final int boardTwoThirds;
-    private final int deployZone = 3;
-    private final int boardSouthSide = 0;
     private final IDeploymentReport deploymentReporter;
     private final AtomicBoolean headerLatch = new AtomicBoolean(false);
 
@@ -84,6 +82,8 @@ public class DeploymentPhase extends PhaseHandler {
 
         int startingPos;
 
+        int deployZone = 3;
+        int boardSouthSide = 0;
         switch (player.getStartingPos()) {
             case START_NE:
             case START_NW:
@@ -137,10 +137,7 @@ public class DeploymentPhase extends PhaseHandler {
         for (var unit : formation.getUnits()) {
             for (var element : unit.getElements()) {
                 var optEntity = getSimulationManager().getGame().getEntity(element.getId());
-                if (optEntity.isPresent()) {
-                    var entity = optEntity.get();
-                    entity.setDeployed(true);
-                }
+                optEntity.ifPresent(entity -> entity.setDeployed(true));
             }
         }
 

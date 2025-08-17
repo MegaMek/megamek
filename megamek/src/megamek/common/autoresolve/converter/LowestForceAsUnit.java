@@ -36,9 +36,6 @@ import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 import java.util.ArrayList;
 
-import megamek.common.units.Entity;
-import megamek.common.interfaces.ForceAssignable;
-import megamek.common.units.UnitRole;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;
@@ -49,9 +46,12 @@ import megamek.common.autoresolve.acar.role.Role;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.interfaces.ForceAssignable;
 import megamek.common.strategicBattleSystems.BaseFormationConverter;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.strategicBattleSystems.SBFUnitConverter;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitRole;
 import megamek.common.util.Counter;
 import megamek.logging.MMLogger;
 
@@ -76,7 +76,7 @@ public class LowestForceAsUnit extends BaseFormationConverter<Formation> {
                 if (entity instanceof Entity entityCast) {
                     entityCast.setOwner(player);
                     if (entityCast.getOwnerId() != force.getOwnerId()) {
-                        logger.error("Entity " + entityCast + " does not belong to force " + force);
+                        logger.error("Entity {} does not belong to force {}", entityCast, force);
                         continue;
                     }
                     var element = ASConverter.convert(entityCast);

@@ -38,17 +38,22 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Vector;
 
-import megamek.common.*;
-import megamek.common.board.Coords;
-import megamek.common.compute.Compute;
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.AmmoType.Munitions;
+import megamek.common.Hex;
+import megamek.common.HexTarget;
+import megamek.common.LosEffects;
+import megamek.common.Report;
+import megamek.common.SpecialHexDisplay;
 import megamek.common.SpecialHexDisplay.Type;
+import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.NukeDetonatedAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.Minefield;
 import megamek.common.event.GamePlayerStrategicActionEvent;
 import megamek.common.game.Game;
@@ -57,10 +62,10 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.ArtilleryHandlerHelper;
+import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.common.weapons.handlers.AreaEffectHelper.DamageFalloff;
-import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -78,7 +83,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
     public ArtilleryWeaponIndirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         if (w.getEntity(g) instanceof BattleArmor) {
-            shootingBA = ((BattleArmor) w.getEntity(g)).getNumberActiverTroopers();
+            shootingBA = ((BattleArmor) w.getEntity(g)).getNumberActiveTroopers();
         }
     }
 
@@ -622,7 +627,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // BA Tube artillery is the only artillery that can be mounted by BA
         // so we do the multiplication here
         if (ae instanceof BattleArmor ba) {
-            toReturn *= ba.getNumberActiverTroopers();
+            toReturn *= ba.getNumberActiveTroopers();
         }
         // area effect damage is double
         if (target.isConventionalInfantry()) {

@@ -108,8 +108,8 @@ public class BattleArmorTROView extends TROView {
             setModelData("jumpMass", testBA.getWeightSecondaryMotiveSystem() * 1000);
         }
         final List<Map<String, Object>> manipulators = new ArrayList<>();
-        manipulators.add(formatManipulatorRow(BattleArmor.MOUNT_LOC_LARM, ba.getLeftManipulator()));
-        manipulators.add(formatManipulatorRow(BattleArmor.MOUNT_LOC_RARM, ba.getRightManipulator()));
+        manipulators.add(formatManipulatorRow(BattleArmor.MOUNT_LOC_LEFT_ARM, ba.getLeftManipulator()));
+        manipulators.add(formatManipulatorRow(BattleArmor.MOUNT_LOC_RIGHT_ARM, ba.getRightManipulator()));
         setModelData("manipulators", manipulators);
         final String armorName = EquipmentType.getArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1),
               TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));

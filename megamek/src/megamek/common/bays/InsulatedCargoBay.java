@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,12 +34,15 @@
 
 package megamek.common.bays;
 
+import java.io.Serial;
+
 import megamek.common.units.Entity;
 
 /**
  * Represents a volume of space set aside for carrying insulated cargo
  */
 public final class InsulatedCargoBay extends Bay {
+    @Serial
     private static final long serialVersionUID = 4161027191694822726L;
 
     private double weight = 0;
@@ -82,7 +85,7 @@ public final class InsulatedCargoBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showRecovery) {
-        StringBuffer returnString = new StringBuffer("Insulated Cargo Space "
+        StringBuilder returnString = new StringBuilder("Insulated Cargo Space "
               + numDoorsString() + " - ");
 
         if (getUnused() != Math.round(getUnused())) {

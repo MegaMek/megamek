@@ -35,20 +35,12 @@ package megamek.common.autoresolve.acar.report;
 
 import java.util.function.Consumer;
 
-import megamek.common.board.Coords;
-import megamek.common.game.IGame;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.component.Formation;
+import megamek.common.board.Coords;
+import megamek.common.game.IGame;
 
-public class DeploymentReport implements IDeploymentReport {
-
-    private final IGame game;
-    private final Consumer<PublicReportEntry> reportConsumer;
-
-    private DeploymentReport(IGame game, Consumer<PublicReportEntry> reportConsumer) {
-        this.reportConsumer = reportConsumer;
-        this.game = game;
-    }
+public record DeploymentReport(IGame game, Consumer<PublicReportEntry> reportConsumer) implements IDeploymentReport {
 
     public static IDeploymentReport create(SimulationManager manager) {
         if (manager.isLogSuppressed()) {

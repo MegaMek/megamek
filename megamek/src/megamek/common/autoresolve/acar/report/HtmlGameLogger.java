@@ -42,8 +42,8 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import megamek.common.game.GameLog;
 import megamek.common.Report;
+import megamek.common.game.GameLog;
 import megamek.logging.MMLogger;
 
 /**
@@ -51,7 +51,7 @@ import megamek.logging.MMLogger;
  */
 public class HtmlGameLogger {
 
-    private static final MMLogger logger = MMLogger.create(HtmlGameLogger.class);
+    private static final MMLogger LOGGER = MMLogger.create(HtmlGameLogger.class);
     private final GameLog gameLog;
 
     private static class LocalGameLog extends GameLog {
@@ -96,10 +96,10 @@ public class HtmlGameLogger {
                 return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
             } catch (IOException e) {
-                logger.error("Error reading CSS file", e);
+                LOGGER.error("Error reading CSS file", e);
             }
         } else {
-            logger.error("CSS file not found " + cssFile);
+            LOGGER.error("CSS file not found {}", cssFile);
         }
         return "";
     }

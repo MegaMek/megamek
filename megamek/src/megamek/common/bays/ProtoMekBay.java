@@ -1,6 +1,6 @@
 /*
   Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,21 +34,24 @@
 
 package megamek.common.bays;
 
-import megamek.common.units.Entity;
-import megamek.common.units.ProtoMek;
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
+import megamek.common.units.Entity;
+import megamek.common.units.ProtoMek;
 
 /**
  * Represents a volume of space set aside for carrying ProtoMek points aboard large spacecraft and mobile structures.
  */
 public final class ProtoMekBay extends UnitBay {
+    @Serial
     private static final long serialVersionUID = 927162989742234173L;
 
     /**
      * The default constructor is only for serialization.
      */
-    protected ProtoMekBay() {
+    private ProtoMekBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
@@ -57,8 +60,7 @@ public final class ProtoMekBay extends UnitBay {
      * Create a space for the given tonnage of troops. For this class, only the weight of the troops (and their
      * equipment) are considered; if you'd like to think that they are stacked like lumber, be my guest.
      *
-     * @param space     The number of ProtoMeks that can fit in this bay.
-     * @param bayNumber
+     * @param space The number of ProtoMeks that can fit in this bay.
      */
     public ProtoMekBay(double space, int doors, int bayNumber) {
         totalSpace = Math.ceil(space / 5);
@@ -66,7 +68,7 @@ public final class ProtoMekBay extends UnitBay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
-        currentdoors = doors;
+        currentDoors = doors;
     }
 
     /**

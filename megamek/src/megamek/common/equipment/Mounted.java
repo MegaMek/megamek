@@ -1522,7 +1522,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * @return For BattleArmor, returns the location where a piece of equipment is mounted, e.g.
-     *       {@link BattleArmor#MOUNT_LOC_LARM}.
+     *       {@link BattleArmor#MOUNT_LOC_LEFT_ARM}.
      */
     public int getBaMountLoc() {
         return baMountLoc;

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.bays;
 
+import java.io.Serial;
+
 import megamek.common.units.Entity;
 import megamek.common.units.InfantryTransporter;
 
@@ -41,6 +43,7 @@ import megamek.common.units.InfantryTransporter;
  * Represents a volume of space set aside for carrying general cargo aboard large spacecraft and mobile structures.
  */
 public final class CargoBay extends Bay implements InfantryTransporter {
+    @Serial
     private static final long serialVersionUID = 4161027191694822726L;
 
     /**
@@ -62,16 +65,13 @@ public final class CargoBay extends Bay implements InfantryTransporter {
         currentSpace = space;
         this.doors = doors;
         this.bayNumber = bayNumber;
-        currentdoors = doors;
+        currentDoors = doors;
     }
 
     @Override
     public boolean canLoad(Entity unit) {
-        if (!unit.isInfantry()) {
-            return false;
-        }
         // Infantry is only restricted by adjacency requirements (TW pp. 223 - 225)
-        return true;
+        return unit.isInfantry();
     }
 
     @Override
@@ -90,7 +90,7 @@ public final class CargoBay extends Bay implements InfantryTransporter {
 
     @Override
     public String getUnusedString(boolean showRecovery) {
-        StringBuffer returnString = new StringBuffer("Cargo Space "
+        StringBuilder returnString = new StringBuilder("Cargo Space "
               + numDoorsString() + " - ");
 
         if (getUnused() != Math.round(getUnused())) {

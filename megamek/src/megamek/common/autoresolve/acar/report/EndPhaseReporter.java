@@ -38,17 +38,15 @@ import static megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip.ownerCo
 import java.util.Map;
 import java.util.function.Consumer;
 
-import megamek.common.units.Entity;
-import megamek.common.interfaces.IEntityRemovalConditions;
-import megamek.common.game.IGame;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.component.Formation;
+import megamek.common.game.IGame;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.strategicBattleSystems.SBFUnit;
+import megamek.common.units.Entity;
 
-public class EndPhaseReporter implements IEndPhaseReporter {
+public record EndPhaseReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) implements IEndPhaseReporter {
 
-    private final Consumer<PublicReportEntry> reportConsumer;
-    private final IGame game;
     private static final Map<Integer, String> reportIdForEachRemovalCondition = Map.of(
           IEntityRemovalConditions.REMOVE_DEVASTATED, "acar.endPhase.devastated",
           IEntityRemovalConditions.REMOVE_EJECTED, "acar.endPhase.destroyedPilot",
@@ -59,11 +57,6 @@ public class EndPhaseReporter implements IEndPhaseReporter {
           IEntityRemovalConditions.REMOVE_SALVAGEABLE, "acar.endPhase.destroyedSalvage");
 
     private static final String MSG_ID_UNIT_DESTROYED_UNKNOWINGLY = "acar.endPhase.destroyedSurprise";
-
-    private EndPhaseReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) {
-        this.reportConsumer = reportConsumer;
-        this.game = game;
-    }
 
     public static IEndPhaseReporter create(SimulationManager manager) {
         if (manager.isLogSuppressed()) {

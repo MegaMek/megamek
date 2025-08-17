@@ -35,16 +35,16 @@ package megamek.common.bays;
 
 import java.util.function.Predicate;
 
-import megamek.common.*;
+import megamek.common.TechAdvancement;
+import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.EquipmentMessages;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.interfaces.ITechnologyDelegator;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Infantry;
 import megamek.common.units.InfantryTransporter.PlatoonType;
-import megamek.common.annotations.Nullable;
-import megamek.common.battleArmor.BattleArmor;
-import megamek.common.equipment.EquipmentMessages;
 
 /**
  * Data for various transport bay types. This is used by MekHQ for cubicle parts, but can also be used in the future for
@@ -92,13 +92,13 @@ public enum BayType implements ITechnologyDelegator {
     public static final int CATEGORY_INFANTRY = 1;
     public static final int CATEGORY_NON_INFANTRY = 2;
 
-    private int category;
-    private double weight;
-    private double capacity;
-    private int personnel;
-    private long cost;
-    private Predicate<Entity> canLoad;
-    private TechAdvancement techAdvancement;
+    private final int category;
+    private final double weight;
+    private final double capacity;
+    private final int personnel;
+    private final long cost;
+    private final Predicate<Entity> canLoad;
+    private final TechAdvancement techAdvancement;
 
     BayType(int category, double weight, double capacity, int personnel, long cost,
           Predicate<Entity> canLoad, TechAdvancement techAdvancement) {
@@ -207,13 +207,13 @@ public enum BayType implements ITechnologyDelegator {
             return INSULATED_CARGO;
         } else if (bay instanceof LivestockCargoBay) {
             return LIVESTOCK_CARGO;
-        } else if (bay instanceof InfantryBay) {
-            PlatoonType ptype = ((InfantryBay) bay).getPlatoonType();
-            if (ptype == PlatoonType.JUMP) {
+        } else if (bay instanceof InfantryBay infantryBay) {
+            PlatoonType platoonType = infantryBay.getPlatoonType();
+            if (platoonType == PlatoonType.JUMP) {
                 return INFANTRY_JUMP;
-            } else if (ptype == PlatoonType.MOTORIZED) {
+            } else if (platoonType == PlatoonType.MOTORIZED) {
                 return INFANTRY_MOTORIZED;
-            } else if (ptype == PlatoonType.MECHANIZED) {
+            } else if (platoonType == PlatoonType.MECHANIZED) {
                 return INFANTRY_MECHANIZED;
             } else {
                 return INFANTRY_FOOT;

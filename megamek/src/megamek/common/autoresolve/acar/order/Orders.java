@@ -134,10 +134,10 @@ public class Orders implements Collection<Order> {
     }
 
     @Override
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(Collection<?> collection) {
         var changed = false;
         for (Order order : ordersPerPlayer.values()) {
-            if (!c.contains(order)) {
+            if (!collection.contains(order)) {
                 if (remove(order)) {
                     changed = true;
                 }

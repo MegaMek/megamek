@@ -36,12 +36,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import megamek.common.compute.Compute;
-import megamek.common.units.Crew;
 import megamek.common.CriticalSlot;
-import megamek.common.units.Entity;
 import megamek.common.HitData;
+import megamek.common.compute.Compute;
 import megamek.common.interfaces.IEntityRemovalConditions;
+import megamek.common.units.Crew;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
@@ -106,9 +106,8 @@ public interface DamageApplier<E extends Entity> {
      * @param dmg         the total damage to apply
      * @param clusterSize the size of the clusters
      */
-    default int applyDamageInClusters(int dmg, int clusterSize) {
+    default void applyDamageInClusters(int dmg, int clusterSize) {
         int totalDamage = dmg;
-        int damageApplied = 0;
         while (totalDamage > 0) {
             var clusterDamage = clusterSize;
             if (clusterSize == -1) {
@@ -117,12 +116,12 @@ public interface DamageApplier<E extends Entity> {
             clusterDamage = Math.min(totalDamage, clusterDamage);
             applyDamage(clusterDamage);
             totalDamage -= clusterDamage;
-            damageApplied += clusterDamage;
         }
+
         if (entityMustBeDevastated()) {
-            damageApplied += devastateUnit();
+            devastateUnit();
         }
-        return damageApplied;
+
     }
 
 
@@ -132,19 +131,16 @@ public interface DamageApplier<E extends Entity> {
      * @param hitDetails  the details of the hit
      * @param clusterSize the size of the clusters
      */
-    default int applyDamageInClusters(HitDetails hitDetails, int clusterSize) {
+    default void applyDamageInClusters(HitDetails hitDetails, int clusterSize) {
         int totalDamage = hitDetails.damageToApply();
-        int damageApplied = 0;
         while (totalDamage > 0) {
             var clusterDamage = Math.min(totalDamage, clusterSize);
             hitDetails = applyDamage(hitDetails.withDamage(clusterDamage));
             totalDamage -= clusterDamage;
-            damageApplied += clusterDamage;
         }
         if (entityMustBeDevastated()) {
-            damageApplied += devastateUnit();
+            devastateUnit();
         }
-        return damageApplied;
     }
 
 

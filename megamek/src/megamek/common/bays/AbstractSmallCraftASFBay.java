@@ -106,7 +106,7 @@ public abstract class AbstractSmallCraftASFBay extends UnitBay {
     /** Sets the recovery slots to two unused slots per currently available door. */
     public void initializeRecoverySlots() {
         recoverySlots.clear();
-        for (int i = 0; i < currentdoors; i++) {
+        for (int i = 0; i < currentDoors; i++) {
             recoverySlots.add(0);
             recoverySlots.add(0);
         }

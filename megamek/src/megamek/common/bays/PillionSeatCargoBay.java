@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,10 +34,13 @@
 
 package megamek.common.bays;
 
+import java.io.Serial;
+
 /**
  * Represents an external or exposed support vehicle crew seat.
  */
 public final class PillionSeatCargoBay extends StandardSeatCargoBay {
+    @Serial
     private static final long serialVersionUID = 145634308684637504L;
 
     /**

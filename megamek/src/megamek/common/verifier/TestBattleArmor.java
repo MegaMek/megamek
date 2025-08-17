@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.AmmoType;
@@ -271,7 +271,7 @@ public class TestBattleArmor extends TestEntity {
         int numAntiMekWeapons = 0;
         int numAntiPersonnelWeapons = 0;
         if ((ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD)
-              && ((loc == BattleArmor.MOUNT_LOC_LARM) || (loc == BattleArmor.MOUNT_LOC_RARM))) {
+              && ((loc == BattleArmor.MOUNT_LOC_LEFT_ARM) || (loc == BattleArmor.MOUNT_LOC_RIGHT_ARM))) {
             return false;
         }
         if ((loc == BattleArmor.MOUNT_LOC_TURRET) && (ba.getTurretCapacity() == 0)) {
@@ -981,10 +981,10 @@ public class TestBattleArmor extends TestEntity {
         BAManipulator raManipType = BAManipulator.NONE;
         for (Mounted<?> m : ba.getEquipment()) {
             if ((m instanceof MiscMounted) && m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
-                if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
+                if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LEFT_ARM) {
                     numLAManipulators++;
                     laManipType = BAManipulator.getManipulator(m.getType().getInternalName());
-                } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
+                } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RIGHT_ARM) {
                     numRAManipulators++;
                     raManipType = BAManipulator.getManipulator(m.getType().getInternalName());
                 } else {

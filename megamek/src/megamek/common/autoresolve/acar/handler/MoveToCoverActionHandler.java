@@ -33,12 +33,12 @@
 
 package megamek.common.autoresolve.acar.handler;
 
-import megamek.common.board.BoardLocation;
-import megamek.common.compute.Compute;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.MoveToCoverAction;
 import megamek.common.autoresolve.acar.report.IMovementReport;
 import megamek.common.autoresolve.acar.report.MovementReport;
+import megamek.common.board.BoardLocation;
+import megamek.common.compute.Compute;
 
 public class MoveToCoverActionHandler extends AbstractActionHandler {
 
@@ -61,10 +61,10 @@ public class MoveToCoverActionHandler extends AbstractActionHandler {
         var formationOpt = game().getFormation(moveAction.getEntityId());
         var movingFormation = formationOpt.orElseThrow();
         var x = movingFormation.getPosition().coords().getX();
-        var moveX = moveAction.getDestination().getX();
+        var moveX = moveAction.destination().getX();
 
-        var targetFormationOpt = game().getFormation(moveAction.getTargetFormationId());
-        var boardLocation = game().clamp(BoardLocation.of(moveAction.getDestination(), 0));
+        var targetFormationOpt = game().getFormation(moveAction.targetFormationId());
+        var boardLocation = game().clamp(BoardLocation.of(moveAction.destination(), 0));
 
         if (targetFormationOpt.isPresent()) {
             var targetX = targetFormationOpt.get().getPosition().coords().getX();

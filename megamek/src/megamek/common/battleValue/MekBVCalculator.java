@@ -243,9 +243,9 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             }
 
             // Handle splittable and super-heavy weapons
-            int criticals;
+            int criticalSlots;
             if (mounted.isSplit() || mek.isSuperHeavy()) {
-                criticals = 0;
+                criticalSlots = 0;
                 for (int l = 0; l < entity.locations(); l++) {
                     List<CriticalSlot> criticalSlotsCopy = new ArrayList<>();
                     for (int i = 0; i < entity.getNumberOfCriticals(l); i++) {
@@ -254,16 +254,16 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                             criticalSlotsCopy.add(slot);
                         }
                     }
-                    criticals += criticalSlotsCopy.size();
+                    criticalSlots += criticalSlotsCopy.size();
                 }
             } else if (mounted.getType() instanceof HVACWeapon) {
-                criticals = 1; // HVAC weapons are -1 total regardless of slot count
+                criticalSlots = 1; // HVAC weapons are -1 total regardless of slot count
             } else {
-                criticals = mounted.getCriticals();
+                criticalSlots = mounted.getCriticals();
             }
 
             // Adjust defensive value
-            toSubtract *= criticals;
+            toSubtract *= criticalSlots;
             defensiveValue -= toSubtract;
             bvReport.addLine("- " + equipmentDescriptor(mounted),
                   "- " + formatForReport(toSubtract),
@@ -328,7 +328,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
 
         long coolantPods = entity.getAmmo()
               .stream()
-              .map(a -> ((AmmoType) a.getType()).getAmmoType())
+              .map(a -> a.getType().getAmmoType())
               .filter(t -> t == AmmoType.AmmoTypeEnum.COOLANT_POD)
               .count();
         if (coolantPods > 0) {
@@ -527,7 +527,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     }
 
     /**
-     * Returns the (first) CriticalSlot object for a given mounted equipment in its main location. This is used to find
+     * Returns the (first) CriticalSlot object for given mounted equipment in its main location. This is used to find
      * the CriticalSlot for ammo which only uses a single CriticalSlot.
      *
      * @param mounted the equipment to look for

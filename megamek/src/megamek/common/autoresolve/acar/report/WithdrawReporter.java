@@ -35,19 +35,11 @@ package megamek.common.autoresolve.acar.report;
 
 import java.util.function.Consumer;
 
-import megamek.common.game.IGame;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.component.Formation;
+import megamek.common.game.IGame;
 
-public class WithdrawReporter implements IWithdrawReporter {
-
-    private final IGame game;
-    private final Consumer<PublicReportEntry> reportConsumer;
-
-    public WithdrawReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) {
-        this.game = game;
-        this.reportConsumer = reportConsumer;
-    }
+public record WithdrawReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) implements IWithdrawReporter {
 
     public static IWithdrawReporter create(SimulationManager manager) {
         if (manager.isLogSuppressed()) {

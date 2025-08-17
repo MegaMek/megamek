@@ -37,12 +37,7 @@ import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.handler.WithdrawActionHandler;
 
-public class WithdrawAction implements Action {
-    private final int formationId;
-
-    public WithdrawAction(int formationId) {
-        this.formationId = formationId;
-    }
+public record WithdrawAction(int formationId) implements Action {
 
     @Override
     public int getEntityId() {

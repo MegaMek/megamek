@@ -38,18 +38,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import megamek.common.units.Entity;
-import megamek.common.units.EntitySelector;
-import megamek.common.game.Game;
-import megamek.common.game.InGameObject;
 import megamek.common.Player;
-import megamek.common.units.ProtoMek;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.copy.CrewRefBreak;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.Game;
+import megamek.common.game.InGameObject;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.EntitySelector;
+import megamek.common.units.ProtoMek;
 import megamek.logging.MMLogger;
 
 /**
@@ -67,7 +67,7 @@ public class MMSetupForces extends SetupForces {
     /**
      * Create the forces for the game object, using the campaign, units and scenario
      *
-     * @param simulation The game object to setup the forces in
+     * @param simulation The game object to set up the forces in
      */
     @Override
     public void createForcesOnSimulation(SimulationContext simulation) {
@@ -138,9 +138,9 @@ public class MMSetupForces extends SetupForces {
     }
 
     /**
-     * Setup the player, its forces and entities in the game, it also sets the player skill level.
+     * Set up the player, its forces and entities in the game, it also sets the player skill level.
      *
-     * @param simulation The game object to setup the player in
+     * @param simulation The game object to set up the player in
      */
     private void setupPlayer(Player player, List<InGameObject> inGameObjects, SimulationContext simulation) {
         var cleanPlayer = getCleanPlayer(player);
@@ -155,7 +155,7 @@ public class MMSetupForces extends SetupForces {
     }
 
     /**
-     * Create a player object from the campaign and scenario wichi doesnt have a reference to the original player
+     * Create a player object from the campaign and scenario which doesn't have a reference to the original player
      *
      * @return The clean player object
      */
@@ -180,9 +180,9 @@ public class MMSetupForces extends SetupForces {
     }
 
     /**
-     * Setup the player forces and entities for the game
+     * Set up the player forces and entities for the game
      *
-     * @param player The player object to setup the forces for
+     * @param player The player object to set up the forces for
      *
      * @return A list of entities for the player
      */
@@ -221,7 +221,7 @@ public class MMSetupForces extends SetupForces {
         Map<Integer, Integer> forceMapping = new HashMap<>();
         for (final Entity entity : new ArrayList<>(entities)) {
             if (entity instanceof ProtoMek) {
-                int numPlayerProtos = simulation.getSelectedEntityCount(new EntitySelector() {
+                int numPlayerProtoMeks = simulation.getSelectedEntityCount(new EntitySelector() {
                     private final int ownerId = entity.getOwnerId();
 
                     @Override
@@ -230,7 +230,7 @@ public class MMSetupForces extends SetupForces {
                     }
                 });
 
-                entity.setUnitNumber((short) (numPlayerProtos / 5));
+                entity.setUnitNumber((short) (numPlayerProtoMeks / 5));
             }
 
             if (Entity.NONE == entity.getId()) {

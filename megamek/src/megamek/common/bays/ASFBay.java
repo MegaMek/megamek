@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.bays;
 
+import java.io.Serial;
+
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.interfaces.ITechnology;
@@ -45,6 +47,7 @@ import megamek.common.units.LandAirMek;
  * Represents a Transport Bay (TM p.239) for carrying Fighters/LAMs aboard large spacecraft or other units.
  */
 public final class ASFBay extends AbstractSmallCraftASFBay {
+    @Serial
     private static final long serialVersionUID = -4110012474950158433L;
 
     /**
@@ -72,7 +75,7 @@ public final class ASFBay extends AbstractSmallCraftASFBay {
         currentSpace = space;
         this.doors = doors;
         doorsNext = doors;
-        this.currentdoors = doors;
+        this.currentDoors = doors;
         this.bayNumber = bayNumber;
         initializeRecoverySlots();
     }

@@ -46,19 +46,9 @@ import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.logging.MMLogger;
 
-public class PhaseEndReporter implements IPhaseEndReporter {
+public record PhaseEndReporter(SimulationContext context, Consumer<PublicReportEntry> reportConsumer,
+      HtmlGameLogger gameLogger) implements IPhaseEndReporter {
     private static final MMLogger logger = MMLogger.create(PhaseEndReporter.class);
-
-    private final HtmlGameLogger gameLogger;
-    private final Consumer<PublicReportEntry> reportConsumer;
-    private final SimulationContext context;
-
-    private PhaseEndReporter(SimulationContext context, Consumer<PublicReportEntry> reportConsumer,
-          HtmlGameLogger gameLogger) {
-        this.reportConsumer = reportConsumer;
-        this.gameLogger = gameLogger;
-        this.context = context;
-    }
 
     public static IPhaseEndReporter create(SimulationManager manager) {
         if (manager.isLogSuppressed()) {

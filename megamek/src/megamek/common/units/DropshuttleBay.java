@@ -75,7 +75,7 @@ public class DropshuttleBay extends UnitBay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
-        currentdoors = doors;
+        currentDoors = doors;
         this.facing = facing;
     }
 

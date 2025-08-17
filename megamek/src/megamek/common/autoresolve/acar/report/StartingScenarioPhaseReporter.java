@@ -41,22 +41,15 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import megamek.client.ui.util.UIUtil;
-import megamek.common.units.Entity;
-import megamek.common.units.IAero;
-import megamek.common.game.IGame;
 import megamek.common.Player;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
+import megamek.common.game.IGame;
+import megamek.common.units.Entity;
+import megamek.common.units.IAero;
 
-public class StartingScenarioPhaseReporter implements IStartingScenarioPhaseReporter {
-
-    private final IGame game;
-    private final Consumer<PublicReportEntry> reportConsumer;
-
-    private StartingScenarioPhaseReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) {
-        this.reportConsumer = reportConsumer;
-        this.game = game;
-    }
+public record StartingScenarioPhaseReporter(IGame game, Consumer<PublicReportEntry> reportConsumer)
+      implements IStartingScenarioPhaseReporter {
 
     public static IStartingScenarioPhaseReporter create(SimulationManager manager) {
         if (manager.isLogSuppressed()) {

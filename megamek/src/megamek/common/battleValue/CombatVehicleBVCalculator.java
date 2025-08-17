@@ -83,22 +83,12 @@ public class CombatVehicleBVCalculator extends BVCalculator {
 
     @Override
     protected void processTypeModifier() {
-        double typeModifier;
-        switch (entity.getMovementMode()) {
-            case TRACKED:
-                typeModifier = 0.9;
-                break;
-            case WHEELED:
-                typeModifier = 0.8;
-                break;
-            case HOVER:
-            case VTOL:
-            case WIGE:
-                typeModifier = 0.7;
-                break;
-            default:
-                typeModifier = 0.6;
-        }
+        double typeModifier = switch (entity.getMovementMode()) {
+            case TRACKED -> 0.9;
+            case WHEELED -> 0.8;
+            case HOVER, VTOL, WIGE -> 0.7;
+            default -> 0.6;
+        };
 
         if (!entity.isSupportVehicle()) {
             for (Mounted<?> m : entity.getMisc()) {

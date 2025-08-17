@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -286,7 +286,7 @@ class GeneralEntityReadout implements EntityReadout {
     }
 
     protected ViewElement createDesignInvalidElement() {
-        // Note that this has apparently no effect outside of a game
+        // Note that this has apparently no effect outside a game
         return entity.isDesignValid()
               ? new EmptyElement()
               : new PlainLine(Messages.getString("MekView.DesignInvalid"));
@@ -430,12 +430,12 @@ class GeneralEntityReadout implements EntityReadout {
 
     protected List<ViewElement> createTechTable(Entity entity) {
         List<ViewElement> result = new ArrayList<>();
-        result.add(new TooltippedLabelledLine(
+        result.add(new ToolTippedLabelledLine(
               Messages.getString("MekView.TechRating"),
               Messages.getString("MekView.TechRating.tooltip"),
               entity.getFullRatingName()));
 
-        result.add(new TooltippedLabelledLine(
+        result.add(new ToolTippedLabelledLine(
               Messages.getString("MekView.EarliestTechDate"),
               Messages.getString("MekView.EarliestTechDate.tooltip"),
               entity.getEarliestTechDateAndEra()));
@@ -447,23 +447,23 @@ class GeneralEntityReadout implements EntityReadout {
               Messages.getString("MekView.Era"));
         tpTable.setJustification(JUSTIFIED_LEFT, JUSTIFIED_LEFT);
 
-        tpTable.addRow(new TooltippedElement(
+        tpTable.addRow(new ToolTippedElement(
                     Messages.getString("MekView.Prototype"),
                     Messages.getString("MekView.Prototype.tooltip")),
               new DateRangeElement(entity.getPrototypeRangeDate()));
 
-        tpTable.addRow(new TooltippedElement(
+        tpTable.addRow(new ToolTippedElement(
                     Messages.getString("MekView.Production"),
                     Messages.getString("MekView.Production.tooltip")),
               new DateRangeElement(entity.getProductionDateRange()));
 
-        tpTable.addRow(new TooltippedElement(
+        tpTable.addRow(new ToolTippedElement(
                     Messages.getString("MekView.Common"),
                     Messages.getString("MekView.Common.tooltip")),
               new DateRangeElement(entity.getCommonDateRange()));
 
         if (entity.getExtinctionRange().length() > 1) {
-            tpTable.addRow(new TooltippedElement(
+            tpTable.addRow(new ToolTippedElement(
                         Messages.getString("MekView.Extinct"),
                         Messages.getString("MekView.Extinct.tooltip")),
                   new DateRangeElement(entity.getExtinctionRange()));

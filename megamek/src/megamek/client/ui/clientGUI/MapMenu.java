@@ -1835,7 +1835,7 @@ public class MapMenu extends JPopupMenu {
         JMenuItem item = new JMenuItem("Vibro Claw Attack");
         item.addActionListener(evt -> {
             try {
-                ((PhysicalDisplay) currentPanel).vibroclawatt();
+                ((PhysicalDisplay) currentPanel).vibroclawAttack();
             } catch (Exception ex) {
                 logger.error(ex, "");
             }
@@ -1847,7 +1847,7 @@ public class MapMenu extends JPopupMenu {
         JMenuItem item = new JMenuItem("Jump Jet Attack");
         item.addActionListener(evt -> {
             try {
-                ((PhysicalDisplay) currentPanel).jumpjetatt();
+                ((PhysicalDisplay) currentPanel).jumpJetAttack();
             } catch (Exception ex) {
                 logger.error(ex, "");
             }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -79,8 +79,8 @@ public class PointblankShotDisplay extends FiringDisplay {
     private static final MMLogger logger = MMLogger.create(PointblankShotDisplay.class);
 
     /**
-     * This enumeration lists all of the possible ActionCommands that can be carried out during the pointblank phase.
-     * Each command has a string for the command plus a flag that determines what unit type it is appropriate for.
+     * This enumeration lists all the possible ActionCommands that can be carried out during the pointblank phase. Each
+     * command has a string for the command plus a flag that determines what unit type it is appropriate for.
      *
      * @author arlith
      */
@@ -95,7 +95,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         FIRE_CANCEL("fireCancel"),
         FIRE_MORE("fireMore");
 
-        String cmd;
+        final String cmd;
 
         /**
          * Priority that determines this buttons order
@@ -170,10 +170,10 @@ public class PointblankShotDisplay extends FiringDisplay {
     protected Map<FiringCommand, MegaMekButton> buttons;
 
     /**
-     * Creates and lays out a new pointblank phase display for the specified clientgui.getClient().
+     * Creates and lays out a new pointblank phase display for the specified clientGUI.getClient().
      */
-    public PointblankShotDisplay(final ClientGUI clientgui) {
-        super(clientgui);
+    public PointblankShotDisplay(final ClientGUI clientGUI) {
+        super(clientGUI);
         setButtons();
         setButtonsTooltips();
         setupButtonPanel();
@@ -187,7 +187,7 @@ public class PointblankShotDisplay extends FiringDisplay {
                 if (isIgnoringEvents()) {
                     return;
                 }
-                if (clientgui.isProcessingPointblankShot()) {
+                if (clientGUI.isProcessingPointblankShot()) {
                     if (e.getSource().equals(butSkipTurn)) {
                         // Undo any turret turns, arm flips, etc.
                         attacks.clear();
@@ -197,7 +197,7 @@ public class PointblankShotDisplay extends FiringDisplay {
                     }
                     // When the turn is ended, we could miss a key release event
                     // This will ensure no repeating keys are stuck down
-                    clientgui.controller.stopAllRepeating();
+                    clientGUI.controller.stopAllRepeating();
                 }
             }
         };
@@ -333,7 +333,7 @@ public class PointblankShotDisplay extends FiringDisplay {
             setFlipArmsEnabled(ce().canFlipArms());
             updateSearchlight();
         } else {
-            logger.error("Tried to select non-existent entity " + en);
+            logger.error("Tried to select non-existent entity {}", en);
         }
 
         clientgui.clearTemporarySprites();
@@ -411,15 +411,15 @@ public class PointblankShotDisplay extends FiringDisplay {
         if (needNagForOverheat()) {
             if ((ce() != null)
                   && ce().isCapitalFighter()) {
-                int totalheat = 0;
+                int totalHeat = 0;
                 for (EntityAction action : attacks) {
                     if (action instanceof WeaponAttackAction) {
                         Mounted<?> weapon = ce().getEquipment(((WeaponAttackAction) action).getWeaponId());
-                        totalheat += weapon.getCurrentHeat();
+                        totalHeat += weapon.getCurrentHeat();
                     }
                 }
 
-                if (totalheat > ce().getHeatCapacity()) {
+                if (totalHeat > ce().getHeatCapacity()) {
                     // confirm this action
                     String title = Messages.getString("FiringDisplay.OverheatNag.title");
                     String body = Messages.getString("FiringDisplay.OverheatNag.message");
@@ -430,11 +430,7 @@ public class PointblankShotDisplay extends FiringDisplay {
             }
         }
 
-        if (ce() == null) {
-            return true;
-        }
-
-        return false;
+        return ce() == null;
     }
 
     @Override
@@ -459,8 +455,7 @@ public class PointblankShotDisplay extends FiringDisplay {
             for (EntityAction o : attacks) {
                 if (o instanceof ArtilleryAttackAction) {
                     newAttacks.addElement(o);
-                } else if (o instanceof WeaponAttackAction) {
-                    WeaponAttackAction waa = (WeaponAttackAction) o;
+                } else if (o instanceof WeaponAttackAction waa) {
                     Entity attacker = waa
                           .getEntity(game);
                     Targetable target1 = waa.getTarget(clientgui.getClient()
@@ -490,15 +485,9 @@ public class PointblankShotDisplay extends FiringDisplay {
             }
             // now add the attacks in rear/arm arcs
             for (EntityAction o : attacks) {
-                if (o instanceof ArtilleryAttackAction) {
-                    // newAttacks.addElement(o);
-                    continue;
-                } else if (o instanceof WeaponAttackAction) {
-                    WeaponAttackAction waa = (WeaponAttackAction) o;
-                    Entity attacker = waa
-                          .getEntity(game);
-                    Targetable target1 = waa.getTarget(clientgui.getClient()
-                          .getGame());
+                if (!(o instanceof ArtilleryAttackAction) && (o instanceof WeaponAttackAction waa)) {
+                    Entity attacker = waa.getEntity(game);
+                    Targetable target1 = waa.getTarget(clientgui.getClient().getGame());
                     boolean curInFrontArc = ComputeArc.isInArc(attacker.getPosition(),
                           attacker.getSecondaryFacing(), target1,
                           attacker.getForwardArc());
@@ -553,7 +542,7 @@ public class PointblankShotDisplay extends FiringDisplay {
      */
     @Override
     public void fire() {
-        // get the selected weaponnum
+        // get the selected weapon num
         final int weaponNum = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
         WeaponMounted mounted = (WeaponMounted) ce().getEquipment(weaponNum);
 
@@ -935,15 +924,15 @@ public class PointblankShotDisplay extends FiringDisplay {
         }
 
         Entity entity = game.getEntity(event.getEntityId());
-        if (entity == null) {
-            return;
-        } else if (clientgui.getPointblankEID() == entity.getId()) {
-            selectEntity(entity.getId());
-        } else {
-            clientgui.maybeShowUnitDisplay();
-            clientgui.getUnitDisplay().displayEntity(entity);
-            if (entity.isDeployed()) {
-                clientgui.centerOnUnit(entity);
+        if (entity != null) {
+            if (clientgui.getPointblankEID() == entity.getId()) {
+                selectEntity(entity.getId());
+            } else {
+                clientgui.maybeShowUnitDisplay();
+                clientgui.getUnitDisplay().displayEntity(entity);
+                if (entity.isDeployed()) {
+                    clientgui.centerOnUnit(entity);
+                }
             }
         }
     }

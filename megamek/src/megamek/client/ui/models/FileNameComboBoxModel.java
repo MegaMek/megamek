@@ -43,7 +43,7 @@ import javax.swing.event.ListDataListener;
 
 /**
  * The FileNameComboBoxModel class is a ComboBoxModel that uses the file name as the value. It receives a list or array
- * of files and instead of showing the stringfied version of the file it shows only the value of {@link File#getName()}
+ * of files and instead of showing the string version of the file it shows only the value of {@link File#getName()}
  * method. It has a helper function to get the selected file on its own if necessary.
  *
  * @author Luana Coppio

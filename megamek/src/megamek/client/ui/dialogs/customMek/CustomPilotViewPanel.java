@@ -131,7 +131,7 @@ public class CustomPilotViewPanel extends JPanel {
 
             portrait = entity.getCrew().getPortrait(slot);
             portraitButton.setIcon(entity.getCrew().getPortrait(slot).getImageIcon());
-            add(portraitButton, GBC.std().gridheight(4));
+            add(portraitButton, GBC.std().gridHeight(4));
 
             JButton button = new JButton(Messages.getString("CustomMekDialog.RandomName"));
             button.addActionListener(e -> {

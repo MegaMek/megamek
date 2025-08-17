@@ -55,10 +55,10 @@ public class BASE64ImageView extends ImageView {
      * Returns a unique url for the image. It's created by getting the code location and adding the element to it. This
      * doesn't strictly need to be an actual url, it just needs to be unique and properly formatted.
      *
-     * @param elmnt the html element containing the base64 src
+     * @param element the html element containing the base64 src
      */
-    public BASE64ImageView(Element elmnt) {
-        super(elmnt);
+    public BASE64ImageView(Element element) {
+        super(element);
         populateImage();
     }
 
@@ -83,9 +83,9 @@ public class BASE64ImageView extends ImageView {
         String b64 = getBASE64Image();
         if (b64 != null) {
             BufferedImage newImage = null;
-            try (ByteArrayInputStream bais = new ByteArrayInputStream(
+            try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
                   Base64.getDecoder().decode(b64.getBytes()))) {
-                newImage = ImageIO.read(bais);
+                newImage = ImageIO.read(byteArrayInputStream);
             } catch (Exception ex) {
                 logger.error("", ex);
             }

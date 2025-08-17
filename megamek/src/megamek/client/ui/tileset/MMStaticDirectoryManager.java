@@ -52,11 +52,8 @@ public class MMStaticDirectoryManager {
     private static DirectoryItems camouflageDirectory;
     private static MekTileset mekTileset;
 
-    // Re-parsing Prevention Variables: They are True at startup and when the
-    // specified directory
-    // should be re-parsed, and are used to avoid re-parsing the directory
-    // repeatedly when there's
-    // an error.
+    // Reparsing Prevention Variables: They are True at startup and when the specified directory should be reparsed,
+    // and are used to avoid reparsing the directory repeatedly when there's an error.
     private static boolean parsePortraitDirectory = true;
     private static boolean parseCamouflageDirectory = true;
     private static boolean parseMekTileset = true;
@@ -71,7 +68,7 @@ public class MMStaticDirectoryManager {
     // region Initialization
 
     /**
-     * This initialized all of the directories under this manager
+     * This initialized all the directories under this manager
      */
     public static void initialize() {
         initializePortraits();
@@ -88,7 +85,7 @@ public class MMStaticDirectoryManager {
         // Read in and parse MM's portrait folder only when first called or when
         // refreshed
         if (parsePortraitDirectory) {
-            // Set parsePortraitDirectory to false to avoid parsing repeatedly when
+            // Set parsePortraitDirectory too false to avoid parsing repeatedly when
             // something fails
             parsePortraitDirectory = false;
             try {
@@ -103,17 +100,22 @@ public class MMStaticDirectoryManager {
                 }
 
                 // check for portraits in story arcs subdirectories
-                File storyarcsDir = Configuration.storyarcsDir();
-                if (storyarcsDir.exists() && storyarcsDir.isDirectory()) {
-                    for (File file : storyarcsDir.listFiles()) {
-                        if (file.isDirectory()) {
-                            File storyArcPortraitDir = new File(file.getPath() + "/data/images/portraits");
-                            if (storyArcPortraitDir.exists() && storyArcPortraitDir.isDirectory()) {
-                                DirectoryItems storyArcPortraits = new DirectoryItems(storyArcPortraitDir,
-                                      new ImageFileFactory());
-                                portraitDirectory.merge(storyArcPortraits);
+                File storyArcsDir = Configuration.storyarcsDir();
+                if (storyArcsDir.exists() && storyArcsDir.isDirectory()) {
+                    File[] fileList = storyArcsDir.listFiles();
+
+                    if (fileList != null) {
+                        for (File file : fileList) {
+                            if (file.isDirectory()) {
+                                File storyArcPortraitDir = new File(file.getPath() + "/data/images/portraits");
+                                if (storyArcPortraitDir.exists() && storyArcPortraitDir.isDirectory()) {
+                                    DirectoryItems storyArcPortraits = new DirectoryItems(storyArcPortraitDir,
+                                          new ImageFileFactory());
+                                    portraitDirectory.merge(storyArcPortraits);
+                                }
                             }
                         }
+
                     }
                 }
             } catch (Exception e) {
@@ -130,7 +132,7 @@ public class MMStaticDirectoryManager {
     private static void initializeCamouflage() {
         // Read in and parse MM's camo folder only when first called or when refreshed
         if (parseCamouflageDirectory) {
-            // Set parseCamouflageDirectory to false to avoid parsing repeatedly when
+            // Set parseCamouflageDirectory too false to avoid parsing repeatedly when
             // something fails
             parseCamouflageDirectory = false;
             try {
@@ -145,15 +147,18 @@ public class MMStaticDirectoryManager {
                 }
 
                 // check for camouflage in story arcs subdirectories
-                File storyarcsDir = Configuration.storyarcsDir();
-                if (storyarcsDir.exists() && storyarcsDir.isDirectory()) {
-                    for (File file : storyarcsDir.listFiles()) {
-                        if (file.isDirectory()) {
-                            File storyArcCamoDir = new File(file.getPath() + "/data/images/camo");
-                            if (storyArcCamoDir.exists() && storyArcCamoDir.isDirectory()) {
-                                DirectoryItems storyArcCamo = new DirectoryItems(storyArcCamoDir,
-                                      new ScaledImageFileFactory());
-                                camouflageDirectory.merge(storyArcCamo);
+                File storyArcsDir = Configuration.storyarcsDir();
+                if (storyArcsDir.exists() && storyArcsDir.isDirectory()) {
+                    File[] fileList = storyArcsDir.listFiles();
+                    if (fileList != null) {
+                        for (File file : fileList) {
+                            if (file.isDirectory()) {
+                                File storyArcCamoDir = new File(file.getPath() + "/data/images/camo");
+                                if (storyArcCamoDir.exists() && storyArcCamoDir.isDirectory()) {
+                                    DirectoryItems storyArcCamo = new DirectoryItems(storyArcCamoDir,
+                                          new ScaledImageFileFactory());
+                                    camouflageDirectory.merge(storyArcCamo);
+                                }
                             }
                         }
                     }
@@ -171,7 +176,7 @@ public class MMStaticDirectoryManager {
      */
     private static void initializeMekTileset() {
         if (parseMekTileset) {
-            // Set parseMekTileset to false to avoid parsing repeatedly when something fails
+            // Set parseMekTileset too false to avoid parsing repeatedly when something fails
             parseMekTileset = false;
             mekTileset = new MekTileset(Configuration.unitImagesDir());
             try {

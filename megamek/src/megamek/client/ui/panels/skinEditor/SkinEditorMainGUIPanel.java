@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,6 +43,7 @@ import java.awt.SystemColor;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDialog;
@@ -60,6 +61,7 @@ import megamek.logging.MMLogger;
 public class SkinEditorMainGUIPanel extends JPanel implements WindowListener {
     private static final MMLogger logger = MMLogger.create(SkinEditorMainGUIPanel.class);
 
+    @Serial
     private static final long serialVersionUID = 5625499617779156289L;
 
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
@@ -72,7 +74,6 @@ public class SkinEditorMainGUIPanel extends JPanel implements WindowListener {
 
     // A menu bar to contain all actions.
     private JDialog skinSpecEditorD;
-    private SkinSpecEditorPanel skinSpecEditorPanel;
 
     public SkinEditorMainGUIPanel() {
         super(new BorderLayout());
@@ -166,7 +167,7 @@ public class SkinEditorMainGUIPanel extends JPanel implements WindowListener {
             }
         });
 
-        skinSpecEditorPanel = new SkinSpecEditorPanel(this);
+        SkinSpecEditorPanel skinSpecEditorPanel = new SkinSpecEditorPanel(this);
 
         skinSpecEditorD = new JDialog(frame,
               Messages.getString("SkinEditor.SkinEditorDialog.Title"), false);

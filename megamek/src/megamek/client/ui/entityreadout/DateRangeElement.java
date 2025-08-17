@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,13 +32,7 @@
  */
 package megamek.client.ui.entityreadout;
 
-class DateRangeElement implements ViewElement {
-
-    private final String text;
-
-    public DateRangeElement(String text) {
-        this.text = text;
-    }
+record DateRangeElement(String text) implements ViewElement {
 
     @Override
     public String toPlainText() {

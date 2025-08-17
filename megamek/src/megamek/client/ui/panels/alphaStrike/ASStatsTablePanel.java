@@ -249,7 +249,7 @@ public class ASStatsTablePanel implements ActionListener {
 
         for (AlphaStrikeElement element : group.elements.stream()
               .sorted(aseTableComparator)
-              .collect(Collectors.toList())) {
+              .toList()) {
             boolean oddRow = (rows++ % 2) == 1;
             addGridElementLeftAlign(element.getName(), oddRow);
             addGridElement(element.getASUnitType() + "", oddRow);
@@ -330,7 +330,7 @@ public class ASStatsTablePanel implements ActionListener {
     }
 
     /** add a header button that connects to the <code>sort</code> of an AlphaStrikeElementComparator */
-    private JButton addSortableHeader(AlphaStrikeElementComparator comparator) {
+    private void addSortableHeader(AlphaStrikeElementComparator comparator) {
         var button = new JButton(comparator.getLabel());
         button.addActionListener(this);
         button.setForeground(comparator.sort == 0 ? HEADER_COLOR : SORTED_HEADER_COLOR);
@@ -338,7 +338,6 @@ public class ASStatsTablePanel implements ActionListener {
         button.setToolTipText("Click to sort by " + comparator.name);
         panel.add(button);
         buttonMap.put(button, comparator);
-        return button;
     }
 
     private String getArcedSpecials(AlphaStrikeElement element) {
@@ -367,7 +366,7 @@ public class ASStatsTablePanel implements ActionListener {
 
     private void addElementHeaders() {
         rows++;
-        aseTableComparator.comparatorList.stream().forEach(mc -> addSortableHeader(mc));
+        aseTableComparator.comparatorList.forEach(this::addSortableHeader);
         addHeader("Specials");
         addHeader("Conversion");
         addLine();
@@ -386,7 +385,7 @@ public class ASStatsTablePanel implements ActionListener {
         }
     }
 
-    /** Adds a line of JSeperators to the panel. The additional strut is required for the line to show. */
+    /** Adds a line of JSeparators to the panel. The additional strut is required for the line to show. */
     private void addLine() {
         rows++;
         for (int col = 0; col < COLUMNS; col++) {
@@ -400,12 +399,15 @@ public class ASStatsTablePanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (buttonMap.containsKey(e.getSource())) {
-            JButton button = (JButton) e.getSource();
-            AlphaStrikeElementComparator comparator = buttonMap.get(button);
-            comparator.toggleSort();
-            button.setText(comparator.getLabel());
-            rebuildPanel();
+        Object source = e.getSource();
+        if (source instanceof JButton button) {
+            if (buttonMap.containsKey(button)) {
+                AlphaStrikeElementComparator comparator = buttonMap.get(button);
+                comparator.toggleSort();
+                button.setText(comparator.getLabel());
+                rebuildPanel();
+            }
+
         }
     }
 
@@ -436,10 +438,10 @@ public class ASStatsTablePanel implements ActionListener {
     }
 
     /** Extend this class to create a comparator triggered by a button */
-    private abstract class AlphaStrikeElementComparator implements Comparator<AlphaStrikeElement> {
+    private abstract static class AlphaStrikeElementComparator implements Comparator<AlphaStrikeElement> {
         // 0 is do not sort, 1 is sort, -q is reverse sort
         private int sort = 0;
-        private String name;
+        private final String name;
 
         AlphaStrikeElementComparator(String name) {
             this.name = name;
@@ -458,7 +460,7 @@ public class ASStatsTablePanel implements ActionListener {
      * Orderable, optional sorting criteria for AlphaStrikeElements. Execute sorts in order of
      * <code>comparatorList</code>
      */
-    private class ASETableComparator implements Comparator<AlphaStrikeElement> {
+    private static class ASETableComparator implements Comparator<AlphaStrikeElement> {
         //sort criteria: 1 is sort, 0 is do not sort, -1 is reverse sort
         private final List<AlphaStrikeElementComparator> comparatorList = new ArrayList<>();
 

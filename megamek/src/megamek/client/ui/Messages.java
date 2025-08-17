@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,10 +39,8 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import megamek.MegaMek;
-import megamek.logging.MMLogger;
 
 public class Messages {
-    private static final MMLogger logger = MMLogger.create(Messages.class);
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("megamek.client.messages",
           MegaMek.getMMOptions().getLocale());

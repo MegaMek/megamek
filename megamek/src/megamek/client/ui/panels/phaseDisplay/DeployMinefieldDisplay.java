@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,7 @@ package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -62,15 +63,16 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
+    @Serial
     private static final long serialVersionUID = -1243277953037374936L;
 
     /**
-     * This enumeration lists all of the possible ActionCommands that can be carried out during the deploy minefield
+     * This enumeration lists all the possible ActionCommands that can be carried out during the deployment minefield
      * phase.  Each command has a string for the command.
      *
      * @author arlith
      */
-    public static enum DeployMinefieldCommand implements PhaseCommand {
+    public enum DeployMinefieldCommand implements PhaseCommand {
         COMMAND_NONE("noCommand"),
         DEPLOY_MINE_CONV("deployMineConv"),
         DEPLOY_MINE_COM("deployMineCom"),
@@ -80,7 +82,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         DEPLOY_CARRYABLE("deployCarriable"),
         REMOVE_MINES("removeMines");
 
-        private static DeployMinefieldCommand[] actualCommands =
+        private static final DeployMinefieldCommand[] actualCommands =
               { DEPLOY_MINE_CONV, DEPLOY_MINE_COM, DEPLOY_MINE_VIBRA, DEPLOY_MINE_ACTIVE,
                 DEPLOY_MINE_INFERNO, DEPLOY_CARRYABLE, REMOVE_MINES };
 
@@ -88,7 +90,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
          * Priority that determines this buttons order
          */
         public int priority;
-        String cmd;
+        final String cmd;
 
         DeployMinefieldCommand(String c) {
             cmd = c;
@@ -170,7 +172,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     protected final ClientGUI clientgui;
 
     /**
-     * Creates and lays out a new deployment phase display for the specified clientgui.getClient().
+     * Creates and lays out a new deployment phase display for the specified clientGUI.getClient().
      */
     public DeployMinefieldDisplay(ClientGUI clientgui) {
         super(clientgui);
@@ -270,7 +272,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         if (currentCommand == DeployMinefieldCommand.REMOVE_MINES) {
             if (!game.containsMinefield(coords) &&
-                  game.getGroundObjects(coords).size() == 0) {
+                  game.getGroundObjects(coords).isEmpty()) {
                 return;
             }
             Enumeration<?> mfs = game.getMinefields(coords).elements();
@@ -323,7 +325,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             game.placeGroundObject(coords, toDeploy);
             groundObjects.remove(toDeploy);
 
-            if (groundObjects.size() <= 0) {
+            if (groundObjects.isEmpty()) {
                 currentCommand = DeployMinefieldCommand.COMMAND_NONE;
             }
 

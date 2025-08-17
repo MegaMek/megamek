@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,8 +51,9 @@ import megamek.common.util.DistractableDelegate;
 
 /**
  * This is the base class for all the "displays" which take control during the local player's turn. Only one display is
- * shown at each time; the ChatLounge is also a display. The ChatLounge doesn't show the boardview but most other
- * displays do. Typically the display itself is the button bar at the bottom of the GUI.
+ * shown at each time; the ChatLounge is also a display. The ChatLounge doesn't show the
+ * {@link megamek.client.ui.clientGUI.boardview.BoardView} but most other displays do. Typically, the display itself is
+ * the button bar at the bottom of the GUI.
  * <p>
  * Note that a display being active does not mean that it is also the player's turn. The display should allow inspecting
  * units and other actions even when it's another player's turn. Also, even when it's the local player's turn, a unit is
@@ -68,8 +69,8 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
 
     private final DistractableDelegate distractableDelegate = new DistractableDelegate();
 
-    /** The IClientgui that this display is a part of. Cannot be null. */
-    private final IClientGUI clientgui;
+    /** The IClientGUI that this display is a part of. Cannot be null. */
+    private final IClientGUI clientGUI;
 
     /**
      * Creates a phase display using the standard skin settings for phase displays.
@@ -91,7 +92,7 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
      */
     protected AbstractPhaseDisplay(IClientGUI cg, String panelSkin, String buttonSkin) {
         super(panelSkin, 0);
-        clientgui = Objects.requireNonNull(cg);
+        clientGUI = Objects.requireNonNull(cg);
         setBorder(new MegaMekBorder(panelSkin));
 
         butDone = new MegaMekButton("DONE", buttonSkin);
@@ -99,11 +100,11 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.addActionListener(e -> done());
 
-        MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.DONE, this::shouldperformDone, this::done);
+        MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.DONE, this::shouldPerformDone, this::done);
     }
 
     private void done() {
-        if (shouldperformDone()) {
+        if (shouldPerformDone()) {
             // When the turn is ended, we could miss a key release event
             // This will ensure no repeating keys are stuck down
             MegaMekGUI.getKeyDispatcher().stopAllRepeating();
@@ -111,11 +112,11 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         }
     }
 
-    private boolean shouldperformDone() {
-        return ((clientgui.getClient().isMyTurn() ||
-              (clientgui.getClient().getGame().getTurn() == null) ||
-              (clientgui.getClient().getGame().getPhase().isReport()))) &&
-              !clientgui.shouldIgnoreHotKeys() &&
+    private boolean shouldPerformDone() {
+        return ((clientGUI.getClient().isMyTurn() ||
+              (clientGUI.getClient().getGame().getTurn() == null) ||
+              (clientGUI.getClient().getGame().getPhase().isReport()))) &&
+              !clientGUI.shouldIgnoreHotKeys() &&
               !isIgnoringEvents() &&
               isVisible() &&
               butDone.isEnabled();
@@ -138,8 +139,8 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
      */
     public abstract void ready();
 
-    public IClientGUI getClientgui() {
-        return clientgui;
+    public IClientGUI getClientGUI() {
+        return clientGUI;
     }
 
     public MegaMekButton getButDone() {
@@ -147,20 +148,20 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
     }
 
     /**
-     * Sends a Done packet to the server. Shortcut for clientgui.getClient().sendDone(true).
+     * Sends a Done packet to the server. Shortcut for clientGUI.getClient().sendDone(true).
      *
      * @see megamek.client.IClient#sendDone(boolean)
      */
     protected void sendDone() {
-        clientgui.getClient().sendDone(true);
+        clientGUI.getClient().sendDone(true);
     }
 
     /**
      * @return True when the client determines that it is the local player's turn to act. Shortcut to
-     *       clientgui.getClient().isMyTurn().
+     *       clientGUI.getClient().isMyTurn().
      */
     protected boolean isMyTurn() {
-        return clientgui.getClient().isMyTurn();
+        return clientGUI.getClient().isMyTurn();
     }
 
     //region Empty BoardViewListener

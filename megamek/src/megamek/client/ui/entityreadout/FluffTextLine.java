@@ -38,18 +38,10 @@ import megamek.client.ui.util.DiscordFormat;
  * This Element is a specific for fluff text. It emphasizes the label and cleans HTML tags from the text for output in
  * formats other than HTML (in other words, allows HTML tags in the text).
  */
-class FluffTextLine implements ViewElement {
+record FluffTextLine(String label, String value) implements ViewElement {
 
     private static final String PLAIN_FORMAT = "%s: %s\n";
     private static final String HTML_FORMAT = "<B>%s</B>: %s<BR>\n";
-
-    private final String label;
-    private final String value;
-
-    FluffTextLine(String label, String value) {
-        this.label = label;
-        this.value = value;
-    }
 
     @Override
     public String toPlainText() {

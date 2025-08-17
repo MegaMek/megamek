@@ -106,8 +106,8 @@ public class MekSetTest {
 
     private static void testImageName(File dir, String imageName, String line) throws IOException {
         File imgFile = new File(dir, imageName);
-        boolean exactmatch = imgFile.exists() && imgFile.getCanonicalPath().endsWith(imgFile.getName());
-        if (!exactmatch) {
+        boolean exactMatch = imgFile.exists() && imgFile.getCanonicalPath().endsWith(imgFile.getName());
+        if (!exactMatch) {
             System.out.print("Error in [" + line + "]: ");
             String[] dirFiles = imgFile.getParentFile().list();
             if (dirFiles == null) {

@@ -74,7 +74,6 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         MOVE_MORE("MoveMore");
 
         private final String cmd;
-        private final Predicate<SBFFormation> isEligible;
         private int priority;
 
         MoveCommand(String c) {
@@ -83,7 +82,6 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
 
         MoveCommand(String c, Predicate<SBFFormation> isEligible) {
             cmd = c;
-            this.isEligible = isEligible;
             priority = ordinal();
         }
 
@@ -122,7 +120,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         game().addGameListener(this);
         // TODO: rather have clientGUI take BVListeners and forward all events -> dont have to deal with changing
         //  BoardViews
-        clientgui.boardViews().forEach(b -> b.addBoardViewListener(this));
+        clientGUI.boardViews().forEach(b -> b.addBoardViewListener(this));
     }
 
     @Override
@@ -137,7 +135,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
     private void selectFormation(@Nullable SBFFormation formation) {
         if (formation == null) {
             currentFormation = SBFFormation.NONE;
-            clientgui.clearMovementEnvelope();
+            clientGUI.clearMovementEnvelope();
         } else {
             currentFormation = formation.getId();
             if (isMyTurn() && GUIP.getMoveEnvelope()) {
@@ -148,7 +146,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
     }
 
     protected boolean shouldPerformClearKeyCommand() {
-        return !clientgui.isChatBoxActive() && !isIgnoringEvents() && isVisible();
+        return !clientGUI.isChatBoxActive() && !isIgnoringEvents() && isVisible();
     }
 
     private void registerKeyCommands() {
@@ -190,8 +188,8 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
                 plannedMovement = new SBFMovePath(currentFormation, formation.getPosition(), game());
             }
         }
-        clientgui.selectForAction(game().getFormation(currentFormation).orElse(null));
-        clientgui.showMovePath(plannedMovement);
+        clientGUI.selectForAction(game().getFormation(currentFormation).orElse(null));
+        clientGUI.showMovePath(plannedMovement);
         updateDonePanel();
     }
 
@@ -203,11 +201,11 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
     }
 
     private void selectNextFormation() {
-        clientgui.getClient().getGame().getNextEligibleFormation(currentFormation).ifPresent(this::selectFormation);
+        clientGUI.getClient().getGame().getNextEligibleFormation(currentFormation).ifPresent(this::selectFormation);
     }
 
     private void selectPreviousFormation() {
-        clientgui.getClient().getGame().getPreviousEligibleFormation(currentFormation).ifPresent(this::selectFormation);
+        clientGUI.getClient().getGame().getPreviousEligibleFormation(currentFormation).ifPresent(this::selectFormation);
     }
 
     @Override
@@ -232,7 +230,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         }
 
         if (plannedMovement.getSteps().isEmpty() || planJump(formation.get()).isConfirmed()) {
-            clientgui.getClient().moveUnit(plannedMovement);
+            clientGUI.getClient().moveUnit(plannedMovement);
             endMyTurn();
         }
     }
@@ -241,8 +239,8 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         // TODO SBF RULES Can you use JUMP if you remain in the hex?
         if (formation.getJumpMove() > 0) {
             List<Integer> choices = Stream.iterate(0, n -> n + 1).limit(formation.getJumpMove() + 1).toList();
-            SBFJumpChoiceDialog jumpChoiceDialog = new SBFJumpChoiceDialog(clientgui.getFrame(), choices);
-            jumpChoiceDialog.setLocationRelativeTo(clientgui.getFrame());
+            SBFJumpChoiceDialog jumpChoiceDialog = new SBFJumpChoiceDialog(clientGUI.getFrame(), choices);
+            jumpChoiceDialog.setLocationRelativeTo(clientGUI.getFrame());
             jumpChoiceDialog.pack();
             DialogResult result = jumpChoiceDialog.showDialog();
             if (result.isConfirmed()) {
@@ -268,20 +266,20 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
     @Override
     public void removeAllListeners() {
         game().removeGameListener(this);
-        clientgui.boardViews().forEach(b -> b.removeBoardViewListener(this));
+        clientGUI.boardViews().forEach(b -> b.removeBoardViewListener(this));
     }
 
     private void beginMyTurn() {
         initDonePanelForNewTurn();
         updateButtonStatus();
         if (GUIP.getAutoSelectNextUnit()) {
-            clientgui.getClient().getGame().getNextEligibleFormation().ifPresent(this::selectFormation);
+            clientGUI.getClient().getGame().getNextEligibleFormation().ifPresent(this::selectFormation);
         }
         startTimer();
     }
 
     private SBFGame game() {
-        return clientgui.getClient().getGame();
+        return clientGUI.getClient().getGame();
     }
 
     private void updateButtonStatus() {
@@ -340,7 +338,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
             mvEnvMP.put(c.coords(), mvEnvData.get(c).getMpUsed());
         }
 
-        clientgui.showMovementEnvelope(formation, mvEnvMP);
+        clientGUI.showMovementEnvelope(formation, mvEnvMP);
     }
 
     @Override
@@ -389,7 +387,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
 
         if (finPath != null) {
             plannedMovement = finPath;
-            clientgui.showMovePath(plannedMovement);
+            clientGUI.showMovePath(plannedMovement);
         } else {
             resetPlannedMovement();
             logger.error("Unable to find a move path for formation {} to {}!", currentFormation, dest);

@@ -63,10 +63,10 @@ import megamek.client.ui.comboBoxes.MMComboBox;
 import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
 import megamek.client.ui.widget.BackGroundDrawer;
-import megamek.client.ui.widget.PMUtil;
-import megamek.client.ui.widget.PicMap;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
+import megamek.client.ui.widget.picmap.PMUtil;
+import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.*;
 import megamek.common.AmmoType.AmmoTypeEnum;
 import megamek.common.AmmoType.Munitions;
@@ -321,7 +321,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         parent.setPreferredSize(pref);
 
         parent.add(child, GBC.eol()
-              .gridy(gridY++)
+              .gridY(gridY++)
               .insets(10, 1, 10, 1)
               .weighty(1)
               .fill(fill));
@@ -338,12 +338,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         int parentGridY = 0;
 
         pWeaponOrder.add(wSortOrder,
-              GBC.std().insets(15, 1, 1, 1).gridy(parentGridY).gridx(0));
+              GBC.std().insets(15, 1, 1, 1).gridY(parentGridY).gridX(0));
         comboWeaponSortOrder = new MMComboBox<>("comboWeaponSortOrder", WeaponSortOrder.values());
         pWeaponOrder.add(comboWeaponSortOrder, GBC.eol()
               .fill(GridBagConstraints.HORIZONTAL)
               .anchor(GridBagConstraints.WEST)
-              .insets(15, 9, 15, 1).gridy(parentGridY).gridx(1));
+              .insets(15, 9, 15, 1).gridY(parentGridY).gridX(1));
         addSubDisplay(parent, pWeaponOrder, LINE_HEIGHT, GridBagConstraints.BOTH);
 
         // weapon list
@@ -372,17 +372,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         JPanel pAmmo = new JPanel(new GridBagLayout());
         pAmmo.setOpaque(false);
 
-        pAmmo.add(wBayWeapon, GBC.std().insets(15, 1, 1, 1).gridy(parentGridY).gridx(0));
+        pAmmo.add(wBayWeapon, GBC.std().insets(15, 1, 1, 1).gridY(parentGridY).gridX(0));
         pAmmo.add(m_chBayWeapon, GBC.std().fill(GridBagConstraints.HORIZONTAL)
-              .insets(15, 1, 15, 1).gridy(parentGridY).gridx(1));
+              .insets(15, 1, 15, 1).gridY(parentGridY).gridX(1));
         parentGridY++;
 
-        pAmmo.add(wAmmo, GBC.std().insets(15, 9, 1, 1).gridy(parentGridY).gridx(0));
+        pAmmo.add(wAmmo, GBC.std().insets(15, 9, 1, 1).gridY(parentGridY).gridX(0));
 
         pAmmo.add(m_chAmmo,
               GBC.eol().fill(GridBagConstraints.HORIZONTAL)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 9, 15, 1).gridy(parentGridY).gridx(1));
+                    .insets(15, 9, 15, 1).gridY(parentGridY).gridX(1));
 
         addSubDisplay(parent, pAmmo, LINE_HEIGHT * 3 / 2, GridBagConstraints.BOTH);
 
@@ -422,34 +422,34 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         int parentGridY = 0;
 
         pCurrentWeapon.add(wNameL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST)
-              .insets(5, 9, 1, 1).gridy(parentGridY).gridx(0).weightx(1));
+              .insets(5, 9, 1, 1).gridY(parentGridY).gridX(0).weightX(1));
 
         pCurrentWeapon.add(wHeatL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST)
-              .insets(15, 9, 1, 1).gridy(parentGridY).gridx(1).weightx(1));
+              .insets(15, 9, 1, 1).gridY(parentGridY).gridX(1).weightX(1));
 
         pCurrentWeapon.add(wDamL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST)
-              .insets(15, 9, 1, 1).gridy(parentGridY).gridx(2).weightx(1));
+              .insets(15, 9, 1, 1).gridY(parentGridY).gridX(2).weightX(1));
 
         pCurrentWeapon.add(wArcHeatL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST)
-              .insets(15, 9, 1, 1).gridy(parentGridY).gridx(3).weightx(1));
+              .insets(15, 9, 1, 1).gridY(parentGridY).gridX(3).weightX(1));
 
         pCurrentWeapon.add(wDamageTrooperL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST)
-              .insets(15, 9, 1, 1).gridy(parentGridY).gridx(3).weightx(1));
+              .insets(15, 9, 1, 1).gridY(parentGridY).gridX(3).weightX(1));
         parentGridY++;
         pCurrentWeapon.add(wNameR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST)
-              .insets(5, 1, 1, 1).gridy(parentGridY).gridx(0).weightx(1));
+              .insets(5, 1, 1, 1).gridY(parentGridY).gridX(0).weightX(1));
 
         pCurrentWeapon.add(wHeatR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST)
-              .insets(15, 1, 1, 1).gridy(parentGridY).gridx(1).weightx(1));
+              .insets(15, 1, 1, 1).gridY(parentGridY).gridX(1).weightX(1));
 
         pCurrentWeapon.add(wDamR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST)
-              .insets(15, 1, 1, 1).gridy(parentGridY).gridx(2).weightx(1));
+              .insets(15, 1, 1, 1).gridY(parentGridY).gridX(2).weightX(1));
 
         pCurrentWeapon.add(wArcHeatR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST)
-              .insets(15, 1, 1, 1).gridy(parentGridY).gridx(3).weightx(1));
+              .insets(15, 1, 1, 1).gridY(parentGridY).gridX(3).weightX(1));
 
         pCurrentWeapon.add(wDamageTrooperR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST)
-              .insets(15, 1, 1, 1).gridy(parentGridY).gridx(3).weightx(1));
+              .insets(15, 1, 1, 1).gridY(parentGridY).gridX(3).weightX(1));
 
         addSubDisplay(parent, pCurrentWeapon, LINE_HEIGHT * 2, GridBagConstraints.NONE);
     }
@@ -546,53 +546,53 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         pRange.add(wMinL,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 9, 9, 1).gridy(parentGridY).gridx(0).weightx(1));
+                    .insets(15, 9, 9, 1).gridY(parentGridY).gridX(0).weightX(1));
 
         pRange.add(wShortL,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 9, 9, 1).gridy(parentGridY).gridx(1).weightx(1));
+                    .insets(15, 9, 9, 1).gridY(parentGridY).gridX(1).weightX(1));
 
         pRange.add(wMedL,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 9, 9, 1).gridy(parentGridY).gridx(2).weightx(1));
+                    .insets(15, 9, 9, 1).gridY(parentGridY).gridX(2).weightX(1));
 
         pRange.add(wLongL,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 9, 9, 1).gridy(parentGridY).gridx(3).weightx(1));
+                    .insets(15, 9, 9, 1).gridY(parentGridY).gridX(3).weightX(1));
 
         pRange.add(wExtL,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 9, 9, 1).gridy(parentGridY).gridx(4).weightx(1));
+                    .insets(15, 9, 9, 1).gridY(parentGridY).gridX(4).weightX(1));
 
         parentGridY++;
 
         pRange.add(wInfantryRange0L, GBC.std().fill(GridBagConstraints.NONE)
               .anchor(GridBagConstraints.WEST)
-              .insets(15, 9, 9, 1).gridy(parentGridY).gridx(0).weightx(1));
+              .insets(15, 9, 9, 1).gridY(parentGridY).gridX(0).weightX(1));
 
         pRange.add(wInfantryRange1L, GBC.std().fill(GridBagConstraints.NONE)
               .anchor(GridBagConstraints.WEST)
-              .insets(15, 9, 9, 1).gridy(parentGridY).gridx(1).weightx(1));
+              .insets(15, 9, 9, 1).gridY(parentGridY).gridX(1).weightX(1));
 
         pRange.add(wInfantryRange2L, GBC.std().fill(GridBagConstraints.NONE)
               .anchor(GridBagConstraints.WEST)
-              .insets(15, 9, 9, 1).gridy(parentGridY).gridx(2).weightx(1));
+              .insets(15, 9, 9, 1).gridY(parentGridY).gridX(2).weightX(1));
 
         pRange.add(wInfantryRange3L, GBC.std().fill(GridBagConstraints.NONE)
               .anchor(GridBagConstraints.WEST)
-              .insets(15, 9, 9, 1).gridy(parentGridY).gridx(3).weightx(1));
+              .insets(15, 9, 9, 1).gridY(parentGridY).gridX(3).weightX(1));
 
         pRange.add(wInfantryRange4L, GBC.std().fill(GridBagConstraints.NONE)
               .anchor(GridBagConstraints.WEST)
-              .insets(15, 9, 9, 1).gridy(parentGridY).gridx(4).weightx(1));
+              .insets(15, 9, 9, 1).gridY(parentGridY).gridX(4).weightX(1));
 
         pRange.add(wInfantryRange5L, GBC.std().fill(GridBagConstraints.NONE)
               .anchor(GridBagConstraints.WEST)
-              .insets(15, 9, 9, 1).gridy(parentGridY).gridx(4).weightx(1));
+              .insets(15, 9, 9, 1).gridY(parentGridY).gridX(4).weightX(1));
 
         parentGridY++;
         // ----------------
@@ -600,77 +600,77 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         pRange.add(wMinR,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 1, 9, 1).gridy(parentGridY).gridx(0).weightx(1));
+                    .insets(15, 1, 9, 1).gridY(parentGridY).gridX(0).weightX(1));
 
         pRange.add(wShortR,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 1, 9, 1).gridy(parentGridY).gridx(1).weightx(1));
+                    .insets(15, 1, 9, 1).gridY(parentGridY).gridX(1).weightX(1));
 
         pRange.add(wMedR,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 1, 9, 1).gridy(parentGridY).gridx(2).weightx(1));
+                    .insets(15, 1, 9, 1).gridY(parentGridY).gridX(2).weightX(1));
 
         pRange.add(wLongR,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 1, 9, 1).gridy(parentGridY).gridx(3).weightx(1));
+                    .insets(15, 1, 9, 1).gridY(parentGridY).gridX(3).weightX(1));
 
         pRange.add(wExtR,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 1, 9, 1).gridy(parentGridY).gridx(4).weightx(1));
+                    .insets(15, 1, 9, 1).gridY(parentGridY).gridX(4).weightX(1));
 
         pRange.add(wInfantryRange0R, GBC.std().fill(GridBagConstraints.NONE)
               .anchor(GridBagConstraints.WEST)
-              .insets(15, 1, 9, 1).gridy(parentGridY).gridx(0).weightx(1));
+              .insets(15, 1, 9, 1).gridY(parentGridY).gridX(0).weightX(1));
 
         pRange.add(wInfantryRange1R, GBC.std().fill(GridBagConstraints.NONE)
               .anchor(GridBagConstraints.WEST)
-              .insets(15, 1, 9, 1).gridy(parentGridY).gridx(1).weightx(1));
+              .insets(15, 1, 9, 1).gridY(parentGridY).gridX(1).weightX(1));
 
         pRange.add(wInfantryRange2R, GBC.std().fill(GridBagConstraints.NONE)
               .anchor(GridBagConstraints.WEST)
-              .insets(15, 1, 9, 1).gridy(parentGridY).gridx(2).weightx(1));
+              .insets(15, 1, 9, 1).gridY(parentGridY).gridX(2).weightX(1));
 
         pRange.add(wInfantryRange3R, GBC.std().fill(GridBagConstraints.NONE)
               .anchor(GridBagConstraints.WEST)
-              .insets(15, 1, 9, 1).gridy(parentGridY).gridx(3).weightx(1));
+              .insets(15, 1, 9, 1).gridY(parentGridY).gridX(3).weightX(1));
 
         pRange.add(wInfantryRange4R, GBC.std().fill(GridBagConstraints.NONE)
               .anchor(GridBagConstraints.WEST)
-              .insets(15, 1, 9, 1).gridy(parentGridY).gridx(4).weightx(1));
+              .insets(15, 1, 9, 1).gridY(parentGridY).gridX(4).weightX(1));
 
         pRange.add(wInfantryRange5R, GBC.std().fill(GridBagConstraints.NONE)
               .anchor(GridBagConstraints.WEST)
-              .insets(15, 1, 9, 1).gridy(parentGridY).gridx(5).weightx(1));
+              .insets(15, 1, 9, 1).gridY(parentGridY).gridX(5).weightX(1));
 
         parentGridY++;
         // ----------------
         pRange.add(wAVL,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 1, 9, 1).gridy(parentGridY).gridx(0).weightx(1));
+                    .insets(15, 1, 9, 1).gridY(parentGridY).gridX(0).weightX(1));
 
         pRange.add(wShortAVR, GBC.std().fill(GridBagConstraints.NONE)
               .anchor(GridBagConstraints.WEST)
-              .insets(15, 1, 9, 1).gridy(parentGridY).gridx(1).weightx(1));
+              .insets(15, 1, 9, 1).gridY(parentGridY).gridX(1).weightX(1));
 
         pRange.add(wMedAVR,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 1, 9, 1).gridy(parentGridY).gridx(2).weightx(1));
+                    .insets(15, 1, 9, 1).gridY(parentGridY).gridX(2).weightX(1));
 
         pRange.add(wLongAVR,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 1, 9, 1).gridy(parentGridY).gridx(3).weightx(1));
+                    .insets(15, 1, 9, 1).gridY(parentGridY).gridX(3).weightX(1));
 
         pRange.add(wExtAVR,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 1, 9, 1).gridy(parentGridY).gridx(4).weightx(1));
+                    .insets(15, 1, 9, 1).gridY(parentGridY).gridX(4).weightX(1));
 
         pRange.setMinimumSize(new Dimension(INTERNAL_PANE_WIDTH, LINE_HEIGHT));
         pRange.setMaximumSize(new Dimension(INTERNAL_PANE_WIDTH, LINE_HEIGHT));
@@ -703,28 +703,28 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         pTargetInfo.add(wTargetExtraInfo,
               GBC.eol().fill(GridBagConstraints.BOTH)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(5, 1, 5, 1).gridy(parentGridY).gridx(0));
+                    .insets(5, 1, 5, 1).gridY(parentGridY).gridX(0));
         parentGridY++;
 
         pTargetInfo.add(currentHeatBuildupL,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(5, 1, 1, 1).gridy(parentGridY).gridx(0));
+                    .insets(5, 1, 1, 1).gridY(parentGridY).gridX(0));
 
         pTargetInfo.add(currentHeatBuildupR,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(2, 1, 1, 1).gridy(parentGridY).gridx(1));
+                    .insets(2, 1, 1, 1).gridY(parentGridY).gridX(1));
 
         pTargetInfo.add(wRangeL,
               GBC.std().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(15, 1, 1, 1).gridy(parentGridY).gridx(2));
+                    .insets(15, 1, 1, 1).gridY(parentGridY).gridX(2));
 
         pTargetInfo.add(wRangeR,
               GBC.eol().fill(GridBagConstraints.NONE)
                     .anchor(GridBagConstraints.WEST)
-                    .insets(5, 1, 5, 1).gridy(parentGridY).gridx(3));
+                    .insets(5, 1, 5, 1).gridY(parentGridY).gridX(3));
 
         addSubDisplay(parent, pTargetInfo, LINE_HEIGHT * 2, GridBagConstraints.HORIZONTAL);
     }
@@ -824,53 +824,53 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
+        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.V_ALIGN_TOP;
         tile = getToolkit().getImage(
               new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
+        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.V_ALIGN_BOTTOM;
         tile = getToolkit().getImage(
               new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
+        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.H_ALIGN_LEFT;
         tile = getToolkit().getImage(
               new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
+        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.H_ALIGN_RIGHT;
         tile = getToolkit().getImage(
               new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-              | BackGroundDrawer.HALIGN_LEFT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_TOP
+              | BackGroundDrawer.H_ALIGN_LEFT;
         tile = getToolkit().getImage(
               new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-              | BackGroundDrawer.HALIGN_LEFT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_BOTTOM
+              | BackGroundDrawer.H_ALIGN_LEFT;
         tile = getToolkit().getImage(
               new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-              | BackGroundDrawer.HALIGN_RIGHT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_TOP
+              | BackGroundDrawer.H_ALIGN_RIGHT;
         tile = getToolkit().getImage(
               new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-              | BackGroundDrawer.HALIGN_RIGHT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_BOTTOM
+              | BackGroundDrawer.H_ALIGN_RIGHT;
         tile = getToolkit().getImage(
               new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, this);

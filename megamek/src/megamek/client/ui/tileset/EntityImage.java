@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -82,18 +82,18 @@ public class EntityImage {
 
     // Damage decal images
     private static final File DECAL_PATH = new File(Configuration.imagesDir(), "units/DamageDecals");
-    private static final File FILE_DAMAGEDECAL_EMPTY = new File("Transparent.png");
+    private static final File FILE_DAMAGE_DECAL_EMPTY = new File("Transparent.png");
 
     // Directory paths within DECAL_PATH
     private static final String PATH_FIRE1 = "Fire1/";
     private static final String PATH_FIRE2 = "Fire2/";
     private static final String PATH_FIRE3 = "Fire3/";
-    private static final String PATH_FIREMULTI = "FireMulti/";
+    private static final String PATH_FIRE_MULTI = "FireMulti/";
 
     private static final String PATH_SMOKE1 = "Smoke1/";
     private static final String PATH_SMOKE2 = "Smoke2/";
     private static final String PATH_SMOKE3 = "Smoke3/";
-    private static final String PATH_SMOKEMULTI = "SmokeMulti/";
+    private static final String PATH_SMOKE_MULTI = "SmokeMulti/";
 
     private static final String PATH_LIGHT = "Light/";
     private static final String PATH_MODERATE = "Moderate/";
@@ -101,7 +101,7 @@ public class EntityImage {
     private static final String PATH_CRIPPLED = "Crippled/";
 
     /** A transparent image used as a no-damage decal. */
-    private static Image dmgEmpty;
+    private static final Image dmgEmpty;
 
     private static final int[] X_POS = { 0, 0, 63, 63, 0, -63, -63 };
     private static final int[] Y_POS = { 0, -72, -36, 36, 72, 36, -36 };
@@ -130,7 +130,7 @@ public class EntityImage {
                 grabImagePixels(overlay.getImage(), pOverlays[i]);
             }
         } catch (Exception e) {
-            logger.error("Failed to grab pixels for the camo overlay." + e.getMessage());
+            logger.error("Failed to grab pixels for the camo overlay.{}", e.getMessage());
         }
     }
 
@@ -142,9 +142,9 @@ public class EntityImage {
             DecalImages = new DirectoryItems(DECAL_PATH, new ImageFileFactory());
         } catch (Exception e) {
             DecalImages = null;
-            logger.warn("Failed to find the damage decal images." + e.getMessage());
+            logger.warn("Failed to find the damage decal images.{}", e.getMessage());
         }
-        dmgEmpty = TilesetManager.loadSpecificImage(DECAL_PATH, FILE_DAMAGEDECAL_EMPTY.toString());
+        dmgEmpty = TilesetManager.loadSpecificImage(DECAL_PATH, FILE_DAMAGE_DECAL_EMPTY.toString());
     }
 
     /** The base (unit) image used for this icon. */
@@ -152,14 +152,14 @@ public class EntityImage {
     /** The wreck base image used for this icon. */
     private Image wreck;
     /** The damage decal image used for this icon. */
-    private Image decal;
+    private final Image decal;
     /** The smoke image used for this icon. */
-    private Image smoke;
+    private final Image smoke;
     /** A smaller icon used for the unit overview. */
     protected Image icon;
     private Camouflage camouflage;
     protected Image[] facings = new Image[6];
-    private Image[] wreckFacings = new Image[6];
+    private final Image[] wreckFacings = new Image[6];
     /** The damage level, from none to crippled. */
     private final int dmgLevel;
     /** The tonnage of the unit. */
@@ -176,8 +176,6 @@ public class EntityImage {
     private final int pos;
     /** True for units that occupy one hex (all but some dropships). */
     private final boolean isSingleHex;
-    /** True for tanks */
-    private final boolean isTank;
     private final int unitHeight;
     private final int unitElevation;
     private final boolean withShadows;
@@ -212,8 +210,8 @@ public class EntityImage {
         this(base, null, camouflage, entity, -1, true, true);
     }
 
-    public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
-          Entity entity, int secondaryPos) {
+    public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp, Entity entity,
+          int secondaryPos) {
         this(base, wreck, camouflage, entity, secondaryPos, false, true);
     }
 
@@ -222,8 +220,8 @@ public class EntityImage {
         this(base, wreck, camouflage, null, entity, secondaryPos, preview, withShadows);
     }
 
-    public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
-          Entity entity, int secondaryPos, boolean preview, boolean withShadows) {
+    public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp, Entity entity, int secondaryPos,
+          boolean preview, boolean withShadows) {
         this.base = base;
         setCamouflage(camouflage);
         this.wreck = wreck;
@@ -232,7 +230,8 @@ public class EntityImage {
         // hack: gun emplacements are pretty beefy but have weight 0
         this.weight = entity instanceof GunEmplacement ? SMOKE_THREE + 1 : entity.getWeight();
         isInfantry = entity instanceof Infantry;
-        isTank = entity instanceof Tank;
+        // True for tanks
+        boolean isTank = entity instanceof Tank;
         isPreview = preview;
         isSlim = (isTank && !(entity instanceof GunEmplacement));
         isVerySlim = entity instanceof VTOL;
@@ -261,6 +260,11 @@ public class EntityImage {
             return Math.max(Entity.DMG_HEAVY, entity.getDamageLevel(false));
         }
 
+        return getCalculatedDamageLevel(entity);
+
+    }
+
+    private static int getCalculatedDamageLevel(Entity entity) {
         int calculatedDamageLevel = entity.getDamageLevel();
 
         // entities may be "damaged" or "crippled" due to harmless weapon jams, being
@@ -272,9 +276,7 @@ public class EntityImage {
               (entity.getInternalRemainingPercent() >= 1.0)) {
             calculatedDamageLevel = Entity.DMG_NONE;
         }
-
         return calculatedDamageLevel;
-
     }
 
     public Camouflage getCamouflage() {
@@ -345,20 +347,23 @@ public class EntityImage {
     protected BufferedImage rotateImage(Image img, int dir) {
         double cx = base.getWidth(null) / 2.0;
         double cy = base.getHeight(null) / 2.0;
-        AffineTransformOp xform = new AffineTransformOp(
-              AffineTransform.getRotateInstance(
-                    (-Math.PI / 3) * (6 - dir), cx, cy),
-              AffineTransformOp.TYPE_BICUBIC);
+        AffineTransformOp affineTransform = new AffineTransformOp(
+              AffineTransform.getRotateInstance((-Math.PI / 3) * (6 - dir), cx, cy), AffineTransformOp.TYPE_BICUBIC);
+
         BufferedImage src;
-        if (img instanceof BufferedImage) {
-            src = (BufferedImage) img;
+        if (img instanceof BufferedImage bufferedImage) {
+            src = bufferedImage;
         } else {
             src = ImageUtil.createAcceleratedImage(img);
         }
-        BufferedImage dst = ImageUtil.createAcceleratedImage(
-              src.getWidth(), src.getHeight());
-        xform.filter(src, dst);
-        return dst;
+
+        if (src != null) {
+            BufferedImage dst = ImageUtil.createAcceleratedImage(src.getWidth(), src.getHeight());
+            affineTransform.filter(src, dst);
+            return dst;
+        }
+
+        return null;
     }
 
     public Image getFacing(int facing) {
@@ -440,22 +445,21 @@ public class EntityImage {
                     int green1 = (pixel1 >> 8) & 0xff;
                     int blue1 = (pixel1) & 0xff;
 
-                    // Pretreat with the camo overlay (but not Infantry, they're too small, it'll
-                    // just darken them)
-                    int oalpha = 128;
+                    // Pretreat with the camo overlay (but not Infantry, they're too small, it'll just darken them)
+                    int overlayAlpha = 128;
                     if (GUIP.getUseCamoOverlay() && !isInfantry && isSingleHex) {
-                        oalpha = pOverlays[facing][i] & 0xff;
+                        overlayAlpha = pOverlays[facing][i] & 0xff;
                     }
 
                     // "Overlay" image combination formula
-                    if (oalpha < 128) {
-                        red1 = red1 * 2 * oalpha / 255;
-                        green1 = green1 * 2 * oalpha / 255;
-                        blue1 = blue1 * 2 * oalpha / 255;
+                    if (overlayAlpha < 128) {
+                        red1 = red1 * 2 * overlayAlpha / 255;
+                        green1 = green1 * 2 * overlayAlpha / 255;
+                        blue1 = blue1 * 2 * overlayAlpha / 255;
                     } else {
-                        red1 = 255 - 2 * (255 - red1) * (255 - oalpha) / 255;
-                        green1 = 255 - 2 * (255 - green1) * (255 - oalpha) / 255;
-                        blue1 = 255 - 2 * (255 - blue1) * (255 - oalpha) / 255;
+                        red1 = 255 - 2 * (255 - red1) * (255 - overlayAlpha) / 255;
+                        green1 = 255 - 2 * (255 - green1) * (255 - overlayAlpha) / 255;
+                        blue1 = 255 - 2 * (255 - blue1) * (255 - overlayAlpha) / 255;
                     }
 
                     int red2 = red1 * blue / 255;
@@ -518,17 +522,17 @@ public class EntityImage {
         int green22 = (pixel22 >> 8) & 0xff;
         int blue22 = (pixel22) & 0xff;
 
-        int redx1 = MathUtility.lerp(red11, red21, dx);
-        int redx2 = MathUtility.lerp(red12, red22, dx);
-        int red2 = MathUtility.lerp(redx1, redx2, dy);
+        int redX1 = MathUtility.lerp(red11, red21, dx);
+        int redX2 = MathUtility.lerp(red12, red22, dx);
+        int red2 = MathUtility.lerp(redX1, redX2, dy);
 
-        int greenx1 = MathUtility.lerp(green11, green21, dx);
-        int greenx2 = MathUtility.lerp(green12, green22, dx);
-        int green2 = MathUtility.lerp(greenx1, greenx2, dy);
+        int greenX1 = MathUtility.lerp(green11, green21, dx);
+        int greenX2 = MathUtility.lerp(green12, green22, dx);
+        int green2 = MathUtility.lerp(greenX1, greenX2, dy);
 
-        int bluex1 = MathUtility.lerp(blue11, blue21, dx);
-        int bluex2 = MathUtility.lerp(blue12, blue22, dx);
-        int blue2 = MathUtility.lerp(bluex1, bluex2, dy);
+        int blueX1 = MathUtility.lerp(blue11, blue21, dx);
+        int blueX2 = MathUtility.lerp(blue12, blue22, dx);
+        int blue2 = MathUtility.lerp(blueX1, blueX2, dy);
         return (red2 << 16) | (green2 << 8) | blue2;
     }
 
@@ -584,7 +588,7 @@ public class EntityImage {
             grabImagePixels(image, pUnit);
             grabImagePixels(decal, pDmgD);
         } catch (Exception e) {
-            logger.error("Failed to grab pixels for an image to apply the decal. " + e.getMessage());
+            logger.error("Failed to grab pixels for an image to apply the decal. {}", e.getMessage());
             return image;
         }
 
@@ -631,16 +635,26 @@ public class EntityImage {
 
         // Overlay the smoke image
         Image result = ImageUtil.createAcceleratedImage(image);
-        Graphics g = result.getGraphics();
-        if (isSingleHex) {
-            g.drawImage(smoke, 0, 0, null);
-        } else {
-            // Draw the right section of the bigger smoke/fire image
-            int sx = smoke.getWidth(null) / 2 - IMG_WIDTH / 2 + X_POS[pos];
-            int sy = smoke.getHeight(null) / 2 - IMG_HEIGHT / 2 + Y_POS[pos];
-            g.drawImage(smoke, 0, 0, IMG_WIDTH, IMG_HEIGHT, sx, sy, sx + IMG_WIDTH, sy + IMG_HEIGHT, null);
+        if (result != null) {
+            Graphics graphics = result.getGraphics();
+            if (isSingleHex) {
+                graphics.drawImage(smoke, 0, 0, null);
+            } else {
+                // Draw the right section of the bigger smoke/fire image
+                int smokeWidth = smoke.getWidth(null) / 2 - IMG_WIDTH / 2 + X_POS[pos];
+                int smokeHeight = smoke.getHeight(null) / 2 - IMG_HEIGHT / 2 + Y_POS[pos];
+                graphics.drawImage(smoke,
+                      0,
+                      0,
+                      IMG_WIDTH,
+                      IMG_HEIGHT,
+                      smokeWidth,
+                      smokeHeight,
+                      smokeWidth + IMG_WIDTH,
+                      smokeHeight + IMG_HEIGHT,
+                      null);
+            }
         }
-
         return result;
     }
 
@@ -656,18 +670,14 @@ public class EntityImage {
     /** Returns the damage decal based on damage level. */
     private Image getDamageDecal(Entity entity, int pos) {
         try {
-            switch (dmgLevel) {
-                case Entity.DMG_LIGHT:
-                    return getIM(PATH_LIGHT, entity.getShortName(), pos);
-                case Entity.DMG_MODERATE:
-                    return getIM(PATH_MODERATE, entity.getShortName(), pos);
-                case Entity.DMG_HEAVY:
-                    return getIM(PATH_HEAVY, entity.getShortName(), pos);
-                case Entity.DMG_CRIPPLED:
-                    return getIM(PATH_CRIPPLED, entity.getShortName(), pos);
-                default: // DMG_NONE:
-                    return null;
-            }
+            return switch (dmgLevel) {
+                case Entity.DMG_LIGHT -> getIM(PATH_LIGHT, entity.getShortName(), pos);
+                case Entity.DMG_MODERATE -> getIM(PATH_MODERATE, entity.getShortName(), pos);
+                case Entity.DMG_HEAVY -> getIM(PATH_HEAVY, entity.getShortName(), pos);
+                case Entity.DMG_CRIPPLED -> getIM(PATH_CRIPPLED, entity.getShortName(), pos);
+                default -> // DMG_NONE:
+                      null;
+            };
         } catch (Exception e) {
             logger.error(e, "Could not load decal image.");
         }
@@ -687,28 +697,34 @@ public class EntityImage {
                 return dmgEmpty;
             }
 
-            String path;
-            if (pos > -1) {
-                // Multi-hex units get their own overlays
-                path = dmgLevel == Entity.DMG_HEAVY ? PATH_SMOKEMULTI : PATH_FIREMULTI;
-            } else {
-                // Three stacks of smoke and fire for wide and heavy units,
-                // two for slimmer and medium units and one for very slim
-                // and light units
-                if (weight > SMOKE_THREE && !isSlim) {
-                    path = dmgLevel == Entity.DMG_HEAVY ? PATH_SMOKE3 : PATH_FIRE3;
-                } else if (weight > SMOKE_TWO && !isVerySlim) {
-                    path = dmgLevel == Entity.DMG_HEAVY ? PATH_SMOKE2 : PATH_FIRE2;
-                } else {
-                    path = dmgLevel == Entity.DMG_HEAVY ? PATH_SMOKE1 : PATH_FIRE1;
-                }
-            }
+            String path = getPath(pos);
             // Use the same smoke image for all positions of multi-hex units (pos = 0)!
             return getIM(path, entity.getShortName(), 0);
         } catch (Exception e) {
             logger.error(e, "Could not load smoke/fire image.");
         }
         return null;
+    }
+
+    private String getPath(int pos) {
+        String path;
+        if (pos > -1) {
+            // Multi-hex units get their own overlays
+            path = dmgLevel == Entity.DMG_HEAVY ? PATH_SMOKE_MULTI : PATH_FIRE_MULTI;
+        } else {
+            // Three stacks of smoke and fire for wide and heavy units,
+            // two for slimmer and medium units and one for very slim
+            // and light units
+            if (weight > SMOKE_THREE && !isSlim) {
+                path = dmgLevel == Entity.DMG_HEAVY ? PATH_SMOKE3 : PATH_FIRE3;
+            } else if (weight > SMOKE_TWO && !isVerySlim) {
+                path = dmgLevel == Entity.DMG_HEAVY ? PATH_SMOKE2 : PATH_FIRE2;
+            } else {
+                path = dmgLevel == Entity.DMG_HEAVY ? PATH_SMOKE1 : PATH_FIRE1;
+            }
+        }
+
+        return path;
     }
 
     protected Image applyDropShadow(Image image) {

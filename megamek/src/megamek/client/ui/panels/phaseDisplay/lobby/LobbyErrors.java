@@ -60,10 +60,10 @@ public final class LobbyErrors {
     private static final String ONLY_TEAM = "Combinations like loading, C3 connections and shared forces are only valid within a team.";
     private static final String ENTITY_OR_FORCE = "Please select either only forces or only units.";
     private static final String FORCE_EMPTY = "Please select only empty forces.";
-    private static final String FORCE_ASSIGN_ONLYTEAM = "Can only reassign a force to a teammate when reassigning without units.";
-    private static final String FORCE_ATTACH_TOSUB = "Cannot attach a force to its own subforce.";
+    private static final String FORCE_ASSIGN_ONLY_TEAM = "Can only reassign a force to a teammate when reassigning without units.";
+    private static final String FORCE_ATTACH_TO_SUB_FORCE = "Cannot attach a force to its own sub force.";
     private static final String PLAYER_DONE = "Cannot edit units while your status is Done.";
-    private static final String SBF_CONVERSIONERROR = "At least some of the forces you selected cannot be " +
+    private static final String SBF_CONVERSION_ERROR = "At least some of the forces you selected cannot be " +
           "converted to SBF Formations. Please select only the topmost forces to be converted, no subForces. " +
           "A converted force must conform to the rules given in Interstellar Operations. Conversion " +
           "will typically work with companies created in the Force Generator.";
@@ -82,7 +82,7 @@ public final class LobbyErrors {
     }
 
     public static void showForceNoAttachSubForce(JFrame owner) {
-        JOptionPane.showMessageDialog(owner, FORCE_ATTACH_TOSUB);
+        JOptionPane.showMessageDialog(owner, FORCE_ATTACH_TO_SUB_FORCE);
     }
 
     public static void showOnlyTeam(JFrame owner) {
@@ -150,7 +150,7 @@ public final class LobbyErrors {
     }
 
     public static void showOnlyTeammate(JFrame owner) {
-        JOptionPane.showMessageDialog(owner, FORCE_ASSIGN_ONLYTEAM);
+        JOptionPane.showMessageDialog(owner, FORCE_ASSIGN_ONLY_TEAM);
     }
 
     public static void showOnlyEntityOrForce(JFrame owner) {
@@ -162,7 +162,7 @@ public final class LobbyErrors {
     }
 
     public static void showSBFConversion(JFrame owner) {
-        JOptionPane.showMessageDialog(owner, SBF_CONVERSIONERROR);
+        JOptionPane.showMessageDialog(owner, SBF_CONVERSION_ERROR);
     }
 
     public static void showCannotEditWhileDone(JFrame owner) {

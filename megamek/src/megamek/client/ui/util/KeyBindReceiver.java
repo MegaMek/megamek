@@ -47,7 +47,7 @@ public interface KeyBindReceiver {
      * <p>
      * When this method returns false, this receiver will not be counted as having consumed the key press.
      *
-     * @return True when the this receiver is in a state to receive the keybind and may react to it. False otherwise.
+     * @return True when the receiver is in a state to receive the keybind and may react to it. False otherwise.
      */
     boolean shouldReceiveKeyCommands();
 }

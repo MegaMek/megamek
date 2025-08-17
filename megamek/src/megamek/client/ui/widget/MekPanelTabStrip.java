@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,6 +42,9 @@ import java.io.Serial;
 import java.util.Objects;
 
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
+import megamek.client.ui.widget.picmap.PMHotArea;
+import megamek.client.ui.widget.picmap.PMPicPolygonalArea;
+import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
@@ -69,7 +72,7 @@ public class MekPanelTabStrip extends PicMap {
     private static final Image[] idleImage = new Image[NUM_TABS];
     private static final Image[] activeImage = new Image[NUM_TABS];
 
-    private PMPicPolygonalArea[] tabs = new PMPicPolygonalArea[NUM_TABS];
+    private final PMPicPolygonalArea[] tabs = new PMPicPolygonalArea[NUM_TABS];
     private Image idleCorner, selectedCorner;
     private int activeTab = 0;
     UnitDisplayPanel md;
@@ -154,10 +157,10 @@ public class MekPanelTabStrip extends PicMap {
 
         for (int i = 0; i < NUM_TABS; i++) {
             if (idleImage[i].getWidth(null) != activeImage[i].getWidth(null)) {
-                logger.warn("idleImage and activeImage do not match widths for image " + i);
+                logger.warn("idleImage and activeImage do not match widths for image {}", i);
             }
             if (idleImage[i].getHeight(null) != activeImage[i].getHeight(null)) {
-                logger.warn("idleImage and activeImage do not match heights for image " + i);
+                logger.warn("idleImage and activeImage do not match heights for image {}", i);
             }
         }
         if (idleCorner.getWidth(null) != selectedCorner.getWidth(null)) {

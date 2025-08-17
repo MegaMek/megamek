@@ -79,8 +79,8 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
           boolean leaf, int row, boolean hasFocus) {
 
-        Game game = lobby.getClientgui().getClient().getGame();
-        localPlayer = lobby.getClientgui().getClient().getLocalPlayer();
+        Game game = lobby.getClientGUI().getClient().getGame();
+        localPlayer = lobby.getClientGUI().getClient().getLocalPlayer();
         Color selectionColor = UIManager.getColor("Tree.selectionBackground");
         setOpaque(true);
 

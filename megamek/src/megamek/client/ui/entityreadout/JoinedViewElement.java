@@ -104,7 +104,7 @@ class JoinedViewElement implements ViewElement {
     /**
      * Appends the given int as a PlainElement to the end of this joined element. Calls can be chained.
      *
-     * @param value The int number to append (uses String.valueof)
+     * @param value The int number to append (uses String.valueOf)
      *
      * @return this joined element
      */

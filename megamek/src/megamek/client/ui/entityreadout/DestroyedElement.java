@@ -36,19 +36,13 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.DiscordFormat;
 import megamek.client.ui.util.UIUtil;
 
-class DestroyedElement implements ViewElement {
+record DestroyedElement(String text) implements ViewElement {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final String HTML_FORMAT = "<FONT %s>%s</FONT>";
 
-    private final String text;
-
-    public DestroyedElement(String text) {
-        this.text = text;
-    }
-
     public DestroyedElement(int number) {
-        text = String.valueOf(number);
+        this(String.valueOf(number));
     }
 
     @Override

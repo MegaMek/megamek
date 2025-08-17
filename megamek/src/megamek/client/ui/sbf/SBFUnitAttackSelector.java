@@ -59,6 +59,23 @@ public class SBFUnitAttackSelector {
         unitSelector.addListSelectionListener(listener);
         unitSelector.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         unitSelector.setAlignmentX(0);
+        DefaultListCellRenderer renderer = new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                  boolean isSelected, boolean cellHasFocus) {
+                SBFUnit unit = (SBFUnit) value;
+                String unitLine = "<HTML><HEAD><STYLE>" +
+                      SBFInGameObjectTooltip.styles() +
+                      "</STYLE></HEAD><BODY>" + "<TABLE>" +
+                      SBFInGameObjectTooltip.unitLine(unit) +
+                      "</TABLE></BODY></HTML>";
+                super.getListCellRendererComponent(list, unitLine, index, isSelected, cellHasFocus);
+                if (!isSelected) {
+                    setBackground(UIManager.getColor("Label.background"));
+                }
+                return this;
+            }
+        };
         unitSelector.setCellRenderer(renderer);
         unitSelector.setOpaque(false);
         unitSelector.setBorder(new EmptyBorder(0, 3, 0, 0));
@@ -81,21 +98,4 @@ public class SBFUnitAttackSelector {
         return unitSelector.getSelectedIndex();
     }
 
-    private final DefaultListCellRenderer renderer = new DefaultListCellRenderer() {
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-              boolean isSelected, boolean cellHasFocus) {
-            SBFUnit unit = (SBFUnit) value;
-            String unitLine = "<HTML><HEAD><STYLE>" +
-                  SBFInGameObjectTooltip.styles() +
-                  "</STYLE></HEAD><BODY>" + "<TABLE>" +
-                  SBFInGameObjectTooltip.unitLine(unit) +
-                  "</TABLE></BODY></HTML>";
-            super.getListCellRendererComponent(list, unitLine, index, isSelected, cellHasFocus);
-            if (!isSelected) {
-                setBackground(UIManager.getColor("Label.background"));
-            }
-            return this;
-        }
-    };
 }

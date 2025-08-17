@@ -36,9 +36,7 @@ package megamek.client;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.ForceAssignable;
@@ -52,7 +50,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFReportEntry;
-import megamek.common.strategicBattleSystems.SBFTurn;
 import megamek.common.util.ImageUtil;
 import megamek.logging.MMLogger;
 
@@ -92,19 +89,18 @@ public class SBFClient extends AbstractClient {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected boolean handleGameSpecificPacket(Packet packet) {
-        switch (packet.getCommand()) {
+        switch (packet.command()) {
             case SENDING_ENTITIES:
                 receiveEntities(packet);
                 break;
             case SENDING_REPORTS_ALL:
-                var receivedReports = (Map<Integer, List<SBFReportEntry>>) packet.getObject(0);
+                var receivedReports = packet.getIntegerWithSBFReportEntryList(0);
                 game.replaceAllReports(receivedReports);
                 if (keepGameLog()) {
                     // Re-write the gamelog from scratch
                     initGameLog();
-                    for (int round : receivedReports.keySet().stream().sorted().collect(Collectors.toList())) {
+                    for (int round : receivedReports.keySet().stream().sorted().toList()) {
                         possiblyWriteToLog(assembleAndAddImages(receivedReports.get(round)));
                     }
                 }
@@ -115,33 +111,29 @@ public class SBFClient extends AbstractClient {
                 phaseReport = roundReport;
                 break;
             case SENDING_REPORTS:
-                phaseReport = assembleAndAddImages((List<SBFReportEntry>) packet.getObject(0));
+                phaseReport = assembleAndAddImages(packet.getSBFReportEntryList(0));
                 if (keepGameLog()) {
                     if ((log == null) && (game.getCurrentRound() == 1)) {
                         initGameLog();
                     }
-                    if (log != null) {
-                        // TODO
-                        // log.append(phaseReport);
-                    }
                 }
-                game.addReports((List<SBFReportEntry>) packet.getObject(0));
+                game.addReports(packet.getSBFReportEntryList(0));
                 roundReport = assembleAndAddImages(game.getGameReport().get(game.getCurrentRound()));
                 break;
             case SENDING_TURNS:
-                game.setTurns((List<SBFTurn>) packet.getObject(0));
+                game.setTurns(packet.getSBFTurnList(0));
                 break;
             case TURN:
                 game.setTurnIndex(packet.getIntValue(0), packet.getIntValue(1));
                 break;
             case ENTITY_UPDATE:
-                getGame().receiveUnit((InGameObject) packet.getObject(0));
+                getGame().receiveUnit(packet.getInGameObject(0));
                 break;
             case UNIT_INVISIBLE:
-                getGame().forget((int) packet.getObject(0));
+                getGame().forget(packet.getIntValue(0));
             case ACTIONS:
                 getGame().clearActions();
-                for (EntityAction action : (List<EntityAction>) packet.getObject(0)) {
+                for (EntityAction action : packet.getEntityActionList(0)) {
                     getGame().addAction(action);
                 }
             default:
@@ -169,21 +161,19 @@ public class SBFClient extends AbstractClient {
     /**
      * Loads the entities from the data in the net command.
      */
-    @SuppressWarnings("unchecked")
-    protected void receiveEntities(Packet c) {
-        List<InGameObject> newActiveUnits = (List<InGameObject>) c.getObject(0);
-        List<InGameObject> newGraveyard = (List<InGameObject>) c.getObject(1);
-        Forces newForces = (Forces) c.getObject(2);
+    protected void receiveEntities(Packet packet) {
+        List<InGameObject> newActiveUnits = packet.getInGameObjectList(0);
+        List<InGameObject> newGraveyard = packet.getInGameObjectList(1);
+        Forces newForces = packet.getForces(2);
         // Replace the entities in the game.
         if (newForces != null) {
             game.setForces(newForces);
         }
         game.setUnitList(newActiveUnits);
-        if (newGraveyard != null) {
-            game.setGraveyard(newGraveyard);
-            for (InGameObject e : newGraveyard) {
-                cacheImgTag(e);
-            }
+        game.setGraveyard(newGraveyard);
+
+        for (InGameObject inGameObject : newGraveyard) {
+            cacheImgTag(inGameObject);
         }
         // cache the image data for the entities and set force for entities
         for (InGameObject unit : newActiveUnits) {
@@ -223,13 +213,6 @@ public class SBFClient extends AbstractClient {
      */
     private Image getTargetImage(InGameObject e) {
         return e.getIcon();
-        // if (bv == null) {
-        // return null;
-        // } else if (e.isDestroyed()) {
-        // return bv.getTilesetManager().wreckMarkerFor(e, -1);
-        // } else {
-        // return bv.getTilesetManager().imageFor(e);
-        // }
     }
 
     public void moveUnit(SBFMovePath movePath) {

@@ -57,7 +57,7 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
           KeyCommandBind.UNDO_LAST_STEP,
           KeyCommandBind.NEXT_TARGET,
           KeyCommandBind.NEXT_TARGET_VALID,
-          KeyCommandBind.NEXT_TARGET_NOALLIES,
+          KeyCommandBind.NEXT_TARGET_NO_ALLIES,
           KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES,
           KeyCommandBind.PHYS_PUNCH,
           KeyCommandBind.PHYS_KICK,
@@ -65,16 +65,16 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
           KeyCommandBind.DONE_NO_ACTION);
 
     /** The keybinds to be shown during the movement phase */
-    private static final List<KeyCommandBind> BINDS_MOVE = Arrays.asList(KeyCommandBind.MOVE_STEPFORWARD,
-          KeyCommandBind.MOVE_STEPBACKWARD,
+    private static final List<KeyCommandBind> BINDS_MOVE = Arrays.asList(KeyCommandBind.MOVE_STEP_FORWARD,
+          KeyCommandBind.MOVE_STEP_BACKWARD,
           KeyCommandBind.TURN_LEFT,
           KeyCommandBind.TURN_RIGHT,
-          KeyCommandBind.TOGGLE_MOVEMODE,
+          KeyCommandBind.TOGGLE_MOVE_MODE,
           KeyCommandBind.MOVE_BACKUP,
-          KeyCommandBind.MOVE_GOPRONE,
+          KeyCommandBind.MOVE_GO_PRONE,
           KeyCommandBind.MOVE_GETUP,
           KeyCommandBind.UNDO_LAST_STEP,
-          KeyCommandBind.TOGGLE_CONVERSIONMODE,
+          KeyCommandBind.TOGGLE_CONVERSION_MODE,
           KeyCommandBind.DONE_NO_ACTION);
 
     /** The keybinds to be shown in all phases during the local player's turn */

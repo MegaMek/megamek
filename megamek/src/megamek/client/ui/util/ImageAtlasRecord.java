@@ -39,9 +39,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
- * Class to map a file path to a location within an image atlas file. Currently stores the original file path along with
- * the path to the atlas with coordinates as the file path and will eventually be converted to better represent the data
- * as individual components to allow more customization.
+ * Class to map a file path to a location within an image atlas file. Currently, stores the original file path along
+ * with the path to the atlas with coordinates as the file path and will eventually be converted to better represent the
+ * data as individual components to allow more customization.
  *
  * @author rjhancock
  */
@@ -67,7 +67,6 @@ public class ImageAtlasRecord {
     /**
      * Get the original file path.
      *
-     * @return
      */
     public String getOriginalFilePath() {
         return originalFilePath;
@@ -76,7 +75,6 @@ public class ImageAtlasRecord {
     /**
      * Get the atlas file path.
      *
-     * @return
      */
     public String getAtlasFilePath() {
         return atlasFilePath;
@@ -85,7 +83,6 @@ public class ImageAtlasRecord {
     /**
      * Set the original file path.
      *
-     * @param originalFilePath
      */
     public void setOriginalFilePath(String originalFilePath) {
         this.originalFilePath = originalFilePath;
@@ -94,7 +91,6 @@ public class ImageAtlasRecord {
     /**
      * Set the atlas file path.
      *
-     * @param atlasFilePath
      */
     public void setAtlasFilePath(String atlasFilePath) {
         this.atlasFilePath = atlasFilePath;

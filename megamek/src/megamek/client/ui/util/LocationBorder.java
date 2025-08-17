@@ -67,9 +67,12 @@ public class LocationBorder extends AbstractBorder {
     }
 
     @Override
-    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-        if ((thickness > 0) && (lineColor != null) && (width > 0) && (height > 0) && (g instanceof Graphics2D)) {
-            Graphics2D g2d = (Graphics2D) g;
+    public void paintBorder(Component component, Graphics graphics, int x, int y, int width, int height) {
+        if ((thickness > 0)
+              && (lineColor != null)
+              && (width > 0)
+              && (height > 0)
+              && (graphics instanceof Graphics2D g2d)) {
 
             Color oldColor = g2d.getColor();
             Stroke oldStroke = g2d.getStroke();

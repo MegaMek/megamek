@@ -321,7 +321,7 @@ public final class UIUtil {
      * lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiGreen() {
-        return uiBgBrightness() > 130 ? LIGHTUI_GREEN : DARKUI_GREEN;
+        return uiBgBrightness() > 130 ? LIGHT_UI_GREEN : DARK_UI_GREEN;
     }
 
     /**
@@ -329,7 +329,7 @@ public final class UIUtil {
      * lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiGray() {
-        return uiBgBrightness() > 130 ? LIGHTUI_GRAY : DARKUI_GRAY;
+        return uiBgBrightness() > 130 ? LIGHT_UI_GRAY : DARK_UI_GRAY;
     }
 
     /**
@@ -346,7 +346,7 @@ public final class UIUtil {
      * be lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiLightBlue() {
-        return uiBgBrightness() > 130 ? LIGHTUI_LIGHTBLUE : DARKUI_LIGHTBLUE;
+        return uiBgBrightness() > 130 ? LIGHT_UI_LIGHTBLUE : DARK_UI_LIGHTBLUE;
     }
 
     /**
@@ -354,7 +354,7 @@ public final class UIUtil {
      * be lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiLightRed() {
-        return uiBgBrightness() > 130 ? LIGHTUI_LIGHTRED : DARKUI_LIGHTRED;
+        return uiBgBrightness() > 130 ? LIGHT_UI_LIGHT_RED : DARK_UI_LIGHT_RED;
     }
 
     /**
@@ -362,7 +362,7 @@ public final class UIUtil {
      * will be lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiLightViolet() {
-        return uiBgBrightness() > 130 ? LIGHTUI_LIGHTVIOLET : DARKUI_LIGHTVIOLET;
+        return uiBgBrightness() > 130 ? LIGHT_UI_LIGHT_VIOLET : DARK_UI_LIGHT_VIOLET;
     }
 
     /**
@@ -370,7 +370,7 @@ public final class UIUtil {
      * be lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiLightGreen() {
-        return uiBgBrightness() > 130 ? LIGHTUI_LIGHTGREEN : DARKUI_LIGHTGREEN;
+        return uiBgBrightness() > 130 ? LIGHT_UI_LIGHTGREEN : DARK_UI_LIGHTGREEN;
     }
 
     /**
@@ -378,7 +378,7 @@ public final class UIUtil {
      * lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiYellow() {
-        return uiBgBrightness() > 130 ? LIGHTUI_YELLOW : DARKUI_YELLOW;
+        return uiBgBrightness() > 130 ? LIGHT_UI_YELLOW : DARK_UI_YELLOW;
     }
 
     /**
@@ -389,7 +389,7 @@ public final class UIUtil {
      */
     @Deprecated(since = "0.50.06", forRemoval = true)
     public static Color uiBlack() {
-        return uiBgBrightness() > 130 ? LIGHTUI_BLACK : DARKUI_BLACK;
+        return uiBgBrightness() > 130 ? LIGHT_UI_BLACK : DARK_UI_BLACK;
     }
 
     /**
@@ -397,7 +397,7 @@ public final class UIUtil {
      * be lighter for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiWhite() {
-        return uiBgBrightness() > 130 ? LIGHTUI_WHITE : DARKUI_WHITE;
+        return uiBgBrightness() > 130 ? LIGHT_UI_WHITE : DARK_UI_WHITE;
     }
 
     /**
@@ -405,7 +405,7 @@ public final class UIUtil {
      * light UI look-and-feel.
      */
     public static Color uiQuirksColor() {
-        return uiBgBrightness() > 130 ? LIGHTUI_LIGHTCYAN : DARKUI_LIGHTCYAN;
+        return uiBgBrightness() > 130 ? LIGHT_UI_LIGHTCYAN : DARK_UI_LIGHTCYAN;
     }
 
     /**
@@ -451,7 +451,7 @@ public final class UIUtil {
      * will be darker for a dark UI LAF than for a light UI LAF.
      */
     public static Color uiDarkBlue() {
-        return uiBgBrightness() > 130 ? LIGHTUI_DARKBLUE : DARKUI_DARKBLUE;
+        return uiBgBrightness() > 130 ? LIGHT_UI_DARKBLUE : DARK_UI_DARKBLUE;
     }
 
     /**
@@ -588,13 +588,16 @@ public final class UIUtil {
      * @return The scaling factor based on DPI
      */
     public static float getDpiScaleFactor(Component component) {
-        GraphicsConfiguration gc = null;
+        GraphicsConfiguration graphicsConfiguration = null;
         if (component != null) {
-            gc = component.getGraphicsConfiguration();
+            graphicsConfiguration = component.getGraphicsConfiguration();
         }
-        if (gc == null) {
+
+        if (graphicsConfiguration == null) {
             // Fallback to default GraphicsEnvironment if component doesn't have a GraphicsConfiguration
-            gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+            graphicsConfiguration = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                  .getDefaultScreenDevice()
+                  .getDefaultConfiguration();
         }
         // Get screen resolution
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
@@ -679,7 +682,7 @@ public final class UIUtil {
         int imageType = BufferedImage.TYPE_INT_ARGB;
         if (image instanceof BufferedImage) {
             int currentType = ((BufferedImage) image).getType();
-            if ((currentType != BufferedImage.TYPE_CUSTOM) && (currentType != 0)) {
+            if ((currentType != 0)) {
                 imageType = currentType;
             }
         }
@@ -748,7 +751,7 @@ public final class UIUtil {
             tracker.waitForID(0);
         } catch (InterruptedException ignored) {
             // really should never come here
-            logger.warn("Splash image loading interrupted", ignored);
+            logger.warn("Splash image loading interrupted");
         }
 
         return createSplashComponent(imgSplash, parent, scaledMonitorSize);
@@ -773,10 +776,8 @@ public final class UIUtil {
         Image constrainedSplashImage = UIUtil.constrainImageSize(imgSplash, observer, maxSize.width, maxSize.height);
         RawImagePanel splash = new RawImagePanel(constrainedSplashImage);
 
-        Dimension splashDim = new Dimension(constrainedSplashImage == null ?
-              maxSize.width :
-              constrainedSplashImage.getWidth(observer),
-              constrainedSplashImage == null ? maxSize.height : constrainedSplashImage.getHeight(observer));
+        Dimension splashDim = new Dimension(constrainedSplashImage.getWidth(observer),
+              constrainedSplashImage.getHeight(observer));
 
         splash.setMaximumSize(splashDim);
         splash.setMinimumSize(splashDim);
@@ -792,7 +793,6 @@ public final class UIUtil {
 
         Point pos = component.getLocationOnScreen();
         Dimension size = component.getSize();
-        Rectangle r = new Rectangle(scaledScreenSize);
 
         // center and size if out of bounds
         if ((pos.x < 0) ||
@@ -804,7 +804,7 @@ public final class UIUtil {
     }
 
     /**
-     * Activates anti-aliasing and other high-quality settings for the given Graphics.
+     * Activates antialiasing and other high-quality settings for the given Graphics.
      *
      * @param graph Graphics context to use hq rendering for
      */
@@ -1337,29 +1337,29 @@ public final class UIUtil {
 
     // PRIVATE
 
-    private static final Color LIGHTUI_GREEN = new Color(20, 140, 20);
-    private static final Color DARKUI_GREEN = new Color(40, 180, 40);
+    private static final Color LIGHT_UI_GREEN = new Color(20, 140, 20);
+    private static final Color DARK_UI_GREEN = new Color(40, 180, 40);
     private static final Color UI_GRAY = new Color(100, 100, 100);
-    private static final Color LIGHTUI_GRAY = new Color(100, 100, 100);
-    private static final Color DARKUI_GRAY = new Color(150, 150, 150);
-    private static final Color LIGHTUI_LIGHTBLUE = new Color(100, 100, 150);
-    private static final Color DARKUI_LIGHTBLUE = new Color(150, 150, 210);
-    private static final Color LIGHTUI_LIGHTRED = new Color(210, 100, 100);
-    private static final Color DARKUI_LIGHTRED = new Color(210, 150, 150);
-    private static final Color LIGHTUI_LIGHTVIOLET = new Color(180, 100, 220);
-    private static final Color DARKUI_LIGHTVIOLET = new Color(180, 150, 220);
-    private static final Color LIGHTUI_YELLOW = new Color(250, 170, 40);
-    private static final Color DARKUI_YELLOW = new Color(200, 200, 60);
-    private static final Color LIGHTUI_LIGHTCYAN = new Color(40, 130, 130);
-    private static final Color DARKUI_LIGHTCYAN = new Color(100, 180, 180);
-    private static final Color LIGHTUI_LIGHTGREEN = new Color(80, 180, 80);
-    private static final Color DARKUI_LIGHTGREEN = new Color(150, 210, 150);
-    private static final Color LIGHTUI_DARKBLUE = new Color(225, 225, 245);
-    private static final Color DARKUI_DARKBLUE = new Color(50, 50, 80);
-    private static final Color LIGHTUI_BLACK = new Color(0, 0, 0);
-    private static final Color DARKUI_BLACK = new Color(0, 0, 0);
-    private static final Color LIGHTUI_WHITE = new Color(255, 255, 255);
-    private static final Color DARKUI_WHITE = new Color(255, 255, 255);
+    private static final Color LIGHT_UI_GRAY = new Color(100, 100, 100);
+    private static final Color DARK_UI_GRAY = new Color(150, 150, 150);
+    private static final Color LIGHT_UI_LIGHTBLUE = new Color(100, 100, 150);
+    private static final Color DARK_UI_LIGHTBLUE = new Color(150, 150, 210);
+    private static final Color LIGHT_UI_LIGHT_RED = new Color(210, 100, 100);
+    private static final Color DARK_UI_LIGHT_RED = new Color(210, 150, 150);
+    private static final Color LIGHT_UI_LIGHT_VIOLET = new Color(180, 100, 220);
+    private static final Color DARK_UI_LIGHT_VIOLET = new Color(180, 150, 220);
+    private static final Color LIGHT_UI_YELLOW = new Color(250, 170, 40);
+    private static final Color DARK_UI_YELLOW = new Color(200, 200, 60);
+    private static final Color LIGHT_UI_LIGHTCYAN = new Color(40, 130, 130);
+    private static final Color DARK_UI_LIGHTCYAN = new Color(100, 180, 180);
+    private static final Color LIGHT_UI_LIGHTGREEN = new Color(80, 180, 80);
+    private static final Color DARK_UI_LIGHTGREEN = new Color(150, 210, 150);
+    private static final Color LIGHT_UI_DARKBLUE = new Color(225, 225, 245);
+    private static final Color DARK_UI_DARKBLUE = new Color(50, 50, 80);
+    private static final Color LIGHT_UI_BLACK = new Color(0, 0, 0);
+    private static final Color DARK_UI_BLACK = new Color(0, 0, 0);
+    private static final Color LIGHT_UI_WHITE = new Color(255, 255, 255);
+    private static final Color DARK_UI_WHITE = new Color(255, 255, 255);
 
     /**
      * Returns an HTML FONT Size String, according to GUIScale and deltaScale (e.g. "style=font-size:22"). The given

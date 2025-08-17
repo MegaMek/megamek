@@ -3059,7 +3059,7 @@ public class Princess extends BotClient {
 
     @Override
     protected void handlePacket(final Packet c) {
-        final StringBuilder msg = new StringBuilder("Received packet, cmd: " + c.getCommand());
+        final StringBuilder msg = new StringBuilder("Received packet, cmd: " + c.command());
         try {
             super.handlePacket(c);
             getPrecognition().handlePacket(c);

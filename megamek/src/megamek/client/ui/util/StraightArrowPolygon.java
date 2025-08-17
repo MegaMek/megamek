@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,6 +37,7 @@ package megamek.client.ui.util;
 
 import java.awt.Point;
 import java.awt.Polygon;
+import java.io.Serial;
 
 /**
  * This class calculates and stores points of polygon shaped as straight arrow. Minimum required arguments are two Point
@@ -49,23 +50,22 @@ import java.awt.Polygon;
  * @author Slava Zipunov (zipp32)
  */
 public class StraightArrowPolygon extends Polygon {
+    @Serial
     private static final long serialVersionUID = 6865457471619747091L;
-    private Polygon hotArea = new Polygon();
-    private Point startPoint;
-    private Point endPoint;
+    private final Polygon hotArea = new Polygon();
+    private final Point startPoint;
+    private final Point endPoint;
     private int headLength = 30;
     private int headWidth = 5;
     private int arrowWidthAtHead = 3;
     private int tailWidth = 3;
-    private int tailLength = 0;
-    private boolean halved = false;
+    private final boolean halved;
 
     /**
-     * Most extencive constructor with all paremeters given
+     * Most extensive constructor with all parameters given
      */
-    public StraightArrowPolygon(Point startPoint, Point endPoint,
-          int headLength, int headWidth, int arrowWidthAtHead, int tailWidth,
-          int tailLength, boolean halved) {
+    public StraightArrowPolygon(Point startPoint, Point endPoint, int headLength, int headWidth, int arrowWidthAtHead,
+          int tailWidth, int tailLength, boolean halved) {
         super();
         this.startPoint = startPoint;
         this.endPoint = endPoint;
@@ -91,8 +91,7 @@ public class StraightArrowPolygon extends Polygon {
     /**
      * One more constructor
      */
-    public StraightArrowPolygon(Point startPoint, Point endPoint, int width,
-          boolean halved) {
+    public StraightArrowPolygon(Point startPoint, Point endPoint, int width, boolean halved) {
         super();
         this.startPoint = startPoint;
         this.endPoint = endPoint;
@@ -106,8 +105,7 @@ public class StraightArrowPolygon extends Polygon {
     /**
      * I know, it is annoying, but another constructor
      */
-    public StraightArrowPolygon(Point startPoint, Point endPoint, int width,
-          int headWidth, boolean halved) {
+    public StraightArrowPolygon(Point startPoint, Point endPoint, int width, int headWidth, boolean halved) {
         super();
         this.startPoint = startPoint;
         this.endPoint = endPoint;
@@ -128,6 +126,7 @@ public class StraightArrowPolygon extends Polygon {
         double sin = dY / arrowLength;
         double cos = dX / arrowLength;
         this.addPoint(startPoint.x, startPoint.y);
+        int tailLength = 0;
         this.addPoint((int) Math.round(startPoint.x + tailWidth * sin
               - tailLength * cos), (int) Math.round(startPoint.y - tailWidth
               * cos - tailLength * sin));

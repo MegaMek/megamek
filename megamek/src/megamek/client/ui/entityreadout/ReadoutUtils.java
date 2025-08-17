@@ -87,15 +87,15 @@ final class ReadoutUtils {
 
             ViewElement[] row = createWeaponTableRow(mounted, entity, true);
 
-            WeaponType wtype = mounted.getType();
-            if (wtype instanceof BayWeapon) {
+            WeaponType weaponType = mounted.getType();
+            if (weaponType instanceof BayWeapon) {
                 BayInfo bayInfo = getBayInfo(mounted);
                 row[2] = new PlainElement(bayInfo.totalHeat());
                 if ((bayInfo.damagedWeapons() > 0) && !showDetail) {
                     row[3] = new DestroyedElement(Messages.getString("MekView.WeaponDamage") + ")");
                 }
             } else {
-                row[2] = new PlainElement(wtype.getHeat());
+                row[2] = new PlainElement(weaponType.getHeat());
                 if (entity.isOmni()) {
                     row[3] = new PlainElement(Messages.getString(mounted.isOmniPodMounted() ?
                           "MekView.Pod" :
@@ -104,7 +104,7 @@ final class ReadoutUtils {
             }
             wpnTable.addRow(row);
 
-            if ((wtype instanceof BayWeapon) && showDetail) {
+            if ((weaponType instanceof BayWeapon) && showDetail) {
                 addBayWeaponList(mounted, wpnTable, entity, true);
                 addBayAmmoList(mounted, wpnTable);
             }
@@ -130,8 +130,8 @@ final class ReadoutUtils {
 
             ViewElement[] row = createWeaponTableRow(mounted, entity, false);
 
-            WeaponType wtype = mounted.getType();
-            if (wtype instanceof BayWeapon) {
+            WeaponType weaponType = mounted.getType();
+            if (weaponType instanceof BayWeapon) {
                 BayInfo bayInfo = getBayInfo(mounted);
                 if (bayInfo.damagedWeapons() > 0 && !showDetail) {
                     row[2] = new DamagedElement(Messages.getString("MekView.WeaponDamage") + ")");
@@ -144,7 +144,7 @@ final class ReadoutUtils {
 
             wpnTable.addRow(row);
 
-            if ((wtype instanceof BayWeapon) && showDetail) {
+            if ((weaponType instanceof BayWeapon) && showDetail) {
                 addBayWeaponList(mounted, wpnTable, entity, false);
                 addBayAmmoList(mounted, wpnTable);
             }
@@ -159,20 +159,20 @@ final class ReadoutUtils {
      * Collects and returns the total weapon heat and the number of damaged weapons in the given bayWeapon.
      */
     private static BayInfo getBayInfo(WeaponMounted bayWeapon) {
-        WeaponType wtype = bayWeapon.getType();
-        int heat = wtype.getHeat();
-        int bWeapDamaged = 0;
-        if (wtype instanceof BayWeapon) {
+        WeaponType weaponType = bayWeapon.getType();
+        int heat = weaponType.getHeat();
+        int bWeaponDamaged = 0;
+        if (weaponType instanceof BayWeapon) {
             // loop through weapons in bay and add up heat
             heat = 0;
             for (WeaponMounted m : bayWeapon.getBayWeapons()) {
                 heat = heat + m.getType().getHeat();
                 if (m.isDestroyed()) {
-                    bWeapDamaged++;
+                    bWeaponDamaged++;
                 }
             }
         }
-        return new BayInfo(bWeapDamaged, heat);
+        return new BayInfo(bWeaponDamaged, heat);
     }
 
     private static ViewElement[] createWeaponTableRow(Mounted<?> mounted, Entity entity, boolean withHeatColumn) {
@@ -275,7 +275,7 @@ final class ReadoutUtils {
 
 
     /**
-     * @return An itemlist of the given entity's transports.
+     * @return An item list of the given entity's transports.
      */
     static ItemList createTransporterList(Entity entity) {
         var transportsList = new ItemList(Messages.getString("MekView.CarryingCapacity"));

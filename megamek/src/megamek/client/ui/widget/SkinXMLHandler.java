@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -71,25 +71,25 @@ public class SkinXMLHandler {
     public static String SKIN_HEADER;
 
     static {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        sb.append("<!--\n");
-        sb.append("  This is the a skin for Megamek\n");
-        sb.append("\n");
-        sb.append("  New skins can be created by specifying UI_Element tags\n");
-        sb.append("\n");
-        sb.append("  The defaultElement UI_Element specifies the default border to be used by UI\n");
-        sb.append("    components\n");
-        sb.append("\n");
-        sb.append("  The defaultButton UI_Element specifies the default border and background\n");
-        sb.append("   images to use for Megamek buttons.  The first image is the base default\n");
-        sb.append("   image and the second image is the pressed image\n");
-        sb.append("\n");
-        sb.append("  NOTE: All locations should be in data/images/widgets\n");
-        sb.append("-->\n");
-        sb.append("<skin xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-        sb.append("    xsi:noNamespaceSchemaLocation=\"skinSchema.xsd\">\n");
-        SKIN_HEADER = sb.toString();
+        SKIN_HEADER = """
+              <?xml version="1.0" encoding="UTF-8"?>
+              <!--
+                This is the a skin for Megamek
+              
+                New skins can be created by specifying UI_Element tags
+              
+                The defaultElement UI_Element specifies the default border to be used by UI
+                  components
+              
+                The defaultButton UI_Element specifies the default border and background
+                 images to use for Megamek buttons.  The first image is the base default
+                 image and the second image is the pressed image
+              
+                NOTE: All locations should be in data/images/widgets
+              -->
+              <skin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:noNamespaceSchemaLocation="skinSchema.xsd">
+              """;
     }
 
     /**
@@ -161,9 +161,6 @@ public class SkinXMLHandler {
     /**
      * Checks whether the given path points to a file that is a valid skin specification.
      *
-     * @param fileName
-     *
-     * @return
      */
     public static boolean validSkinSpecFile(String fileName) {
         File file = new MegaMekFile(fileName).getFile();
@@ -177,11 +174,7 @@ public class SkinXMLHandler {
             // Until that's done, just assume anything with UI_ELEMENT tags is
             // valid
             NodeList listOfComponents = doc.getElementsByTagName(UI_ELEMENT);
-            if (listOfComponents.getLength() > 0) {
-                return true;
-            } else {
-                return false;
-            }
+            return listOfComponents.getLength() > 0;
         } catch (Exception e) {
             return false;
         }
@@ -215,7 +208,7 @@ public class SkinXMLHandler {
                 file = new MegaMekFile(Configuration.skinsDir(),
                       GUIPreferences.getInstance().getDefaultSkinFile()).getFile();
                 if (!file.exists() || !file.isFile()) {
-                    logger.error("Cannot initialize skin based on a non-existent file with filename " + filename);
+                    logger.error("Cannot initialize skin based on a non-existent file with filename {}", filename);
                     return false;
                 }
             }
@@ -224,7 +217,7 @@ public class SkinXMLHandler {
         // Build the XML document.
         try {
             DocumentBuilder builder = MMXMLUtility.newSafeDocumentBuilder();
-            logger.debug("Parsing " + file.getName());
+            logger.debug("Parsing {}", file.getName());
             Document doc = builder.parse(file);
 
             // Get the list of units.
@@ -258,7 +251,7 @@ public class SkinXMLHandler {
                     // Get the border specs
                     Element border = (Element) borderList.getElementsByTagName(BORDER).item(0);
                     if (border == null) {
-                        logger.error(String.format("Missing <%s> tag in element %s", BORDER, comp));
+                        logger.error("Missing <{}> tag in element {}", BORDER, comp);
                         continue;
                     }
 
@@ -320,7 +313,7 @@ public class SkinXMLHandler {
                 }
 
                 if (UIComponents.getUIComponent(name) == null) {
-                    logger.error("Unable to add unrecognized UI component: " + name);
+                    logger.error("Unable to add unrecognized UI component: {}", name);
                 } else {
                     skinSpecs.put(name, skinSpec);
                 }
@@ -328,8 +321,9 @@ public class SkinXMLHandler {
 
             if (!skinSpecs.containsKey(UIComponents.DefaultUIElement.getComp())
                   || !skinSpecs.containsKey(UIComponents.DefaultButton.getComp())) {
-                logger.error(String.format("Skin specification file doesn't specify %s or %s",
-                      UIComponents.DefaultUIElement, UIComponents.DefaultButton));
+                logger.error("Skin specification file doesn't specify {} or {}",
+                      UIComponents.DefaultUIElement,
+                      UIComponents.DefaultButton);
                 return false;
             }
         } catch (Exception ex) {
@@ -417,9 +411,8 @@ public class SkinXMLHandler {
 
     /**
      * Given a UI_Component component with a UnitDisplay name, parse it into a new UnitDisplaySkinSpecification. This
-     * tupe of UI_Element has a different structure than other UI_Elements.
+     * type of UI_Element has a different structure than other UI_Elements.
      *
-     * @param border
      */
     private static void parseUnitDisplaySkinSpec(Element border) {
         udSpec = new UnitDisplaySkinSpecification();
@@ -543,7 +536,6 @@ public class SkinXMLHandler {
     /**
      * Writes the current skin to the specified XML file.
      *
-     * @param filename
      */
     public static void writeSkinToFile(String filename) {
         try (FileOutputStream fos = new FileOutputStream(new MegaMekFile(filename).getFile());
@@ -566,9 +558,6 @@ public class SkinXMLHandler {
     /**
      * Helper method for writing the UI_Element tag related to a UnitDisplaySkinSpecification.
      *
-     * @param out
-     *
-     * @throws IOException
      */
     private static void writeUnitDisplaySkinSpec(Writer out) throws IOException {
         // If the spec is null, nothing to do
@@ -686,10 +675,6 @@ public class SkinXMLHandler {
     /**
      * Convenience method for writing out the UI_ELEMENT tag.
      *
-     * @param component
-     * @param out
-     *
-     * @throws IOException
      */
     private static void writeSkinComponent(String component, Writer out)
           throws IOException {
@@ -765,10 +750,6 @@ public class SkinXMLHandler {
     /**
      * Convenience method for writing out the BORDER element.
      *
-     * @param skinSpec
-     * @param out
-     *
-     * @throws IOException
      */
     private static void writeBorder(SkinSpecification skinSpec, Writer out)
           throws IOException {
@@ -890,7 +871,6 @@ public class SkinXMLHandler {
     /**
      * Returns the list of components that have SkinSpecifications.
      *
-     * @return
      */
     public synchronized static Set<String> getSkinnedComponents() {
         return skinSpecs.keySet();
@@ -902,7 +882,6 @@ public class SkinXMLHandler {
      * @param component      The name of the component to get skin info for.
      * @param defaultToPlain Determines if a default component should be used if no match, or a plain component
      *
-     * @return
      */
     public synchronized static SkinSpecification getSkin(String component,
           boolean defaultToPlain, boolean isBtn) {
@@ -943,7 +922,6 @@ public class SkinXMLHandler {
     /**
      * Adds a new component to the SkinSpecs map.
      *
-     * @param component
      */
     public synchronized static void addNewComp(String component) {
         if (skinSpecs == null) {
@@ -959,7 +937,6 @@ public class SkinXMLHandler {
     /**
      * Remove the specified component from the SkinSpecs map.
      *
-     * @param component
      */
     public synchronized static void removeComp(String component) {
         skinSpecs.remove(component);

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,6 +44,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -67,36 +68,37 @@ import megamek.common.preference.PreferenceManager;
  * @author arlith
  */
 public class SkinSpecEditorPanel extends JPanel implements ListSelectionListener, ActionListener {
+    @Serial
     private static final long serialVersionUID = -37452332974426228L;
 
-    private SkinEditorMainGUIPanel mainGUI;
+    private final SkinEditorMainGUIPanel mainGUI;
 
-    private JComboBox<String> currSkinCombo = new JComboBox<>();
+    private final JComboBox<String> currSkinCombo = new JComboBox<>();
 
-    private JButton addCompButton = new JButton(Messages.getString("SkinEditor.AddCompButton"));
+    private final JButton addCompButton = new JButton(Messages.getString("SkinEditor.AddCompButton"));
 
-    private JButton removeCompButton = new JButton(Messages.getString("SkinEditor.RemoveCompButton"));
+    private final JButton removeCompButton = new JButton(Messages.getString("SkinEditor.RemoveCompButton"));
 
-    private JButton saveSkinButton = new JButton(Messages.getString("SkinEditor.SaveSkinButton"));
+    private final JButton saveSkinButton = new JButton(Messages.getString("SkinEditor.SaveSkinButton"));
 
-    private JButton resetSkinButton = new JButton(Messages.getString("SkinEditor.ResetSkinButton"));
+    private final JButton resetSkinButton = new JButton(Messages.getString("SkinEditor.ResetSkinButton"));
 
     /**
      * Lists all SkinSpecifications for the current skin.
      */
-    private DefaultListModel<UIComponents> skinSpecCompModel = new DefaultListModel<>();
-    private JList<UIComponents> skinSpecCompList = new JList<>(skinSpecCompModel);
+    private final DefaultListModel<UIComponents> skinSpecCompModel = new DefaultListModel<>();
+    private final JList<UIComponents> skinSpecCompList = new JList<>(skinSpecCompModel);
 
-    private JCheckBox enablePlain = new JCheckBox(Messages.getString("SkinEditor.EnablePlain"));
-    private JCheckBox enableBorders = new JCheckBox(Messages.getString("SkinEditor.EnableBorders"));
+    private final JCheckBox enablePlain = new JCheckBox(Messages.getString("SkinEditor.EnablePlain"));
+    private final JCheckBox enableBorders = new JCheckBox(Messages.getString("SkinEditor.EnableBorders"));
 
-    private JPanel editPanel = new JPanel();
+    private final JPanel editPanel = new JPanel();
     /**
      * Panel that holds UI widgets for editing the selected skin spec.
      */
-    private SkinSpecPanel skinEditPanel = new SkinSpecPanel(this);
+    private final SkinSpecPanel skinEditPanel = new SkinSpecPanel(this);
 
-    private UnitDisplaySpecPanel udEditPanel = new UnitDisplaySpecPanel(this);
+    private final UnitDisplaySpecPanel udEditPanel = new UnitDisplaySpecPanel(this);
 
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -252,7 +254,7 @@ public class SkinSpecEditorPanel extends JPanel implements ListSelectionListener
     }
 
     /**
-     * Updates the List model to display all of the current components with SkinSpecifications.
+     * Updates the List model to display all the current components with SkinSpecifications.
      */
     private void populateSkinSpecComponents() {
         removeListeners();
@@ -281,13 +283,9 @@ public class SkinSpecEditorPanel extends JPanel implements ListSelectionListener
         }
         UIComponents selectedComp = skinSpecCompList.getSelectedValue();
 
-        if ((selectedComp == UIComponents.DefaultButton)
-              || (selectedComp == UIComponents.DefaultUIElement)
-              || (selectedComp == UIComponents.UnitDisplay)) {
-            removeCompButton.setEnabled(false);
-        } else {
-            removeCompButton.setEnabled(true);
-        }
+        removeCompButton.setEnabled((selectedComp != UIComponents.DefaultButton)
+              && (selectedComp != UIComponents.DefaultUIElement)
+              && (selectedComp != UIComponents.UnitDisplay));
 
         editPanel.removeAll();
         if (selectedComp == UIComponents.UnitDisplay) {
@@ -383,10 +381,8 @@ public class SkinSpecEditorPanel extends JPanel implements ListSelectionListener
             UIComponents selectedComp = skinSpecCompList.getSelectedValue();
             // Don't remove defaults - this button shouldn't be enabled in this
             // case, but just to be sure...
-            if ((selectedComp == UIComponents.DefaultButton)
-                  || (selectedComp == UIComponents.DefaultUIElement)) {
-                return;
-            } else {
+            if ((selectedComp != UIComponents.DefaultButton)
+                  && (selectedComp != UIComponents.DefaultUIElement)) {
                 SkinXMLHandler.removeComp(selectedComp.getComp());
                 populateSkinSpecComponents();
                 setupEditPanel();
@@ -421,12 +417,9 @@ public class SkinSpecEditorPanel extends JPanel implements ListSelectionListener
 
         int returnVal = fc.showSaveDialog(mainGUI);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
-            // I want a file, y'know!
             return file;
         }
-        if (fc.getSelectedFile() != null) {
-            file = path + "/" + fc.getSelectedFile().getName();
-        }
+        file = path + "/" + fc.getSelectedFile().getName();
         return file;
     }
 

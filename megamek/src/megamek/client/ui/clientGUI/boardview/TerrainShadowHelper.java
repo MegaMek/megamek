@@ -355,7 +355,7 @@ class TerrainShadowHelper {
                     }
                     // Bridge Shadow
                     if (hex.containsTerrain(Terrains.BRIDGE)) {
-                        supers = boardView.getTilesetManager().orthoFor(hex);
+                        supers = boardView.getTilesetManager().orthographicFor(hex);
 
                         if (supers.isEmpty()) {
                             break;

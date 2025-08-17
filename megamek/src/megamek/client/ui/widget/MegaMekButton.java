@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2008 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,6 +41,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.Serial;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -58,6 +59,7 @@ import megamek.logging.MMLogger;
 public class MegaMekButton extends JButton implements MouseListener {
     private static final MMLogger logger = MMLogger.create(MegaMekButton.class);
 
+    @Serial
     private static final long serialVersionUID = -3271105050872007863L;
 
     // Default values for button text colors
@@ -85,7 +87,7 @@ public class MegaMekButton extends JButton implements MouseListener {
     boolean iconsLoaded = false;
 
     /**
-     * Keeps track of if the button is pressed or not. This is used for determining if which image icon should be
+     * Keeps track of if the button is pressed or not. This is used for determining which image icon should be
      * displayed.
      */
     boolean isPressed = false;
@@ -143,7 +145,6 @@ public class MegaMekButton extends JButton implements MouseListener {
     /**
      * Default text constructor, the button will use the DefaultButton SkinSpecification.
      *
-     * @param text
      */
     public MegaMekButton(String text) {
         super(text);
@@ -180,7 +181,7 @@ public class MegaMekButton extends JButton implements MouseListener {
         loadIcon(skinSpec);
         isBGTiled = skinSpec.tileBackground;
 
-        if (skinSpec.fontColors.size() >= 1) {
+        if (!skinSpec.fontColors.isEmpty()) {
             buttonColor = skinSpec.fontColors.get(0);
         } else {
             buttonColor = defaultColor;
@@ -206,7 +207,6 @@ public class MegaMekButton extends JButton implements MouseListener {
     /**
      * Use the supplied SkinSpecification to load the background images.
      *
-     * @param spec
      */
     public void loadIcon(SkinSpecification spec) {
         iconsLoaded = true;
@@ -217,7 +217,7 @@ public class MegaMekButton extends JButton implements MouseListener {
         }
         // Setting this to false helps with transparent images
         setContentAreaFilled(false);
-        // Otherwise, try to load in all of the images.
+        // Otherwise, try to load in all the images.
         try {
             if (spec.backgrounds.size() < 2) {
                 logger.error(
@@ -253,7 +253,7 @@ public class MegaMekButton extends JButton implements MouseListener {
 
     @Override
     protected void paintComponent(Graphics g) {
-        // Call super, so this components plays well with Swing
+        // Call super, so these components plays well with Swing
         super.paintComponent(g);
         // If none of the icons are loaded, treat this is a regular JButton
         if (!iconsLoaded) {
@@ -261,9 +261,9 @@ public class MegaMekButton extends JButton implements MouseListener {
         }
 
         // If the BG icon is tiled, draw it in
+        int w = getWidth();
+        int h = getHeight();
         if (isBGTiled) {
-            int w = getWidth();
-            int h = getHeight();
             int iW = isPressed ? backgroundPressedIcon.getIconWidth()
                   : backgroundIcon.getIconWidth();
             int iH = isPressed ? backgroundPressedIcon.getIconHeight()
@@ -280,8 +280,6 @@ public class MegaMekButton extends JButton implements MouseListener {
                 }
             }
         } else { // Otherwise, treat the BG Icon as one image to overlay
-            int w = getWidth();
-            int h = getHeight();
             if (isPressed) {
                 if (bgPressedBuffer == null || bgPressedBuffer.getWidth() != w
                       || bgPressedBuffer.getHeight() != h) {

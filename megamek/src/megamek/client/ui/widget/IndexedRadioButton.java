@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,12 +34,14 @@
 
 package megamek.client.ui.widget;
 
+import java.io.Serial;
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 
 public class IndexedRadioButton extends JRadioButton {
+    @Serial
     private static final long serialVersionUID = 5224809762401860469L;
-    private int index;
+    private final int index;
 
     public IndexedRadioButton(String label, boolean state, ButtonGroup group,
           int index) {

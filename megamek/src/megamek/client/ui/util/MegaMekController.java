@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,9 +51,9 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.IClientGUI;
 
 /**
- * This class implements a KeyEventDispatcher, which handles all generated KeyEvents. If the KeyEvent correspondes to a
- * registerd hotkey, the action for that hotkey will be used to consume the event otherwise the event will be dispatched
- * as normal.
+ * This class implements a KeyEventDispatcher, which handles all generated KeyEvents. If the KeyEvent corresponds to a
+ * registered hotkey, the action for that hotkey will be used to consume the event otherwise the event will be
+ * dispatched as normal.
  * <p>
  * The idea is that the system is split into two: keys can be bound to string commands, and string commands can be bound
  * to CommandAction objects, which are a simple class that implements an "actionPerformed" method. The class that
@@ -84,7 +84,7 @@ public class MegaMekController implements KeyEventDispatcher {
     private static final int MAX_REPEAT_RATE = 100;
 
     public BoardEditorPanel boardEditor = null;
-    public IClientGUI clientgui = null;
+    public IClientGUI clientGUI = null;
 
     /** Maps a key code to a command string. */
     protected Set<KeyCommandBind> keyCmdSet;
@@ -113,8 +113,8 @@ public class MegaMekController implements KeyEventDispatcher {
     @Override
     public boolean dispatchKeyEvent(KeyEvent evt) {
 
-        // Don't consider hotkeys when the clientgui has a dialog visible
-        if (((clientgui != null) && clientgui.shouldIgnoreHotKeys())
+        // Don't consider hotkeys when the clientGUI has a dialog visible
+        if (((clientGUI != null) && clientGUI.shouldIgnoreHotKeys())
               || ((boardEditor != null) && boardEditor.shouldIgnoreHotKeys())
               || ignoreKeyPresses) {
             return false;
@@ -178,7 +178,7 @@ public class MegaMekController implements KeyEventDispatcher {
      * Registers an action to a keybind given as the cmd parameter (e.g. KeyCommandBind.SCROLL_NORTH.cmd). For every
      * press of the bound key, the action will be called.
      *
-     * @param cmd    The keycommand string, obtained through KeyCommandBind
+     * @param cmd    The key command string, obtained through KeyCommandBind
      * @param action The CommandAction
      */
     public synchronized void registerCommandAction(String cmd, CommandAction action) {

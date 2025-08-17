@@ -45,6 +45,7 @@ import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.Serial;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,16 +81,16 @@ import megamek.common.options.OptionsConstants;
  */
 public class TeamOverviewPanel extends JPanel {
 
+    @Serial
     private static final long serialVersionUID = -4754010220963493049L;
 
-    private enum TOMCOLS {
+    private enum TOP_COLS {
         TEAM, MEMBERS, TONNAGE, COST, BV, HIDDEN, UNITS
     }
 
     private final TeamOverviewModel teamOverviewModel = new TeamOverviewModel();
     private final JTable teamOverviewTable = new JTable(teamOverviewModel);
     private final TableColumnManager teamOverviewManager = new TableColumnManager(teamOverviewTable, false);
-    private final JScrollPane scrTeams = new JScrollPane(teamOverviewTable);
     private final ClientGUI clientGui;
     private boolean isDetached;
     private int shownColumn;
@@ -105,14 +106,15 @@ public class TeamOverviewPanel extends JPanel {
         teamOverviewTable.getTableHeader().setReorderingAllowed(false);
         teamOverviewTable.getTableHeader().addMouseListener(headerListener);
         var colModel = teamOverviewTable.getColumnModel();
-        colModel.getColumn(TOMCOLS.MEMBERS.ordinal()).setCellRenderer(new MemberListRenderer());
+        colModel.getColumn(TOP_COLS.MEMBERS.ordinal()).setCellRenderer(new MemberListRenderer());
         var centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        colModel.getColumn(TOMCOLS.TONNAGE.ordinal()).setCellRenderer(centerRenderer);
-        colModel.getColumn(TOMCOLS.COST.ordinal()).setCellRenderer(centerRenderer);
-        colModel.getColumn(TOMCOLS.BV.ordinal()).setCellRenderer(centerRenderer);
-        colModel.getColumn(TOMCOLS.TEAM.ordinal()).setCellRenderer(centerRenderer);
-        colModel.getColumn(TOMCOLS.HIDDEN.ordinal()).setCellRenderer(centerRenderer);
+        colModel.getColumn(TOP_COLS.TONNAGE.ordinal()).setCellRenderer(centerRenderer);
+        colModel.getColumn(TOP_COLS.COST.ordinal()).setCellRenderer(centerRenderer);
+        colModel.getColumn(TOP_COLS.BV.ordinal()).setCellRenderer(centerRenderer);
+        colModel.getColumn(TOP_COLS.TEAM.ordinal()).setCellRenderer(centerRenderer);
+        colModel.getColumn(TOP_COLS.HIDDEN.ordinal()).setCellRenderer(centerRenderer);
+        JScrollPane scrTeams = new JScrollPane(teamOverviewTable);
         scrTeams.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         add(scrTeams);
 
@@ -125,15 +127,15 @@ public class TeamOverviewPanel extends JPanel {
             isDetached = state;
             if (isDetached) {
                 shownColumn = 0;
-                teamOverviewManager.hideColumn(TOMCOLS.TONNAGE.ordinal());
-                teamOverviewManager.hideColumn(TOMCOLS.COST.ordinal());
+                teamOverviewManager.hideColumn(TOP_COLS.TONNAGE.ordinal());
+                teamOverviewManager.hideColumn(TOP_COLS.COST.ordinal());
             } else {
-                teamOverviewManager.hideColumn(TOMCOLS.TONNAGE.ordinal());
-                teamOverviewManager.hideColumn(TOMCOLS.COST.ordinal());
-                teamOverviewManager.hideColumn(TOMCOLS.BV.ordinal());
-                teamOverviewManager.showColumn(TOMCOLS.TONNAGE.ordinal());
-                teamOverviewManager.showColumn(TOMCOLS.COST.ordinal());
-                teamOverviewManager.showColumn(TOMCOLS.BV.ordinal());
+                teamOverviewManager.hideColumn(TOP_COLS.TONNAGE.ordinal());
+                teamOverviewManager.hideColumn(TOP_COLS.COST.ordinal());
+                teamOverviewManager.hideColumn(TOP_COLS.BV.ordinal());
+                teamOverviewManager.showColumn(TOP_COLS.TONNAGE.ordinal());
+                teamOverviewManager.showColumn(TOP_COLS.COST.ordinal());
+                teamOverviewManager.showColumn(TOP_COLS.BV.ordinal());
             }
             refreshTableHeader();
         }
@@ -145,17 +147,17 @@ public class TeamOverviewPanel extends JPanel {
             if (isDetached) {
                 shownColumn = (shownColumn + 1) % 3;
                 if (shownColumn == 0) {
-                    teamOverviewManager.hideColumn(TOMCOLS.TONNAGE.ordinal());
-                    teamOverviewManager.hideColumn(TOMCOLS.COST.ordinal());
-                    teamOverviewManager.showColumn(TOMCOLS.BV.ordinal());
+                    teamOverviewManager.hideColumn(TOP_COLS.TONNAGE.ordinal());
+                    teamOverviewManager.hideColumn(TOP_COLS.COST.ordinal());
+                    teamOverviewManager.showColumn(TOP_COLS.BV.ordinal());
                 } else if (shownColumn == 1) {
-                    teamOverviewManager.hideColumn(TOMCOLS.TONNAGE.ordinal());
-                    teamOverviewManager.showColumn(TOMCOLS.COST.ordinal());
-                    teamOverviewManager.hideColumn(TOMCOLS.BV.ordinal());
+                    teamOverviewManager.hideColumn(TOP_COLS.TONNAGE.ordinal());
+                    teamOverviewManager.showColumn(TOP_COLS.COST.ordinal());
+                    teamOverviewManager.hideColumn(TOP_COLS.BV.ordinal());
                 } else {
-                    teamOverviewManager.showColumn(TOMCOLS.TONNAGE.ordinal());
-                    teamOverviewManager.hideColumn(TOMCOLS.COST.ordinal());
-                    teamOverviewManager.hideColumn(TOMCOLS.BV.ordinal());
+                    teamOverviewManager.showColumn(TOP_COLS.TONNAGE.ordinal());
+                    teamOverviewManager.hideColumn(TOP_COLS.COST.ordinal());
+                    teamOverviewManager.hideColumn(TOP_COLS.BV.ordinal());
                 }
             }
         }
@@ -173,7 +175,7 @@ public class TeamOverviewPanel extends JPanel {
 
     /** Updates the table with data from the game. */
     public void refreshData() {
-        // Remeber the previously selected team, if any
+        // Remember the previously selected team, if any
         int selectedRow = teamOverviewTable.getSelectedRow();
         int selectedTeam = -1;
         if (selectedRow != -1) {
@@ -192,16 +194,17 @@ public class TeamOverviewPanel extends JPanel {
 
     /** The table model for the Team overview panel */
     private class TeamOverviewModel extends AbstractTableModel {
+        @Serial
         private static final long serialVersionUID = 2747614890129092912L;
 
-        private ArrayList<Team> teams = new ArrayList<>();
-        private ArrayList<Integer> teamID = new ArrayList<>();
-        private ArrayList<String> teamNames = new ArrayList<>();
-        private ArrayList<Long> bvs = new ArrayList<>();
-        private ArrayList<Long> costs = new ArrayList<>();
-        private ArrayList<Long> tons = new ArrayList<>();
-        private ArrayList<String> units = new ArrayList<>();
-        private ArrayList<Double> hidden = new ArrayList<>();
+        private final ArrayList<Team> teams = new ArrayList<>();
+        private final ArrayList<Integer> teamID = new ArrayList<>();
+        private final ArrayList<String> teamNames = new ArrayList<>();
+        private final ArrayList<Long> bvs = new ArrayList<>();
+        private final ArrayList<Long> costs = new ArrayList<>();
+        private final ArrayList<Long> tons = new ArrayList<>();
+        private final ArrayList<String> units = new ArrayList<>();
+        private final ArrayList<Double> hidden = new ArrayList<>();
 
         @Override
         public int getRowCount() {
@@ -221,7 +224,7 @@ public class TeamOverviewPanel extends JPanel {
 
         @Override
         public int getColumnCount() {
-            return TOMCOLS.values().length;
+            return TOP_COLS.values().length;
         }
 
         /** Updates the stored data from the provided game. */
@@ -293,18 +296,20 @@ public class TeamOverviewPanel extends JPanel {
             }
         }
 
-        private String unitSummary(int[] counts, boolean[] criticals, boolean[] warnings) {
-            String result = "";
+        private String unitSummary(int[] counts, boolean[] criticalSlots, boolean[] warnings) {
+            StringBuilder result = new StringBuilder();
             for (int i = 0; i < counts.length; i++) {
                 if (counts[i] > 0) {
-                    result += criticals[i] ? criticalSign() + " " : "";
-                    result += warnings[i] ? warningSign() + " " : "";
-                    result += Messages.getString("ChatLounge.teamOverview.unitSum" + i) + " " + counts[i];
-                    result += "<BR>";
+                    result.append(criticalSlots[i] ? criticalSign() + " " : "");
+                    result.append(warnings[i] ? warningSign() + " " : "");
+                    result.append(Messages.getString("ChatLounge.teamOverview.unitSum" + i))
+                          .append(" ")
+                          .append(counts[i]);
+                    result.append("<BR>");
                 }
 
             }
-            return result;
+            return result.toString();
         }
 
         /**
@@ -327,7 +332,7 @@ public class TeamOverviewPanel extends JPanel {
         @Override
         public String getColumnName(int column) {
             column += (isDetached && column > 1) ? 2 : 0;
-            String text = Messages.getString("ChatLounge.teamOverview.COL" + TOMCOLS.values()[column]);
+            String text = Messages.getString("ChatLounge.teamOverview.COL" + TOP_COLS.values()[column]);
             float textSizeDelta = isDetached ? 0f : 0.3f;
             return "<HTML><NOBR>" + UIUtil.fontHTML(textSizeDelta) + text;
         }
@@ -340,33 +345,33 @@ public class TeamOverviewPanel extends JPanel {
         @Override
         public Object getValueAt(int row, int col) {
             StringBuilder result = new StringBuilder("<HTML><NOBR>");
-            TOMCOLS column = TOMCOLS.values()[col];
+            TOP_COLS column = TOP_COLS.values()[col];
             switch (column) {
                 case TEAM:
                     boolean isEnemy = !teams.get(row).players().contains(clientGui.getClient().getLocalPlayer());
                     Color color = isEnemy ? GUIPreferences.getInstance().getEnemyUnitColor()
                           : GUIPreferences.getInstance().getMyUnitColor();
-                    result.append(UIUtil.fontHTML(color) + "&nbsp;");
-                    result.append(teamNames.get(row) + "</FONT>");
+                    result.append(UIUtil.fontHTML(color)).append("&nbsp;");
+                    result.append(teamNames.get(row)).append("</FONT>");
                     break;
 
                 case TONNAGE:
-                    result.append(fontHTML() + "<CENTER>");
+                    result.append(fontHTML()).append("<CENTER>");
                     double ton = (double) tons.get(row) / 1000;
                     if (ton < 10) {
-                        result.append(String.format("%.2f", ton) + " Tons");
+                        result.append(String.format("%.2f", ton)).append(" Tons");
                     } else {
-                        result.append(String.format("%,d", Math.round(ton)) + " Tons");
+                        result.append(String.format("%,d", Math.round(ton))).append(" Tons");
                     }
                     result.append(relativeValue(tons, row));
                     break;
 
                 case COST:
-                    result.append(fontHTML() + "<CENTER>");
+                    result.append(fontHTML()).append("<CENTER>");
                     if (costs.get(row) < 10_000_000) {
-                        result.append(String.format("%,d", costs.get(row)) + " C-Bills");
+                        result.append(String.format("%,d", costs.get(row))).append(" C-Bills");
                     } else {
-                        result.append(String.format("%,d", costs.get(row) / 1_000_000) + "\u00B7M C-Bills");
+                        result.append(String.format("%,d", costs.get(row) / 1_000_000)).append("\u00B7M C-Bills");
                     }
                     result.append(relativeValue(costs, row));
                     break;
@@ -375,7 +380,7 @@ public class TeamOverviewPanel extends JPanel {
                     return teams.get(row).players();
 
                 case BV:
-                    result.append(fontHTML() + "<CENTER>");
+                    result.append(fontHTML()).append("<CENTER>");
                     result.append(NumberFormat.getIntegerInstance().format(bvs.get(row)));
                     result.append(relativeValue(bvs, row));
                     break;
@@ -389,7 +394,7 @@ public class TeamOverviewPanel extends JPanel {
                     break;
 
                 case HIDDEN:
-                    result.append(fontHTML() + "<CENTER>");
+                    result.append(fontHTML()).append("<CENTER>");
                     var percentage = hidden.get(row);
                     result.append(percentage == 0 ? "--" : NumberFormat.getPercentInstance().format(percentage));
 
@@ -435,6 +440,7 @@ public class TeamOverviewPanel extends JPanel {
 
     /** A specialized renderer for the mek table. */
     private class MemberListRenderer extends JPanel implements TableCellRenderer {
+        @Serial
         private static final long serialVersionUID = 6379065972840999336L;
 
         MemberListRenderer() {
@@ -446,20 +452,18 @@ public class TeamOverviewPanel extends JPanel {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
               boolean hasFocus, int row, int column) {
 
-            if (!(value instanceof List<?>)) {
+            if (!(value instanceof List<?> playerList)) {
                 return null;
             }
             removeAll();
             add(Box.createVerticalGlue());
-            List<?> playerList = (List<?>) value;
             int baseSize = FONT_SCALE1 - (isDetached ? 2 : 0);
             int size = 2 * baseSize;
             Font font = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, baseSize);
             for (Object obj : playerList) {
-                if (!(obj instanceof Player)) {
+                if (!(obj instanceof Player player)) {
                     continue;
                 }
-                Player player = (Player) obj;
                 JLabel lblPlayer = new JLabel(player.getName());
                 lblPlayer.setBorder(new EmptyBorder(3, 3, 3, 3));
                 lblPlayer.setFont(font);

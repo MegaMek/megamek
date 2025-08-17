@@ -62,7 +62,7 @@ import megamek.common.annotations.Nullable;
  * This class also provides a StringDrawerConfig class that can be used in a similar way to assemble settings to a
  * config that can then be used in the StringDrawer chain to apply those settings using
  * {@link #useConfig(StringDrawerConfig)}. Note that all settings applied from a config in this way can be overridden
- * again by calling a different setting afterwards.
+ * again by calling a different setting afterward.
  * <p>
  * Example:
  * <pre>{@code
@@ -135,7 +135,7 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the fill color to draw the text with. Unless {@link #outline(Color, float)} is used, this the fill color
+     * Sets the fill color to draw the text width. Unless {@link #outline(Color, float)} is used, this the fill color
      * fills the entire text.
      *
      * @param color The fill color of the text
@@ -305,7 +305,7 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the StringDrawer to keep the text within the given maximum pixel width. If the text would appear wider, a
+     * Sets the StringDrawer to keep the text within the given maximum pixel width. If the text appeared wider, a
      * smaller font size is calculated and used instead. Note that the width is not strictly enforced, the result may
      * still be wider or smaller in the range of a few pixels.
      *

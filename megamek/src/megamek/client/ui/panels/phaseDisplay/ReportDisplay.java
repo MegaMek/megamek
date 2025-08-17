@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.event.ActionEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -47,12 +48,13 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 
 public class ReportDisplay extends StatusBarPhaseDisplay {
+    @Serial
     private static final long serialVersionUID = 6185643976857892270L;
 
     public enum ReportCommand implements PhaseCommand {
         REPORT_REPORT("reportReport"),
-        REPORT_PLAYERLIST("reportPlayerList"),
-        REPORT_REROLLINITIATIVE("reportRerollInitiative");
+        REPORT_PLAYER_LIST("reportPlayerList"),
+        REPORT_REROLL_INITIATIVE("reportRerollInitiative");
 
         final String cmd;
 
@@ -101,19 +103,19 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     private Map<ReportCommand, MegaMekButton> buttons;
     private boolean rerolled; // have we rerolled an init?
 
-    private static final String RD_REPORTDISPLAY = "ReportDisplay.";
+    private static final String RD_REPORT_DISPLAY = "ReportDisplay.";
     private static final String RD_TOOLTIP = ".tooltip";
 
     private final ClientGUI clientgui;
 
     /**
-     * Creates and lays out a new movement phase display for the specified clientgui.getClient().
+     * Creates and lays out a new movement phase display for the specified clientGUI.getClient().
      */
-    public ReportDisplay(ClientGUI clientgui) {
-        super(clientgui);
-        this.clientgui = clientgui;
+    public ReportDisplay(ClientGUI clientGUI) {
+        super(clientGUI);
+        this.clientgui = clientGUI;
 
-        if (clientgui == null) {
+        if (clientGUI == null) {
             return;
         }
 
@@ -127,15 +129,15 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
 
         setupButtonPanel();
 
-        clientgui.getClient().getGame().addGameListener(this);
-        //        clientgui.getBoardView().addBoardViewListener(this);
+        clientGUI.getClient().getGame().addGameListener(this);
+        //        clientGUI.getBoardView().addBoardViewListener(this);
     }
 
     @Override
     protected void setButtons() {
         buttons = new HashMap<>((int) (ReportCommand.values().length * 1.25 + 0.5));
         for (ReportCommand cmd : ReportCommand.values()) {
-            buttons.put(cmd, createButton(cmd.getCmd(), RD_REPORTDISPLAY));
+            buttons.put(cmd, createButton(cmd.getCmd(), RD_REPORT_DISPLAY));
         }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
     }
@@ -143,7 +145,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     @Override
     protected void setButtonsTooltips() {
         for (ReportCommand cmd : ReportCommand.values()) {
-            String tt = createToolTip(cmd.getCmd(), RD_REPORTDISPLAY, cmd.getHotKeyDesc());
+            String tt = createToolTip(cmd.getCmd(), RD_REPORT_DISPLAY, cmd.getHotKeyDesc());
             buttons.get(cmd).setToolTipText(tt);
         }
     }
@@ -170,10 +172,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void ready() {
-        //        if (!clientgui.getBoardView().isTileImagesLoaded()) {
-        //            return;
-        //        }
-
         butDone.setEnabled(false);
         setReportEnabled(false);
         setPlayerListEnabled(false);
@@ -186,11 +184,11 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     }
 
     public void setPlayerListEnabled(boolean enabled) {
-        buttons.get(ReportCommand.REPORT_PLAYERLIST).setEnabled(enabled);
+        buttons.get(ReportCommand.REPORT_PLAYER_LIST).setEnabled(enabled);
     }
 
     public void setRerollInitiativeEnabled(boolean enabled) {
-        buttons.get(ReportCommand.REPORT_REROLLINITIATIVE).setEnabled(enabled);
+        buttons.get(ReportCommand.REPORT_REROLL_INITIATIVE).setEnabled(enabled);
     }
 
     public void resetRerollInitiativeEnabled() {
@@ -217,11 +215,11 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     //
     @Override
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_REROLLINITIATIVE.getCmd())) {
+        if (ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_REROLL_INITIATIVE.getCmd())) {
             rerollInitiative();
         } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_REPORT.getCmd()))) {
             GUIP.toggleRoundReportEnabled();
-        } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_PLAYERLIST.getCmd()))) {
+        } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_PLAYER_LIST.getCmd()))) {
             GUIP.togglePlayerListEnabled();
         }
     }

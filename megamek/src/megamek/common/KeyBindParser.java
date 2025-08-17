@@ -56,8 +56,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * This class provides a static method to read in the defaultKeybinds.xml and set all of the
- * <code>KeyCommandbind</code>'s based on the specifications in the XML file.
+ * This class provides a static method to read in the defaultKeybinds.xml and set all of the {@link KeyCommandBind}'s
+ * based on the specifications in the XML file.
  *
  * @author arlith
  */
@@ -77,7 +77,7 @@ public class KeyBindParser {
     public static String IS_REPEATABLE = "isRepeatable";
 
     // Keybinds change event
-    private static ArrayList<IPreferenceChangeListener> listeners = new ArrayList<>();
+    private static final ArrayList<IPreferenceChangeListener> listeners = new ArrayList<>();
     public static final String KEYBINDS_CHANGED = "keyBindsChanged";
 
     public static void parseKeyBindings(MegaMekController controller) {
@@ -94,14 +94,14 @@ public class KeyBindParser {
         // Build the XML document.
         try {
             DocumentBuilder builder = MMXMLUtility.newSafeDocumentBuilder();
-            logger.debug("Parsing " + file.getName());
+            logger.debug("Parsing {}", file.getName());
             Document doc = builder.parse(file);
             logger.debug("Parsing finished.");
 
             // Get the list of units.
             NodeList listOfUnits = doc.getElementsByTagName(KEY_BIND);
             int totalBinds = listOfUnits.getLength();
-            logger.debug("Total number of key binds parsed: " + totalBinds);
+            logger.debug("Total number of key binds parsed: {}", totalBinds);
 
             for (int bindCount = 0; bindCount < totalBinds; bindCount++) {
 
@@ -111,7 +111,7 @@ public class KeyBindParser {
                 // Get the key code
                 Element elem = (Element) bindingList.getElementsByTagName(KEY_CODE).item(0);
                 if (elem == null) {
-                    logger.error("Missing " + KEY_CODE + " element #" + bindCount);
+                    logger.error("KeyCode - Missing {} element #{}", KEY_CODE, bindCount);
                     continue;
                 }
                 int keyCode = Integer.parseInt(elem.getTextContent());
@@ -119,7 +119,7 @@ public class KeyBindParser {
                 // Get the modifier.
                 elem = (Element) bindingList.getElementsByTagName(KEY_MODIFIER).item(0);
                 if (elem == null) {
-                    logger.error("Missing " + KEY_MODIFIER + " element #" + bindCount);
+                    logger.error("Modifier - Missing {} element #{}", KEY_MODIFIER, bindCount);
                     continue;
                 }
                 int modifiers = Integer.parseInt(elem.getTextContent());
@@ -127,7 +127,7 @@ public class KeyBindParser {
                 // Get the command
                 elem = (Element) bindingList.getElementsByTagName(COMMAND).item(0);
                 if (elem == null) {
-                    logger.error("Missing " + COMMAND + " element #" + bindCount);
+                    logger.error("Command - Missing {} element #{}", COMMAND, bindCount);
                     continue;
                 }
                 String command = elem.getTextContent();
@@ -135,7 +135,7 @@ public class KeyBindParser {
                 // Get the isRepeatable
                 elem = (Element) bindingList.getElementsByTagName(IS_REPEATABLE).item(0);
                 if (elem == null) {
-                    logger.error("Missing " + IS_REPEATABLE + " element #" + bindCount);
+                    logger.error("Repeatable - Missing {} element #{}", IS_REPEATABLE, bindCount);
                     continue;
                 }
                 boolean isRepeatable = Boolean.parseBoolean(elem.getTextContent());
@@ -143,7 +143,7 @@ public class KeyBindParser {
                 KeyCommandBind keyBind = KeyCommandBind.getBindByCmd(command);
 
                 if (keyBind == null) {
-                    logger.error("Unknown command: " + command + ", element #" + bindCount);
+                    logger.error("Unknown command: {}, element #{}", command, bindCount);
                 } else {
                     keyBind.key = keyCode;
                     keyBind.modifiers = modifiers;
@@ -161,7 +161,6 @@ public class KeyBindParser {
     /**
      * Each KeyCommand has a built-in default; if no key binding file can be found, we should register those defaults.
      *
-     * @param controller
      */
     public static void registerDefaultKeyBinds(MegaMekController controller) {
         for (KeyCommandBind kcb : KeyCommandBind.values()) {
@@ -233,7 +232,7 @@ public class KeyBindParser {
 
     private synchronized static void fireKeyBindsChangeEvent() {
         final PreferenceChangeEvent pe = new PreferenceChangeEvent(KeyBindParser.class, KEYBINDS_CHANGED, null, null);
-        listeners.stream().forEach(l -> l.preferenceChange(pe));
+        listeners.forEach(l -> l.preferenceChange(pe));
     }
 
 }

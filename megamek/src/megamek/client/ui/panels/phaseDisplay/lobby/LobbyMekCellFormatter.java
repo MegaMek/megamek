@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -95,7 +95,7 @@ class LobbyMekCellFormatter {
     static String formatUnitFull(Entity entity, ChatLounge lobby, boolean forceView) {
         StringBuilder result = new StringBuilder("<HTML><NOBR>" + fontHTML());
 
-        Client client = lobby.getClientgui().getClient();
+        Client client = lobby.getClientGUI().getClient();
         Game game = client.getGame();
 
         GameOptions options = game.getOptions();
@@ -115,11 +115,11 @@ class LobbyMekCellFormatter {
             } else if (entity.isSupportVehicle()) {
                 result.append(entity.getWeightClassName());
             } else if (entity.isFighter()) {
-                result.append(entity.getWeightClassName() + Messages.getString("ChatLounge.4"));
+                result.append(entity.getWeightClassName()).append(Messages.getString("ChatLounge.4"));
             } else if (entity instanceof Mek) {
-                result.append(entity.getWeightClassName() + Messages.getString("ChatLounge.3"));
+                result.append(entity.getWeightClassName()).append(Messages.getString("ChatLounge.3"));
             } else if (entity instanceof Tank) {
-                result.append(entity.getWeightClassName() + Messages.getString("ChatLounge.6"));
+                result.append(entity.getWeightClassName()).append(Messages.getString("ChatLounge.6"));
             } else {
                 result.append(entity.getWeightClassName());
             }
@@ -159,12 +159,12 @@ class LobbyMekCellFormatter {
         } else {
             result.append(fontHTML());
         }
-        result.append("<B>" + entity.getShortNameRaw() + "</B></FONT>");
+        result.append("<B>").append(entity.getShortNameRaw()).append("</B></FONT>");
 
         // ID
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
             result.append(UIUtil.fontHTML(uiGray()));
-            result.append(" [ID: " + entity.getId() + "]</FONT>");
+            result.append(" [ID: ").append(entity.getId()).append("]</FONT>");
         }
         if (!forceView) {
             result.append("<BR>");
@@ -208,7 +208,7 @@ class LobbyMekCellFormatter {
 
         // ECM
         if (entity.hasActiveECM()) {
-            result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiC3Color()));
+            result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiC3Color()));
             result.append(ECM_SIGN + " ");
             result.append(Messages.getString("BoardView1.ecmSource"));
             result.append("</FONT>");
@@ -231,21 +231,21 @@ class LobbyMekCellFormatter {
             result.append(MekTableModel.DOT_SPACER);
 
             if (pilot.getSlotCount() > 1 || entity instanceof FighterSquadron) {
-                result.append("<I>" + Messages.getString("ChatLounge.multipleCrew") + "</I>");
+                result.append("<I>").append(Messages.getString("ChatLounge.multipleCrew")).append("</I>");
             } else if ((pilot.getNickname(0) != null) && !pilot.getNickname(0).isEmpty()) {
-                result.append(UIUtil.fontHTML(uiNickColor()) + "<B>'");
-                result.append(pilot.getNickname(0).toUpperCase() + "'</B></FONT>");
+                result.append(UIUtil.fontHTML(uiNickColor())).append("<B>'");
+                result.append(pilot.getNickname(0).toUpperCase()).append("'</B></FONT>");
                 if (!pilot.getStatusDesc(0).isEmpty()) {
-                    result.append(" (" + pilot.getStatusDesc(0) + ")");
+                    result.append(" (").append(pilot.getStatusDesc(0)).append(")");
                 }
             } else {
                 result.append(pilot.getDesc(0));
             }
 
             final boolean rpgSkills = options.booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-            result.append(" (" + pilot.getSkillsAsString(rpgSkills) + ")");
+            result.append(" (").append(pilot.getSkillsAsString(rpgSkills)).append(")");
             if (pilot.countOptions() > 0) {
-                result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiQuirksColor()));
+                result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiQuirksColor()));
                 result.append(Messages.getString("ChatLounge.abilities"));
                 result.append("</FONT>");
             }
@@ -279,12 +279,12 @@ class LobbyMekCellFormatter {
                 result.append(UIUtil.fontHTML(uiLightGreen()));
             }
             String msg_start = Messages.getString("ChatLounge.Start");
-            result.append(" " + msg_start + ": ");
+            result.append(" ").append(msg_start).append(": ");
 
             if (sp <= Board.NUM_ZONES) {
                 result.append(IStartingPositions.START_LOCATION_NAMES[sp]);
             } else {
-                result.append(" Zone " + Board.decodeCustomDeploymentZoneID(sp));
+                result.append(" Zone ").append(Board.decodeCustomDeploymentZoneID(sp));
             }
 
             if (sp == 0) {
@@ -294,14 +294,24 @@ class LobbyMekCellFormatter {
                 int SEy = entity.getStartingAnySEy() + 1;
                 int hexes = (1 + SEx - NWx) * (1 + SEy - NWy);
                 if ((NWx + NWy + SEx + SEy) > 0) {
-                    result.append(" (" + NWx + ", " + NWy + ")-(" + SEx + ", " + SEy + ") (" + hexes + ")");
+                    result.append(" (")
+                          .append(NWx)
+                          .append(", ")
+                          .append(NWy)
+                          .append(")-(")
+                          .append(SEx)
+                          .append(", ")
+                          .append(SEy)
+                          .append(") (")
+                          .append(hexes)
+                          .append(")");
                 }
             }
             int so = entity.getStartingOffset(true);
             int sw = entity.getStartingWidth(true);
             if ((so != 0) || (sw != 3)) {
-                result.append(", " + so);
-                result.append(", " + sw);
+                result.append(", ").append(so);
+                result.append(", ").append(sw);
             }
             if (spe != Board.START_NONE) {
                 result.append("</FONT>");
@@ -324,7 +334,7 @@ class LobbyMekCellFormatter {
             if (entity.calculateFreeC3Nodes() >= 5) {
                 result.append("C3i" + UNCONNECTED_SIGN);
             } else {
-                result.append("C3i" + CONNECTED_SIGN + entity.getC3NetId());
+                result.append("C3i" + CONNECTED_SIGN).append(entity.getC3NetId());
                 if (entity.calculateFreeC3Nodes() > 0) {
                     result.append(Messages.getString("ChatLounge.C3iNodes", entity.calculateFreeC3Nodes()));
                 }
@@ -338,7 +348,7 @@ class LobbyMekCellFormatter {
             if (entity.calculateFreeC3Nodes() >= 5) {
                 result.append("NC3" + UNCONNECTED_SIGN);
             } else {
-                result.append("NC3" + CONNECTED_SIGN + entity.getC3NetId());
+                result.append("NC3" + CONNECTED_SIGN).append(entity.getC3NetId());
                 if (entity.calculateFreeC3Nodes() > 0) {
                     result.append(Messages.getString("ChatLounge.C3iNodes", entity.calculateFreeC3Nodes()));
                 }
@@ -350,14 +360,15 @@ class LobbyMekCellFormatter {
             if (entity.getC3Master() == null) {
                 if (entity.hasC3S()) {
                     firstEntry = dotSpacer(result, firstEntry);
-                    result.append(
-                          UIUtil.fontHTML(uiC3Color()) + Messages.getString("ChatLounge.C3S") + UNCONNECTED_SIGN);
+                    result.append(UIUtil.fontHTML(uiC3Color()))
+                          .append(Messages.getString("ChatLounge.C3S"))
+                          .append(UNCONNECTED_SIGN);
                     result.append("</FONT>");
                 }
 
                 if (entity.hasC3M()) {
                     firstEntry = dotSpacer(result, firstEntry);
-                    result.append(UIUtil.fontHTML(uiC3Color()) + Messages.getString("ChatLounge.C3Master"));
+                    result.append(UIUtil.fontHTML(uiC3Color())).append(Messages.getString("ChatLounge.C3Master"));
                     int freeS = entity.calculateFreeC3Nodes();
                     if (freeS == 0) {
                         result.append(" (full)");
@@ -368,10 +379,10 @@ class LobbyMekCellFormatter {
                 }
             } else if (entity.C3MasterIs(entity)) {
                 firstEntry = dotSpacer(result, firstEntry);
-                result.append(UIUtil.fontHTML(uiC3Color()) + Messages.getString("ChatLounge.C3CC"));
+                result.append(UIUtil.fontHTML(uiC3Color())).append(Messages.getString("ChatLounge.C3CC"));
                 if (entity.hasC3MM()) {
-                    String msg_freec3mnodes = Messages.getString("ChatLounge.FreeC3MNodes");
-                    result.append(MessageFormat.format(" " + msg_freec3mnodes,
+                    String msgFreeC3MNodes = Messages.getString("ChatLounge.FreeC3MNodes");
+                    result.append(MessageFormat.format(" " + msgFreeC3MNodes,
                           entity.calculateFreeC3MNodes(), entity.calculateFreeC3Nodes()));
                 } else {
                     result.append(getString("ChatLounge.C3MNodes", entity.calculateFreeC3MNodes()));
@@ -381,7 +392,7 @@ class LobbyMekCellFormatter {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(UIUtil.fontHTML(uiC3Color()));
                 if (entity.hasC3S()) {
-                    result.append(getString("ChatLounge.C3S") + CONNECTED_SIGN);
+                    result.append(getString("ChatLounge.C3S")).append(CONNECTED_SIGN);
                 } else {
                     result.append(getString("ChatLounge.C3Master"));
                     int freeS = entity.calculateFreeC3Nodes();
@@ -402,20 +413,34 @@ class LobbyMekCellFormatter {
         if (isCarried) {
             firstEntry = dotSpacer(result, firstEntry);
             Entity loader = entity.getGame().getEntity(entity.getTransportId());
-            result.append(UIUtil.fontHTML(uiGreen()) + LOADED_SIGN);
-            result.append("<I> " + Messages.getString("ChatLounge.aboard") + " " + loader.getChassis());
+
+            if (loader != null) {
+                result.append(UIUtil.fontHTML(uiGreen())).append(LOADED_SIGN);
+                result.append("<I> ")
+                      .append(Messages.getString("ChatLounge.aboard"))
+                      .append(" ")
+                      .append(loader.getChassis());
+            }
+
             if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-                result.append(" [" + entity.getTransportId() + "]");
+                result.append(" [").append(entity.getTransportId()).append("]");
             }
             result.append("</I></FONT>");
 
         } else if (isTowed) { // Towed
             firstEntry = dotSpacer(result, firstEntry);
             Entity tractor = entity.getGame().getEntity(entity.getTowedBy());
-            result.append(UIUtil.fontHTML(uiGreen()) + LOADED_SIGN);
-            result.append("<I> " + Messages.getString("ChatLounge.towedBy") + " " + tractor.getChassis());
+
+            if (tractor != null) {
+                result.append(UIUtil.fontHTML(uiGreen())).append(LOADED_SIGN);
+                result.append("<I> ")
+                      .append(Messages.getString("ChatLounge.towedBy"))
+                      .append(" ")
+                      .append(tractor.getChassis());
+            }
+
             if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-                result.append(" [" + entity.getTransportId() + "]");
+                result.append(" [").append(entity.getTransportId()).append("]");
             }
             result.append("</I></FONT>");
 
@@ -439,8 +464,8 @@ class LobbyMekCellFormatter {
         if (entity.isOffBoard()) {
             firstEntry = dotSpacer(result, firstEntry);
             result.append(getString("ChatLounge.deploysOffBoard"));
-            result.append(",  " + entity.getOffBoardDirection());
-            result.append(", " + entity.getOffBoardDistance());
+            result.append(",  ").append(entity.getOffBoardDirection());
+            result.append(", ").append(entity.getOffBoardDistance());
         }
 
         if (entity.getDeployRound() > 0) {
@@ -470,48 +495,46 @@ class LobbyMekCellFormatter {
             if (entity.isAero()) {
                 IAero aero = (IAero) entity;
                 firstEntry = dotSpacer(result, firstEntry);
-                result.append(UIUtil.fontHTML(uiGreen()) + "<I>");
-                result.append(Messages.getString("ChatLounge.compact.velocity") + ": ");
+                result.append(UIUtil.fontHTML(uiGreen())).append("<I>");
+                result.append(Messages.getString("ChatLounge.compact.velocity")).append(": ");
                 result.append(aero.getCurrentVelocity());
                 if (mapType != MapSettings.MEDIUM_SPACE) {
-                    result.append(", " + Messages.getString("ChatLounge.compact.altitude") + ": ");
+                    result.append(", ").append(Messages.getString("ChatLounge.compact.altitude")).append(": ");
                     result.append(aero.getAltitude());
                 }
                 if (options.booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
-                    result.append(", " + Messages.getString("ChatLounge.compact.fuel") + ": ");
+                    result.append(", ").append(Messages.getString("ChatLounge.compact.fuel")).append(": ");
                     result.append(aero.getCurrentFuel());
                 }
                 result.append("</I></FONT>");
             } else if ((entity.getElevation() != 0) || (entity instanceof VTOL)) {
                 firstEntry = dotSpacer(result, firstEntry);
-                result.append(UIUtil.fontHTML(uiGreen()) + "<I>");
-                result.append(Messages.getString("ChatLounge.compact.elevation") + ": ");
-                result.append(entity.getElevation() + "</I></FONT>");
+                result.append(UIUtil.fontHTML(uiGreen())).append("<I>");
+                result.append(Messages.getString("ChatLounge.compact.elevation")).append(": ");
+                result.append(entity.getElevation()).append("</I></FONT>");
             }
         }
 
         // Auto Eject
-        String msg_autoejectdisabled = Messages.getString("ChatLounge.AutoEjectDisabled");
-        if (entity instanceof Mek) {
-            Mek mek = ((Mek) entity);
+        String msgAutoEjectDisabled = Messages.getString("ChatLounge.AutoEjectDisabled");
+        if (entity instanceof Mek mek) {
             if ((mek.hasEjectSeat()) && (!mek.isAutoEject())) {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(UIUtil.fontHTML(uiYellow()));
                 result.append(WARNING_SIGN + "\u23CF<I>");
-                result.append(msg_autoejectdisabled);
+                result.append(msgAutoEjectDisabled);
                 result.append("</I></FONT>");
             }
         }
-        if ((entity instanceof Aero)
+        if ((entity instanceof Aero aero)
               && (!(entity instanceof Jumpship))
               && (!(entity instanceof SmallCraft))) {
-            Aero aero = ((Aero) entity);
             if ((aero.hasEjectSeat())
                   && (!aero.isAutoEject())) {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(UIUtil.fontHTML(uiYellow()));
                 result.append(WARNING_SIGN + "\u23CF<I>");
-                result.append(msg_autoejectdisabled);
+                result.append(msgAutoEjectDisabled);
                 result.append("</I></FONT>");
             }
         }
@@ -524,7 +547,7 @@ class LobbyMekCellFormatter {
      * mode. Assumes that no enemy or blind-drop-hidden units are provided.
      */
     static String formatUnitCompact(Entity entity, ChatLounge lobby, boolean forceView) {
-        Client client = lobby.getClientgui().getClient();
+        Client client = lobby.getClientGUI().getClient();
         Game game = client.getGame();
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
@@ -538,7 +561,7 @@ class LobbyMekCellFormatter {
                 value += UIUtil.fontHTML(uiGray());
                 value += MessageFormat.format("[{0}] </FONT>", entity.getId());
             }
-            String uType = "";
+            String uType;
             if (entity instanceof Infantry) {
                 uType = Messages.getString("ChatLounge.0");
             } else if (entity instanceof ProtoMek) {
@@ -601,7 +624,7 @@ class LobbyMekCellFormatter {
 
         // Loaded unit
         if (isCarried) {
-            result.append(UIUtil.fontHTML(uiGreen()) + LOADED_SIGN + "</FONT>");
+            result.append(UIUtil.fontHTML(uiGreen())).append(LOADED_SIGN).append("</FONT>");
         }
 
         // Unit name
@@ -620,21 +643,21 @@ class LobbyMekCellFormatter {
             result.append(MekTableModel.DOT_SPACER);
 
             if (pilot.getSlotCount() > 1 || entity instanceof FighterSquadron) {
-                result.append("<I>" + Messages.getString("ChatLounge.multipleCrew") + "</I>");
+                result.append("<I>").append(Messages.getString("ChatLounge.multipleCrew")).append("</I>");
             } else if ((pilot.getNickname(0) != null) && !pilot.getNickname(0).isEmpty()) {
-                result.append(UIUtil.fontHTML(uiNickColor()) + "<B>'");
-                result.append(pilot.getNickname(0).toUpperCase() + "'</B></FONT>");
+                result.append(UIUtil.fontHTML(uiNickColor())).append("<B>'");
+                result.append(pilot.getNickname(0).toUpperCase()).append("'</B></FONT>");
                 if (!pilot.getStatusDesc(0).isEmpty()) {
-                    result.append(" (" + pilot.getStatusDesc(0) + ")");
+                    result.append(" (").append(pilot.getStatusDesc(0)).append(")");
                 }
             } else {
                 result.append(pilot.getDesc(0));
             }
 
             final boolean rpgSkills = options.booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-            result.append(" (" + pilot.getSkillsAsString(rpgSkills) + ")");
+            result.append(" (").append(pilot.getSkillsAsString(rpgSkills)).append(")");
             if (pilot.countOptions() > 0) {
-                result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiQuirksColor()));
+                result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiQuirksColor()));
                 result.append(Messages.getString("ChatLounge.abilities"));
             }
 
@@ -671,28 +694,28 @@ class LobbyMekCellFormatter {
 
         // C3 ...
         if (entity.hasC3i() || entity.hasNavalC3()) {
-            result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiC3Color()));
+            result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiC3Color()));
             String msg_c3i = Messages.getString("ChatLounge.C3i");
             String msg_nc3 = Messages.getString("ChatLounge.NC3");
 
             String c3Name = entity.hasC3i() ? msg_c3i : msg_nc3;
             if (entity.calculateFreeC3Nodes() >= 5) {
-                result.append(c3Name + UNCONNECTED_SIGN);
+                result.append(c3Name).append(UNCONNECTED_SIGN);
             } else {
-                result.append(c3Name + CONNECTED_SIGN + entity.getC3NetId());
+                result.append(c3Name).append(CONNECTED_SIGN).append(entity.getC3NetId());
             }
             result.append("</FONT>");
         }
 
         if (entity.hasC3()) {
-            String msg_c3sabrv = Messages.getString("ChatLounge.C3SAbrv");
+            String msgC3SAbbreviation = Messages.getString("ChatLounge.C3SAbrv");
             String msg_c3m = Messages.getString("ChatLounge.C3M");
             String msg_c3mcc = Messages.getString("ChatLounge.C3MCC");
 
-            result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiC3Color()));
+            result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiC3Color()));
             if (entity.getC3Master() == null) {
                 if (entity.hasC3S()) {
-                    result.append(msg_c3sabrv + UNCONNECTED_SIGN);
+                    result.append(msgC3SAbbreviation).append(UNCONNECTED_SIGN);
                 }
                 if (entity.hasC3M()) {
                     result.append(msg_c3m);
@@ -701,9 +724,9 @@ class LobbyMekCellFormatter {
                 result.append(msg_c3mcc);
             } else {
                 if (entity.hasC3S()) {
-                    result.append(msg_c3sabrv + CONNECTED_SIGN);
+                    result.append(msgC3SAbbreviation).append(CONNECTED_SIGN);
                 } else {
-                    result.append(msg_c3m + CONNECTED_SIGN);
+                    result.append(msg_c3m).append(CONNECTED_SIGN);
                 }
                 result.append(entity.getC3Master().getChassis());
             }
@@ -713,43 +736,46 @@ class LobbyMekCellFormatter {
         // Loaded onto another unit
         if (isCarried) {
             Entity loader = entity.getGame().getEntity(entity.getTransportId());
-            result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiGreen()) + "<I>(");
-            result.append(loader.getChassis());
-            if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-                result.append(" [" + entity.getTransportId() + "]");
+
+            if (loader != null) {
+                result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>(");
+                result.append(loader.getChassis());
+                if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+                    result.append(" [").append(entity.getTransportId()).append("]");
+                }
+                result.append(")</I></FONT>");
             }
-            result.append(")</I></FONT>");
         }
 
         // Deployment info, doesn't matter when the unit is carried
         if (!isCarried) {
             if (entity.isHidden()) {
-                result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiGreen()) + "<I>");
-                result.append(Messages.getString("ChatLounge.compact.hidden") + "</I></FONT>");
+                result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
+                result.append(Messages.getString("ChatLounge.compact.hidden")).append("</I></FONT>");
             }
 
             if (entity.isHullDown()) {
-                result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiGreen()) + "<I>");
-                result.append(Messages.getString("ChatLounge.compact.hulldown") + "</I></FONT>");
+                result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
+                result.append(Messages.getString("ChatLounge.compact.hulldown")).append("</I></FONT>");
             }
 
             if (entity.isProne()) {
-                result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiGreen()) + "<I>");
-                result.append(Messages.getString("ChatLounge.compact.prone") + "</I></FONT>");
+                result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
+                result.append(Messages.getString("ChatLounge.compact.prone")).append("</I></FONT>");
             }
         }
 
         if (entity.countPartialRepairs() > 0) {
-            result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiLightRed()));
+            result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiLightRed()));
             result.append("Partial Repairs</FONT>");
         }
 
         // Offboard deployment
         if (entity.isOffBoard()) {
-            result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiGreen()) + "<I>");
-            result.append(Messages.getString("ChatLounge.compact.deploysOffBoard") + "</I></FONT>");
+            result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
+            result.append(Messages.getString("ChatLounge.compact.deploysOffBoard")).append("</I></FONT>");
         } else if (entity.getDeployRound() > 0) {
-            result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiGreen()) + "<I>");
+            result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
             result.append(Messages.getString("ChatLounge.compact.deployRound", entity.getDeployRound()));
             if (entity.getStartingPos(false) != Board.START_NONE) {
                 result.append(Messages.getString("ChatLounge.compact.deployZone",
@@ -762,28 +788,28 @@ class LobbyMekCellFormatter {
         if (!isCarried) {
             if (entity.isAero()) {
                 IAero aero = (IAero) entity;
-                result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiGreen()) + "<I>");
-                result.append(Messages.getString("ChatLounge.compact.velocity") + ": ");
+                result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
+                result.append(Messages.getString("ChatLounge.compact.velocity")).append(": ");
                 result.append(aero.getCurrentVelocity());
                 if (mapType != MapSettings.MEDIUM_SPACE) {
-                    result.append(", " + Messages.getString("ChatLounge.compact.altitude") + ": ");
+                    result.append(", ").append(Messages.getString("ChatLounge.compact.altitude")).append(": ");
                     result.append(aero.getAltitude());
                 }
                 if (options.booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
-                    result.append(", " + Messages.getString("ChatLounge.compact.fuel") + ": ");
+                    result.append(", ").append(Messages.getString("ChatLounge.compact.fuel")).append(": ");
                     result.append(aero.getCurrentFuel());
                 }
                 result.append("</I></FONT>");
             } else if ((entity.getElevation() != 0) || (entity instanceof VTOL)) {
-                result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiGreen()) + "<I>");
-                result.append(Messages.getString("ChatLounge.compact.elevation") + ": ");
-                result.append(entity.getElevation() + "</I></FONT>");
+                result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
+                result.append(Messages.getString("ChatLounge.compact.elevation")).append(": ");
+                result.append(entity.getElevation()).append("</I></FONT>");
             }
         }
 
         // Starting heat
         if (entity.getHeat() != 0 && entity.tracksHeat()) {
-            result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiGreen()));
+            result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen()));
             result.append("<I>Heat: ").append(entity.getHeat()).append(" </I></FONT>");
         }
 
@@ -796,21 +822,19 @@ class LobbyMekCellFormatter {
         }
 
         // Auto Eject
-        if (entity instanceof Mek) {
-            Mek mek = ((Mek) entity);
+        if (entity instanceof Mek mek) {
             if ((mek.hasEjectSeat()) && (!mek.isAutoEject())) {
-                result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiGreen()));
+                result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen()));
                 result.append(UIUtil.fontHTML(uiYellow()));
                 result.append(WARNING_SIGN + "\u23CF</FONT>");
             }
         }
-        if ((entity instanceof Aero)
+        if ((entity instanceof Aero aero)
               && (!(entity instanceof Jumpship))
               && (!(entity instanceof SmallCraft))) {
-            Aero aero = ((Aero) entity);
             if ((aero.hasEjectSeat())
                   && (!aero.isAutoEject())) {
-                result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiGreen()));
+                result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen()));
                 result.append(UIUtil.fontHTML(uiYellow()));
                 result.append(WARNING_SIGN + "\u23CF</FONT>");
             }
@@ -836,7 +860,7 @@ class LobbyMekCellFormatter {
     }
 
     private static String formatForce(Force force, ChatLounge lobby) {
-        Client client = lobby.getClientgui().getClient();
+        Client client = lobby.getClientGUI().getClient();
         Game game = client.getGame();
         Player localPlayer = client.getLocalPlayer();
         int ownerId = game.getForces().getOwnerId(force);
@@ -854,7 +878,7 @@ class LobbyMekCellFormatter {
         StringBuilder result = new StringBuilder("<HTML><NOBR>");
         result.append(fontHTML(color));
 
-        // A top-level / subforce special char
+        // A top-level / sub force special char
         if (force.isTopLevel()) {
             result.append("\u2327&nbsp;&nbsp; ");
         } else {
@@ -888,17 +912,17 @@ class LobbyMekCellFormatter {
         int totalBv = fullEntities.stream().filter(e -> !e.isPartOfFighterSquadron())
               .mapToInt(Entity::calculateBattleValue).sum();
         if (totalBv > 0) {
-            String msg_bvplain = Messages.getString("ChatLounge.BVplain");
-            result.append(msg_bvplain + " ").append(String.format("%,d", totalBv));
+            String msgBVPlain = Messages.getString("ChatLounge.BVplain");
+            result.append(msgBVPlain).append(" ").append(String.format("%,d", totalBv));
             // Unit Type
-            long unittypes = fullEntities.stream().map(e -> Entity.getEntityMajorTypeName(e.getEntityType())).distinct()
+            long unitTypes = fullEntities.stream().map(e -> Entity.getEntityMajorTypeName(e.getEntityType())).distinct()
                   .count();
             result.append(fontHTML(color));
             result.append(MekTableModel.DOT_SPACER);
-            if (unittypes > 1) {
+            if (unitTypes > 1) {
                 String msg_mixed = Messages.getString("ChatLounge.Mixed");
-                result.append(" " + msg_mixed);
-            } else if (unittypes == 1) {
+                result.append(" ").append(msg_mixed);
+            } else if (unitTypes == 1) {
                 Entity entity = CollectionUtil.anyOneElement(fullEntities);
                 result.append(UnitType.getTypeName(entity.getUnitType()));
             }
@@ -925,20 +949,20 @@ class LobbyMekCellFormatter {
         }
 
         if (pilot.getSlotCount() > 1 || entity instanceof FighterSquadron) {
-            result.append("<I>" + Messages.getString("ChatLounge.multipleCrew") + "</I>");
+            result.append("<I>").append(Messages.getString("ChatLounge.multipleCrew")).append("</I>");
         } else if ((pilot.getNickname(0) != null) && !pilot.getNickname(0).isEmpty()) {
-            result.append(UIUtil.fontHTML(uiNickColor()) + "<B>'");
-            result.append(pilot.getNickname(0).toUpperCase() + "'</B></FONT>");
+            result.append(UIUtil.fontHTML(uiNickColor())).append("<B>'");
+            result.append(pilot.getNickname(0).toUpperCase()).append("'</B></FONT>");
             if (!pilot.getStatusDesc(0).isEmpty()) {
-                result.append(" (" + pilot.getStatusDesc(0) + ")");
+                result.append(" (").append(pilot.getStatusDesc(0)).append(")");
             }
         } else {
             result.append(pilot.getDesc(0));
         }
 
-        result.append(" (" + pilot.getSkillsAsString(rpgSkills) + ")");
+        result.append(" (").append(pilot.getSkillsAsString(rpgSkills)).append(")");
         if (pilot.countOptions() > 0) {
-            result.append(MekTableModel.DOT_SPACER + UIUtil.fontHTML(uiQuirksColor()));
+            result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiQuirksColor()));
             result.append(Messages.getString("ChatLounge.abilities"));
         }
 
@@ -960,28 +984,28 @@ class LobbyMekCellFormatter {
         result.append(fontHTML());
 
         if (blindDrop) {
-            result.append("<B>" + Messages.getString("ChatLounge.Unknown") + "</B>");
+            result.append("<B>").append(Messages.getString("ChatLounge.Unknown")).append("</B>");
             return result.toString();
         }
 
         if (crew.getSlotCount() == 1 && !(entity instanceof FighterSquadron)) { // Single-person crew
             if (crew.isMissing(0)) {
-                result.append("<B>No " + crew.getCrewType().getRoleName(0) + "</B>");
+                result.append("<B>No ").append(crew.getCrewType().getRoleName(0)).append("</B>");
             } else {
                 if ((crew.getNickname(0) != null) && !crew.getNickname(0).isEmpty()) {
                     result.append(fontHTML(uiNickColor()));
-                    result.append("<B>'" + crew.getNickname(0).toUpperCase() + "'</B></FONT>");
+                    result.append("<B>'").append(crew.getNickname(0).toUpperCase()).append("'</B></FONT>");
                 } else {
-                    result.append("<B>" + crew.getDesc(0) + "</B>");
+                    result.append("<B>").append(crew.getDesc(0)).append("</B>");
                 }
             }
             result.append("<BR>");
         } else { // Multi-person crew
-            result.append("<I>" + Messages.getString("ChatLounge.multipleCrew") + "</I>");
+            result.append("<I>").append(Messages.getString("ChatLounge.multipleCrew")).append("</I>");
             result.append("<BR>");
         }
-        result.append(CrewSkillSummaryUtil.getSkillNames(entity) + ": ");
-        result.append("<B>" + crew.getSkillsAsString(rpgSkills) + "</B><BR>");
+        result.append(CrewSkillSummaryUtil.getSkillNames(entity)).append(": ");
+        result.append("<B>").append(crew.getSkillsAsString(rpgSkills)).append("</B><BR>");
 
         // Advantages, MD, Edge
         if ((crew.countOptions(LVL3_ADVANTAGES) > 0) || (crew.countOptions(MD_ADVANTAGES) > 0)) {
@@ -1005,7 +1029,7 @@ class LobbyMekCellFormatter {
         current.append(";>");
     }
 
-    static void fullidString(StringBuilder current, int id) {
+    static void fullIDString(StringBuilder current, int id) {
         formatSpan(current, uiGray());
         current.append(" [ID: ").append(id).append("]</SPAN>");
     }

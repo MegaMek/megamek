@@ -63,7 +63,6 @@ public class ImageAtlasRecords {
     /**
      * Constructor that takes an existing list of @see ImageAtlasRecord objects.
      *
-     * @param records
      */
     public ImageAtlasRecords(List<ImageAtlasRecord> records) {
         this.records = records;
@@ -72,8 +71,6 @@ public class ImageAtlasRecords {
     /**
      * Adds a new record to the list.
      *
-     * @param originalFilePath
-     * @param atlasFilePath
      */
     public void addRecord(String originalFilePath, String atlasFilePath) {
         ImageAtlasRecord atlasRecord = new ImageAtlasRecord(originalFilePath, atlasFilePath);
@@ -83,7 +80,6 @@ public class ImageAtlasRecords {
     /**
      * Returns the Atlas File Path for an Original File Path.
      *
-     * @param originalFilePath
      */
     public String get(String originalFilePath) {
         for (ImageAtlasRecord atlasRecord : records) {
@@ -98,7 +94,6 @@ public class ImageAtlasRecords {
     /**
      * Returns true if the AtlasMap contains the given Original File Path.
      *
-     * @param originalFilePath
      */
     public Boolean containsKey(String originalFilePath) {
         for (ImageAtlasRecord atlasRecord : records) {

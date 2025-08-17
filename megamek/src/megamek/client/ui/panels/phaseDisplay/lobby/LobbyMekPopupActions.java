@@ -63,13 +63,10 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 
 /** The ActionListener for the lobby popup menu for both the MekTable and MekTrees. */
-public class LobbyMekPopupActions implements ActionListener {
-
-    private ChatLounge lobby;
+public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
 
     /** The ActionListener for the lobby popup menu for both the MekTable and MekTrees. */
-    LobbyMekPopupActions(ChatLounge cl) {
-        lobby = cl;
+    public LobbyMekPopupActions {
     }
 
     @Override
@@ -92,19 +89,19 @@ public class LobbyMekPopupActions implements ActionListener {
                 break;
 
             // Multi entity commands
-            case LMP_ALPHASTRIKE:
+            case LMP_ALPHA_STRIKE:
             case LMP_AUTOCONFIG:
-            case LMP_SAVECONFIG:
-            case LMP_APPLYCONFIG:
-            case LMP_RANDOMCONFIG:
-            case LMP_UNLOADALLFROMBAY:
+            case LMP_SAVE_CONFIG:
+            case LMP_APPLY_CONFIG:
+            case LMP_RANDOM_CONFIG:
+            case LMP_UNLOAD_ALL_FROM_BAY:
             case LMP_C3CM:
             case LMP_C3LM:
             case LMP_C3JOIN:
             case LMP_C3CONNECT:
             case LMP_C3DISCONNECT:
-            case LMP_C3FORMC3:
-            case LMP_C3FORMNHC3:
+            case LMP_C3_FORM_C3:
+            case LMP_C3_FORM_NHC3:
             case LMP_SWAP:
             case LMP_DAMAGE:
             case LMP_BV:
@@ -116,14 +113,14 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_SKILLS:
             case LMP_NAME:
             case LMP_CALLSIGN:
-            case LMP_RAPIDFIREMG_ON:
-            case LMP_RAPIDFIREMG_OFF:
-            case LMP_HOTLOAD_ON:
-            case LMP_HOTLOAD_OFF:
+            case LMP_RAPID_FIRE_MG_ON:
+            case LMP_RAPID_FIRE_MG_OFF:
+            case LMP_HOT_LOAD_ON:
+            case LMP_HOT_LOAD_OFF:
             case LMP_SQUADRON:
             case LMP_LOAD:
             case LMP_UNLOAD:
-            case LMP_UNLOADALL:
+            case LMP_UNLOAD_ALL:
             case LMP_DETACH_TRAILER:
             case LMP_DETACH_FROM_TRACTOR:
             case LMP_DEPLOY:
@@ -131,7 +128,7 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_HEAT:
             case LMP_HIDDEN:
             case LMP_STAND:
-            case LMP_PRIO_TARGET:
+            case LMP_PRIORITY_TARGET:
                 if (!entities.isEmpty()) {
                     multiEntityAction(command, entities, info);
                 }
@@ -143,17 +140,17 @@ public class LobbyMekPopupActions implements ActionListener {
                 break;
 
             // Force commands
-            case LMP_FCREATESUB:
-            case LMP_FADDTO:
-            case LMP_FRENAME:
-            case LMP_FCREATETOP:
-            case LMP_FREMOVE:
-            case LMP_FPROMOTE:
-            case LMP_FASSIGN:
-            case LMP_FASSIGNONLY:
-            case LMP_FCREATEFROM:
-            case LMP_SBFFORMATION:
-            case LMP_FCDELETEEMPTY:
+            case LMP_F_CREATE_SUB:
+            case LMP_F_ADD_TO:
+            case LMP_F_RENAME:
+            case LMP_F_CREATE_TOP:
+            case LMP_F_REMOVE:
+            case LMP_F_PROMOTE:
+            case LMP_F_ASSIGN:
+            case LMP_F_ASSIGN_ONLY:
+            case LMP_F_CREATE_FROM:
+            case LMP_SBF_FORMATION:
+            case LMP_FC_DELETE_EMPTY:
                 forceAction(command, entities, info);
                 break;
         }
@@ -161,40 +158,44 @@ public class LobbyMekPopupActions implements ActionListener {
 
     /** Calls lobby actions for forces. */
     private void forceAction(String command, Set<Entity> entities, String info) {
+        int forceId;
+        int newOwnerId;
+        StringTokenizer stringTokenizer;
+
         switch (command) {
-            case LMP_FCREATESUB:
+            case LMP_F_CREATE_SUB:
                 int parentId = StringUtil.toInt(info, Force.NO_FORCE);
                 lobby.lobbyActions.forceCreateSub(parentId);
                 break;
 
-            case LMP_FADDTO:
-                int forceId = StringUtil.toInt(info, Force.NO_FORCE);
+            case LMP_F_ADD_TO:
+                forceId = StringUtil.toInt(info, Force.NO_FORCE);
                 lobby.lobbyActions.forceAddEntity(entities, forceId);
                 break;
 
-            case LMP_FRENAME:
+            case LMP_F_RENAME:
                 forceId = StringUtil.toInt(info, Force.NO_FORCE);
                 lobby.lobbyActions.forceRename(forceId);
                 break;
 
-            case LMP_FCREATETOP:
+            case LMP_F_CREATE_TOP:
                 lobby.lobbyActions.forceCreateEmpty();
                 break;
 
-            case LMP_FCDELETEEMPTY:
+            case LMP_FC_DELETE_EMPTY:
                 forceId = StringUtil.toInt(info, Force.NO_FORCE);
                 lobby.lobbyActions.forceDeleteEmpty(forceId);
                 break;
 
-            case LMP_FCREATEFROM:
+            case LMP_F_CREATE_FROM:
                 lobby.lobbyActions.forceCreateFrom(entities);
                 break;
 
-            case LMP_FREMOVE:
+            case LMP_F_REMOVE:
                 lobby.lobbyActions.forceRemoveEntity(entities);
                 break;
 
-            case LMP_FPROMOTE:
+            case LMP_F_PROMOTE:
                 StringTokenizer fst = new StringTokenizer(info, ",");
                 Set<Integer> forceIds = new HashSet<>();
                 while (fst.hasMoreTokens()) {
@@ -203,19 +204,21 @@ public class LobbyMekPopupActions implements ActionListener {
                 lobby.lobbyActions.forcePromote(forceIds);
                 break;
 
-            case LMP_FASSIGN:
-                StringTokenizer st = new StringTokenizer(info, ":");
-                int newOwnerId = StringUtil.toInt(st.nextToken(), Player.PLAYER_NONE);
-                lobby.lobbyActions.forceAssignFull(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
+            case LMP_F_ASSIGN:
+                stringTokenizer = new StringTokenizer(info, ":");
+                newOwnerId = StringUtil.toInt(stringTokenizer.nextToken(), Player.PLAYER_NONE);
+                lobby.lobbyActions.forceAssignFull(LobbyUtility.getForces(lobby.game(), stringTokenizer.nextToken()),
+                      newOwnerId);
                 break;
 
-            case LMP_FASSIGNONLY:
-                st = new StringTokenizer(info, ":");
-                newOwnerId = StringUtil.toInt(st.nextToken(), Player.PLAYER_NONE);
-                lobby.lobbyActions.forceAssignOnly(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
+            case LMP_F_ASSIGN_ONLY:
+                stringTokenizer = new StringTokenizer(info, ":");
+                newOwnerId = StringUtil.toInt(stringTokenizer.nextToken(), Player.PLAYER_NONE);
+                lobby.lobbyActions.forceAssignOnly(LobbyUtility.getForces(lobby.game(), stringTokenizer.nextToken()),
+                      newOwnerId);
                 break;
 
-            case LMP_SBFFORMATION:
+            case LMP_SBF_FORMATION:
                 lobby.lobbyActions.showSbfView(LobbyUtility.getForces(lobby.game(), info));
                 break;
         }
@@ -224,6 +227,8 @@ public class LobbyMekPopupActions implements ActionListener {
     /** Calls lobby actions for multiple entities. */
     private void multiEntityAction(String command, Set<Entity> entities, String info) {
         Set<Entity> updateCandidates;
+        int master;
+
         switch (command) {
             case LMP_INDI_CAMO:
                 lobby.lobbyActions.individualCamo(entities);
@@ -246,17 +251,17 @@ public class LobbyMekPopupActions implements ActionListener {
                 break;
 
             case LMP_CALLSIGN:
-                lobby.lobbyActions.setRandomCallsigns(entities);
+                lobby.lobbyActions.setRandomCallSigns(entities);
                 break;
 
-            case LMP_RAPIDFIREMG_ON:
-            case LMP_RAPIDFIREMG_OFF:
-                lobby.lobbyActions.toggleBurstMg(entities, command.equals(LMP_RAPIDFIREMG_ON));
+            case LMP_RAPID_FIRE_MG_ON:
+            case LMP_RAPID_FIRE_MG_OFF:
+                lobby.lobbyActions.toggleBurstMg(entities, command.equals(LMP_RAPID_FIRE_MG_ON));
                 break;
 
-            case LMP_HOTLOAD_ON:
-            case LMP_HOTLOAD_OFF:
-                lobby.lobbyActions.toggleHotLoad(entities, command.equals(LMP_HOTLOAD_ON));
+            case LMP_HOT_LOAD_ON:
+            case LMP_HOT_LOAD_OFF:
+                lobby.lobbyActions.toggleHotLoad(entities, command.equals(LMP_HOT_LOAD_ON));
                 break;
 
             case LMP_SQUADRON:
@@ -272,7 +277,7 @@ public class LobbyMekPopupActions implements ActionListener {
                 lobby.disembarkAll(entities);
                 break;
 
-            case LMP_UNLOADALL:
+            case LMP_UNLOAD_ALL:
                 updateCandidates = new HashSet<>();
                 lobby.offloadAll(entities, updateCandidates);
                 lobby.sendUpdate(updateCandidates);
@@ -319,15 +324,15 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_VIEW:
                 List<Integer> entityIds = entities.stream().map(Entity::getId).toList();
                 LobbyUtility.liveEntityReadoutAction(entityIds, lobby.canSeeAll(entities),
-                      lobby.getClientgui().getFrame(), lobby.game());
+                      lobby.getClientGUI().getFrame(), lobby.game());
                 break;
 
             case LMP_BV:
-                LobbyUtility.mekBVAction(entities, lobby.canSeeAll(entities), false, lobby.getClientgui().getFrame());
+                LobbyUtility.mekBVAction(entities, lobby.canSeeAll(entities), false, lobby.getClientGUI().getFrame());
                 break;
 
             case LMP_COST:
-                LobbyUtility.mekCostAction(entities, lobby.canSeeAll(entities), false, lobby.getClientgui().getFrame());
+                LobbyUtility.mekCostAction(entities, lobby.canSeeAll(entities), false, lobby.getClientGUI().getFrame());
                 break;
 
             case LMP_DAMAGE:
@@ -352,7 +357,7 @@ public class LobbyMekPopupActions implements ActionListener {
                 break;
 
             case LMP_C3JOIN:
-                int master = Integer.parseInt(info);
+                master = Integer.parseInt(info);
                 lobby.lobbyActions.c3JoinNh(entities, master, false);
                 break;
 
@@ -361,17 +366,17 @@ public class LobbyMekPopupActions implements ActionListener {
                 lobby.lobbyActions.c3Connect(entities, master, false);
                 break;
 
-            case LMP_C3FORMC3:
+            case LMP_C3_FORM_C3:
                 master = Integer.parseInt(info);
                 lobby.lobbyActions.c3Connect(entities, master, true);
                 break;
 
-            case LMP_C3FORMNHC3:
+            case LMP_C3_FORM_NHC3:
                 master = Integer.parseInt(info);
                 lobby.lobbyActions.c3JoinNh(entities, master, true);
                 break;
 
-            case LMP_UNLOADALLFROMBAY:
+            case LMP_UNLOAD_ALL_FROM_BAY:
                 int bay = Integer.parseInt(info);
                 lobby.lobbyActions.unloadFromBay(entities, bay);
                 break;
@@ -384,18 +389,18 @@ public class LobbyMekPopupActions implements ActionListener {
                 lobby.lobbyActions.forceMove(LobbyUtility.getForces(lobby.game(), info), entities, true);
                 break;
 
-            case LMP_PRIO_TARGET:
-                lobby.lobbyActions.setPrioTarget(info, entities);
+            case LMP_PRIORITY_TARGET:
+                lobby.lobbyActions.setPriorityTarget(info, entities);
                 break;
 
-            case LMP_ALPHASTRIKE:
+            case LMP_ALPHA_STRIKE:
                 lobby.lobbyActions.showAlphaStrikeView(entities);
                 break;
 
             case LMP_AUTOCONFIG:
-            case LMP_RANDOMCONFIG:
-            case LMP_SAVECONFIG:
-            case LMP_APPLYCONFIG:
+            case LMP_RANDOM_CONFIG:
+            case LMP_SAVE_CONFIG:
+            case LMP_APPLY_CONFIG:
                 runMunitionConfigCMD(entities, command);
                 break;
         }
@@ -404,58 +409,63 @@ public class LobbyMekPopupActions implements ActionListener {
     /**
      * Run config command for a set of entities
      *
-     * @param entities
-     * @param command
      */
     private void runMunitionConfigCMD(Set<Entity> entities, String command) {
         TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(lobby.game());
-        MunitionTree mt = new MunitionTree();
-        ArrayList<Entity> el = new ArrayList<Entity>(entities);
-        ClientGUI clientgui = lobby.getClientgui();
-        // Team team = lobby.game().getTeamForPlayer(el.get(0).getOwner());
-        Team team = clientgui.getClient().getGame().getTeamForPlayer(el.get(0).getOwner());
+        MunitionTree munitionTree = new MunitionTree();
+        ArrayList<Entity> entityArrayList = new ArrayList<>(entities);
+        ClientGUI clientGUI = lobby.getClientGUI();
+        // Team team = lobby.game().getTeamForPlayer(entityArrayList.get(0).getOwner());
+        Team team = clientGUI.getClient().getGame().getTeamForPlayer(entityArrayList.get(0).getOwner());
         String faction = (team != null) ? team.getFaction() : FactionRecord.IS_GENERAL_KEY;
 
         // Parameters are generated _from_ the teams' information, _for_ the selected entities
-        ReconfigurationParameters rp = tlg.generateParameters(el, faction, team);
+        ReconfigurationParameters reconfigurationParameters = tlg.generateParameters(entityArrayList, faction, team);
         // Extra nuke controls don't apply in the context menu; rely on game option!
-        rp.nukesBannedForMe = lobby.game().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES);
+        reconfigurationParameters.nukesBannedForMe = lobby.game()
+              .getOptions()
+              .booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES);
         // Reduce Pirate ammo somewhat; others get full loadouts
-        rp.isPirate = faction.toUpperCase().equals("PIR");
-        rp.binFillPercent = (rp.isPirate) ? TeamLoadOutGenerator.UNSET_FILL_RATIO : 1.0f;
+        reconfigurationParameters.isPirate = faction.equalsIgnoreCase("PIR");
+        reconfigurationParameters.binFillPercent = (reconfigurationParameters.isPirate) ?
+              TeamLoadOutGenerator.UNSET_FILL_RATIO :
+              1.0f;
 
         boolean reconfigured = false;
 
         switch (command) {
             case LMP_AUTOCONFIG:
-                mt = tlg.generateMunitionTree(rp, el, "");
-                resetBombChoices(clientgui, lobby.game(), el);
-                tlg.reconfigureEntities(el, faction, mt, rp);
+                munitionTree = TeamLoadOutGenerator.generateMunitionTree(reconfigurationParameters,
+                      entityArrayList,
+                      "");
+                resetBombChoices(clientGUI, lobby.game(), entityArrayList);
+                tlg.reconfigureEntities(entityArrayList, faction, munitionTree, reconfigurationParameters);
                 reconfigured = true;
                 break;
-            case LMP_RANDOMCONFIG:
-                mt = TeamLoadOutGenerator.generateRandomizedMT();
-                resetBombChoices(clientgui, lobby.game(), el);
-                tlg.reconfigureEntities(el, faction, mt, rp);
+            case LMP_RANDOM_CONFIG:
+                munitionTree = TeamLoadOutGenerator.generateRandomizedMT();
+                resetBombChoices(clientGUI, lobby.game(), entityArrayList);
+                tlg.reconfigureEntities(entityArrayList, faction, munitionTree, reconfigurationParameters);
                 reconfigured = true;
                 break;
-            case LMP_SAVECONFIG:
-                mt.loadEntityList(el);
-                saveLoadout(mt);
+            case LMP_SAVE_CONFIG:
+                munitionTree.loadEntityList(entityArrayList);
+                saveLoadout(munitionTree);
                 break;
-            case LMP_APPLYCONFIG:
-                mt = loadLoadout();
-                if (null != mt && null != clientgui) {
+            case LMP_APPLY_CONFIG:
+                munitionTree = loadLoadout();
+                if (null != munitionTree) {
                     // Apply to entities
-                    resetBombChoices(clientgui, lobby.game(), el);
-                    tlg.reconfigureEntities(el, faction, mt, rp);
+                    resetBombChoices(clientGUI, lobby.game(), entityArrayList);
+                    tlg.reconfigureEntities(entityArrayList, faction, munitionTree, reconfigurationParameters);
                     reconfigured = true;
                 }
                 break;
         }
         if (reconfigured) {
             // Have to send reconfig as controlling player
-            clientgui.chatlounge.sendProxyUpdates(el, lobby.game().getPlayer(el.get(0).getOwnerId()));
+            clientGUI.chatlounge.sendProxyUpdates(entityArrayList,
+                  lobby.game().getPlayer(entityArrayList.get(0).getOwnerId()));
         }
     }
 
@@ -490,36 +500,34 @@ public class LobbyMekPopupActions implements ActionListener {
             // No file selected?  No loadout!
             return;
         }
-        if (fc.getSelectedFile() != null) {
-            String file = fc.getSelectedFile().getAbsolutePath();
-            if (!file.toLowerCase().endsWith(".adf")) {
-                file = file + ".adf";
-            }
-            source.writeToADFFilename(file);
+        String file = fc.getSelectedFile().getAbsolutePath();
+        if (!file.toLowerCase().endsWith(".adf")) {
+            file = file + ".adf";
         }
+        source.writeToADFFilename(file);
     }
 
     private MunitionTree loadLoadout() {
-        MunitionTree mt = null;
-        JFileChooser fc = new JFileChooser(Paths.get(MMConstants.USER_LOADOUTS_DIR).toAbsolutePath().toString());
+        MunitionTree munitionTree;
+        JFileChooser jFileChooser = new JFileChooser(Paths.get(MMConstants.USER_LOADOUTS_DIR)
+              .toAbsolutePath()
+              .toString());
         FileNameExtensionFilter adfFilter = new FileNameExtensionFilter(
               "adf files (*.adf)", "adf");
-        fc.addChoosableFileFilter(adfFilter);
-        fc.setFileFilter(adfFilter);
-        fc.setLocation(lobby.getLocation().x + 150, lobby.getLocation().y + 100);
-        fc.setDialogTitle(Messages.getString("ClientGui.LoadoutLoadDialog.title"));
+        jFileChooser.addChoosableFileFilter(adfFilter);
+        jFileChooser.setFileFilter(adfFilter);
+        jFileChooser.setLocation(lobby.getLocation().x + 150, lobby.getLocation().y + 100);
+        jFileChooser.setDialogTitle(Messages.getString("ClientGui.LoadoutLoadDialog.title"));
 
-        int returnVal = fc.showOpenDialog(lobby);
-        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
+        int returnVal = jFileChooser.showOpenDialog(lobby);
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (jFileChooser.getSelectedFile() == null)) {
             // No file selected?  No loadout!
             return null;
         }
 
-        if (fc.getSelectedFile() != null) {
-            String file = fc.getSelectedFile().getAbsolutePath();
-            mt = new MunitionTree(file);
-        }
-        return mt;
+        String file = jFileChooser.getSelectedFile().getAbsolutePath();
+        munitionTree = new MunitionTree(file);
+        return munitionTree;
     }
 
     /** Calls lobby actions for a single entity. */

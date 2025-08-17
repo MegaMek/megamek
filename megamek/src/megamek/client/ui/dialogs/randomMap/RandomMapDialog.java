@@ -62,7 +62,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.IMapSettingsObserver;
-import megamek.client.ui.util.VerifyIsPositiveInteger;
+import megamek.client.ui.util.verifier.VerifyIsPositiveInteger;
 import megamek.client.ui.widget.VerifiableTextField;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.MapSettings;

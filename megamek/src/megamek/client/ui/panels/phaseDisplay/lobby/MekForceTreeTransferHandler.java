@@ -36,7 +36,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
-import java.io.IOException;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -50,19 +50,19 @@ import megamek.common.force.Force;
 import megamek.logging.MMLogger;
 
 /**
- * The TransferHandler manages drag-and-drop for the C3 tree. Partly taken from
- * https://coderanch.com/t/346509/java/JTree-drag-drop-tree-Java
+ * The TransferHandler manages drag-and-drop for the C3 tree. Partly taken from LOGGER
  */
 public class MekForceTreeTransferHandler extends TransferHandler {
     private static final MMLogger logger = MMLogger.create(MekForceTreeTransferHandler.class);
 
+    @Serial
     private static final long serialVersionUID = -2872981855792727691L;
     private static final DataFlavor FLAVOR = DataFlavor.stringFlavor;
 
     private final ChatLounge lobby;
 
-    public MekForceTreeTransferHandler(ChatLounge cl, MekTreeForceModel model) {
-        lobby = cl;
+    public MekForceTreeTransferHandler(ChatLounge chatLounge, MekTreeForceModel model) {
+        lobby = chatLounge;
     }
 
     @Override
@@ -119,8 +119,8 @@ public class MekForceTreeTransferHandler extends TransferHandler {
 
         try {
             String source = (String) support.getTransferable().getTransferData(FLAVOR);
-            List<Integer> entityIdList = getselectedEntityIds(source);
-            List<Integer> forceIdList = getselectedForceIds(source);
+            List<Integer> entityIdList = getSelectedEntityIds(source);
+            List<Integer> forceIdList = getSelectedForceIds(source);
             // Only drag either entities or forces
             if (!entityIdList.isEmpty() && !forceIdList.isEmpty()) {
                 return false;
@@ -142,8 +142,8 @@ public class MekForceTreeTransferHandler extends TransferHandler {
         try {
             // Source info, dragged forces and entities
             String source = (String) support.getTransferable().getTransferData(FLAVOR);
-            List<Integer> entityIdList = getselectedEntityIds(source);
-            List<Integer> forceIdList = getselectedForceIds(source);
+            List<Integer> entityIdList = getSelectedEntityIds(source);
+            List<Integer> forceIdList = getSelectedForceIds(source);
             StringTokenizer outer = new StringTokenizer(source, ":");
             String entityIds = outer.nextToken();
 
@@ -198,7 +198,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
         return false;
     }
 
-    private List<Integer> getselectedForceIds(String source) {
+    private List<Integer> getSelectedForceIds(String source) {
         StringTokenizer outer = new StringTokenizer(source, ":");
         outer.nextToken();
         String forceIds = outer.nextToken();
@@ -213,7 +213,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
         return forceIdList;
     }
 
-    private List<Integer> getselectedEntityIds(String source) {
+    private List<Integer> getSelectedEntityIds(String source) {
         StringTokenizer outer = new StringTokenizer(source, ":");
         String entityIds = outer.nextToken();
         StringTokenizer entitySt = new StringTokenizer(entityIds, ",");
@@ -226,10 +226,10 @@ public class MekForceTreeTransferHandler extends TransferHandler {
         return entityIdList;
     }
 
-    private class StringTransferable implements Transferable {
+    private static class StringTransferable implements Transferable {
 
         private final DataFlavor[] supported = { DataFlavor.stringFlavor };
-        private String selectionIds;
+        private final String selectionIds;
 
         StringTransferable(String str) {
             this.selectionIds = str;
@@ -241,7 +241,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
         }
 
         @Override
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             if (!isDataFlavorSupported(flavor)) {
                 throw new UnsupportedFlavorException(flavor);
             }

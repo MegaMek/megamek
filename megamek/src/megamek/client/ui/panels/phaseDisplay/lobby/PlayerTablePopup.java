@@ -55,8 +55,8 @@ import megamek.common.util.CollectionUtil;
 class PlayerTablePopup {
 
     static final String PTP_CONFIG = "CONFIG";
-    static final String PTP_BOTREMOVE = "BOTREMOVE";
-    static final String PTP_BOTSETTINGS = "BOTSETTINGS";
+    static final String PTP_BOT_REMOVE = "BOTREMOVE";
+    static final String PTP_BOT_SETTINGS = "BOTSETTINGS";
     static final String PTP_TEAM = "TEAM";
     static final String PTP_DEPLOY = "DEPLOY";
     static final String PTP_REPLACE = "REPLACE";
@@ -79,8 +79,8 @@ class PlayerTablePopup {
         popup.add(teamMenu(allConfigurable, listener));
         popup.add(startPosMenu(allConfigurable, listener, currentBoard));
         popup.add(ScalingPopup.spacer());
-        popup.add(menuItem("Remove Bot", PTP_BOTREMOVE, isOnePlayer && allOwnedBots, listener));
-        popup.add(menuItem("Bot Settings...", PTP_BOTSETTINGS, isOnePlayer && allOwnedBots, listener));
+        popup.add(menuItem("Remove Bot", PTP_BOT_REMOVE, isOnePlayer && allOwnedBots, listener));
+        popup.add(menuItem("Bot Settings...", PTP_BOT_SETTINGS, isOnePlayer && allOwnedBots, listener));
         popup.add(menuItem("Edit Bots...", PTP_REPLACE, isSingleGhost, listener));
 
         return popup;

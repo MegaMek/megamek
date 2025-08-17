@@ -69,9 +69,9 @@ import megamek.common.options.OptionsConstants;
 
 class PlayerTable extends JTable {
 
-    private static final int PLAYERTABLE_ROWHEIGHT = 45;
+    private static final int PLAYER_TABLE_ROW_HEIGHT = 45;
 
-    PlayerTableModel model = new PlayerTableModel();
+    PlayerTableModel model;
     ChatLounge lobby;
 
     public PlayerTable(PlayerTableModel pm, ChatLounge cl) {
@@ -88,7 +88,7 @@ class PlayerTable extends JTable {
     }
 
     void setRowHeights() {
-        setRowHeight(UIUtil.scaleForGUI(PLAYERTABLE_ROWHEIGHT));
+        setRowHeight(UIUtil.scaleForGUI(PLAYER_TABLE_ROW_HEIGHT));
     }
 
     @Override
@@ -111,30 +111,30 @@ class PlayerTable extends JTable {
         result.append("</FONT>");
 
         if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())) {
-            String msg_thisbot = Messages.getString("ChatLounge.ThisBot");
-            result.append(" (" + UIUtil.BOT_MARKER + " " + msg_thisbot + ")");
+            String msgThisBot = Messages.getString("ChatLounge.ThisBot");
+            result.append(" (" + UIUtil.BOT_MARKER + " ").append(msgThisBot).append(")");
         } else if (lobby.client().getBots().containsKey(player.getName())) {
-            String msg_yourbot = Messages.getString("ChatLounge.YourBot");
-            result.append(" (" + UIUtil.BOT_MARKER + " " + msg_yourbot + ")");
+            String msgYourBot = Messages.getString("ChatLounge.YourBot");
+            result.append(" (" + UIUtil.BOT_MARKER + " ").append(msgYourBot).append(")");
         } else if (lobby.localPlayer().equals(player)) {
             String msg_you = Messages.getString("ChatLounge.You");
-            result.append(" (" + msg_you + ")");
+            result.append(" (").append(msg_you).append(")");
         }
         result.append("<BR>");
         if (player.getConstantInitBonus() != 0) {
             String sign = (player.getConstantInitBonus() > 0) ? "+" : "";
-            String msg_initiativemodifier = Messages.getString("ChatLounge.InitiativeModifier");
-            result.append(msg_initiativemodifier + ": ").append(sign);
+            String msgInitiativeModifier = Messages.getString("ChatLounge.InitiativeModifier");
+            result.append(msgInitiativeModifier).append(": ").append(sign);
             result.append(player.getConstantInitBonus());
         } else {
-            String msg_noinitiativemodifier = Messages.getString("ChatLounge.NoInitiativeModifier");
-            result.append(msg_noinitiativemodifier);
+            String msgNoInitiativeModifier = Messages.getString("ChatLounge.NoInitiativeModifier");
+            result.append(msgNoInitiativeModifier);
         }
         if (lobby.game().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             int mines = player.getNbrMFConventional() + player.getNbrMFActive()
                   + player.getNbrMFInferno() + player.getNbrMFVibra();
-            String msg_totalminefields = Messages.getString("ChatLounge.TotalMinefields");
-            result.append("<BR>" + msg_totalminefields + ": ").append(mines);
+            String msgTotalMinefields = Messages.getString("ChatLounge.TotalMinefields");
+            result.append("<BR>").append(msgTotalMinefields).append(": ").append(mines);
         }
         return result.toString();
     }
@@ -144,7 +144,7 @@ class PlayerTable extends JTable {
         static final int COL_PLAYER = 0;
         static final int N_COL = 1;
 
-        private ArrayList<Player> players;
+        private final ArrayList<Player> players;
 
         public PlayerTableModel() {
             players = new ArrayList<>();
@@ -228,15 +228,17 @@ class PlayerTable extends JTable {
             if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0)
                   && !player.isBot()
                   && player.getId() != 0) {
-                result.append(msg_start + ": " + Messages.getString("ChatLounge.Player0"));
+                result.append(msg_start).append(": ").append(Messages.getString("ChatLounge.Player0"));
             } else if ((!lobby.client().getLocalPlayer().isGameMaster()
                   && (isEnemy)
                   && (gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
                   || gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)))) {
-                result.append(msg_start + ": " + Messages.getString("ChatLounge.Blind"));
+                result.append(msg_start).append(": ").append(Messages.getString("ChatLounge.Blind"));
             } else if ((player.getStartingPos() >= 0)
                   && (player.getStartingPos() <= IStartingPositions.START_LOCATION_NAMES.length)) {
-                result.append(msg_start + ": " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+                result.append(msg_start)
+                      .append(": ")
+                      .append(IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
 
                 if (player.getStartingPos() == 0) {
                     int NWx = player.getStartingAnyNWx() + 1;
@@ -244,17 +246,28 @@ class PlayerTable extends JTable {
                     int SEx = player.getStartingAnySEx() + 1;
                     int SEy = player.getStartingAnySEy() + 1;
                     if ((NWx + NWy + SEx + SEy) > 0) {
-                        result.append(" (" + NWx + ", " + NWy + ")-(" + SEx + ", " + SEy + ")");
+                        result.append(" (")
+                              .append(NWx)
+                              .append(", ")
+                              .append(NWy)
+                              .append(")-(")
+                              .append(SEx)
+                              .append(", ")
+                              .append(SEy)
+                              .append(")");
                     }
                 }
                 int so = player.getStartOffset();
                 int sw = player.getStartWidth();
                 if ((so != 0) || (sw != 3)) {
-                    result.append(", " + so);
-                    result.append(", " + sw);
+                    result.append(", ").append(so);
+                    result.append(", ").append(sw);
                 }
             } else if (player.getStartingPos() > IStartingPositions.START_LOCATION_NAMES.length) {
-                result.append(msg_start + ": " + "Zone " + Board.decodeCustomDeploymentZoneID(player.getStartingPos()));
+                result.append(msg_start)
+                      .append(": ")
+                      .append("Zone ")
+                      .append(Board.decodeCustomDeploymentZoneID(player.getStartingPos()));
             }
 
             if (!LobbyUtility.isValidStartPos(lobby.game(), player)) {
@@ -265,8 +278,8 @@ class PlayerTable extends JTable {
 
             // Player BV
             result.append(UIUtil.DOT_SPACER);
-            String msg_bvplain = Messages.getString("ChatLounge.BVplain");
-            result.append(msg_bvplain + ": ");
+            String msgBVPlain = Messages.getString("ChatLounge.BVplain");
+            result.append(msgBVPlain).append(": ");
             NumberFormat formatter = NumberFormat.getIntegerInstance(MegaMek.getMMOptions().getLocale());
             result.append((player.getBV() != 0) ? formatter.format(player.getBV()) : "--");
 
@@ -275,7 +288,7 @@ class PlayerTable extends JTable {
                 result.append(UIUtil.DOT_SPACER);
                 String sign = (player.getConstantInitBonus() > 0) ? "+" : "";
                 String msg_init = Messages.getString("ChatLounge.Init");
-                result.append(msg_init + ": ").append(sign);
+                result.append(msg_init).append(": ").append(sign);
                 result.append(player.getConstantInitBonus());
             }
 
@@ -297,7 +310,7 @@ class PlayerTable extends JTable {
 
             setIconTextGap(10);
             Image camo = player.getCamouflage().getImage();
-            int size = scaleForGUI(PLAYERTABLE_ROWHEIGHT) / 2;
+            int size = scaleForGUI(PLAYER_TABLE_ROW_HEIGHT) / 2;
             setImage(camo.getScaledInstance(-1, size, Image.SCALE_SMOOTH));
 
             if (isSelected) {

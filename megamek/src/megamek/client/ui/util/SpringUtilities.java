@@ -48,9 +48,9 @@ public class SpringUtilities {
      * A debugging utility that prints to stdout the component's minimum, preferred, and maximum sizes.
      */
     public static void printSizes(Component c) {
-        logger.debug("minimumSize = " + c.getMinimumSize());
-        logger.debug("preferredSize = " + c.getPreferredSize());
-        logger.debug("maximumSize = " + c.getMaximumSize());
+        logger.debug("minimumSize = {}", c.getMinimumSize());
+        logger.debug("preferredSize = {}", c.getPreferredSize());
+        logger.debug("maximumSize = {}", c.getMaximumSize());
     }
 
     /* Used by makeCompactGrid. */

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,7 +49,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.tileset.EntityImage;
@@ -82,14 +81,14 @@ public class MekTableModel extends AbstractTableModel {
     public static final int COL_BV = COLS.BV.ordinal();
     public static final int N_COL = COLS.values().length;
 
-    // Some unicode symbols. These work on Windows when setting the font
+    // Some Unicode symbols. These work on Windows when setting the font
     // to Dialog (which I believe uses Arial). I hope they work on other systems.
     public static final String DOT_SPACER = " \u2B1D ";
 
     /**
      * Control value for the size of camo and portraits in the table at GUI scale == 1.
      */
-    static final int MEKTABLE_IMGHEIGHT = 60;
+    static final int MEK_TABLE_IMG_HEIGHT = 60;
 
     private static final String UNKNOWN_UNIT = new MegaMekFile(Configuration.miscImagesDir(),
           "unknown_unit.gif").toString();
@@ -116,7 +115,6 @@ public class MekTableModel extends AbstractTableModel {
     private final ArrayList<String> pilotTooltips = new ArrayList<>();
     /** The displayed contents of the Player column. */
     private final ArrayList<String> playerCells = new ArrayList<>();
-    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     // endregion Variable Declarations
 
     // region Constructors
@@ -218,9 +216,9 @@ public class MekTableModel extends AbstractTableModel {
             unitTooltips.add(null);
             pilotTooltips.add(null);
         } else {
-            MapSettings mset = chatLounge.mapSettings;
+            MapSettings mapSettings = chatLounge.mapSettings;
             Player lPlayer = clientGui.getClient().getLocalPlayer();
-            String s = UnitToolTip.lobbyTip(entity, lPlayer, mset).toString();
+            String s = UnitToolTip.lobbyTip(entity, lPlayer, mapSettings).toString();
             unitTooltips.add(UnitToolTip.wrapWithHTML(s));
             s = PilotToolTip.lobbyTip(entity).toString();
             if (entity instanceof Entity) {
@@ -339,7 +337,7 @@ public class MekTableModel extends AbstractTableModel {
             boolean localGM = clientGui.getClient().getLocalPlayer().isGameMaster();
             boolean showAsUnknown = !localGM && clientGui.getClient().getLocalPlayer().isEnemyOf(owner)
                   && clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
-            int size = UIUtil.scaleForGUI(MEKTABLE_IMGHEIGHT);
+            int size = UIUtil.scaleForGUI(MEK_TABLE_IMG_HEIGHT);
 
             if (showAsUnknown) {
                 setToolTipText(null);

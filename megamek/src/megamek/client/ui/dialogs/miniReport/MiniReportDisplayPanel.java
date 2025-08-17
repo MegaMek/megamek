@@ -183,7 +183,7 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
 
         comboQuick.addActionListener(this);
         comboQuick.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_KEY_SELNEXT), "MiniReportDisplay.comboQuickNext");
+              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_KEY_SELECT_NEXT), "MiniReportDisplay.comboQuickNext");
         comboQuick.getActionMap().put("MiniReportDisplay.comboQuickNext", new AbstractAction() {
 
             @Override
@@ -194,7 +194,8 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
             }
         });
         comboQuick.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_KEY_SELPREV), "MiniReportDisplay.comboQuickPrev");
+              .put(KeyCommandBind.keyStroke(KeyCommandBind.REPORT_KEY_SELECT_PREVIOUS),
+                    "MiniReportDisplay.comboQuickPrev");
         comboQuick.getActionMap().put("MiniReportDisplay.comboQuickPrev", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -210,11 +211,11 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         comboQuick.setToolTipText("<html>"
               + Messages.getString("MiniReportDisplay.tooltip.ComboQuickNext")
               + ": "
-              + KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_SELNEXT)
+              + KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_SELECT_NEXT)
               + "<br>"
               + Messages.getString("MiniReportDisplay.tooltip.ComboQuickPrev")
               + ": "
-              + KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_SELPREV)
+              + KeyCommandBind.getDesc(KeyCommandBind.REPORT_KEY_SELECT_PREVIOUS)
               + "<br>"
               + Messages.getString("MiniReportDisplay.tooltip.ComboQuickInfo")
               + "</html>");

@@ -35,6 +35,7 @@ package megamek.client.ui.panels.phaseDisplay;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -66,18 +67,19 @@ import megamek.logging.MMLogger;
 public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelectionListener {
     private static final MMLogger logger = MMLogger.create(PrephaseDisplay.class);
 
+    @Serial
     private static final long serialVersionUID = 3441669419807288865L;
 
     /**
-     * This enumeration lists all of the possible ActionCommands that can be carried out during the Prephase. Each
-     * command has a string for the command plus a flag that determines what unit type it is appropriate for.
+     * This enumeration lists all the possible ActionCommands that can be carried out during the Prephase. Each command
+     * has a string for the command plus a flag that determines what unit type it is appropriate for.
      */
     public enum PrephaseCommand implements PhaseCommand {
         PREPHASE_NEXT("prephaseNext"),
         PREPHASE_REVEAL("prephaseReveal"),
         PREPHASE_CANCEL_REVEAL("prephaseCancelReveal");
 
-        String cmd;
+        final String cmd;
 
         /**
          * Priority that determines this buttons order
@@ -134,11 +136,11 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
     protected final ClientGUI clientgui;
 
     /**
-     * Creates and lays out a new Prefiring or PreMovement phase display for the specified clientgui.getClient().
+     * Creates and lays out a new PreFiring or PreMovement phase display for the specified clientGUi.getClient().
      */
-    public PrephaseDisplay(final ClientGUI clientgui, GamePhase phase) {
-        super(clientgui);
-        this.clientgui = clientgui;
+    public PrephaseDisplay(final ClientGUI clientGUI, GamePhase phase) {
+        super(clientGUI);
+        this.clientgui = clientGUI;
         this.phase = phase;
 
         setupStatusBar(Messages.getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
@@ -187,7 +189,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
      */
     public void initializeListeners() {
         game().addGameListener(this);
-        //        clientgui.getBoardView().addBoardViewListener(this);
         clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
     }
 
@@ -225,7 +226,9 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
                 // Walk through the list of entities for this player.
                 for (int nextId = client.getNextEntityNum(en); nextId != en; nextId = client.getNextEntityNum(nextId)) {
 
-                    if (null != game().getEntity(nextId).getPosition()) {
+                    Entity nextEntity = client.getEntity(nextId);
+
+                    if (nextEntity != null && null != nextEntity.getPosition()) {
                         cen = nextId;
                         break;
                     }
@@ -234,7 +237,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
 
                 // We were *supposed* to have found an on-board entity.
                 if (null == ce().getPosition()) {
-                    logger.error("Could not find an on-board entity: " + en);
+                    logger.error("Could not find an on-board entity: {}", en);
                     return;
                 }
             }
@@ -248,7 +251,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
                 clientgui.centerOnUnit(ce());
             }
         } else {
-            logger.error("Tried to select non-existent entity: " + en);
+            logger.error("Tried to select non-existent entity: {}", en);
         }
     }
 

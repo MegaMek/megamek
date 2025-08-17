@@ -36,7 +36,9 @@ import java.awt.Rectangle;
 import java.io.Serial;
 import java.util.Enumeration;
 
-import megamek.client.ui.widget.*;
+import megamek.client.ui.widget.BackGroundDrawer;
+import megamek.client.ui.widget.mapset.*;
+import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.*;
 import megamek.logging.MMLogger;
 

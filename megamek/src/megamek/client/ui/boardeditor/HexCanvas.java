@@ -87,7 +87,7 @@ class HexCanvas extends JPanel {
             for (final Image newVar : safeList(tm.supersFor(curHex))) {
                 g.drawImage(newVar, 0, 0, this);
             }
-            for (final Image newVar : safeList(tm.orthoFor(curHex))) {
+            for (final Image newVar : safeList(tm.orthographicFor(curHex))) {
                 g.drawImage(newVar, 0, 0, this);
             }
             UIUtil.setHighQualityRendering(g);

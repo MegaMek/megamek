@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.lists;
 
+import java.io.Serial;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -48,6 +49,7 @@ import megamek.common.icons.AbstractIcon;
  */
 public class AbstractIconList extends JList<AbstractIcon> {
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = -8060324139099113292L;
 
     private final DefaultListModel<AbstractIcon> iconModel;

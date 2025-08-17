@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,16 +33,10 @@
 
 package megamek.client.ui.entityreadout;
 
-class PlainElement implements ViewElement {
-
-    private final String text;
-
-    public PlainElement(String text) {
-        this.text = text;
-    }
+record PlainElement(String text) implements ViewElement {
 
     public PlainElement(int number) {
-        text = String.valueOf(number);
+        this(String.valueOf(number));
     }
 
     @Override

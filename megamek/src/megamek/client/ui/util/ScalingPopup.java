@@ -34,6 +34,7 @@
 package megamek.client.ui.util;
 
 import java.awt.Dimension;
+import java.io.Serial;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
@@ -48,6 +49,7 @@ public class ScalingPopup extends JPopupMenu {
     /** Returns a spacer (empty, small menu item) for a scaling popup menu. */
     public static JMenuItem spacer() {
         JMenuItem result = new JMenuItem() {
+            @Serial
             private static final long serialVersionUID = 1249257644704746075L;
 
             @Override

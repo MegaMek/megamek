@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 
 package megamek.common.commandLine;
 
+import java.io.Serial;
 import java.util.Objects;
 
 /**
@@ -46,6 +47,7 @@ public abstract class AbstractCommandLineParser {
      * Exception thrown in case of error
      */
     public static class ParseException extends Exception {
+        @Serial
         private static final long serialVersionUID = -3077985683676777509L;
 
         public ParseException(String message) {
@@ -76,12 +78,12 @@ public abstract class AbstractCommandLineParser {
     /**
      * Parser input
      */
-    private String[] args;
+    private final String[] args;
 
     /**
      * The length of the input array
      */
-    private int argsLen;
+    private final int argsLen;
 
     /**
      * Index of the next token to process

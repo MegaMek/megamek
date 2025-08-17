@@ -48,13 +48,13 @@ import megamek.common.annotations.Nullable;
  * <p>
  * BoardLocation is immutable.
  */
-public class BoardLocation implements Serializable {
+public record BoardLocation(Coords coords, int boardId, boolean isNoLocation) implements Serializable {
 
     /**
      * This location represents a location that has null coords or a negative board ID, i.e. is obviously invalid. This
      * location, when checked, will return false for comparisons and empty results for adjacent hexes and the like. Note
      * that a BoardLocation that is not a NO_LOCATION does not necessarily exist either, its board ID may still be
-     * invalid or its coords outside of any board.
+     * invalid or its coords outside any board.
      * <p>
      * The coords or board ID of NO_LOCATION should not be used directly but if used the coords are at Integer
      * .MIN_VALUE and the board ID is Board.BOARD_NONE.
@@ -62,18 +62,8 @@ public class BoardLocation implements Serializable {
     public static final BoardLocation NO_LOCATION =
           new BoardLocation(new Coords(Integer.MIN_VALUE, Integer.MIN_VALUE), Board.BOARD_NONE, true);
 
-    private final Coords coords;
-    private final int boardId;
-    private final boolean isNoLocation;
-
     private BoardLocation(Coords coords, int boardId) {
         this(coords, boardId, false);
-    }
-
-    private BoardLocation(Coords coords, int boardId, boolean isNoLocation) {
-        this.coords = coords;
-        this.boardId = boardId;
-        this.isNoLocation = isNoLocation;
     }
 
     /**
@@ -201,7 +191,7 @@ public class BoardLocation implements Serializable {
     }
 
     /**
-     * Two BoardLocations are equal when their board ID and coords are equal. Two NO_LOCATIONs are equal.
+     * Two BoardLocations are equal when their board ID and coords are equal. Two NO_LOCATION's are equal.
      *
      * @param o The object to compare
      *
@@ -226,17 +216,5 @@ public class BoardLocation implements Serializable {
 
     public int getY() {
         return coords.getY();
-    }
-
-    public boolean isNoLocation() {
-        return isNoLocation;
-    }
-
-    public Coords coords() {
-        return coords;
-    }
-
-    public int boardId() {
-        return boardId;
     }
 }

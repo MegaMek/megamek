@@ -36,7 +36,6 @@ package megamek.common.commandLine;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.Writer;
 import java.util.Vector;
 
@@ -122,7 +121,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
 
     @Override
     protected void start() throws ParseException {
-        ;
+
         if (getTokenType() == TOK_OPTION) {
             final String tokenVal = getTokenValue();
             nextToken();
@@ -131,25 +130,25 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                     case HELP:
                         System.out.println(help());
                         System.exit(0);
-                    case EQDB:
+                    case EQ_DB:
                         processEquipmentDb();
                         break;
-                    case EQEDB:
+                    case EQE_DB:
                         processExtendedEquipmentDb();
                         break;
-                    case EQYAMLDB:
+                    case EQ_YAML_DB:
                         processYamlEquipmentDb();
                         break;
-                    case EQWDB:
+                    case EQW_DB:
                         processWeaponEquipmentDb();
                         break;
-                    case EQADB:
+                    case EQA_DB:
                         processWeaponAmmoDb();
                         break;
-                    case EQMDB:
+                    case EQM_DB:
                         processWeaponMiscDb();
                         break;
-                    case DATADIR:
+                    case DATA_DIR:
                         processDataDir();
                         break;
                     case VALIDATE:
@@ -179,12 +178,12 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                     case GIF:
                         writeGif = true;
                         break;
-                    case EDITRATGEN:
+                    case EDIT_RAT_GEN:
                         ratGenEditor = true;
                         break;
                 }
             } catch (ParseException ex) {
-                logger.error("Incorrect arguments:" + ex.getMessage() + '\n' + help());
+                logger.error("Incorrect arguments:{}\n{}", ex.getMessage(), help());
                 throw ex;
             }
         }
@@ -294,12 +293,11 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
             }
 
             if (ms == null) {
-                logger.error(filename + " not found. Try using \"chassis model\" for input.",
-                      new IOException());
+                logger.error("{} not found. Try using \"chassis model\" for input.", filename);
             } else {
                 try {
                     Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-                    logger.info("Validating Entity: " + entity.getShortNameRaw());
+                    logger.info("Validating Entity: {}", entity.getShortNameRaw());
                     EntityReadout mekView = EntityReadout.createReadout(entity, false);
                     StringBuffer sb = new StringBuffer(mekView.getFullReadout());
                     TestEntity testEntity = TestEntity.getEntityVerifier(entity);
@@ -336,7 +334,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
 
             File file = new File("./docs/" + filename);
             try (Writer w = new FileWriter(file); BufferedWriter bw = new BufferedWriter(w)) {
-                bw.write("Megamek Unit AlphaStrike Converter");
+                bw.write("MegaMek Unit AlphaStrike Converter");
                 bw.newLine();
                 bw.write("This file can be regenerated with java -jar MegaMek.jar -asc filename");
                 bw.newLine();

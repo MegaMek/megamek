@@ -36,8 +36,8 @@ package megamek.common.board;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.game.Game;
 import megamek.common.annotations.Nullable;
+import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 
@@ -152,7 +152,7 @@ public final class BoardHelper {
     }
 
     /**
-     * Returns true when the given Coords is a hex of any of the atmospheric rows 1-4 (or 1-7 with very high atmosphere
+     * Returns true when the given Coords is a hex of the atmospheric rows 1-4 (or 1-7 with very high atmosphere
      * conditions) on a high-altitude map, false otherwise. Returns false for ground row hexes and for hexes of the
      * space-atmosphere interface. Also returns false when planetary conditions indicate the atmosphere is "vacuum".
      *
@@ -165,10 +165,9 @@ public final class BoardHelper {
     }
 
     /**
-     * Returns true when the given X position is a hex of any of the atmospheric rows 1-4 (or 1-7 with very high
-     * atmosphere conditions) on a high-altitude map, false otherwise. Returns false for ground row hexes and for hexes
-     * of the space-atmosphere interface. Also returns false when planetary conditions indicate the atmosphere is
-     * "vacuum".
+     * Returns true when the given X position is a hex of the atmospheric rows 1-4 (or 1-7 with very high atmosphere
+     * conditions) on a high-altitude map, false otherwise. Returns false for ground row hexes and for hexes of the
+     * space-atmosphere interface. Also returns false when planetary conditions indicate the atmosphere is "vacuum".
      *
      * @param x The X position on the board to test (Coords.getX())
      *
@@ -179,9 +178,9 @@ public final class BoardHelper {
     }
 
     /**
-     * Returns true when the given BoardLocation indicates a hex of any of the atmospheric rows 1-4 (or 1-7 with very
-     * high atmosphere conditions) on a high-altitude map, false otherwise. Returns false for ground row hexes and for
-     * hexes of the space-atmosphere interface. Also returns false when planetary conditions indicate the atmosphere is
+     * Returns true when the given BoardLocation indicates a hex of the atmospheric rows 1-4 (or 1-7 with very high
+     * atmosphere conditions) on a high-altitude map, false otherwise. Returns false for ground row hexes and for hexes
+     * of the space-atmosphere interface. Also returns false when planetary conditions indicate the atmosphere is
      * "vacuum".
      *
      * @param boardLocation The location to test
@@ -193,9 +192,9 @@ public final class BoardHelper {
     }
 
     /**
-     * Returns true when the given Coords is a hex of any of the atmospheric rows 1-4 or the ground row on a
-     * high-altitude map, false if it is in the space/atmosphere interface or in true space. Returns false for all hexes
-     * if this board is not a high-altitude board or when planetary conditions indicate the atmosphere is "vacuum".
+     * Returns true when the given Coords is a hex of the atmospheric rows 1-4 or the ground row on a high-altitude map,
+     * false if it is in the space/atmosphere interface or in true space. Returns false for all hexes if this board is
+     * not a high-altitude board or when planetary conditions indicate the atmosphere is "vacuum".
      *
      * @param coords The position on the board to test
      *
@@ -321,7 +320,7 @@ public final class BoardHelper {
         }
     }
 
-    public static int highAltAtmoRowRangeIncrease(Game game) {
+    public static int highAltAtmosphereRowRangeIncrease(Game game) {
         return switch (game.getPlanetaryConditions().getAtmosphere()) {
             case VACUUM -> 0;
             case TRACE -> 1;
@@ -332,7 +331,7 @@ public final class BoardHelper {
         };
     }
 
-    public static int highAltSpaceAtmoRangeIncrease(Game game) {
+    public static int highAltSpaceAtmosphereRangeIncrease(Game game) {
         return switch (game.getPlanetaryConditions().getAtmosphere()) {
             case VACUUM, TRACE, THIN -> 0;
             case HIGH -> 3;
@@ -361,7 +360,7 @@ public final class BoardHelper {
               position2)) || (isTrueSpaceHex(game, board, position2) && isBelowSpaceAtmosphereInterface(game,
               board,
               position1)));
-        // @@MultiBoardTODO: Make this an IMPOSSIBLE reason in loseffects for non-cap weapons
+        // @@MultiBoardTODO: Make this an IMPOSSIBLE reason in los effects for non-cap weapons
     }
 
     private BoardHelper() {

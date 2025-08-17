@@ -90,7 +90,7 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
               board.getBoardId(), null, entity.climbMode()) != null);
 
         if (entity.getMovementMode().isWiGE()) {
-            addAirborneWigeOptions(result);
+            addAirborneWiGEOptions(result);
         }
 
         if (limitToType != null) {
@@ -106,16 +106,16 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
      *
      * @param result The current options where the WiGE is landed
      */
-    private void addAirborneWigeOptions(List<ElevationOption> result) {
+    private void addAirborneWiGEOptions(List<ElevationOption> result) {
         // WiGE may also deploy flying wherever they can be grounded
-        List<ElevationOption> wigeOptions = new ArrayList<>();
+        List<ElevationOption> wIGEOptions = new ArrayList<>();
         for (ElevationOption currentOption : result) {
             if (!hasElevationOption(result, currentOption.elevation() + 1)) {
                 // If an elevation already exists, it is probably a bridge; at that elevation, the WiGE is landed
-                wigeOptions.add(new ElevationOption(currentOption.elevation() + 1, ELEVATION));
+                wIGEOptions.add(new ElevationOption(currentOption.elevation() + 1, ELEVATION));
             }
         }
-        result.addAll(wigeOptions);
+        result.addAll(wIGEOptions);
     }
 
     private List<ElevationOption> allowedAeroAltitudes() {

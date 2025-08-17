@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -68,7 +68,7 @@ public class Coords implements Serializable {
     // region Constants
     static final double EPSILON = 1e-7;
     static final int MAX_ITERATIONS = 1000; // for median logic
-    public static final double HEXSIDE = Math.PI / 3.0;
+    public static final double HEX_SIDE = Math.PI / 3.0;
     public static final int[] ALL_DIRECTIONS = { 0, 1, 2, 3, 4, 5 };
     // endregion Constants
 
@@ -386,7 +386,7 @@ public class Coords implements Serializable {
      * @param d the destination coordinate.
      */
     public int direction(Coords d) {
-        return (int) Math.round(radian(d) / HEXSIDE) % 6;
+        return (int) Math.round(radian(d) / HEX_SIDE) % 6;
     }
 
     /**
@@ -591,7 +591,7 @@ public class Coords implements Serializable {
 
         if (split) {
             // HACK to make left appear before right in the sequence reliably
-            centerDirection = (int) Math.round(src.radian(dest) + 0.0001 / HEXSIDE) % 6;
+            centerDirection = (int) Math.round(src.radian(dest) + 0.0001 / HEX_SIDE) % 6;
         }
 
         directions[2] = centerDirection; // center last

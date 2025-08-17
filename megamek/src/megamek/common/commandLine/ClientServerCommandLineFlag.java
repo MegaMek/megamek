@@ -43,17 +43,17 @@ import megamek.logging.MMLogger;
 public enum ClientServerCommandLineFlag {
     // region Enum Declarations
     HELP(Messages.getString("MegaMek.Help")),
-    USEDEFAULTS(Messages.getString("MegaMek.Help.UseDefaults")),
+    USE_DEFAULTS(Messages.getString("MegaMek.Help.UseDefaults")),
     PORT(Messages.getFormattedString("MegaMek.Help.Port", MMConstants.MIN_PORT, MMConstants.MAX_PORT,
           MMConstants.DEFAULT_PORT)),
-    DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir", Configuration.dataDir())),
+    DATA_DIR(Messages.getFormattedString("MegaMek.Help.DataDir", Configuration.dataDir())),
     // server or host only options
     ANNOUNCE(Messages.getString("MegaMek.Help.Announce"), true, false, true),
     MAIL(Messages.getString("MegaMek.Help.Mail"), true, false, true),
     SAVEGAME(Messages.getString("MegaMek.Help.SaveGame"), true, false, true),
     PASSWORD(Messages.getString("MegaMek.Help.Password"), true, false, true),
     // client or host only options
-    PLAYERNAME(Messages.getString("MegaMek.Help.PlayerName"), false, true, true),
+    PLAYER_NAME(Messages.getString("MegaMek.Help.PlayerName"), false, true, true),
     // client only options
     SERVER(Messages.getFormattedString("MegaMek.Help.Server", MMConstants.LOCALHOST), false, true, false);
     // endregion Enum Declarations
@@ -81,7 +81,7 @@ public enum ClientServerCommandLineFlag {
             return valueOf(text.toUpperCase(Locale.ROOT));
         } catch (Exception ex) {
             MMLogger.create(ClientServerCommandLineFlag.class)
-                  .error(String.format("Failed to parse the ClientServerCommandLineFlag from '%s'", text));
+                  .error("Failed to parse the ClientServerCommandLineFlag from '{}'", text);
             throw (ex);
         }
     }

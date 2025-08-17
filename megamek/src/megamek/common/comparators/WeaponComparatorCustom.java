@@ -1,7 +1,6 @@
 /*
-
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,23 +40,17 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.units.Entity;
 
 /**
- * Comparator for sorting Weapons (Mounteds that have WeaponTypes) by a custom ordering.  The ordering is stored in the
- * Entity instance, using a map that maps the weapon's ID to it's custom order index.
+ * Comparator for sorting Weapons (Mounted that have WeaponTypes) by a custom ordering.  The ordering is stored in the
+ * Entity instance, using a map that maps the weapon's ID to its custom order index.
  *
  * @author arlith
  */
-public class WeaponComparatorCustom implements Comparator<WeaponMounted> {
-
-    private final Entity entity;
-
-    public WeaponComparatorCustom(Entity e) {
-        entity = e;
-    }
+public record WeaponComparatorCustom(Entity entity) implements Comparator<WeaponMounted> {
 
     @Override
-    public int compare(WeaponMounted obj1, WeaponMounted obj2) {
-        int weapNum1 = entity.getCustomWeaponOrder(obj1);
-        int weapNum2 = entity.getCustomWeaponOrder(obj2);
-        return weapNum1 - weapNum2;
+    public int compare(WeaponMounted lhs, WeaponMounted rhs) {
+        int leftWeaponOrder = entity.getCustomWeaponOrder(lhs);
+        int rightWeaponOrder = entity.getCustomWeaponOrder(rhs);
+        return leftWeaponOrder - rightWeaponOrder;
     }
 }

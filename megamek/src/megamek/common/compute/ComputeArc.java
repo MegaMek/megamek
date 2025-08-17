@@ -37,12 +37,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import megamek.common.game.Game;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CrossBoardAttackHelper;
 import megamek.common.enums.FacingArc;
 import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Mek;
@@ -130,7 +130,7 @@ public class ComputeArc {
                   .embeddedBoardPosition(targetAtmoBoard.getBoardId()));
         } else if (Compute.isAirToAir(game, attacker, target) && !game.onTheSameBoard(attacker, target)
               && (game.onDirectlyConnectedBoards(attacker, target)
-              || CrossBoardAttackHelper.onGroundMapsWithinOneAtmoMap(game, attacker, target))) {
+              || CrossBoardAttackHelper.onGroundMapsWithinOneAtmosphereMap(game, attacker, target))) {
             // In A2A attacks between different maps (only ground/ground, ground/atmo or atmo/ground), replace the
             // position of the unit on the ground map with the position of the ground map itself in the atmo map
             if (game.isOnGroundMap(attacker) && game.isOnAtmosphericMap(target)) {
@@ -258,7 +258,7 @@ public class ComputeArc {
 
         if (Compute.isAirToAir(game, attacker, target) && !game.onTheSameBoard(attacker, target)
               && (game.onDirectlyConnectedBoards(attacker, target)
-              || CrossBoardAttackHelper.onGroundMapsWithinOneAtmoMap(game, attacker, target))) {
+              || CrossBoardAttackHelper.onGroundMapsWithinOneAtmosphereMap(game, attacker, target))) {
             // In A2A attacks between different maps (only ground/ground, ground/atmo or atmo/ground), replace the
             // position of the unit on the ground map with the position of the ground map itself in the atmo map
             if (game.isOnGroundMap(attacker) && game.isOnAtmosphericMap(target)) {

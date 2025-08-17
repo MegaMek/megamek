@@ -50,18 +50,18 @@ public enum MegaMekCommandLineFlag {
     QUICK(Messages.getFormattedString("MegaMek.Help.Quick", MMConstants.QUICKSAVE_FILE)),
 
     // exporters and utilities
-    EQDB(Messages.getString("MegaMek.Help.EquipmentDB")),
-    EQEDB(Messages.getString("MegaMek.Help.EquipmentExtendedDB")),
-    EQYAMLDB(Messages.getString("MegaMek.Help.EquipmentYamlDB")),
-    EQWDB(Messages.getString("MegaMek.Help.EquipmentWeaponDB")),
-    EQADB(Messages.getString("MegaMek.Help.EquipmentAmmoDB")),
-    EQMDB(Messages.getString("MegaMek.Help.EquipmentMiscDB")),
+    EQ_DB(Messages.getString("MegaMek.Help.EquipmentDB")),
+    EQE_DB(Messages.getString("MegaMek.Help.EquipmentExtendedDB")),
+    EQ_YAML_DB(Messages.getString("MegaMek.Help.EquipmentYamlDB")),
+    EQW_DB(Messages.getString("MegaMek.Help.EquipmentWeaponDB")),
+    EQA_DB(Messages.getString("MegaMek.Help.EquipmentAmmoDB")),
+    EQM_DB(Messages.getString("MegaMek.Help.EquipmentMiscDB")),
     EXPORT(Messages.getString("MegaMek.Help.UnitExport")),
     VALIDATE(Messages.getString("MegaMek.Help.UnitValidator")),
     OUL(Messages.getString("MegaMek.Help.OfficialUnitList")),
     ASC(Messages.getString("MegaMek.Help.UnitAlphastrikeConversion")),
-    EDITRATGEN(Messages.getString("MegaMek.Help.RatgenEdit")),
-    DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir", Configuration.dataDir())),
+    EDIT_RAT_GEN(Messages.getString("MegaMek.Help.RatgenEdit")),
+    DATA_DIR(Messages.getFormattedString("MegaMek.Help.DataDir", Configuration.dataDir())),
     GIF(Messages.getString("MegaMek.Help.Gif"));
     // endregion Enum Declarations
 

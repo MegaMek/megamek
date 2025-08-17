@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,49 +42,44 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.units.Entity;
 
 /**
- * Comparator for sorting Weapons (Mounteds that have WeaponTypes) by arcs with ties arbitrated based on damage (high to
+ * Comparator for sorting Weapons (Mounted that have WeaponTypes) by arcs with ties arbitrated based on damage (high to
  * low).
  *
  * @author arlith
  */
-public class WeaponComparatorArc implements Comparator<WeaponMounted> {
-    private final Entity entity;
-
-    public WeaponComparatorArc(Entity e) {
-        entity = e;
-    }
+public record WeaponComparatorArc(Entity entity) implements Comparator<WeaponMounted> {
 
     @Override
-    public int compare(WeaponMounted obj1, WeaponMounted obj2) {
-        int wnum1 = entity.getEquipmentNum(obj1);
-        int wnum2 = entity.getEquipmentNum(obj2);
-        WeaponType weap1 = (WeaponType) obj1.getType();
-        WeaponType weap2 = (WeaponType) obj2.getType();
+    public int compare(WeaponMounted lhs, WeaponMounted rhs) {
+        int leftWeaponNumber = entity.getEquipmentNum(lhs);
+        int rightWeaponNumber = entity.getEquipmentNum(rhs);
+        WeaponType leftWeaponType = lhs.getType();
+        WeaponType rightWeaponType = rhs.getType();
 
         // Pick the weapon with the lowest arc
-        if (entity.getWeaponArc(wnum1) > entity.getWeaponArc(wnum2)) {
+        if (entity.getWeaponArc(leftWeaponNumber) > entity.getWeaponArc(rightWeaponNumber)) {
             return 1;
-        } else if (entity.getWeaponArc(wnum1) < entity.getWeaponArc(wnum2)) {
+        } else if (entity.getWeaponArc(leftWeaponNumber) < entity.getWeaponArc(rightWeaponNumber)) {
             return -1;
         } else {
             // Break ties with damage
             // If types are equal, pick front facing first
-            if (weap1 == weap2) {
-                if (obj1.isRearMounted()) {
+            if (leftWeaponType == rightWeaponType) {
+                if (lhs.isRearMounted()) {
                     return -1;
-                } else if (obj2.isRearMounted()) {
+                } else if (rhs.isRearMounted()) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
             // Pick the weapon with the highest damage
-            if (weap1.getDamage() > weap2.getDamage()) {
+            if (leftWeaponType.getDamage() > rightWeaponType.getDamage()) {
                 return 1;
-            } else if (weap1.getDamage() < weap2.getDamage()) {
+            } else if (leftWeaponType.getDamage() < rightWeaponType.getDamage()) {
                 return -1;
             } else { // Break ties with heat
-                return Integer.compare(weap1.getHeat(), weap2.getHeat());
+                return Integer.compare(leftWeaponType.getHeat(), rightWeaponType.getHeat());
             }
         }
     }

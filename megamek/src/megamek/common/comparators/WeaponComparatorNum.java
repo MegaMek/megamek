@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,22 +41,16 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.units.Entity;
 
 /**
- * Comparator for sorting Weapons (Mounteds that have WeaponTypes) by weapon number.
+ * Comparator for sorting Weapons (Mounted that have WeaponTypes) by weapon number.
  *
  * @author arlith
  */
-public class WeaponComparatorNum implements Comparator<WeaponMounted> {
-
-    private final Entity entity;
-
-    public WeaponComparatorNum(Entity e) {
-        entity = e;
-    }
+public record WeaponComparatorNum(Entity entity) implements Comparator<WeaponMounted> {
 
     @Override
-    public int compare(WeaponMounted obj1, WeaponMounted obj2) {
-        int weapNum1 = entity.getEquipmentNum(obj1);
-        int weapNum2 = entity.getEquipmentNum(obj2);
-        return weapNum1 - weapNum2;
+    public int compare(WeaponMounted lhs, WeaponMounted rhs) {
+        int leftWeaponNum = entity.getEquipmentNum(lhs);
+        int rightWeaponNum = entity.getEquipmentNum(rhs);
+        return leftWeaponNum - rightWeaponNum;
     }
 }

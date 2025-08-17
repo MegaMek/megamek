@@ -40,14 +40,14 @@ import java.util.Optional;
 import megamek.common.Messages;
 
 /**
- * Represents the type of a game board (map). Note that low altitude (aka atmospheric) maps may come with or without
+ * Represents the type of game board (map). Note that low altitude (aka atmospheric) maps may come with or without
  * terrain and space maps may be high altitude maps when they are near a planet. Radar and Capital Radar maps may be
  * used in the Abstract Aerospace Combat rules of SO:AA and SBF.
  */
 public enum BoardType implements Serializable {
     GROUND("G"),
 
-    // The following are intentionally not named as in the rules so the temptation to compare directly with them is 
+    // The following are intentionally not named as in the rules so the temptation to compare directly with them is
     // low. Compare using the isXYZ() methods
 
     FAR_SPACE("FS"), // space without planetary surface
@@ -112,8 +112,8 @@ public enum BoardType implements Serializable {
     }
 
     /**
-     * Returns a single character code identifying the this MapType (e.g. "G" for GROUND). Can be used e.g. in context
-     * menus. Use {@link #boardTypeForCode(String)} to reconstruct the MapType.
+     * Returns a single character code identifying the MapType (e.g. "G" for GROUND). Can be used e.g. in context menus.
+     * Use {@link #boardTypeForCode(String)} to reconstruct the MapType.
      *
      * @return the code character for this MapType
      */

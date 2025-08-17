@@ -452,7 +452,7 @@ class ComputeTest {
         faller.setId(1);
         faller.setWeight(weight);
 
-        assertEquals(expectedDamage, Compute.getAffaDamageFor(faller, elevation));
+        assertEquals(expectedDamage, Compute.getAccidentalFallFromAboveDamageFor(faller, elevation));
     }
 
     @Test
@@ -466,7 +466,7 @@ class ComputeTest {
         faller.setId(1);
         faller.setWeight(weight);
 
-        assertEquals(expectedDamage, Compute.getAffaDamageFor(faller, elevation));
+        assertEquals(expectedDamage, Compute.getAccidentalFallFromAboveDamageFor(faller, elevation));
     }
 
     @Test
@@ -480,6 +480,6 @@ class ComputeTest {
         faller.setId(1);
         faller.setWeight(weight);
 
-        assertEquals(expectedDamage, Compute.getAffaDamageFor(faller, elevation));
+        assertEquals(expectedDamage, Compute.getAccidentalFallFromAboveDamageFor(faller, elevation));
     }
 }

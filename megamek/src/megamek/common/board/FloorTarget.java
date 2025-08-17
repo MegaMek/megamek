@@ -57,16 +57,16 @@ public class FloorTarget implements Targetable {
     /**
      * The coordinates of the hex being targeted.
      */
-    private Coords position;
+    private final Coords position;
     private int id;
-    private int elevation;
-    private String name;
-    private int targetElevation;
+    private final int elevation;
+    private final String name;
+    private final int targetElevation;
 
     /**
      * Target a single hex of a building.
      *
-     * @param coords          - the <code>Coords</code> of the hext being targeted.
+     * @param coords          - the <code>Coords</code> of the hex being targeted.
      * @param board           - the game's <code>Board</code> object.
      * @param targetElevation - Kind where in the building you want to aim at.
      *
@@ -84,10 +84,8 @@ public class FloorTarget implements Targetable {
         id = FloorTarget.coordsToId(coords);
 
         // Generate a name.
-        StringBuilder sb = new StringBuilder();
-        sb.append("Hex ").append(position.getBoardNum()).append(" of ")
-              .append(bldg.getName()).append(Messages.getString("BuildingTarget.Ignite"));
-        name = sb.toString();
+        name = "Hex " + position.getBoardNum() + " of " + bldg.getName() + Messages.getString(
+              "BuildingTarget.Ignite");
         Hex targetHex = board.getHex(position);
         this.elevation = targetHex.floor();
         this.targetElevation = targetElevation;
@@ -159,7 +157,7 @@ public class FloorTarget implements Targetable {
     /**
      * Creates an id for this building based on its location as well as a building code. The transformation encodes the
      * y value in the top 5 decimal digits and the x value in the bottom 5. Could more efficiently encode this by
-     * partitioning the binary representation, but this is more human readable and still allows for a 99999x99999 hex
+     * partitioning the binary representation, but this is more human-readable and still allows for a 99999x99999 hex
      * map.
      */
     public static int coordsToId(Coords c) {

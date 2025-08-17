@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002 Josh Yockey
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,7 +39,7 @@ import java.util.Comparator;
 
 import megamek.common.loaders.MekSummary;
 
-public class MekSummaryComparator implements Comparator<MekSummary> {
+public record MekSummaryComparator(int m_nType) implements Comparator<MekSummary> {
     public static final int T_CHASSIS = 0;
     public static final int T_MODEL = 1;
     public static final int T_WEIGHT = 2;
@@ -48,31 +48,17 @@ public class MekSummaryComparator implements Comparator<MekSummary> {
     public static final int T_COST = 5;
     public static final int T_LEVEL = 6;
 
-    private int m_nType;
-
-    public MekSummaryComparator(int nType) {
-        m_nType = nType;
-    }
-
     @Override
     public int compare(MekSummary ms1, MekSummary ms2) {
-        switch (m_nType) {
-            case T_CHASSIS:
-                return ms1.getChassis().compareTo(ms2.getChassis());
-            case T_MODEL:
-                return ms1.getModel().compareTo(ms2.getModel());
-            case T_WEIGHT:
-                return Double.compare(ms1.getTons(), ms2.getTons());
-            case T_BV:
-                return Integer.compare(ms1.getBV(), ms2.getBV());
-            case T_YEAR:
-                return Integer.compare(ms1.getYear(), ms2.getYear());
-            case T_COST:
-                return Long.compare(ms1.getCost(), ms2.getCost());
-            case T_LEVEL:
-                return ms1.getLevel().compareTo(ms2.getLevel());
-            default:
-                return 0;
-        }
+        return switch (m_nType) {
+            case T_CHASSIS -> ms1.getChassis().compareTo(ms2.getChassis());
+            case T_MODEL -> ms1.getModel().compareTo(ms2.getModel());
+            case T_WEIGHT -> Double.compare(ms1.getTons(), ms2.getTons());
+            case T_BV -> Integer.compare(ms1.getBV(), ms2.getBV());
+            case T_YEAR -> Integer.compare(ms1.getYear(), ms2.getYear());
+            case T_COST -> Long.compare(ms1.getCost(), ms2.getCost());
+            case T_LEVEL -> ms1.getLevel().compareTo(ms2.getLevel());
+            default -> 0;
+        };
     }
 }

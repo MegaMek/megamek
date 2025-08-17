@@ -38,10 +38,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.hexArea.HexArea;
 
-public class HexLevelPostProcessor implements BoardProcessor {
-
-    private final int level;
-    private final HexArea area;
+public record HexLevelPostProcessor(int level, HexArea area) implements BoardProcessor {
 
     /**
      * Creates a board processor that sets the hex level of each hex of the given HexArea to the given level.
@@ -49,9 +46,7 @@ public class HexLevelPostProcessor implements BoardProcessor {
      * @param level the hex level to set
      * @param area  the HexArea to apply the change to
      */
-    public HexLevelPostProcessor(int level, HexArea area) {
-        this.level = level;
-        this.area = area;
+    public HexLevelPostProcessor {
     }
 
 

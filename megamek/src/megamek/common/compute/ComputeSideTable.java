@@ -34,10 +34,10 @@
 package megamek.common.compute;
 
 import megamek.common.CalledShot;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.board.CrossBoardAttackHelper;
+import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 
@@ -116,7 +116,7 @@ public class ComputeSideTable {
         Coords effectiveTargetPosition = target.getPosition();
         if (Compute.isAirToAir(game, attacker, target) && !game.onTheSameBoard(attacker, target)
               && (game.onDirectlyConnectedBoards(attacker, target)
-              || CrossBoardAttackHelper.onGroundMapsWithinOneAtmoMap(game, attacker, target))) {
+              || CrossBoardAttackHelper.onGroundMapsWithinOneAtmosphereMap(game, attacker, target))) {
             if (game.isOnGroundMap(attacker) && game.isOnAtmosphericMap(target)) {
                 attackPos = game.getBoard(target).embeddedBoardPosition(attacker.getBoardId());
             } else if (game.isOnAtmosphericMap(attacker) && game.isOnGroundMap(target)) {

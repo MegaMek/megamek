@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,7 +42,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 
 /**
- * Comparator for sorting Weapons (Mounteds that have WeaponTypes) by BV, needed for BV calculation Only pass Mounteds
+ * Comparator for sorting Weapons (Mounted that have WeaponTypes) by BV, needed for BV calculation Only pass Mounted
  * into this that are weapons
  *
  * @author beerockxs
@@ -53,34 +53,32 @@ public class WeaponComparatorBV implements Comparator<Mounted<?>> {
     }
 
     @Override
-    public int compare(Mounted<?> obj1, Mounted<?> obj2) {
-        if (obj1.getType() instanceof WeaponType
-              && obj2.getType() instanceof WeaponType) {
-            WeaponType weap1 = (WeaponType) obj1.getType();
-            WeaponType weap2 = (WeaponType) obj2.getType();
-            if (weap1 == weap2) {
-                if (obj1.isRearMounted()) {
+    public int compare(Mounted<?> lhs, Mounted<?> rhs) {
+        if (lhs.getType() instanceof WeaponType leftWeaponType
+              && rhs.getType() instanceof WeaponType rightWeaponType) {
+            if (leftWeaponType == rightWeaponType) {
+                if (lhs.isRearMounted()) {
                     return -1;
-                } else if (obj2.isRearMounted()) {
+                } else if (rhs.isRearMounted()) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
             // sort heat 0 weapons at the very end
-            if (weap1.getHeat() == weap2.getHeat() && weap1.getHeat() == 0) {
+            if (leftWeaponType.getHeat() == rightWeaponType.getHeat() && leftWeaponType.getHeat() == 0) {
                 return 0;
-            } else if (weap2.getHeat() == 0) {
+            } else if (rightWeaponType.getHeat() == 0) {
                 return -1;
-            } else if (weap1.getHeat() == 0) {
+            } else if (leftWeaponType.getHeat() == 0) {
                 return 1;
             }
             // if same BV, lower heat first
-            if (Objects.equals(weap1.getBV(), weap2.getBV())) {
-                return weap1.getHeat() - weap2.getHeat();
+            if (Objects.equals(leftWeaponType.getBV(), rightWeaponType.getBV())) {
+                return leftWeaponType.getHeat() - rightWeaponType.getHeat();
             }
             // otherwise, higher BV first
-            return Double.valueOf(weap2.getBV() - weap1.getBV()).intValue();
+            return Double.valueOf(rightWeaponType.getBV() - leftWeaponType.getBV()).intValue();
         }
         throw new ClassCastException("Passed Mounted are not Weapons");
     }

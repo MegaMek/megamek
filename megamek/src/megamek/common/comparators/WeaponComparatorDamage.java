@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,7 +41,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 
 /**
- * Comparator for sorting Weapons (Mounteds that have WeaponTypes) by damage with ties arbitrated based on heat (lower
+ * Comparator for sorting Weapons (Mounted that have WeaponTypes) by damage with ties arbitrated based on heat (lower
  * heat wins).
  *
  * @author arlith
@@ -60,29 +60,29 @@ public class WeaponComparatorDamage implements Comparator<WeaponMounted> {
     }
 
     @Override
-    public int compare(WeaponMounted obj1, WeaponMounted obj2) {
-        WeaponType weap1 = obj1.getType();
-        WeaponType weap2 = obj2.getType();
+    public int compare(WeaponMounted lhs, WeaponMounted rhs) {
+        WeaponType leftWeaponType = lhs.getType();
+        WeaponType rightWeaponType = rhs.getType();
 
         // If types are equal, pick front facing first
-        if (weap1 == weap2) {
-            if (obj1.isRearMounted()) {
+        if (leftWeaponType == rightWeaponType) {
+            if (lhs.isRearMounted()) {
                 return -1 * ascending;
-            } else if (obj2.isRearMounted()) {
+            } else if (rhs.isRearMounted()) {
                 return ascending;
             } else {
                 return 0;
             }
         }
         // Pick the weapon with the highest damage
-        if (weap1.getDamage() > weap2.getDamage()) {
+        if (leftWeaponType.getDamage() > rightWeaponType.getDamage()) {
             return ascending;
-        } else if (weap1.getDamage() < weap2.getDamage()) {
+        } else if (leftWeaponType.getDamage() < rightWeaponType.getDamage()) {
             return -1 * ascending;
         } else { // Break ties with heat
-            if (weap1.getHeat() > weap2.getHeat()) {
+            if (leftWeaponType.getHeat() > rightWeaponType.getHeat()) {
                 return ascending;
-            } else if (weap1.getHeat() < weap2.getHeat()) {
+            } else if (leftWeaponType.getHeat() < rightWeaponType.getHeat()) {
                 return -1 * ascending;
             } else {
                 return 0;

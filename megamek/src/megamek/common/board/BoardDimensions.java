@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,8 +34,8 @@
 
 package megamek.common.board;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Type-safe, immutable, dimensions class for handling board sizes.
@@ -43,24 +43,23 @@ import java.util.Objects;
  * @author Edward Cullen
  * @author Simon (Juliez)
  */
-public class BoardDimensions implements Serializable, Comparable<BoardDimensions> {
+public record BoardDimensions(int w, int h) implements Serializable, Comparable<BoardDimensions> {
 
+    @Serial
     private static final long serialVersionUID = -3562335656969231217L;
 
     /**
      * Construct a new BoardDimensions object.
      *
-     * @param width  The width
-     * @param height The height
+     * @param w The width
+     * @param h The height
      *
      * @throws IllegalArgumentException If either width or height is less than 1.
      */
-    public BoardDimensions(final int width, final int height) {
-        if ((width < 1) || (height < 1)) {
+    public BoardDimensions {
+        if ((w < 1) || (h < 1)) {
             throw new IllegalArgumentException("width and height must be positive non-zero values");
         }
-        w = width;
-        h = height;
     }
 
     /** @return The board width. */
@@ -93,11 +92,6 @@ public class BoardDimensions implements Serializable, Comparable<BoardDimensions
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(w, h);
-    }
-
-    @Override
     public String toString() {
         return w + " x " + h;
     }
@@ -110,6 +104,4 @@ public class BoardDimensions implements Serializable, Comparable<BoardDimensions
         return (width() - o.width() != 0) ? width() - o.width() : height() - o.height();
     }
 
-    private final int w;
-    private final int h;
 }

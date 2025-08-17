@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,7 +41,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 
 /**
- * Comparator for sorting Weapons (Mounteds that have WeaponTypes) by Range.
+ * Comparator for sorting Weapons (Mounted that have WeaponTypes) by Range.
  *
  * @author arlith
  */
@@ -60,22 +60,22 @@ public class WeaponComparatorRange implements Comparator<WeaponMounted> {
     }
 
     @Override
-    public int compare(WeaponMounted obj1, WeaponMounted obj2) {
-        WeaponType weap1 = obj1.getType();
-        WeaponType weap2 = obj2.getType();
+    public int compare(WeaponMounted lhs, WeaponMounted rhs) {
+        WeaponType leftWeaponType = lhs.getType();
+        WeaponType rightWeaponType = rhs.getType();
 
         // If types are equal, pick front facing first
-        if (weap1 == weap2) {
-            if (obj1.isRearMounted()) {
+        if (leftWeaponType == rightWeaponType) {
+            if (lhs.isRearMounted()) {
                 return -1 * ascending;
-            } else if (obj2.isRearMounted()) {
+            } else if (rhs.isRearMounted()) {
                 return ascending;
             } else {
                 return 0;
             }
         }
-        int[] ranges1 = weap1.getRanges(obj1);
-        int[] ranges2 = weap2.getRanges(obj2);
+        int[] ranges1 = leftWeaponType.getRanges(lhs);
+        int[] ranges2 = rightWeaponType.getRanges(rhs);
         // Start by comparing the short range brackets (*not* the minimum
         // ranges at index 0), then work outwards from there as needed.
         for (int r = 1; r < ranges1.length; r++) {
@@ -86,9 +86,9 @@ public class WeaponComparatorRange implements Comparator<WeaponMounted> {
             }
         }
         // If we get here, all ranges are equals, arbitrate with heat
-        if (weap1.getHeat() > weap2.getHeat()) {
+        if (leftWeaponType.getHeat() > rightWeaponType.getHeat()) {
             return ascending;
-        } else if (weap1.getHeat() < weap2.getHeat()) {
+        } else if (leftWeaponType.getHeat() < rightWeaponType.getHeat()) {
             return -1 * ascending;
         } else {
             return 0;

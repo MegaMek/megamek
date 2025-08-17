@@ -158,7 +158,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
                                 nextToken();
                                 parseMail();
                                 break;
-                            case PLAYERNAME:
+                            case PLAYER_NAME:
                                 nextToken();
                                 parsePlayerName();
                                 break;
@@ -170,11 +170,11 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
                                 nextToken();
                                 parseSaveGame();
                                 break;
-                            case DATADIR:
+                            case DATA_DIR:
                                 nextToken();
                                 processDataDir();
                                 break;
-                            case USEDEFAULTS:
+                            case USE_DEFAULTS:
                                 useDefaults = true;
                                 break;
                         }

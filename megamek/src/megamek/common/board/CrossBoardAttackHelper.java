@@ -33,10 +33,10 @@
 
 package megamek.common.board;
 
-import megamek.common.game.Game;
 import megamek.common.HexTarget;
-import megamek.common.game.IGame;
 import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.game.IGame;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 
@@ -47,7 +47,7 @@ public final class CrossBoardAttackHelper {
      * the same board.
      *
      * <P>Note: Returns false when attacker and target are on the same board! Also returns false when attacker or
-     * target do not have a valid position, i.e. are undeployed or offboard or transported.</P>
+     * target do not have a valid position, i.e. are un-deployed or offboard or transported.</P>
      *
      * <P>Note: This method is strict in that when it returns false, no attack is possible. It
      * may however return true when an attack is possible in principle but may still be hindered by some circumstance.
@@ -89,7 +89,7 @@ public final class CrossBoardAttackHelper {
         // A2A attacks are possible between ground map and atmospheric map
         if (Compute.isAirToAir(game, attacker, target) &&
               (game.onDirectlyConnectedBoards(attacker, target) ||
-                    onGroundMapsWithinOneAtmoMap(game, attacker, target))) {
+                    onGroundMapsWithinOneAtmosphereMap(game, attacker, target))) {
             return true;
         }
 
@@ -114,7 +114,7 @@ public final class CrossBoardAttackHelper {
     /**
      * Returns true when the flying unit is in the precise hex of an atmospheric board that corresponds to the board of
      * the ground unit. In this case, e.g., the ground unit can make a G2A attack. Note that the flying and ground unit
-     * can both be target or attacker depending on the situation (i.e., order matters).
+     * can both be targeted or attacker depending on the situation (i.e., order matters).
      *
      * @param flying The flying (aero) unit
      * @param ground The ground unit
@@ -129,7 +129,7 @@ public final class CrossBoardAttackHelper {
               && game.getBoard(flying).getEmbeddedBoardAt(flying.getPosition()) == game.getBoard(ground).getBoardId();
     }
 
-    public static boolean onGroundMapsWithinOneAtmoMap(Game game, Targetable unit1, Targetable unit2) {
+    public static boolean onGroundMapsWithinOneAtmosphereMap(Game game, Targetable unit1, Targetable unit2) {
         return game.isOnGroundMap(unit1) &&
               game.isOnGroundMap(unit2) &&
               game.hasEnclosingBoard(unit1.getBoardId()) &&
@@ -210,9 +210,9 @@ public final class CrossBoardAttackHelper {
      * is measured as the distance in hexes between the ground maps on their atmospheric map multiplied by 17
      * (Board.DEFAULT_BOARD_HEIGHT). If the ground maps are not on the same atmospheric map but instead two different
      * ones within a common space map, the distance is equal to the hex distance of the atmospheric maps on the space
-     * map times 36 * 17 as each space hex measures 18 km and each atmo hex 0.5 km. If attacker and target are on the
-     * same map or one of them is not on a ground map or their maps are not connected at all (no common space map), this
-     * will return {@link Integer#MAX_VALUE}.
+     * map times 36 * 17 as each space hex measures 18 km and each atmosphere hex 0.5 km. If attacker and target are on
+     * the same map or one of them is not on a ground map or their maps are not connected at all (no common space map),
+     * this will return {@link Integer#MAX_VALUE}.
      *
      * @param attacker The attacker
      * @param target   The target (typically a hex)

@@ -8899,7 +8899,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 if (diceRoll.getIntValue() >= toHit.getValue()) {
                     // deal damage to target
-                    int damage = Compute.getAffaDamageFor(entity, fallElevation);
+                    int damage = Compute.getAccidentalFallFromAboveDamageFor(entity, fallElevation);
                     r = new Report(2220);
                     r.subject = affaTarget.getId();
                     r.addDesc(affaTarget);

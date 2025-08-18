@@ -623,9 +623,9 @@ public class ProtoMek extends Entity {
             // front mounted
             return switch (mounted.getLocation()) {
                 case LOC_TORSO -> Compute.ARC_FORWARD;
-                case LOC_RARM -> Compute.ARC_RIGHTARM;
-                case LOC_LARM -> Compute.ARC_LEFTARM;
-                case LOC_MAINGUN -> Compute.ARC_MAINGUN;
+                case LOC_RARM -> Compute.ARC_RIGHT_ARM;
+                case LOC_LARM -> Compute.ARC_LEFT_ARM;
+                case LOC_MAINGUN -> Compute.ARC_MAIN_GUN;
                 default -> Compute.ARC_360;
             };
         }

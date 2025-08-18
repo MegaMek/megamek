@@ -349,12 +349,12 @@ public class ComputeArc {
                         return true;
                     }
                     break;
-                case Compute.ARC_RIGHTARM:
+                case Compute.ARC_RIGHT_ARM:
                     if ((fa >= 300) || (fa <= 120)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_LEFTARM:
+                case Compute.ARC_LEFT_ARM:
                     if ((fa >= 240) || (fa <= 60)) {
                         return true;
                     }
@@ -364,17 +364,17 @@ public class ComputeArc {
                         return true;
                     }
                     break;
-                case Compute.ARC_RIGHTSIDE:
+                case Compute.ARC_RIGHT_SIDE:
                     if ((fa > 60) && (fa <= 120)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_LEFTSIDE:
+                case Compute.ARC_LEFT_SIDE:
                     if ((fa < 300) && (fa >= 240)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_MAINGUN:
+                case Compute.ARC_MAIN_GUN:
                     if ((fa >= 240) || (fa <= 120)) {
                         return true;
                     }
@@ -406,42 +406,42 @@ public class ComputeArc {
                         return true;
                     }
                     break;
-                case Compute.ARC_LWING:
+                case Compute.ARC_LEFT_WING:
                     if ((fa > 300) || (fa <= 0)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_LWING_WPL:
+                case Compute.ARC_LEFT_WING_WPL:
                     if ((fa > 240) || (fa < 60)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_RWING:
+                case Compute.ARC_RIGHT_WING:
                     if ((fa >= 0) && (fa < 60)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_RWING_WPL:
+                case Compute.ARC_RIGHT_WING_WPL:
                     if ((fa > 300) || (fa < 120)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_LWINGA:
+                case Compute.ARC_LEFT_WING_AFT:
                     if ((fa >= 180) && (fa < 240)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_LWINGA_WPL:
+                case Compute.ARC_LEFT_WING_AFT_WPL:
                     if ((fa > 120) && (fa < 300)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_RWINGA:
+                case Compute.ARC_RIGHT_WING_AFT:
                     if ((fa > 120) && (fa <= 180)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_RWINGA_WPL:
+                case Compute.ARC_RIGHT_WING_AFT_WPL:
                     if ((fa > 60) && (fa < 240)) {
                         return true;
                     }
@@ -451,42 +451,42 @@ public class ComputeArc {
                         return true;
                     }
                     break;
-                case Compute.ARC_LEFTSIDE_SPHERE:
+                case Compute.ARC_LEFT_SIDE_SPHERE:
                     if ((fa > 240) || (fa < 0)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_LEFTSIDE_SPHERE_WPL:
+                case Compute.ARC_LEFT_SIDE_SPHERE_WPL:
                     if ((fa > 180) || (fa < 60)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_RIGHTSIDE_SPHERE:
+                case Compute.ARC_RIGHT_SIDE_SPHERE:
                     if ((fa > 0) && (fa < 120)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_RIGHTSIDE_SPHERE_WPL:
+                case Compute.ARC_RIGHT_SIDE_SPHERE_WPL:
                     if ((fa > 300) || (fa < 180)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_LEFTSIDEA_SPHERE:
+                case Compute.ARC_LEFT_SIDE_AFT_SPHERE:
                     if ((fa > 180) && (fa < 300)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_LEFTSIDEA_SPHERE_WPL:
+                case Compute.ARC_LEFT_SIDE_AFT_SPHERE_WPL:
                     if ((fa > 120) && (fa < 360)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_RIGHTSIDEA_SPHERE:
+                case Compute.ARC_RIGHT_SIDE_AFT_SPHERE:
                     if ((fa > 60) && (fa < 180)) {
                         return true;
                     }
                     break;
-                case Compute.ARC_RIGHTSIDEA_SPHERE_WPL:
+                case Compute.ARC_RIGHT_SIDE_AFT_SPHERE_WPL:
                     if ((fa > 0) && (fa < 240)) {
                         return true;
                     }

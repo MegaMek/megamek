@@ -475,9 +475,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
             clubArc = Compute.ARC_FORWARD;
         } else {
             if (club.getLocation() == Mek.LOC_LARM) {
-                clubArc = Compute.ARC_LEFTARM;
+                clubArc = Compute.ARC_LEFT_ARM;
             } else if (armMounted) {
-                clubArc = Compute.ARC_RIGHTARM;
+                clubArc = Compute.ARC_RIGHT_ARM;
             } else if (club.isRearMounted()) {
                 clubArc = Compute.ARC_REAR;
             } else {

@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,18 +44,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.board.Coords;
 import megamek.common.ECMInfo;
 import megamek.common.ECMInfo.ECCMComparator;
 import megamek.common.ECMInfo.ECMComparator;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Coords;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 import megamek.server.SmokeCloud;
 
 /**
@@ -69,11 +69,6 @@ public class ComputeECM {
      * This method checks to see if a line from a to b is affected by any ECM field (including Angel) of the enemy of
      * ae
      *
-     * @param ae
-     * @param a
-     * @param b
-     *
-     * @return
      */
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b) {
         return isAffectedByECM(ae, a, b, null);
@@ -83,12 +78,8 @@ public class ComputeECM {
      * This method checks to see if a line from a to b is affected by any ECM field (including Angel) of the enemy of
      * ae
      *
-     * @param ae
-     * @param a
-     * @param b
      * @param allECMInfo A collection of ECMInfo for each Entity in the Game.
      *
-     * @return
      */
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b,
           List<ECMInfo> allECMInfo) {
@@ -99,11 +90,6 @@ public class ComputeECM {
     /**
      * This method checks to see if a line from a to b is affected by an ECCM field of the enemy of ae.
      *
-     * @param ae
-     * @param a
-     * @param b
-     *
-     * @return
      */
     public static boolean isAffectedByECCM(Entity ae, Coords a, Coords b) {
         ECMInfo ecmInfo = getECMEffects(ae, a, b, false, null);
@@ -114,13 +100,8 @@ public class ComputeECM {
      * This method checks to see if a line from a to b is affected by an Angel ECM field of the enemy of ae (ignoring
      * other kinds of ECM).
      *
-     * @param ae
-     * @param a
-     * @param b
-     *
-     * @return count that shows if you are in an friendly ECCM field positive number means you are in an friendly ECCM
-     *       field Negative number means you are in a enemy ECM field 0 means you are not effect by enemy or friendly
-     *       fields.
+     * @return shows if you are in a friendly ECCM field positive number means you are in a friendly ECCM field Negative
+     *       number means you are in an enemy ECM field 0 means you are not affect by enemy or friendly fields.
      */
     public static boolean isAffectedByAngelECM(Entity ae, Coords a, Coords b) {
         return isAffectedByAngelECM(ae, a, b, null);
@@ -130,14 +111,10 @@ public class ComputeECM {
      * This method checks to see if a line from a to b is affected by an Angel ECM field of the enemy of ae (ignoring
      * other kinds of ECM).
      *
-     * @param ae
-     * @param a
-     * @param b
      * @param allECMInfo A collection of ECMInfo for each Entity in the Game.
      *
-     * @return count that shows if you are in an friendly ECCM field positive number means you are in an friendly ECCM
-     *       field Negative number means you are in a enemy ECM field 0 means you are not effect by enemy or friendly
-     *       fields.
+     * @return shows if you are in a friendly ECCM field positive number means you are in a friendly ECCM field Negative
+     *       number means you are in an enemy ECM field 0 means you are not affect by enemy or friendly fields.
      */
     public static boolean isAffectedByAngelECM(Entity ae, Coords a, Coords b,
           List<ECMInfo> allECMInfo) {
@@ -251,7 +228,7 @@ public class ComputeECM {
             } else if (((x % 3) == 2)) {
                 // if we are looking at the second split hex then both this one
                 // and the prior need to have ECM
-                // becaue the advantage should go to the defender
+                // because the advantage should go to the defender
                 if ((ecmStatus > 0) && !eccmPresent && (prevEcmStatus > 0)
                       && !prevEccmPresent) {
                     totalECM++;
@@ -491,11 +468,6 @@ public class ComputeECM {
     /**
      * Returns the total ECM effects on the supplied unit.
      *
-     * @param ae
-     * @param a
-     * @param b
-     *
-     * @return
      */
     public static @Nullable ECMInfo getECMEffects(Entity ae, @Nullable Coords a, @Nullable Coords b,
           boolean compareECM,
@@ -551,9 +523,6 @@ public class ComputeECM {
      * Returns the total friendly ECM effects on the supplied unit.
      *
      * @param affectedEntity The entity to check.
-     * @param allEcmInfo
-     *
-     * @return
      */
     public static @Nullable ECMInfo getFriendlyECMEffects(Entity affectedEntity, @Nullable List<ECMInfo> allEcmInfo) {
         if (allEcmInfo == null) {

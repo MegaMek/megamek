@@ -42,9 +42,6 @@ import java.util.*;
 
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.dialogs.unitSelectorDialogs.AbstractUnitSelectorDialog;
-import megamek.common.game.Game;
-import megamek.common.interfaces.ITechnology.Faction;
-import megamek.common.loaders.MapSettings;
 import megamek.common.SimpleTechLevel;
 import megamek.common.Team;
 import megamek.common.TechConstants;
@@ -59,6 +56,9 @@ import megamek.common.equipment.BombType.BombTypeEnum;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ITechnology.Faction;
+import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.BTObject;
@@ -1278,7 +1278,7 @@ public class TeamLoadOutGenerator {
     private void iterativelyLoadAmmo(Entity e, MunitionTree mt, List<AmmoMounted> binList, String binName,
           String techBase, String faction) {
         // Copy counts that we will update, otherwise mt entry gets edited permanently.
-        HashMap<String, Integer> counts = new HashMap<>(mt.getCountsOfAmmosForKey(e.getFullChassis(),
+        HashMap<String, Integer> counts = new HashMap<>(mt.getCountsOfAmmunitionForKey(e.getFullChassis(),
               e.getModel(),
               e.getCrew().getName(0),
               binName));

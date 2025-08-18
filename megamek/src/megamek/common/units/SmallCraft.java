@@ -39,7 +39,6 @@ import java.util.Map;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.HitData;
-import megamek.common.util.RoundWeight;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
@@ -56,6 +55,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.RoundWeight;
 
 /**
  * @author Jay Lawson
@@ -637,31 +637,31 @@ public class SmallCraft extends Aero {
                 case LOC_RWING:
                     if (mounted.isRearMounted()) {
                         if (mounted.isInWaypointLaunchMode()) {
-                            arc = Compute.ARC_RWINGA_WPL;
+                            arc = Compute.ARC_RIGHT_WING_AFT_WPL;
                             break;
                         }
-                        arc = Compute.ARC_RWINGA;
+                        arc = Compute.ARC_RIGHT_WING_AFT;
                     } else {
                         if (mounted.isInWaypointLaunchMode()) {
-                            arc = Compute.ARC_RWING_WPL;
+                            arc = Compute.ARC_RIGHT_WING_WPL;
                             break;
                         }
-                        arc = Compute.ARC_RWING;
+                        arc = Compute.ARC_RIGHT_WING;
                     }
                     break;
                 case LOC_LWING:
                     if (mounted.isRearMounted()) {
                         if (mounted.isInWaypointLaunchMode()) {
-                            arc = Compute.ARC_LWINGA_WPL;
+                            arc = Compute.ARC_LEFT_WING_AFT_WPL;
                             break;
                         }
-                        arc = Compute.ARC_LWINGA;
+                        arc = Compute.ARC_LEFT_WING_AFT;
                     } else {
                         if (mounted.isInWaypointLaunchMode()) {
-                            arc = Compute.ARC_LWING_WPL;
+                            arc = Compute.ARC_LEFT_WING_WPL;
                             break;
                         }
-                        arc = Compute.ARC_LWING;
+                        arc = Compute.ARC_LEFT_WING;
                     }
                     break;
                 case LOC_AFT:
@@ -687,31 +687,31 @@ public class SmallCraft extends Aero {
                     case LOC_RWING:
                         if (mounted.isRearMounted()) {
                             if (mounted.isInWaypointLaunchMode()) {
-                                arc = Compute.ARC_RIGHTSIDEA_SPHERE_WPL;
+                                arc = Compute.ARC_RIGHT_SIDE_AFT_SPHERE_WPL;
                                 break;
                             }
-                            arc = Compute.ARC_RIGHTSIDEA_SPHERE;
+                            arc = Compute.ARC_RIGHT_SIDE_AFT_SPHERE;
                         } else {
                             if (mounted.isInWaypointLaunchMode()) {
-                                arc = Compute.ARC_RIGHTSIDE_SPHERE_WPL;
+                                arc = Compute.ARC_RIGHT_SIDE_SPHERE_WPL;
                                 break;
                             }
-                            arc = Compute.ARC_RIGHTSIDE_SPHERE;
+                            arc = Compute.ARC_RIGHT_SIDE_SPHERE;
                         }
                         break;
                     case LOC_LWING:
                         if (mounted.isRearMounted()) {
                             if (mounted.isInWaypointLaunchMode()) {
-                                arc = Compute.ARC_LEFTSIDEA_SPHERE_WPL;
+                                arc = Compute.ARC_LEFT_SIDE_AFT_SPHERE_WPL;
                                 break;
                             }
-                            arc = Compute.ARC_LEFTSIDEA_SPHERE;
+                            arc = Compute.ARC_LEFT_SIDE_AFT_SPHERE;
                         } else {
                             if (mounted.isInWaypointLaunchMode()) {
-                                arc = Compute.ARC_LEFTSIDE_SPHERE_WPL;
+                                arc = Compute.ARC_LEFT_SIDE_SPHERE_WPL;
                                 break;
                             }
-                            arc = Compute.ARC_LEFTSIDE_SPHERE;
+                            arc = Compute.ARC_LEFT_SIDE_SPHERE;
                         }
                         break;
                     case LOC_AFT:

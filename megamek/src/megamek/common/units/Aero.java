@@ -1210,16 +1210,16 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 break;
             case LOC_RWING:
                 if (mounted.isRearMounted()) {
-                    arc = Compute.ARC_RWINGA;
+                    arc = Compute.ARC_RIGHT_WING_AFT;
                 } else {
-                    arc = Compute.ARC_RWING;
+                    arc = Compute.ARC_RIGHT_WING;
                 }
                 break;
             case LOC_LWING:
                 if (mounted.isRearMounted()) {
-                    arc = Compute.ARC_LWINGA;
+                    arc = Compute.ARC_LEFT_WING_AFT;
                 } else {
-                    arc = Compute.ARC_LWING;
+                    arc = Compute.ARC_LEFT_WING;
                 }
                 break;
             case LOC_AFT:

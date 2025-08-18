@@ -1082,7 +1082,7 @@ public class Tank extends Entity {
                 if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_RIGHT_BROADSIDE;
                 }
-                return Compute.ARC_RIGHTSIDE;
+                return Compute.ARC_RIGHT_SIDE;
             case LOC_LEFT:
                 if (mounted.isSponsonTurretMounted()) {
                     return Compute.ARC_SPONSON_TURRET_LEFT;
@@ -1093,7 +1093,7 @@ public class Tank extends Entity {
                 if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_LEFT_BROADSIDE;
                 }
-                return Compute.ARC_LEFTSIDE;
+                return Compute.ARC_LEFT_SIDE;
             case LOC_REAR:
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_REAR;

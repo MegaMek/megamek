@@ -510,9 +510,9 @@ public class FireControl {
         // Check if target is within arc
         final int arc;
         if (PhysicalAttackType.LEFT_PUNCH == attackType) {
-            arc = Compute.ARC_LEFTARM;
+            arc = Compute.ARC_LEFT_ARM;
         } else if (PhysicalAttackType.RIGHT_PUNCH == attackType) {
-            arc = Compute.ARC_RIGHTARM;
+            arc = Compute.ARC_RIGHT_ARM;
         } else {
             arc = Compute.ARC_FORWARD; // assume kick
         }

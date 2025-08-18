@@ -1464,23 +1464,23 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 break;
             case LOC_RT:
                 if (mounted.isRearMounted()) {
-                    arc = Compute.ARC_RWINGA;
+                    arc = Compute.ARC_RIGHT_WING_AFT;
                 } else {
-                    arc = Compute.ARC_RWING;
+                    arc = Compute.ARC_RIGHT_WING;
                 }
                 break;
             case LOC_LT:
                 if (mounted.isRearMounted()) {
-                    arc = Compute.ARC_LWINGA;
+                    arc = Compute.ARC_LEFT_WING_AFT;
                 } else {
-                    arc = Compute.ARC_LWING;
+                    arc = Compute.ARC_LEFT_WING;
                 }
                 break;
             case LOC_RARM:
-                arc = Compute.ARC_RWING;
+                arc = Compute.ARC_RIGHT_WING;
                 break;
             case LOC_LARM:
-                arc = Compute.ARC_LWING;
+                arc = Compute.ARC_LEFT_WING;
                 break;
             case LOC_RLEG:
             case LOC_LLEG:

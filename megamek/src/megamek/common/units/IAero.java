@@ -647,22 +647,22 @@ public interface IAero {
      */
     default int rollArcs(int arc) {
         if (isRolled()) {
-            if (arc == Compute.ARC_LWING) {
-                return Compute.ARC_RWING;
-            } else if (arc == Compute.ARC_RWING) {
-                return Compute.ARC_LWING;
-            } else if (arc == Compute.ARC_LWINGA) {
-                return Compute.ARC_RWINGA;
-            } else if (arc == Compute.ARC_RWINGA) {
-                return Compute.ARC_LWINGA;
-            } else if (arc == Compute.ARC_LEFTSIDE_SPHERE) {
-                return Compute.ARC_RIGHTSIDE_SPHERE;
-            } else if (arc == Compute.ARC_RIGHTSIDE_SPHERE) {
-                return Compute.ARC_LEFTSIDE_SPHERE;
-            } else if (arc == Compute.ARC_LEFTSIDEA_SPHERE) {
-                return Compute.ARC_RIGHTSIDEA_SPHERE;
-            } else if (arc == Compute.ARC_RIGHTSIDEA_SPHERE) {
-                return Compute.ARC_LEFTSIDEA_SPHERE;
+            if (arc == Compute.ARC_LEFT_WING) {
+                return Compute.ARC_RIGHT_WING;
+            } else if (arc == Compute.ARC_RIGHT_WING) {
+                return Compute.ARC_LEFT_WING;
+            } else if (arc == Compute.ARC_LEFT_WING_AFT) {
+                return Compute.ARC_RIGHT_WING_AFT;
+            } else if (arc == Compute.ARC_RIGHT_WING_AFT) {
+                return Compute.ARC_LEFT_WING_AFT;
+            } else if (arc == Compute.ARC_LEFT_SIDE_SPHERE) {
+                return Compute.ARC_RIGHT_SIDE_SPHERE;
+            } else if (arc == Compute.ARC_RIGHT_SIDE_SPHERE) {
+                return Compute.ARC_LEFT_SIDE_SPHERE;
+            } else if (arc == Compute.ARC_LEFT_SIDE_AFT_SPHERE) {
+                return Compute.ARC_RIGHT_SIDE_AFT_SPHERE;
+            } else if (arc == Compute.ARC_RIGHT_SIDE_AFT_SPHERE) {
+                return Compute.ARC_LEFT_SIDE_AFT_SPHERE;
             } else if (arc == Compute.ARC_LEFT_BROADSIDE) {
                 return Compute.ARC_RIGHT_BROADSIDE;
             } else if (arc == Compute.ARC_RIGHT_BROADSIDE) {

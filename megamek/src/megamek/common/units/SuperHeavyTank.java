@@ -36,14 +36,14 @@ package megamek.common.units;
 
 import java.util.ArrayList;
 
-import megamek.common.board.Board;
-import megamek.common.board.Coords;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.LosEffects;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.Mounted;
@@ -423,7 +423,7 @@ public class SuperHeavyTank extends Tank {
                 if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_RIGHT_BROADSIDE;
                 }
-                return Compute.ARC_RIGHTSIDE;
+                return Compute.ARC_RIGHT_SIDE;
             case LOC_FRONTLEFT:
             case LOC_REARLEFT:
                 if (mounted.isSponsonTurretMounted()) {
@@ -435,7 +435,7 @@ public class SuperHeavyTank extends Tank {
                 if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_LEFT_BROADSIDE;
                 }
-                return Compute.ARC_LEFTSIDE;
+                return Compute.ARC_LEFT_SIDE;
             case LOC_REAR:
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_REAR;

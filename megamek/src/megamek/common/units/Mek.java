@@ -1896,8 +1896,8 @@ public abstract class Mek extends Entity {
         // front mounted
         return switch (mounted.getLocation()) {
             case LOC_HEAD, LOC_CT, LOC_RT, LOC_LT, LOC_RLEG, LOC_LLEG -> Compute.ARC_FORWARD;
-            case LOC_RARM -> getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_RIGHTARM;
-            case LOC_LARM -> getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_LEFTARM;
+            case LOC_RARM -> getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_RIGHT_ARM;
+            case LOC_LARM -> getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_LEFT_ARM;
             default -> Compute.ARC_360;
         };
     }

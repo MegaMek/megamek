@@ -37,8 +37,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import megamek.common.ECMInfo;
-import megamek.common.units.Entity;
 import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 
 /**
@@ -112,12 +112,9 @@ public class ComputeC3Spotter {
             return false;
         }
 
-        if (!attacker.isLargeCraft() && !game.isOnGroundMap(attacker)) {
-            // Assuming that C3, C3i systems only work on ground maps, TW p.131. Nova can be mounted on some aeros
-            // but only works when "interacting with ground units", IO:AE p.60
-            return false;
-        }
-        return true;
+        // Assuming that C3, C3i systems only work on ground maps, TW p.131. Nova can be mounted on some aeros
+        // but only works when "interacting with ground units", IO:AE p.60
+        return attacker.isLargeCraft() || game.isOnGroundMap(attacker);
     }
 
     /**

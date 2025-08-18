@@ -132,10 +132,11 @@ public class Warship extends Jumpship {
         final Mounted<?> mounted = getEquipment(weaponNumber);
         int arc = switch (mounted.getLocation()) {
             case LOC_NOSE -> mounted.isInWaypointLaunchMode() ? ARC_NOSE_WPL : ARC_NOSE;
-            case LOC_FRS -> mounted.isInWaypointLaunchMode() ? ARC_RIGHTSIDE_SPHERE_WPL : ARC_RIGHTSIDE_SPHERE;
-            case LOC_FLS -> mounted.isInWaypointLaunchMode() ? ARC_LEFTSIDE_SPHERE_WPL : ARC_LEFTSIDE_SPHERE;
-            case LOC_ARS -> mounted.isInWaypointLaunchMode() ? ARC_RIGHTSIDEA_SPHERE_WPL : ARC_RIGHTSIDEA_SPHERE;
-            case LOC_ALS -> mounted.isInWaypointLaunchMode() ? ARC_LEFTSIDEA_SPHERE_WPL : ARC_LEFTSIDEA_SPHERE;
+            case LOC_FRS -> mounted.isInWaypointLaunchMode() ? ARC_RIGHT_SIDE_SPHERE_WPL : ARC_RIGHT_SIDE_SPHERE;
+            case LOC_FLS -> mounted.isInWaypointLaunchMode() ? ARC_LEFT_SIDE_SPHERE_WPL : ARC_LEFT_SIDE_SPHERE;
+            case LOC_ARS ->
+                  mounted.isInWaypointLaunchMode() ? ARC_RIGHT_SIDE_AFT_SPHERE_WPL : ARC_RIGHT_SIDE_AFT_SPHERE;
+            case LOC_ALS -> mounted.isInWaypointLaunchMode() ? ARC_LEFT_SIDE_AFT_SPHERE_WPL : ARC_LEFT_SIDE_AFT_SPHERE;
             case LOC_AFT -> mounted.isInWaypointLaunchMode() ? ARC_AFT_WPL : ARC_AFT;
             case LOC_LBS -> mounted.isInWaypointLaunchMode() ? ARC_LEFT_BROADSIDE_WPL : ARC_LEFT_BROADSIDE;
             case LOC_RBS -> mounted.isInWaypointLaunchMode() ? ARC_RIGHT_BROADSIDE_WPL : ARC_RIGHT_BROADSIDE;

@@ -229,8 +229,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
         final int attackerHeight = ae.relHeight() + attHex.getLevel(); // The absolute level of the attacker's arms
         final int targetElevation = target.getElevation()
               + targHex.getLevel(); // The absolute level of the target's arms
-        final int armArc = (arm == PunchAttackAction.RIGHT) ? Compute.ARC_RIGHTARM
-              : Compute.ARC_LEFTARM;
+        final int armArc = (arm == PunchAttackAction.RIGHT) ? Compute.ARC_RIGHT_ARM
+              : Compute.ARC_LEFT_ARM;
 
         ToHitData toHit;
 

@@ -85,7 +85,7 @@ public class ComputeSideTable {
 
     private static int sideTableForEntityTarget(Entity attacker, Entity target, int calledShotType) {
         Coords attackPos = attacker.getPosition();
-        Game game = attacker.game;
+        Game game = attacker.getGame();
 
         boolean usePrior = false;
         // aeros in the same hex need to adjust position to get side table

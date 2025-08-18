@@ -1989,8 +1989,7 @@ public class Compute {
      * alter the /nova debug server command.
      */
     @Deprecated
-    public static Entity exposed_findC3Spotter(Game game, Entity attacker,
-          Targetable target) {
+    public static Entity exposed_findC3Spotter(Game game, Entity attacker, Targetable target) {
         return ComputeC3Spotter.findC3Spotter(game, attacker, target);
     }
 

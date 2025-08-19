@@ -896,7 +896,7 @@ public class EntityListFile {
             if ((entity.getGame() != null) && (entity.getC3Master() != null)) {
                 Entity entityC3MAster = entity.getGame().getEntity(entity.getC3Master().getId());
                 if (entityC3MAster.getC3UUIDAsString() != null) {
-                    output.write("\" " + MULParser.ATTR_C3MASTERIS + "=\"");
+                    output.write("\" " + MULParser.ATTR_C3_MASTER_IS + "=\"");
                     output.write(entityC3MAster.getC3UUIDAsString());
                 }
             }
@@ -966,7 +966,7 @@ public class EntityListFile {
                       '<' +
                       MULParser.ELE_CREW +
                       ' ' +
-                      MULParser.ATTR_CREWTYPE +
+                      MULParser.ATTR_CREW_TYPE +
                       "=\"");
                 output.write(crew.getCrewType().toString().toLowerCase());
                 writeCrewAttributes(output, entity, crew);
@@ -1107,19 +1107,19 @@ public class EntityListFile {
                               "\">\n");
                         output.write(indentStr(indentLvl + 2) +
                               '<' +
-                              MULParser.ELE_BAYDAMAGE +
+                              MULParser.ELE_BAY_DAMAGE +
                               '>' +
                               nextbay.getBayDamage() +
                               "</" +
-                              MULParser.ELE_BAYDAMAGE +
+                              MULParser.ELE_BAY_DAMAGE +
                               ">\n");
                         output.write(indentStr(indentLvl + 2) +
                               '<' +
-                              MULParser.ELE_BAYDOORS +
+                              MULParser.ELE_BAY_DOORS +
                               '>' +
                               nextbay.getCurrentDoors() +
                               "</" +
-                              MULParser.ELE_BAYDOORS +
+                              MULParser.ELE_BAY_DOORS +
                               ">\n");
                         for (Entity e : nextbay.getLoadedUnits()) {
                             output.write(indentStr(indentLvl + 2) +
@@ -1219,7 +1219,7 @@ public class EntityListFile {
                     if ((C3iEntity.getC3UUIDAsString() != null) && C3iEntity.onSameC3NetworkAs(entity, true)) {
                         output.write(indentStr(indentLvl + 1) +
                               '<' +
-                              MULParser.ELE_C3ILINK +
+                              MULParser.ELE_C3I_LINK +
                               ' ' +
                               MULParser.ATTR_LINK +
                               "=\"");
@@ -1291,7 +1291,7 @@ public class EntityListFile {
                     for (String id : aero.getEscapeCraft()) {
                         output.write(indentStr(indentLvl + 1) +
                               '<' +
-                              MULParser.ELE_ESCCRAFT +
+                              MULParser.ELE_ESCAPE_CRAFT +
                               ' ' +
                               MULParser.ATTR_ID +
                               "=\"" +
@@ -1303,7 +1303,7 @@ public class EntityListFile {
 
             if (entity instanceof SmallCraft craft) {
                 if (!craft.getNOtherCrew().isEmpty()) {
-                    output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCCREW + ">\n");
+                    output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCAPE_CREW + ">\n");
                     for (String id : craft.getNOtherCrew().keySet()) {
                         output.write(indentStr(indentLvl + 2) +
                               '<' +
@@ -1319,11 +1319,11 @@ public class EntityListFile {
                               craft.getNOtherCrew().get(id));
                         output.write("\"/>\n");
                     }
-                    output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_ESCCREW + ">\n");
+                    output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_ESCAPE_CREW + ">\n");
                 }
 
                 if (!craft.getPassengers().isEmpty()) {
-                    output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCPASS + ">\n");
+                    output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCAPE_PASSENGERS + ">\n");
                     for (String id : craft.getPassengers().keySet()) {
                         output.write(indentStr(indentLvl + 2) +
                               '<' +
@@ -1339,7 +1339,7 @@ public class EntityListFile {
                               craft.getPassengers().get(id));
                         output.write("\"/>\n");
                     }
-                    output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_ESCPASS + ">\n");
+                    output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_ESCAPE_PASSENGERS + ">\n");
                 }
                 if (craft instanceof EscapePods) {
                     // Original number of pods, used to set the strength of a group of pods
@@ -1355,7 +1355,7 @@ public class EntityListFile {
 
             } else if (entity instanceof EjectedCrew eCrew) {
                 if (!eCrew.getNOtherCrew().isEmpty()) {
-                    output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCCREW + ">\n");
+                    output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCAPE_CREW + ">\n");
                     for (String id : eCrew.getNOtherCrew().keySet()) {
                         output.write(indentStr(indentLvl + 2) +
                               '<' +
@@ -1371,11 +1371,11 @@ public class EntityListFile {
                               eCrew.getNOtherCrew().get(id));
                         output.write("\"/>\n");
                     }
-                    output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_ESCCREW + ">\n");
+                    output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_ESCAPE_CREW + ">\n");
                 }
 
                 if (!eCrew.getPassengers().isEmpty()) {
-                    output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCPASS + ">\n");
+                    output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCAPE_PASSENGERS + ">\n");
                     for (String id : eCrew.getPassengers().keySet()) {
                         output.write(indentStr(indentLvl + 2) +
                               '<' +
@@ -1391,7 +1391,7 @@ public class EntityListFile {
                               eCrew.getPassengers().get(id));
                         output.write("\"/>\n");
                     }
-                    output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_ESCPASS + ">\n");
+                    output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_ESCAPE_PASSENGERS + ">\n");
                 }
                 // Original number of men
                 output.write(indentStr(indentLvl + 1) +
@@ -1468,15 +1468,15 @@ public class EntityListFile {
         output.write("\" " + MULParser.ATTR_NICK + "=\"");
         output.write(crew.getNickname(pos).replaceAll("\"", "&quot;"));
         output.write("\" " + MULParser.ATTR_GENDER + "=\"" + crew.getGender(pos).name());
-        output.write("\" " + MULParser.ATTR_CLANPILOT + "=\"" + crew.isClanPilot(pos));
+        output.write("\" " + MULParser.ATTR_CLAN_PILOT + "=\"" + crew.isClanPilot(pos));
 
         if ((null != entity.getGame()) &&
               entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
-            output.write("\" " + MULParser.ATTR_GUNNERYL + "=\"");
+            output.write("\" " + MULParser.ATTR_GUNNERY_L + "=\"");
             output.write(String.valueOf(crew.getGunneryL(pos)));
-            output.write("\" " + MULParser.ATTR_GUNNERYM + "=\"");
+            output.write("\" " + MULParser.ATTR_GUNNERY_M + "=\"");
             output.write(String.valueOf(crew.getGunneryM(pos)));
-            output.write("\" " + MULParser.ATTR_GUNNERYB + "=\"");
+            output.write("\" " + MULParser.ATTR_GUNNERY_B + "=\"");
             output.write(String.valueOf(crew.getGunneryB(pos)));
         } else {
             output.write("\" " + MULParser.ATTR_GUNNERY + "=\"");
@@ -1536,17 +1536,17 @@ public class EntityListFile {
 
     private static void writeLAMAeroAttributes(Writer output, final LAMPilot crew, boolean rpgGunnery)
           throws IOException {
-        output.write("\" " + MULParser.ATTR_GUNNERYAERO + "=\"");
+        output.write("\" " + MULParser.ATTR_GUNNERY_AERO + "=\"");
         output.write(String.valueOf(crew.getGunneryAero()));
         if (rpgGunnery) {
-            output.write("\" " + MULParser.ATTR_GUNNERYAEROL + "=\"");
+            output.write("\" " + MULParser.ATTR_GUNNERY_AERO_L + "=\"");
             output.write(String.valueOf(crew.getGunneryAeroL()));
-            output.write("\" " + MULParser.ATTR_GUNNERYAEROM + "=\"");
+            output.write("\" " + MULParser.ATTR_GUNNERY_AERO_M + "=\"");
             output.write(String.valueOf(crew.getGunneryAeroM()));
-            output.write("\" " + MULParser.ATTR_GUNNERYAEROB + "=\"");
+            output.write("\" " + MULParser.ATTR_GUNNERY_AERO_B + "=\"");
             output.write(String.valueOf(crew.getGunneryAeroB()));
         }
-        output.write("\" " + MULParser.ATTR_PILOTINGAERO + "=\"");
+        output.write("\" " + MULParser.ATTR_PILOTING_AERO + "=\"");
         output.write(String.valueOf(crew.getPilotingAero()));
     }
 
@@ -1561,17 +1561,17 @@ public class EntityListFile {
      */
     private static void writeCrewAttributes(Writer output, final Entity entity, final Crew crew) throws IOException {
         if (crew.getInitBonus() != 0) {
-            output.write("\" " + MULParser.ATTR_INITB + "=\"");
+            output.write("\" " + MULParser.ATTR_INIT_B + "=\"");
             output.write(String.valueOf(crew.getInitBonus()));
         }
         if (crew.getCommandBonus() != 0) {
-            output.write("\" " + MULParser.ATTR_COMMANDB + "=\"");
+            output.write("\" " + MULParser.ATTR_COMMAND_B + "=\"");
             output.write(String.valueOf(crew.getCommandBonus()));
         }
         output.write("\" " + MULParser.ATTR_EJECTED + "=\"");
         output.write(String.valueOf(crew.isEjected()));
         if (crew.countOptions(PilotOptions.LVL3_ADVANTAGES) > 0) {
-            output.write("\" " + MULParser.ATTR_ADVS + "=\"");
+            output.write("\" " + MULParser.ATTR_ADVANTAGES + "=\"");
             output.write(String.valueOf(crew.getOptionList("::", PilotOptions.LVL3_ADVANTAGES)));
         }
         if (crew.countOptions(PilotOptions.EDGE_ADVANTAGES) > 0) {
@@ -1584,47 +1584,47 @@ public class EntityListFile {
         }
         if (entity instanceof Mek) {
             if (((Mek) entity).isAutoEject()) {
-                output.write("\" " + MULParser.ATTR_AUTOEJECT + "=\"true");
+                output.write("\" " + MULParser.ATTR_AUTO_EJECT + "=\"true");
             } else {
-                output.write("\" " + MULParser.ATTR_AUTOEJECT + "=\"false");
+                output.write("\" " + MULParser.ATTR_AUTO_EJECT + "=\"false");
             }
             if ((null != entity.getGame()) &&
                   (entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION))) {
                 if (((Mek) entity).isCondEjectAmmo()) {
-                    output.write("\" " + MULParser.ATTR_CONDEJECTAMMO + "=\"true");
+                    output.write("\" " + MULParser.ATTR_COND_EJECT_AMMO + "=\"true");
                 } else {
-                    output.write("\" " + MULParser.ATTR_CONDEJECTAMMO + "=\"false");
+                    output.write("\" " + MULParser.ATTR_COND_EJECT_AMMO + "=\"false");
                 }
                 if (((Mek) entity).isCondEjectEngine()) {
-                    output.write("\" " + MULParser.ATTR_CONDEJECTENGINE + "=\"true");
+                    output.write("\" " + MULParser.ATTR_COND_EJECT_ENGINE + "=\"true");
                 } else {
-                    output.write("\" " + MULParser.ATTR_CONDEJECTENGINE + "=\"false");
+                    output.write("\" " + MULParser.ATTR_COND_EJECT_ENGINE + "=\"false");
                 }
                 if (((Mek) entity).isCondEjectCTDest()) {
-                    output.write("\" " + MULParser.ATTR_CONDEJECTCTDEST + "=\"true");
+                    output.write("\" " + MULParser.ATTR_COND_EJECT_CT_DEST + "=\"true");
                 } else {
-                    output.write("\" " + MULParser.ATTR_CONDEJECTCTDEST + "=\"false");
+                    output.write("\" " + MULParser.ATTR_COND_EJECT_CT_DEST + "=\"false");
                 }
                 if (((Mek) entity).isCondEjectHeadshot()) {
-                    output.write("\" " + MULParser.ATTR_CONDEJECTHEADSHOT + "=\"true");
+                    output.write("\" " + MULParser.ATTR_COND_EJECT_HEAD_SHOT + "=\"true");
                 } else {
-                    output.write("\" " + MULParser.ATTR_CONDEJECTHEADSHOT + "=\"false");
+                    output.write("\" " + MULParser.ATTR_COND_EJECT_HEAD_SHOT + "=\"false");
                 }
             }
         }
     }
 
     private static String getTurretLockedString(Tank e) {
-        String retval = "      <" + MULParser.ELE_TURRETLOCK + ' ' + MULParser.ATTR_DIRECTION + "=\"";
+        String retval = "      <" + MULParser.ELE_TURRET_LOCK + ' ' + MULParser.ATTR_DIRECTION + "=\"";
         retval = retval + e.getSecondaryFacing();
         retval = retval + "\"/>\n";
         return retval;
     }
 
     private static String getMovementString(Tank e) {
-        String retVal = "      <" + MULParser.ELE_MOTIVE + ' ' + MULParser.ATTR_MDAMAGE + "=\"";
+        String retVal = "      <" + MULParser.ELE_MOTIVE + ' ' + MULParser.ATTR_DAMAGE + "=\"";
         retVal = retVal + e.getMotiveDamage();
-        retVal = retVal + "\" " + MULParser.ATTR_MPENALTY + "=\"";
+        retVal = retVal + "\" " + MULParser.ATTR_PENALTY + "=\"";
         retVal = retVal + e.getMotivePenalty();
         retVal = retVal + "\"/>\n";
         return retVal;
@@ -1633,7 +1633,7 @@ public class EntityListFile {
     // Aero crits
     private static String getAeroCritString(Aero a) {
 
-        String retVal = "      <" + MULParser.ELE_AEROCRIT;
+        String retVal = "      <" + MULParser.ELE_AERO_CRIT;
         String critVal = "";
 
         // crits
@@ -1693,7 +1693,7 @@ public class EntityListFile {
 
     // Dropship crits
     private static String getDropshipCritString(Dropship a) {
-        String retVal = "      <" + MULParser.ELE_DROPCRIT;
+        String retVal = "      <" + MULParser.ELE_DROP_CRIT;
         String critVal = "";
 
         // crits
@@ -1701,7 +1701,7 @@ public class EntityListFile {
             critVal = critVal + ' ' + MULParser.ATTR_DOCKING_COLLAR + "=\"" + MULParser.VALUE_NONE + '"';
         }
         if (a.isKFBoomDamaged()) {
-            critVal = critVal + ' ' + MULParser.ATTR_KFBOOM + "=\"" + MULParser.VALUE_NONE + '"';
+            critVal = critVal + ' ' + MULParser.ATTR_KF_BOOM + "=\"" + MULParser.VALUE_NONE + '"';
         }
 
         if (!critVal.isBlank()) {
@@ -1718,7 +1718,7 @@ public class EntityListFile {
     // Tank crits
     private static String getTankCritString(Tank t) {
 
-        String retVal = "      <" + MULParser.ELE_TANKCRIT;
+        String retVal = "      <" + MULParser.ELE_TANK_CRIT;
         String critVal = "";
 
         // crits

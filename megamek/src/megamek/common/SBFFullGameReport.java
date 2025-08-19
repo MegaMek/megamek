@@ -56,7 +56,7 @@ public class SBFFullGameReport implements FullGameReport<SBFReportEntry> {
     }
 
     @Override
-    public boolean hasReportsforRound(int round) {
+    public boolean hasReportsForRound(int round) {
         return fullReport.containsKey(round);
     }
 

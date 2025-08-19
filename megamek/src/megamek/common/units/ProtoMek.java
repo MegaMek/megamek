@@ -48,6 +48,10 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.cost.ProtoMekCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
@@ -332,69 +336,69 @@ public class ProtoMek extends Entity {
         };
     }
 
-    public static final TechAdvancement TA_STANDARD_PROTOMEK = new TechAdvancement(ITechnology.TechBase.CLAN).setClanAdvancement(
+    public static final TechAdvancement TA_STANDARD_PROTOMEK = new TechAdvancement(TechBase.CLAN).setClanAdvancement(
                 3055,
                 3059,
                 3060)
           .setClanApproximate(true, false, false)
-          .setPrototypeFactions(ITechnology.Faction.CSJ)
-          .setProductionFactions(ITechnology.Faction.CSJ)
-          .setTechRating(ITechnology.TechRating.F)
-          .setAvailability(ITechnology.AvailabilityValue.X,
-                ITechnology.AvailabilityValue.X,
-                ITechnology.AvailabilityValue.E,
-                ITechnology.AvailabilityValue.D)
+          .setPrototypeFactions(Faction.CSJ)
+          .setProductionFactions(Faction.CSJ)
+          .setTechRating(TechRating.F)
+          .setAvailability(AvailabilityValue.X,
+                AvailabilityValue.X,
+                AvailabilityValue.E,
+                AvailabilityValue.D)
           .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    public static final TechAdvancement TA_QUAD = new TechAdvancement(ITechnology.TechBase.CLAN).setClanAdvancement(3075,
+    public static final TechAdvancement TA_QUAD = new TechAdvancement(TechBase.CLAN).setClanAdvancement(3075,
                 3083,
                 3100)
           .setClanApproximate(false, true, false)
-          .setPrototypeFactions(ITechnology.Faction.CLAN)
-          .setProductionFactions(ITechnology.Faction.CCC)
-          .setTechRating(ITechnology.TechRating.F)
-          .setAvailability(ITechnology.AvailabilityValue.X,
-                ITechnology.AvailabilityValue.X,
-                ITechnology.AvailabilityValue.E,
-                ITechnology.AvailabilityValue.D)
+          .setPrototypeFactions(Faction.CLAN)
+          .setProductionFactions(Faction.CCC)
+          .setTechRating(TechRating.F)
+          .setAvailability(AvailabilityValue.X,
+                AvailabilityValue.X,
+                AvailabilityValue.E,
+                AvailabilityValue.D)
           .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    public static final TechAdvancement TA_ULTRA = new TechAdvancement(ITechnology.TechBase.CLAN).setClanAdvancement(
+    public static final TechAdvancement TA_ULTRA = new TechAdvancement(TechBase.CLAN).setClanAdvancement(
                 3075,
                 3083,
                 3100)
           .setClanApproximate(false, true, false)
-          .setPrototypeFactions(ITechnology.Faction.CLAN)
-          .setProductionFactions(ITechnology.Faction.CCY)
-          .setTechRating(ITechnology.TechRating.F)
-          .setAvailability(ITechnology.AvailabilityValue.X,
-                ITechnology.AvailabilityValue.X,
-                ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.D)
+          .setPrototypeFactions(Faction.CLAN)
+          .setProductionFactions(Faction.CCY)
+          .setTechRating(TechRating.F)
+          .setAvailability(AvailabilityValue.X,
+                AvailabilityValue.X,
+                AvailabilityValue.D,
+                AvailabilityValue.D)
           .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    public static final TechAdvancement TA_GLIDER = new TechAdvancement(ITechnology.TechBase.CLAN).setClanAdvancement(
+    public static final TechAdvancement TA_GLIDER = new TechAdvancement(TechBase.CLAN).setClanAdvancement(
                 3075,
                 3084,
                 3100)
           .setClanApproximate(false, true, false)
-          .setPrototypeFactions(ITechnology.Faction.CLAN)
-          .setProductionFactions(ITechnology.Faction.CSR)
-          .setTechRating(ITechnology.TechRating.F)
-          .setAvailability(ITechnology.AvailabilityValue.X,
-                ITechnology.AvailabilityValue.X,
-                ITechnology.AvailabilityValue.E,
-                ITechnology.AvailabilityValue.E)
+          .setPrototypeFactions(Faction.CLAN)
+          .setProductionFactions(Faction.CSR)
+          .setTechRating(TechRating.F)
+          .setAvailability(AvailabilityValue.X,
+                AvailabilityValue.X,
+                AvailabilityValue.E,
+                AvailabilityValue.E)
           .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    public static final TechAdvancement TA_INTERFACE_COCKPIT = new TechAdvancement(ITechnology.TechBase.IS).setISAdvancement(
+    public static final TechAdvancement TA_INTERFACE_COCKPIT = new TechAdvancement(TechBase.IS).setISAdvancement(
                 3071,
                 ITechnology.DATE_NONE,
                 ITechnology.DATE_NONE,
                 3085)
           .setISApproximate(true)
-          .setPrototypeFactions(ITechnology.Faction.WB)
-          .setTechRating(ITechnology.TechRating.E)
-          .setAvailability(ITechnology.AvailabilityValue.X,
-                ITechnology.AvailabilityValue.X,
-                ITechnology.AvailabilityValue.F,
-                ITechnology.AvailabilityValue.X)
+          .setPrototypeFactions(Faction.WB)
+          .setTechRating(TechRating.E)
+          .setAvailability(AvailabilityValue.X,
+                AvailabilityValue.X,
+                AvailabilityValue.F,
+                AvailabilityValue.X)
           .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     @Override

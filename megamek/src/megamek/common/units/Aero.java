@@ -53,6 +53,10 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.*;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ITechnology;
@@ -276,18 +280,18 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         return UnitType.AERO;
     }
 
-    protected static final TechAdvancement TA_ASF = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(
+    protected static final TechAdvancement TA_ASF = new TechAdvancement(TechBase.ALL).setAdvancement(
                 ITechnology.DATE_NONE,
                 2470,
                 2490)
-          .setProductionFactions(ITechnology.Faction.TH)
-          .setTechRating(ITechnology.TechRating.D)
-          .setAvailability(ITechnology.AvailabilityValue.C,
-                ITechnology.AvailabilityValue.E,
-                ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.C)
+          .setProductionFactions(Faction.TH)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.C,
+                AvailabilityValue.E,
+                AvailabilityValue.D,
+                AvailabilityValue.C)
           .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    protected static final TechAdvancement TA_ASF_PRIMITIVE = new TechAdvancement(ITechnology.TechBase.IS)
+    protected static final TechAdvancement TA_ASF_PRIMITIVE = new TechAdvancement(TechBase.IS)
           // Per MUL team and per availability codes should exist to around 2781
           .setISAdvancement(Map.of(
                 AdvancementPhase.PROTOTYPE, ITechnology.DATE_ES,
@@ -297,13 +301,13 @@ public abstract class Aero extends Entity implements IAero, IBomber {
           .setISApproximate(
                 AdvancementPhase.PRODUCTION,
                 AdvancementPhase.EXTINCT)
-          .setPrototypeFactions(ITechnology.Faction.TA)
-          .setProductionFactions(ITechnology.Faction.TA)
-          .setTechRating(ITechnology.TechRating.D)
-          .setAvailability(ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.X,
-                ITechnology.AvailabilityValue.F,
-                ITechnology.AvailabilityValue.F)
+          .setPrototypeFactions(Faction.TA)
+          .setProductionFactions(Faction.TA)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.D,
+                AvailabilityValue.X,
+                AvailabilityValue.F,
+                AvailabilityValue.F)
           .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
@@ -316,23 +320,23 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     protected static final TechAdvancement[] COCKPIT_TA = {
-          new TechAdvancement(ITechnology.TechBase.ALL)
+          new TechAdvancement(TechBase.ALL)
                 .setAdvancement(Map.of(
                       AdvancementPhase.PROTOTYPE, 2460,
                       AdvancementPhase.PRODUCTION, 2470,
                       AdvancementPhase.COMMON, 2491
                 ))
                 .setApproximate(AdvancementPhase.PROTOTYPE)
-                .setPrototypeFactions(ITechnology.Faction.TH)
-                .setProductionFactions(ITechnology.Faction.TH)
-                .setTechRating(ITechnology.TechRating.C)
-                .setAvailability(ITechnology.AvailabilityValue.C,
-                      ITechnology.AvailabilityValue.C,
-                      ITechnology.AvailabilityValue.C,
-                      ITechnology.AvailabilityValue.C)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.C,
+                      AvailabilityValue.C,
+                      AvailabilityValue.C,
+                      AvailabilityValue.C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           // Standard
-          new TechAdvancement(ITechnology.TechBase.IS)
+          new TechAdvancement(TechBase.IS)
                 .setISAdvancement(Map.of(
                       AdvancementPhase.PROTOTYPE, 3065,
                       AdvancementPhase.PRODUCTION, 3070,
@@ -342,16 +346,16 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                       AdvancementPhase.COMMON, 3080
                 ))
                 .setISApproximate(AdvancementPhase.PROTOTYPE)
-                .setPrototypeFactions(ITechnology.Faction.WB)
-                .setProductionFactions(ITechnology.Faction.WB, ITechnology.Faction.CSR)
-                .setTechRating(ITechnology.TechRating.E)
-                .setAvailability(ITechnology.AvailabilityValue.X,
-                      ITechnology.AvailabilityValue.X,
-                      ITechnology.AvailabilityValue.E,
-                      ITechnology.AvailabilityValue.D)
+                .setPrototypeFactions(Faction.WB)
+                .setProductionFactions(Faction.WB, Faction.CSR)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.X,
+                      AvailabilityValue.X,
+                      AvailabilityValue.E,
+                      AvailabilityValue.D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           // Small
-          new TechAdvancement(ITechnology.TechBase.ALL)
+          new TechAdvancement(TechBase.ALL)
                 .setISAdvancement(Map.of(
                       AdvancementPhase.PROTOTYPE, 2625,
                       AdvancementPhase.PRODUCTION, 2631,
@@ -364,30 +368,30 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                       AdvancementPhase.PRODUCTION, 2631
                 ))
                 .setClanApproximate(AdvancementPhase.PROTOTYPE)
-                .setPrototypeFactions(ITechnology.Faction.TH)
-                .setProductionFactions(ITechnology.Faction.TH)
-                .setReintroductionFactions(ITechnology.Faction.FS)
-                .setTechRating(ITechnology.TechRating.D)
-                .setAvailability(ITechnology.AvailabilityValue.C,
-                      ITechnology.AvailabilityValue.F,
-                      ITechnology.AvailabilityValue.E,
-                      ITechnology.AvailabilityValue.D)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setReintroductionFactions(Faction.FS)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.C,
+                      AvailabilityValue.F,
+                      AvailabilityValue.E,
+                      AvailabilityValue.D)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           // Cockpit command console
-          new TechAdvancement(ITechnology.TechBase.ALL)
+          new TechAdvancement(TechBase.ALL)
                 .setAdvancement(Map.of(
                       AdvancementPhase.PROTOTYPE, ITechnology.DATE_ES,
                       AdvancementPhase.PRODUCTION, 2300,
                       AdvancementPhase.EXTINCT, 2520
                 ))
                 .setISApproximate(AdvancementPhase.PRODUCTION)
-                .setPrototypeFactions(ITechnology.Faction.TA)
-                .setProductionFactions(ITechnology.Faction.TA)
-                .setTechRating(ITechnology.TechRating.C)
-                .setAvailability(ITechnology.AvailabilityValue.D,
-                      ITechnology.AvailabilityValue.X,
-                      ITechnology.AvailabilityValue.X,
-                      ITechnology.AvailabilityValue.F)
+                .setPrototypeFactions(Faction.TA)
+                .setProductionFactions(Faction.TA)
+                .setTechRating(TechRating.C)
+                .setAvailability(AvailabilityValue.D,
+                      AvailabilityValue.X,
+                      AvailabilityValue.X,
+                      AvailabilityValue.F)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           // Primitive
     };

@@ -44,6 +44,11 @@ import megamek.common.Messages;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Era;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -109,78 +114,78 @@ public class Engine implements Serializable, ITechnology {
     // (MagLev from TO:AU&E pg 62)
     // The other engine types are assumed to have a value of 0 in the array
     // if not listed.
-    private static final double[][] SV_ENGINE_RATINGS = new double[NUM_ENGINE_TYPES][EquipmentType.TechRating.values().length];
+    private static final double[][] SV_ENGINE_RATINGS = new double[NUM_ENGINE_TYPES][TechRating.values().length];
 
     static {
-        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.TechRating.A.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.TechRating.B.getIndex()] = 3.0;
-        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.TechRating.C.getIndex()] = 2.0;
-        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.TechRating.D.getIndex()] = 1.5;
-        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.TechRating.E.getIndex()] = 1.3;
-        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.TechRating.F.getIndex()] = 1.0;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][TechRating.B.getIndex()] = 3.0;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][TechRating.C.getIndex()] = 2.0;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][TechRating.D.getIndex()] = 1.5;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][TechRating.E.getIndex()] = 1.3;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][TechRating.F.getIndex()] = 1.0;
 
-        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.TechRating.A.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.TechRating.B.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.TechRating.C.getIndex()] = 1.5;
-        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.TechRating.D.getIndex()] = 1.0;
-        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.TechRating.E.getIndex()] = 0.75;
-        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.TechRating.F.getIndex()] = 0.5;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][TechRating.B.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][TechRating.C.getIndex()] = 1.5;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][TechRating.D.getIndex()] = 1.0;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][TechRating.E.getIndex()] = 0.75;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][TechRating.F.getIndex()] = 0.5;
 
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.TechRating.A.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.TechRating.B.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.TechRating.C.getIndex()] = 1.2;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.TechRating.D.getIndex()] = 1.0;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.TechRating.E.getIndex()] = 0.9;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.TechRating.F.getIndex()] = 0.7;
+        SV_ENGINE_RATINGS[FUEL_CELL][TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[FUEL_CELL][TechRating.B.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[FUEL_CELL][TechRating.C.getIndex()] = 1.2;
+        SV_ENGINE_RATINGS[FUEL_CELL][TechRating.D.getIndex()] = 1.0;
+        SV_ENGINE_RATINGS[FUEL_CELL][TechRating.E.getIndex()] = 0.9;
+        SV_ENGINE_RATINGS[FUEL_CELL][TechRating.F.getIndex()] = 0.7;
 
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.TechRating.A.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.TechRating.B.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.TechRating.C.getIndex()] = 1.75;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.TechRating.D.getIndex()] = 1.5;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.TechRating.E.getIndex()] = 1.4;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.TechRating.F.getIndex()] = 1.3;
+        SV_ENGINE_RATINGS[FISSION][TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[FISSION][TechRating.B.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[FISSION][TechRating.C.getIndex()] = 1.75;
+        SV_ENGINE_RATINGS[FISSION][TechRating.D.getIndex()] = 1.5;
+        SV_ENGINE_RATINGS[FISSION][TechRating.E.getIndex()] = 1.4;
+        SV_ENGINE_RATINGS[FISSION][TechRating.F.getIndex()] = 1.3;
 
-        SV_ENGINE_RATINGS[NONE][EquipmentType.TechRating.A.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[NONE][EquipmentType.TechRating.B.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[NONE][EquipmentType.TechRating.C.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[NONE][EquipmentType.TechRating.D.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[NONE][EquipmentType.TechRating.E.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[NONE][EquipmentType.TechRating.F.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[NONE][TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[NONE][TechRating.B.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[NONE][TechRating.C.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[NONE][TechRating.D.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[NONE][TechRating.E.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[NONE][TechRating.F.getIndex()] = 0.0;
 
-        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.TechRating.A.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.TechRating.B.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.TechRating.C.getIndex()] = 0.8;
-        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.TechRating.D.getIndex()] = 0.7;
-        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.TechRating.E.getIndex()] = 0.6;
-        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.TechRating.F.getIndex()] = 0.5;
+        SV_ENGINE_RATINGS[MAGLEV][TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[MAGLEV][TechRating.B.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[MAGLEV][TechRating.C.getIndex()] = 0.8;
+        SV_ENGINE_RATINGS[MAGLEV][TechRating.D.getIndex()] = 0.7;
+        SV_ENGINE_RATINGS[MAGLEV][TechRating.E.getIndex()] = 0.6;
+        SV_ENGINE_RATINGS[MAGLEV][TechRating.F.getIndex()] = 0.5;
 
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.TechRating.A.getIndex()] = 4.0;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.TechRating.B.getIndex()] = 3.5;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.TechRating.C.getIndex()] = 3.0;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.TechRating.D.getIndex()] = 2.8;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.TechRating.E.getIndex()] = 2.6;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.TechRating.F.getIndex()] = 2.5;
+        SV_ENGINE_RATINGS[STEAM][TechRating.A.getIndex()] = 4.0;
+        SV_ENGINE_RATINGS[STEAM][TechRating.B.getIndex()] = 3.5;
+        SV_ENGINE_RATINGS[STEAM][TechRating.C.getIndex()] = 3.0;
+        SV_ENGINE_RATINGS[STEAM][TechRating.D.getIndex()] = 2.8;
+        SV_ENGINE_RATINGS[STEAM][TechRating.E.getIndex()] = 2.6;
+        SV_ENGINE_RATINGS[STEAM][TechRating.F.getIndex()] = 2.5;
 
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.TechRating.A.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.TechRating.B.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.TechRating.C.getIndex()] = 1.5;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.TechRating.D.getIndex()] = 1.2;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.TechRating.E.getIndex()] = 1.0;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.TechRating.F.getIndex()] = 0.8;
+        SV_ENGINE_RATINGS[BATTERY][TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[BATTERY][TechRating.B.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[BATTERY][TechRating.C.getIndex()] = 1.5;
+        SV_ENGINE_RATINGS[BATTERY][TechRating.D.getIndex()] = 1.2;
+        SV_ENGINE_RATINGS[BATTERY][TechRating.E.getIndex()] = 1.0;
+        SV_ENGINE_RATINGS[BATTERY][TechRating.F.getIndex()] = 0.8;
 
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.TechRating.A.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.TechRating.B.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.TechRating.C.getIndex()] = 5.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.TechRating.D.getIndex()] = 4.5;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.TechRating.E.getIndex()] = 4.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.TechRating.F.getIndex()] = 3.5;
+        SV_ENGINE_RATINGS[SOLAR][TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[SOLAR][TechRating.B.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[SOLAR][TechRating.C.getIndex()] = 5.0;
+        SV_ENGINE_RATINGS[SOLAR][TechRating.D.getIndex()] = 4.5;
+        SV_ENGINE_RATINGS[SOLAR][TechRating.E.getIndex()] = 4.0;
+        SV_ENGINE_RATINGS[SOLAR][TechRating.F.getIndex()] = 3.5;
 
-        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.TechRating.A.getIndex()] = 0.0;
-        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.TechRating.B.getIndex()] = 1.4;
-        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.TechRating.C.getIndex()] = 1.0;
-        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.TechRating.D.getIndex()] = 0.8;
-        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.TechRating.E.getIndex()] = 0.7;
-        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.TechRating.F.getIndex()] = 0.6;
+        SV_ENGINE_RATINGS[EXTERNAL][TechRating.A.getIndex()] = 0.0;
+        SV_ENGINE_RATINGS[EXTERNAL][TechRating.B.getIndex()] = 1.4;
+        SV_ENGINE_RATINGS[EXTERNAL][TechRating.C.getIndex()] = 1.0;
+        SV_ENGINE_RATINGS[EXTERNAL][TechRating.D.getIndex()] = 0.8;
+        SV_ENGINE_RATINGS[EXTERNAL][TechRating.E.getIndex()] = 0.7;
+        SV_ENGINE_RATINGS[EXTERNAL][TechRating.F.getIndex()] = 0.6;
     }
 
     public boolean engineValid;

@@ -34,8 +34,11 @@
 
 package megamek.common.weapons.battlearmor.innerSphere;
 
-import megamek.common.TechAdvancement;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.battlearmor.BAFlamerWeapon;
 
@@ -69,7 +72,7 @@ public class ISBAHeavyFlamer extends BAFlamerWeapon {
         flags = flags.or(F_FLAMER).or(F_ENERGY).or(F_BA_WEAPON)
               .or(F_BURST_FIRE).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "312, TO";
-        techAdvancement.setTechBase(TechAdvancement.TechBase.ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3070, 3073, 3075, DATE_NONE, DATE_NONE)

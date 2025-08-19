@@ -237,18 +237,18 @@ public final class HexAreaDeserializer {
                   SOUTH,
                   EAST,
                   WEST);
-            int mindistance = 0;
-            int maxdistance = 0;
+            int minDistance = 0;
+            int maxDistance = 0;
             if (node.has(MIN_DISTANCE)) {
-                mindistance = node.get(MIN_DISTANCE).intValue();
+                minDistance = node.get(MIN_DISTANCE).intValue();
             }
             if (node.has(MAX_DISTANCE)) {
-                maxdistance = node.get(MAX_DISTANCE).intValue();
+                maxDistance = node.get(MAX_DISTANCE).intValue();
             }
-            maxdistance = Math.max(maxdistance, mindistance);
+            maxDistance = Math.max(maxDistance, minDistance);
             area = new BorderHexArea(borders.contains(NORTH), borders.contains(SOUTH), borders.contains(EAST),
                   borders.contains(WEST),
-                  mindistance, maxdistance);
+                  minDistance, maxDistance);
         } else {
             List<String> borders = TriggerDeserializer.parseArrayOrSingleNode(node, NORTH, SOUTH, EAST, WEST);
             area = new BorderHexArea(borders.contains(NORTH), borders.contains(SOUTH), borders.contains(EAST),

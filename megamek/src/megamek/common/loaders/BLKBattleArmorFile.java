@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -83,7 +83,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
             throw new EntityLoadingException("Could not find chassis block.");
         }
         String chassis = dataFile.getDataAsString("chassis")[0];
-        if (chassis.toLowerCase().equals("biped")) {
+        if (chassis.equalsIgnoreCase("biped")) {
             t.setChassisType(BattleArmor.CHASSIS_TYPE_BIPED);
         } else if (chassis.equalsIgnoreCase("quad")) {
             t.setChassisType(BattleArmor.CHASSIS_TYPE_QUAD);
@@ -165,9 +165,9 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
         }
         t.recalculateTechAdvancement();
 
-        String[] abbrs = t.getLocationAbbrs();
+        String[] abbreviations = t.getLocationAbbrs();
         for (int loop = 0; loop < t.locations(); loop++) {
-            loadEquipment(t, abbrs[loop], loop);
+            loadEquipment(t, abbreviations[loop], loop);
         }
 
         if (dataFile.exists("cost")) {

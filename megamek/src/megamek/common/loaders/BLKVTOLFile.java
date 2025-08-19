@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -57,18 +57,12 @@ public class BLKVTOLFile extends BLKFile implements IMekLoader {
 
     @Override
     protected int defaultVGLFacing(int location, boolean rearFacing) {
-        switch (location) {
-            case VTOL.LOC_RIGHT:
-                return rearFacing ? 2 : 1;
-            case VTOL.LOC_REAR:
-                return 3;
-            case VTOL.LOC_LEFT:
-                return rearFacing ? 4 : 5;
-            case VTOL.LOC_FRONT:
-            case VTOL.LOC_TURRET:
-            default:
-                return 0;
-        }
+        return switch (location) {
+            case VTOL.LOC_RIGHT -> rearFacing ? 2 : 1;
+            case VTOL.LOC_REAR -> 3;
+            case VTOL.LOC_LEFT -> rearFacing ? 4 : 5;
+            default -> 0;
+        };
     }
 
     @Override
@@ -183,9 +177,9 @@ public class BLKVTOLFile extends BLKFile implements IMekLoader {
             try {
                 t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
             } catch (IllegalArgumentException ex) {
-                logger.error("While loading " + t.getShortNameRaw()
-                      + ": Could not parse ICE fuel type "
-                      + dataFile.getDataAsString("fuelType")[0]);
+                logger.error("While loading {}: Could not parse ICE fuel type {}",
+                      t.getShortNameRaw(),
+                      dataFile.getDataAsString("fuelType")[0]);
                 t.setICEFuelType(FuelType.PETROCHEMICALS);
             }
         }

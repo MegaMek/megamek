@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -61,35 +61,19 @@ public class BLKTankFile extends BLKFile implements IMekLoader {
     @Override
     protected int defaultVGLFacing(int location, boolean rearFacing) {
         if (superheavy) {
-            switch (location) {
-                case SuperHeavyTank.LOC_FRONTRIGHT:
-                    return 1;
-                case SuperHeavyTank.LOC_REARRIGHT:
-                case SuperHeavyTank.LOC_REAR:
-                    return 2;
-                case SuperHeavyTank.LOC_REARLEFT:
-                case SuperHeavyTank.LOC_FRONTLEFT:
-                    return 4;
-                case SuperHeavyTank.LOC_FRONT:
-                case SuperHeavyTank.LOC_TURRET:
-                case SuperHeavyTank.LOC_TURRET_2:
-                default:
-                    return 0;
-            }
+            return switch (location) {
+                case SuperHeavyTank.LOC_FRONTRIGHT -> 1;
+                case SuperHeavyTank.LOC_REARRIGHT, SuperHeavyTank.LOC_REAR -> 2;
+                case SuperHeavyTank.LOC_REARLEFT, SuperHeavyTank.LOC_FRONTLEFT -> 4;
+                default -> 0;
+            };
         } else {
-            switch (location) {
-                case Tank.LOC_RIGHT:
-                    return 2;
-                case Tank.LOC_REAR:
-                    return 3;
-                case Tank.LOC_LEFT:
-                    return 5;
-                case Tank.LOC_FRONT:
-                case Tank.LOC_TURRET:
-                case Tank.LOC_TURRET_2:
-                default:
-                    return 0;
-            }
+            return switch (location) {
+                case Tank.LOC_RIGHT -> 2;
+                case Tank.LOC_REAR -> 3;
+                case Tank.LOC_LEFT -> 5;
+                default -> 0;
+            };
         }
     }
 
@@ -271,9 +255,9 @@ public class BLKTankFile extends BLKFile implements IMekLoader {
             try {
                 t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
             } catch (IllegalArgumentException ex) {
-                logger.error("While loading " + t.getShortNameRaw()
-                      + ": Could not parse ICE fuel type "
-                      + dataFile.getDataAsString("fuelType")[0]);
+                logger.error("While loading {}: Could not parse ICE fuel type {}",
+                      t.getShortNameRaw(),
+                      dataFile.getDataAsString("fuelType")[0]);
                 t.setICEFuelType(FuelType.PETROCHEMICALS);
             }
         }

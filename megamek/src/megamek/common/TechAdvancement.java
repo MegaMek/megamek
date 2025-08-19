@@ -40,6 +40,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Era;
+import megamek.common.enums.Faction;
+import megamek.common.enums.FactionAffiliation;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.interfaces.ITechnology;
 
 /**

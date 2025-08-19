@@ -33,23 +33,22 @@
 
 package megamek.common.equipment.enums;
 
-import megamek.common.interfaces.ITechnology;
-import megamek.common.interfaces.ITechnology.TechRating;
+import megamek.common.enums.TechRating;
 
 /**
  * Fuel type affects costs of refueling (if tracking fuel) and possibly vehicle operating range. See StratOps, p. 179.
  */
 public enum FuelType {
     /** Currently a placeholder for "none of the others"; a better option than null */
-    NONE(0, ITechnology.TechRating.A),
+    NONE(0, TechRating.A),
     /** Fuel cell */
-    HYDROGEN(15000, ITechnology.TechRating.C),
+    HYDROGEN(15000, TechRating.C),
     /** Standard non-aerospace ICE fuel */
-    PETROCHEMICALS(1000, ITechnology.TechRating.A),
+    PETROCHEMICALS(1000, TechRating.A),
     /** Alternate ICE fuel */
-    ALCOHOL(1500, ITechnology.TechRating.A),
+    ALCOHOL(1500, TechRating.A),
     /** Alternate ICE fuel */
-    NATURAL_GAS(1200, ITechnology.TechRating.A);
+    NATURAL_GAS(1200, TechRating.A);
 
     /**
      * Cost in C-bills per ton. This is the cost for delivery to a forward military base. Costs can vary quite a bit in

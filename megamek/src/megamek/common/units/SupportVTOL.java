@@ -36,6 +36,9 @@ package megamek.common.units;
 
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.MiscType;
 

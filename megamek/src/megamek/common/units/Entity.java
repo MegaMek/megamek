@@ -77,12 +77,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeECM;
-import megamek.common.enums.AimingMode;
-import megamek.common.enums.BasementType;
-import megamek.common.enums.BuildingType;
-import megamek.common.enums.GamePhase;
-import megamek.common.enums.MPBoosters;
-import megamek.common.enums.WeaponSortOrder;
+import megamek.common.enums.*;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
@@ -284,7 +279,7 @@ public abstract class Entity extends TurnOrdered
      * Used by support vehicles to define the structural tech rating (TM pg 117). The values should come from
      * EquipmentType.TechRating.A-X.
      */
-    protected TechRating structuralTechRating = EquipmentType.TechRating.A;
+    protected TechRating structuralTechRating = TechRating.A;
 
     /**
      * Used by support vehicles to define tech rating of armor. Default value indicates that structural tech rating
@@ -1003,7 +998,7 @@ public abstract class Entity extends TurnOrdered
         return CrewType.SINGLE;
     }
 
-    protected void initMilitary() {
+    public void initMilitary() {
         military = hasViableWeapons();
     }
 

@@ -34,7 +34,9 @@
 
 package megamek.common.weapons.battlearmor.innerSphere;
 
-import megamek.common.TechAdvancement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.battlearmor.BAMGWeapon;
@@ -71,7 +73,7 @@ public class ISBAMGLight extends BAMGWeapon {
         cost = 5000;
         rulesRefs = "258, TM";
 
-        techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
+        techAdvancement.setTechBase(TechBase.IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3068);
         techAdvancement.setTechRating(TechRating.C);
         techAdvancement.setAvailability(AvailabilityValue.X,

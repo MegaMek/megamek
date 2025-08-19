@@ -36,6 +36,10 @@ package megamek.common.weapons.flamers.innerSphere;
 
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;

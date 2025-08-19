@@ -41,6 +41,12 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Era;
+import megamek.common.enums.Faction;
+import megamek.common.enums.FactionAffiliation;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.eras.Eras;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.units.Entity;

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -60,7 +60,7 @@ import megamek.logging.MMLogger;
 public class BLKMekFile extends BLKFile implements IMekLoader {
     private static final MMLogger logger = MMLogger.create(BLKMekFile.class);
 
-    // armor locatioms
+    // armor locations
     public static final int HD = 0;
     public static final int LA = 1;
     public static final int LF = 2;
@@ -85,14 +85,14 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
     @SuppressWarnings("unchecked")
     public Entity getEntity() throws EntityLoadingException {
 
-        int chassisType = 0;
+        int chassisType;
         if (!dataFile.exists("chassis_type")) {
             chassisType = 0;
         } else {
             chassisType = dataFile.getDataAsInt("chassis_type")[0];
         }
 
-        Mek mek = null;
+        Mek mek;
 
         if (chassisType == 1) {
             mek = new QuadMek();
@@ -218,16 +218,16 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
         }
 
         // load equipment stuff...
-        List<String>[] criticals = new Vector[8];
+        List<String>[] criticalSlots = new Vector[8];
 
-        criticals[Mek.LOC_HEAD] = dataFile.getDataAsVector("hd criticalSlots");
-        criticals[Mek.LOC_LARM] = dataFile.getDataAsVector("la criticalSlots");
-        criticals[Mek.LOC_RARM] = dataFile.getDataAsVector("ra criticalSlots");
-        criticals[Mek.LOC_LLEG] = dataFile.getDataAsVector("ll criticalSlots");
-        criticals[Mek.LOC_RLEG] = dataFile.getDataAsVector("rl criticalSlots");
-        criticals[Mek.LOC_LT] = dataFile.getDataAsVector("lt criticalSlots");
-        criticals[Mek.LOC_RT] = dataFile.getDataAsVector("rt criticalSlots");
-        criticals[Mek.LOC_CT] = dataFile.getDataAsVector("ct criticalSlots");
+        criticalSlots[Mek.LOC_HEAD] = dataFile.getDataAsVector("hd criticalSlots");
+        criticalSlots[Mek.LOC_LARM] = dataFile.getDataAsVector("la criticalSlots");
+        criticalSlots[Mek.LOC_RARM] = dataFile.getDataAsVector("ra criticalSlots");
+        criticalSlots[Mek.LOC_LLEG] = dataFile.getDataAsVector("ll criticalSlots");
+        criticalSlots[Mek.LOC_RLEG] = dataFile.getDataAsVector("rl criticalSlots");
+        criticalSlots[Mek.LOC_LT] = dataFile.getDataAsVector("lt criticalSlots");
+        criticalSlots[Mek.LOC_RT] = dataFile.getDataAsVector("rt criticalSlots");
+        criticalSlots[Mek.LOC_CT] = dataFile.getDataAsVector("ct criticalSlots");
 
         // prefix is "Clan " or "IS "
         String prefix;
@@ -237,9 +237,9 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
             prefix = "IS ";
         }
 
-        for (int loc = 0; loc < criticals.length; loc++) {
-            for (int c = 0; c < criticals[loc].size(); c++) {
-                String critName = criticals[loc].get(c).toString().trim();
+        for (int loc = 0; loc < criticalSlots.length; loc++) {
+            for (int c = 0; c < criticalSlots[loc].size(); c++) {
+                String critName = criticalSlots[loc].get(c).trim();
                 boolean rearMounted = false;
                 boolean turretMounted = false;
                 boolean armored = false;

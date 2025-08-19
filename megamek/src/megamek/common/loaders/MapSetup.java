@@ -35,6 +35,7 @@ package megamek.common.loaders;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,7 @@ import megamek.utilities.xml.MMXMLUtility;
 @XmlRootElement(name = "MAPSETUP")
 @XmlAccessorType(value = XmlAccessType.NONE)
 public class MapSetup implements Serializable {
+    @Serial
     private static final long serialVersionUID = 5219340035488553080L;
 
     @XmlElement(name = "BOARDWIDTH")

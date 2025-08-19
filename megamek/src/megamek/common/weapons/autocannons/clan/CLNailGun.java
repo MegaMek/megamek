@@ -34,7 +34,9 @@
 
 package megamek.common.weapons.autocannons.clan;
 
-import megamek.common.TechAdvancement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.weapons.autocannons.NailRivetGunWeapon;
 
 /**
@@ -53,7 +55,7 @@ public class CLNailGun extends NailRivetGunWeapon {
         addLookupName("CLNailRivet Gun");
         addLookupName("CLNail/Rivet Gun");
         addLookupName("CLNail Gun");
-        techAdvancement.setTechBase(TechAdvancement.TechBase.CLAN);
+        techAdvancement.setTechBase(TechBase.CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2820);
         techAdvancement.setTechRating(TechRating.C);
         techAdvancement.setAvailability(AvailabilityValue.X,

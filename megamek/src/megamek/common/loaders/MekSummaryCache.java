@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,22 +43,13 @@ import java.util.zip.ZipFile;
 
 import megamek.common.Configuration;
 import megamek.common.MPCalculationSetting;
-import megamek.common.bays.SuperHeavyVehicleBay;
 import megamek.common.TechConstants;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battleArmor.BattleArmorHandles;
-import megamek.common.bays.ASFBay;
-import megamek.common.bays.BattleArmorBay;
-import megamek.common.bays.CargoBay;
-import megamek.common.bays.HeavyVehicleBay;
-import megamek.common.bays.InfantryBay;
-import megamek.common.bays.LightVehicleBay;
-import megamek.common.bays.MekBay;
-import megamek.common.bays.ProtoMekBay;
-import megamek.common.bays.SmallCraftBay;
+import megamek.common.bays.*;
 import megamek.common.equipment.DockingCollar;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Transporter;
@@ -316,9 +307,9 @@ public class MekSummaryCache {
             }
 
             // load units from story arcs
-            File storyarcsDir = Configuration.storyarcsDir();
-            if (storyarcsDir.exists() && storyarcsDir.isDirectory()) {
-                File[] storyArcsFiles = storyarcsDir.listFiles();
+            File storyArcsDir = Configuration.storyarcsDir();
+            if (storyArcsDir.exists() && storyArcsDir.isDirectory()) {
+                File[] storyArcsFiles = storyArcsDir.listFiles();
                 if (storyArcsFiles != null) {
                     for (File file : storyArcsFiles) {
                         if (file.isDirectory()) {
@@ -491,8 +482,8 @@ public class MekSummaryCache {
         }
         ms.setTons(e.getWeight());
         if (e instanceof BattleArmor) {
-            ms.setTOweight(((BattleArmor) e).getAlternateWeight());
-            ms.setTWweight(e.getWeight());
+            ms.setTOWeight(((BattleArmor) e).getAlternateWeight());
+            ms.setTWWeight(e.getWeight());
             ms.setSuitWeight(((BattleArmor) e).getTrooperWeight());
         }
         ms.setBV(e.calculateBattleValue(true, true));
@@ -545,7 +536,7 @@ public class MekSummaryCache {
         ms.setDoomedInExtremeTemp(e.doomedInExtremeTemp());
         ms.setDoomedInVacuum(e.doomedInVacuum());
 
-        // Check to see if this entity has a cockpit, and if so, set it's type
+        // Check to see if this entity has a cockpit, and if so, set its type
         if ((e instanceof Mek)) {
             ms.setCockpitType(((Mek) e).getCockpitType());
         } else if ((e instanceof Aero)) {
@@ -738,9 +729,9 @@ public class MekSummaryCache {
         ms.setSuperHeavyVehicleBays(shvBays);
         ms.setSuperHeavyVehicleDoors(shvDoors);
         ms.setSuperHeavyVehicleUnits(shvUnits);
-        ms.setDropshuttleBays(dBays);
-        ms.setDropshuttleDoors(dDoors);
-        ms.setDropshuttelUnits(dUnits);
+        ms.setDropShuttleBays(dBays);
+        ms.setDropShuttleDoors(dDoors);
+        ms.setDropShuttleUnits(dUnits);
         ms.setBattleArmorHandles(bah);
         ms.setCargoBayUnits(cbUnits);
         ms.setNavalRepairFacilities(nrf);
@@ -812,12 +803,12 @@ public class MekSummaryCache {
                         continue;
                     } else if (f.getName().equalsIgnoreCase("unofficial") && ignoreUnofficial) {
                         // Meks in this directory are ignored because
-                        // they are unofficial and we don't want those right
+                        // they are unofficial, and we don't want those right
                         // now.
                         continue;
                     } else if (f.getName().equalsIgnoreCase("_svn")
                           || f.getName().equalsIgnoreCase(".svn")) {
-                        // This is a Subversion work directory. Lets ignore it.
+                        // This is a Subversion work directory. Let's ignore it.
                         continue;
                     }
                     // recursion is fun

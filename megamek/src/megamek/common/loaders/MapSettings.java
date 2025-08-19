@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,6 +37,7 @@ package megamek.common.loaders;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,8 +70,9 @@ import megamek.utilities.xml.MMXMLUtility;
 @XmlRootElement(name = "ENVIRONMENT")
 @XmlAccessorType(value = XmlAccessType.NONE)
 public class MapSettings implements Serializable {
-    private static final MMLogger logger = MMLogger.create(MapSettings.class);
+    private static final MMLogger LOGGER = MMLogger.create(MapSettings.class);
 
+    @Serial
     private static final long serialVersionUID = -6163977970758303066L;
 
     public static final String BOARD_RANDOM = "[RANDOM]";
@@ -81,7 +83,7 @@ public class MapSettings implements Serializable {
     public static final int MOUNTAIN_VOLCANO_EXTINCT = 1;
     public static final int MOUNTAIN_VOLCANO_DORMANT = 2;
     public static final int MOUNTAIN_VOLCANO_ACTIVE = 3;
-    public static final int MOUNTAIN_SNOWCAPPED = 4;
+    public static final int MOUNTAIN_SNOW_CAPPED = 4;
     public static final int MOUNTAIN_LAKE = 5;
 
     public static final int MEDIUM_GROUND = 0;
@@ -102,31 +104,31 @@ public class MapSettings implements Serializable {
     private ArrayList<String> boardsAvailable = new ArrayList<>();
     private ArrayList<BuildingTemplate> boardBuildings = new ArrayList<>();
 
-    /**
+    /*
      * Parameters for the Map Generator Parameters refer to a default map siz 16
      * x 17, with other size some of the parameters get linear transformed to
      * give good result for new size
      */
 
-    /** how much hills there should be, Range 0..99 */
+    /** how many hills there should be, Range 0..99 */
     @XmlElement(name = "HILLYNESS")
     private int hilliness = 40;
     /**
-     * how much cliffs should there be, range 0-100 (% chance for each cliff candidate)
+     * how many cliffs should there be, range 0-100 (% chance for each cliff candidate)
      */
     @XmlElement(name = "CLIFFS")
     private int cliffs = 0;
-    /** Maximum difference between highest elevation and lowest sink */
+    /** Maximum difference between the highest elevation and lowest sink */
     @XmlElement(name = "HILLELEVATIONRANGE")
     private int range = 5;
-    /** Probabiltity for invertion of the map, Range 0..100 */
+    /** Probability for inversion of the map, Range 0..100 */
     @XmlElement(name = "HILLINVERTPROB")
     private int probInvert = 5;
 
-    /** how much Lakes at least */
+    /** how many Lakes at least */
     @XmlElement(name = "WATERMINSPOTS")
     private int minWaterSpots = 1;
-    /** how much Lakes at most */
+    /** how many Lakes at most */
     @XmlElement(name = "WATERMAXSPOTS")
     private int maxWaterSpots = 3;
     /** minimum size of a lake */
@@ -301,7 +303,7 @@ public class MapSettings implements Serializable {
     @XmlElement(name = "RUBBLEMAXHEXES")
     private int maxRubbleSize = 6;
 
-    /** probability of a rubble ultraspot */
+    /** probability of a rubble ultras pot */
     @XmlElement(name = "RUBBLEULTRAPROB")
     private int probUltraRubble = 0;
 
@@ -324,10 +326,10 @@ public class MapSettings implements Serializable {
     /** how much ice spots at most */
     @XmlElement(name = "ICEMAXSPOTS")
     private int maxIceSpots = 0;
-    /** minimum size of a ice spot */
+    /** minimum size of an ice spot */
     @XmlElement(name = "ICEMINHEXES")
     private int minIceSize = 1;
-    /** maximum Size of a ice spot */
+    /** maximum Size of an ice spot */
     @XmlElement(name = "ICEMAXHEXES")
     private int maxIceSize = 6;
 
@@ -339,7 +341,7 @@ public class MapSettings implements Serializable {
     @XmlElement(name = "RIVERPROB")
     private int probRiver = 0;
 
-    /** probabilitay for Crater 0..100 */
+    /** probability for Crater 0..100 */
     @XmlElement(name = "CRATEPROB")
     private int probCrater = 0;
 
@@ -359,7 +361,7 @@ public class MapSettings implements Serializable {
     @XmlElement(name = "CRATERMINNUM")
     private int minCraters = 1;
 
-    /** which landscape generation Algortihm to use */
+    /** which landscape generation Algorithm to use */
     /* atm there are 2 different: 0= first, 1=second */
     @XmlElement(name = "ALGORITHM")
     private int algorithmToUse = 0;
@@ -418,7 +420,7 @@ public class MapSettings implements Serializable {
     @XmlElement(name = "MOUNTSTYLE")
     private int mountainStyle = MOUNTAIN_PLAIN;
 
-    /** end Map Generator Parameters */
+    // end Map Generator Parameters
 
     /**
      * Creates and returns a new default instance of MapSettings.
@@ -456,7 +458,7 @@ public class MapSettings implements Serializable {
             Unmarshaller um = jc.createUnmarshaller();
             ms = (MapSettings) um.unmarshal(MMXMLUtility.createSafeXmlSource(is));
         } catch (Exception e) {
-            logger.error("Error loading XML for map settings: " + e.getMessage(), e);
+            LOGGER.error("Error loading XML for map settings: {}", e.getMessage(), e);
         }
 
         return ms;
@@ -635,7 +637,7 @@ public class MapSettings implements Serializable {
             throw new IllegalArgumentException("Map width and height must be at least 1!");
         }
 
-        // If the map size doesn't correspond to the size of boardsselected, correct
+        // If the map size doesn't correspond to the size of boards selected, correct
         // that first to be safe, as the changes below are always relative changes.
         // This happens with MapSettings construction
         if (boardsSelected.size() != mapWidth * mapHeight) {
@@ -719,21 +721,21 @@ public class MapSettings implements Serializable {
         }
         for (int i = 0; i < boardsSelected.size(); i++) {
             if (board.equals(boardsSelected.get(i))) {
-                int rindex = 0;
+                int rIndex = 0;
                 boolean nonFound = true;
                 while (nonFound) {
-                    // if we have no boards, set rindex to 0, so the generated
+                    // if we have no boards, set rIndex to 0, so the generated
                     // board
                     // gets selected
                     // Default boards are GENERATED, RANDOM and SUPPRISE
                     if (boardsAvailable.size() < 4) {
-                        rindex = 0;
+                        rIndex = 0;
                         nonFound = false;
                     } else {
-                        rindex = Compute.randomInt(boardsAvailable.size() - 3) + 3;
+                        rIndex = Compute.randomInt(boardsAvailable.size() - 3) + 3;
                         // validate that the selected map is legal
                         Board b = new Board(16, 17);
-                        String boardSelected = boardsAvailable.get(rindex);
+                        String boardSelected = boardsAvailable.get(rIndex);
                         if (!MapSettings.BOARD_GENERATED.equals(boardSelected) &&
                               !MapSettings.BOARD_RANDOM.equals(boardSelected) &&
                               !MapSettings.BOARD_SURPRISE.equals(boardSelected)) {
@@ -741,16 +743,16 @@ public class MapSettings implements Serializable {
                             if (b.isValid()) {
                                 nonFound = false;
                             } else {
-                                boardsAvailable.remove(rindex);
+                                boardsAvailable.remove(rIndex);
                             }
                         }
                     }
                 }
                 // Do a one pi rotation half of the time.
                 if (0 == Compute.randomInt(2)) {
-                    boardsSelected.set(i, Board.BOARD_REQUEST_ROTATION + boardsAvailable.get(rindex));
+                    boardsSelected.set(i, Board.BOARD_REQUEST_ROTATION + boardsAvailable.get(rIndex));
                 } else {
-                    boardsSelected.set(i, boardsAvailable.get(rindex));
+                    boardsSelected.set(i, boardsAvailable.get(rIndex));
                 }
             }
         }
@@ -800,7 +802,7 @@ public class MapSettings implements Serializable {
     }
 
     /**
-     * Checks, if the Mapgenerator parameters are all valid. If not they are changed to valid values.
+     * Checks, if the MapGenerator parameters are all valid. If not they are changed to valid values.
      */
     public void validateMapGenParameters() {
         if (hilliness < 0) {
@@ -1081,9 +1083,9 @@ public class MapSettings implements Serializable {
     } /* validateMapGenParameters */
 
     /**
-     * Returns true if the this Mapsetting has the same mapgenerator settings and size as the parameter.
+     * Returns true if the MapSetting has the same MapGenerator settings and size as the parameter.
      *
-     * @param other The Mapsetting to which compare.
+     * @param other The MapSetting to which compare.
      *
      * @return True if settings are the same.
      */
@@ -1897,7 +1899,7 @@ public class MapSettings implements Serializable {
             JAXBElement<MapSettings> element = new JAXBElement<>(new QName("ENVIRONMENT"), MapSettings.class, this);
             marshaller.marshal(element, os);
         } catch (Exception ex) {
-            logger.error("Failed to write map settings xml", ex);
+            LOGGER.error("Failed to write map settings xml", ex);
         }
     }
 }

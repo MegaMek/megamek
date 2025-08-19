@@ -38,8 +38,10 @@
  */
 package megamek.common.weapons.infantry.pistol;
 
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -69,7 +71,7 @@ public class InfantryPistolBlazerPistolWeapon extends InfantryWeapon {
         ammoWeight = 0.0003;
         shots = 8;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
+        techAdvancement.setTechBase(TechBase.IS);
         techAdvancement.setISAdvancement(2100, 2290, 2350);
         techAdvancement.setTechRating(TechRating.D);
         techAdvancement.setAvailability(AvailabilityValue.C,

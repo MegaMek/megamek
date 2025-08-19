@@ -38,6 +38,9 @@
  */
 package megamek.common.weapons.infantry.support.mg;
 
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.weapons.infantry.InfantryWeapon;
 

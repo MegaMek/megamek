@@ -49,7 +49,7 @@ import megamek.logging.MMLogger;
 /**
  * This class is a builder for settings for a Princess bot (BehaviorSettings) and also supports parsing such settings
  * from a yaml MM scenario definition. The difference to BehaviorSettings itself is that this builder can work with
- * incomplete settings, such as only a change to herdmentality or only a change to auto-flee. When building the final
+ * incomplete settings, such as only a change to herd mentality or only a change to auto-flee. When building the final
  * BehaviorSettings, either default values or the values of a given other BehaviorSettings are used where the builder
  * has no value.
  *
@@ -79,7 +79,7 @@ public class PrincessSettingsBuilder {
     private int fallShame = -1;
 
     @JsonAlias(PRINCESS_AGGRESSION)
-    private int hyperAgression = -1;
+    private int hyperAggression = -1;
 
     @JsonAlias(PRINCESS_HERDING)
     private int herdMentality = -1;
@@ -117,8 +117,8 @@ public class PrincessSettingsBuilder {
     }
 
     @SuppressWarnings("unused")
-    public PrincessSettingsBuilder hyperAgression(int hyperAgression) {
-        this.hyperAgression = hyperAgression;
+    public PrincessSettingsBuilder hyperAggression(int hyperAggression) {
+        this.hyperAggression = hyperAggression;
         return this;
     }
 
@@ -191,8 +191,8 @@ public class PrincessSettingsBuilder {
         if (fallShame != -1) {
             settings.setFallShameIndex(fallShame);
         }
-        if (hyperAgression != -1) {
-            settings.setHyperAggressionIndex(hyperAgression);
+        if (hyperAggression != -1) {
+            settings.setHyperAggressionIndex(hyperAggression);
         }
         if (herdMentality != -1) {
             settings.setHerdMentalityIndex(herdMentality);

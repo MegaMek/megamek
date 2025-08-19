@@ -34,8 +34,11 @@
 
 package megamek.common.weapons.battlearmor.clan;
 
-import megamek.common.TechAdvancement;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.battlearmor.BAFlamerWeapon;
 
@@ -67,7 +70,7 @@ public class CLBAFlamer extends BAFlamerWeapon {
         shortAV = 2;
         maxRange = RANGE_SHORT;
         rulesRefs = "255, TM";
-        techAdvancement.setTechBase(TechAdvancement.TechBase.ALL);
+        techAdvancement.setTechBase(TechBase.ALL);
         techAdvancement.setClanAdvancement(2860, 2868, 3050);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3050);
         techAdvancement.setIntroLevel(false);

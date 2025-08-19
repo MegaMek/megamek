@@ -36,6 +36,10 @@ package megamek.common.weapons.mortars.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.weapons.mortars.MekMortarWeapon;
 
 /**

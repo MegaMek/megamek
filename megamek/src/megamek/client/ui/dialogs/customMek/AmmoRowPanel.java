@@ -53,15 +53,15 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import megamek.client.ui.Messages;
+import megamek.common.SimpleTechLevel;
+import megamek.common.enums.TechBase;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.interfaces.ITechnology;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
-import megamek.common.SimpleTechLevel;
-import megamek.common.equipment.WeaponType;
-import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.options.OptionsConstants;
 
 class AmmoRowPanel extends JPanel implements ChangeListener {
@@ -74,7 +74,7 @@ class AmmoRowPanel extends JPanel implements ChangeListener {
     final WeaponMounted bay;
     private final AmmoType.AmmoTypeEnum at;
     private final int rackSize;
-    private final ITechnology.TechBase techBase;
+    private final TechBase techBase;
     final List<AmmoMounted> ammoMounts;
 
     final List<JSpinner> spinners;
@@ -97,7 +97,7 @@ class AmmoRowPanel extends JPanel implements ChangeListener {
         // set the bay's tech base to that of any weapon in the bay
         // an assumption is made here that bays don't mix clan-only and IS-only tech
         // base
-        this.techBase = weaponType.map(EquipmentType::getTechBase).orElse(WeaponType.TechBase.ALL);
+        this.techBase = weaponType.map(EquipmentType::getTechBase).orElse(TechBase.ALL);
 
         munitions = AmmoType.getMunitionsFor(at).stream()
               .filter(this::includeMunition)
@@ -165,14 +165,14 @@ class AmmoRowPanel extends JPanel implements ChangeListener {
               || (ammoType.getAmmoType() != at)
               || (ammoType.getRackSize() != rackSize)
               || ((ammoType.getTechBase() != techBase)
-              && (ammoType.getTechBase() != AmmoType.TechBase.ALL)
-              && (techBase != AmmoType.TechBase.ALL))
+              && (ammoType.getTechBase() != TechBase.ALL)
+              && (techBase != TechBase.ALL))
               || !ammoType.isLegal(bayMunitionsChoicePanel.getGame()
                     .getOptions()
                     .intOption(OptionsConstants.ALLOWED_YEAR),
               SimpleTechLevel.getGameTechLevel(bayMunitionsChoicePanel.getGame()),
-              techBase == AmmoType.TechBase.CLAN,
-              techBase == AmmoType.TechBase.ALL,
+              techBase == TechBase.CLAN,
+              techBase == TechBase.ALL,
               bayMunitionsChoicePanel.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
             return false;
         }

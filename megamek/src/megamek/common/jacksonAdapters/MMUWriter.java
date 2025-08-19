@@ -50,7 +50,7 @@ import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
 /**
- * This class has static methods for writing information to a MMU file which uses YAML formatting to hold information
+ * This class has static methods for writing information to an MMU file which uses YAML formatting to hold information
  * about SBF Formations, Units and AlphaStrikeElements.
  */
 public class MMUWriter {

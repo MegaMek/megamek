@@ -43,8 +43,11 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.SimpleTechLevel;
-import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponType;
@@ -704,7 +707,7 @@ public class BombType extends AmmoType {
         bomb.bv = 18;
         bomb.cost = 15000;
         bomb.rulesRefs = "229, TM";
-        bomb.techAdvancement.setTechBase(TechAdvancement.TechBase.IS)
+        bomb.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3055, 3064, 3067)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B);
@@ -848,7 +851,7 @@ public class BombType extends AmmoType {
         bomb.cost = 1000000;
         bomb.flags = bomb.flags.or(F_NUCLEAR).or(AmmoType.F_OTHER_BOMB);
         bomb.capital = true;
-        bomb.techAdvancement.setTechBase(TechAdvancement.TechBase.IS).setTechRating(TechRating.E)
+        bomb.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setISAdvancement(2200).setPrototypeFactions(Faction.TA)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);

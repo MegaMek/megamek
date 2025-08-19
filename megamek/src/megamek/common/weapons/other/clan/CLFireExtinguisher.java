@@ -34,9 +34,11 @@
 
 package megamek.common.weapons.other.clan;
 
-import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.game.Game;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
@@ -65,7 +67,7 @@ public class CLFireExtinguisher extends Weapon {
         criticalSlots = 0;
         flags = flags.or(F_SOLO_ATTACK).or(F_NO_FIRES);
 
-        techAdvancement.setTechBase(TechAdvancement.TechBase.CLAN);
+        techAdvancement.setTechBase(TechBase.CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
         techAdvancement.setTechRating(TechRating.B);
         techAdvancement.setAvailability(AvailabilityValue.X,

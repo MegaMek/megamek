@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -57,23 +57,12 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMekLoader {
 
     @Override
     protected int defaultVGLFacing(int location, boolean rearFacing) {
-        switch (location) {
-            case LargeSupportTank.LOC_FRONTRIGHT:
-                return 1;
-            case LargeSupportTank.LOC_REARRIGHT:
-                return 2;
-            case LargeSupportTank.LOC_REAR:
-                return 2;
-            case LargeSupportTank.LOC_REARLEFT:
-                return 4;
-            case LargeSupportTank.LOC_FRONTLEFT:
-                return 4;
-            case LargeSupportTank.LOC_FRONT:
-            case LargeSupportTank.LOC_TURRET:
-            case LargeSupportTank.LOC_TURRET_2:
-            default:
-                return 0;
-        }
+        return switch (location) {
+            case LargeSupportTank.LOC_FRONTRIGHT -> 1;
+            case LargeSupportTank.LOC_REARRIGHT, LargeSupportTank.LOC_REAR -> 2;
+            case LargeSupportTank.LOC_REARLEFT, LargeSupportTank.LOC_FRONTLEFT -> 4;
+            default -> 0;
+        };
     }
 
     @Override
@@ -211,9 +200,9 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMekLoader {
             try {
                 t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
             } catch (IllegalArgumentException ex) {
-                logger.error("While loading " + t.getShortNameRaw()
-                      + ": Could not parse ICE fuel type "
-                      + dataFile.getDataAsString("fuelType")[0]);
+                logger.error("While loading {}: Could not parse ICE fuel type {}",
+                      t.getShortNameRaw(),
+                      dataFile.getDataAsString("fuelType")[0]);
                 t.setICEFuelType(FuelType.PETROCHEMICALS);
             }
         }

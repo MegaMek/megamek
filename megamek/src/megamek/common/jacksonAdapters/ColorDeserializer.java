@@ -63,7 +63,7 @@ public class ColorDeserializer extends StdDeserializer<Color> {
      *
      * @param node The JsonNode to read
      *
-     * @return A RGB or RGBA color
+     * @return An RGB or RGBA color
      */
     public static Color parseColor(JsonNode node) {
         int red = node.get(RED).asInt();

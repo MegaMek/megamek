@@ -34,8 +34,10 @@
 
 package megamek.common.weapons.battlearmor.innerSphere;
 
-import megamek.common.TechAdvancement;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
@@ -72,7 +74,7 @@ public class ISBAMortarLight extends Weapon {
         flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "263, TM";
-        techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
+        techAdvancement.setTechBase(TechBase.IS);
         techAdvancement.setISAdvancement(3049, 3057, 3063);
         techAdvancement.setTechRating(TechRating.B);
         techAdvancement.setAvailability(AvailabilityValue.X,

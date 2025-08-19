@@ -51,6 +51,7 @@ import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.BombLoadout;
@@ -59,7 +60,6 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.game.Game;
-import megamek.common.interfaces.ITechnology;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -668,11 +668,11 @@ class GeneralEntityReadout implements EntityReadout {
             }
 
             String name = mounted.getDesc();
-            if (entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
+            if (entity.isClan() && (mounted.getType().getTechBase() == TechBase.IS)) {
                 name += Messages.getString("MekView.IS");
             }
 
-            if (!entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
+            if (!entity.isClan() && (mounted.getType().getTechBase() == TechBase.CLAN)) {
                 name += Messages.getString("MekView.Clan");
             }
             ViewElement[] row = { new PlainElement(name),

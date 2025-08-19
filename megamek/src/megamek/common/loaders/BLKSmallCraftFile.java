@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,15 +34,15 @@
 
 package megamek.common.loaders;
 
-import megamek.common.units.Entity;
-import megamek.common.units.EntityMovementMode;
+import megamek.common.TechConstants;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.IArmorState;
-import megamek.common.exceptions.LocationFullException;
 import megamek.common.equipment.Mounted;
-import megamek.common.units.SmallCraft;
-import megamek.common.TechConstants;
 import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.SmallCraft;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestEntity;
 import megamek.logging.MMLogger;
@@ -123,7 +123,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
 
         // figure out structural integrity
         if (!dataFile.exists("structural_integrity")) {
-            throw new EntityLoadingException("Could not find structual_integrity block.");
+            throw new EntityLoadingException("Could not find structural_integrity block.");
         }
         a.setOSI(dataFile.getDataAsInt("structural_integrity")[0]);
 
@@ -217,7 +217,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
             prefix = "IS ";
         }
 
-        boolean rearMount = false;
+        boolean rearMount;
 
         if (saEquip[0] != null) {
             for (String element : saEquip) {

@@ -40,15 +40,15 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import megamek.common.units.Entity;
-import megamek.common.interfaces.ForceAssignable;
-import megamek.common.loaders.MekSummary;
-import megamek.common.loaders.MekSummaryCache;
-import megamek.common.units.UnitRole;
 import megamek.common.alphaStrike.ASArcSummary;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitRole;
 
 /**
  * This Jackson serializer writes AlphaStrikeElements to YAML output.
@@ -68,8 +68,8 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
     static final String FULL_NAME = "fullname";
     static final String AS_TYPE = "astype";
     static final String STRUCTURE = "structure";
-    static final String SQUADSIZE = "squadsize";
-    static final String STRUCTUREDAMAGE = "structuredamage";
+    static final String SQUAD_SIZE = "squadsize";
+    static final String STRUCTURE_DAMAGE = "structuredamage";
     static final String OVERHEAT = "overheat";
     static final String NOSE_ARC = "nose";
     static final String AFT_ARC = "aft";
@@ -84,7 +84,7 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
     }
 
     @Override
-    public void serialize(ASCardDisplayable element, JsonGenerator jgen, SerializerProvider provider)
+    public void serialize(ASCardDisplayable element, JsonGenerator jsonGenerator, SerializerProvider provider)
           throws IOException {
 
         String fullName = (element.getFullChassis() + " " + element.getModel()).trim();
@@ -92,74 +92,76 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
         boolean writeCacheLink = (unit != null) && unit.isCanon();
         writeCacheLink &= !MMUWriter.Views.FullStats.class.equals(provider.getActiveView());
 
-        jgen.writeStartObject();
-        jgen.writeStringField(TYPE, AS_ELEMENT);
+        jsonGenerator.writeStartObject();
+        jsonGenerator.writeStringField(TYPE, AS_ELEMENT);
         if (element instanceof AlphaStrikeElement && ((AlphaStrikeElement) element).getId() != Entity.NONE) {
-            jgen.writeNumberField(ID, ((AlphaStrikeElement) element).getId());
+            jsonGenerator.writeNumberField(ID, ((AlphaStrikeElement) element).getId());
         }
         if (writeCacheLink) {
-            jgen.writeStringField(FULL_NAME, fullName);
+            jsonGenerator.writeStringField(FULL_NAME, fullName);
         } else {
-            jgen.writeStringField(CHASSIS, element.getFullChassis());
+            jsonGenerator.writeStringField(CHASSIS, element.getFullChassis());
             if (!element.getModel().isBlank()) {
-                jgen.writeStringField(MODEL, element.getModel());
+                jsonGenerator.writeStringField(MODEL, element.getModel());
             }
         }
         if (element instanceof ForceAssignable && ((ForceAssignable) element).partOfForce()) {
-            jgen.writeStringField(FORCE, ((ForceAssignable) element).getForceString());
+            jsonGenerator.writeStringField(FORCE, ((ForceAssignable) element).getForceString());
         }
         if (element.getSkill() != 4) {
-            jgen.writeNumberField(SKILL, element.getSkill());
+            jsonGenerator.writeNumberField(SKILL, element.getSkill());
         }
 
         if (!writeCacheLink) {
-            jgen.writeStringField(AS_TYPE, element.getASUnitType().name());
-            jgen.writeNumberField(SIZE, element.getSize());
+            jsonGenerator.writeStringField(AS_TYPE, element.getASUnitType().name());
+            jsonGenerator.writeNumberField(SIZE, element.getSize());
             if (element.getRole() != UnitRole.UNDETERMINED) {
-                jgen.writeStringField(ROLE, element.getRole().toString());
+                jsonGenerator.writeStringField(ROLE, element.getRole().toString());
             }
 
             // Remove the inch (") sign from movement to avoid escaping; this doesn't lose any information
             // Also remove "0." from station-keeping (k) movement to simplify parsing
             String movement = AlphaStrikeHelper.getMovementAsString(element);
-            jgen.writeStringField(MOVE, movement.replace("\"", "").replace("0.", ""));
+            jsonGenerator.writeStringField(MOVE, movement.replace("\"", "").replace("0.", ""));
             if (!element.usesArcs()) {
                 if (element.getStandardDamage().hasDamage()) {
-                    jgen.writeObjectField(DAMAGE, element.getStandardDamage());
+                    jsonGenerator.writeObjectField(DAMAGE, element.getStandardDamage());
                 }
             } else {
-                writeArc(element.getFrontArc(), jgen, element, NOSE_ARC);
-                writeArc(element.getRearArc(), jgen, element, AFT_ARC);
-                writeArc(element.getLeftArc(), jgen, element, SIDE_ARC);
+                writeArc(element.getFrontArc(), jsonGenerator, element, NOSE_ARC);
+                writeArc(element.getRearArc(), jsonGenerator, element, AFT_ARC);
+                writeArc(element.getLeftArc(), jsonGenerator, element, SIDE_ARC);
             }
             if (element.getOV() != 0) {
-                jgen.writeNumberField(OVERHEAT, element.getOV());
+                jsonGenerator.writeNumberField(OVERHEAT, element.getOV());
             }
-            jgen.writeNumberField(ARMOR, element.getFullArmor());
-            jgen.writeNumberField(STRUCTURE, element.getFullStructure());
+            jsonGenerator.writeNumberField(ARMOR, element.getFullArmor());
+            jsonGenerator.writeNumberField(STRUCTURE, element.getFullStructure());
             if (!element.getSpecialAbilities().getSpecialsDisplayString(element).isBlank()) {
-                jgen.writeStringField(SPECIALS, element.getSpecialAbilities().getSpecialsDisplayString(element));
+                jsonGenerator.writeStringField(SPECIALS,
+                      element.getSpecialAbilities().getSpecialsDisplayString(element));
             }
             if (element.isBattleArmor()) {
-                jgen.writeNumberField(SQUADSIZE, element.getSquadSize());
+                jsonGenerator.writeNumberField(SQUAD_SIZE, element.getSquadSize());
             }
 
             if (element.getFullArmor() > element.getCurrentArmor()) {
-                jgen.writeNumberField(ARMORDAMAGE, element.getFullArmor() - element.getCurrentArmor());
+                jsonGenerator.writeNumberField(ARMOR_DAMAGE, element.getFullArmor() - element.getCurrentArmor());
             }
             if (element.getFullStructure() > element.getCurrentStructure()) {
-                jgen.writeNumberField(STRUCTUREDAMAGE, element.getFullStructure() - element.getCurrentStructure());
+                jsonGenerator.writeNumberField(STRUCTURE_DAMAGE,
+                      element.getFullStructure() - element.getCurrentStructure());
             }
             //TODO crits
             //TODO position and facing
         }
-        jgen.writeEndObject();
+        jsonGenerator.writeEndObject();
     }
 
-    private void writeArc(ASArcSummary arc, JsonGenerator jgen, ASCardDisplayable element, String specName)
+    private void writeArc(ASArcSummary arc, JsonGenerator jsonGenerator, ASCardDisplayable element, String specName)
           throws IOException {
         if (!arc.getSpecialsShortExportString(", ", element).isBlank()) {
-            jgen.writeObjectField(specName, arc.getSpecialsShortExportString(", ", element));
+            jsonGenerator.writeObjectField(specName, arc.getSpecialsShortExportString(", ", element));
         }
     }
 }

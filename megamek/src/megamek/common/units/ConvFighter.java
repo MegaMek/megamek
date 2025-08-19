@@ -38,6 +38,10 @@ import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.cost.ConvFighterCostCalculator;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.options.OptionsConstants;
 
@@ -104,14 +108,14 @@ public class ConvFighter extends AeroSpaceFighter {
         return used;
     }
 
-    protected static final TechAdvancement TA_CONV_FIGHTER = new TechAdvancement(ITechnology.TechBase.ALL)
+    protected static final TechAdvancement TA_CONV_FIGHTER = new TechAdvancement(TechBase.ALL)
           .setAdvancement(ITechnology.DATE_NONE, 2470, 2490)
-          .setProductionFactions(ITechnology.Faction.TH)
-          .setTechRating(ITechnology.TechRating.D)
-          .setAvailability(ITechnology.AvailabilityValue.C,
-                ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.C,
-                ITechnology.AvailabilityValue.B)
+          .setProductionFactions(Faction.TH)
+          .setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.C,
+                AvailabilityValue.D,
+                AvailabilityValue.C,
+                AvailabilityValue.B)
           .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override

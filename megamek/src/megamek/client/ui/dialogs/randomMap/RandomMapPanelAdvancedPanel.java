@@ -55,8 +55,8 @@ import megamek.client.ui.util.verifier.VerifyInRange;
 import megamek.client.ui.util.verifier.VerifyIsInteger;
 import megamek.client.ui.util.verifier.VerifyIsPositiveInteger;
 import megamek.client.ui.widget.VerifiableTextField;
-import megamek.common.loaders.MapSettings;
 import megamek.common.annotations.Nullable;
+import megamek.common.loaders.MapSettings;
 import megamek.common.util.BoardUtilities;
 import megamek.logging.MMLogger;
 
@@ -1252,7 +1252,7 @@ public class RandomMapPanelAdvancedPanel extends JPanel {
               Messages.getString("RandomMapDialog.volcanoDormant")),
         VOLCANO_ACTIVE(MapSettings.MOUNTAIN_VOLCANO_ACTIVE,
               Messages.getString("RandomMapDialog.volcanoActive")),
-        SNOW_CAPPED(MapSettings.MOUNTAIN_SNOWCAPPED, Messages.getString("RandomMapDialog.mountainSnowcapped")),
+        SNOW_CAPPED(MapSettings.MOUNTAIN_SNOW_CAPPED, Messages.getString("RandomMapDialog.mountainSnowcapped")),
         LAKE(MapSettings.MOUNTAIN_LAKE, Messages.getString("RandomMapDialog.mountainLake"));
 
         private final int code;

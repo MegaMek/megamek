@@ -53,7 +53,11 @@ import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
 import megamek.common.enums.MPBoosters;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
@@ -1042,24 +1046,24 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     }
 
     private static final TechAdvancement[] TA_LAM = {
-          new TechAdvancement(ITechnology.TechBase.IS).setISAdvancement(2683, 2688, ITechnology.DATE_NONE, 3085)
+          new TechAdvancement(TechBase.IS).setISAdvancement(2683, 2688, ITechnology.DATE_NONE, 3085)
                 .setClanAdvancement(ITechnology.DATE_NONE, 2688, ITechnology.DATE_NONE, 2825)
-                .setPrototypeFactions(ITechnology.Faction.TH)
-                .setProductionFactions(ITechnology.Faction.TH)
-                .setTechRating(ITechnology.TechRating.D)
-                .setAvailability(ITechnology.AvailabilityValue.D,
-                      ITechnology.AvailabilityValue.E,
-                      ITechnology.AvailabilityValue.F,
-                      ITechnology.AvailabilityValue.F).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // standard
-          new TechAdvancement(ITechnology.TechBase.IS).setISAdvancement(2680, 2684, ITechnology.DATE_NONE, 2781)
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setTechRating(TechRating.D)
+                .setAvailability(AvailabilityValue.D,
+                      AvailabilityValue.E,
+                      AvailabilityValue.F,
+                      AvailabilityValue.F).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), // standard
+          new TechAdvancement(TechBase.IS).setISAdvancement(2680, 2684, ITechnology.DATE_NONE, 2781)
                 .setClanAdvancement(ITechnology.DATE_NONE, 2684, ITechnology.DATE_NONE, 2801)
-                .setPrototypeFactions(ITechnology.Faction.TH)
-                .setProductionFactions(ITechnology.Faction.TH)
-                .setTechRating(ITechnology.TechRating.E)
-                .setAvailability(ITechnology.AvailabilityValue.E,
-                      ITechnology.AvailabilityValue.F,
-                      ITechnology.AvailabilityValue.X,
-                      ITechnology.AvailabilityValue.X).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL) // bimodal
+                .setPrototypeFactions(Faction.TH)
+                .setProductionFactions(Faction.TH)
+                .setTechRating(TechRating.E)
+                .setAvailability(AvailabilityValue.E,
+                      AvailabilityValue.F,
+                      AvailabilityValue.X,
+                      AvailabilityValue.X).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL) // bimodal
     };
 
     @Override

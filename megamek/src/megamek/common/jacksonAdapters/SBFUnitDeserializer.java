@@ -59,7 +59,7 @@ import megamek.common.strategicBattleSystems.SBFUnitConverter;
 /**
  * This Jackson deserializer reads an SBF Unit (part of a formation) from an MMU file. When the MMU file lists the
  * elements, these will be taken and converted to the SBFUnit (and any transients like damage applied). When the MMU
- * file doesnt list the elements, it must have the stats; then the SBFUnit will be constructed without the elements.
+ * file doesn't list the elements, it must have the stats; then the SBFUnit will be constructed without the elements.
  */
 public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
 
@@ -76,7 +76,7 @@ public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
     }
 
     @Override
-    public SBFUnit deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    public SBFUnit deserialize(JsonParser jp, DeserializationContext context) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
         if (!node.has(TYPE) || !node.get(TYPE).textValue().equalsIgnoreCase(SBF_UNIT)) {
             throw new IllegalArgumentException("SBFUnitDeserializer: Wrong Deserializer chosen!");
@@ -88,10 +88,6 @@ public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
         try {
             unit.setName(node.get(GENERAL_NAME).textValue());
             unit.setSkill(node.has(SKILL) ? node.get("skill").intValue() : 4);
-
-            // if (node.has(FORCE)) {
-            // unit.setForceString(node.get(FORCE).textValue());
-            // }
 
             if (node.has(ELEMENTS)) {
                 // When the elements are given, read them and convert

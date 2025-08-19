@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,7 @@
 
 package megamek.common.loaders;
 
-import megamek.common.*;
+import megamek.common.TechConstants;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.IArmorState;
@@ -256,12 +256,12 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
             prefix = "IS ";
         }
 
-        boolean rearMount = false;
-        int nAmmo = 1;
+        boolean rearMount;
+        int nAmmo;
         // set up a new weapons bay mount
         WeaponMounted bayMount = null;
         // set up a new bay type
-        boolean newBay = false;
+        boolean newBay;
         double bayDamage = 0;
         if (saEquip[0] != null) {
             for (String element : saEquip) {
@@ -308,12 +308,12 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
 
                 if (etype != null) {
                     // first load the equipment
-                    Mounted<?> newmount;
+                    Mounted<?> newMount;
                     try {
                         if (nAmmo == 1) {
-                            newmount = a.addEquipment(etype, nLoc, rearMount);
+                            newMount = a.addEquipment(etype, nLoc, rearMount);
                         } else {
-                            newmount = a.addEquipment(etype, nLoc, rearMount,
+                            newMount = a.addEquipment(etype, nLoc, rearMount,
                                   nAmmo);
                         }
                     } catch (LocationFullException ex) {
@@ -322,15 +322,14 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
 
                     // this is where weapon bays go
                     // first, lets see if it is a weapon
-                    if (newmount.getType() instanceof WeaponType) {
+                    if (newMount.getType() instanceof WeaponType weaponType) {
                         // if so then I need to find out if it is the same class
                         // as the current weapon bay
                         // If the current bay is null, then it needs to be
                         // initialized
-                        WeaponType weap = (WeaponType) newmount.getType();
                         if (bayMount == null) {
                             try {
-                                bayMount = (WeaponMounted) a.addEquipment(weap.getBayType(), nLoc, rearMount);
+                                bayMount = (WeaponMounted) a.addEquipment(weaponType.getBayType(), nLoc, rearMount);
                                 newBay = false;
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(
@@ -338,37 +337,39 @@ public class BLKDropshipFile extends BLKFile implements IMekLoader {
                             }
                         }
 
-                        double damage = weap.getShortAV();
-                        if (weap.isCapital()) {
+                        double damage = weaponType.getShortAV();
+                        if (weaponType.isCapital()) {
                             damage *= 10;
                         }
                         if (!newBay
                               && ((bayDamage + damage) <= 700)
                               && (bayMount.isRearMounted() == rearMount)
-                              && (weap.getAtClass() == ((WeaponType) bayMount
-                              .getType()).getAtClass())
-                              && !(((WeaponType) bayMount.getType())
-                              .isSubCapital() && !weap.isSubCapital())) {
+                              && (weaponType.getAtClass() == bayMount
+                              .getType().getAtClass())
+                              && !(bayMount.getType()
+                              .isSubCapital() && !weaponType.isSubCapital())) {
                             // then we should add this weapon to the current bay
-                            bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
+                            bayMount.addWeaponToBay(a.getEquipmentNum(newMount));
                             bayDamage += damage;
                         } else {
                             try {
-                                bayMount = (WeaponMounted) a.addEquipment(weap.getBayType(), nLoc, rearMount);
+                                bayMount = (WeaponMounted) a.addEquipment(weaponType.getBayType(), nLoc, rearMount);
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(
                                       ex.getMessage());
                             }
-                            bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
+                            bayMount.addWeaponToBay(a.getEquipmentNum(newMount));
                             // reset bay damage
                             bayDamage = damage;
                         }
-                    } else if (newmount.getType() instanceof AmmoType) {
+                    } else if (newMount.getType() instanceof AmmoType) {
                         // ammo should also get loaded into the bay
-                        bayMount.addAmmoToBay(a.getEquipmentNum(newmount));
+                        if (bayMount != null) {
+                            bayMount.addAmmoToBay(a.getEquipmentNum(newMount));
+                        }
                     }
                     if (etype.isVariableSize()) {
-                        newmount.setSize(size);
+                        newMount.setSize(size);
                     }
                 } else if (!equipName.isBlank()) {
                     a.addFailedEquipment(equipName);

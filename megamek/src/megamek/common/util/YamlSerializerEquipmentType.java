@@ -46,14 +46,14 @@ import java.util.stream.Collectors;
 
 import megamek.common.TechAdvancement;
 import megamek.common.TechAdvancement.AdvancementPhase;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Era;
+import megamek.common.enums.Faction;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponType;
-import megamek.common.interfaces.ITechnology.AvailabilityValue;
-import megamek.common.interfaces.ITechnology.Era;
-import megamek.common.interfaces.ITechnology.Faction;
 import megamek.logging.MMLogger;
 
 /**

@@ -34,6 +34,11 @@
 
 package megamek.common.weapons.capitalWeapons;
 
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+
 /**
  * @author Jay Lawson
  * @since Sep 25, 2004

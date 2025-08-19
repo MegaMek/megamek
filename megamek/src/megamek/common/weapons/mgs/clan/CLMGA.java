@@ -36,6 +36,9 @@ package megamek.common.weapons.mgs.clan;
 
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;

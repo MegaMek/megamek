@@ -34,7 +34,9 @@
 
 package megamek.common.weapons.battlearmor.innerSphere;
 
-import megamek.common.TechAdvancement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.weapons.tag.TAGWeapon;
 
 /**
@@ -67,7 +69,7 @@ public class ISBALightTAG extends TAGWeapon {
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "270, TM";
-        techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
+        techAdvancement.setTechBase(TechBase.IS);
         techAdvancement.setISAdvancement(3046, 3053, 3057);
         techAdvancement.setTechRating(TechRating.E);
         techAdvancement.setAvailability(AvailabilityValue.X,

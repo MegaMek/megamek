@@ -39,6 +39,10 @@ import java.io.Serial;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.units.Entity;
 import megamek.common.units.InfantryTransporter;
@@ -155,7 +159,7 @@ public final class BattleArmorBay extends Bay implements InfantryTransporter {
     }
 
     public static TechAdvancement techAdvancement() {
-        return new TechAdvancement(ITechnology.TechBase.ALL)
+        return new TechAdvancement(TechBase.ALL)
               .setClanAdvancement(2867, 2868, 2870, ITechnology.DATE_NONE, ITechnology.DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
               .setISAdvancement(ITechnology.DATE_NONE,
@@ -163,11 +167,11 @@ public final class BattleArmorBay extends Bay implements InfantryTransporter {
                     3050,
                     ITechnology.DATE_NONE,
                     ITechnology.DATE_NONE)
-              .setPrototypeFactions(ITechnology.Faction.CWF).setTechRating(ITechnology.TechRating.D)
-              .setAvailability(ITechnology.AvailabilityValue.X,
-                    ITechnology.AvailabilityValue.X,
-                    ITechnology.AvailabilityValue.C,
-                    ITechnology.AvailabilityValue.B)
+              .setPrototypeFactions(Faction.CWF).setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.X,
+                    AvailabilityValue.X,
+                    AvailabilityValue.C,
+                    AvailabilityValue.B)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

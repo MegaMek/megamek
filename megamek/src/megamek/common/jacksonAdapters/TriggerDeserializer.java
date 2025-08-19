@@ -54,14 +54,14 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
     private static final String TYPE = "type";
     private static final String TYPE_AND = "and";
     private static final String TYPE_OR = "or";
-    private static final String TYPE_GAMESTART = "gamestart";
-    private static final String TYPE_ROUNDSTART = "roundstart";
-    private static final String TYPE_ROUNDEND = "roundend";
-    private static final String TYPE_PHASESTART = "phasestart";
-    private static final String TYPE_FLEDUNITS = "fledunits";
-    private static final String TYPE_ACTIVEUNITS = "activeunits";
-    private static final String TYPE_KILLEDUNITS = "killedunits";
-    private static final String TYPE_KILLEDUNIT = "killedunit";
+    private static final String TYPE_GAME_START = "gamestart";
+    private static final String TYPE_ROUND_START = "roundstart";
+    private static final String TYPE_ROUND_END = "roundend";
+    private static final String TYPE_PHASE_START = "phasestart";
+    private static final String TYPE_FLED_UNITS = "fledunits";
+    private static final String TYPE_ACTIVE_UNITS = "activeunits";
+    private static final String TYPE_KILLED_UNITS = "killedunits";
+    private static final String TYPE_KILLED_UNIT = "killedunit";
     private static final String TYPE_UNIT_POSITION = "position";
     private static final String TYPE_UNITS_POSITION = "positions";
     private static final String TYPE_BATTLEFIELD_CONTROL = "battlefieldcontrol";
@@ -88,7 +88,7 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
     }
 
     @Override
-    public Trigger deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    public Trigger deserialize(JsonParser jp, DeserializationContext context) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
         return parseNode(node);
     }
@@ -100,14 +100,14 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
         Trigger trigger = switch (type) {
             case TYPE_AND -> parseAndTrigger(node);
             case TYPE_OR -> parseOrTrigger(node);
-            case TYPE_GAMESTART -> new GameStartTrigger();
-            case TYPE_ROUNDSTART -> parseRoundStartTrigger(node);
-            case TYPE_ROUNDEND -> parseRoundEndTrigger(node);
-            case TYPE_PHASESTART -> parsePhaseStartTrigger(node);
-            case TYPE_FLEDUNITS -> parseFledUnitsTrigger(node);
-            case TYPE_ACTIVEUNITS -> parseActiveUnitsTrigger(node);
-            case TYPE_KILLEDUNITS -> parseKilledUnitsTrigger(node);
-            case TYPE_KILLEDUNIT -> parseKilledUnitTrigger(node);
+            case TYPE_GAME_START -> new GameStartTrigger();
+            case TYPE_ROUND_START -> parseRoundStartTrigger(node);
+            case TYPE_ROUND_END -> parseRoundEndTrigger(node);
+            case TYPE_PHASE_START -> parsePhaseStartTrigger(node);
+            case TYPE_FLED_UNITS -> parseFledUnitsTrigger(node);
+            case TYPE_ACTIVE_UNITS -> parseActiveUnitsTrigger(node);
+            case TYPE_KILLED_UNITS -> parseKilledUnitsTrigger(node);
+            case TYPE_KILLED_UNIT -> parseKilledUnitTrigger(node);
             case TYPE_BATTLEFIELD_CONTROL -> new BattlefieldControlTrigger();
             case TYPE_UNIT_POSITION -> parseUnitPositionTrigger(node);
             case TYPE_UNITS_POSITION -> parseUnitsPositionTrigger(node);

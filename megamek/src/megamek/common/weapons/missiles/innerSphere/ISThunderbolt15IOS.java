@@ -33,6 +33,8 @@
 
 package megamek.common.weapons.missiles.innerSphere;
 
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechRating;
 import megamek.common.weapons.missiles.Thunderbolt15Weapon;
 
 /**

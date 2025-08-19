@@ -34,7 +34,9 @@
 
 package megamek.common.weapons.battlearmor.innerSphere;
 
-import megamek.common.TechAdvancement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.Weapon;
@@ -75,7 +77,7 @@ public class ISBAGrenadeLauncherHeavy extends Weapon {
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "256, TM";
-        techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
+        techAdvancement.setTechBase(TechBase.IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3050);
         techAdvancement.setTechRating(TechRating.C);
         techAdvancement.setAvailability(AvailabilityValue.X,

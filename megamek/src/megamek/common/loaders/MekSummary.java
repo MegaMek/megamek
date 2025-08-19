@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2004 Josh Yockey
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -165,9 +165,9 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int superHeavyVehicleBays;
     private int superHeavyVehicleDoors;
     private double superHeavyVehicleUnits;
-    private int dropshuttleBays;
-    private int dropshuttleDoors;
-    private double dropshuttelUnits;
+    private int dropShuttleBays;
+    private int dropShuttleDoors;
+    private double dropShuttleUnits;
     private int battleArmorHandles;
     private double cargoBayUnits;
     private int navalRepairFacilities;
@@ -501,16 +501,16 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return superHeavyVehicleUnits;
     }
 
-    public int getDropshuttleBays() {
-        return dropshuttleBays;
+    public int getDropShuttleBays() {
+        return dropShuttleBays;
     }
 
-    public int getDropshuttleDoors() {
-        return dropshuttleDoors;
+    public int getDropShuttleDoors() {
+        return dropShuttleDoors;
     }
 
-    public double getDropshuttelUnits() {
-        return dropshuttelUnits;
+    public double getDropShuttleUnits() {
+        return dropShuttleUnits;
     }
 
     public int getBattleArmorHandles() {
@@ -529,11 +529,11 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return tons;
     }
 
-    public double getTOweight() {
+    public double getTOWeight() {
         return toSuitTons;
     }
 
-    public double getTWweight() {
+    public double getTWWeight() {
         return twSuitTons;
     }
 
@@ -824,16 +824,16 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         superHeavyVehicleUnits = d;
     }
 
-    public void setDropshuttleBays(int i) {
-        dropshuttleBays = i;
+    public void setDropShuttleBays(int i) {
+        dropShuttleBays = i;
     }
 
-    public void setDropshuttleDoors(int i) {
-        dropshuttleDoors = i;
+    public void setDropShuttleDoors(int i) {
+        dropShuttleDoors = i;
     }
 
-    public void setDropshuttelUnits(double d) {
-        dropshuttelUnits = d;
+    public void setDropShuttleUnits(double d) {
+        dropShuttleUnits = d;
     }
 
     public void setBattleArmorHandles(int i) {
@@ -916,12 +916,12 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         this.tons = nTons;
     }
 
-    public void setTOweight(double TOsuitTons) {
-        this.toSuitTons = TOsuitTons;
+    public void setTOWeight(double TOSuitTons) {
+        this.toSuitTons = TOSuitTons;
     }
 
-    public void setTWweight(double TWsuitTons) {
-        this.twSuitTons = TWsuitTons;
+    public void setTWWeight(double TWSuitTons) {
+        this.twSuitTons = TWSuitTons;
     }
 
     public void setCost(long nCost) {
@@ -1306,7 +1306,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
             return false;
         }
         final MekSummary other = (MekSummary) obj;
-        // we match on chassis + model + unittype + sourcefile
+        // we match on chassis + model + unit type + source file
         return Objects.equals(chassis, other.chassis) &&
               Objects.equals(model, other.model) &&
               Objects.equals(unitType, other.unitType) &&
@@ -1396,7 +1396,6 @@ public class MekSummary implements Serializable, ASCardDisplayable {
             }
         } catch (Exception ex) {
             logger.error("", ex);
-            System.out.println(ex);
         }
         return null;
     }

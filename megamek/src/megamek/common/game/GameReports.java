@@ -61,7 +61,7 @@ public class GameReports implements FullGameReport<Report> {
             // Combine round 0 (deployment) with round one's reports.
             round = 1;
         }
-        if (!hasReportsforRound(round)) {
+        if (!hasReportsForRound(round)) {
             // First reports for the round.
             reports.add(new ArrayList<>(v));
         } else {
@@ -71,7 +71,7 @@ public class GameReports implements FullGameReport<Report> {
     }
 
     @Override
-    public boolean hasReportsforRound(int round) {
+    public boolean hasReportsForRound(int round) {
         return round >= 0 && round <= reports.size();
     }
 
@@ -79,7 +79,7 @@ public class GameReports implements FullGameReport<Report> {
     public List<Report> get(int round) {
         // Rounds prior to 1 (initial deployment) are lumped in with round 1
         round = Math.max(1, round);
-        if (hasReportsforRound(round)) {
+        if (hasReportsForRound(round)) {
             return reports.get(round - 1);
         } else {
             return new ArrayList<>();

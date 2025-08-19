@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,16 +34,16 @@
 
 package megamek.common.loaders;
 
+import megamek.common.TechConstants;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.exceptions.LocationFullException;
-import megamek.common.equipment.Mounted;
 import megamek.common.units.ProtoMek;
-import megamek.common.TechConstants;
-import megamek.common.equipment.WeaponType;
-import megamek.common.equipment.ArmorType;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestProtoMek;
 
@@ -89,11 +89,9 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
         }
         t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
 
-        int engineCode = BLKFile.FUSION;
         int engineFlags = Engine.NORMAL_ENGINE;
-        engineFlags |= Engine.CLAN_ENGINE;
         int engineRating = TestProtoMek.calcEngineRating(t);
-        t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
+        t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(BLKFile.FUSION), engineFlags));
 
         if (dataFile.exists("jumpingMP")) {
             t.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
@@ -109,7 +107,7 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
 
         int[] armor = dataFile.getDataAsInt("armor");
 
-        boolean hasMainGun = false;
+        boolean hasMainGun;
         int armorLocs = armor.length + t.firstArmorIndex();
         if (ProtoMek.NUM_PROTOMEK_LOCATIONS == armorLocs) {
             hasMainGun = true;
@@ -141,9 +139,9 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
         t.autoSetInternal();
         t.recalculateTechAdvancement();
 
-        String[] abbrs = t.getLocationNames();
+        String[] abbreviations = t.getLocationNames();
         for (int loop = 0; loop < t.locations(); loop++) {
-            loadEquipment(t, abbrs[loop], loop);
+            loadEquipment(t, abbreviations[loop], loop);
         }
         t.setArmorTonnage(t.getArmorWeight());
         loadQuirks(t);

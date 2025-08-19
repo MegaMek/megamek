@@ -65,7 +65,7 @@ public final class VictoryDeserializer {
     }
 
     /**
-     * Parses the given single victory node to return a DrawTriggeredEvent. It does not apply to a player and it is
+     * Parses the given single victory node to return a DrawTriggeredEvent. It does not apply to a player, and it is
      * automatically game-ending, as explicit draw conditions are unnecessary when the game has already ended.
      *
      * @param victoryNode a node from the victory: definition in a scenario file

@@ -38,6 +38,7 @@ import java.io.Serial;
 
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.AvailabilityValue;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponTypeFlag;
 import megamek.common.game.Game;

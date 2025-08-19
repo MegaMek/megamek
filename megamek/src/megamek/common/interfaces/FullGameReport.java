@@ -80,7 +80,7 @@ public interface FullGameReport<T extends ReportEntry> extends Serializable {
      *
      * @return False when no report has been added for the given round, true otherwise
      */
-    boolean hasReportsforRound(int round);
+    boolean hasReportsForRound(int round);
 
     /**
      * Returns the reports for the given game round. Note that this method should not return null but rather an empty
@@ -88,7 +88,7 @@ public interface FullGameReport<T extends ReportEntry> extends Serializable {
      *
      * @param round The game round to get the reports for
      *
-     * @see #hasReportsforRound(int)
+     * @see #hasReportsForRound(int)
      */
     List<T> get(int round);
 

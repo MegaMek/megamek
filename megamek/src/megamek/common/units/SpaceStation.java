@@ -40,6 +40,10 @@ import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.cost.SpaceStationCostCalculator;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.options.OptionsConstants;
 
 /**

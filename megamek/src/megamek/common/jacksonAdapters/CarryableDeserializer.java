@@ -39,18 +39,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import megamek.common.equipment.Briefcase;
-import megamek.common.board.Coords;
-import megamek.common.equipment.ICarryable;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
+import megamek.common.equipment.Briefcase;
+import megamek.common.jacksonAdapters.dtos.CarryableInfo;
 
-public class CarryableDeserializer extends StdDeserializer<CarryableDeserializer.CarryableInfo> {
+public class CarryableDeserializer extends StdDeserializer<CarryableInfo> {
 
     private static final String NAME = "name";
     private static final String WEIGHT = "weight";
@@ -68,15 +66,8 @@ public class CarryableDeserializer extends StdDeserializer<CarryableDeserializer
         super(vc);
     }
 
-    /**
-     * This is a temporary record for parsed info about a Carryable object (which do not have a position field)
-     */
-    @JsonRootName(value = "Carryable")
-    @JsonDeserialize(using = CarryableDeserializer.class)
-    public record CarryableInfo(ICarryable carryable, Coords position) {}
-
     @Override
-    public CarryableInfo deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    public CarryableInfo deserialize(JsonParser jp, DeserializationContext context) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
         requireFields("Carryable", node, NAME, WEIGHT);
 
@@ -118,12 +109,10 @@ public class CarryableDeserializer extends StdDeserializer<CarryableDeserializer
     }
 
     private void parseStatus(Briefcase briefcase, String statusString) {
-        switch (statusString) {
-            case INVULNERABLE:
-                briefcase.setInvulnerable(true);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown status " + statusString);
+        if (statusString.equals(INVULNERABLE)) {
+            briefcase.setInvulnerable(true);
+        } else {
+            throw new IllegalArgumentException("Unknown status " + statusString);
         }
     }
 }

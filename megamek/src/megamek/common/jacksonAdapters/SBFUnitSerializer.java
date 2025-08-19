@@ -66,50 +66,50 @@ public class SBFUnitSerializer extends StdSerializer<SBFUnit> {
     }
 
     @Override
-    public void serialize(SBFUnit unit, JsonGenerator jgen, SerializerProvider provider)
+    public void serialize(SBFUnit unit, JsonGenerator jsonGenerator, SerializerProvider provider)
           throws IOException {
 
         boolean hasElements = !unit.getElements().isEmpty();
         boolean writeFullStats = MMUWriter.Views.FullStats.class.equals(provider.getActiveView());
 
-        jgen.writeStartObject();
-        jgen.writeStringField(TYPE, SBF_UNIT);
-        jgen.writeStringField(GENERAL_NAME, unit.getName());
+        jsonGenerator.writeStartObject();
+        jsonGenerator.writeStringField(TYPE, SBF_UNIT);
+        jsonGenerator.writeStringField(GENERAL_NAME, unit.getName());
 
         if (!hasElements || writeFullStats) {
             if (unit.getSkill() != 4) {
-                jgen.writeNumberField(SKILL, unit.getSkill());
+                jsonGenerator.writeNumberField(SKILL, unit.getSkill());
             }
-            jgen.writeStringField(SBF_TYPE, unit.getType().name());
-            jgen.writeNumberField(SIZE, unit.getSize());
-            jgen.writeNumberField(TMM, unit.getTmm());
-            // Separating move and mode because the move code is ambiguous and it is unclear to me
+            jsonGenerator.writeStringField(SBF_TYPE, unit.getType().name());
+            jsonGenerator.writeNumberField(SIZE, unit.getSize());
+            jsonGenerator.writeNumberField(TMM, unit.getTmm());
+            // Separating move and mode because the move code is ambiguous, and it is unclear to me
             // if the rules require the exact mode to be known, e.g. if SUBMARINE, MEK_UMU or BA_UMU must be distinct
-            jgen.writeNumberField(MOVE, unit.getMovement());
-            jgen.writeObjectField(MOVE_MODE, unit.getMovementMode());
+            jsonGenerator.writeNumberField(MOVE, unit.getMovement());
+            jsonGenerator.writeObjectField(MOVE_MODE, unit.getMovementMode());
             if (unit.getMovement() != unit.getTrspMovement()) {
-                jgen.writeNumberField(TRSP_MOVE, unit.getTrspMovement());
+                jsonGenerator.writeNumberField(TRSP_MOVE, unit.getTrspMovement());
             }
-            if (unit.getTrspMovementMode() != unit.getTrspMovementMode()) {
-                jgen.writeObjectField(TRSP_MOVE_MODE, unit.getTrspMovementMode());
+            if (unit.getMovementMode() != unit.getTrspMovementMode()) {
+                jsonGenerator.writeObjectField(TRSP_MOVE_MODE, unit.getTrspMovementMode());
             }
             if (unit.getJumpMove() != 0) {
-                jgen.writeNumberField(JUMP, unit.getJumpMove());
+                jsonGenerator.writeNumberField(JUMP, unit.getJumpMove());
             }
             if (unit.getDamage().hasDamage()) {
-                jgen.writeObjectField(DAMAGE, unit.getDamage());
+                jsonGenerator.writeObjectField(DAMAGE, unit.getDamage());
             }
-            jgen.writeNumberField(ARMOR, unit.getArmor());
-            jgen.writeStringField(SPECIALS, unit.getSpecialAbilities().getSpecialsDisplayString(unit));
-            jgen.writeNumberField(PV, unit.getPointValue());
+            jsonGenerator.writeNumberField(ARMOR, unit.getArmor());
+            jsonGenerator.writeStringField(SPECIALS, unit.getSpecialAbilities().getSpecialsDisplayString(unit));
+            jsonGenerator.writeNumberField(PV, unit.getPointValue());
         }
 
         if (hasElements) {
-            provider.defaultSerializeField(ELEMENTS, unit.getElements(), jgen);
+            provider.defaultSerializeField(ELEMENTS, unit.getElements(), jsonGenerator);
         }
 
         //TODO damage
 
-        jgen.writeEndObject();
+        jsonGenerator.writeEndObject();
     }
 }

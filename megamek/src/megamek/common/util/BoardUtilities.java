@@ -44,7 +44,8 @@ import java.util.Set;
 
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.OffBoardDirection;
 import megamek.common.board.Board;
 import megamek.common.board.BoardType;
 import megamek.common.board.Coords;
@@ -1542,7 +1543,7 @@ public class BoardUtilities {
 
                 if (elev >= height - 2) {
                     switch (capStyle) {
-                        case MapSettings.MOUNTAIN_SNOWCAPPED:
+                        case MapSettings.MOUNTAIN_SNOW_CAPPED:
                             hex.setTheme("snow");
                             break;
                         case MapSettings.MOUNTAIN_VOLCANO_ACTIVE:

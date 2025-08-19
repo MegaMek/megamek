@@ -38,6 +38,10 @@ package megamek.common.weapons.unofficial.innerSphere.ac;
  * @since Sep 25, 2004
  */
 
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.weapons.autocannons.LACWeapon;
 
 public class ISLAC10 extends LACWeapon {

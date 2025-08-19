@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,7 @@
 
 package megamek.common.loaders;
 
-import megamek.common.*;
+import megamek.common.TechConstants;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
@@ -56,7 +56,7 @@ import megamek.common.verifier.TestEntity;
  */
 public class BLKConvFighterFile extends BLKFile implements IMekLoader {
 
-    // armor locatioms
+    // armor locations
     public static final int NOSE = 0;
     public static final int RW = 1;
     public static final int LW = 2;
@@ -187,7 +187,7 @@ public class BLKConvFighterFile extends BLKFile implements IMekLoader {
             prefix = "IS ";
         }
 
-        boolean rearMount = false;
+        boolean rearMount;
 
         if (saEquip[0] != null) {
             for (String element : saEquip) {

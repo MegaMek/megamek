@@ -34,6 +34,10 @@
 
 package megamek.common.weapons.bombs.clan;
 
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.weapons.tag.TAGWeapon;
 

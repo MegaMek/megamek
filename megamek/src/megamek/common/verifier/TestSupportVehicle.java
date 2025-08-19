@@ -55,12 +55,14 @@ import megamek.common.bays.SecondClassQuartersCargoBay;
 import megamek.common.bays.StandardSeatCargoBay;
 import megamek.common.bays.SteerageQuartersCargoBay;
 import megamek.common.compute.Compute;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.interfaces.ITechManager;
 import megamek.common.interfaces.ITechnology;
-import megamek.common.interfaces.ITechnology.AvailabilityValue;
-import megamek.common.interfaces.ITechnology.TechBase;
 import megamek.common.interfaces.ITechnologyDelegator;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
@@ -523,34 +525,34 @@ public class TestSupportVehicle extends TestEntity {
      * proposal to the rules committee for E.
      */
     public static final TechAdvancement[] TECH_LEVEL_TA = {
-          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.A)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.A)
                 .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
                 .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A,
                 AvailabilityValue.A),
 
-          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.B)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.B)
                 .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
                 .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B,
                 AvailabilityValue.A),
 
-          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.C)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.C)
                 .setAdvancement(ITechnology.DATE_ES, ITechnology.DATE_ES, ITechnology.DATE_ES)
-                .setPrototypeFactions(ITechnology.Faction.TA).setProductionFactions(ITechnology.Faction.TA)
+                .setPrototypeFactions(Faction.TA).setProductionFactions(Faction.TA)
                 .setAvailability(AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B,
                 AvailabilityValue.B),
 
-          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.D)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.D)
                 .setAdvancement(2420, 2430, 2435).setApproximate(true, true, false)
-                .setPrototypeFactions(ITechnology.Faction.TH).setProductionFactions(ITechnology.Faction.TH)
+                .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH)
                 .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C,
                 AvailabilityValue.B),
 
-          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.E)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.E)
                 .setISAdvancement(2557, 2571, 3055).setClanAdvancement(2557, 2571, 2815)
                 .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D,
                 AvailabilityValue.C),
 
-          new TechAdvancement(TechBase.ALL).setTechRating(ITechnology.TechRating.F)
+          new TechAdvancement(TechBase.ALL).setTechRating(TechRating.F)
                 .setISAdvancement(ITechnology.DATE_NONE, ITechnology.DATE_NONE, 3065)
                 .setISApproximate(false, false, true)
                 .setClanAdvancement(2820, 2825, 2830).setClanApproximate(true, true, false)
@@ -561,15 +563,15 @@ public class TestSupportVehicle extends TestEntity {
     /**
      * The chassis weight multiplier for tech ratings A-F
      */
-    private static final EnumMap<ITechnology.TechRating, Double> STRUCTURE_TECH_MULTIPLIER = new EnumMap<>(ITechnology.TechRating.class);
+    private static final EnumMap<TechRating, Double> STRUCTURE_TECH_MULTIPLIER = new EnumMap<>(TechRating.class);
 
     static {
-        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.A, 1.6);
-        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.B, 1.3);
-        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.C, 1.15);
-        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.D, 1.0);
-        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.E, 0.85);
-        STRUCTURE_TECH_MULTIPLIER.put(ITechnology.TechRating.F, 0.66);
+        STRUCTURE_TECH_MULTIPLIER.put(TechRating.A, 1.6);
+        STRUCTURE_TECH_MULTIPLIER.put(TechRating.B, 1.3);
+        STRUCTURE_TECH_MULTIPLIER.put(TechRating.C, 1.15);
+        STRUCTURE_TECH_MULTIPLIER.put(TechRating.D, 1.0);
+        STRUCTURE_TECH_MULTIPLIER.put(TechRating.E, 0.85);
+        STRUCTURE_TECH_MULTIPLIER.put(TechRating.F, 0.66);
     }
 
     /**

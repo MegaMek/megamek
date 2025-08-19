@@ -34,7 +34,9 @@
 
 package megamek.common.weapons.autocannons.innerSphere;
 
-import megamek.common.TechAdvancement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.weapons.autocannons.NailRivetGunWeapon;
 
 /**
@@ -48,7 +50,7 @@ public class ISRivetGun extends NailRivetGunWeapon {
         name = "Rivet Gun";
         setInternalName(name);
         addLookupName("ISRivet Gun");
-        techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
+        techAdvancement.setTechBase(TechBase.IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2310);
         techAdvancement.setTechRating(TechRating.C);
         techAdvancement.setAvailability(AvailabilityValue.C,

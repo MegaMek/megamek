@@ -61,6 +61,7 @@ import megamek.common.alphaStrike.ASTurretSummary;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentTypeLookup;
@@ -69,7 +70,6 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.MountedHelper;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
-import megamek.common.interfaces.ITechnology;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.weapons.missiles.MissileWeapon;
@@ -876,7 +876,7 @@ public class ASDamageConverter {
     protected static BattleForceSUA getArtilleryType(WeaponType weaponType) {
         switch (weaponType.getAmmoType()) {
             case ARROW_IV:
-                return (weaponType.getTechBase() == ITechnology.TechBase.CLAN) ? ARTAC : ARTAIS;
+                return (weaponType.getTechBase() == TechBase.CLAN) ? ARTAC : ARTAIS;
             case LONG_TOM:
                 return ARTLT;
             case SNIPER:

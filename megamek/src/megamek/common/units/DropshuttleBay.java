@@ -37,6 +37,10 @@ package megamek.common.units;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.bays.UnitBay;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 
 /**
  * Implements internal bays for dropships used by primitive jumpships. See rules IO, p. 119.

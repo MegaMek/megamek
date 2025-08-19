@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,11 @@
 package megamek.common.interfaces;
 
 import megamek.common.SimpleTechLevel;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Era;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 
 /**
  * Convenience interface that allows classes to implement the ITechnology interface by delegating to a member that

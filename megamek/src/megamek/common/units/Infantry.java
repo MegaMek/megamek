@@ -50,7 +50,11 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.cost.InfantryCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.IArmorState;
@@ -232,96 +236,96 @@ public class Infantry extends Entity {
      * @return The Tech Advancement data for the movement mode.
      */
     public static TechAdvancement getMotiveTechAdvancement(EntityMovementMode movementMode) {
-        TechAdvancement techAdvancement = new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
+        TechAdvancement techAdvancement = new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
                     ITechnology.DATE_PS,
                     ITechnology.DATE_PS)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
         switch (movementMode) {
             case INF_MOTORIZED:
-                techAdvancement.setTechRating(ITechnology.TechRating.B)
-                      .setAvailability(ITechnology.AvailabilityValue.A,
-                            ITechnology.AvailabilityValue.A,
-                            ITechnology.AvailabilityValue.A,
-                            ITechnology.AvailabilityValue.A)
+                techAdvancement.setTechRating(TechRating.B)
+                      .setAvailability(AvailabilityValue.A,
+                            AvailabilityValue.A,
+                            AvailabilityValue.A,
+                            AvailabilityValue.A)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
             case INF_JUMP:
                 techAdvancement.setAdvancement(ITechnology.DATE_ES, ITechnology.DATE_ES, ITechnology.DATE_ES)
-                      .setTechRating(ITechnology.TechRating.D)
-                      .setAvailability(ITechnology.AvailabilityValue.B,
-                            ITechnology.AvailabilityValue.B,
-                            ITechnology.AvailabilityValue.B,
-                            ITechnology.AvailabilityValue.B)
+                      .setTechRating(TechRating.D)
+                      .setAvailability(AvailabilityValue.B,
+                            AvailabilityValue.B,
+                            AvailabilityValue.B,
+                            AvailabilityValue.B)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
             case INF_UMU:
                 techAdvancement.setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS)
-                      .setTechRating(ITechnology.TechRating.B)
-                      .setAvailability(ITechnology.AvailabilityValue.D,
-                            ITechnology.AvailabilityValue.D,
-                            ITechnology.AvailabilityValue.D,
-                            ITechnology.AvailabilityValue.D)
+                      .setTechRating(TechRating.B)
+                      .setAvailability(AvailabilityValue.D,
+                            AvailabilityValue.D,
+                            AvailabilityValue.D,
+                            AvailabilityValue.D)
                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
                 break;
             case WHEELED:
-                techAdvancement.setTechRating(ITechnology.TechRating.A)
-                      .setAvailability(ITechnology.AvailabilityValue.A,
-                            ITechnology.AvailabilityValue.B,
-                            ITechnology.AvailabilityValue.A,
-                            ITechnology.AvailabilityValue.A)
+                techAdvancement.setTechRating(TechRating.A)
+                      .setAvailability(AvailabilityValue.A,
+                            AvailabilityValue.B,
+                            AvailabilityValue.A,
+                            AvailabilityValue.A)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
             case TRACKED:
-                techAdvancement.setTechRating(ITechnology.TechRating.B)
-                      .setAvailability(ITechnology.AvailabilityValue.B,
-                            ITechnology.AvailabilityValue.C,
-                            ITechnology.AvailabilityValue.B,
-                            ITechnology.AvailabilityValue.B)
+                techAdvancement.setTechRating(TechRating.B)
+                      .setAvailability(AvailabilityValue.B,
+                            AvailabilityValue.C,
+                            AvailabilityValue.B,
+                            AvailabilityValue.B)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
             case HOVER:
-                techAdvancement.setTechRating(ITechnology.TechRating.C)
-                      .setAvailability(ITechnology.AvailabilityValue.A,
-                            ITechnology.AvailabilityValue.B,
-                            ITechnology.AvailabilityValue.A,
-                            ITechnology.AvailabilityValue.B)
+                techAdvancement.setTechRating(TechRating.C)
+                      .setAvailability(AvailabilityValue.A,
+                            AvailabilityValue.B,
+                            AvailabilityValue.A,
+                            AvailabilityValue.B)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
             case VTOL:
                 techAdvancement.setAdvancement(ITechnology.DATE_ES, ITechnology.DATE_ES)
-                      .setTechRating(ITechnology.TechRating.C)
-                      .setAvailability(ITechnology.AvailabilityValue.C,
-                            ITechnology.AvailabilityValue.D,
-                            ITechnology.AvailabilityValue.D,
-                            ITechnology.AvailabilityValue.C)
+                      .setTechRating(TechRating.C)
+                      .setAvailability(AvailabilityValue.C,
+                            AvailabilityValue.D,
+                            AvailabilityValue.D,
+                            AvailabilityValue.C)
                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
                 break;
             case SUBMARINE:
                 techAdvancement.setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS)
-                      .setTechRating(ITechnology.TechRating.C)
-                      .setAvailability(ITechnology.AvailabilityValue.D,
-                            ITechnology.AvailabilityValue.D,
-                            ITechnology.AvailabilityValue.D,
-                            ITechnology.AvailabilityValue.D)
+                      .setTechRating(TechRating.C)
+                      .setAvailability(AvailabilityValue.D,
+                            AvailabilityValue.D,
+                            AvailabilityValue.D,
+                            AvailabilityValue.D)
                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
                 break;
             case NONE:
                 // Beast-mounted
                 techAdvancement.setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS)
-                      .setTechRating(ITechnology.TechRating.A)
-                      .setAvailability(ITechnology.AvailabilityValue.A,
-                            ITechnology.AvailabilityValue.A,
-                            ITechnology.AvailabilityValue.A,
-                            ITechnology.AvailabilityValue.A)
+                      .setTechRating(TechRating.A)
+                      .setAvailability(AvailabilityValue.A,
+                            AvailabilityValue.A,
+                            AvailabilityValue.A,
+                            AvailabilityValue.A)
                       .setStaticTechLevel(SimpleTechLevel.ADVANCED);
                 break;
             case INF_LEG:
             default:
-                techAdvancement.setTechRating(ITechnology.TechRating.A)
-                      .setAvailability(ITechnology.AvailabilityValue.A,
-                            ITechnology.AvailabilityValue.A,
-                            ITechnology.AvailabilityValue.A,
-                            ITechnology.AvailabilityValue.A)
+                techAdvancement.setTechRating(TechRating.A)
+                      .setAvailability(AvailabilityValue.A,
+                            AvailabilityValue.A,
+                            AvailabilityValue.A,
+                            AvailabilityValue.A)
                       .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 break;
         }
@@ -330,88 +334,88 @@ public class Infantry extends Entity {
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
+        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
                     ITechnology.DATE_PS,
                     ITechnology.DATE_PS)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     public static TechAdvancement getCombatEngineerTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
+        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
                     ITechnology.DATE_PS,
                     ITechnology.DATE_PS)
-              .setTechRating(ITechnology.TechRating.C)
-              .setAvailability(ITechnology.AvailabilityValue.A,
-                    ITechnology.AvailabilityValue.B,
-                    ITechnology.AvailabilityValue.A,
-                    ITechnology.AvailabilityValue.A)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.A,
+                    AvailabilityValue.B,
+                    AvailabilityValue.A,
+                    AvailabilityValue.A)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getMarineTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
+        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
                     ITechnology.DATE_PS,
                     ITechnology.DATE_PS)
-              .setTechRating(ITechnology.TechRating.C)
-              .setAvailability(ITechnology.AvailabilityValue.A,
-                    ITechnology.AvailabilityValue.A,
-                    ITechnology.AvailabilityValue.A,
-                    ITechnology.AvailabilityValue.A)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.A,
+                    AvailabilityValue.A,
+                    AvailabilityValue.A,
+                    AvailabilityValue.A)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getMountainTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
+        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
                     ITechnology.DATE_PS,
                     ITechnology.DATE_PS)
-              .setTechRating(ITechnology.TechRating.B)
-              .setAvailability(ITechnology.AvailabilityValue.A,
-                    ITechnology.AvailabilityValue.A,
-                    ITechnology.AvailabilityValue.A,
-                    ITechnology.AvailabilityValue.A)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.A,
+                    AvailabilityValue.A,
+                    AvailabilityValue.A,
+                    AvailabilityValue.A)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getParatrooperTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
+        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
                     ITechnology.DATE_PS,
                     ITechnology.DATE_PS)
-              .setTechRating(ITechnology.TechRating.B)
-              .setAvailability(ITechnology.AvailabilityValue.A,
-                    ITechnology.AvailabilityValue.A,
-                    ITechnology.AvailabilityValue.A,
-                    ITechnology.AvailabilityValue.A)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.A,
+                    AvailabilityValue.A,
+                    AvailabilityValue.A,
+                    AvailabilityValue.A)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getParamedicTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
+        return new TechAdvancement(TechBase.ALL).setAdvancement(ITechnology.DATE_PS,
                     ITechnology.DATE_PS,
                     ITechnology.DATE_PS)
-              .setTechRating(ITechnology.TechRating.B)
-              .setAvailability(ITechnology.AvailabilityValue.C,
-                    ITechnology.AvailabilityValue.C,
-                    ITechnology.AvailabilityValue.C,
-                    ITechnology.AvailabilityValue.C)
+              .setTechRating(TechRating.B)
+              .setAvailability(AvailabilityValue.C,
+                    AvailabilityValue.C,
+                    AvailabilityValue.C,
+                    AvailabilityValue.C)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     public static TechAdvancement getTAGTroopsTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setISAdvancement(2585,
+        return new TechAdvancement(TechBase.ALL).setISAdvancement(2585,
                     2600,
                     ITechnology.DATE_NONE,
                     2535,
                     3037)
               .setClanAdvancement(2585, 2600)
               .setApproximate(true, false, false, false, false)
-              .setTechRating(ITechnology.TechRating.E)
-              .setPrototypeFactions(ITechnology.Faction.TH)
-              .setProductionFactions(ITechnology.Faction.TH)
-              .setReintroductionFactions(ITechnology.Faction.FS)
-              .setAvailability(ITechnology.AvailabilityValue.F,
-                    ITechnology.AvailabilityValue.X,
-                    ITechnology.AvailabilityValue.E,
-                    ITechnology.AvailabilityValue.E)
+              .setTechRating(TechRating.E)
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.TH)
+              .setReintroductionFactions(Faction.FS)
+              .setAvailability(AvailabilityValue.F,
+                    AvailabilityValue.X,
+                    AvailabilityValue.E,
+                    AvailabilityValue.E)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 

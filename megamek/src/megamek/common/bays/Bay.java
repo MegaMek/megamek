@@ -45,6 +45,11 @@ import java.util.stream.Collectors;
 
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Era;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.Transporter;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ITechnology;
@@ -153,6 +158,10 @@ public class Bay implements Transporter, ITechnology {
         doors = d;
         doorsNext = d;
         currentDoors = d;
+    }
+
+    public Vector<Integer> getTroops() {
+        return troops;
     }
 
     public int getCurrentDoors() {

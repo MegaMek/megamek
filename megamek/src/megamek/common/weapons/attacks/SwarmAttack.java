@@ -34,10 +34,14 @@
 
 package megamek.common.weapons.attacks;
 
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.game.Game;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.SwarmAttackHandler;

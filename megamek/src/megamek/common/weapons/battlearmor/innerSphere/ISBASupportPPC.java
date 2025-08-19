@@ -34,7 +34,9 @@
 
 package megamek.common.weapons.battlearmor.innerSphere;
 
-import megamek.common.TechAdvancement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.weapons.ppc.PPCWeapon;
 
@@ -70,7 +72,7 @@ public class ISBASupportPPC extends PPCWeapon {
         bv = 14;
         cost = 14000;
         rulesRefs = "267, TM";
-        techAdvancement.setTechBase(TechAdvancement.TechBase.IS)
+        techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3046, 3053, 3056).setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C);
     }

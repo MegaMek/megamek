@@ -39,9 +39,9 @@ import static megamek.common.jacksonAdapters.ASElementSerializer.FULL_NAME;
 import static megamek.common.jacksonAdapters.ASElementSerializer.NOSE_ARC;
 import static megamek.common.jacksonAdapters.ASElementSerializer.OVERHEAT;
 import static megamek.common.jacksonAdapters.ASElementSerializer.SIDE_ARC;
-import static megamek.common.jacksonAdapters.ASElementSerializer.SQUADSIZE;
+import static megamek.common.jacksonAdapters.ASElementSerializer.SQUAD_SIZE;
 import static megamek.common.jacksonAdapters.ASElementSerializer.STRUCTURE;
-import static megamek.common.jacksonAdapters.ASElementSerializer.STRUCTUREDAMAGE;
+import static megamek.common.jacksonAdapters.ASElementSerializer.STRUCTURE_DAMAGE;
 import static megamek.common.jacksonAdapters.MMUReader.*;
 
 import java.io.IOException;
@@ -56,11 +56,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import megamek.common.units.Entity;
-import megamek.common.loaders.MekFileParser;
-import megamek.common.loaders.MekSummary;
-import megamek.common.loaders.MekSummaryCache;
-import megamek.common.units.UnitRole;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASSpecialAbilityCollection;
 import megamek.common.alphaStrike.ASTurretSummary;
@@ -69,6 +64,11 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitRole;
 
 /**
  * This Jackson deserializer reads an AlphaStrikeElement from an MMU file. When the MMU file has the "fullname:" field,
@@ -89,7 +89,7 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
     }
 
     @Override
-    public AlphaStrikeElement deserialize(JsonParser jp, DeserializationContext ctxt)
+    public AlphaStrikeElement deserialize(JsonParser jp, DeserializationContext context)
           throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
         if (!node.has(MMUReader.TYPE) || !node.get(MMUReader.TYPE).textValue().equalsIgnoreCase(AS_ELEMENT)) {
@@ -171,8 +171,8 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
                 element.setRole(UnitRole.parseRole(node.get(ROLE).textValue()));
             }
 
-            if (element.isBattleArmor() && node.has(SQUADSIZE)) {
-                element.setSquadSize((Integer) node.get(SQUADSIZE).numberValue());
+            if (element.isBattleArmor() && node.has(SQUAD_SIZE)) {
+                element.setSquadSize((Integer) node.get(SQUAD_SIZE).numberValue());
             }
         }
         element.setSkill(node.has(SKILL) ? node.get(SKILL).intValue() : 4);
@@ -181,13 +181,13 @@ public class ASElementDeserializer extends StdDeserializer<AlphaStrikeElement> {
         // Transient values:
         //TODO: position, crits...
 
-        if (node.has(ARMORDAMAGE)) {
-            int armor = element.getFullArmor() - (Integer) node.get(ARMORDAMAGE).numberValue();
+        if (node.has(ARMOR_DAMAGE)) {
+            int armor = element.getFullArmor() - (Integer) node.get(ARMOR_DAMAGE).numberValue();
             element.setCurrentArmor(Math.max(armor, 0));
         }
 
-        if (node.has(STRUCTUREDAMAGE)) {
-            int structure = element.getFullStructure() - (Integer) node.get(STRUCTUREDAMAGE).numberValue();
+        if (node.has(STRUCTURE_DAMAGE)) {
+            int structure = element.getFullStructure() - (Integer) node.get(STRUCTURE_DAMAGE).numberValue();
             element.setCurrentStructure(Math.max(structure, 0));
         }
         return element;

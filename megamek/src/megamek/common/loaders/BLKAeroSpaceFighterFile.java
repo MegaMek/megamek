@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,7 @@
 
 package megamek.common.loaders;
 
-import megamek.common.*;
+import megamek.common.TechConstants;
 import megamek.common.bays.CargoBay;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;

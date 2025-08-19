@@ -34,6 +34,9 @@
 
 package megamek.common.weapons.unofficial.innerSphere.mrm;
 
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.weapons.missiles.MRMWeapon;
 
 /**

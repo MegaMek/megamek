@@ -59,7 +59,7 @@ public class PrincessSettingsEventDeserializer extends StdDeserializer<PrincessS
     }
 
     @Override
-    public PrincessSettingsEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    public PrincessSettingsEvent deserialize(JsonParser jp, DeserializationContext context) throws IOException {
         return parse(jp.getCodec().readTree(jp));
     }
 

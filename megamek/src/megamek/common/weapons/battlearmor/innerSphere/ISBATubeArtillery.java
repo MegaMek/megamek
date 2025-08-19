@@ -34,6 +34,10 @@
 
 package megamek.common.weapons.battlearmor.innerSphere;
 
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.options.IGameOptions;

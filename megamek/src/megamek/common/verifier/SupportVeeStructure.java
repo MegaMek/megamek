@@ -36,21 +36,21 @@ package megamek.common.verifier;
 
 import java.util.EnumMap;
 
-import megamek.common.units.Entity;
-import megamek.common.interfaces.ITechnology;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.MiscType;
+import megamek.common.units.Entity;
 
 public class SupportVeeStructure extends Structure {
 
-    static final EnumMap<ITechnology.TechRating, Double> SV_TECH_RATING_STRUCTURE_MULTIPLIER = new EnumMap<>(ITechnology.TechRating.class);
+    static final EnumMap<TechRating, Double> SV_TECH_RATING_STRUCTURE_MULTIPLIER = new EnumMap<>(TechRating.class);
 
     static {
-        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(ITechnology.TechRating.A, 1.60);
-        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(ITechnology.TechRating.B, 1.30);
-        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(ITechnology.TechRating.C, 1.15);
-        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(ITechnology.TechRating.D, 1.00);
-        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(ITechnology.TechRating.E, 0.85);
-        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(ITechnology.TechRating.F, 0.66);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(TechRating.A, 1.60);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(TechRating.B, 1.30);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(TechRating.C, 1.15);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(TechRating.D, 1.00);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(TechRating.E, 0.85);
+        SV_TECH_RATING_STRUCTURE_MULTIPLIER.put(TechRating.F, 0.66);
     }
 
     Entity sv;

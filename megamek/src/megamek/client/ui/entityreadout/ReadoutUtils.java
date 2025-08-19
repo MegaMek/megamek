@@ -41,8 +41,8 @@ import java.util.List;
 
 import megamek.client.ui.Messages;
 import megamek.common.bays.Bay;
+import megamek.common.enums.TechBase;
 import megamek.common.equipment.*;
-import megamek.common.interfaces.ITechnology;
 import megamek.common.units.Entity;
 import megamek.common.units.InfantryCompartment;
 import megamek.common.units.Mek;
@@ -179,10 +179,10 @@ final class ReadoutUtils {
 
     private static ViewElement[] createWeaponTableRow(Mounted<?> mounted, Entity entity, boolean withHeatColumn) {
         String name = mounted.getDesc() + GeneralEntityReadout.quirkMarker(mounted);
-        if (entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.IS)) {
+        if (entity.isClan() && (mounted.getType().getTechBase() == TechBase.IS)) {
             name += Messages.getString("MekView.IS");
         }
-        if (!entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
+        if (!entity.isClan() && (mounted.getType().getTechBase() == TechBase.CLAN)) {
             name += Messages.getString("MekView.Clan");
         }
         ViewElement nameElement = new PlainElement(name);
@@ -204,10 +204,10 @@ final class ReadoutUtils {
         for (WeaponMounted m : mounted.getBayWeapons()) {
 
             String name = "- " + m.getDesc();
-            if (entity.isClan() && (m.getType().getTechBase() == ITechnology.TechBase.IS)) {
+            if (entity.isClan() && (m.getType().getTechBase() == TechBase.IS)) {
                 name += Messages.getString("MekView.IS");
             }
-            if (!entity.isClan() && (m.getType().getTechBase() == ITechnology.TechBase.CLAN)) {
+            if (!entity.isClan() && (m.getType().getTechBase() == TechBase.CLAN)) {
                 name += Messages.getString("MekView.Clan");
             }
             ViewElement nameElement = new PlainElement(name);

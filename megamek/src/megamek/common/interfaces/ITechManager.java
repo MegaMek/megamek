@@ -34,8 +34,9 @@
 package megamek.common.interfaces;
 
 import megamek.common.SimpleTechLevel;
-import megamek.common.interfaces.ITechnology.AvailabilityValue;
-import megamek.common.interfaces.ITechnology.Faction;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
 
 /**
  * Determines whether a piece of technology (a part, construction option, or entire unit) meets certain constraints such
@@ -102,7 +103,7 @@ public interface ITechManager {
         // Unofficial tech has the option to ignore year availability
         if ((getTechLevel() == SimpleTechLevel.UNOFFICIAL)
               && unofficialNoYear()) {
-            return useMixedTech() || (tech.getTechBase() == ITechnology.TechBase.ALL)
+            return useMixedTech() || (tech.getTechBase() == TechBase.ALL)
                   || (useClanTechBase() == tech.isClan());
         }
 
@@ -145,7 +146,7 @@ public interface ITechManager {
                       || tech.getSimpleLevel(getGameYear(), false, faction).compareTo(getTechLevel()) <= 0;
             }
         } else {
-            if (tech.getTechBase() != ITechnology.TechBase.ALL
+            if (tech.getTechBase() != TechBase.ALL
                   && clanTech != tech.isClan()) {
                 return false;
             } else if (clanTech && (!introducedClan || (!showExtinct() && extinctClan))) {
@@ -156,7 +157,7 @@ public interface ITechManager {
                 return tech.getSimpleLevel(getGameYear(), clanTech, faction).compareTo(getTechLevel()) <= 0;
             }
         }
-        // It's available in the year and we're not using tech progression, so just check the tech level.
+        // It's available in the year, and we're not using tech progression, so just check the tech level.
         return tech.getStaticTechLevel().compareTo(getTechLevel()) <= 0;
     }
 }

@@ -67,7 +67,16 @@ import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
 import megamek.common.interfaces.IStartingPositions;
 import megamek.common.interfaces.PlanetaryConditionsUsing;
-import megamek.common.jacksonAdapters.*;
+import megamek.common.jacksonAdapters.BoardDeserializer;
+import megamek.common.jacksonAdapters.BotParser;
+import megamek.common.jacksonAdapters.EntityDeserializer;
+import megamek.common.jacksonAdapters.GeneralEventDeserializer;
+import megamek.common.jacksonAdapters.HexAreaDeserializer;
+import megamek.common.jacksonAdapters.MMUReader;
+import megamek.common.jacksonAdapters.MessageDeserializer;
+import megamek.common.jacksonAdapters.TriggerDeserializer;
+import megamek.common.jacksonAdapters.VictoryDeserializer;
+import megamek.common.jacksonAdapters.dtos.CarryableInfo;
 import megamek.common.options.GameOptions;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
@@ -409,12 +418,12 @@ public class ScenarioV2 implements Scenario {
             // Carryables
             if (playerNode.has(OBJECTS) && (game instanceof AbstractGame)) {
                 JsonNode carryablesNode = playerNode.get(OBJECTS);
-                List<CarryableDeserializer.CarryableInfo> carryables = new MMUReader(scenariofile)
-                      .read(carryablesNode, CarryableDeserializer.CarryableInfo.class).stream()
-                      .filter(o -> o instanceof CarryableDeserializer.CarryableInfo)
-                      .map(o -> (CarryableDeserializer.CarryableInfo) o)
+                List<CarryableInfo> carryables = new MMUReader(scenariofile)
+                      .read(carryablesNode, CarryableInfo.class).stream()
+                      .filter(o -> o instanceof CarryableInfo)
+                      .map(o -> (CarryableInfo) o)
                       .toList();
-                for (CarryableDeserializer.CarryableInfo carryableInfo : carryables) {
+                for (CarryableInfo carryableInfo : carryables) {
                     if (carryableInfo.position() == null) {
                         player.getGroundObjectsToPlace().add(carryableInfo.carryable());
                     } else {

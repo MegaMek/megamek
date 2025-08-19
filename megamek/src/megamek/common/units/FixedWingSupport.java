@@ -35,15 +35,18 @@
 package megamek.common.units;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.interfaces.ITechnology;
-import megamek.common.util.RoundWeight;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.bays.CargoBay;
 import megamek.common.cost.FixedWingSupportCostCalculator;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.MiscType;
+import megamek.common.interfaces.ITechnology;
+import megamek.common.util.RoundWeight;
 
 /**
  * @author Jason Tighe
@@ -195,71 +198,71 @@ public class FixedWingSupport extends ConvFighter {
               && (getEngine().isFusion() || getEngine().isFission() || getEngine().isSolar()));
     }
 
-    private static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(TechBase.ALL)
           .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
-          .setTechRating(ITechnology.TechRating.B)
-          .setAvailability(ITechnology.AvailabilityValue.C,
-                ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.C,
-                ITechnology.AvailabilityValue.C)
+          .setTechRating(TechRating.B)
+          .setAvailability(AvailabilityValue.C,
+                AvailabilityValue.D,
+                AvailabilityValue.C,
+                AvailabilityValue.C)
           .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_FIXED_WING_SUPPORT_LARGE = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_FIXED_WING_SUPPORT_LARGE = new TechAdvancement(TechBase.ALL)
           .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
-          .setTechRating(ITechnology.TechRating.B)
-          .setAvailability(ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.E,
-                ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.D)
+          .setTechRating(TechRating.B)
+          .setAvailability(AvailabilityValue.D,
+                AvailabilityValue.E,
+                AvailabilityValue.D,
+                AvailabilityValue.D)
           .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_AIRSHIP_SUPPORT_SMALL = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_AIRSHIP_SUPPORT_SMALL = new TechAdvancement(TechBase.ALL)
           .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
-          .setTechRating(ITechnology.TechRating.A)
-          .setAvailability(ITechnology.AvailabilityValue.C,
-                ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.C,
-                ITechnology.AvailabilityValue.C)
+          .setTechRating(TechRating.A)
+          .setAvailability(AvailabilityValue.C,
+                AvailabilityValue.D,
+                AvailabilityValue.C,
+                AvailabilityValue.C)
           .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_AIRSHIP_SUPPORT_MEDIUM = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_AIRSHIP_SUPPORT_MEDIUM = new TechAdvancement(TechBase.ALL)
           .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
-          .setTechRating(ITechnology.TechRating.B)
-          .setAvailability(ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.E,
-                ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.D)
+          .setTechRating(TechRating.B)
+          .setAvailability(AvailabilityValue.D,
+                AvailabilityValue.E,
+                AvailabilityValue.D,
+                AvailabilityValue.D)
           .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // Availability missing from TO. Using medium
-    private static final TechAdvancement TA_AIRSHIP_SUPPORT_LARGE = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_AIRSHIP_SUPPORT_LARGE = new TechAdvancement(TechBase.ALL)
           .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
-          .setTechRating(ITechnology.TechRating.C)
-          .setAvailability(ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.E,
-                ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.D)
+          .setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.D,
+                AvailabilityValue.E,
+                AvailabilityValue.D,
+                AvailabilityValue.D)
           .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     // Also using early spaceflight for intro dates based on common sense.
-    private static final TechAdvancement TA_SATELLITE_SMALL = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_SATELLITE_SMALL = new TechAdvancement(TechBase.ALL)
           .setAdvancement(ITechnology.DATE_ES, ITechnology.DATE_ES, ITechnology.DATE_ES)
-          .setTechRating(ITechnology.TechRating.C)
-          .setAvailability(ITechnology.AvailabilityValue.C,
-                ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.C,
-                ITechnology.AvailabilityValue.C)
+          .setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.C,
+                AvailabilityValue.D,
+                AvailabilityValue.C,
+                AvailabilityValue.C)
           .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    private static final TechAdvancement TA_SATELLITE_MEDIUM = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_SATELLITE_MEDIUM = new TechAdvancement(TechBase.ALL)
           .setAdvancement(ITechnology.DATE_ES, ITechnology.DATE_ES, ITechnology.DATE_ES)
-          .setTechRating(ITechnology.TechRating.C)
-          .setAvailability(ITechnology.AvailabilityValue.C,
-                ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.D)
+          .setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.C,
+                AvailabilityValue.D,
+                AvailabilityValue.D,
+                AvailabilityValue.D)
           .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    private static final TechAdvancement TA_SATELLITE_LARGE = new TechAdvancement(ITechnology.TechBase.ALL)
+    private static final TechAdvancement TA_SATELLITE_LARGE = new TechAdvancement(TechBase.ALL)
           .setAdvancement(ITechnology.DATE_ES, ITechnology.DATE_ES, ITechnology.DATE_ES)
-          .setTechRating(ITechnology.TechRating.C)
-          .setAvailability(ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.E,
-                ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.D)
+          .setTechRating(TechRating.C)
+          .setAvailability(AvailabilityValue.D,
+                AvailabilityValue.E,
+                AvailabilityValue.D,
+                AvailabilityValue.D)
           .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override

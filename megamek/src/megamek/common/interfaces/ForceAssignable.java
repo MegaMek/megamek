@@ -87,10 +87,10 @@ public interface ForceAssignable extends InGameObject {
     }
 
     /**
-     * Filters the given list of ForceAssignables, keeping only those that are an Entity and returns a new list of those
+     * Filters the given list of ForceAssignable, keeping only those that are an Entity and returns a new list of those
      * Entities.
      *
-     * @param forceAssignableList The list of ForceAssignables to filter
+     * @param forceAssignableList The list of ForceAssignable to filter
      *
      * @return A filtered list of all Entities in the given list
      */
@@ -102,10 +102,10 @@ public interface ForceAssignable extends InGameObject {
     }
 
     /**
-     * Filters the given list of ForceAssignables, keeping only those that are an AlphaStrikeElement and returns a new
+     * Filters the given list of ForceAssignable, keeping only those that are an AlphaStrikeElement and returns a new
      * list of those AlphaStrikeElements.
      *
-     * @param forceAssignableList The list of ForceAssignables to filter
+     * @param forceAssignableList The list of ForceAssignable to filter
      *
      * @return A filtered list of all AlphaStrikeElements in the given list
      */

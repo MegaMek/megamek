@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2002-2004 Josh Yockey
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -244,7 +244,6 @@ public class MekFileParser {
      *
      * @param content String containing the unit representation
      *
-     * @throws Exception
      */
     public void parse(String content) throws Exception {
         final boolean isBlk = content.contains("<BlockVersion>") || content.contains("<UnitType>");
@@ -345,7 +344,7 @@ public class MekFileParser {
                 if ((eqNum > 0) && linkable.test(ent.getEquipment().get(eqNum - 1))) {
                     m.setLinked(ent.getEquipment().get(eqNum - 1));
                 } else {
-                    for (Mounted<?> weapon : ent.totalWeaponList) {
+                    for (Mounted<?> weapon : ent.getTotalWeaponList()) {
                         if (linkable.test(weapon)) {
                             m.setLinked(weapon);
                             break;
@@ -597,7 +596,7 @@ public class MekFileParser {
                         for (WeaponMounted bayMountedWeapon : mWeapon.getBayWeapons()) {
                             WeaponType bayWeaponType = bayMountedWeapon.getType();
 
-                            // Check for PPC that isn't cross linked
+                            // Check for PPC that isn't cross-linked
                             if (!bayWeaponType.hasFlag(WeaponType.F_PPC) ||
                                   (bayMountedWeapon.getCrossLinkedBy() != null)) {
                                 continue;
@@ -620,7 +619,7 @@ public class MekFileParser {
                         }
                     }
 
-                    // Check for PPC that isn't cross linked
+                    // Check for PPC that isn't cross-linked
                     if (!weaponType.hasFlag(WeaponType.F_PPC) || (mWeapon.getCrossLinkedBy() != null)) {
                         continue;
                     }

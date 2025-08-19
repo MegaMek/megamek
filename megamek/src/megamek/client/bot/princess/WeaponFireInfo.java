@@ -48,7 +48,6 @@ import java.util.Objects;
 
 import megamek.common.Hex;
 import megamek.common.HexTarget;
-import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -56,6 +55,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.BombLoadout;
@@ -533,7 +533,7 @@ public class WeaponFireInfo {
         // For clan plasma cannon, assume 7 "damage".
         final WeaponType weaponType = weapon.getType();
         if (weaponType.hasFlag(WeaponType.F_PLASMA) &&
-              TechAdvancement.TechBase.CLAN == weaponType.getTechBase()) {
+              TechBase.CLAN == weaponType.getTechBase()) {
             return new double[] { 7D, 0D, 0D };
         }
 

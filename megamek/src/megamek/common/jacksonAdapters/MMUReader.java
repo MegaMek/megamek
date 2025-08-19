@@ -49,7 +49,7 @@ import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
 /**
- * This class has methods for reading objects such as SBF Formations, Units and AlphaStrikeElements from a MMU file
+ * This class has methods for reading objects such as SBF Formations, Units and AlphaStrikeElements from an MMU file
  * which uses YAML formatting.
  */
 public final class MMUReader {
@@ -71,7 +71,7 @@ public final class MMUReader {
     static final String MOVE_MODE = "movemode";
     static final String TRSP_MOVE = "trspmove";
     static final String TRSP_MOVE_MODE = "trspmovemode";
-    static final String ARMORDAMAGE = "armordamage";
+    static final String ARMOR_DAMAGE = "armordamage";
     static final String SPECIALS = "specials";
     static final String ARMOR = "armor";
     static final String JUMP = "jump";
@@ -90,7 +90,7 @@ public final class MMUReader {
     }
 
     /**
-     * Read a list of objects from a given MMU file (YAML format, see {@link MMUWriter}. The list can be empty or
+     * Read a list of objects from a given MMU file (YAML format, see {@link MMUWriter}). The list can be empty or
      * contain one or multiple results. If reading any part of the file fails, an exception is thrown.
      *
      * @param file The MMU file to read
@@ -179,9 +179,9 @@ public final class MMUReader {
     }
 
     /**
-     * Tests the given node (which should be an object node that holds a full AS element or SBF Unit) if it has all of
-     * the given fields. If any of the given fields is missing, an IllegalArgumentException is thrown. The given
-     * objectType can be any String, it is only used as part of the error message when a field is not found.
+     * Tests the given node (which should be an object node that holds a full AS element or SBF Unit) if it has all the
+     * given fields. If any of the given fields is missing, an IllegalArgumentException is thrown. The given objectType
+     * can be any String, it is only used as part of the error message when a field is not found.
      *
      * @param objectType The object type such as "ASElement". Only used as part of the exception message
      * @param node       the node containing an object to be deserialized

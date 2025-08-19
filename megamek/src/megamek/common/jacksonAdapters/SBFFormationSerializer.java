@@ -51,12 +51,12 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import megamek.common.units.Entity;
 import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.units.Entity;
 
 /**
  * This Jackson serializer writes an SBF Formation to YAML output. Since the base values can be calculated from the
- * stats of the SBF units, only the units are written unless the "FullStats" View is used (see {@link MMUWriter}.
+ * stats of the SBF units, only the units are written unless the "FullStats" View is used (see {@link MMUWriter}).
  * <p>
  * In addition, any transients like damage are written if present (2024: only partially implemented).
  */
@@ -75,50 +75,51 @@ public class SBFFormationSerializer extends StdSerializer<SBFFormation> {
     }
 
     @Override
-    public void serialize(SBFFormation formation, JsonGenerator jgen, SerializerProvider provider)
+    public void serialize(SBFFormation formation, JsonGenerator generator, SerializerProvider provider)
           throws IOException {
 
         boolean writeFullStats = MMUWriter.Views.FullStats.class.equals(provider.getActiveView());
-        jgen.writeStartObject();
-        jgen.writeStringField(MMUReader.TYPE, MMUReader.SBF_FORMATION);
-        jgen.writeStringField(MMUReader.GENERAL_NAME, formation.getName());
+        generator.writeStartObject();
+        generator.writeStringField(MMUReader.TYPE, MMUReader.SBF_FORMATION);
+        generator.writeStringField(MMUReader.GENERAL_NAME, formation.getName());
         if (!formation.specificName().isBlank()) {
-            jgen.writeStringField(MMUReader.SPECIFIC_NAME, formation.specificName());
+            generator.writeStringField(MMUReader.SPECIFIC_NAME, formation.specificName());
         }
         if (formation.getId() != Entity.NONE) {
-            jgen.writeNumberField(ID, formation.getId());
+            generator.writeNumberField(ID, formation.getId());
         }
         if (writeFullStats) {
             if (formation.getSkill() != 4) {
-                jgen.writeNumberField(SKILL, formation.getSkill());
+                generator.writeNumberField(SKILL, formation.getSkill());
             }
-            jgen.writeStringField(SBF_TYPE, formation.getType().name());
-            jgen.writeNumberField(SIZE, formation.getSize());
-            jgen.writeNumberField(TMM, formation.getTmm());
-            // Separating move and mode because the move code is ambiguous and it is unclear to me
+            generator.writeStringField(SBF_TYPE, formation.getType().name());
+            generator.writeNumberField(SIZE, formation.getSize());
+            generator.writeNumberField(TMM, formation.getTmm());
+            // Separating move and mode because the move code is ambiguous, and it is unclear to me
             // if the rules require the exact mode to be known, e.g. if SUBMARINE, MEK_UMU or BA_UMU must be distinct
-            jgen.writeNumberField(MOVE, formation.getMovement());
-            jgen.writeObjectField(MOVE_MODE, formation.getMovementMode());
+            generator.writeNumberField(MOVE, formation.getMovement());
+            generator.writeObjectField(MOVE_MODE, formation.getMovementMode());
             if (formation.getMovement() != formation.getTrspMovement()) {
-                jgen.writeNumberField(TRSP_MOVE, formation.getTrspMovement());
+                generator.writeNumberField(TRSP_MOVE, formation.getTrspMovement());
             }
-            if (formation.getTrspMovementMode() != formation.getTrspMovementMode()) {
-                jgen.writeObjectField(TRSP_MOVE_MODE, formation.getTrspMovementMode());
+            if (formation.getMovementMode() != formation.getTrspMovementMode()) {
+                generator.writeObjectField(TRSP_MOVE_MODE, formation.getTrspMovementMode());
             }
             if (formation.getJumpMove() != 0) {
-                jgen.writeNumberField(JUMP, formation.getJumpMove());
+                generator.writeNumberField(JUMP, formation.getJumpMove());
             }
-            jgen.writeNumberField(TACTICS, formation.getTactics());
-            jgen.writeNumberField(MORALE, formation.getMorale());
+            generator.writeNumberField(TACTICS, formation.getTactics());
+            generator.writeNumberField(MORALE, formation.getMorale());
             if (!formation.getSpecialAbilities().getSpecialsDisplayString(formation).isBlank()) {
-                jgen.writeStringField(SPECIALS, formation.getSpecialAbilities().getSpecialsDisplayString(formation));
+                generator.writeStringField(SPECIALS,
+                      formation.getSpecialAbilities().getSpecialsDisplayString(formation));
             }
-            jgen.writeNumberField(PV, formation.getPointValue());
+            generator.writeNumberField(PV, formation.getPointValue());
         }
-        provider.defaultSerializeField(UNITS, formation.getUnits(), jgen);
+        provider.defaultSerializeField(UNITS, formation.getUnits(), generator);
 
         //TODO damage
-        jgen.writeEndObject();
+        generator.writeEndObject();
     }
 }
 

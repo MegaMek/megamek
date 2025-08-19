@@ -38,8 +38,10 @@
  */
 package megamek.common.weapons.infantry.pistol;
 
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -70,7 +72,7 @@ public class InfantryPistolAutoPistolNissanWeapon extends InfantryWeapon {
         ammoCost = 3;
         shots = 8;
         rulesRefs = "176,HBHK";
-        techAdvancement.setTechBase(TechAdvancement.TechBase.IS);
+        techAdvancement.setTechBase(TechBase.IS);
         techAdvancement.setISAdvancement(2600, 2620, 2630);
         techAdvancement.setTechRating(TechRating.C);
         techAdvancement.setAvailability(AvailabilityValue.B,

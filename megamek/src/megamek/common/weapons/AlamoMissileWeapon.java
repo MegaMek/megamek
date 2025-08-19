@@ -34,7 +34,9 @@
 
 package megamek.common.weapons;
 
-import megamek.common.TechAdvancement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
@@ -68,7 +70,7 @@ public class AlamoMissileWeapon extends CapitalMissileWeapon {
         maxRange = RANGE_MED;
         ammoType = AmmoType.AmmoTypeEnum.ALAMO;
         capital = true;
-        techAdvancement.setTechBase(TechAdvancement.TechBase.IS)
+        techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3071, DATE_NONE, DATE_NONE)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E);

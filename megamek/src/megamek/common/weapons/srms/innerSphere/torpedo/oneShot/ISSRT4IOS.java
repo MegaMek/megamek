@@ -35,6 +35,10 @@
 package megamek.common.weapons.srms.innerSphere.torpedo.oneShot;
 
 import megamek.common.SimpleTechLevel;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.weapons.srms.SRTWeapon;
 
 /**

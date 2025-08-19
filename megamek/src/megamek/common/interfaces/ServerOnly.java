@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
 /**
  * This annotation is used to mark IGame and subclass methods that are intended for use by the Server and GameManager
  * only (in other words, not by the Client). Such methods usually change the game object as a reaction to actions by the
- * players and dice rolls etc, perform all necessary validity tests and then send the changes to the clients. As the
+ * players and dice rolls etc., perform all necessary validity tests and then send the changes to the clients. As the
  * GameManager and Server are not using events, these methods should not fire any.
  */
 @Target(ElementType.METHOD)

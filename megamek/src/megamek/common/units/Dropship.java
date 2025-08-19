@@ -51,6 +51,10 @@ import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.cost.DropShipCostCalculator;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponMounted;
@@ -170,13 +174,13 @@ public class Dropship extends SmallCraft {
     }
 
     public static TechAdvancement getCollarTA() {
-        return new TechAdvancement(ITechnology.TechBase.ALL).setAdvancement(2458, 2470, 2500)
-              .setPrototypeFactions(ITechnology.Faction.TH).setProductionFactions(ITechnology.Faction.TH).setTechRating(
-                    ITechnology.TechRating.C)
-              .setAvailability(ITechnology.AvailabilityValue.C,
-                    ITechnology.AvailabilityValue.C,
-                    ITechnology.AvailabilityValue.C,
-                    ITechnology.AvailabilityValue.C)
+        return new TechAdvancement(TechBase.ALL).setAdvancement(2458, 2470, 2500)
+              .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH).setTechRating(
+                    TechRating.C)
+              .setAvailability(AvailabilityValue.C,
+                    AvailabilityValue.C,
+                    AvailabilityValue.C,
+                    AvailabilityValue.C)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
@@ -395,22 +399,22 @@ public class Dropship extends SmallCraft {
         }
     }
 
-    protected static final TechAdvancement TA_DROPSHIP = new TechAdvancement(ITechnology.TechBase.ALL)
+    protected static final TechAdvancement TA_DROPSHIP = new TechAdvancement(TechBase.ALL)
           .setAdvancement(ITechnology.DATE_NONE, 2470, 2490).setISApproximate(false, true, false)
-          .setProductionFactions(ITechnology.Faction.TH).setTechRating(ITechnology.TechRating.D)
-          .setAvailability(ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.E,
-                ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.D)
+          .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.D,
+                AvailabilityValue.E,
+                AvailabilityValue.D,
+                AvailabilityValue.D)
           .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    protected static final TechAdvancement TA_DROPSHIP_PRIMITIVE = new TechAdvancement(ITechnology.TechBase.IS)
+    protected static final TechAdvancement TA_DROPSHIP_PRIMITIVE = new TechAdvancement(TechBase.IS)
           .setISAdvancement(ITechnology.DATE_ES, 2200, ITechnology.DATE_NONE, 2500)
           .setISApproximate(false, true, false, false)
-          .setProductionFactions(ITechnology.Faction.TA).setTechRating(ITechnology.TechRating.D)
-          .setAvailability(ITechnology.AvailabilityValue.D,
-                ITechnology.AvailabilityValue.X,
-                ITechnology.AvailabilityValue.X,
-                ITechnology.AvailabilityValue.X)
+          .setProductionFactions(Faction.TA).setTechRating(TechRating.D)
+          .setAvailability(AvailabilityValue.D,
+                AvailabilityValue.X,
+                AvailabilityValue.X,
+                AvailabilityValue.X)
           .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override

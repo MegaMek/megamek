@@ -38,6 +38,9 @@ import java.io.Serial;
 
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
@@ -135,13 +138,13 @@ public final class ASFBay extends AbstractSmallCraftASFBay {
     }
 
     public static TechAdvancement techAdvancement() {
-        return new TechAdvancement(ITechnology.TechBase.ALL)
+        return new TechAdvancement(TechBase.ALL)
               .setAdvancement(ITechnology.DATE_ES, ITechnology.DATE_ES, ITechnology.DATE_ES)
-              .setTechRating(ITechnology.TechRating.C)
-              .setAvailability(ITechnology.AvailabilityValue.C,
-                    ITechnology.AvailabilityValue.C,
-                    ITechnology.AvailabilityValue.C,
-                    ITechnology.AvailabilityValue.C)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C,
+                    AvailabilityValue.C,
+                    AvailabilityValue.C,
+                    AvailabilityValue.C)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

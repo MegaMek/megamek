@@ -52,7 +52,7 @@ import megamek.server.scriptedevent.MessageTriggeredActiveEvent;
 import megamek.server.trigger.Trigger;
 
 public class MessageDeserializer extends StdDeserializer<MessageTriggeredActiveEvent> {
-    private static final MMLogger logger = MMLogger.create(MessageDeserializer.class);
+    private static final MMLogger LOGGER = MMLogger.create(MessageDeserializer.class);
 
     private static final String TEXT = "text";
     private static final String HEADER = "header";
@@ -68,8 +68,9 @@ public class MessageDeserializer extends StdDeserializer<MessageTriggeredActiveE
     }
 
     @Override
-    public MessageTriggeredActiveEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        return parse(jp.getCodec().readTree(jp), new File(""));
+    public MessageTriggeredActiveEvent deserialize(JsonParser parser, DeserializationContext context)
+          throws IOException {
+        return parse(parser.getCodec().readTree(parser), new File(""));
     }
 
     /**
@@ -97,7 +98,7 @@ public class MessageDeserializer extends StdDeserializer<MessageTriggeredActiveE
             try {
                 image = loadImage(messageNode.get(IMAGE).asText(), basePath);
             } catch (IOException ex) {
-                logger.warn(ex.getMessage());
+                LOGGER.warn(ex.getMessage());
             }
         }
 

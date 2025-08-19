@@ -43,13 +43,13 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import megamek.common.Configuration;
 import megamek.common.board.Board;
 import megamek.common.board.BoardType;
-import megamek.common.compute.Compute;
-import megamek.common.Configuration;
 import megamek.common.board.Coords;
-import megamek.common.loaders.MapSettings;
 import megamek.common.board.postprocess.BoardProcessor;
+import megamek.common.compute.Compute;
+import megamek.common.loaders.MapSettings;
 import megamek.common.util.BoardUtilities;
 import megamek.logging.MMLogger;
 
@@ -114,9 +114,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
 
         } else {
             Board board = parseSingleBoard(mapNode, basePath);
-            if (board != null) {
-                result.add(board);
-            }
+            result.add(board);
         }
         return result;
     }
@@ -144,7 +142,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
             return board;
 
         } else if (mapNode.has(SURPRISE)) {
-            // map: as node with surprise: filelist and optional modify:
+            // map: as node with surprise: file list and optional modify:
             if (!mapNode.get(SURPRISE).isArray()) {
                 throw new IllegalArgumentException("Surprise keyword without boards list!");
             }
@@ -302,7 +300,7 @@ public class BoardDeserializer extends StdDeserializer<Board> {
     }
 
     @Override
-    public Board deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public Board deserialize(JsonParser p, DeserializationContext context) throws IOException {
         return parse(p.getCodec().readTree(p), new File("")).get(0);
     }
 

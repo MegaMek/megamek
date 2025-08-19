@@ -47,9 +47,9 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
-import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.strategicBattleSystems.SBFUnit;
@@ -64,7 +64,7 @@ public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
     private static final String AT = "at";
     private static final String X = "x";
     private static final String Y = "y";
-    private static final String DEPLOYMENTROUND = "deploymentround";
+    private static final String DEPLOYMENT_ROUND = "deploymentround";
 
     public SBFFormationDeserializer() {
         this(null);
@@ -75,7 +75,7 @@ public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
     }
 
     @Override
-    public SBFFormation deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    public SBFFormation deserialize(JsonParser jp, DeserializationContext context) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
         if (!node.has(TYPE) || !node.get(TYPE).textValue().equalsIgnoreCase(SBF_FORMATION)) {
             throw new IllegalArgumentException("SBFFormationDeserializer: Wrong Deserializer chosen!");
@@ -123,8 +123,8 @@ public class SBFFormationDeserializer extends StdDeserializer<SBFFormation> {
     }
 
     private void assignDeploymentRound(SBFFormation formation, JsonNode node) {
-        if (node.has(DEPLOYMENTROUND)) {
-            formation.setDeployRound(node.get(DEPLOYMENTROUND).asInt());
+        if (node.has(DEPLOYMENT_ROUND)) {
+            formation.setDeployRound(node.get(DEPLOYMENT_ROUND).asInt());
         }
     }
 

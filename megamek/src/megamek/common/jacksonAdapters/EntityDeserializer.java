@@ -74,9 +74,9 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String PRONE = "prone";
     private static final String SHUTDOWN = "shutdown";
     private static final String HIDDEN = "hidden";
-    private static final String HULLDOWN = "hulldown";
+    private static final String HULL_DOWN = "hulldown";
     private static final String FACING = "facing";
-    private static final String DEPLOYMENTROUND = "deploymentround";
+    private static final String DEPLOYMENT_ROUND = "deploymentround";
     private static final String ELEVATION = "elevation";
     private static final String ALTITUDE = "altitude";
     private static final String VELOCITY = "velocity";
@@ -102,7 +102,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     }
 
     @Override
-    public Entity deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    public Entity deserialize(JsonParser jp, DeserializationContext context) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
         requireFields("TW Unit", node, FULL_NAME);
 
@@ -121,7 +121,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         CrewDeserializer.parseCrew(node, entity);
         assignRemaining(entity, node);
         assignCrits(entity, node);
-        assignAmmos(entity, node);
+        assignAmmunition(entity, node);
         assignBombs(entity, node);
         assignFleeArea(entity, node);
         return entity;
@@ -176,8 +176,8 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     }
 
     private void assignDeploymentRound(Entity entity, JsonNode node) {
-        if (node.has(DEPLOYMENTROUND)) {
-            entity.setDeployRound(node.get(DEPLOYMENTROUND).asInt());
+        if (node.has(DEPLOYMENT_ROUND)) {
+            entity.setDeployRound(node.get(DEPLOYMENT_ROUND).asInt());
         }
     }
 
@@ -245,7 +245,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
             case HIDDEN:
                 entity.setHidden(true);
                 break;
-            case HULLDOWN:
+            case HULL_DOWN:
                 entity.setHullDown(true);
                 break;
             default:
@@ -330,27 +330,27 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         }
     }
 
-    private void assignAmmos(Entity entity, JsonNode node) {
+    private void assignAmmunition(Entity entity, JsonNode node) {
         if (node.has(AMMO)) {
             JsonNode critsNode = node.get(AMMO);
             for (int location = 0; location < entity.locations(); location++) {
                 String locationAbbr = entity.getLocationAbbr(location);
                 final int finalLoc = location;
                 if (critsNode.has(locationAbbr)) {
-                    critsNode.get(locationAbbr).iterator().forEachRemaining(n -> assignAmmo(entity, n, finalLoc));
+                    critsNode.get(locationAbbr).iterator().forEachRemaining(n -> assignAmmunition(entity, n, finalLoc));
                 }
             }
         }
     }
 
-    private void assignAmmo(Entity entity, JsonNode node, int location) {
+    private void assignAmmunition(Entity entity, JsonNode node, int location) {
         int slot = node.get(SLOT).asInt() - 1;
         int shots = node.get(SHOTS).asInt();
         CriticalSlot cs = entity.getCritical(location, slot);
         if (cs != null) {
             Mounted<?> ammo = cs.getMount();
             if (ammo.getType() instanceof AmmoType) {
-                // Also make sure we dont exceed the max allowed
+                // Also make sure we don't exceed the max allowed
                 ammo.setShotsLeft(Math.min(shots, ammo.getBaseShotsLeft()));
             } else {
                 throw new IllegalArgumentException("Invalid ammo slot "

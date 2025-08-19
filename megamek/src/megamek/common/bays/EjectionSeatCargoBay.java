@@ -36,6 +36,9 @@ package megamek.common.bays;
 import java.io.Serial;
 
 import megamek.common.TechAdvancement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 
 /**
  * Support vehicle ejection seats.

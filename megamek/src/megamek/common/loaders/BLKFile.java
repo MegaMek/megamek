@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -1543,7 +1543,7 @@ public class BLKFile {
             // If 2-field format, return with default values set.
             if (numbersArray.length == 2) {
                 return temp;
-            } else if (numbersArray.length > 2) {
+            } else {
                 // Attempt to parse index 2 as an integer bay number, otherwise leave it as default
                 try {
                     temp[2] = String.valueOf(Integer.parseInt(numbersArray[2]));

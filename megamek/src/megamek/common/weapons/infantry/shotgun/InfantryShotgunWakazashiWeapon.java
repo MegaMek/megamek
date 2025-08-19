@@ -38,8 +38,10 @@
  */
 package megamek.common.weapons.infantry.shotgun;
 
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -69,7 +71,7 @@ public class InfantryShotgunWakazashiWeapon extends InfantryWeapon {
         shots = 10;
         bursts = 3;
         rulesRefs = " 176,HBHK";
-        techAdvancement.setTechBase(TechAdvancement.TechBase.ALL);
+        techAdvancement.setTechBase(TechBase.ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2100);
         techAdvancement.setTechRating(TechRating.D);
         techAdvancement.setAvailability(AvailabilityValue.C,

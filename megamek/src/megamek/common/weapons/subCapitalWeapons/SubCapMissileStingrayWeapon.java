@@ -36,6 +36,10 @@ package megamek.common.weapons.subCapitalWeapons;
 
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
@@ -73,20 +77,20 @@ public class SubCapMissileStingrayWeapon extends SubCapMissileWeapon {
         this.maxRange = WeaponType.RANGE_MED;
         rulesRefs = "345, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(ITechnology.TechBase.ALL)
+        techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
-              .setTechRating(ITechnology.TechRating.E)
-              .setAvailability(ITechnology.AvailabilityValue.X,
-                    ITechnology.AvailabilityValue.X,
-                    ITechnology.AvailabilityValue.F,
-                    ITechnology.AvailabilityValue.D)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X,
+                    AvailabilityValue.X,
+                    AvailabilityValue.F,
+                    AvailabilityValue.D)
               .setISAdvancement(ITechnology.DATE_NONE, 3060, 3072, ITechnology.DATE_NONE, ITechnology.DATE_NONE)
               .setISApproximate(false, true, false, false, false)
               .setClanAdvancement(ITechnology.DATE_NONE, 3070, 3072, ITechnology.DATE_NONE, ITechnology.DATE_NONE)
               .setClanApproximate(false, true, false, false, false)
-              .setPrototypeFactions(ITechnology.Faction.WB)
-              .setProductionFactions(ITechnology.Faction.WB)
+              .setPrototypeFactions(Faction.WB)
+              .setProductionFactions(Faction.WB)
               .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 

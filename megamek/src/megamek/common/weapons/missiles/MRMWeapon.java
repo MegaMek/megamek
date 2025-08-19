@@ -34,13 +34,13 @@
 
 package megamek.common.weapons.missiles;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.MRMHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -86,7 +86,7 @@ public abstract class MRMWeapon extends MissileWeapon {
 
     @Override
     public String getSortingName() {
-        String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+        String oneShotTag = hasFlag(F_ONE_SHOT) ? "OS " : "";
         if (name.contains("I-OS")) {
             oneShotTag = "XIOS ";
         }

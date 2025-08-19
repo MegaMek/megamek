@@ -36,11 +36,11 @@ package megamek.common.weapons.autocannons;
 
 import java.io.Serial;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.HVACWeaponHandler;
 import megamek.common.weapons.handlers.RapidfireHVACWeaponHandler;
@@ -71,6 +71,6 @@ public abstract class HVACWeapon extends ACWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_STANDARD;
+        return BF_CLASS_STANDARD;
     }
 }

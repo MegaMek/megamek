@@ -34,17 +34,17 @@
 
 package megamek.common.weapons.bayweapons.capital;
 
-import megamek.common.units.Entity;
-import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBayHandler;
 import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBearingsOnlyHandler;
-import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -104,6 +104,6 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_CAPITAL_MISSILE;
+        return BF_CLASS_CAPITAL_MISSILE;
     }
 }

@@ -55,7 +55,7 @@ public abstract class InfantryAttack extends Weapon {
         longRange = 0;
         extremeRange = 0;
         tonnage = 0.0;
-        criticals = 0;
+        criticalSlots = 0;
         bv = 0;
         cost = 0;
     }

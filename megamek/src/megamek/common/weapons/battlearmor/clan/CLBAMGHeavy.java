@@ -62,7 +62,7 @@ public class CLBAMGHeavy extends BAMGWeapon {
         longRange = 2;
         extremeRange = 2;
         tonnage = 0.15;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 6;
         cost = 7500;
         rulesRefs = "258, TM";

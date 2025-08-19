@@ -53,9 +53,9 @@ public class ISLRM15IOS extends LRMWeapon {
         rackSize = 15;
         minimumRange = 6;
         tonnage = 6.5;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 27;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONE_SHOT);
         cost = 140000;
         shortAV = 9;
         medAV = 9;

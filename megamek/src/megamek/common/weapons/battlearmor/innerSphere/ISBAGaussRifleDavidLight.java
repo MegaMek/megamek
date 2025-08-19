@@ -57,7 +57,7 @@ public class ISBAGaussRifleDavidLight extends Weapon {
         extremeRange = 12;
         bv = 7;
         tonnage = 0.1;
-        criticals = 1;
+        criticalSlots = 1;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC)
               .or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         cost = 22500;

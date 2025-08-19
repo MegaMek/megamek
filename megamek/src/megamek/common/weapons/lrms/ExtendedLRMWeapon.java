@@ -57,7 +57,7 @@ public abstract class ExtendedLRMWeapon extends LRMWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_STANDARD;
+        return BF_CLASS_STANDARD;
     }
 
     @Override

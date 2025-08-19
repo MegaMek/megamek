@@ -1348,9 +1348,9 @@ public class BattleArmor extends Infantry {
     public boolean hasImprovedSensors() {
         for (Mounted<?> equip : getMisc()) {
             if (equip.getType().hasFlag(MiscType.F_BAP)) {
-                if (equip.getType().getInternalName().equals(Sensor.ISIMPROVED)
+                if (equip.getType().getInternalName().equals(Sensor.IS_IMPROVED)
                       || equip.getType().getInternalName()
-                      .equals(Sensor.CLIMPROVED)) {
+                      .equals(Sensor.CL_IMPROVED)) {
                     return true;
                 }
             }
@@ -1366,9 +1366,9 @@ public class BattleArmor extends Infantry {
         for (Mounted<?> equip : getMisc()) {
             if (equip.getType().hasFlag(MiscType.F_BAP)
                   && !(equip.getType().getInternalName()
-                  .equals(Sensor.ISIMPROVED)
+                  .equals(Sensor.IS_IMPROVED)
                   || equip.getType()
-                  .getInternalName().equals(Sensor.CLIMPROVED))) {
+                  .getInternalName().equals(Sensor.CL_IMPROVED))) {
                 return true;
             }
         }

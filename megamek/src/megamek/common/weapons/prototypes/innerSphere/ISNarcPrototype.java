@@ -57,7 +57,7 @@ public class ISNarcPrototype extends NarcWeapon {
         this.longRange = 9;
         this.extremeRange = 12;
         this.tonnage = 3.0;
-        this.criticals = 2;
+        this.criticalSlots = 2;
         this.bv = 15;
         this.cost = 300000;
         flags = flags.or(F_PROTOTYPE);

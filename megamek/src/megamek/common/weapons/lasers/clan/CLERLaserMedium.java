@@ -60,7 +60,7 @@ public class CLERLaserMedium extends LaserWeapon {
         waterLongRange = 10;
         waterExtremeRange = 15;
         tonnage = 1.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 108;
         cost = 80000;
         shortAV = 7;

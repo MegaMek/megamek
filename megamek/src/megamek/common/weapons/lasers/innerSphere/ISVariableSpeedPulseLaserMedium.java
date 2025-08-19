@@ -68,7 +68,7 @@ public class ISVariableSpeedPulseLaserMedium extends VariableSpeedPulseLaserWeap
         damageMedium = 7;
         damageLong = 5;
         tonnage = 4.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 56;
         cost = 200000;
         shortAV = 7;

@@ -46,7 +46,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.HexTarget;
+import megamek.common.TechAdvancement;
+import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -57,10 +60,10 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.BombMounted;
-import megamek.common.equipment.BombType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.BombType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
@@ -70,9 +73,9 @@ import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
+import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.common.weapons.handlers.AreaEffectHelper.DamageFalloff;
-import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.infantry.InfantryWeaponHandler;
 import megamek.logging.MMLogger;
@@ -104,7 +107,7 @@ public class WeaponFireInfo {
     private int damageDirection = -1; // direction damage is coming from relative to target
     private ToHitData toHit = null;
     private double expectedCriticals;
-    private double killProbability; // probability to destroy CT or HEAD (ignores criticals)
+    private double killProbability; // probability to destroy CT or HEAD (ignores criticalSlots)
     private Game game;
     private EntityState shooterState = null;
     private EntityState targetState = null;
@@ -469,7 +472,7 @@ public class WeaponFireInfo {
                           game.getBoard().getHex(target.getPosition()).terrainLevel(Terrains.JUNGLE)
                     );
                     boolean blockedByWoods = (
-                          weapon.getType().getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE
+                          weapon.getType().getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE
                     );
                     blockedByWoods |= weapon.getType().getRackSize() <= woodsLevel
                           || weapon.getType().getDamage() <= woodsLevel;
@@ -514,7 +517,7 @@ public class WeaponFireInfo {
                             // Rough estimate of collateral damage
                             bayFriendly += weaponType.getRackSize() * 4;
                             bayBuilding += weaponType.getRackSize() * 8;
-                        case WeaponType.DAMAGE_BY_CLUSTERTABLE:
+                        case WeaponType.DAMAGE_BY_CLUSTER_TABLE:
                         case WeaponType.DAMAGE_SPECIAL:
                         case WeaponType.DAMAGE_VARIABLE:
                             bayDamage += weaponType.getRackSize();
@@ -537,7 +540,7 @@ public class WeaponFireInfo {
         // artillery and cluster table use the rack size as the base damage amount,
         // but we'll roll an "average" cluster for the given weapon size to estimate
         // damage.
-        if ((weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) ||
+        if ((weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE) ||
               (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
             // Assume average cluster size for this weapon, unless it has Streak
             // capabilities

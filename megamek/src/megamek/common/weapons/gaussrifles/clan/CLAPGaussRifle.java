@@ -60,7 +60,7 @@ public class CLAPGaussRifle extends GaussWeapon {
         longRange = 9;
         extremeRange = 12;
         tonnage = 0.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 21;
         flags = flags.or(F_BURST_FIRE);
         cost = 8500;

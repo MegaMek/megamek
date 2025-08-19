@@ -63,7 +63,7 @@ public abstract class NailRivetGunWeapon extends AmmoWeapon {
         longRange = 1;
         extremeRange = 1;
         tonnage = 0.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 1.0;
         cost = 7000;
     }

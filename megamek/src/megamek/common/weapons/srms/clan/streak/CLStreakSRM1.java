@@ -59,7 +59,7 @@ public class CLStreakSRM1 extends StreakSRMWeapon {
         this.longRange = 12;
         this.extremeRange = 16;
         this.tonnage = 0.5;
-        this.criticals = 0;
+        this.criticalSlots = 0;
         this.bv = 20;
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);

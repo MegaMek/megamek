@@ -51,7 +51,7 @@ public class CLLRM13 extends LRMWeapon {
         rackSize = 13;
         minimumRange = WEAPON_NA;
         tonnage = 2.6;
-        criticals = 0;
+        criticalSlots = 0;
         bv = 161;
         // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         // But LRM Tech Base and Avail Ratings.

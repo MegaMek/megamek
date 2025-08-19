@@ -34,10 +34,10 @@
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.equipment.Mounted;
-import megamek.common.units.ProtoMek;
-import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.ProtoMek;
 
 public class ProtoMekCostCalculator {
 
@@ -90,8 +90,8 @@ public class ProtoMekCostCalculator {
         int sinks = 0;
         for (Mounted<?> mount : protoMek.getWeaponList()) {
             if (mount.getType().hasFlag(WeaponType.F_ENERGY)) {
-                WeaponType wtype = (WeaponType) mount.getType();
-                sinks += wtype.getHeat();
+                WeaponType weaponType = (WeaponType) mount.getType();
+                sinks += weaponType.getHeat();
             }
         }
         costs[idx++] = 2000 * sinks;

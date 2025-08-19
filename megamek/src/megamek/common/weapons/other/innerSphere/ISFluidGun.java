@@ -55,8 +55,8 @@ public class ISFluidGun extends FluidGunWeapon {
         extremeRange = 4;
         bv = 6;
         heat = 0;
-        criticals = 2;
-        svslots = 1;
+        criticalSlots = 2;
+        svSlots = 1;
         tonnage = 2;
         cost = 35000;
         rulesRefs = "313, TO";

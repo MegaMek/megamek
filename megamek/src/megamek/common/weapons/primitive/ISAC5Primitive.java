@@ -74,7 +74,7 @@ public class ISAC5Primitive extends ACWeapon {
         longRange = 18;
         extremeRange = 24;
         tonnage = 8.0;
-        criticals = 4;
+        criticalSlots = 4;
         bv = 70;
         cost = 125000;
         shortAV = 5;

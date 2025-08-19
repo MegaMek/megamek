@@ -61,7 +61,7 @@ public class ISBALaserPulseMedium extends PulseLaserWeapon {
         waterLongRange = 4;
         waterExtremeRange = 6;
         tonnage = 0.8;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 48;
         cost = 60000;
         flags = flags.or(F_BA_WEAPON)

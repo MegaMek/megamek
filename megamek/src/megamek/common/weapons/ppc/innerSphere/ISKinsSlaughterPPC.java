@@ -60,7 +60,7 @@ public class ISKinsSlaughterPPC extends PPCWeapon {
         this.waterLongRange = 16;
         this.waterExtremeRange = 24;
         this.tonnage = 7.0;
-        this.criticals = 3;
+        this.criticalSlots = 3;
         this.bv = 229;
         this.cost = 450000;
         // Since this is a SL Era ER PPC variant mentioned in Spartan Fluff

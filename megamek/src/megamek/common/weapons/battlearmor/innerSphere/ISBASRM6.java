@@ -55,7 +55,7 @@ public class ISBASRM6 extends SRMWeapon {
         this.longRange = 9;
         this.extremeRange = 12;
         this.tonnage = 0.360;
-        this.criticals = 3;
+        this.criticalSlots = 3;
         this.bv = 59;
         cost = 30000;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)

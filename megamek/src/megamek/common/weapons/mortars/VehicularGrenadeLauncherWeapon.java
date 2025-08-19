@@ -69,9 +69,9 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
         longRange = 1;
         extremeRange = 1;
         tonnage = 0.5;
-        criticals = 1;
+        criticalSlots = 1;
         flags = flags.or(F_MEK_WEAPON).or(F_PROTO_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
-              .or(F_BALLISTIC).or(F_ONESHOT).or(F_VGL);
+              .or(F_BALLISTIC).or(F_ONE_SHOT).or(F_VGL);
         explosive = false;
         bv = 15.0;
         cost = 10000;

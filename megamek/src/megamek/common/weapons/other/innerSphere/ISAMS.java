@@ -64,7 +64,7 @@ public class ISAMS extends AmmoWeapon {
         shortAV = 3;
         ammoType = AmmoType.AmmoTypeEnum.AMS;
         tonnage = 0.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 32;
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
               .or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC);

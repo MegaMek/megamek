@@ -62,7 +62,7 @@ public class ISLightPPC extends PPCWeapon {
         waterLongRange = 10;
         waterExtremeRange = 15;
         tonnage = 3.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 88;
         shortAV = 5;
         medAV = 5;

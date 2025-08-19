@@ -61,6 +61,7 @@ import megamek.common.rolls.MMRoll;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
+import megamek.common.weapons.TeleMissile;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.attacks.DiveBombAttack;
@@ -3099,7 +3100,7 @@ public class Compute {
         }
 
         // Missiles, HAGs, LBX cluster rounds, and ultra/rotary cannons (when spun up) use the missile hits table
-        if (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+        if (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE) {
             use_table = true;
         }
 
@@ -3198,10 +3199,10 @@ public class Compute {
             if (attacker instanceof BattleArmor) {
                 // The number of troopers hitting
                 fHits = expectedHitsByRackSize[baShootingStrength];
-                if (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+                if (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE) {
                     fHits *= expectedHitsByRackSize[wt.getRackSize()];
                 }
-                if (wt.getDamage() != WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+                if (wt.getDamage() != WeaponType.DAMAGE_BY_CLUSTER_TABLE) {
                     if (wt.getDamage() != WeaponType.DAMAGE_VARIABLE) {
                         fDamage = wt.getDamage();
                     } else {
@@ -3222,7 +3223,7 @@ public class Compute {
                         attacker.getPosition(),
                         weaponTarget.getPosition(),
                         allECMInfo))
-                  && (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE)
+                  && (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE)
                   && (wt.hasFlag(WeaponType.F_MISSILE)) && null != at) {
                 // Check for linked artemis guidance system
                 if ((wt.getAmmoType() == AmmoTypeEnum.LRM)
@@ -3282,7 +3283,7 @@ public class Compute {
             }
 
             // adjust for previous AMS
-            if ((wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE)
+            if ((wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE)
                   && wt.hasFlag(WeaponType.F_MISSILE)) {
                 List<WeaponMounted> vCounters = weaponAttackAction.getCounterEquipment();
                 if (vCounters != null) {
@@ -3513,7 +3514,7 @@ public class Compute {
 
         // If the weapon doesn't require ammo, just get the estimated damage
         if (weaponType.hasFlag(WeaponType.F_ENERGY)
-              || weaponType.hasFlag(WeaponType.F_ONESHOT)
+              || weaponType.hasFlag(WeaponType.F_ONE_SHOT)
               || weaponType.hasFlag(WeaponType.F_INFANTRY)
               || (weaponType.getAmmoType() == AmmoTypeEnum.NA)) {
             return Compute.getExpectedDamage(game, weaponAttackAction, false);
@@ -4128,14 +4129,14 @@ public class Compute {
             int distance = detector.getPosition().distance(targetPos);
             // Per SO p119, optical firing solutions are lost if the target moves beyond
             // 1/10 max range
-            if (detector.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL
+            if (detector.getActiveSensor().type() == Sensor.TYPE_AERO_THERMAL
                   && distance > Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE) {
                 toRemove.add(id);
-            } else if (detector.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL
+            } else if (detector.getActiveSensor().type() == Sensor.TYPE_SPACECRAFT_THERMAL
                   && distance > Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE) {
                 toRemove.add(id);
                 // For ASF sensors, make sure we're using the space range of 555...
-            } else if (detector.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR
+            } else if (detector.getActiveSensor().type() == Sensor.TYPE_AERO_SENSOR
                   && distance > Sensor.ASF_RADAR_MAX_RANGE) {
                 toRemove.add(id);
             } else {
@@ -4219,7 +4220,7 @@ public class Compute {
         }
 
         // ESM sensor can't produce a firing solution
-        if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_ESM) {
+        if (ae.getActiveSensor().type() == Sensor.TYPE_SPACECRAFT_ESM) {
             return false;
         }
         Coords targetPos = target.getPosition();
@@ -4233,9 +4234,9 @@ public class Compute {
         // A bit of a hack here. "Aero Sensors" return the ground range, because Sensor
         // doesn't know about Game or Entity
         // to do otherwise. We need to use the space range instead.
-        if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+        if (ae.getActiveSensor().type() == Sensor.TYPE_AERO_SENSOR) {
             outOfVisualRange = Sensor.ASF_RADAR_MAX_RANGE;
-            rangeIncrement = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
+            rangeIncrement = Sensor.ASF_RADAR_AUTO_SPOT_RANGE;
         }
 
         if (distance > outOfVisualRange) {
@@ -4252,13 +4253,13 @@ public class Compute {
         }
 
         // Targets at 1/10 max range are automatically detected
-        if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
-            autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
-        } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
-            autoVisualRange = Sensor.LC_RADAR_AUTOSPOT_RANGE;
-        } else if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
+        if (ae.getActiveSensor().type() == Sensor.TYPE_AERO_SENSOR) {
+            autoVisualRange = Sensor.ASF_RADAR_AUTO_SPOT_RANGE;
+        } else if (ae.getActiveSensor().type() == Sensor.TYPE_SPACECRAFT_RADAR) {
+            autoVisualRange = Sensor.LC_RADAR_AUTO_SPOT_RANGE;
+        } else if (ae.getActiveSensor().type() == Sensor.TYPE_AERO_THERMAL) {
             autoVisualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
-        } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+        } else if (ae.getActiveSensor().type() == Sensor.TYPE_SPACECRAFT_THERMAL) {
             autoVisualRange = Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE;
         }
 
@@ -4322,7 +4323,7 @@ public class Compute {
         }
 
         // ESM sensor can't produce a firing solution
-        if (attacker.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_ESM) {
+        if (attacker.getActiveSensor().type() == Sensor.TYPE_SPACECRAFT_ESM) {
             return false;
         }
         int distance = attacker.getPosition().distance(futureTargetPosition);
@@ -4335,9 +4336,9 @@ public class Compute {
         // A bit of a hack here. "Aero Sensors" return the ground range, because Sensor
         // doesn't know about Game or Entity
         // to do otherwise. We need to use the space range instead.
-        if (attacker.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+        if (attacker.getActiveSensor().type() == Sensor.TYPE_AERO_SENSOR) {
             outOfVisualRange = Sensor.ASF_RADAR_MAX_RANGE;
-            rangeIncrement = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
+            rangeIncrement = Sensor.ASF_RADAR_AUTO_SPOT_RANGE;
         }
 
         if (distance > outOfVisualRange) {
@@ -4354,13 +4355,13 @@ public class Compute {
         }
 
         // Targets at 1/10 max range are automatically detected
-        if (attacker.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
-            autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
-        } else if (attacker.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
-            autoVisualRange = Sensor.LC_RADAR_AUTOSPOT_RANGE;
-        } else if (attacker.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
+        if (attacker.getActiveSensor().type() == Sensor.TYPE_AERO_SENSOR) {
+            autoVisualRange = Sensor.ASF_RADAR_AUTO_SPOT_RANGE;
+        } else if (attacker.getActiveSensor().type() == Sensor.TYPE_SPACECRAFT_RADAR) {
+            autoVisualRange = Sensor.LC_RADAR_AUTO_SPOT_RANGE;
+        } else if (attacker.getActiveSensor().type() == Sensor.TYPE_AERO_THERMAL) {
             autoVisualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
-        } else if (attacker.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+        } else if (attacker.getActiveSensor().type() == Sensor.TYPE_SPACECRAFT_THERMAL) {
             autoVisualRange = Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE;
         }
 
@@ -4431,9 +4432,9 @@ public class Compute {
         // A bit of a hack here. "Aero Sensors" return the ground range, because Sensor
         // doesn't know about Game or Entity
         // to do otherwise. We need to use the space range instead.
-        if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+        if (ae.getActiveSensor().type() == Sensor.TYPE_AERO_SENSOR) {
             maxSensorRange = Sensor.ASF_RADAR_MAX_RANGE;
-            rangeIncrement = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
+            rangeIncrement = Sensor.ASF_RADAR_AUTO_SPOT_RANGE;
         }
 
         if (ae instanceof Aero aero) {
@@ -4465,11 +4466,11 @@ public class Compute {
 
         // Military ESM automatically detects anyone using active sensors, which
         // includes all telemissiles
-        if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_ESM
+        if (ae.getActiveSensor().type() == Sensor.TYPE_SPACECRAFT_ESM
               && target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity te = (Entity) target;
-            return te.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR
-                  || te.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR
+            return te.getActiveSensor().type() == Sensor.TYPE_AERO_SENSOR
+                  || te.getActiveSensor().type() == Sensor.TYPE_SPACECRAFT_RADAR
                   || te instanceof TeleMissile;
         }
 
@@ -4531,9 +4532,9 @@ public class Compute {
                 visualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
             }
             if (entity.getActiveSensor() != null) {
-                if (entity.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+                if (entity.getActiveSensor().type() == Sensor.TYPE_AERO_SENSOR) {
                     // required because the return on this from the method below is for ground maps
-                    visualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
+                    visualRange = Sensor.ASF_RADAR_AUTO_SPOT_RANGE;
                 } else {
                     visualRange = (int) Math.ceil(entity.getActiveSensor().getRangeByBracket() / 10.0);
                 }
@@ -4757,8 +4758,8 @@ public class Compute {
         // if we are crossing water then only mag scan will work unless we are a
         // naval vessel
         if (los.isBlockedByWater()
-              && sensor.getType() != Sensor.TYPE_MEK_MAGSCAN
-              && sensor.getType() != Sensor.TYPE_VEE_MAGSCAN
+              && sensor.type() != Sensor.TYPE_MEK_MAG_SCAN
+              && sensor.type() != Sensor.TYPE_VEE_MAG_SCAN
               && ae.getMovementMode() != EntityMovementMode.HYDROFOIL
               && ae.getMovementMode() != EntityMovementMode.NAVAL) {
             return 0;
@@ -4847,7 +4848,7 @@ public class Compute {
 
         // ASF sensors change range when in space, so we do that here
         if (e.isSpaceborne()) {
-            if (e.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+            if (e.getActiveSensor().type() == Sensor.TYPE_AERO_SENSOR) {
                 range = Sensor.ASF_RADAR_MAX_RANGE;
             }
 
@@ -4860,7 +4861,7 @@ public class Compute {
         // Dropships using radar in an atmosphere need a range that's a bit more
         // sensible
         if (e.hasETypeFlag(Entity.ETYPE_DROPSHIP) && !e.isSpaceborne()) {
-            if (e.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
+            if (e.getActiveSensor().type() == Sensor.TYPE_SPACECRAFT_RADAR) {
                 range = Sensor.LC_RADAR_GROUND_RANGE;
             }
         }
@@ -6136,9 +6137,9 @@ public class Compute {
                  WeaponType.WEAPON_CLUSTER_MISSILE_1D6,
                  WeaponType.WEAPON_CLUSTER_MISSILE_2D6,
                  WeaponType.WEAPON_CLUSTER_MISSILE_3D6 -> Messages.getString("WeaponType.Missile");
-            case WeaponType.WEAPON_BURST_HALFD6 -> Messages.getString("WeaponType.BurstHalf");
+            case WeaponType.WEAPON_BURST_HALF_D6 -> Messages.getString("WeaponType.BurstHalf");
             default -> String.format("%s (%dD6)", Messages.getString("WeaponType.Burst"),
-                  burstMultiplier * (damageType - WeaponType.WEAPON_BURST_HALFD6));
+                  burstMultiplier * (damageType - WeaponType.WEAPON_BURST_HALF_D6));
         };
     }
 
@@ -6181,7 +6182,7 @@ public class Compute {
                 // Estimate rather than compute exact bay / trooper damage sum.
                 totalDmg += type.getRackSize();
             } else if (type.getDamage() == WeaponType.DAMAGE_ARTILLERY
-                  || type.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+                  || type.getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE) {
                 totalDmg += type.getRackSize();
             } else if (type.getDamage() == WeaponType.DAMAGE_SPECIAL) {// Handle dive bomb attacks here!
                 if (type instanceof DiveBombAttack) {
@@ -6250,7 +6251,7 @@ public class Compute {
                 damage /= 5;
                 damage += Compute.d6(3);
                 break;
-            case WeaponType.WEAPON_BURST_HALFD6:
+            case WeaponType.WEAPON_BURST_HALF_D6:
                 damage = Compute.d6() / 2.0;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
@@ -6306,7 +6307,7 @@ public class Compute {
         // from non-infantry rather than cancel it out
         // http://bg.battletech.com/forums/index.php/topic,23928.0.html
         if (isNonInfantryAgainstMechanized) {
-            if (damageType < WeaponType.WEAPON_BURST_HALFD6) {
+            if (damageType < WeaponType.WEAPON_BURST_HALF_D6) {
                 damage *= 2;
             } else {
                 damage /= 2;
@@ -6837,8 +6838,8 @@ public class Compute {
             return 0;
         }
 
-        final boolean advFireCon = entity.hasMisc(MiscType.F_ADVANCED_FIRECONTROL);
-        final boolean basicFireCon = !advFireCon && entity.hasMisc(MiscType.F_BASIC_FIRECONTROL);
+        final boolean advFireCon = entity.hasMisc(MiscType.F_ADVANCED_FIRE_CONTROL);
+        final boolean basicFireCon = !advFireCon && entity.hasMisc(MiscType.F_BASIC_FIRE_CONTROL);
         if (entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             if (!advFireCon && !basicFireCon) {
                 // No fire control requires one gunner per weapon.
@@ -7039,7 +7040,7 @@ public class Compute {
               && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
               || Compute.canSee(game, ae, target))
               && !(weaponType instanceof ArtilleryCannonWeapon)
-              && !weaponType.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT)
+              && !weaponType.hasFlag(WeaponType.F_MORTAR_TYPE_INDIRECT)
               && !(isLandedSpheroid && noseWeaponAimedAtGroundTarget);
     }
 

@@ -34,14 +34,14 @@
 
 package megamek.common.weapons.prototypes.innerSphere;
 
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.weapons.autocannons.UACWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.prototype.PrototypeISUltraWeaponHandler;
-import megamek.common.weapons.autocannons.UACWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -67,7 +67,7 @@ public class ISUAC5Prototype extends UACWeapon {
         longRange = 20;
         extremeRange = 26;
         tonnage = 9.0;
-        criticals = 6;
+        criticalSlots = 6;
         bv = 112;
         cost = 1000000;
         explosionDamage = damage;

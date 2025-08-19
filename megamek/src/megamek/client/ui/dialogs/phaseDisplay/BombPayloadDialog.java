@@ -56,7 +56,7 @@ import javax.swing.JPanel;
 
 import megamek.client.ui.Messages;
 import megamek.common.equipment.BombLoadout;
-import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 
 /**
  * A dialog to determine bomb payload.

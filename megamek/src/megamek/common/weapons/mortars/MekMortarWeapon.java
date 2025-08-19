@@ -34,12 +34,12 @@
 
 package megamek.common.weapons.mortars;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
@@ -61,9 +61,9 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
     public MekMortarWeapon() {
         super();
         ammoType = AmmoType.AmmoTypeEnum.MEK_MORTAR;
-        damage = DAMAGE_BY_CLUSTERTABLE;
+        damage = DAMAGE_BY_CLUSTER_TABLE;
         atClass = CLASS_MORTAR;
-        flags = flags.or(F_MEK_MORTAR).or(F_MORTARTYPE_INDIRECT).or(F_MEK_WEAPON).or(F_MISSILE).or(F_TANK_WEAPON);
+        flags = flags.or(F_MEK_MORTAR).or(F_MORTAR_TYPE_INDIRECT).or(F_MEK_WEAPON).or(F_MISSILE).or(F_TANK_WEAPON);
         infDamageClass = WEAPON_CLUSTER_MISSILE;
     }
 

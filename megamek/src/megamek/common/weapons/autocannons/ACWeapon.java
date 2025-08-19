@@ -36,16 +36,19 @@ package megamek.common.weapons.autocannons;
 
 import java.io.Serial;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.*;
+import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.Weapon;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.RapidfireACWeaponHandler;
 import megamek.common.weapons.handlers.ac.ACAPHandler;
 import megamek.common.weapons.handlers.ac.ACCaselessHandler;
 import megamek.common.weapons.handlers.ac.ACFlakHandler;
@@ -53,8 +56,6 @@ import megamek.common.weapons.handlers.ac.ACFlechetteHandler;
 import megamek.common.weapons.handlers.ac.ACIncendiaryHandler;
 import megamek.common.weapons.handlers.ac.ACTracerHandler;
 import megamek.common.weapons.handlers.ac.ACWeaponHandler;
-import megamek.common.weapons.handlers.AttackHandler;
-import megamek.common.weapons.handlers.RapidfireACWeaponHandler;
 import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -149,7 +150,7 @@ public abstract class ACWeapon extends AmmoWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_AC;
+        return BF_CLASS_AC;
     }
 
     @Override

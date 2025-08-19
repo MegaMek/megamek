@@ -38,13 +38,13 @@ import static megamek.common.equipment.MountedHelper.isArtemisIV;
 import static megamek.common.equipment.MountedHelper.isArtemisProto;
 import static megamek.common.equipment.MountedHelper.isArtemisV;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.srm.SRMHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
@@ -124,12 +124,12 @@ public abstract class SRTWeapon extends MissileWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_TORP;
+        return BF_CLASS_TORPEDO;
     }
 
     @Override
     public String getSortingName() {
-        String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+        String oneShotTag = hasFlag(F_ONE_SHOT) ? "OS " : "";
         if (name.contains("I-OS")) {
             oneShotTag = "XIOS ";
         }

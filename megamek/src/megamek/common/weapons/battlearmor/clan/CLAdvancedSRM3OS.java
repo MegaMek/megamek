@@ -54,13 +54,13 @@ public class CLAdvancedSRM3OS extends AdvancedSRMWeapon {
         bv = 9;
         flags = flags.or(F_NO_FIRES)
               .or(F_BA_WEAPON)
-              .or(F_ONESHOT)
+              .or(F_ONE_SHOT)
               .andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON)
               .andNot(F_PROTO_WEAPON);
         tonnage = .105;
-        criticals = 4;
+        criticalSlots = 4;
         cost = 22500;
         rulesRefs = "261, TM";
         techAdvancement.setTechBase(TechBase.CLAN)

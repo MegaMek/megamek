@@ -67,7 +67,7 @@ public class CLERPulseLaserLarge extends PulseLaserWeapon {
         longAV = 10;
         maxRange = RANGE_LONG;
         tonnage = 6.0;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 272;
         cost = 400000;
         rulesRefs = "320, TO";

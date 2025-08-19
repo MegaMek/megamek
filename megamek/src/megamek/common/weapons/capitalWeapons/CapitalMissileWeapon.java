@@ -34,16 +34,16 @@
 
 package megamek.common.weapons.capitalWeapons;
 
-import megamek.common.compute.Compute;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectFireHandler;
 import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectFireHandler;
 import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.handlers.capitalMissile.CapitalMissileHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -87,7 +87,7 @@ public abstract class CapitalMissileWeapon extends AmmoWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_CAPITAL_MISSILE;
+        return BF_CLASS_CAPITAL_MISSILE;
     }
 
     @Override

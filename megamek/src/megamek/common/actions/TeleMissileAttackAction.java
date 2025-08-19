@@ -44,7 +44,6 @@ import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.TeleMissile;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
@@ -52,6 +51,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
+import megamek.common.weapons.TeleMissile;
 import megamek.common.weapons.handlers.AttackHandler;
 
 /**
@@ -202,8 +202,8 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                 }
 
                 // Set up differences between point defense and AMS bays
-                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMSBAY);
-                boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PDBAY);
+                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMS_BAY);
+                boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PD_BAY);
 
                 // Point defense bays can only fire at one attack per round
                 if (isPDBay) {
@@ -231,7 +231,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                         pdOverheated = true;
                         break;
                     }
-                    if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                    if (counter.getType().hasFlag(WeaponType.F_HEAT_AS_DICE)) {
                         int heatDice = Compute.d6(bayW.getCurrentHeat());
                         pdEnt.heatBuildup += heatDice;
                         weaponHeat += heatDice;

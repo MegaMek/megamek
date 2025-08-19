@@ -36,7 +36,9 @@ package megamek.common.weapons.handlers;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.HitData;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.EquipmentType;
@@ -106,7 +108,7 @@ public class LegAttackHandler extends WeaponHandler {
         vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, damage,
               false, damageType, false, false, throughFront, underWater));
         Report.addNewline(vPhaseReport);
-        // Do criticals.
+        // Do criticalSlots.
         int critMod = 0;
         if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED) {
             critMod -= 2;

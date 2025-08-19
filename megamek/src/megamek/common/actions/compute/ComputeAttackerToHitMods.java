@@ -234,11 +234,11 @@ public class ComputeAttackerToHitMods {
 
         // Support vehicle basic/advanced fire control systems
         if ((attacker instanceof SupportTank) || (attacker instanceof SupportVTOL)) {
-            if (!attacker.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) &&
-                  !attacker.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
+            if (!attacker.hasWorkingMisc(MiscType.F_BASIC_FIRE_CONTROL) &&
+                  !attacker.hasWorkingMisc(MiscType.F_ADVANCED_FIRE_CONTROL)) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.SupVeeNoFc"));
-            } else if (attacker.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) &&
-                  !(attacker.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))) {
+            } else if (attacker.hasWorkingMisc(MiscType.F_BASIC_FIRE_CONTROL) &&
+                  !(attacker.hasWorkingMisc(MiscType.F_ADVANCED_FIRE_CONTROL))) {
                 toHit.addModifier(1, Messages.getString("WeaponAttackAction.SupVeeBfc"));
             }
         }

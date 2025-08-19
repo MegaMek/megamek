@@ -37,16 +37,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import megamek.codeUtilities.MathUtility;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
-import megamek.common.units.Entity;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
-import megamek.common.units.ProtoMek;
 import megamek.common.equipment.WeaponType;
-import megamek.common.annotations.Nullable;
-import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.ProtoMek;
 import megamek.common.util.StringUtil;
 
 /**
@@ -345,7 +345,7 @@ public class TestProtoMek extends TestEntity {
             buff.append("Does not have legal armor type.\n");
             illegal = true;
         } else {
-            slotsByLoc.merge(ProtoMek.LOC_TORSO, armor.getCriticals(proto), Integer::sum);
+            slotsByLoc.merge(ProtoMek.LOC_TORSO, armor.getNumCriticalSlots(proto), Integer::sum);
         }
 
         for (int loc = 0; loc < proto.locations(); loc++) {

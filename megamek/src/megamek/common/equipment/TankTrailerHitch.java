@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2002-2018 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,14 +34,15 @@
 
 package megamek.common.equipment;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.units.Entity;
 import megamek.common.game.Game;
 import megamek.common.loaders.MekFileParser;
+import megamek.common.units.Entity;
 
 /**
  * Represents a trailer hitch that allows a wheeled or tracked vehicle to tow trailers.
@@ -49,12 +50,13 @@ import megamek.common.loaders.MekFileParser;
  * @see MekFileParser#postLoadInit
  */
 public class TankTrailerHitch implements Transporter {
+    @Serial
     private static final long serialVersionUID = 1193349063084937973L;
 
     /**
      * Is this transporter associated with a front or rear-mounted hitch equipment?
      */
-    private boolean rearMounted = false;
+    private final boolean rearMounted;
 
     public boolean getRearMounted() {
         return rearMounted;
@@ -79,7 +81,7 @@ public class TankTrailerHitch implements Transporter {
     /**
      * Get the <code>String</code> to report the presence (or lack thereof) of a towed trailer.
      * <p>
-     * Sub-classes are encouraged to override this method.
+     * Subclasses are encouraged to override this method.
      *
      * @param isLoaded - a <code>boolean</code> that indicates a trailer is currently loaded (if the value is
      *                 <code>true</code>) or not (if the value is <code>false</code>).
@@ -123,11 +125,7 @@ public class TankTrailerHitch implements Transporter {
         }
 
         // We must have enough space for the trailer.
-        if (towed != Entity.NONE) {
-            return false;
-        }
-
-        return true;
+        return towed == Entity.NONE;
     }
 
     /**
@@ -152,8 +150,8 @@ public class TankTrailerHitch implements Transporter {
      * Get a <code>List</code> of the units currently loaded into this payload.
      *
      * @return A <code>Vector</code> of loaded <code>Entity</code> units. This list will never be <code>null</code>, but
-     *       it may be empty. The returned <code>List</code> is independent from the under- lying data structure;
-     *       modifying one does not affect the other.
+     *       it may be empty. The returned <code>List</code> is independent of the under-lying data structure; modifying
+     *       one does not affect the other.
      */
     @Override
     public final Vector<Entity> getLoadedUnits() {
@@ -194,7 +192,7 @@ public class TankTrailerHitch implements Transporter {
     /**
      * Return a string that identifies the unused capacity of this transporter.
      * <p>
-     * Sub-classes should override the <code>getVacancyString</code> method.
+     * Subclasses should override the <code>getVacancyString</code> method.
      *
      * @return A <code>String</code> meant for a human.
      *

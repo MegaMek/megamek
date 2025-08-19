@@ -54,9 +54,9 @@ public class ISC3MBS extends TAGWeapon {
         addLookupName("C3 Master Boosted System with TAG");
         addLookupName("C3 Boosted System (C3BS) [Master]");
         tonnage = 6;
-        criticals = 6;
-        svslots = 6;
-        tankslots = 1;
+        criticalSlots = 6;
+        svSlots = 6;
+        tankSlots = 1;
         hittable = true;
         spreadable = false;
         cost = 3000000;

@@ -63,7 +63,7 @@ public class CLImprovedPPC extends PPCWeapon {
         waterLongRange = 10;
         waterExtremeRange = 14;
         tonnage = 6.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 176;
         cost = 200000;
         shortAV = 10;

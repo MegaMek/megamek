@@ -37,17 +37,17 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import megamek.MegaMek;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.enums.GamePhase;
+import megamek.common.game.GameTurn;
+import megamek.common.loaders.MapSettings;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.EntitySelector;
 import megamek.common.units.FighterSquadron;
-import megamek.common.game.GameTurn;
 import megamek.common.units.IAero;
-import megamek.common.loaders.MapSettings;
-import megamek.common.Player;
-import megamek.common.Report;
-import megamek.common.enums.GamePhase;
-import megamek.common.options.OptionsConstants;
 import megamek.common.util.EmailService;
 import megamek.logging.MMLogger;
 import megamek.server.DynamicTerrainProcessor;
@@ -131,7 +131,7 @@ public class TWPhasePreparationManager {
                 gameManager.getGame().resetTurnIndex();
                 gameManager.sendCurrentTurns();
                 break;
-            case SET_ARTILLERY_AUTOHIT_HEXES:
+            case SET_ARTILLERY_AUTO_HIT_HEXES:
                 gameManager.deployOffBoardEntities();
                 gameManager.checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
@@ -155,7 +155,7 @@ public class TWPhasePreparationManager {
             case PREMOVEMENT:
             case MOVEMENT:
             case DEPLOYMENT:
-            case PREFIRING:
+            case PRE_FIRING:
             case FIRING:
             case PHYSICAL:
             case TARGETING:

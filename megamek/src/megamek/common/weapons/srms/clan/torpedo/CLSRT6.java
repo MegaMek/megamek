@@ -63,7 +63,7 @@ public class CLSRT6 extends SRTWeapon {
         waterLongRange = 9;
         waterExtremeRange = 12;
         tonnage = 1.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 59;
         flags = flags.or(F_NO_FIRES);
         cost = 80000;

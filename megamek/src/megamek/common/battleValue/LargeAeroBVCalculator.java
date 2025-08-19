@@ -127,7 +127,7 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
                         (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.VEHICLE_FLAMER) ||
                         (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.HEAVY_FLAMER) ||
                         (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.CHEMICAL_LASER))) ||
-                  weaponType.hasFlag(WeaponType.F_ONESHOT) ||
+                  weaponType.hasFlag(WeaponType.F_ONE_SHOT) ||
                   weaponType.hasFlag(WeaponType.F_INFANTRY) ||
                   (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.NA))) {
                 String key = bvLocation(weapon) + ":" + weaponType.getAmmoType() + ":" + weaponType.getRackSize();

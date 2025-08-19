@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.other.innerSphere;
 
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.CenturionWeaponSystemHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
@@ -62,7 +62,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         longRange = 18;
         extremeRange = 24;
         tonnage = 5.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 190;
         cost = 1000000;
         shortAV = 0;

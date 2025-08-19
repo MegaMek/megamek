@@ -65,6 +65,6 @@ public class CapitalPPCBayWeapon extends BayWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_CAPITAL;
+        return BF_CLASS_CAPITAL;
     }
 }

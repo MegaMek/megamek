@@ -38,7 +38,8 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
-import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.units.Entity;
 
 public class AmmoMounted extends Mounted<AmmoType> {
@@ -58,7 +59,7 @@ public class AmmoMounted extends Mounted<AmmoType> {
     public void changeAmmoType(AmmoType at) {
         setType(at);
         if (getLocation() == Entity.LOC_NONE) {
-            // Oneshot launcher
+            // One shot launcher
             setShotsLeft(1);
         } else {
             // Regular launcher
@@ -76,12 +77,12 @@ public class AmmoMounted extends Mounted<AmmoType> {
             damagePerShot = 5;
         }
 
-        //Capital missiles need a racksize for this
+        //Capital missiles need a rack size for this
         if (getType().hasFlag(AmmoType.F_CAP_MISSILE)) {
             rackSize = 1;
         }
 
-        //Screen launchers need a racksize. Damage is 15 per TW p251
+        //Screen launchers need a rack size. Damage is 15 per TW p251
         if (getType().getAmmoType() == AmmoType.AmmoTypeEnum.SCREEN_LAUNCHER) {
             rackSize = 1;
             damagePerShot = 15;

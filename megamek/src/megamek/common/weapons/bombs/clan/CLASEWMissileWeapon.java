@@ -34,11 +34,11 @@
 
 package megamek.common.weapons.bombs.clan;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.BombType.BombTypeEnum;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.ASEWMissileWeaponHandler;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.missiles.ThunderboltWeapon;
@@ -68,12 +68,12 @@ public class CLASEWMissileWeapon extends ThunderboltWeapon {
         this.longRange = 28;
         this.extremeRange = 42;
         this.tonnage = 2;
-        this.criticals = 0;
+        this.criticalSlots = 0;
         this.hittable = false;
         this.bv = 0;
         this.cost = 20000;
         this.flags = flags.or(F_MISSILE)
-              .or(F_LARGEMISSILE)
+              .or(F_LARGE_MISSILE)
               .or(F_BOMB_WEAPON)
               .andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON);

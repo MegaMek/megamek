@@ -45,9 +45,13 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.MPCalculationSetting;
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.*;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.interfaces.ITechManager;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.BipedMek;
@@ -133,7 +137,7 @@ public class TestMek extends TestEntity {
             if (armor.hasFlag(MiscType.F_MEK_EQUIPMENT)
                   && ((armor.getArmorType() != EquipmentType.T_ARMOR_COMMERCIAL) || industrial)
                   && techManager.isLegal(armor)
-                  && (!isLam || (armor.getCriticals(null) == 0))
+                  && (!isLam || (armor.getNumCriticalSlots(null) == 0))
                   && (!industrialOnly || armor.isIndustrial())) {
                 legalArmors.add(armor);
             }
@@ -485,7 +489,7 @@ public class TestMek extends TestEntity {
         if (et instanceof MiscType) {
             criticals = calcMiscCrits((MiscType) et, mounted.getSize());
         } else {
-            criticals = mounted.getCriticals();
+            criticals = mounted.getNumCriticalSlots();
         }
         int count = 0;
 
@@ -543,7 +547,7 @@ public class TestMek extends TestEntity {
                       && (m.getUsableShotsLeft() <= 1)) {
                     continue;
                 }
-                if (m.getCriticals() == 0) {
+                if (m.getNumCriticalSlots() == 0) {
                     continue;
                 }
                 if (!(m.getType() instanceof MiscType)) {
@@ -635,7 +639,7 @@ public class TestMek extends TestEntity {
     }
 
     private boolean checkSystemCriticals(StringBuffer buff) {
-        // Engine criticals
+        // Engine criticalSlots
         boolean engineCorrect = true;
         int requiredSideCrits = engine.getSideTorsoCriticalSlots().length;
         if ((requiredSideCrits != mek.getNumberOfCriticals(
@@ -652,7 +656,7 @@ public class TestMek extends TestEntity {
             engineCorrect = false;
         }
         if (!engineCorrect) {
-            buff.append("Engine: Incorrect number of criticals allocated.\n");
+            buff.append("Engine: Incorrect number of criticalSlots allocated.\n");
         }
 
         if (!engineCorrect) {
@@ -860,9 +864,9 @@ public class TestMek extends TestEntity {
         for (MiscMounted m : mek.getMisc()) {
             hasHarjelII |= m.getType().hasFlag(MiscType.F_HARJEL_II);
             hasHarjelIII |= m.getType().hasFlag(MiscType.F_HARJEL_III);
-            hasNullSig |= m.getType().hasFlag(MiscType.F_NULLSIG);
-            hasVoidSig |= m.getType().hasFlag(MiscType.F_VOIDSIG);
-            hasTC |= m.getType().hasFlag(MiscType.F_TARGCOMP);
+            hasNullSig |= m.getType().hasFlag(MiscType.F_NULL_SIG);
+            hasVoidSig |= m.getType().hasFlag(MiscType.F_VOID_SIG);
+            hasTC |= m.getType().hasFlag(MiscType.F_TARGETING_COMPUTER);
             hasMASC |= m.getType().hasFlag(MiscType.F_MASC)
                   && !m.getType().hasSubType(MiscType.S_SUPERCHARGER);
             hasAES |= m.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM);
@@ -1076,7 +1080,7 @@ public class TestMek extends TestEntity {
                     illegal = true;
                 }
                 if (!mek.hasAdvancedFireControl()
-                      && (misc.hasFlag(MiscType.F_TARGCOMP)
+                      && (misc.hasFlag(MiscType.F_TARGETING_COMPUTER)
                       || misc.hasFlag(MiscType.F_ARTEMIS)
                       || misc.hasFlag(MiscType.F_ARTEMIS_PROTO)
                       || misc.hasFlag(MiscType.F_ARTEMIS_V)
@@ -1226,7 +1230,7 @@ public class TestMek extends TestEntity {
             }
             EquipmentType structure = EquipmentType.get(EquipmentType.getStructureTypeName(mek.getStructureType(),
                   mek.isClan()));
-            if (structure.getCriticals(mek) > 0) {
+            if (structure.getNumCriticalSlots(mek) > 0) {
                 buff.append("LAMs may not use ").append(structure.getName()).append("\n");
                 illegal = true;
             }
@@ -1241,7 +1245,7 @@ public class TestMek extends TestEntity {
                     illegal = true;
                 } else {
                     final EquipmentType eq = EquipmentType.get(EquipmentType.getArmorTypeName(at, mek.isClan()));
-                    if (eq != null && eq.getCriticals(mek) > 0) {
+                    if (eq != null && eq.getNumCriticalSlots(mek) > 0) {
                         buff.append("LAMs cannot use ").append(eq.getName()).append("\n");
                         illegal = true;
                     }
@@ -1515,7 +1519,7 @@ public class TestMek extends TestEntity {
         String structureName = EquipmentType.getStructureTypeName(mek.getStructureType(),
               TechConstants.isClan(mek.getStructureTechLevel()));
         EquipmentType structure = EquipmentType.get(structureName);
-        int requiredStructureCrits = structure.getCriticals(mek);
+        int requiredStructureCrits = structure.getNumCriticalSlots(mek);
         if (mek.getNumberOfCriticals(structure) != requiredStructureCrits) {
             buff.append("The internal structure of this mek is not using the correct number of crit slots\n");
             illegal = true;
@@ -1686,7 +1690,7 @@ public class TestMek extends TestEntity {
                 }
                 return false;
             }
-            if (eq.hasFlag(MiscType.F_LIFTHOIST) && ((location == Mek.LOC_HEAD) || mek.locationIsLeg(location))) {
+            if (eq.hasFlag(MiscType.F_LIFT_HOIST) && ((location == Mek.LOC_HEAD) || mek.locationIsLeg(location))) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a torso or arm location.\n");
                 }

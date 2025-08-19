@@ -184,7 +184,7 @@ public class EquipmentTypeLookup {
     @EquipmentName
     public static final String MONOCYCLE_CHASSIS_MOD = "MonocycleChassisMod";
     @EquipmentName
-    public static final String OFFROAD_CHASSIS_MOD = "OffroadChassisMod";
+    public static final String OFF_ROAD_CHASSIS_MOD = "OffroadChassisMod";
     @EquipmentName
     public static final String OMNI_CHASSIS_MOD = "OmniChassisMod";
     @EquipmentName

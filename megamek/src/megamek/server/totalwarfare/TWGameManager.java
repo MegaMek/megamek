@@ -72,7 +72,8 @@ import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.AmmoType.Munitions;
-import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -119,6 +120,7 @@ import megamek.common.util.HazardousLiquidPoolUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.DamageType;
+import megamek.common.weapons.TeleMissile;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.common.weapons.handlers.AreaEffectHelper.DamageFalloff;
@@ -1928,10 +1930,10 @@ public class TWGameManager extends AbstractGameManager {
                 // write Movement Phase header to report
                 addReport(new Report(2000, Report.PUBLIC));
             case PREMOVEMENT:
-            case SET_ARTILLERY_AUTOHIT_HEXES:
+            case SET_ARTILLERY_AUTO_HIT_HEXES:
             case DEPLOY_MINEFIELDS:
             case DEPLOYMENT:
-            case PREFIRING:
+            case PRE_FIRING:
             case FIRING:
             case PHYSICAL:
             case TARGETING:
@@ -2183,7 +2185,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     private void changeToNextTurn(int prevPlayerId) {
         boolean minefieldPhase = game.getPhase().isDeployMinefields();
-        boolean artyPhase = game.getPhase().isSetArtilleryAutohitHexes();
+        boolean artyPhase = game.getPhase().isSetArtilleryAutoHitHexes();
         if (isPlayerForcedVictory()) {
             setIneligible(game.getPhase());
         }
@@ -2273,7 +2275,7 @@ public class TWGameManager extends AbstractGameManager {
                 endCurrentTurn(toSkip);
                 break;
             case PREMOVEMENT:
-            case PREFIRING:
+            case PRE_FIRING:
                 endCurrentTurn(toSkip);
             default:
                 break;
@@ -2769,7 +2771,7 @@ public class TWGameManager extends AbstractGameManager {
                     // turns during the movement phase
                     if (getGame().getPhase().isMovement() || getGame().getPhase().isDeployment()) {
                         turn = new EntityClassTurn(player.getId(), ~aeroMask);
-                    } else if (getGame().getPhase().isPremovement() || getGame().getPhase().isPrefiring()) {
+                    } else if (getGame().getPhase().isPremovement() || getGame().getPhase().isPreFiring()) {
                         turn = new PrephaseTurn(player.getId());
                     } else {
                         turn = new GameTurn(player.getId());
@@ -4869,7 +4871,7 @@ public class TWGameManager extends AbstractGameManager {
                   0,
                   false));
         } else if (flip && entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE) {
-            // QuadVees don't suffer stunned crew criticals; require PSR to avoid damage
+            // QuadVees don't suffer stunned crew criticalSlots; require PSR to avoid damage
             // instead.
             PilotingRollData prd = entity.getBasePilotingRoll();
             addReport(checkPilotAvoidFallDamage(entity, 1, prd));
@@ -6034,7 +6036,7 @@ public class TWGameManager extends AbstractGameManager {
             if (superchargerFailure) {
                 addReport(vReport);
                 // If this is supercharger failure we need to damage the supercharger as well as
-                // the additional criticals. For meks this requires the additional step of
+                // the additional criticalSlots. For meks this requires the additional step of
                 // finding
                 // the slot and marking it as hit so it can't absorb future damage.
                 Mounted<?> supercharger = entity.getSuperCharger();
@@ -9392,7 +9394,7 @@ public class TWGameManager extends AbstractGameManager {
         int playerId = artyAutoHitHexes.getPlayerID();
 
         // is this the right phase?
-        if (!game.getPhase().isSetArtilleryAutohitHexes()) {
+        if (!game.getPhase().isSetArtilleryAutoHitHexes()) {
             logger.error("Server got set artyautohithexespacket in wrong phase");
             return;
         }
@@ -9513,7 +9515,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // is this the right phase?
-        if (!getGame().getPhase().isPrefiring() && !getGame().getPhase().isPremovement()) {
+        if (!getGame().getPhase().isPreFiring() && !getGame().getPhase().isPremovement()) {
             logger.error("Server got Prephase packet in wrong phase " + game.getPhase());
             return;
         }
@@ -11343,8 +11345,8 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @param ae                the attacking entity
      * @param missed            did the attack miss? If so, a PSR is necessary.
-     * @param criticalLocations the locations for possible criticals, should be one or both arms depending on if it was
-     *                          an unarmed attack (both arms) or a weapon attack (the arm with the weapon).
+     * @param criticalLocations the locations for possible criticalSlots, should be one or both arms depending on if it
+     *                          was an unarmed attack (both arms) or a weapon attack (the arm with the weapon).
      */
     private void applyZweihanderSelfDamage(Entity ae, boolean missed, int... criticalLocations) {
         Report r = new Report(4022);
@@ -11616,7 +11618,7 @@ public class TWGameManager extends AbstractGameManager {
                     if ((target instanceof BattleArmor) &&
                           (hit.getLocation() < te.locations()) &&
                           (te.getInternal(hit.getLocation()) > 0)) {
-                        // TODO : we should really apply BA criticals through the critical hits methods. Right now they
+                        // TODO : we should really apply BA criticalSlots through the critical hits methods. Right now they
                         //  are applied in damageEntity
                         HitData baHit = new HitData(hit.getLocation(), false, HitData.EFFECT_CRITICAL);
                         addReport(damageEntity(te, baHit, 0));
@@ -17618,7 +17620,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param vDesc - the <code>Vector</code> that this function should add its
      *              <code>Report</code>s to.  It may be empty, but not
      *              <code>null</code>.
-     * @param hits  - the number of criticals on the engine
+     * @param hits  - the number of criticalSlots on the engine
      *
      * @return <code>true</code> if the unit's engine exploded,
      *       <code>false</code> if not.
@@ -19573,7 +19575,7 @@ public class TWGameManager extends AbstractGameManager {
                     // may be null
                     boolean destroyAll = false;
                     // CRIT_WEAPON damages the capital fighter/squadron's weapon groups
-                    // TODO: Go ahead and map damage for the fighters' weapon criticals for MHQ
+                    // TODO: Go ahead and map damage for the fighters' weapon criticalSlots for MHQ
                     // resolution.
                     // (Currently this is not working as the Capital Fighter has no weapons of its
                     // own, only groups.
@@ -21015,7 +21017,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Checks for aero criticals
+     * Checks for aero criticalSlots
      *
      * @param vDesc         - {@link Report} <code>Vector</code>
      * @param a             - the entity being critted
@@ -21419,7 +21421,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         possibleReactiveCrit &= locContainsReactiveArmor;
 
-        // transfer criticals, if needed
+        // transfer criticalSlots, if needed
         while ((en.canTransferCriticals(loc) && !possibleReactiveCrit) &&
               (en.getTransferLocation(loc) != Entity.LOC_DESTROYED) &&
               (en.getTransferLocation(loc) != Entity.LOC_NONE)) {
@@ -24744,7 +24746,7 @@ public class TWGameManager extends AbstractGameManager {
                   " and does not use ammo.");
             return;
         }
-        if (mWeap.getType().hasFlag(WeaponType.F_ONESHOT) && !mWeap.getType().hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+        if (mWeap.getType().hasFlag(WeaponType.F_ONE_SHOT) && !mWeap.getType().hasFlag(WeaponType.F_DOUBLE_ONE_SHOT)) {
             logger.error("Item #" +
                   weaponId +
                   " of entity " +

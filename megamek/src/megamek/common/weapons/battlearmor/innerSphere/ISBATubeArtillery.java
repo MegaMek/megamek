@@ -58,12 +58,12 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
         longRange = 2;
         extremeRange = 2; // No extreme range.
         tonnage = 0.5;
-        criticals = 4;
+        criticalSlots = 4;
         bv = 27;
         cost = 200000;
         rulesRefs = "284, TO";
         flags = flags.or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).or(F_MEK_MORTAR).or(F_MISSILE);
-        damage = DAMAGE_BY_CLUSTERTABLE;
+        damage = DAMAGE_BY_CLUSTER_TABLE;
         atClass = CLASS_ARTILLERY;
         infDamageClass = WEAPON_CLUSTER_MISSILE;
         techAdvancement.setTechBase(TechBase.IS)

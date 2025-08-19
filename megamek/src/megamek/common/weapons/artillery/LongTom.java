@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.artillery;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.SimpleTechLevel;
+import megamek.common.equipment.AmmoType;
 
 /**
  * @author Sebastian Brocks
@@ -61,8 +61,8 @@ public class LongTom extends ArtilleryWeapon {
         longRange = 30;
         extremeRange = 30; // No extreme range.
         tonnage = 30;
-        criticals = 30;
-        svslots = 15;
+        criticalSlots = 30;
+        svSlots = 15;
         bv = 368;
         cost = 450000;
         rulesRefs = "284, TO";

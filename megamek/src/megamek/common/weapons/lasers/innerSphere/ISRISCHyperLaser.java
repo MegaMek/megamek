@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.lasers.innerSphere;
 
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.HyperLaserHandler;
 import megamek.common.weapons.lasers.LaserWeapon;
@@ -67,7 +67,7 @@ public class ISRISCHyperLaser extends LaserWeapon {
         waterLongRange = 18;
         waterExtremeRange = 27;
         tonnage = 8.0;
-        criticals = 6;
+        criticalSlots = 6;
         bv = 596;
         cost = 750000;
         shortAV = 20;

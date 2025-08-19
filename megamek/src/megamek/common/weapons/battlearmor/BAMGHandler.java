@@ -36,13 +36,13 @@ package megamek.common.weapons.battlearmor;
 
 import java.util.Vector;
 
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
-import megamek.common.units.Infantry;
 import megamek.common.Report;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Infantry;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.handlers.WeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -72,7 +72,7 @@ public class BAMGHandler extends WeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (weapon.isRapidfire() && !(target instanceof Infantry)) {
+        if (weapon.isRapidFire() && !(target instanceof Infantry)) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
             switch (wtype.getDamage()) {
                 case 1:
@@ -105,7 +105,7 @@ public class BAMGHandler extends WeaponHandler {
     @Override
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-            if (weapon.isRapidfire()) {
+            if (weapon.isRapidFire()) {
                 ae.heatBuildup += nDamPerHit;
             } else {
                 super.addHeat();
@@ -124,7 +124,7 @@ public class BAMGHandler extends WeaponHandler {
         Report r = new Report(3220);
         r.subject = subjectId;
         vPhaseReport.add(r);
-        if (weapon.isRapidfire() && !target.isConventionalInfantry()) {
+        if (weapon.isRapidFire() && !target.isConventionalInfantry()) {
             r.newlines = 0;
             r = new Report(3225);
             r.subject = subjectId;

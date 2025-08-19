@@ -302,7 +302,7 @@ public class TestBattleArmor extends TestEntity {
                 if (m.getType().isSpreadable()) {
                     numUsedCrits++;
                 } else {
-                    numUsedCrits += m.getCriticals();
+                    numUsedCrits += m.getNumCriticalSlots();
                 }
             }
         }
@@ -336,7 +336,7 @@ public class TestBattleArmor extends TestEntity {
         if (newMount.getType().isSpreadable()) {
             newCrits = 1;
         } else {
-            newCrits = newMount.getCriticals();
+            newCrits = newMount.getNumCriticalSlots();
         }
         if ((numUsedCrits + newCrits) <= ba.getNumCrits(loc)) {
             // Weapons require extra criticism
@@ -666,7 +666,7 @@ public class TestBattleArmor extends TestEntity {
             return false;
         }
         EquipmentType boosterType = EquipmentType.get(EquipmentTypeLookup.BA_MYOMER_BOOSTER);
-        if (ba.countWorkingMisc(MiscType.F_MASC) > boosterType.getCriticals(ba)) {
+        if (ba.countWorkingMisc(MiscType.F_MASC) > boosterType.getNumCriticalSlots(ba)) {
             buff.append("BattleArmor may only mount 1 " + "myomer booster!");
             return false;
         }
@@ -721,7 +721,7 @@ public class TestBattleArmor extends TestEntity {
             if (m.getType().isSpreadable()) {
                 critSize = 1;
             } else {
-                critSize = m.getCriticals();
+                critSize = m.getNumCriticalSlots();
             }
 
             // Manipulators don't take up slots in BA
@@ -903,7 +903,7 @@ public class TestBattleArmor extends TestEntity {
                     buff.append(BattleArmor.getBaMountLocAbbr(loc) + " of "
                           + ba.getLocationAbbr(t) + " has "
                           + critsUsed[t][loc]
-                          + " used criticals, but only has "
+                          + " used criticalSlots, but only has "
                           + ba.getNumCrits(loc) + " available criticsl!\n");
                     correct = false;
                 }
@@ -943,12 +943,12 @@ public class TestBattleArmor extends TestEntity {
                 if ((m.getType() instanceof AmmoType)
                       && (m.getLinkedBy() != null)
                       && m.getLinkedBy().getType()
-                      .hasFlag(WeaponType.F_ONESHOT)) {
+                      .hasFlag(WeaponType.F_ONE_SHOT)) {
                     continue;
                 }
 
                 // Equipment taking up no slots doesn't need to be mounted
-                if ((m.getCriticals() == 0)
+                if ((m.getNumCriticalSlots() == 0)
                       && !((m.getType() instanceof InfantryWeapon)
                       && !m.isAPMMounted())) {
                     continue;

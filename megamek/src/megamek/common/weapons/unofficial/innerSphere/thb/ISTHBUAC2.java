@@ -59,7 +59,7 @@ public class ISTHBUAC2 extends UACWeapon {
         this.longRange = 32;
         this.extremeRange = 40;
         this.tonnage = 7.0;
-        this.criticals = 3;
+        this.criticalSlots = 3;
         this.bv = 67;
         this.cost = 150000;
         // Since this are the Tactical Handbook Weapons I'm using the TM Stats.

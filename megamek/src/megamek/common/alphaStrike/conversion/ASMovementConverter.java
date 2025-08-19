@@ -204,7 +204,7 @@ final class ASMovementConverter {
     private static boolean hasJetBooster(Entity entity) {
         return entity.getMisc().stream()
               .map(Mounted::getType)
-              .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && m.hasSubType(MiscType.S_JETBOOSTER)));
+              .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && m.hasSubType(MiscType.S_JET_BOOSTER)));
     }
 
     /** Returns true if the given entity has a ProtoMek Myomer Booster. */

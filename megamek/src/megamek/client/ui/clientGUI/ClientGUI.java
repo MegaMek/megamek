@@ -1264,14 +1264,14 @@ public class ClientGUI extends AbstractClientGUI
                 boardViews().forEach(bv -> ((BoardView) bv).getTilesetManager().reset());
                 break;
             case POINTBLANK_SHOT:
-            case SET_ARTILLERY_AUTOHIT_HEXES:
+            case SET_ARTILLERY_AUTO_HIT_HEXES:
             case DEPLOY_MINEFIELDS:
             case DEPLOYMENT:
             case TARGETING:
             case PREMOVEMENT:
             case MOVEMENT:
             case OFFBOARD:
-            case PREFIRING:
+            case PRE_FIRING:
             case FIRING:
             case PHYSICAL:
             case INITIATIVE_REPORT:
@@ -1356,7 +1356,7 @@ public class ClientGUI extends AbstractClientGUI
                 component.setName(main);
                 panMain.add(component, main);
                 break;
-            case SET_ARTILLERY_AUTOHIT_HEXES:
+            case SET_ARTILLERY_AUTO_HIT_HEXES:
                 component = new SelectArtyAutoHitHexDisplay(this);
                 main = CG_BOARD_VIEW;
                 secondary = CG_SELECT_ARTY_AUTO_HIT_HEX_DISPLAY;
@@ -1437,8 +1437,8 @@ public class ClientGUI extends AbstractClientGUI
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
-            case PREFIRING:
-                component = new PrephaseDisplay(this, GamePhase.PREFIRING);
+            case PRE_FIRING:
+                component = new PrephaseDisplay(this, GamePhase.PRE_FIRING);
                 ((PrephaseDisplay) component).initializeListeners();
                 main = CG_BOARD_VIEW;
                 secondary = CG_PRE_FIRING;

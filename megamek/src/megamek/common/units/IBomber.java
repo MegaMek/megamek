@@ -36,15 +36,15 @@ package megamek.common.units;
 import java.util.Arrays;
 import java.util.List;
 
-import megamek.common.game.Game;
-import megamek.common.exceptions.LocationFullException;
 import megamek.common.TechConstants;
 import megamek.common.equipment.BombLoadout;
-import megamek.common.equipment.BombType;
-import megamek.common.equipment.BombType.BombTypeEnum;
 import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 
 /**

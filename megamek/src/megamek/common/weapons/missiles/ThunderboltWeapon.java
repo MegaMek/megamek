@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.missiles;
 
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.handlers.AttackHandler;
@@ -59,7 +59,7 @@ public abstract class ThunderboltWeapon extends MissileWeapon {
         longRange = 18;
         extremeRange = 24;
         maxRange = RANGE_MED;
-        flags = flags.or(F_LARGEMISSILE);
+        flags = flags.or(F_LARGE_MISSILE);
         atClass = CLASS_THUNDERBOLT;
         rulesRefs = "159, TO:AUE";
         techAdvancement.setTechBase(TechBase.IS)

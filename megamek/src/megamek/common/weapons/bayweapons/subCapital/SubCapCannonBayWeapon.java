@@ -65,6 +65,6 @@ public class SubCapCannonBayWeapon extends AmmoBayWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_SUBCAPITAL;
+        return BF_CLASS_SUBCAPITAL;
     }
 }

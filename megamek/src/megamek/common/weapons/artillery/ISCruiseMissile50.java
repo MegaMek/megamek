@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.artillery;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.SimpleTechLevel;
+import megamek.common.equipment.AmmoType;
 
 /**
  * @author Sebastian Brocks
@@ -57,8 +57,8 @@ public class ISCruiseMissile50 extends ArtilleryWeapon {
         longRange = 50;
         extremeRange = 50; // No extreme range.
         tonnage = 55;
-        criticals = 55;
-        svslots = 25;
+        criticalSlots = 55;
+        svSlots = 25;
         flags = flags.or(F_CRUISE_MISSILE);
         bv = 601;
         cost = 900000;

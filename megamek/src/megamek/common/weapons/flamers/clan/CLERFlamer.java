@@ -35,8 +35,8 @@
 package megamek.common.weapons.flamers.clan;
 
 import megamek.common.SimpleTechLevel;
-import megamek.common.equipment.WeaponType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.flamers.FlamerWeapon;
 
 /**
@@ -61,7 +61,7 @@ public class CLERFlamer extends FlamerWeapon {
         longRange = 7;
         extremeRange = 10;
         tonnage = 1;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 16;
         cost = 15000;
         shortAV = 2;

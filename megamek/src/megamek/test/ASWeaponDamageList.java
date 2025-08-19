@@ -55,7 +55,7 @@ public class ASWeaponDamageList {
                 wpLine.add(etype.getName());
                 wpLine.add(etype.getInternalName());
                 wpLine.add(etype.isClan() ? "-Clan-" : "-IS-");
-                double mult = etype.hasFlag(WeaponType.F_ONESHOT) ? 0.1 : 1;
+                double mult = etype.hasFlag(WeaponType.F_ONE_SHOT) ? 0.1 : 1;
                 double s = mult * ((WeaponType) etype).getBattleForceDamage(AlphaStrikeElement.SHORT_RANGE, null);
                 String sT = s == 0 ? "--" : "" + s;
                 double m = mult * ((WeaponType) etype).getBattleForceDamage(AlphaStrikeElement.MEDIUM_RANGE, null);

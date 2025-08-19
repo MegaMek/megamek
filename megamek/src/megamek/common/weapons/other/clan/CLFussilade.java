@@ -53,7 +53,7 @@ public class CLFussilade extends CLIATMWeapon {
         setInternalName("Fusillade");
         addLookupName("Fussilade");
         flags = flags.or(WeaponType.F_PROTO_WEAPON).or(WeaponType.F_MISSILE)
-              .or(WeaponType.F_ONESHOT).or(WeaponType.F_DOUBLE_ONESHOT)
+              .or(WeaponType.F_ONE_SHOT).or(WeaponType.F_DOUBLE_ONE_SHOT)
               .andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON);
         rackSize = 3;
@@ -69,7 +69,7 @@ public class CLFussilade extends CLIATMWeapon {
         maxRange = RANGE_MED;
         cost = 100000;
         tonnage = 1.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 11.0;
         rulesRefs = "65, IO";
         techAdvancement.setTechBase(TechBase.CLAN)

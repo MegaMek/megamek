@@ -66,7 +66,7 @@ public class CLERPulseLaserMedium extends PulseLaserWeapon {
         medAV = 7;
         maxRange = RANGE_MED;
         tonnage = 2.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 117;
         cost = 150000;
         rulesRefs = "320, TO";

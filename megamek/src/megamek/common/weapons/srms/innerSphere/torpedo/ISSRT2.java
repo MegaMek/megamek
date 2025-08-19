@@ -56,7 +56,7 @@ public class ISSRT2 extends SRTWeapon {
         waterLongRange = 9;
         waterExtremeRange = 12;
         tonnage = 1.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 21;
         flags = flags.or(F_NO_FIRES);
         cost = 10000;

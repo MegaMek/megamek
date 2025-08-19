@@ -61,7 +61,7 @@ public class CLHeavyMG extends MGWeapon {
         longRange = 2;
         extremeRange = 2;
         tonnage = 0.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 6;
         cost = 7500;
         shortAV = 3;

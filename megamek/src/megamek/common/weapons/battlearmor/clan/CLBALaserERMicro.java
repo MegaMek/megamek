@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.battlearmor.clan;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.lasers.LaserWeapon;
 
 /**
@@ -62,7 +62,7 @@ public class CLBALaserERMicro extends LaserWeapon {
         waterLongRange = 2;
         waterExtremeRange = 2;
         tonnage = 0.15;
-        criticals = 1;
+        criticalSlots = 1;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON)
               .andNot(F_PROTO_WEAPON);
         bv = 7;

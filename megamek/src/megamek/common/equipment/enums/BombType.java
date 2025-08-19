@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,7 +33,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.equipment;
+package megamek.common.equipment.enums;
 
 import static java.util.stream.Collectors.toList;
 
@@ -45,6 +45,9 @@ import java.util.Map;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
@@ -158,10 +161,7 @@ public class BombType extends AmmoType {
             int gameTL = TechConstants.getSimpleLevel(
                   gameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)
             );
-            if (this.isAdvancedAmmo() && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
-                return false;
-            }
-            return true;
+            return !this.isAdvancedAmmo() || (gameTL >= TechConstants.T_SIMPLE_ADVANCED);
         }
 
         public static BombTypeEnum fromIndex(int index) {
@@ -296,46 +296,27 @@ public class BombType extends AmmoType {
     }
 
     public static BombType createBombByType(BombTypeEnum bType) {
-        switch (bType) {
-            case HE:
-                return createHighExplosiveBomb();
-            case CLUSTER:
-                return createClusterBomb();
-            case LG:
-                return createLaserGuidedBomb();
-            case RL:
-                return createRocketBomb();
-            case TAG:
-                return createTAGBomb();
-            case AAA:
-                return createAAAMissileBomb();
-            case AS:
-                return createASMissileBomb();
-            case ASEW:
-                return createISASEWMissileBomb();
-            case ARROW:
-                return createArrowIVBomb();
-            case HOMING:
-                return createArrowIVHomingBomb();
-            case INFERNO:
-                return createInfernoBomb();
-            case LAA:
-                return createLAAMissileBomb();
-            case THUNDER:
-                return createThunderBomb();
-            case TORPEDO:
-                return createTorpedoBomb();
-            case ALAMO:
-                return createAlamoBomb();
-            case FAE_SMALL:
-                return createSmallFuelAirBomb();
-            case FAE_LARGE:
-                return createLargeFuelAirBomb();
-            case RLP:
-                return createPrototypeRocketBomb();
-            default:
-                return null;
-        }
+        return switch (bType) {
+            case HE -> createHighExplosiveBomb();
+            case CLUSTER -> createClusterBomb();
+            case LG -> createLaserGuidedBomb();
+            case RL -> createRocketBomb();
+            case TAG -> createTAGBomb();
+            case AAA -> createAAAMissileBomb();
+            case AS -> createASMissileBomb();
+            case ASEW -> createISASEWMissileBomb();
+            case ARROW -> createArrowIVBomb();
+            case HOMING -> createArrowIVHomingBomb();
+            case INFERNO -> createInfernoBomb();
+            case LAA -> createLAAMissileBomb();
+            case THUNDER -> createThunderBomb();
+            case TORPEDO -> createTorpedoBomb();
+            case ALAMO -> createAlamoBomb();
+            case FAE_SMALL -> createSmallFuelAirBomb();
+            case FAE_LARGE -> createLargeFuelAirBomb();
+            case RLP -> createPrototypeRocketBomb();
+            default -> null;
+        };
     }
 
     // START OF BOMBS

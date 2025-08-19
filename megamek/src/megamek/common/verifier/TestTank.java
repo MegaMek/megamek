@@ -39,13 +39,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.*;
-import megamek.common.equipment.*;
-import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.MPCalculationSetting;
+import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.bays.BattleArmorBay;
 import megamek.common.bays.Bay;
 import megamek.common.bays.InfantryBay;
+import megamek.common.equipment.*;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.interfaces.ITechManager;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -575,7 +576,7 @@ public class TestTank extends TestEntity {
         boolean correct = true;
 
         for (Mounted<?> mount : tank.getMisc()) {
-            if (mount.getLocation() == Entity.LOC_NONE && !(mount.getCriticals() == 0)) {
+            if (mount.getLocation() == Entity.LOC_NONE && !(mount.getNumCriticalSlots() == 0)) {
                 unallocated.add(mount);
             }
         }
@@ -894,7 +895,7 @@ public class TestTank extends TestEntity {
         if (eq instanceof MiscType) {
             // Equipment explicitly forbidden to a mast mount
             if ((eq.hasFlag(MiscType.F_MODULAR_ARMOR) || eq.hasFlag(MiscType.F_HARJEL)
-                  || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM) || eq.hasFlag(MiscType.F_LIFTHOIST)
+                  || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM) || eq.hasFlag(MiscType.F_LIFT_HOIST)
                   || eq.hasFlag(MiscType.F_MANIPULATOR) || eq.hasFlag(MiscType.F_FLUID_SUCTION_SYSTEM)
                   || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM) || eq.hasFlag(MiscType.F_SPRAYER))
                   && (tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)) {
@@ -903,7 +904,7 @@ public class TestTank extends TestEntity {
             }
             if ((eq.hasFlag(MiscType.F_HARJEL) || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)
                   || eq.hasFlag(MiscType.F_SPRAYER)
-                  || (eq.hasFlag(MiscType.F_LIFTHOIST) && !(tank instanceof VTOL)))
+                  || (eq.hasFlag(MiscType.F_LIFT_HOIST) && !(tank instanceof VTOL)))
                   && (location == Tank.LOC_BODY)) {
                 buffer.append(eq.getName()).append(" cannot be mounted in the body.\n");
                 return false;

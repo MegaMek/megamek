@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.prototypes.clan;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 
 /**
  * @author Sebastian Brocks
@@ -62,7 +62,7 @@ public class CLStreakSRM6Prototype extends CLPrototypeStreakSRMWeapon {
         longRange = 9;
         extremeRange = 12;
         tonnage = 4.5;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 89;
         cost = 120000;
         shortAV = 8;

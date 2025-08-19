@@ -44,16 +44,16 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
+import megamek.common.TechAdvancement;
+import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.interfaces.ITechnology.AvailabilityValue;
 import megamek.common.interfaces.ITechnology.Era;
 import megamek.common.interfaces.ITechnology.Faction;
-import megamek.common.equipment.MiscType;
-import megamek.common.TechAdvancement;
-import megamek.common.TechAdvancement.AdvancementPhase;
-import megamek.common.equipment.WeaponType;
 import megamek.logging.MMLogger;
 
 /**
@@ -242,9 +242,9 @@ public class YamlSerializerEquipmentType {
         addVariableOrFixedValue(stats, "cost", getDoubleFieldValue(equipment, "cost"), equipment::isVariableCost);
         addVariableOrFixedValue(stats, "bv", getDoubleFieldValue(equipment, "bv"), equipment::isVariableBV);
         addVariableOrFixedValue(stats,
-              "criticals",
-              getIntegerFieldValue(equipment, "criticals"),
-              equipment::isVariableCriticals);
+              "criticalSlots",
+              getIntegerFieldValue(equipment, "criticalSlots"),
+              equipment::isVariableCriticalSlots);
 
         // Optional statistics
         YamlEncDec.addPropIfNotDefault(stats,
@@ -264,13 +264,13 @@ public class YamlSerializerEquipmentType {
               getIntegerFieldValue(equipment, "toHitModifier"),
               getIntegerFieldValue(defaultEquipment, "toHitModifier"));
         YamlEncDec.addPropIfNotDefault(stats,
-              "tankslots",
-              getIntegerFieldValue(equipment, "tankslots"),
-              getIntegerFieldValue(defaultEquipment, "tankslots"));
+              "tankSlots",
+              getIntegerFieldValue(equipment, "tankSlots"),
+              getIntegerFieldValue(defaultEquipment, "tankSlots"));
         YamlEncDec.addPropIfNotDefault(stats,
-              "svslots",
-              getIntegerFieldValue(equipment, "svslots"),
-              getIntegerFieldValue(defaultEquipment, "svslots"));
+              "svSlots",
+              getIntegerFieldValue(equipment, "svSlots"),
+              getIntegerFieldValue(defaultEquipment, "svSlots"));
         YamlEncDec.addPropIfNotDefault(stats,
               "omniFixedOnly",
               getBooleanFieldValue(equipment, "omniFixedOnly"),

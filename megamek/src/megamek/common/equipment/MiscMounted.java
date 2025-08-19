@@ -34,9 +34,10 @@
 package megamek.common.equipment;
 
 import megamek.common.CriticalSlot;
+import megamek.common.Messages;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-import megamek.common.Messages;
 
 public class MiscMounted extends Mounted<MiscType> {
 
@@ -91,7 +92,7 @@ public class MiscMounted extends Mounted<MiscType> {
     /**
      * Rules state that every time the shield takes a crit its damage absorption for each attack is reduced by 1. Also
      * for every Arm actuator critted damage absorption is reduced by 1 and finally if the shoulder is hit the damage
-     * absorption is reduced by 2 making it possble to kill a shield before its gone through its full damage capacity.
+     * absorption is reduced by 2 making it possible to kill a shield before its gone through its full damage capacity.
      *
      * @param entity   Entity mounted the shield
      * @param location The shield location index
@@ -247,7 +248,7 @@ public class MiscMounted extends Mounted<MiscType> {
     /**
      * get the vibrabomb sensitivity
      *
-     * @return the <code>int</code> vibrabomb sensitity this mine is set to.
+     * @return the <code>int</code> vibrabomb sensitivity this mine is set to.
      */
     public int getVibraSetting() {
         return vibraSetting;
@@ -255,20 +256,14 @@ public class MiscMounted extends Mounted<MiscType> {
 
     @Override
     public String getBaseDesc() {
-        switch (getMineType()) {
-            case MINE_CONVENTIONAL:
-                return Messages.getString("Mounted.ConventionalMine");
-            case MINE_VIBRABOMB:
-                return Messages.getString("Mounted.VibraBombMine");
-            case MINE_COMMAND_DETONATED:
-                return Messages.getString("Mounted.CommandDetonatedMine");
-            case MINE_ACTIVE:
-                return Messages.getString("Mounted.ActiveMine");
-            case MINE_INFERNO:
-                return Messages.getString("Mounted.InfernoMine");
-            default:
-                return super.getBaseDesc();
-        }
+        return switch (getMineType()) {
+            case MINE_CONVENTIONAL -> Messages.getString("Mounted.ConventionalMine");
+            case MINE_VIBRABOMB -> Messages.getString("Mounted.VibraBombMine");
+            case MINE_COMMAND_DETONATED -> Messages.getString("Mounted.CommandDetonatedMine");
+            case MINE_ACTIVE -> Messages.getString("Mounted.ActiveMine");
+            case MINE_INFERNO -> Messages.getString("Mounted.InfernoMine");
+            default -> super.getBaseDesc();
+        };
     }
 
     @Override

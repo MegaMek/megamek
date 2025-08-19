@@ -62,7 +62,7 @@ public class CLChemicalLaserSmall extends CLChemicalLaserWeapon {
         waterLongRange = 2;
         waterExtremeRange = 2;
         tonnage = 0.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 7;
         cost = 10000;
         shortAV = 3;

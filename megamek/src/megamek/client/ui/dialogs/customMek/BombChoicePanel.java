@@ -53,7 +53,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import megamek.common.equipment.BombLoadout;
-import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.units.IBomber;
 
 /**

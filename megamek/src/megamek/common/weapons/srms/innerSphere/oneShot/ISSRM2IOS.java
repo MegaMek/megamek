@@ -64,9 +64,9 @@ public class ISSRM2IOS extends SRMWeapon {
         longRange = 9;
         extremeRange = 12;
         tonnage = 0.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 4;
-        flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
+        flags = flags.or(F_NO_FIRES).or(F_ONE_SHOT);
         cost = 8000;
         shortAV = 2;
         maxRange = RANGE_SHORT;

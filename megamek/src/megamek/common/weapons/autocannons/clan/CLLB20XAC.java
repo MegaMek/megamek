@@ -59,7 +59,7 @@ public class CLLB20XAC extends LBXACWeapon {
         longRange = 12;
         extremeRange = 16;
         tonnage = 12.0;
-        criticals = 9;
+        criticalSlots = 9;
         bv = 237.0;
         cost = 600000;
         shortAV = getBaseAeroDamage();

@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,15 +35,17 @@
 
 package megamek.common.equipment;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
-import megamek.common.compute.Compute;
-import megamek.common.board.Coords;
 import megamek.common.Player;
 import megamek.common.ToHitData;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 
 public class Minefield implements Serializable, Cloneable {
+    @Serial
     private static final long serialVersionUID = 1556863068173491352L;
     public static final int TYPE_CONVENTIONAL = 0;
     public static final int TYPE_COMMAND_DETONATED = 1;
@@ -75,8 +77,8 @@ public class Minefield implements Serializable, Cloneable {
 
     public static final String FILENAME_IMAGE = "minefieldsign.gif";
 
-    private static String[] names = { "Conventional", "Command-detonated",
-                                      "Vibrabomb", "Active", "EMP", "Inferno" };
+    private static final String[] names = { "Conventional", "Command-detonated", "Vibrabomb", "Active", "EMP",
+                                            "Inferno" };
     //"Thunder", "Thunder-Inferno", "Thunder-Active",
     //"Thunder-Vibrabomb" };
 
@@ -84,8 +86,6 @@ public class Minefield implements Serializable, Cloneable {
 
     private Coords coords = null;
     private int playerId = Player.PLAYER_NONE;
-    //private int damage = 0;
-    //private int secondaryDamage = 0;
     private int density = 5;
     private int type = -1;
     private int setting = 0;
@@ -199,7 +199,6 @@ public class Minefield implements Serializable, Cloneable {
     /**
      * what do we need to roll to trigger this mine
      *
-     * @return
      */
     public int getTrigger() {
         if (density < 15) {

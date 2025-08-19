@@ -61,7 +61,7 @@ public class ISRifleMedium extends RifleWeapon {
         longRange = 15;
         extremeRange = 22;
         tonnage = 5.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 51;
         cost = 75750;
         explosive = false; // when firing incendiary ammo

@@ -31,7 +31,9 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.equipment;
+package megamek.common.equipment.enums;
+
+import megamek.common.equipment.EquipmentFlag;
 
 /**
  * Set of flags that can be used to determine how the ammo is used and its special properties
@@ -45,11 +47,11 @@ public enum AmmoTypeFlag implements EquipmentFlag {
 
     F_ENCUMBERING, // Encumbering ammo - if loaded on a BA it cant jump or make anti-mek attacks until dumped
 
-    F_MG, // Machinegun ammo
+    F_MG, // Machine gun ammo
     F_MML_LRM, // LRM type
     F_MML_SRM, // SRM type
 
-    F_HOTLOAD, // Ammo can be hotloaded
+    F_HOT_LOAD, // Ammo can be hot loaded
 
     F_SCREEN, // Used by MHQ for loading ammo bins
 
@@ -68,6 +70,4 @@ public enum AmmoTypeFlag implements EquipmentFlag {
     F_NUCLEAR, // Nuclear missile
     F_SANTA_ANNA, // Nuke Santa Anna Missile
     F_PEACEMAKER, // Nuke Peacemaker Missile
-    ;
-
 }

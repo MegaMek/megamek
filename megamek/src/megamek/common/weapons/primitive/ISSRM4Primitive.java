@@ -35,11 +35,11 @@
 
 package megamek.common.weapons.primitive;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.srm.SRMHandler;
 import megamek.common.weapons.srms.SRMWeapon;
@@ -68,7 +68,7 @@ public class ISSRM4Primitive extends SRMWeapon {
         longRange = 9;
         extremeRange = 12;
         tonnage = 2.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 39;
         cost = 60000;
         shortAV = 4;

@@ -173,7 +173,7 @@ public class QuadVee extends QuadMek {
     }
 
     /**
-     * In vehicle mode the QuadVee ignores actuator and hip criticals, but is subject to track/wheel damage and various
+     * In vehicle mode the QuadVee ignores actuator and hip criticalSlots, but is subject to track/wheel damage and various
      * effects of vehicle motive damage.
      */
     public int getCruiseMP(MPCalculationSetting mpCalculationSetting) {

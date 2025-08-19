@@ -53,7 +53,7 @@ public class ISMRM3OS extends MRMWeapon {
         longRange = 15;
         extremeRange = 16;
         bv = 4;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONE_SHOT);
         rulesRefs = "Unofficial";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

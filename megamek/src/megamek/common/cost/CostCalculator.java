@@ -39,14 +39,14 @@ import java.util.Map;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
-import megamek.common.equipment.AmmoType;
+import megamek.common.annotations.Nullable;
 import megamek.common.bays.Bay;
-import megamek.common.units.Entity;
+import megamek.common.bays.StandardSeatCargoBay;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
-import megamek.common.bays.StandardSeatCargoBay;
-import megamek.common.annotations.Nullable;
-import megamek.common.equipment.ArmorType;
+import megamek.common.units.Entity;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class CostCalculator {
@@ -70,7 +70,7 @@ public class CostCalculator {
      * positive values will be added to the previous total while a negative value will be multiplied with the previous
      * total (and the negative sign removed).
      *
-     * @param costs An array of cost or multplier values
+     * @param costs An array of cost or multiplier values
      *
      * @return The total C-bill cost as calculated from the costs array
      */
@@ -112,7 +112,7 @@ public class CostCalculator {
      */
     static long getWeaponsAndEquipmentCost(Entity entity, CalculationReport costReport, boolean ignoreAmmo) {
         long cost = 0;
-        NumberFormat commafy = NumberFormat.getInstance();
+        NumberFormat commaFormatter = NumberFormat.getInstance();
 
         Map<String, Integer> weaponsNumberMap = new HashMap<>();
         Map<String, Long> weaponsCostMap = new HashMap<>();
@@ -145,7 +145,7 @@ public class CostCalculator {
         }
         for (String weapon : weaponsNumberMap.keySet()) {
             costReport.addLine(weaponsNumberMap.get(weapon) + " " + weapon, "",
-                  commafy.format(weaponsCostMap.get(weapon)));
+                  commaFormatter.format(weaponsCostMap.get(weapon)));
         }
 
         int count = entity.implicitClanCASE();
@@ -153,7 +153,7 @@ public class CostCalculator {
             long itemCost = 50000;
             cost += count * itemCost;
             for (int i = 0; i < count; i++) {
-                costReport.addLine("CASE", "", commafy.format(itemCost));
+                costReport.addLine("CASE", "", commaFormatter.format(itemCost));
             }
         }
         // Large craft have a separate section for bays
@@ -172,15 +172,15 @@ public class CostCalculator {
             }
             if (seatCost > 0) {
                 cost += seatCost;
-                costReport.addLine("Seating", "", commafy.format(seatCost));
+                costReport.addLine("Seating", "", commaFormatter.format(seatCost));
             }
             if (quartersCost > 0) {
                 cost += quartersCost;
-                costReport.addLine("Quarters", "", commafy.format(quartersCost));
+                costReport.addLine("Quarters", "", commaFormatter.format(quartersCost));
             }
             if (bayCost > 0) {
                 cost += bayCost;
-                costReport.addLine("Bays", "", commafy.format(bayCost));
+                costReport.addLine("Bays", "", commaFormatter.format(bayCost));
             }
         }
         return cost;
@@ -202,22 +202,22 @@ public class CostCalculator {
      */
     static void fillInReport(CalculationReport costReport, Entity entity, boolean ignoreAmmo,
           String[] systemNames, int equipIndex, double cost, double[] costs) {
-        NumberFormat commafy = NumberFormat.getInstance();
+        NumberFormat commaFormatter = NumberFormat.getInstance();
         costReport.addHeader("Cost Calculations For " + entity.getChassis() + " " + entity.getModel());
         for (int l = 0; l < systemNames.length; l++) {
             if (l == equipIndex) {
                 CostCalculator.getWeaponsAndEquipmentCost(entity, costReport, ignoreAmmo);
             } else {
-                String result = commafy.format(costs[l]);
+                String result = commaFormatter.format(costs[l]);
                 if (costs[l] == 0) {
                     result = "N/A";
                 } else if (costs[l] < 0) {
-                    result = "x " + commafy.format(-costs[l]);
+                    result = "x " + commaFormatter.format(-costs[l]);
                 }
                 costReport.addLine(systemNames[l], "", result);
             }
         }
-        costReport.addResultLine("Total Cost:", "", commafy.format(cost));
+        costReport.addResultLine("Total Cost:", "", commaFormatter.format(cost));
     }
 
 

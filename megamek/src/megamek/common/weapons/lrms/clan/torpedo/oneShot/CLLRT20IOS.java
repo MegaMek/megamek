@@ -57,9 +57,9 @@ public class CLLRT20IOS extends LRTWeapon {
         waterLongRange = 21;
         waterExtremeRange = 28;
         tonnage = 4.5;
-        criticals = 4;
+        criticalSlots = 4;
         bv = 44;
-        flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_ONE_SHOT).andNot(F_PROTO_WEAPON);
         cost = 200000;
         rulesRefs = "327, TO";
         techAdvancement.setTechBase(TechBase.CLAN)

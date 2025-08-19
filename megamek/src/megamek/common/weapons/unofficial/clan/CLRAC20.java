@@ -58,7 +58,7 @@ public class CLRAC20 extends RACWeapon {
         longRange = 12;
         extremeRange = 16;
         tonnage = 16.0;
-        criticals = 10;
+        criticalSlots = 10;
         bv = 823;
         cost = 960000;
         rulesRefs = "Unofficial";

@@ -61,7 +61,7 @@ public class ISBALRM2 extends LRMWeapon {
         bv = 20;
         cost = 12000;
         tonnage = .12;
-        criticals = 2;
+        criticalSlots = 2;
         flags = flags.or(F_NO_FIRES)
               .or(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON)

@@ -36,11 +36,11 @@ package megamek.common.weapons.attacks;
 
 import java.io.Serial;
 
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponTypeFlag;
+import megamek.common.game.Game;
 import megamek.common.units.IBomber;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
@@ -67,7 +67,7 @@ public class AltitudeBombAttack extends Weapon {
         extremeRange = 0;
         maxRange = 0;
         tonnage = 0.0;
-        criticals = 0;
+        criticalSlots = 0;
         bv = 0;
         cost = 0;
         flags = flags.or(F_ALT_BOMB).or(WeaponTypeFlag.INTERNAL_REPRESENTATION);

@@ -35,9 +35,13 @@ package megamek.common.equipment;
 
 import java.util.*;
 
-import megamek.common.*;
+import megamek.common.RangeType;
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechAdvancement;
+import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.enums.AmmoTypeFlag;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
@@ -250,7 +254,7 @@ public class AmmoType extends EquipmentType {
     public static final AmmoTypeFlag F_MG = AmmoTypeFlag.F_MG;
     public static final AmmoTypeFlag F_BATTLEARMOR = AmmoTypeFlag.F_BATTLEARMOR; // only used by BA squads
     public static final AmmoTypeFlag F_PROTOMEK = AmmoTypeFlag.F_PROTOMEK; // only used by ProtoMeks
-    public static final AmmoTypeFlag F_HOTLOAD = AmmoTypeFlag.F_HOTLOAD; // Ammo can be hot-loaded
+    public static final AmmoTypeFlag F_HOTLOAD = AmmoTypeFlag.F_HOT_LOAD; // Ammo can be hot-loaded
 
     // BA can't jump or make anti-mek until dumped
     public static final AmmoTypeFlag F_ENCUMBERING = AmmoTypeFlag.F_ENCUMBERING;
@@ -2034,8 +2038,8 @@ public class AmmoType extends EquipmentType {
     }
 
     public AmmoType() {
-        criticals = 1;
-        tankslots = 0;
+        criticalSlots = 1;
+        tankSlots = 0;
         tonnage = 1.0f;
         explosive = true;
         instantModeSwitch = false;
@@ -2201,8 +2205,8 @@ public class AmmoType extends EquipmentType {
               && (gameOptions != null)
               && (amsWeapon != null)
               && (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF))
-              && (amsWeapon.getType().hasFlag(WeaponType.F_AMSBAY)
-              || (amsWeapon.getType().hasFlag(WeaponType.F_PDBAY) && amsWeapon.hasModes() && amsWeapon.curMode()
+              && (amsWeapon.getType().hasFlag(WeaponType.F_AMS_BAY)
+              || (amsWeapon.getType().hasFlag(WeaponType.F_PD_BAY) && amsWeapon.hasModes() && amsWeapon.curMode()
               .equals(Weapon.MODE_POINT_DEFENSE)))) {
             return true;
         }
@@ -2218,8 +2222,8 @@ public class AmmoType extends EquipmentType {
                 return false;
             }
             return (amsWeapon != null)
-                  && (amsWeapon.getType().hasFlag(WeaponType.F_AMSBAY)
-                  || (amsWeapon.getType().hasFlag(WeaponType.F_PDBAY) && amsWeapon.hasModes() && amsWeapon.curMode()
+                  && (amsWeapon.getType().hasFlag(WeaponType.F_AMS_BAY)
+                  || (amsWeapon.getType().hasFlag(WeaponType.F_PD_BAY) && amsWeapon.hasModes() && amsWeapon.curMode()
                   .equals(Weapon.MODE_POINT_DEFENSE)));
 
         }
@@ -2230,8 +2234,8 @@ public class AmmoType extends EquipmentType {
         }
         // Check if the weapon has AMS capabilities
         if (amsWeapon.getType().hasFlag(WeaponType.F_AMS)
-              || amsWeapon.getType().hasFlag(WeaponType.F_AMSBAY)
-              || (amsWeapon.getType().hasFlag(WeaponType.F_PDBAY) && amsWeapon.hasModes() && amsWeapon.curMode()
+              || amsWeapon.getType().hasFlag(WeaponType.F_AMS_BAY)
+              || (amsWeapon.getType().hasFlag(WeaponType.F_PD_BAY) && amsWeapon.hasModes() && amsWeapon.curMode()
               .equals(Weapon.MODE_POINT_DEFENSE))) {
             return true;
         }
@@ -3606,8 +3610,8 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("ISAMS Ammo");
         ammo.addLookupName("IS Ammo AMS");
         ammo.addLookupName("IS AMS Ammo");
-        ammo.damagePerShot = 1; // only used for ammo criticals
-        ammo.rackSize = 2; // only used for ammo criticals
+        ammo.damagePerShot = 1; // only used for ammo criticalSlots
+        ammo.rackSize = 2; // only used for ammo criticalSlots
         ammo.ammoType = AmmoTypeEnum.AMS;
         ammo.shots = 12;
         ammo.bv = 11;
@@ -3632,8 +3636,8 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("CLAMS Ammo");
         ammo.addLookupName("Clan Ammo AMS");
         ammo.addLookupName("Clan AMS Ammo");
-        ammo.damagePerShot = 1; // only used for ammo criticals
-        ammo.rackSize = 2; // only used for ammo criticals
+        ammo.damagePerShot = 1; // only used for ammo criticalSlots
+        ammo.rackSize = 2; // only used for ammo criticalSlots
         ammo.ammoType = AmmoTypeEnum.AMS;
         ammo.shots = 24;
         ammo.bv = 22;
@@ -5495,7 +5499,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Fluid Gun Ammo";
         ammo.shortName = "Fluid Gun";
         ammo.setInternalName("ISFluidGun Ammo");
-        ammo.damagePerShot = 2; // only used for ammo criticals
+        ammo.damagePerShot = 2; // only used for ammo criticalSlots
         ammo.rackSize = 1;
         ammo.ammoType = AmmoTypeEnum.FLUID_GUN;
         ammo.shots = 20;
@@ -5519,7 +5523,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Fluid Gun Ammo";
         ammo.shortName = "Fluid Gun";
         ammo.setInternalName("CLFluidGun Ammo");
-        ammo.damagePerShot = 2; // only used for ammo criticals
+        ammo.damagePerShot = 2; // only used for ammo criticalSlots
         ammo.rackSize = 1;
         ammo.ammoType = AmmoTypeEnum.FLUID_GUN;
         ammo.shots = 20;
@@ -9783,7 +9787,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLNarc Pods");
         ammo.addLookupName("Clan Ammo Narc");
         ammo.addLookupName("Clan Narc Missile Beacon Ammo");
-        ammo.damagePerShot = 2; // only used for ammo criticals
+        ammo.damagePerShot = 2; // only used for ammo criticalSlots
         ammo.rackSize = 1;
         ammo.ammoType = AmmoTypeEnum.NARC;
         ammo.shots = 6;
@@ -9870,7 +9874,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS Ammo iNarc");
         ammo.addLookupName("IS iNarc Missile Beacon Ammo");
         ammo.addLookupName("iNarc Ammo");
-        ammo.damagePerShot = 3; // only used for ammo criticals
+        ammo.damagePerShot = 3; // only used for ammo criticalSlots
         ammo.rackSize = 1;
         ammo.ammoType = AmmoTypeEnum.INARC;
         ammo.shots = 4;
@@ -9896,7 +9900,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "iNarc ECM";
         ammo.setInternalName("ISiNarc ECM Pods");
         ammo.addLookupName("iNarc ECM Ammo");
-        ammo.damagePerShot = 3; // only used for ammo criticals
+        ammo.damagePerShot = 3; // only used for ammo criticalSlots
         ammo.rackSize = 1;
         ammo.ammoType = AmmoTypeEnum.INARC;
         ammo.munitionType = EnumSet.of(Munitions.M_ECM);
@@ -9923,7 +9927,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "iNarc Explosive";
         ammo.setInternalName("ISiNarc Explosive Pods");
         ammo.addLookupName("iNarc Explosive Ammo");
-        ammo.damagePerShot = 6; // only used for ammo criticals
+        ammo.damagePerShot = 6; // only used for ammo criticalSlots
         ammo.rackSize = 1;
         ammo.ammoType = AmmoTypeEnum.INARC;
         ammo.munitionType = EnumSet.of(Munitions.M_EXPLOSIVE);
@@ -9950,7 +9954,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "iNarc Haywire";
         ammo.setInternalName("ISiNarc Haywire Pods");
         ammo.addLookupName("iNarc Haywire Ammo");
-        ammo.damagePerShot = 3; // only used for ammo criticals
+        ammo.damagePerShot = 3; // only used for ammo criticalSlots
         ammo.rackSize = 1;
         ammo.ammoType = AmmoTypeEnum.INARC;
         ammo.munitionType = EnumSet.of(Munitions.M_HAYWIRE);
@@ -9977,7 +9981,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "iNarc Nemesis";
         ammo.setInternalName("ISiNarc Nemesis Pods");
         ammo.addLookupName("iNarc Nemesis Ammo");
-        ammo.damagePerShot = 3; // only used for ammo criticals
+        ammo.damagePerShot = 3; // only used for ammo criticalSlots
         ammo.rackSize = 1;
         ammo.ammoType = AmmoTypeEnum.INARC;
         ammo.munitionType = EnumSet.of(Munitions.M_NEMESIS);
@@ -11308,8 +11312,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "RISC Advanced Point Defense System Ammo";
         ammo.shortName = "RISC APDS";
         ammo.setInternalName("ISAPDS Ammo");
-        ammo.damagePerShot = 1; // only used for ammo criticals
-        ammo.rackSize = 2; // only used for ammo criticals
+        ammo.damagePerShot = 1; // only used for ammo criticalSlots
+        ammo.rackSize = 2; // only used for ammo criticalSlots
         ammo.ammoType = AmmoTypeEnum.APDS;
         ammo.shots = 12;
         ammo.bv = 22;
@@ -12486,7 +12490,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "C3 Remote Sensor";
         ammo.setInternalName("ISC3Sensors");
         ammo.explosive = false;
-        ammo.damagePerShot = 0; // only used for ammo criticals
+        ammo.damagePerShot = 0; // only used for ammo criticalSlots
         ammo.rackSize = 1;
         ammo.ammoType = AmmoTypeEnum.C3_REMOTE_SENSOR;
         ammo.shots = 4;
@@ -16054,7 +16058,7 @@ public class AmmoType extends EquipmentType {
             return false;
         } else if (!(ammo.getType() instanceof AmmoType)) {
             return false;
-        } else if (weaponType.hasFlag(WeaponType.F_ONESHOT)) {
+        } else if (weaponType.hasFlag(WeaponType.F_ONE_SHOT)) {
             return ammo.getUsableShotsLeft() > 0 && isAmmoValid((AmmoType) ammo.getType(), weaponType);
         } else {
             return ammo.isAmmoUsable() && isAmmoValid((AmmoType) ammo.getType(), weaponType);
@@ -16133,7 +16137,7 @@ public class AmmoType extends EquipmentType {
     }
 
     @Override
-    public boolean isArmorable() {
+    public boolean isEligibleForBeingArmored() {
         // Coolant pods are implemented as ammo, but are not ammo bins for rules purposes
         return getAmmoType() == AmmoTypeEnum.COOLANT_POD;
     }

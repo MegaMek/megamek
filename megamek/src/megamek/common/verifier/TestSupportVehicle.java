@@ -43,11 +43,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import megamek.common.*;
-import megamek.common.interfaces.ITechManager;
-import megamek.common.interfaces.ITechnology;
-import megamek.common.interfaces.ITechnology.AvailabilityValue;
-import megamek.common.interfaces.ITechnology.TechBase;
+import megamek.common.MPCalculationSetting;
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechAdvancement;
+import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.bays.Bay;
 import megamek.common.bays.CrewQuartersCargoBay;
@@ -57,6 +56,11 @@ import megamek.common.bays.StandardSeatCargoBay;
 import megamek.common.bays.SteerageQuartersCargoBay;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.*;
+import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.interfaces.ITechManager;
+import megamek.common.interfaces.ITechnology;
+import megamek.common.interfaces.ITechnology.AvailabilityValue;
+import megamek.common.interfaces.ITechnology.TechBase;
 import megamek.common.interfaces.ITechnologyDelegator;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
@@ -284,7 +288,7 @@ public class TestSupportVehicle extends TestEntity {
               EnumSet.of(SVType.NAVAL)),
         MONOCYCLE(0.5, EquipmentTypeLookup.MONOCYCLE_CHASSIS_MOD,
               EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED), true),
-        OFFROAD(1.5, EquipmentTypeLookup.OFFROAD_CHASSIS_MOD,
+        OFFROAD(1.5, EquipmentTypeLookup.OFF_ROAD_CHASSIS_MOD,
               EnumSet.of(SVType.WHEELED)),
         OMNI(1.0, EquipmentTypeLookup.OMNI_CHASSIS_MOD),
         PROP(1.2, EquipmentTypeLookup.PROP_CHASSIS_MOD,
@@ -828,8 +832,8 @@ public class TestSupportVehicle extends TestEntity {
 
     private double getWeightFireControl() {
         for (Mounted<?> mounted : supportVee.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_BASIC_FIRECONTROL)
-                  || mounted.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
+            if (mounted.getType().hasFlag(MiscType.F_BASIC_FIRE_CONTROL)
+                  || mounted.getType().hasFlag(MiscType.F_ADVANCED_FIRE_CONTROL)) {
                 return mounted.getTonnage();
             }
         }
@@ -924,8 +928,8 @@ public class TestSupportVehicle extends TestEntity {
         return 0;
     }
 
-    private static final EquipmentBitSet EXCLUDE = MiscType.F_BASIC_FIRECONTROL.asEquipmentBitSet()
-          .or(MiscType.F_ADVANCED_FIRECONTROL)
+    private static final EquipmentBitSet EXCLUDE = MiscType.F_BASIC_FIRE_CONTROL.asEquipmentBitSet()
+          .or(MiscType.F_ADVANCED_FIRE_CONTROL)
           .or(MiscType.F_CHASSIS_MODIFICATION);
 
     @Override
@@ -967,8 +971,8 @@ public class TestSupportVehicle extends TestEntity {
     public String printWeightControls() {
         String fireCon = "";
         for (Mounted<?> mounted : supportVee.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_BASIC_FIRECONTROL)
-                  || mounted.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
+            if (mounted.getType().hasFlag(MiscType.F_BASIC_FIRE_CONTROL)
+                  || mounted.getType().hasFlag(MiscType.F_ADVANCED_FIRE_CONTROL)) {
                 fireCon = StringUtil.makeLength(mounted.getName(), getPrintSize() - 5)
                       + TestEntity.makeWeightString(mounted.getTonnage(), usesKgStandard()) + "\n";
                 break;
@@ -1141,7 +1145,7 @@ public class TestSupportVehicle extends TestEntity {
                 sponson = true;
             } else if (mounted.getType().hasFlag(MiscType.F_PINTLE_TURRET)) {
                 pintle = true;
-            } else if (mounted.getType().hasFlag(MiscTypeFlag.F_ADVANCED_FIRECONTROL)) {
+            } else if (mounted.getType().hasFlag(MiscTypeFlag.F_ADVANCED_FIRE_CONTROL)) {
                 hasAdvancedFireControl = true;
             }
         }
@@ -1174,8 +1178,8 @@ public class TestSupportVehicle extends TestEntity {
         }
 
         if (supportVee.isOmni()
-              && (supportVee.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
-              || supportVee.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))
+              && (supportVee.hasWorkingMisc(MiscType.F_BASIC_FIRE_CONTROL)
+              || supportVee.hasWorkingMisc(MiscType.F_ADVANCED_FIRE_CONTROL))
               && (weaponWeight / 10.0 > supportVee.getBaseChassisFireConWeight())) {
             buff.append("Omni configuration exceeds weapon capacity of base chassis fire control system.\n");
             correct = false;

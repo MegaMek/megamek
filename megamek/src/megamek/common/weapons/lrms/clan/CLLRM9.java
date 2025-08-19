@@ -51,7 +51,7 @@ public class CLLRM9 extends LRMWeapon {
         rackSize = 9;
         minimumRange = WEAPON_NA;
         tonnage = 1.8;
-        criticals = 0;
+        criticalSlots = 0;
         bv = 95;
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);

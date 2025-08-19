@@ -38,9 +38,9 @@
  */
 package megamek.common.weapons.capitalWeapons;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
 
 /**
@@ -62,7 +62,7 @@ public abstract class NavalACWeapon extends AmmoWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_CAPITAL;
+        return BF_CLASS_CAPITAL;
     }
 
     @Override

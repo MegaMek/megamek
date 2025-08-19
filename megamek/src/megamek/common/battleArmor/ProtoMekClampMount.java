@@ -31,9 +31,11 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.equipment;
+package megamek.common.battleArmor;
 
-import megamek.common.battleArmor.BattleArmorHandles;
+import java.io.Serial;
+
+import megamek.common.equipment.MiscType;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Mek;
@@ -41,12 +43,13 @@ import megamek.common.units.Mek;
 /**
  * Represents a section of a Mek torso where a protomek equipped with the magnetic clamp system can attach itself for
  * transport. A mek has two of these, one front and one rear. An ultraheavy protomek can only be carried on the front
- * mount, and if carried this way the rear cannot be used. The two mounts are not aware of each other and it is the
+ * mount, and if carried this way the rear cannot be used. The two mounts are not aware of each other, and it is the
  * responsibility of the code that handles loading to enforce this limitation.
  *
  * @author Neoancient
  */
 public class ProtoMekClampMount extends BattleArmorHandles {
+    @Serial
     private static final long serialVersionUID = 3937766099677646981L;
 
     private final boolean rear;
@@ -82,9 +85,12 @@ public class ProtoMekClampMount extends BattleArmorHandles {
     public int getCargoMpReduction(Entity carrier) {
         double protoWeight = 0.0;
         if (carriedUnit != Entity.NONE) {
-            protoWeight = game.getEntity(carriedUnit).getWeight();
-            if (carrier.isOmni()) {
-                protoWeight = Math.max(0, protoWeight - 3.0);
+            Entity carriedEntity = game.getEntity(carriedUnit);
+            if (carriedEntity != null) {
+                protoWeight = carriedEntity.getWeight();
+                if (carrier.isOmni()) {
+                    protoWeight = Math.max(0, protoWeight - 3.0);
+                }
             }
         }
         if (protoWeight < carrier.getWeight() * 0.1) {

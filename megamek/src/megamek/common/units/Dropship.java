@@ -455,7 +455,7 @@ public class Dropship extends SmallCraft {
             return success;
         }
 
-        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT)
+        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONE_SHOT)
               && (atype.getAmmoType() == wtype.getAmmoType()) && (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;

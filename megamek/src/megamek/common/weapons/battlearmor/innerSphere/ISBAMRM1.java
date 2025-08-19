@@ -64,7 +64,7 @@ public class ISBAMRM1 extends MRMWeapon {
         this.bv = 9;
         cost = 5000;
         tonnage = .06;
-        criticals = 1;
+        criticalSlots = 1;
         flags = flags.or(F_NO_FIRES)
               .or(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON)

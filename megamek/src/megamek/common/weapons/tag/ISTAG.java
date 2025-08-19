@@ -47,7 +47,7 @@ public class ISTAG extends TAGWeapon {
         setInternalName("ISTAG");
         addLookupName("IS TAG");
         tonnage = 1;
-        criticals = 1;
+        criticalSlots = 1;
         hittable = true;
         spreadable = false;
         heat = 0;

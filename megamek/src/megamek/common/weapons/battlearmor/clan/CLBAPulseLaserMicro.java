@@ -63,7 +63,7 @@ public class CLBAPulseLaserMicro extends PulseLaserWeapon {
         waterLongRange = 2;
         waterExtremeRange = 2;
         tonnage = 0.160;
-        criticals = 1;
+        criticalSlots = 1;
         flags = flags.or(F_NO_FIRES).or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         bv = 12;

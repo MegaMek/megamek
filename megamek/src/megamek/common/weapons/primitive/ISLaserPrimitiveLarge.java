@@ -64,7 +64,7 @@ public class ISLaserPrimitiveLarge extends LaserWeapon {
         waterLongRange = 9;
         waterExtremeRange = 12;
         tonnage = 5.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 123;
         cost = 100000;
         shortAV = 8;

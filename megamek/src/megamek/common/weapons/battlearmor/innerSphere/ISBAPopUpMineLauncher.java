@@ -34,14 +34,14 @@
 
 package megamek.common.weapons.battlearmor.innerSphere;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.battleArmor.BattleArmor;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.PopUpMineLauncherHandler;
-import megamek.common.weapons.Weapon;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -65,12 +65,12 @@ public class ISBAPopUpMineLauncher extends Weapon {
         longRange = 0;
         extremeRange = 0;
         tonnage = 0.2;
-        criticals = 1;
+        criticalSlots = 1;
         cost = 2500;
         bv = 6;
         String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot", "5-shot", "6-shot" };
         setModes(modeStrings);
-        flags = flags.or(F_DIRECT_FIRE).or(F_SOLO_ATTACK).or(F_BA_WEAPON).or(F_ONESHOT).or(F_BA_INDIVIDUAL);
+        flags = flags.or(F_DIRECT_FIRE).or(F_SOLO_ATTACK).or(F_BA_WEAPON).or(F_ONE_SHOT).or(F_BA_INDIVIDUAL);
         rulesRefs = "267, TM";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

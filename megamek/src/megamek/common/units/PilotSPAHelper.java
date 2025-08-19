@@ -127,7 +127,7 @@ public final class PilotSPAHelper {
 
         return (equipmentType instanceof WeaponType)
               && ((equipmentType instanceof UACWeapon) || (equipmentType instanceof LBXACWeapon) || rapidFireAC
-              || ((WeaponType) equipmentType).damage == WeaponType.DAMAGE_BY_CLUSTERTABLE);
+              || ((WeaponType) equipmentType).damage == WeaponType.DAMAGE_BY_CLUSTER_TABLE);
     }
 
     /**

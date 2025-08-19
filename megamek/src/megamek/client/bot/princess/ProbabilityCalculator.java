@@ -107,7 +107,7 @@ public class ProbabilityCalculator {
     }
 
     /**
-     * If we roll on the critical hit table, how many criticals do we expect to cause
+     * If we roll on the critical hit table, how many criticalSlots do we expect to cause
      */
     static double getExpectedCriticalHitCount() {
         return 0.611; // (9+2*5+3)/36

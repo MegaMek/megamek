@@ -46,7 +46,16 @@ import megamek.common.ToHitData;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.*;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.enums.BombType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
@@ -55,6 +64,7 @@ import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.common.weapons.DamageType;
+import megamek.common.weapons.TeleMissile;
 import megamek.server.IDamageManager;
 import megamek.server.ServerHelper;
 
@@ -210,7 +220,7 @@ public class TWDamageManager implements IDamageManager {
               (hit.getLocation() == Mek.LOC_HEAD) &&
               ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS);
 
-        // booleans to indicate criticals for AT2
+        // booleans to indicate criticalSlots for AT2
         boolean critSI = false;
         boolean critThresh = false;
 
@@ -1747,7 +1757,7 @@ public class TWDamageManager implements IDamageManager {
                         reportVec.addElement(report);
 
                         // If there are split weapons in this location, mark it
-                        // as hit, even if it took no criticals.
+                        // as hit, even if it took no criticalSlots.
                         for (WeaponMounted m : entity.getWeaponList()) {
                             if (m.isSplit()) {
                                 if ((m.getLocation() == hit.getLocation()) ||

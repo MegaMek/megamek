@@ -60,10 +60,10 @@ public class ISBALRM3OS extends LRMWeapon {
         bv = 6;
         cost = 9000;
         tonnage = .12;
-        criticals = 4;
+        criticalSlots = 4;
         flags = flags.or(F_NO_FIRES)
               .or(F_BA_WEAPON)
-              .or(F_ONESHOT)
+              .or(F_ONE_SHOT)
               .andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON)

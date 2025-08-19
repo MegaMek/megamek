@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.autocannons.innerSphere;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.SimpleTechLevel;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.autocannons.HVACWeapon;
 
 /**
@@ -60,7 +60,7 @@ public class ISHVAC10 extends HVACWeapon {
         longRange = 20;
         extremeRange = 30;
         tonnage = 14.0;
-        criticals = 6;
+        criticalSlots = 6;
         bv = 158;
         cost = 230000;
         shortAV = 10;

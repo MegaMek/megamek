@@ -39,7 +39,7 @@ package megamek.common.units;
  * which crew normally execute which roles. Note that this applies to various special multi-crew cockpits in which crew
  * members can take over duties of another that has been incapacitated; units with multiple crew that do not track them
  * separately (such as vehicles and aerospace vessels) still use the SINGLE value, since they do not track damage to
- * individual crew members (outside specific criticals) and only have a single set of skills.
+ * individual crew members (outside specific criticalSlots) and only have a single set of skills.
  *
  * @author Neoancient
  */

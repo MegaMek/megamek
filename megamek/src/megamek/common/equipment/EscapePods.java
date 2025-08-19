@@ -37,6 +37,8 @@
 
 package megamek.common.equipment;
 
+import java.io.Serial;
+
 import megamek.common.units.Aero;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
@@ -49,6 +51,7 @@ import megamek.common.units.SmallCraft;
  * @author MKerensky
  */
 public class EscapePods extends SmallCraft {
+    @Serial
     private static final long serialVersionUID = 8128620143810186608L;
 
     protected int originalRideId;
@@ -76,7 +79,7 @@ public class EscapePods extends SmallCraft {
         setDisplayName(POD_EJECT_NAME + originalRide.getDisplayName());
 
         //Pods and boats have an SI of 1 each
-        initializeSI(nPods);
+        setOSI(nPods);
 
         //Escape pods have fuel and thrusters to maneuver with
         if (isEscapePod) {
@@ -106,7 +109,7 @@ public class EscapePods extends SmallCraft {
         //this constructor is just so that the MUL parser can read these units in so
         // assign some arbitrarily large number here for the internal so that locations will get 
         //the actual current number of pods correct.
-        initializeSI(Integer.MAX_VALUE);
+        setOSI(Integer.MAX_VALUE);
         for (int i = 0; i < locations(); i++) {
             initializeArmor(Integer.MAX_VALUE, i);
         }

@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.MissileBayWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -63,13 +63,13 @@ public class ThunderboltBayWeapon extends AmmoBayWeapon {
         this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
-        this.flags = flags.or(F_MISSILE).or(F_LARGEMISSILE);
+        this.flags = flags.or(F_MISSILE).or(F_LARGE_MISSILE);
         this.atClass = CLASS_THUNDERBOLT;
     }
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_LRM;
+        return BF_CLASS_LRM;
     }
 
     @Override

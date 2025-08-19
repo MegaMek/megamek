@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,20 +34,23 @@
 
 package megamek.common.equipment;
 
-import megamek.common.units.Entity;
+import java.io.Serial;
+
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battleArmor.BattleArmorHandles;
+import megamek.common.units.Entity;
 
 /**
- * Represents the space on an standard Mek (i.e. one that is not an OmniMek) used by Battle Armor squads equipped with
+ * Represents the space on a standard Mek (i.e. one that is not an OmniMek) used by Battle Armor squads equipped with
  * Magnetic Clamps to attach themselves for transport. This transporter gets assigned to all of a player's standard Meks
  * in the Exchange Phase if any Battle Armor squad equipped with a Magnetic Clamp is on that player's side.
  */
 public class ClampMountMek extends BattleArmorHandles {
+    @Serial
     private static final long serialVersionUID = -5687854937528642266L;
 
     private static final String NO_VACANCY_STRING = "A BA squad with magnetic clamps is loaded";
-    private static final String HAVE_VACANCY_STRING = "One BA-magclamp squad";
+    private static final String HAVE_VACANCY_STRING = "One BA-MagClamp squad";
 
     @Override
     public String getUnusedString() {

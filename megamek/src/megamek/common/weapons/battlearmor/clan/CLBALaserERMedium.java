@@ -60,7 +60,7 @@ public class CLBALaserERMedium extends LaserWeapon {
         waterLongRange = 10;
         waterExtremeRange = 15;
         tonnage = .8;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 108;
         cost = 80000;
         shortAV = 7;

@@ -106,7 +106,7 @@ public class ComputeArc {
         // Technically it's an AirToGround attack since the AMS is on the aircraft
         if (Compute.isAirToGround(attacker, target)
               && (attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS)
-              || attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMSBAY))) {
+              || attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS_BAY))) {
             aPos = Compute.getClosestFlightPath(target.getId(), target.getPosition(), attacker);
         }
 
@@ -223,7 +223,7 @@ public class ComputeArc {
         // Technically it's an AirToGround attack since the AMS is on the aircraft
         if (Compute.isAirToGround(attacker, target)
               && (attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS)
-              || attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMSBAY))) {
+              || attacker.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS_BAY))) {
             aPos = Compute.getClosestFlightPath(target.getId(), target.getPosition(), attacker);
         }
 

@@ -41,9 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import megamek.common.*;
-import megamek.common.interfaces.ITechManager;
-import megamek.common.interfaces.ITechnology.Faction;
+import megamek.common.CriticalSlot;
 import megamek.common.annotations.Nullable;
 import megamek.common.bays.Bay;
 import megamek.common.bays.CrewQuartersCargoBay;
@@ -52,6 +50,9 @@ import megamek.common.bays.SecondClassQuartersCargoBay;
 import megamek.common.bays.SteerageQuartersCargoBay;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.*;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.interfaces.ITechManager;
+import megamek.common.interfaces.ITechnology.Faction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
@@ -586,7 +587,7 @@ public class TestAero extends TestEntity {
     public List<Mounted<?>> checkCriticalSlotsForEquipment(Entity entity) {
         List<Mounted<?>> unallocated = new ArrayList<>();
         for (Mounted<?> m : entity.getEquipment()) {
-            if ((m.getLocation() == Entity.LOC_NONE) && !m.isOneShotAmmo() && (m.getCriticals() > 0)) {
+            if ((m.getLocation() == Entity.LOC_NONE) && !m.isOneShotAmmo() && (m.getNumCriticalSlots() > 0)) {
                 unallocated.add(m);
             }
         }
@@ -882,7 +883,7 @@ public class TestAero extends TestEntity {
                     buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
                     return false;
                 }
-            } else if ((eq.hasFlag(MiscType.F_BLUE_SHIELD) || eq.hasFlag(MiscType.F_LIFTHOIST)
+            } else if ((eq.hasFlag(MiscType.F_BLUE_SHIELD) || eq.hasFlag(MiscType.F_LIFT_HOIST)
                   || eq.is(EquipmentTypeLookup.IS_CASE) || eq.is(EquipmentTypeLookup.IS_CASE_P))
                   && (location != Aero.LOC_FUSELAGE)) {
                 buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
@@ -1293,7 +1294,7 @@ public class TestAero extends TestEntity {
             if (eq.hasFlag(MiscType.F_CASE)) {
                 return eq.isClan();
             } else {
-                return !eq.hasFlag(MiscType.F_BLUE_SHIELD) && !eq.hasFlag(MiscType.F_LIFTHOIST);
+                return !eq.hasFlag(MiscType.F_BLUE_SHIELD) && !eq.hasFlag(MiscType.F_LIFT_HOIST);
             }
         } else {
             return !(eq instanceof AmmoType);

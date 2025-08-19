@@ -34,17 +34,17 @@
 
 package megamek.common.weapons.prototypes.innerSphere;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.weapons.autocannons.LBXACWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.prototype.PrototypeACWeaponHandler;
 import megamek.common.weapons.handlers.prototype.PrototypeLBXHandler;
-import megamek.common.weapons.autocannons.LBXACWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -62,7 +62,7 @@ public class ISLB10XACPrototype extends LBXACWeapon {
         shortName = "LB 10-X (P)";
         sortingName = "LB Proto 10-X AC";
         flags = flags.or(F_PROTOTYPE);
-        criticals = 7;
+        criticalSlots = 7;
         heat = 2;
         damage = 10;
         rackSize = 10;

@@ -36,7 +36,9 @@ package megamek.common.weapons.handlers;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.RangeType;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
@@ -192,7 +194,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     // Check for Thunderbolt. We'll use this for single AMS resolution
     @Override
     protected boolean isTbolt() {
-        return wtype.hasFlag(WeaponType.F_LARGEMISSILE);
+        return wtype.hasFlag(WeaponType.F_LARGE_MISSILE);
     }
 
     /**

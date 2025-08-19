@@ -42,7 +42,10 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import megamek.client.ui.clientGUI.sbf.SelectDirection;
-import megamek.common.*;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.SBFFullGameReport;
+import megamek.common.Team;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
@@ -148,8 +151,13 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         return switch (phase) {
             case INITIATIVE, END, TARGETING, PHYSICAL, OFFBOARD, OFFBOARD_REPORT, SBF_DETECTION, SBF_DETECTION_REPORT ->
                   false;
-            case DEPLOYMENT, PREMOVEMENT, MOVEMENT, PREFIRING, FIRING, DEPLOY_MINEFIELDS, SET_ARTILLERY_AUTOHIT_HEXES ->
-                  hasMoreTurns();
+            case DEPLOYMENT,
+                 PREMOVEMENT,
+                 MOVEMENT,
+                 PRE_FIRING,
+                 FIRING,
+                 DEPLOY_MINEFIELDS,
+                 SET_ARTILLERY_AUTO_HIT_HEXES -> hasMoreTurns();
             default -> true;
         };
     }

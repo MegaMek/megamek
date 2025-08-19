@@ -58,9 +58,9 @@ public class ISLRT5IOS extends LRTWeapon {
         waterLongRange = 21;
         waterExtremeRange = 28;
         tonnage = 1.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 9;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONE_SHOT);
         cost = 24000;
         rulesRefs = "327, TO";
         techAdvancement.setTechBase(TechBase.IS)

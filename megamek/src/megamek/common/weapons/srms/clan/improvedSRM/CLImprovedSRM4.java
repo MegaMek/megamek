@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.srms.clan.improvedSRM;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.SimpleTechLevel;
+import megamek.common.equipment.AmmoType;
 import megamek.common.weapons.srms.SRMWeapon;
 
 /**
@@ -56,7 +56,7 @@ public class CLImprovedSRM4 extends SRMWeapon {
         longRange = 12;
         extremeRange = 16;
         tonnage = 2.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 39;
         cost = 60000;
         shortAV = 6;

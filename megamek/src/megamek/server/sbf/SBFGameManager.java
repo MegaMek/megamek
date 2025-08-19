@@ -39,12 +39,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import megamek.common.Player;
+import megamek.common.actions.EntityAction;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
-import megamek.common.Player;
 import megamek.common.interfaces.ReportEntry;
-import megamek.common.turns.TurnOrdered;
-import megamek.common.actions.EntityAction;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
@@ -55,6 +54,7 @@ import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFReportEntry;
 import megamek.common.strategicBattleSystems.SBFRuleOptionsUser;
 import megamek.common.strategicBattleSystems.SBFTurn;
+import megamek.common.turns.TurnOrdered;
 import megamek.logging.MMLogger;
 import megamek.server.AbstractGameManager;
 import megamek.server.Server;
@@ -308,10 +308,10 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
                 addReport(new SBFReportEntry(2000)); // , Report.PUBLIC));
                 // intentional fall through
             case PREMOVEMENT:
-            case SET_ARTILLERY_AUTOHIT_HEXES:
+            case SET_ARTILLERY_AUTO_HIT_HEXES:
             case DEPLOY_MINEFIELDS:
             case DEPLOYMENT:
-            case PREFIRING:
+            case PRE_FIRING:
             case FIRING:
             case PHYSICAL:
             case TARGETING:

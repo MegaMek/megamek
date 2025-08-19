@@ -34,9 +34,9 @@
 
 package megamek.common.weapons.lrms.innerSphere.enhancedLRM;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.lrms.ExtendedLRMWeapon;
 
 /**
@@ -56,7 +56,7 @@ public class ISExtendedLRM20 extends ExtendedLRMWeapon {
         heat = 10;
         rackSize = 20;
         tonnage = 18.0;
-        criticals = 8;
+        criticalSlots = 8;
         bv = 268;
         cost = 500000;
         shortAV = 12;

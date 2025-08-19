@@ -34,14 +34,14 @@
 
 package megamek.common.loaders;
 
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.enums.FuelType;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.FuelType;
 import megamek.common.units.SuperHeavyTank;
 import megamek.common.units.Tank;
-import megamek.common.equipment.ArmorType;
 import megamek.common.util.BuildingBlock;
 import megamek.logging.MMLogger;
 

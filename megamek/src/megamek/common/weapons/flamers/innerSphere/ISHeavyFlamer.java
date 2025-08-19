@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.flamers.innerSphere;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.SimpleTechLevel;
-import megamek.common.equipment.WeaponType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 
 /**
@@ -65,7 +65,7 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
         longRange = 4;
         extremeRange = 6;
         tonnage = 1.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 15;
         cost = 11250;
         shortAV = 4;

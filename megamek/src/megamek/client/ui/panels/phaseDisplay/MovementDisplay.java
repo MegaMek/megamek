@@ -87,6 +87,7 @@ import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.bays.BattleArmorBay;
 import megamek.common.bays.Bay;
 import megamek.common.bays.CargoBay;
@@ -101,9 +102,7 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
-import megamek.common.equipment.ProtoMekClampMount;
 import megamek.common.equipment.TankTrailerHitch;
-import megamek.common.equipment.TeleMissile;
 import megamek.common.equipment.Transporter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -126,6 +125,7 @@ import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.turns.UnloadStrandedTurn;
 import megamek.common.units.*;
+import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
 
 public class MovementDisplay extends ActionPhaseDisplay {

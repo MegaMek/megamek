@@ -48,7 +48,7 @@ public class ISTSEMPCannon extends TSEMPWeapon {
         setInternalName(name);
         addLookupName("ISTSEMP");
         tonnage = 6;
-        criticals = 5;
+        criticalSlots = 5;
         rulesRefs = "84, IO:AE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)

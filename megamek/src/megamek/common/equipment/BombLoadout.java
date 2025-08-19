@@ -34,7 +34,7 @@ package megamek.common.equipment;
 
 import java.util.HashMap;
 
-import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 
 /**
  * Represents a collection of bombs with their quantities.

@@ -63,7 +63,7 @@ public class CLBASRM5 extends SRMWeapon {
         extremeRange = 12;
         bv = 47;
         tonnage = .175;
-        criticals = 3;
+        criticalSlots = 3;
         flags = flags.or(F_NO_FIRES)
               .or(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON)

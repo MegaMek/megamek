@@ -64,9 +64,9 @@ public class ISMRM10OS extends MRMWeapon {
         longRange = 15;
         extremeRange = 22;
         tonnage = 3.5;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 11;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONE_SHOT);
         cost = 25000;
         shortAV = 6;
         medAV = 6;

@@ -38,12 +38,12 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 
-import megamek.common.loaders.MekSummary;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponType;
+import megamek.common.loaders.MekSummary;
 import megamek.common.units.Aero;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityWeightClass;
@@ -626,7 +626,7 @@ public class ModelRecord extends AbstractUnitRecord {
                         ammoFactor = 0.4;
                     }
 
-                    if (eq.hasFlag(WeaponType.F_ONESHOT)) {
+                    if (eq.hasFlag(WeaponType.F_ONE_SHOT)) {
                         ammoFactor = 0.1;
                     }
 
@@ -660,7 +660,7 @@ public class ModelRecord extends AbstractUnitRecord {
                       eq.hasFlag(MiscType.F_ANGEL_ECM) ||
                       eq.hasFlag(MiscType.F_BAP) ||
                       eq.hasFlag(MiscType.F_BLOODHOUND) ||
-                      eq.hasFlag(MiscType.F_TARGCOMP) ||
+                      eq.hasFlag(MiscType.F_TARGETING_COMPUTER) ||
                       eq.hasFlag(MiscType.F_ARTEMIS) ||
                       eq.hasFlag(MiscType.F_ARTEMIS_V) ||
                       eq.hasFlag(MiscType.F_APOLLO) ||

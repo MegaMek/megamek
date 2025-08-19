@@ -64,6 +64,6 @@ public class CapitalMDBayWeapon extends AmmoBayWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_CAPITAL;
+        return BF_CLASS_CAPITAL;
     }
 }

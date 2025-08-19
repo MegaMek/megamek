@@ -56,9 +56,9 @@ public class CLSRT6OS extends SRTWeapon {
         waterLongRange = 9;
         waterExtremeRange = 12;
         tonnage = 2.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 12;
-        flags = flags.or(F_NO_FIRES).or(F_ONESHOT).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_ONE_SHOT).andNot(F_PROTO_WEAPON);
         cost = 40000;
         rulesRefs = "230, TM";
         techAdvancement.setTechBase(TechBase.CLAN)

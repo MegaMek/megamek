@@ -55,7 +55,8 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.*;
-import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.options.OptionsConstants;
@@ -2047,7 +2048,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             if (mounted.getType() instanceof BombType bomb) {
                 BombTypeEnum bombType = bomb.getBombType();
                 if (bombType == BombTypeEnum.NONE) {
-                    slots = mounted.getCriticals();
+                    slots = mounted.getNumCriticalSlots();
                 } else {
                     slots = bombType.getCost();
                 }
@@ -2087,7 +2088,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 aTracker.addWeapon(mounted);
             }
-            if (mounted.getType().hasFlag(WeaponType.F_ONESHOT) && (AmmoType.getOneshotAmmo(mounted) != null)) {
+            if (mounted.getType().hasFlag(WeaponType.F_ONE_SHOT) && (AmmoType.getOneshotAmmo(mounted) != null)) {
                 AmmoMounted m = (AmmoMounted) Mounted.createMounted(this, AmmoType.getOneshotAmmo(mounted));
                 m.setShotsLeft(1);
                 mounted.setLinked(m);
@@ -2147,7 +2148,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             Vector<Sensor> sensorsToRemove = new Vector<>();
             if (isAero()) {
                 for (Sensor sensor : getSensors()) {
-                    if (sensor.getType() == Sensor.TYPE_AERO_THERMAL) {
+                    if (sensor.type() == Sensor.TYPE_AERO_THERMAL) {
                         sensorsToRemove.add(sensor);
                     }
                 }

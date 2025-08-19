@@ -64,7 +64,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
         longRange = 15;
         extremeRange = 20;
         tonnage = 6.0;
-        criticals = 2;
+        criticalSlots = 2;
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
               .or(F_PLASMA).or(F_DIRECT_FIRE).or(F_ENERGY);
         bv = 210;

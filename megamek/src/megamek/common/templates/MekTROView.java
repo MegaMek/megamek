@@ -36,7 +36,7 @@ package megamek.common.templates;
 import java.text.NumberFormat;
 import java.util.StringJoiner;
 
-import megamek.common.*;
+import megamek.common.Messages;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
@@ -276,7 +276,7 @@ public class MekTROView extends TROView {
         if (mount.getLocation() == Entity.LOC_NONE) {
             // Skip heat sinks, Clan CASE, armor, and structure. We do want to show things
             // like robotic control systems.
-            return (mount.getCriticals() > 0)
+            return (mount.getNumCriticalSlots() > 0)
                   || mount.getType().hasFlag(MiscType.F_CASE)
                   || EquipmentType.isArmorType(mount.getType())
                   || EquipmentType.isStructureType(mount.getType());

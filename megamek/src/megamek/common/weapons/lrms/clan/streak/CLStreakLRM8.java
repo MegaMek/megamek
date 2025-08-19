@@ -55,7 +55,7 @@ public class CLStreakLRM8 extends StreakLRMWeapon {
         longRange = 21;
         extremeRange = 28;
         tonnage = 3.2;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 137;
         cost = 120000;
         // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.

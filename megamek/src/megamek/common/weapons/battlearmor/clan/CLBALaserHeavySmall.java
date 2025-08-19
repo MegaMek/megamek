@@ -61,7 +61,7 @@ public class CLBALaserHeavySmall extends LaserWeapon {
         waterLongRange = 2;
         waterExtremeRange = 2;
         tonnage = 0.5;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 15;
         cost = 20000;
         shortAV = 6;

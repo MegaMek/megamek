@@ -64,7 +64,7 @@ public class CLBAERPulseLaserMedium extends PulseLaserWeapon {
         waterLongRange = 8;
         waterExtremeRange = 12;
         tonnage = .8;
-        criticals = 4;
+        criticalSlots = 4;
         bv = 117;
         cost = 150000;
         flags = flags.or(F_NO_FIRES)

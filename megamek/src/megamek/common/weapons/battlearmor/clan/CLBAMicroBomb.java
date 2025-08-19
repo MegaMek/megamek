@@ -34,13 +34,13 @@
 
 package megamek.common.weapons.battlearmor.clan;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.MicroBombHandler;
-import megamek.common.weapons.Weapon;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -66,13 +66,13 @@ public class CLBAMicroBomb extends Weapon {
         bv = 11;
         flags = flags.or(F_NO_FIRES)
               .or(F_BA_WEAPON)
-              .or(F_ONESHOT)
+              .or(F_ONE_SHOT)
               .andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON)
               .andNot(F_PROTO_WEAPON);
         tonnage = .1;
-        criticals = 2;
+        criticalSlots = 2;
         cost = 30000;
         rulesRefs = "253, TM";
         techAdvancement.setTechBase(TechBase.CLAN)

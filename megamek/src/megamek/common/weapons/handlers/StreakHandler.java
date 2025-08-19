@@ -37,7 +37,8 @@ package megamek.common.weapons.handlers;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 
-import megamek.common.*;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
@@ -170,7 +171,7 @@ public class StreakHandler extends MissileWeaponHandler {
 
         if (roll.getIntValue() >= toHit.getValue()) {
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
-            if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
+            if (wtype.hasFlag(WeaponType.F_ONE_SHOT)) {
                 weapon.setFired(true);
             }
             setDone();

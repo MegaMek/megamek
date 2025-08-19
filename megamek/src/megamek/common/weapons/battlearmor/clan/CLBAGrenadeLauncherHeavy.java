@@ -68,7 +68,7 @@ public class CLBAGrenadeLauncherHeavy extends Weapon {
         longRange = 3;
         extremeRange = 4;
         tonnage = 0.1;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 1;
         cost = 4500;
         flags = flags.or(F_DIRECT_FIRE)

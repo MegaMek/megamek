@@ -44,11 +44,11 @@ import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.EscapePods;
-import megamek.common.equipment.TeleMissile;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
 import megamek.common.units.*;
+import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
 
 /**

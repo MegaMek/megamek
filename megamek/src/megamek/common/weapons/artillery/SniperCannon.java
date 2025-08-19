@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.artillery;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
 
 /**
  * @author Sebastian Brocks
@@ -66,7 +66,7 @@ public class SniperCannon extends ArtilleryCannonWeapon {
         longRange = 12;
         extremeRange = 16;
         tonnage = 15;
-        criticals = 10;
+        criticalSlots = 10;
         bv = 77;
         cost = 475000;
         shortAV = 10;

@@ -38,9 +38,9 @@
  */
 package megamek.common.weapons.subCapitalWeapons;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
 
 /**
@@ -67,7 +67,7 @@ public abstract class SubCapCannonWeapon extends AmmoWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_SUBCAPITAL;
+        return BF_CLASS_SUBCAPITAL;
     }
 
     @Override

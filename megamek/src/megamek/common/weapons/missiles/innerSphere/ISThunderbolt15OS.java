@@ -53,6 +53,6 @@ public class ISThunderbolt15OS extends Thunderbolt15Weapon {
         tonnage = 11.5;
         bv = 46;
         cost = 162500;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONE_SHOT);
     }
 }

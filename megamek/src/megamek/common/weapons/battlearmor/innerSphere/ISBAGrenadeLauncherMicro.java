@@ -54,14 +54,14 @@ public class ISBAGrenadeLauncherMicro extends Weapon {
         sortingName = "Grenade Launcher A";
         heat = 0;
         damage = 1;
-        infDamageClass = WeaponType.WEAPON_BURST_HALFD6;
+        infDamageClass = WeaponType.WEAPON_BURST_HALF_D6;
         minimumRange = WEAPON_NA;
         shortRange = 1;
         mediumRange = 2;
         longRange = 2;
         extremeRange = 2;
         tonnage = 0.075;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 1;
         cost = 1950;
         flags = flags.or(F_BALLISTIC)

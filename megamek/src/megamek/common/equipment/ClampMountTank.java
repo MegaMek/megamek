@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,9 +34,11 @@
 
 package megamek.common.equipment;
 
-import megamek.common.units.Entity;
+import java.io.Serial;
+
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battleArmor.BattleArmorHandlesTank;
+import megamek.common.units.Entity;
 
 /**
  * Represents the space on a vehicle used by Battle Armor squads equipped with Magnetic Clamps to attach themselves for
@@ -44,10 +46,11 @@ import megamek.common.battleArmor.BattleArmorHandlesTank;
  * squad equipped with a Magnetic Clamp is on that player's side.
  */
 public class ClampMountTank extends BattleArmorHandlesTank {
+    @Serial
     private static final long serialVersionUID = 593951005031815098L;
 
     private static final String NO_VACANCY_STRING = "A BA squad with magnetic clamps is loaded";
-    private static final String HAVE_VACANCY_STRING = "One BA-magclamp squad";
+    private static final String HAVE_VACANCY_STRING = "One BA-MagClamp squad";
 
 
     @Override

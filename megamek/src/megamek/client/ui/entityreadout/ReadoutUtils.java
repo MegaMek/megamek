@@ -250,7 +250,7 @@ final class ReadoutUtils {
         String name = mounted.getName();
         return (((mounted.getLocation() == Entity.LOC_NONE)
               // Meks can have zero-slot equipment in LOC_NONE that needs to be shown.
-              && (!(entity instanceof Mek) || mounted.getCriticals() > 0)))
+              && (!(entity instanceof Mek) || mounted.getNumCriticalSlots() > 0)))
               || name.contains("Jump Jet")
               || (name.contains("CASE") && !name.contains("II") && entity.isClan())
               || (name.contains("Heat Sink") && !name.contains("Radical"))

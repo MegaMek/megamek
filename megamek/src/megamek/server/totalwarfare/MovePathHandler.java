@@ -68,7 +68,6 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.TeleMissile;
 import megamek.common.equipment.Transporter;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
@@ -82,6 +81,7 @@ import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.units.*;
+import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
 import megamek.server.SmokeCloud;
@@ -737,7 +737,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if ((overallMoveType == EntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
             final Hex curHex = getGame().getBoard(curBoardId).getHex(curPos);
 
-            // check for damaged criticals
+            // check for damaged criticalSlots
             rollTarget = entity.checkLandingWithDamage(overallMoveType);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 gameManager.doSkillCheckInPlace(entity, rollTarget);
@@ -1557,7 +1557,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 } else if ((entity.getEntityType() & Entity.ETYPE_LAND_AIR_MEK) != 0) {
                     // External units on LAMs, including swarmers, fall automatically and take
                     // damage,
-                    // and the LAM itself may take one or more criticals.
+                    // and the LAM itself may take one or more criticalSlots.
                     for (Entity rider : entity.getExternalUnits()) {
                         addReport(gameManager.checkDropBAFromConverting(entity, rider, curPos, curFacing, true, true,
                               true));

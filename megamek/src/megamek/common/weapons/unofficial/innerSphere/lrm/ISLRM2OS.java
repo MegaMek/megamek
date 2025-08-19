@@ -50,7 +50,7 @@ public class ISLRM2OS extends LRMWeapon {
         rackSize = 2;
         minimumRange = 6;
         bv = 4;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONE_SHOT);
         rulesRefs = "Unofficial";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

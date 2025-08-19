@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.missiles.clan;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.missiles.ATMWeapon;
 
 /**
@@ -64,7 +64,7 @@ public class CLATM3 extends ATMWeapon {
         longRange = 15;
         extremeRange = 20;
         tonnage = 1.5;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 53;
         cost = 50000;
         shortAV = 4;

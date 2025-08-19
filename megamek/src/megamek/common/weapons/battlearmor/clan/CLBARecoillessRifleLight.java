@@ -65,7 +65,7 @@ public class CLBARecoillessRifleLight extends Weapon {
         extremeRange = 8;
         bv = 12;
         tonnage = 0.175;
-        criticals = 2;
+        criticalSlots = 2;
         flags = flags.or(F_NO_FIRES)
               .or(F_DIRECT_FIRE)
               .or(F_BALLISTIC)

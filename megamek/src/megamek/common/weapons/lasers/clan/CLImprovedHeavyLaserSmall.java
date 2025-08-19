@@ -63,7 +63,7 @@ public class CLImprovedHeavyLaserSmall extends LaserWeapon {
         waterLongRange = 2;
         waterExtremeRange = 2;
         tonnage = 0.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 19;
         cost = 30000;
         shortAV = 6;

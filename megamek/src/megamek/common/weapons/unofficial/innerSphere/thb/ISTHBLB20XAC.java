@@ -58,7 +58,7 @@ public class ISTHBLB20XAC extends LBXACWeapon {
         longRange = 12;
         extremeRange = 14;
         tonnage = 14.0;
-        criticals = 10;
+        criticalSlots = 10;
         shortAV = getBaseAeroDamage();
         medAV = shortAV;
         longAV = shortAV;

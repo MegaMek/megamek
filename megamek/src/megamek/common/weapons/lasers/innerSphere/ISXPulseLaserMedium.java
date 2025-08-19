@@ -65,7 +65,7 @@ public class ISXPulseLaserMedium extends PulseLaserWeapon {
         maxRange = RANGE_SHORT;
         shortAV = 6;
         tonnage = 2.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 71;
         cost = 110000;
         rulesRefs = "321, TO";

@@ -32,7 +32,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.equipment;
+package megamek.common.weapons;
 
 import java.io.Serializable;
 import java.util.Enumeration;

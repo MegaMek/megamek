@@ -51,7 +51,7 @@ public class ISPrototypeTAG extends TAGWeapon {
         addLookupName("IS Prototype TAG");
         shortName = "TAG (P)";
         tonnage = 1.5;
-        criticals = 1;
+        criticalSlots = 1;
         hittable = true;
         spreadable = false;
         heat = 0;

@@ -57,7 +57,7 @@ public class CLBAAPGaussRifle extends Weapon {
         longRange = 9;
         extremeRange = 12;
         tonnage = 0.2;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 21;
         cost = 10000;
         shortAV = 3;

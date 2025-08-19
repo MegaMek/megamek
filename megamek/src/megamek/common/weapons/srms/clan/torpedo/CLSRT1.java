@@ -62,7 +62,7 @@ public class CLSRT1 extends SRTWeapon {
         waterLongRange = 9;
         waterExtremeRange = 12;
         tonnage = 0.25;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 15;
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);

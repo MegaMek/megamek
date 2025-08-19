@@ -53,7 +53,7 @@ public class ISLRM20 extends LRMWeapon {
         rackSize = 20;
         minimumRange = 6;
         tonnage = 10.0;
-        criticals = 5;
+        criticalSlots = 5;
         bv = 181;
         cost = 250000;
         shortAV = 12;

@@ -63,7 +63,7 @@ public class CLBASRM1 extends SRMWeapon {
               .andNot(F_AERO_WEAPON)
               .andNot(F_PROTO_WEAPON);
         tonnage = 0.035;
-        criticals = 1;
+        criticalSlots = 1;
         cost = 5000;
         rulesRefs = "261, TM";
         techAdvancement.setTechBase(TechBase.CLAN)

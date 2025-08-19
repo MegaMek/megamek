@@ -34,16 +34,16 @@
 
 package megamek.common.weapons.battlearmor.clan;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.battlearmor.BALBXHandler;
+import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 public class CLBALBX extends Weapon {
@@ -64,7 +64,7 @@ public class CLBALBX extends Weapon {
         longRange = 8;
         extremeRange = 12;
         tonnage = 0.4;
-        criticals = 2;
+        criticalSlots = 2;
         toHitModifier = -1;
         // TODO: refactor BA ammo-based weapons to use real AmmoTypes (but not track ammo use)
         ammoType = AmmoType.AmmoTypeEnum.NA;
@@ -126,6 +126,6 @@ public class CLBALBX extends Weapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_FLAK;
+        return BF_CLASS_FLAK;
     }
 }

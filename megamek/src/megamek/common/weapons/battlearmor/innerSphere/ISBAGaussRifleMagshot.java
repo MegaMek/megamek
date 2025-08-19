@@ -53,7 +53,7 @@ public class ISBAGaussRifleMagshot extends Weapon {
         longRange = 9;
         extremeRange = 12;
         tonnage = 0.175;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 15;
         cost = 10500;
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_DIRECT_FIRE)

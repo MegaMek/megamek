@@ -59,7 +59,7 @@ public class ISLRT20 extends LRTWeapon {
         this.waterLongRange = 21;
         this.waterExtremeRange = 28;
         this.tonnage = 10.0;
-        this.criticals = 5;
+        this.criticalSlots = 5;
         this.bv = 181;
         this.cost = 250000;
         rulesRefs = "230, TM";

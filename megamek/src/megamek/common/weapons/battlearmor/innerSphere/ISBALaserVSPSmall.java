@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.battlearmor.innerSphere;
 
-import megamek.common.equipment.WeaponType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 
 /**
@@ -68,7 +68,7 @@ public class ISBALaserVSPSmall extends VariableSpeedPulseLaserWeapon {
         damageMedium = 4;
         damageLong = 3;
         tonnage = .5;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 22;
         cost = 60000;
         shortAV = 4;

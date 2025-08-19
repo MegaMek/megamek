@@ -65,7 +65,7 @@ public class ISXPulseLaserSmall extends PulseLaserWeapon {
         waterLongRange = 3;
         waterExtremeRange = 4;
         tonnage = 1.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 21;
         maxRange = RANGE_SHORT;
         shortAV = 3;

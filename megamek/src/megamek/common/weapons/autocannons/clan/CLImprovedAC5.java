@@ -60,7 +60,7 @@ public class CLImprovedAC5 extends ACWeapon {
         longRange = 18;
         extremeRange = 24;
         tonnage = 7.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 70.0;
         cost = 125000;
         shortAV = 5;

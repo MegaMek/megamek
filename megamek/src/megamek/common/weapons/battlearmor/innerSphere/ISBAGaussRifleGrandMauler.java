@@ -58,7 +58,7 @@ public class ISBAGaussRifleGrandMauler extends Weapon {
         extremeRange = 7;
         tonnage = 0.125;
         cost = 8000;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 6;
         flags = flags.or(F_NO_FIRES)
               .or(F_DIRECT_FIRE)

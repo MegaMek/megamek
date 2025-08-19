@@ -34,13 +34,13 @@
 
 package megamek.common.weapons.other.innerSphere;
 
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.FireExtinguisherHandler;
-import megamek.common.weapons.Weapon;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -62,7 +62,7 @@ public class ISFireExtinguisher extends Weapon {
         longRange = 1;
         extremeRange = 1;
         tonnage = 0.0;
-        criticals = 0;
+        criticalSlots = 0;
         flags = flags.or(F_NO_FIRES).or(F_SOLO_ATTACK);
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.B)

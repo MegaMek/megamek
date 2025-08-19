@@ -49,7 +49,10 @@ import megamek.client.ui.clientGUI.boardview.sprite.AttackSprite;
 import megamek.client.ui.clientGUI.tooltip.HexTooltip;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.LosEffects;
+import megamek.common.Player;
+import megamek.common.SpecialHexDisplay;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
@@ -177,7 +180,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 
         // Show the player(s) that may deploy here
         // in the artillery auto hit designation phase
-        if (game.getPhase().isSetArtilleryAutohitHexes() && (mhex != null)) {
+        if (game.getPhase().isSetArtilleryAutoHitHexes() && (mhex != null)) {
             result.append(HexTooltip.getArtilleryHit(game, coords, bv.getBoardId()));
         }
 
@@ -447,7 +450,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             // the arty auto hit hexes phase. These could be displayed if the player
             // uses the /reset command in some situations
             if ((selectedUnit != null)
-                  && !game.getPhase().isSetArtilleryAutohitHexes()
+                  && !game.getPhase().isSetArtilleryAutoHitHexes()
                   && Objects.equals(localPlayer(), selectedUnit.getOwner())
                   && (selectedWeapon.getType() instanceof WeaponType)
                   && selectedWeapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {

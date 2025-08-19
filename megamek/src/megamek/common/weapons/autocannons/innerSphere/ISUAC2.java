@@ -58,7 +58,7 @@ public class ISUAC2 extends UACWeapon {
         longRange = 25;
         extremeRange = 37;
         tonnage = 7.0;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 56;
         cost = 120000;
         shortAV = 3;

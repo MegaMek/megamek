@@ -34,8 +34,8 @@
 package megamek.server.sbf;
 
 import megamek.MegaMek;
-import megamek.common.game.InGameObject;
 import megamek.common.enums.GamePhase;
+import megamek.common.game.InGameObject;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.logging.MMLogger;
@@ -101,7 +101,7 @@ record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGame
                 // setIneligible(phase);
                 gameManager.initiativeHelper.determineTurnOrder(game().getPhase());
                 break;
-            case SET_ARTILLERY_AUTOHIT_HEXES:
+            case SET_ARTILLERY_AUTO_HIT_HEXES:
                 // deployOffBoardEntities();
                 // checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
@@ -112,7 +112,7 @@ record SBFPhasePreparationManager(SBFGameManager gameManager) implements SBFGame
                 // doTryUnstuck();
             case PREMOVEMENT:
             case DEPLOYMENT:
-            case PREFIRING:
+            case PRE_FIRING:
             case FIRING:
             case PHYSICAL:
             case TARGETING:

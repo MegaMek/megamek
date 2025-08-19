@@ -51,7 +51,7 @@ public class CLBALightTAG extends TAGWeapon {
         addLookupName("ISBALightTAG");
         addLookupName("IS BA Light TAG");
         tonnage = 0.035;
-        criticals = 1;
+        criticalSlots = 1;
         hittable = true;
         spreadable = false;
         heat = 0;

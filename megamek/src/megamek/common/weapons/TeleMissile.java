@@ -32,7 +32,9 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.equipment;
+package megamek.common.weapons;
+
+import java.io.Serial;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.HitData;
@@ -49,6 +51,7 @@ import megamek.common.units.EntityMovementType;
  * @author Jay Lawson
  */
 public class TeleMissile extends Aero {
+    @Serial
     private static final long serialVersionUID = -5932720323745597199L;
 
     public static final int LOC_BODY = 0;

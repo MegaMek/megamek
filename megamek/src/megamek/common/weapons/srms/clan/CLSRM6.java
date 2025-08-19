@@ -38,8 +38,8 @@ import static megamek.common.equipment.MountedHelper.isArtemisIV;
 import static megamek.common.equipment.MountedHelper.isArtemisProto;
 import static megamek.common.equipment.MountedHelper.isArtemisV;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.srms.SRMWeapon;
 
 /**
@@ -68,7 +68,7 @@ public class CLSRM6 extends SRMWeapon {
         longRange = 9;
         extremeRange = 12;
         tonnage = 1.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 59;
         flags = flags.or(F_NO_FIRES);
         cost = 80000;

@@ -83,7 +83,9 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.Hex;
+import megamek.common.Player;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -314,7 +316,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                 if ((GUIP.getGameSummaryMinimap() || GUIP.getGifGameSummaryMinimap())
                       && (e.getOldPhase().isDeployment() || e.getOldPhase().isMovement()
                       || e.getOldPhase().isTargeting() || e.getOldPhase().isPremovement()
-                      || e.getOldPhase().isPrefiring() || e.getOldPhase().isFiring()
+                      || e.getOldPhase().isPreFiring() || e.getOldPhase().isFiring()
                       || e.getOldPhase().isPhysical())) {
 
                     File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getUUIDString());

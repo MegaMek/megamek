@@ -53,15 +53,15 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_BA_INDIVIDUAL,
     F_BURST_FIRE, // Full Damage vs. Infantry
     F_DIRECT_FIRE, // marks any weapon affected by a targeting computer
-    F_DOUBLE_ONESHOT, // Fusillade works like a one-shot weapon but has a second round.
+    F_DOUBLE_ONE_SHOT, // Fusillade works like a one-shot weapon but has a second round.
     F_EXTINGUISHER, // fire Extinguisher
-    F_HEATASDICE, // Variable heat, heat is listed in dice, not points
+    F_HEAT_AS_DICE, // Variable heat, heat is listed in dice, not points
     F_INFANTRY_ONLY, // may only target Infantry
     F_MISSILE_HITS, // use missile rules for # of hits
-    F_MORTARTYPE_INDIRECT,  // This flag is used by mortar-type weapons that allow indirect fire without a spotter and/or with LOS.
+    F_MORTAR_TYPE_INDIRECT,  // This flag is used by mortar-type weapons that allow indirect fire without a spotter and/or with LOS.
     F_NO_FIRES, // can not start fires
     F_NO_AIM,
-    F_ONESHOT,
+    F_ONE_SHOT,
     /** A weapon with this flag can only be fired alone, i.e. it must be the only weapon attacking */
     F_SOLO_ATTACK,
     F_PROTOTYPE, // War of 3039 prototypes
@@ -83,7 +83,7 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_BOMBAST_LASER,
     F_HYPER, // Hyper-Laser
     F_LASER,
-    F_LARGEMISSILE, // Thunderbolt and similar large missiles, for use with AMS resolution
+    F_LARGE_MISSILE, // Thunderbolt and similar large missiles, for use with AMS resolution
     F_ER_FLAMER, // ER flamers do half damage in heat mode
     F_FLAMER,
     F_M_POD,
@@ -103,13 +103,13 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_DIVE_BOMB,
     F_SPACE_BOMB,
 
-    // self defense weapons
+    // self-defense weapons
     F_AMS, // AMS
     F_CWS,
 
     // Capital sized self defense
-    F_AMSBAY, // AMS and Point Defense Bays - Have to work differently from code using the F_AMS flag
-    F_PDBAY, // AMS and Point Defense Bays - Have to work differently from code using the F_AMS flag
+    F_AMS_BAY, // AMS and Point Defense Bays - Have to work differently from code using the F_AMS flag
+    F_PD_BAY, // AMS and Point Defense Bays - Have to work differently from code using the F_AMS flag
 
     // Capital weapons
     F_CRUISE_MISSILE,
@@ -128,7 +128,7 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_INF_AA,
     F_INF_ARCHAIC,
     F_INF_BURST,
-    F_INF_CLIMBINGCLAWS, // TODO Add game rules IO pg 84
+    F_INF_CLIMBING_CLAWS, // TODO Add game rules IO pg 84
     F_INF_ENCUMBER,
     F_INF_NONPENETRATING,
     F_INF_POINT_BLANK,

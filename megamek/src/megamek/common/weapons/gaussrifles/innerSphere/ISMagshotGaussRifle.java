@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.gaussrifles.innerSphere;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.SimpleTechLevel;
+import megamek.common.equipment.AmmoType;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 
 /**
@@ -63,7 +63,7 @@ public class ISMagshotGaussRifle extends GaussWeapon {
         longAV = 2;
         maxRange = RANGE_SHORT;
         tonnage = 0.5;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 15;
         cost = 8500;
         explosionDamage = 3;

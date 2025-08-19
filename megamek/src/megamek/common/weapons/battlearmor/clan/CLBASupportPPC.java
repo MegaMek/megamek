@@ -61,7 +61,7 @@ public class CLBASupportPPC extends PPCWeapon {
         waterExtremeRange = 7;
         bv = 14;
         tonnage = 0.240;
-        criticals = 2;
+        criticalSlots = 2;
         flags = flags.or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         cost = 14000;

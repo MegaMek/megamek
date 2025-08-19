@@ -53,7 +53,7 @@ public class ISBALightTAG extends TAGWeapon {
         setInternalName("ISBALightTAG");
         this.addLookupName("IS BA Light TAG");
         this.tonnage = 0.035;
-        this.criticals = 1;
+        this.criticalSlots = 1;
         this.hittable = true;
         this.spreadable = false;
         this.heat = 0;

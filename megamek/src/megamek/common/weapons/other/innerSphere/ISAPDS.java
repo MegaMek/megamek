@@ -54,7 +54,7 @@ public class ISAPDS extends AmmoWeapon {
         damage = 2; // for manual operation
         ammoType = AmmoType.AmmoTypeEnum.APDS;
         tonnage = 3;
-        criticals = 2;
+        criticalSlots = 2;
         minimumRange = 0;
         shortRange = 1;
         mediumRange = 2;

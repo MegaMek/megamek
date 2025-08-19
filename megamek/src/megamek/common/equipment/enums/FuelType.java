@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.equipment;
+package megamek.common.equipment.enums;
 
 import megamek.common.interfaces.ITechnology;
 import megamek.common.interfaces.ITechnology.TechRating;
@@ -40,15 +40,15 @@ import megamek.common.interfaces.ITechnology.TechRating;
  * Fuel type affects costs of refueling (if tracking fuel) and possibly vehicle operating range. See StratOps, p. 179.
  */
 public enum FuelType {
-    /** Currently a place holder for "none of the others"; a better option than null */
+    /** Currently a placeholder for "none of the others"; a better option than null */
     NONE(0, ITechnology.TechRating.A),
     /** Fuel cell */
-    HYRDOGEN(15000, ITechnology.TechRating.C),
+    HYDROGEN(15000, ITechnology.TechRating.C),
     /** Standard non-aerospace ICE fuel */
     PETROCHEMICALS(1000, ITechnology.TechRating.A),
     /** Alternate ICE fuel */
     ALCOHOL(1500, ITechnology.TechRating.A),
-    /** Alternal ICE fuel */
+    /** Alternate ICE fuel */
     NATURAL_GAS(1200, ITechnology.TechRating.A);
 
     /**
@@ -57,7 +57,7 @@ public enum FuelType {
      */
     public final int cost;
     /**
-     * Availabilty code, as with equipment
+     * Availability code, as with equipment
      */
     public final TechRating availability;
 

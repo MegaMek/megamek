@@ -58,7 +58,7 @@ public class CLMekMortar8 extends MekMortarWeapon {
         extremeRange = 28;
         bv = 50.0;
         heat = 10;
-        criticals = 3;
+        criticalSlots = 3;
         tonnage = 5;
         cost = 70000;
         rulesRefs = "324, TO";

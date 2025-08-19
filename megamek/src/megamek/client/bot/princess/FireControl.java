@@ -60,7 +60,8 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.equipment.*;
-import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.moves.MovePath;
@@ -2807,7 +2808,7 @@ public class FireControl {
             // only a little over half of a cluster will generally hit
             // but some cluster munitions do more than 1 point of damage per individual hit
             // still better than just discounting them completely.
-            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE || weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
+            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTER_TABLE || weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
                 weaponDamage = weaponType.getRackSize();
             }
 
@@ -3591,7 +3592,7 @@ public class FireControl {
         // one
         for (Mounted<?> mounted : tankShooter.getJammedWeapons()) {
             int weaponDamage = ((WeaponType) mounted.getType()).getDamage();
-            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTER_TABLE) {
                 weaponDamage = ((WeaponType) mounted.getType()).getRackSize();
             }
             if (weaponDamage == WeaponType.DAMAGE_ARTILLERY) {

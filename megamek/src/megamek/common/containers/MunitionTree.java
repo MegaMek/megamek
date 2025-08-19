@@ -49,8 +49,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.BombType.BombTypeEnum;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 

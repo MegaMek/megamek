@@ -53,9 +53,9 @@ public class CLLRM5OS extends LRMWeapon {
         rackSize = 5;
         minimumRange = WEAPON_NA;
         tonnage = 1.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 11;
-        flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_ONE_SHOT).andNot(F_PROTO_WEAPON);
         cost = 15000;
         shortAV = 3;
         medAV = 3;

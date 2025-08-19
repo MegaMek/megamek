@@ -34,9 +34,9 @@
 
 package megamek.common.weapons.artillery;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
@@ -62,8 +62,8 @@ public class Thumper extends ArtilleryWeapon {
         longRange = 21;
         extremeRange = 21; // No extreme range.
         tonnage = 15;
-        criticals = 15;
-        svslots = 7;
+        criticalSlots = 15;
+        svSlots = 7;
         bv = 43;
         cost = 187500;
         rulesRefs = "284, TO";

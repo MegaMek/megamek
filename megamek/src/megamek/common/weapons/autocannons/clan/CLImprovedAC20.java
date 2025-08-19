@@ -59,7 +59,7 @@ public class CLImprovedAC20 extends ACWeapon {
         longRange = 9;
         extremeRange = 12;
         tonnage = 13.0;
-        criticals = 9;
+        criticalSlots = 9;
         bv = 178.0;
         cost = 300000;
         explosive = true; // when firing incendiary ammo

@@ -36,13 +36,13 @@ package megamek.common.weapons.bayweapons.capital;
 
 import java.io.Serial;
 
-import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.game.Game;
+import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.CapitalLaserBayOrbitalBombardmentHandler;
-import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -78,6 +78,6 @@ public class CapitalLaserBayWeapon extends BayWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_CAPITAL;
+        return BF_CLASS_CAPITAL;
     }
 }

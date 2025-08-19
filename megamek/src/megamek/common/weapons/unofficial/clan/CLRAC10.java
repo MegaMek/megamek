@@ -58,7 +58,7 @@ public class CLRAC10 extends RACWeapon {
         this.longRange = 18;
         this.extremeRange = 24;
         this.tonnage = 14.0;
-        this.criticals = 7;
+        this.criticalSlots = 7;
         this.bv = 617;
         this.cost = 640000;
         rulesRefs = "Unofficial";

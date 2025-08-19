@@ -33,9 +33,9 @@
 
 package megamek.common.weapons.missiles;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 
 public abstract class Thunderbolt5Weapon extends ThunderboltWeapon {
 
@@ -45,7 +45,7 @@ public abstract class Thunderbolt5Weapon extends ThunderboltWeapon {
         heat = 3;
         shortAV = 5;
         medAV = 5;
-        criticals = 1;
+        criticalSlots = 1;
         missileArmor = 5;
     }
 
@@ -64,7 +64,7 @@ public abstract class Thunderbolt5Weapon extends ThunderboltWeapon {
 
     @Override
     public String getSortingName() {
-        String oneShotTag = hasFlag(F_ONESHOT) ? "OS" : "";
+        String oneShotTag = hasFlag(F_ONE_SHOT) ? "OS" : "";
         if (name.contains("I-OS")) {
             oneShotTag = "XIOS";
         }

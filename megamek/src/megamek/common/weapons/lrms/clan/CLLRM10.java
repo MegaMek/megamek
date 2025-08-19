@@ -38,8 +38,8 @@ import static megamek.common.equipment.MountedHelper.isArtemisIV;
 import static megamek.common.equipment.MountedHelper.isArtemisProto;
 import static megamek.common.equipment.MountedHelper.isArtemisV;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.lrms.LRMWeapon;
 
 /**
@@ -59,7 +59,7 @@ public class CLLRM10 extends LRMWeapon {
         rackSize = 10;
         minimumRange = WEAPON_NA;
         tonnage = 2.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 109;
         cost = 100000;
         shortAV = 6;

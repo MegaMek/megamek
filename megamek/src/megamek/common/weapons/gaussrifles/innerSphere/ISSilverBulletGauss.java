@@ -34,16 +34,16 @@
 
 package megamek.common.weapons.gaussrifles.innerSphere;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.LBXHandler;
-import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -72,7 +72,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
         longRange = 22;
         extremeRange = 33;
         tonnage = 15.0;
-        criticals = 7;
+        criticalSlots = 7;
         bv = 198;
         cost = 350000;
         shortAV = getBaseAeroDamage();
@@ -124,7 +124,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_FLAK;
+        return BF_CLASS_FLAK;
     }
 
     /**

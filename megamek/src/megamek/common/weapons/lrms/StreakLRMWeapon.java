@@ -34,13 +34,13 @@
 
 package megamek.common.weapons.lrms;
 
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.lrm.StreakLRMHandler;
@@ -89,12 +89,12 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_STANDARD;
+        return BF_CLASS_STANDARD;
     }
 
     @Override
     public String getSortingName() {
-        String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+        String oneShotTag = hasFlag(F_ONE_SHOT) ? "OS " : "";
         if (name.contains("I-OS")) {
             oneShotTag = "OSI ";
         }

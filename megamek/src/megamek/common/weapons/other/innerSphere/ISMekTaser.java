@@ -34,12 +34,12 @@
 
 package megamek.common.weapons.other.innerSphere;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.MekTaserHandler;
@@ -70,7 +70,7 @@ public class ISMekTaser extends AmmoWeapon {
         toHitModifier = 1;
         cost = 200000;
         tonnage = 4;
-        criticals = 3;
+        criticalSlots = 3;
         explosionDamage = 6;
         explosive = true;
         flags = flags.or(F_MEK_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE)

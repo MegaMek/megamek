@@ -63,7 +63,7 @@ public class ISPulseLaserMedium extends PulseLaserWeapon {
         waterLongRange = 4;
         waterExtremeRange = 6;
         tonnage = 2.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 48;
         cost = 60000;
         shortAV = 6;

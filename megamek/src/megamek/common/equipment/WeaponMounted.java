@@ -40,14 +40,14 @@ import java.util.Objects;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
-import megamek.common.units.Entity;
-import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.handlers.WeaponHandler;
+import megamek.common.units.Entity;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
+import megamek.common.weapons.handlers.WeaponHandler;
 
 public class WeaponMounted extends Mounted<WeaponType> {
 
@@ -72,11 +72,11 @@ public class WeaponMounted extends Mounted<WeaponType> {
         if ((isHotLoaded() || hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS))
               && (getLinked() != null) && (getLinked().getUsableShotsLeft() > 0)) {
             Mounted<?> link = getLinked();
-            AmmoType atype = ((AmmoType) link.getType());
-            int damagePerShot = atype.getDamagePerShot();
+            AmmoType ammoType = ((AmmoType) link.getType());
+            int damagePerShot = ammoType.getDamagePerShot();
             // Launchers with Dead-Fire missiles in them do an extra point of
             // damage per shot when critted
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                 damagePerShot++;
             }
 
@@ -176,7 +176,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
                       && !m.isDestroyed()
                       && !m.isBreached()
                       && m.getType().hasFlag(WeaponType.F_MG)
-                      && (((WeaponType) m.getType()).getRackSize() == ((WeaponType) getType())
+                      && (m.getType().getRackSize() == getType()
                       .getRackSize())) {
                     nShots++;
                 }
@@ -187,7 +187,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
 
     @Override
     public boolean isOneShot() {
-        return getType().hasFlag(WeaponType.F_ONESHOT);
+        return getType().hasFlag(WeaponType.F_ONE_SHOT);
     }
 
     /**
@@ -345,7 +345,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
      *
      * @param mounted The weapon or ammo.
      *
-     * @return Wehther the bay contains the equipment.
+     * @return Whether the bay contains the equipment.
      */
     public boolean bayContains(Mounted<?> mounted) {
         return bayContains(mounted.getEquipmentNum());

@@ -56,7 +56,7 @@ public class CLLRT4 extends LRTWeapon {
         this.waterLongRange = 21;
         this.waterExtremeRange = 28;
         this.tonnage = 0.8;
-        this.criticals = 0;
+        this.criticalSlots = 0;
         this.bv = 46;
         // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         // But LRM Tech Base and Avail Ratings.

@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.battlearmor.innerSphere;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.missiles.RLWeapon;
 
 /**
@@ -59,8 +59,8 @@ public class ISBARL5 extends RLWeapon {
         bv = 6;
         cost = 6000;
         tonnage = .125;
-        criticals = 4;
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
+        criticalSlots = 4;
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONE_SHOT).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";
         techAdvancement.setTechBase(TechBase.IS)

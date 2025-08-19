@@ -36,13 +36,13 @@ package megamek.common.cost;
 import java.util.ArrayList;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.Engine;
-import megamek.common.units.EntityMovementMode;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
-import megamek.common.util.RoundWeight;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Tank;
-import megamek.common.equipment.ArmorType;
+import megamek.common.util.RoundWeight;
 import megamek.common.verifier.SupportVeeStructure;
 import megamek.common.verifier.TestEntity;
 
@@ -186,19 +186,10 @@ public class CombatVehicleCostCalculator {
         costs[i++] = CostCalculator.getWeaponsAndEquipmentCost(tank, ignoreAmmo) + tank.getExtraCrewSeats() * 100L;
 
         if (!tank.isSupportVehicle()) {
-            double diveTonnage;
-            switch (tank.getMovementMode()) {
-                case HOVER:
-                case HYDROFOIL:
-                case VTOL:
-                case SUBMARINE:
-                case WIGE:
-                    diveTonnage = Math.ceil(tank.getWeight() / 5.0) / 2.0;
-                    break;
-                default:
-                    diveTonnage = 0.0;
-                    break;
-            }
+            double diveTonnage = switch (tank.getMovementMode()) {
+                case HOVER, HYDROFOIL, VTOL, SUBMARINE, WIGE -> Math.ceil(tank.getWeight() / 5.0) / 2.0;
+                default -> 0.0;
+            };
             if (tank.getMovementMode() != EntityMovementMode.VTOL) {
                 costs[i++] = diveTonnage * 20000;
             } else {
@@ -272,6 +263,13 @@ public class CombatVehicleCostCalculator {
             }
         }
 
+        ArrayList<String> left = getLeft(tank);
+        String[] systemNames = left.toArray(new String[0]);
+        CostCalculator.fillInReport(costReport, tank, ignoreAmmo, systemNames, 7, cost, costs);
+        return Math.round(cost);
+    }
+
+    private static ArrayList<String> getLeft(Tank tank) {
         ArrayList<String> left = new ArrayList<>();
         if (tank.isSupportVehicle()) {
             left.add("Chassis");
@@ -298,8 +296,6 @@ public class CombatVehicleCostCalculator {
             left.add("Flotation Hull/Environmental Sealing multiplier");
             left.add("Off-Road Multiplier");
         }
-        String[] systemNames = left.toArray(new String[0]);
-        CostCalculator.fillInReport(costReport, tank, ignoreAmmo, systemNames, 7, cost, costs);
-        return Math.round(cost);
+        return left;
     }
 }

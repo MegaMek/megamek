@@ -61,7 +61,7 @@ public class ISMekMortar1 extends MekMortarWeapon {
         extremeRange = 28;
         bv = 10.0;
         heat = 1;
-        criticals = 1;
+        criticalSlots = 1;
         tonnage = 2;
         cost = 7000;
         rulesRefs = "324, TO";

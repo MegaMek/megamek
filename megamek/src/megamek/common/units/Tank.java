@@ -56,6 +56,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.*;
+import megamek.common.equipment.enums.FuelType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
@@ -677,7 +678,7 @@ public class Tank extends Entity {
         }
         if (isSupportVehicle()) {
             return getWeightClass() >= EntityWeightClass.WEIGHT_LARGE_SUPPORT &&
-                  hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL);
+                  hasWorkingMisc(MiscType.F_ADVANCED_FIRE_CONTROL);
         } else {
             return getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY;
         }
@@ -2597,7 +2598,7 @@ public class Tank extends Entity {
                   !m.isBreached() &&
                   (m.getType() instanceof MiscType) &&
                   m.getType().hasFlag(MiscType.F_MASC) &&
-                  (m.curMode().equals("Armed") || m.getType().hasSubType(MiscType.S_JETBOOSTER))) {
+                  (m.curMode().equals("Armed") || m.getType().hasSubType(MiscType.S_JET_BOOSTER))) {
                 return true;
             }
         }

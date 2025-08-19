@@ -54,13 +54,13 @@ public class CLBASRM1OS extends SRMWeapon {
         bv = 3;
         flags = flags.or(F_NO_FIRES)
               .or(F_BA_WEAPON)
-              .or(F_ONESHOT)
+              .or(F_ONE_SHOT)
               .andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON)
               .andNot(F_PROTO_WEAPON);
         tonnage = .020;
-        criticals = 2;
+        criticalSlots = 2;
         cost = 2500;
         rulesRefs = "261, TM";
         techAdvancement.setTechBase(TechBase.CLAN)

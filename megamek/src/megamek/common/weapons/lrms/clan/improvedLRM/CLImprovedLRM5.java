@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.lrms.clan.improvedLRM;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.SimpleTechLevel;
+import megamek.common.equipment.AmmoType;
 import megamek.common.weapons.lrms.LRMWeapon;
 
 /**
@@ -56,7 +56,7 @@ public class CLImprovedLRM5 extends LRMWeapon {
         rackSize = 5;
         minimumRange = 6;
         tonnage = 1.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 45;
         cost = 30000;
         shortAV = 3;

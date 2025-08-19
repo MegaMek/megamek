@@ -61,7 +61,7 @@ public class CLLightMG extends MGWeapon {
         longRange = 6;
         extremeRange = 8;
         tonnage = 0.25;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 5;
         cost = 5000;
         shortAV = 1;

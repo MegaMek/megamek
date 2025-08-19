@@ -63,7 +63,7 @@ public class CLBASRM6 extends SRMWeapon {
         longRange = 9;
         extremeRange = 12;
         tonnage = .210;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 59;
         flags = flags.or(F_NO_FIRES)
               .or(F_BA_WEAPON)

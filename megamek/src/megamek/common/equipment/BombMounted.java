@@ -33,6 +33,7 @@
 
 package megamek.common.equipment;
 
+import megamek.common.equipment.enums.BombType;
 import megamek.common.units.Entity;
 
 public class BombMounted extends AmmoMounted {

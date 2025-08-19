@@ -625,7 +625,7 @@ public class Infantry extends Entity {
         }
         EquipmentType armorKit = getArmorKit();
         return (armorKit == null) ||
-              !armorKit.hasSubType(MiscType.S_SPACE_SUIT | MiscType.S_XCT_VACUUM | MiscType.S_TOXIC_ATMO);
+              !armorKit.hasSubType(MiscType.S_SPACE_SUIT | MiscType.S_XCT_VACUUM | MiscType.S_TOXIC_ATMOSPHERE);
     }
 
     @Override
@@ -1471,7 +1471,7 @@ public class Infantry extends Entity {
             // Need to remove vibro shovels
             List<Mounted<?>> eqToRemove = new ArrayList<>();
             for (Mounted<?> eq : getEquipment()) {
-                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasSubType(MiscType.S_VIBROSHOVEL)) {
+                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasSubType(MiscType.S_VIBRO_SHOVEL)) {
                     eqToRemove.add(eq);
                 }
             }

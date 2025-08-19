@@ -36,16 +36,16 @@ package megamek.common.weapons.handlers;
 
 import java.util.Vector;
 
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
-import megamek.common.units.Infantry;
 import megamek.common.RangeType;
 import megamek.common.Report;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Infantry;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -76,7 +76,7 @@ public class MGHandler extends AmmoWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         double toReturn = nDamPerHit;
-        if (weapon.isRapidfire() && !(target.isConventionalInfantry())) {
+        if (weapon.isRapidFire() && !(target.isConventionalInfantry())) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
             // nDamPerHit was already set in useAmmo
             toReturn = applyGlancingBlowModifier(toReturn, false);
@@ -126,7 +126,7 @@ public class MGHandler extends AmmoWeaponHandler {
     @Override
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-            if (weapon.isRapidfire()) {
+            if (weapon.isRapidFire()) {
                 ae.heatBuildup += nRapidDamHeatPerHit;
             } else {
                 super.addHeat();
@@ -145,7 +145,7 @@ public class MGHandler extends AmmoWeaponHandler {
         Report r = new Report(3220);
         r.subject = subjectId;
         vPhaseReport.add(r);
-        if (weapon.isRapidfire() && !target.isConventionalInfantry()) {
+        if (weapon.isRapidFire() && !target.isConventionalInfantry()) {
             r.newlines = 0;
             r = new Report(3225);
             r.subject = subjectId;
@@ -161,7 +161,7 @@ public class MGHandler extends AmmoWeaponHandler {
      */
     @Override
     protected void useAmmo() {
-        if (weapon.isRapidfire()) {
+        if (weapon.isRapidFire()) {
 
             // TacOps p.102 Rapid Fire MG Rules
             switch (wtype.getAmmoType()) {

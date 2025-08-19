@@ -47,12 +47,10 @@ import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
-import megamek.common.loaders.MapSettings;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.TagInfo;
 import megamek.common.Team;
-import megamek.common.turns.TurnOrdered;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
@@ -63,11 +61,12 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.*;
-import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.event.*;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.interfaces.PlanetaryConditionsUsing;
 import megamek.common.interfaces.ReportEntry;
+import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
@@ -76,6 +75,7 @@ import megamek.common.planetaryConditions.Wind;
 import megamek.common.planetaryConditions.WindDirection;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.turns.SpecificEntityTurn;
+import megamek.common.turns.TurnOrdered;
 import megamek.common.units.*;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.logging.MMLogger;
@@ -449,12 +449,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             case DEPLOYMENT,
                  TARGETING,
                  PREMOVEMENT,
-                 MOVEMENT,
-                 PREFIRING,
+                 MOVEMENT, PRE_FIRING,
                  FIRING,
                  PHYSICAL,
                  DEPLOY_MINEFIELDS,
-                 SET_ARTILLERY_AUTOHIT_HEXES -> hasMoreTurns();
+                 SET_ARTILLERY_AUTO_HIT_HEXES -> hasMoreTurns();
             case OFFBOARD -> hasMoreTurns() && isOffboardPlayable();
             default -> true;
         };
@@ -830,7 +829,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             case TARGETING:
             case PREMOVEMENT:
             case MOVEMENT:
-            case PREFIRING:
+            case PRE_FIRING:
             case FIRING:
             case PHYSICAL:
             case DEPLOYMENT:

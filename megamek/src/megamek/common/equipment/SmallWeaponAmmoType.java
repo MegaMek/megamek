@@ -36,7 +36,6 @@ package megamek.common.equipment;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import megamek.common.TechAdvancement;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -91,7 +90,7 @@ public class SmallWeaponAmmoType extends AmmoType {
         List<InfantryWeapon> weapons = allTypes.stream()
               .filter(et -> (et instanceof InfantryWeapon)
                     && (((InfantryWeapon) et).getAmmoType() == AmmoType.AmmoTypeEnum.INFANTRY))
-              .map(et -> (InfantryWeapon) et).collect(Collectors.toList());
+              .map(et -> (InfantryWeapon) et).toList();
         for (InfantryWeapon weapon : weapons) {
             addType(new SmallWeaponAmmoType(weapon));
         }

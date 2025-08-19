@@ -86,7 +86,15 @@ import megamek.client.ui.widget.MegaMekBorder;
 import megamek.client.ui.widget.SkinSpecification;
 import megamek.client.ui.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.widget.SkinXMLHandler;
-import megamek.common.*;
+import megamek.common.ArtilleryTracker;
+import megamek.common.Configuration;
+import megamek.common.ECMInfo;
+import megamek.common.Hex;
+import megamek.common.KeyBindParser;
+import megamek.common.LosEffects;
+import megamek.common.Player;
+import megamek.common.SpecialHexDisplay;
+import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
@@ -1175,7 +1183,7 @@ public final class BoardView extends AbstractBoardView
             drawDeployment(graphics2D);
         }
 
-        if ((game.getPhase().isSetArtilleryAutohitHexes() && showAllDeployment) || ((game.getPhase().isLounge())
+        if ((game.getPhase().isSetArtilleryAutoHitHexes() && showAllDeployment) || ((game.getPhase().isLounge())
               && showLobbyPlayerDeployment)) {
             drawAllDeployment(graphics2D);
         }
@@ -1698,7 +1706,7 @@ public final class BoardView extends AbstractBoardView
     public Mounted<?> getSelectedArtilleryWeapon() {
         // We don't want to display artillery auto-hit/adjusted fire hexes during the ArtyAutoHitHexes phase. These
         // could be displayed if the player uses the /reset command in some situations
-        if (game.getPhase().isSetArtilleryAutohitHexes()) {
+        if (game.getPhase().isSetArtilleryAutoHitHexes()) {
             return null;
         }
 
@@ -1994,7 +2002,7 @@ public final class BoardView extends AbstractBoardView
                 drawDeployment(boardGraph);
             }
 
-            if (game.getPhase().isSetArtilleryAutohitHexes() && showAllDeployment) {
+            if (game.getPhase().isSetArtilleryAutoHitHexes() && showAllDeployment) {
                 drawAllDeployment(boardGraph);
             }
 

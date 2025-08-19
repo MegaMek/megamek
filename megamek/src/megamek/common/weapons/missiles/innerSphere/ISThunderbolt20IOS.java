@@ -53,7 +53,7 @@ public class ISThunderbolt20IOS extends Thunderbolt20Weapon {
         tonnage = 14.5;
         bv = 61;
         cost = 360000;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONE_SHOT);
         techAdvancement.setTechRating(TechRating.B)
               .setISAdvancement(3056, 3081, 3085, DATE_NONE, DATE_NONE)
               .setPrototypeFactions(Faction.DC)

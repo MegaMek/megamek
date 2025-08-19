@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.prototypes.innerSphere;
 
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.prototype.PrototypeLaserHandler;
 import megamek.common.weapons.lasers.LaserWeapon;
@@ -73,7 +73,7 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         longAV = 8;
         maxRange = RANGE_LONG;
         tonnage = 5.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 136;
         cost = 600000;
         rulesRefs = "103, IO";

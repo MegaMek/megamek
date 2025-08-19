@@ -61,7 +61,7 @@ public class ISMG extends MGWeapon {
         longRange = 3;
         extremeRange = 4;
         tonnage = 0.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 5;
         cost = 5000;
         shortAV = 2;

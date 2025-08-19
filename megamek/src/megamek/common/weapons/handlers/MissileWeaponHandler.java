@@ -504,7 +504,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             for (WeaponMounted counter : lCounters) {
                 // Set up differences between different types of AMS
                 boolean isAMS = counter.getType().hasFlag(WeaponType.F_AMS);
-                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMSBAY);
+                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMS_BAY);
                 boolean isAPDS = counter.isAPDS();
 
                 // Only one AMS and one APDS can engage each missile attack
@@ -555,7 +555,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         }
 
                         // build up some heat (assume target is ams owner)
-                        if (bayW.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                        if (bayW.getType().hasFlag(WeaponType.F_HEAT_AS_DICE)) {
                             pdEnt.heatBuildup += Compute.d6(bayW.getCurrentHeat());
                         } else {
                             pdEnt.heatBuildup += bayW.getCurrentHeat();
@@ -575,7 +575,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     }
                 } else {
                     // build up some heat
-                    if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                    if (counter.getType().hasFlag(WeaponType.F_HEAT_AS_DICE)) {
                         pdEnt.heatBuildup += Compute.d6(counter.getCurrentHeat());
                     } else {
                         pdEnt.heatBuildup += counter.getCurrentHeat();
@@ -1106,6 +1106,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     // Check for Thunderbolt. We'll use this for single AMS resolution
     @Override
     protected boolean isTbolt() {
-        return wtype.hasFlag(WeaponType.F_LARGEMISSILE);
+        return wtype.hasFlag(WeaponType.F_LARGE_MISSILE);
     }
 }

@@ -519,7 +519,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
 
     public boolean isEligibleForPhase(GamePhase phase) {
         return !isDone && switch (phase) {
-            case PREMOVEMENT, PREFIRING -> isHidden;
+            case PREMOVEMENT, PRE_FIRING -> isHidden;
             default -> isDeployed;
         };
     }

@@ -34,16 +34,16 @@
 
 package megamek.common.weapons.autocannons;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.compute.Compute;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.weapons.handlers.ac.ACWeaponHandler;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.LBXHandler;
+import megamek.common.weapons.handlers.ac.ACWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -95,7 +95,7 @@ public abstract class LBXACWeapon extends AmmoWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_FLAK;
+        return BF_CLASS_FLAK;
     }
 
     /**

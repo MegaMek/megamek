@@ -66,7 +66,7 @@ public class CLBARecoillessRifleMedium extends Weapon {
         longRange = 6;
         extremeRange = 8;
         tonnage = 0.25;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 19;
         flags = flags.or(F_NO_FIRES)
               .or(F_DIRECT_FIRE)

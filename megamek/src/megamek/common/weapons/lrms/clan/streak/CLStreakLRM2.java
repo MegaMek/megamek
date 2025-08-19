@@ -55,7 +55,7 @@ public class CLStreakLRM2 extends StreakLRMWeapon {
         longRange = 21;
         extremeRange = 28;
         tonnage = 0.8;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 34;
         cost = 30000;
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MEK_WEAPON)

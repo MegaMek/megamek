@@ -52,9 +52,9 @@ public class CLLRM15IOS extends LRMWeapon {
         rackSize = 15;
         minimumRange = WEAPON_NA;
         tonnage = 3.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 33;
-        flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_ONE_SHOT).andNot(F_PROTO_WEAPON);
         cost = 140000;
         shortAV = 9;
         medAV = 9;

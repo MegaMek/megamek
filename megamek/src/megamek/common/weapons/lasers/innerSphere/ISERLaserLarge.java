@@ -60,7 +60,7 @@ public class ISERLaserLarge extends LaserWeapon {
         waterLongRange = 12;
         waterExtremeRange = 18;
         tonnage = 5.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 163;
         cost = 200000;
         shortAV = 8;

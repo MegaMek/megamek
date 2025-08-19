@@ -60,7 +60,7 @@ public class ISERLaserSmall extends LaserWeapon {
         waterLongRange = 3;
         waterExtremeRange = 4;
         tonnage = 0.5;
-        criticals = 1;
+        criticalSlots = 1;
         flags = flags.or(F_NO_FIRES);
         bv = 17;
         cost = 11250;

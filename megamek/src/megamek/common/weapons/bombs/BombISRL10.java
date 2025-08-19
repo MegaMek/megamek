@@ -34,11 +34,11 @@
 
 package megamek.common.weapons.bombs;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.BombType.BombTypeEnum;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.RLHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
@@ -63,7 +63,7 @@ public class BombISRL10 extends MissileWeapon {
         this.longRange = 18;
         this.extremeRange = 22;
         this.tonnage = 1;
-        this.criticals = 0;
+        this.criticalSlots = 0;
         this.hittable = false;
         this.bv = 0;
         this.cost = 0;

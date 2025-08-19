@@ -67,7 +67,7 @@ public class ISBALaserVSPMedium extends VariableSpeedPulseLaserWeapon {
         damageMedium = 7;
         damageLong = 5;
         tonnage = .9;
-        criticals = 4;
+        criticalSlots = 4;
         bv = 56;
         cost = 200000;
         shortAV = 7;

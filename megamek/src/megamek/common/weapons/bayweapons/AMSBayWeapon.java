@@ -34,11 +34,11 @@
 
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AmmoBayWeaponHandler;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -62,7 +62,7 @@ public class AMSBayWeapon extends AmmoBayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_AMS;
-        flags = flags.or(F_AUTO_TARGET).or(F_AMSBAY).or(F_AERO_WEAPON);
+        flags = flags.or(F_AUTO_TARGET).or(F_AMS_BAY).or(F_AERO_WEAPON);
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         techAdvancement.setTechBase(TechBase.ALL)

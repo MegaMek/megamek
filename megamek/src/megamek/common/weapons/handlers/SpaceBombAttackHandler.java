@@ -38,17 +38,17 @@ import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.units.Aero;
-import megamek.common.equipment.BombLoadout;
-import megamek.common.equipment.BombType;
-import megamek.common.equipment.BombType.BombTypeEnum;
-import megamek.common.units.Entity;
-import megamek.common.units.FighterSquadron;
-import megamek.common.game.Game;
 import megamek.common.HitData;
-import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.BombLoadout;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.game.Game;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
+import megamek.common.units.FighterSquadron;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 

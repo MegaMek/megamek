@@ -61,13 +61,13 @@ public class ISBALRM5OS extends LRMWeapon {
         rackSize = 5;
         minimumRange = 6;
         tonnage = .2;
-        criticals = 5;
+        criticalSlots = 5;
         bv = 9;
         cost = 18000;
-        criticals = 5;
+        criticalSlots = 5;
         flags = flags.or(F_NO_FIRES)
               .or(F_BA_WEAPON)
-              .or(F_ONESHOT)
+              .or(F_ONE_SHOT)
               .andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON)

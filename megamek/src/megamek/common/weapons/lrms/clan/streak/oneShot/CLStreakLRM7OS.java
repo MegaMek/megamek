@@ -63,10 +63,10 @@ public class CLStreakLRM7OS extends StreakLRMWeapon {
         longRange = 21;
         extremeRange = 28;
         tonnage = 3.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 120;
         cost = 105000;
-        flags = flags.or(F_NO_FIRES).or(F_ONESHOT).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
+        flags = flags.or(F_NO_FIRES).or(F_ONE_SHOT).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_PROTO_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);
         // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         //But LRM Tech Base and Avail Ratings.

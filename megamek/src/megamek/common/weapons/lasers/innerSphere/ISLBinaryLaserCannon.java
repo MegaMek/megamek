@@ -60,7 +60,7 @@ public class ISLBinaryLaserCannon extends LaserWeapon {
         waterLongRange = 6;
         waterExtremeRange = 8;
         tonnage = 1.5;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 148;
         cost = 15000;
         shortAV = 7;

@@ -43,7 +43,15 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.HitData;
+import megamek.common.LosEffects;
+import megamek.common.Messages;
+import megamek.common.RangeType;
+import megamek.common.Report;
+import megamek.common.SpecialHexDisplay;
+import megamek.common.TagInfo;
+import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -333,8 +341,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 }
 
                 // Set up differences between point defense and AMS bays
-                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMSBAY);
-                boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PDBAY);
+                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMS_BAY);
+                boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PD_BAY);
 
                 // Point defense bays can only fire at one attack per round
                 if (isPDBay) {
@@ -357,7 +365,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         pdOverheated = true;
                         break;
                     }
-                    if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                    if (counter.getType().hasFlag(WeaponType.F_HEAT_AS_DICE)) {
                         int heatDice = Compute.d6(bayW
                               .getCurrentHeat());
                         pdEnt.heatBuildup += heatDice;
@@ -1356,7 +1364,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /*
-     * Return the capital missile target for criticals. Zero if not a capital
+     * Return the capital missile target for criticalSlots. Zero if not a capital
      * missile
      */
     protected int getCapMisMod() {
@@ -1390,7 +1398,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.add(toHit.getTableDesc());
             r.add(entityTarget.getLocationAbbr(pcHit));
             vPhaseReport.addElement(r);
-            if (weapon.isRapidfire()) {
+            if (weapon.isRapidFire()) {
                 r.newlines = 0;
                 r = new Report(3225);
                 r.subject = subjectId;
@@ -1546,7 +1554,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.add(toHit.getTableDesc());
             r.add(entityTarget.getLocationAbbr(hit));
             vPhaseReport.addElement(r);
-            if (weapon.isRapidfire()) {
+            if (weapon.isRapidFire()) {
                 r.newlines = 0;
                 r = new Report(3225);
                 r.subject = subjectId;
@@ -1880,7 +1888,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     protected void useAmmo() {
-        if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+        if (wtype.hasFlag(WeaponType.F_DOUBLE_ONE_SHOT)) {
             ArrayList<Mounted<?>> chain = new ArrayList<>();
             for (Mounted<?> current = weapon.getLinked(); current != null; current = current.getLinked()) {
                 chain.add(current);
@@ -1897,7 +1905,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     weapon.setFired(true);
                 }
             }
-        } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
+        } else if (wtype.hasFlag(WeaponType.F_ONE_SHOT)) {
             weapon.setFired(true);
         }
 

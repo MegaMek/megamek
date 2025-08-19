@@ -61,7 +61,7 @@ public class ISRifleLight extends RifleWeapon {
         longRange = 12;
         extremeRange = 18;
         tonnage = 3.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 21;
         cost = 37750;
         explosive = false; // when firing incendiary ammo

@@ -1619,7 +1619,7 @@ class ComputeToHitIsImpossible {
                   && (spotter == null)
                   && !(weaponType instanceof ArtilleryCannonWeapon)
                   && !attacker.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)
-                  && !weaponType.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT)) {
+                  && !weaponType.hasFlag(WeaponType.F_MORTAR_TYPE_INDIRECT)) {
                 return Messages.getString("WeaponAttackAction.NoSpotter");
             }
 
@@ -1801,7 +1801,7 @@ class ComputeToHitIsImpossible {
 
             // Can't fire a one-shot TSEMP more than once
             if (weaponType.hasFlag(WeaponType.F_TSEMP)
-                  && weaponType.hasFlag(WeaponType.F_ONESHOT)
+                  && weaponType.hasFlag(WeaponType.F_ONE_SHOT)
                   && weapon.isFired()) {
                 return Messages.getString("WeaponAttackAction.OneShotTSEMP");
             }
@@ -1846,7 +1846,7 @@ class ComputeToHitIsImpossible {
             }
 
             // If you're an aero, can't fire an AMS Bay at all or a Point Defense bay that's in PD Mode
-            if (weaponType.hasFlag(WeaponType.F_AMSBAY)) {
+            if (weaponType.hasFlag(WeaponType.F_AMS_BAY)) {
                 return Messages.getString("WeaponAttackAction.AutoWeapon");
             } else if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_POINT_DEFENSE)) {
                 return Messages.getString("WeaponAttackAction.PDWeapon");

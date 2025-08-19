@@ -46,7 +46,6 @@ import java.util.zip.ZipFile;
 
 import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
-import megamek.common.exceptions.LocationFullException;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
@@ -56,6 +55,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.Sensor;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
@@ -267,19 +267,19 @@ public class MekFileParser {
             // all `Mek's get the four basic sensors
             ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_RADAR));
             ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_IR));
-            ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_MAGSCAN));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_MAG_SCAN));
             ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_SEISMIC));
             ent.setNextSensor(ent.getSensors().firstElement());
         } else if (ent instanceof VTOL) {
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_RADAR));
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_IR));
-            ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_MAGSCAN));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_MAG_SCAN));
             ent.setNextSensor(ent.getSensors().firstElement());
         } else if (ent instanceof Tank) {
             // all tanks get the four basic sensors
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_RADAR));
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_IR));
-            ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_MAGSCAN));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_MAG_SCAN));
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_SEISMIC));
             ent.setNextSensor(ent.getSensors().firstElement());
         } else if (ent.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
@@ -415,7 +415,7 @@ public class MekFileParser {
                     // huh. this shouldn't happen
                     LOGGER.error("Unable to match Artemis to launcher for {}", ent.getShortName());
                 }
-            } else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType().hasFlag(MiscType.F_VOIDSIG)) &&
+            } else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType().hasFlag(MiscType.F_VOID_SIG)) &&
                   (ent instanceof Mek)) {
                 // Find an ECM suite to link to the stealth system. Stop looking after we find the first ECM suite.
                 for (Mounted<?> mEquip : ent.getMisc()) {
@@ -524,10 +524,10 @@ public class MekFileParser {
                 } else if (m.getType().getInternalName().equals(Sensor.LIGHT_AP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_LIGHT_AP));
                     ent.setNextSensor(ent.getSensors().lastElement());
-                } else if (m.getType().getInternalName().equals(Sensor.CLIMPROVED)) {
+                } else if (m.getType().getInternalName().equals(Sensor.CL_IMPROVED)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BA_IMPROVED));
                     ent.setNextSensor(ent.getSensors().lastElement());
-                } else if (m.getType().getInternalName().equals(Sensor.ISIMPROVED)) {
+                } else if (m.getType().getInternalName().equals(Sensor.IS_IMPROVED)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BA_IMPROVED));
                     ent.setNextSensor(ent.getSensors().lastElement());
                 }

@@ -59,7 +59,7 @@ public class ISFlamer extends FlamerWeapon {
         longRange = 3;
         extremeRange = 4;
         tonnage = 1;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 6;
         cost = 7500;
         shortAV = 2;

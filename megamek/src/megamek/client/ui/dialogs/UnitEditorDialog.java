@@ -352,7 +352,7 @@ public class UnitEditorDialog extends JDialog {
             if (mounted.getType() instanceof InfantryAttack) {
                 continue;
             }
-            int nCrits = mounted.getCriticals();
+            int nCrits = mounted.getNumCriticalSlots();
             int eqNum = entity.getEquipmentNum(mounted);
             int hits = entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT, eqNum, mounted.getLocation());
             if (mounted.isSplit()) {

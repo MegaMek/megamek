@@ -56,7 +56,7 @@ public class ISSRT6 extends SRTWeapon {
         this.waterLongRange = 9;
         this.waterExtremeRange = 12;
         this.tonnage = 3.0;
-        this.criticals = 2;
+        this.criticalSlots = 2;
         this.bv = 59;
         this.cost = 80000;
         rulesRefs = "230, TM";

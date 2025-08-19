@@ -61,7 +61,7 @@ public class CLAdvancedSRM4 extends AdvancedSRMWeapon {
               .andNot(F_AERO_WEAPON)
               .andNot(F_PROTO_WEAPON);
         tonnage = 0.15;
-        criticals = 3;
+        criticalSlots = 3;
         cost = 60000;
         rulesRefs = "261, TM";
         techAdvancement.setTechBase(TechBase.CLAN)

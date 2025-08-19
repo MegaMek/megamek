@@ -63,12 +63,12 @@ import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.MenuScroller;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Player;
+import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.ProtoMekClampMount;
 import megamek.common.equipment.Transporter;
 import megamek.common.equipment.WeaponType;
 import megamek.common.force.Force;
@@ -995,7 +995,7 @@ class LobbyMekPopup {
     private static boolean hasRapidFireMG(Entity entity) {
         for (Mounted<?> m : entity.getWeaponList()) {
             EquipmentType etype = m.getType();
-            if (etype.hasFlag(WeaponType.F_MG) && m.isRapidfire()) {
+            if (etype.hasFlag(WeaponType.F_MG) && m.isRapidFire()) {
                 return true;
             }
         }
@@ -1006,7 +1006,7 @@ class LobbyMekPopup {
     private static boolean hasNormalFireMG(Entity entity) {
         for (Mounted<?> m : entity.getWeaponList()) {
             EquipmentType etype = m.getType();
-            if (etype.hasFlag(WeaponType.F_MG) && !m.isRapidfire()) {
+            if (etype.hasFlag(WeaponType.F_MG) && !m.isRapidFire()) {
                 return true;
             }
         }

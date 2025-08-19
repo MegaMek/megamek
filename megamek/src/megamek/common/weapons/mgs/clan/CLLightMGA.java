@@ -34,12 +34,12 @@
 
 package megamek.common.weapons.mgs.clan;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
-import megamek.common.equipment.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.MGAWeaponHandler;
@@ -68,7 +68,7 @@ public class CLLightMGA extends AmmoWeapon {
         longRange = 6;
         extremeRange = 8;
         tonnage = 0.25;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 0; // we'll have to calculate this in calculateBV(),
         // because it depends on the number of MGs linked to the MGA
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)

@@ -34,14 +34,14 @@
 
 package megamek.common.weapons.gaussrifles.innerSphere;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.GRHandler;
-import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -67,7 +67,7 @@ public class ISGaussRifle extends GaussWeapon {
         longRange = 22;
         extremeRange = 33;
         tonnage = 15.0;
-        criticals = 7;
+        criticalSlots = 7;
         bv = 320;
         cost = 300000;
         shortAV = 15;

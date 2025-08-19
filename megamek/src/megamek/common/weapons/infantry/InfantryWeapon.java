@@ -34,22 +34,22 @@
 
 package megamek.common.weapons.infantry;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.units.Entity;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.game.Game;
-import megamek.common.equipment.InfantryWeaponMounted;
-import megamek.common.equipment.Mounted;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
-import megamek.common.equipment.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.InfantryWeaponMounted;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.units.Entity;
 import megamek.common.weapons.Weapon;
+import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -78,9 +78,9 @@ public abstract class InfantryWeapon extends Weapon {
         extremeRange = 0;
         heat = 0;
         tonnage = 0.0;
-        criticals = 0;
-        tankslots = 0;
-        svslots = 1;
+        criticalSlots = 0;
+        tankSlots = 0;
+        svSlots = 1;
         infantryDamage = 0;
         crew = 1;
         ammoWeight = 0.0;

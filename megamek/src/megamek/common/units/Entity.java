@@ -65,6 +65,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battleArmor.BattleArmorHandles;
+import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.battleValue.BVCalculator;
 import megamek.common.bays.ASFBay;
 import megamek.common.bays.Bay;
@@ -83,7 +84,9 @@ import megamek.common.enums.GamePhase;
 import megamek.common.enums.MPBoosters;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.*;
-import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.eras.Eras;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.exceptions.LocationFullException;
@@ -121,6 +124,7 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.turns.TurnOrdered;
 import megamek.common.util.RoundWeight;
 import megamek.common.weapons.AlamoMissileWeapon;
+import megamek.common.weapons.TeleMissileTracker;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.AltitudeBombAttack;
 import megamek.common.weapons.attacks.DiveBombAttack;
@@ -4199,7 +4203,7 @@ public abstract class Entity extends TurnOrdered
             }
 
             // one-shot launchers need their single shot of ammo added.
-            if ((mounted.getType().hasFlag(WeaponType.F_ONESHOT) ||
+            if ((mounted.getType().hasFlag(WeaponType.F_ONE_SHOT) ||
                   (isSupportVehicle() && (mounted.getType() instanceof InfantryWeapon))) &&
                   (AmmoType.getOneshotAmmo(mounted) != null)) {
                 addOneshotAmmo(mounted);
@@ -4248,7 +4252,7 @@ public abstract class Entity extends TurnOrdered
         // Fusillade gets a second round, which can be a different munition type so need to allow for two separate
         // mounts. Some infantry weapons have alternate inferno ammo, which will use the same mechanism but start
         // with zero shots.
-        if (mounted.getType().hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+        if (mounted.getType().hasFlag(WeaponType.F_DOUBLE_ONE_SHOT)) {
             Mounted<?> m2 = Mounted.createMounted(this, m.getType());
             m2.setOmniPodMounted(mounted.isOmniPodMounted());
             m2.setShotsLeft(shots);
@@ -4436,7 +4440,7 @@ public abstract class Entity extends TurnOrdered
               (mounted.isReady()) &&
               (!(mounted.getType().hasFlag(WeaponType.F_AMS) && mounted.curMode().equals(Weapon.MODE_AMS_ON))) &&
               (!(mounted.getType().hasFlag(WeaponType.F_AMS) && mounted.curMode().equals(Weapon.MODE_AMS_OFF))) &&
-              (!mounted.getType().hasFlag(WeaponType.F_AMSBAY)) &&
+              (!mounted.getType().hasFlag(WeaponType.F_AMS_BAY)) &&
               (!(mounted.hasModes() && mounted.curMode().equals("Point Defense"))) &&
               ((mounted.getLinked() == null) ||
                     ((mounted.getLinked().getType() instanceof MiscType) &&
@@ -4540,12 +4544,12 @@ public abstract class Entity extends TurnOrdered
         AmmoType ammoType = mountedAmmo.getType();
 
         if (mountedAmmo.isAmmoUsable() &&
-              !weaponType.hasFlag(WeaponType.F_ONESHOT) &&
+              !weaponType.hasFlag(WeaponType.F_ONE_SHOT) &&
               (ammoType.getAmmoType() == weaponType.getAmmoType()) &&
               (ammoType.getRackSize() == weaponType.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;
-        } else if ((weaponType.hasFlag(WeaponType.F_DOUBLE_ONESHOT) ||
+        } else if ((weaponType.hasFlag(WeaponType.F_DOUBLE_ONE_SHOT) ||
               (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.INFANTRY)) &&
               (mountedAmmo.getLocation() == Entity.LOC_NONE)) {
             // Make sure this ammo is in the chain, then move it to the head.
@@ -5244,7 +5248,7 @@ public abstract class Entity extends TurnOrdered
             if ((crit != null) && getCritical(loc, i).isHittable()) {
                 hittable++;
             }
-            // Reactive armor criticals in a location with armor should count
+            // Reactive armor criticalSlots in a location with armor should count
             // as hittable, evne though they aren't actually hittable
             else if ((crit != null) &&
                   (crit.getType() == CriticalSlot.TYPE_EQUIPMENT) &&
@@ -5259,8 +5263,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true if this location should transfer criticals to the next location inwards. Checks to see that every
-     * critical in this location is either already totally destroyed (not just hit) or was never hittable to begin
+     * Returns true if this location should transfer criticalSlots to the next location inwards. Checks to see that
+     * every critical in this location is either already totally destroyed (not just hit) or was never hittable to begin
      * with.
      */
     public boolean canTransferCriticals(int loc) {
@@ -5871,12 +5875,12 @@ public abstract class Entity extends TurnOrdered
                     return 5 + cyberBonus + quirkBonus + spaBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP) ||
-                      (m.getType().getInternalName().equals(Sensor.CLBALIGHT_AP)) ||
-                      (m.getType().getInternalName().equals(Sensor.ISBALIGHT_AP))) {
+                      (m.getType().getInternalName().equals(Sensor.CL_BA_LIGHT_AP)) ||
+                      (m.getType().getInternalName().equals(Sensor.IS_BA_LIGHT_AP))) {
                     return 3 + cyberBonus + quirkBonus + spaBonus;
                 }
-                if (m.getType().getInternalName().equals(Sensor.ISIMPROVED) ||
-                      (m.getType().getInternalName().equals(Sensor.CLIMPROVED))) {
+                if (m.getType().getInternalName().equals(Sensor.IS_IMPROVED) ||
+                      (m.getType().getInternalName().equals(Sensor.CL_IMPROVED))) {
                     return 2 + cyberBonus + quirkBonus + spaBonus;
                 }
                 return 4 + cyberBonus + quirkBonus + spaBonus;// everything else should be
@@ -5903,7 +5907,7 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasTargComp() {
         for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_TARGCOMP)) {
+            if (m.getType().hasFlag(MiscType.F_TARGETING_COMPUTER)) {
                 return !m.isInoperable();
             }
         }
@@ -5924,7 +5928,7 @@ public abstract class Entity extends TurnOrdered
             }
         }
         for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_TARGCOMP) && m.curMode().equals("Aimed shot")) {
+            if (m.getType().hasFlag(MiscType.F_TARGETING_COMPUTER) && m.curMode().equals("Aimed shot")) {
                 return !m.isInoperable();
             }
         }
@@ -6783,7 +6787,7 @@ public abstract class Entity extends TurnOrdered
         // or repeating, reset it's fired state
         if (hasFiredTsemp()) {
             for (WeaponMounted m : getWeaponList()) {
-                if (m.getType().hasFlag(WeaponType.F_TSEMP) && !m.getType().hasFlag(WeaponType.F_ONESHOT)) {
+                if (m.getType().hasFlag(WeaponType.F_TSEMP) && !m.getType().hasFlag(WeaponType.F_ONE_SHOT)) {
                     if (m.getType().hasFlag(WeaponType.F_REPEATING) || m.isTSEMPDowntime()) {
                         m.setFired(false);
                         m.setTSEMPDowntime(false);
@@ -6861,7 +6865,7 @@ public abstract class Entity extends TurnOrdered
                 }
                 for (Iterator<INarcPod> iter = iNarcPods.iterator(); iter.hasNext(); ) {
                     INarcPod p = iter.next();
-                    if (p.getLocation() == i) {
+                    if (p.location() == i) {
                         iter.remove();
                     }
                 }
@@ -6873,7 +6877,7 @@ public abstract class Entity extends TurnOrdered
                 }
                 for (Iterator<INarcPod> iter = pendingINarcPods.iterator(); iter.hasNext(); ) {
                     INarcPod p = iter.next();
-                    if (p.getLocation() == i) {
+                    if (p.location() == i) {
                         iter.remove();
                     }
                 }
@@ -6951,8 +6955,8 @@ public abstract class Entity extends TurnOrdered
         // Point defense bays are added too, provided they haven't fired at something
         // else already.
         getActiveAMS().stream()
-              .filter(ams -> ams.getType().hasFlag(WeaponType.F_AMSBAY) ||
-                    (ams.getType().hasFlag(WeaponType.F_PDBAY) && !ams.isUsedThisRound()))
+              .filter(ams -> ams.getType().hasFlag(WeaponType.F_AMS_BAY) ||
+                    (ams.getType().hasFlag(WeaponType.F_PD_BAY) && !ams.isUsedThisRound()))
               .filter(ams -> ComputeArc.isInArc(game,
                     getId(),
                     getEquipmentNum(ams),
@@ -6994,11 +6998,11 @@ public abstract class Entity extends TurnOrdered
 
             // AMS Bays can fire at all incoming attacks each round So can standard AMS if the unofficial option is
             // turned on
-            if ((ams.getType().hasFlag(WeaponType.F_AMSBAY)) ||
+            if ((ams.getType().hasFlag(WeaponType.F_AMS_BAY)) ||
                   (getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS) &&
                         ams.getType().hasFlag(WeaponType.F_AMS))) {
                 attacksInArc.forEach(waa -> waa.addCounterEquipment(ams));
-            } else if (ams.getType().hasFlag(WeaponType.F_PDBAY)) {
+            } else if (ams.getType().hasFlag(WeaponType.F_PD_BAY)) {
                 // Point defense bays are assigned to the attack with the greatest threat Unlike single AMS, PD bays
                 // can gang up on 1 attack
                 Compute.getHighestExpectedDamage(getGame(), attacksInArc, true).addCounterEquipment(ams);
@@ -7045,7 +7049,7 @@ public abstract class Entity extends TurnOrdered
      * @return true if the Entity is narced by that team.
      */
     public boolean isINarcedBy(int nTeamID) {
-        return iNarcPods.stream().anyMatch(pod -> (pod.getTeam() == nTeamID) && (pod.getType() == INarcPod.HOMING));
+        return iNarcPods.stream().anyMatch(pod -> (pod.team() == nTeamID) && (pod.type() == INarcPod.HOMING));
     }
 
     /**
@@ -7056,7 +7060,7 @@ public abstract class Entity extends TurnOrdered
      * @return <code>true</code> if we have.
      */
     public boolean isINarcedWith(long type) {
-        return iNarcPods.stream().anyMatch(pod -> pod.getType() == type);
+        return iNarcPods.stream().anyMatch(pod -> pod.type() == type);
     }
 
     /**
@@ -9900,7 +9904,7 @@ public abstract class Entity extends TurnOrdered
     public boolean isEligibleFor(GamePhase phase) {
         // only deploy in deployment phase
         if (phase.isDeployment() == isDeployed()) {
-            if (!isDeployed() && phase.isSetArtilleryAutohitHexes() && isEligibleForArtyAutoHitHexes()) {
+            if (!isDeployed() && phase.isSetArtilleryAutoHitHexes() && isEligibleForArtyAutoHitHexes()) {
                 LOGGER.debug("Artillery Units Present and Advanced PreDesignate option enabled");
             } else {
                 return false;
@@ -9913,7 +9917,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         // Hidden units are always eligible for PRE phases
-        if (phase.isPremovement() || phase.isPrefiring()) {
+        if (phase.isPremovement() || phase.isPreFiring()) {
             return isHidden();
         }
 
@@ -10683,7 +10687,7 @@ public abstract class Entity extends TurnOrdered
             setArmorType(newArmorType.getArmorType());
             setArmorTechLevel(newArmorType.getStaticTechLevel().getCompoundTechLevel(newArmorType.isClan()));
             // TODO: Is this needed? WTF is the point of it?
-            if (et.getCriticals(this) == 0) {
+            if (et.getNumCriticalSlots(this) == 0) {
                 try {
                     addEquipment(et, LOC_NONE);
                 } catch (Exception e) {
@@ -10705,7 +10709,7 @@ public abstract class Entity extends TurnOrdered
         } else {
             setArmorType(EquipmentType.getArmorType(et), loc);
             // TODO: Is this needed? WTF is the point of it?
-            if (et.getCriticals(this) == 0) {
+            if (et.getNumCriticalSlots(this) == 0) {
                 try {
                     addEquipment(et, LOC_NONE);
                 } catch (Exception e) {
@@ -10731,7 +10735,7 @@ public abstract class Entity extends TurnOrdered
         } else {
             structureTechLevel = et.getTechLevel(year);
             // TODO: Is this needed? WTF is the point of it?
-            if (et.getCriticals(this) == 0) {
+            if (et.getNumCriticalSlots(this) == 0) {
                 try {
                     addEquipment(et, LOC_NONE);
                 } catch (Exception e) {
@@ -11524,8 +11528,8 @@ public abstract class Entity extends TurnOrdered
     public void clearDestroyedNarcPods() {
         pendingNarcPods.removeIf(narcPod -> !locationCanHoldNarcPod(narcPod.getLocation()));
         narcPods.removeIf(narcPod -> !locationCanHoldNarcPod(narcPod.getLocation()));
-        pendingINarcPods.removeIf(iNarcPod -> !locationCanHoldNarcPod(iNarcPod.getLocation()));
-        iNarcPods.removeIf(iNarcPod -> !locationCanHoldNarcPod(iNarcPod.getLocation()));
+        pendingINarcPods.removeIf(iNarcPod -> !locationCanHoldNarcPod(iNarcPod.location()));
+        iNarcPods.removeIf(iNarcPod -> !locationCanHoldNarcPod(iNarcPod.location()));
     }
 
     private boolean locationCanHoldNarcPod(final int location) {
@@ -13558,7 +13562,7 @@ public abstract class Entity extends TurnOrdered
             if (miscType.hasFlag(MiscType.F_MASC) &&
                   m.isReady() &&
                   !miscType.hasSubType(MiscType.S_SUPERCHARGER) &&
-                  !miscType.hasSubType(MiscType.S_JETBOOSTER)) {
+                  !miscType.hasSubType(MiscType.S_JET_BOOSTER)) {
                 return m;
             }
         }

@@ -64,7 +64,7 @@ public class ISMRM10 extends MRMWeapon {
         this.longRange = 15;
         this.extremeRange = 22;
         this.tonnage = 3.0;
-        this.criticals = 2;
+        this.criticalSlots = 2;
         this.bv = 56;
         this.cost = 50000;
         this.shortAV = 6;

@@ -60,7 +60,7 @@ public class CLLB2XAC extends LBXACWeapon {
         longRange = 30;
         extremeRange = 40;
         tonnage = 5.0;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 47.0;
         cost = 150000;
         shortAV = getBaseAeroDamage();

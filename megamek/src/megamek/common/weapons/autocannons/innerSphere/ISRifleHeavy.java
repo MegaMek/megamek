@@ -61,7 +61,7 @@ public class ISRifleHeavy extends RifleWeapon {
         longRange = 18;
         extremeRange = 27;
         tonnage = 8.0;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 91;
         cost = 90000;
         explosive = false; // when firing incendiary ammo

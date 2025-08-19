@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,22 +35,19 @@
 
 package megamek.common.equipment;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
+import megamek.common.Player;
+import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.units.Entity;
-import megamek.common.Player;
 import megamek.common.units.Targetable;
-import megamek.common.ToHitData;
 
-public class MinefieldTarget implements Targetable {
+public record MinefieldTarget(Coords m_coords) implements Targetable {
+    @Serial
     private static final long serialVersionUID = 420672189241204590L;
-    private final Coords m_coords;
-
-    public MinefieldTarget(Coords c) {
-        m_coords = c;
-    }
 
     @Override
     public int getTargetType() {
@@ -115,7 +112,7 @@ public class MinefieldTarget implements Targetable {
 
     /**
      * The transformation encodes the y value in the top 5 decimal digits and the x value in the bottom 5. Could more
-     * efficiently encode this by partitioning the binary representation, but this is more human readable and still
+     * efficiently encode this by partitioning the binary representation, but this is more human-readable and still
      * allows for a 99999x99999 hex map.
      */
     public static int coordsToId(Coords c) {

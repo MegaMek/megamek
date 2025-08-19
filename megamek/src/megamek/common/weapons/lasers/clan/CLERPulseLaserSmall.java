@@ -66,7 +66,7 @@ public class CLERPulseLaserSmall extends PulseLaserWeapon {
         waterLongRange = 4;
         waterExtremeRange = 6;
         tonnage = 1.5;
-        criticals = 1;
+        criticalSlots = 1;
         shortAV = 5;
         maxRange = RANGE_SHORT;
         bv = 36;

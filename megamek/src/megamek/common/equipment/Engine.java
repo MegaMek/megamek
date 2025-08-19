@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,15 +40,15 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.units.Entity;
-import megamek.common.interfaces.ITechnology;
-import megamek.common.units.Mek;
 import megamek.common.Messages;
-import megamek.common.util.RoundWeight;
 import megamek.common.SimpleTechLevel;
-import megamek.common.units.Tank;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
+import megamek.common.interfaces.ITechnology;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
+import megamek.common.util.RoundWeight;
 
 /**
  * This class represents an engine, such as those driving 'Meks.
@@ -196,7 +196,7 @@ public class Engine implements Serializable, ITechnology {
      *
      * @param engineRating the rating of the engine
      * @param engineType   the type of the engine, either combustion or a type of fusion engine.
-     * @param engineFlags  Wether the engine is a tank engine, a clan engine, or large engine, or any combination of
+     * @param engineFlags  Weather the engine is a tank engine, a clan engine, or large engine, or any combination of
      *                     those.
      */
     public Engine(int engineRating, int engineType, int engineFlags) {
@@ -227,7 +227,7 @@ public class Engine implements Serializable, ITechnology {
     /**
      * Sanity checks the engine, no negative ratings, and similar checks.
      *
-     * @return true if the engine is useable.
+     * @return true if the engine is usable.
      */
     private boolean isValidEngine() {
         if (hasFlag(~(CLAN_ENGINE | TANK_ENGINE | LARGE_ENGINE
@@ -246,8 +246,7 @@ public class Engine implements Serializable, ITechnology {
             return false;
         }
 
-        if ((((int) Math.ceil(engineRating / 5) > ENGINE_RATINGS.length)
-              || (engineRating < 0)) && !hasFlag(SUPPORT_VEE_ENGINE)) {
+        if ((((engineRating / 5) > ENGINE_RATINGS.length) || (engineRating < 0)) && !hasFlag(SUPPORT_VEE_ENGINE)) {
             problem.append("Rating:").append(engineRating);
             return false;
         }
@@ -372,27 +371,7 @@ public class Engine implements Serializable, ITechnology {
         // Support Vehicles compute engine weight differently
         if ((entity.isSupportVehicle() || hasFlag(SUPPORT_VEE_ENGINE))
               && isValidEngine()) {
-            int mp = entity.getOriginalWalkMP();
-            if (entity.getMovementMode().isTrain()) {
-                mp = Math.max(0, mp - 2);
-            }
-            double movementFactor = 4 + mp * mp;
-            double engineWeightMult = SV_ENGINE_RATINGS[engineType][entity.getEngineTechRating().getIndex()];
-            double weight = entity.getBaseEngineValue() * movementFactor
-                  * engineWeightMult * entity.getWeight();
-            // Fusion engines have a minimum weight of 0.25t at D+ and 0.5t at C. Fission
-            // engines have
-            // a minimum of 5t at all tech ratings.
-            if ((engineType == NORMAL_ENGINE) && (entity.getEngineTechRating().isBetterOrEqualThan(TechRating.D))) {
-                weight = Math.max(weight, 0.25);
-            } else if ((engineType == NORMAL_ENGINE) || (engineType == FISSION)) {
-                weight = Math.max(weight, 5);
-            }
-
-            // Hovercraft have a minimum engine weight of 20% of the vehicle.
-            if (entity.getMovementMode().isHover()) {
-                weight = Math.max(weight, entity.getWeight() * 0.2);
-            }
+            double weight = getWeight(entity);
 
             return roundWeight.round(weight, entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK) && (engineRating < 40)) {
@@ -443,8 +422,33 @@ public class Engine implements Serializable, ITechnology {
         return toReturn;
     }
 
+    private double getWeight(Entity entity) {
+        int mp = entity.getOriginalWalkMP();
+        if (entity.getMovementMode().isTrain()) {
+            mp = Math.max(0, mp - 2);
+        }
+        double movementFactor = 4 + mp * mp;
+        double engineWeightMultiplier = SV_ENGINE_RATINGS[engineType][entity.getEngineTechRating().getIndex()];
+        double weight = entity.getBaseEngineValue() * movementFactor
+              * engineWeightMultiplier * entity.getWeight();
+        // Fusion engines have a minimum weight of 0.25t at D+ and 0.5t at C. Fission
+        // engines have
+        // a minimum of 5t at all tech ratings.
+        if ((engineType == NORMAL_ENGINE) && (entity.getEngineTechRating().isBetterOrEqualThan(TechRating.D))) {
+            weight = Math.max(weight, 0.25);
+        } else if ((engineType == NORMAL_ENGINE) || (engineType == FISSION)) {
+            weight = Math.max(weight, 5);
+        }
+
+        // Hovercraft have a minimum engine weight of 20% of the vehicle.
+        if (entity.getMovementMode().isHover()) {
+            weight = Math.max(weight, entity.getWeight() * 0.2);
+        }
+        return weight;
+    }
+
     /**
-     * @return the number of heatsinks that fit weight-free into the engine
+     * @return the number of heat sinks that fit weight-free into the engine
      */
     public int getWeightFreeEngineHeatSinks() {
         // Support Vee engines never provide free heat-sinks, TM pg 133
@@ -504,7 +508,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     public static Map<Integer, String> getAllEngineCodeName() {
-        Map<Integer, String> result = new HashMap();
+        Map<Integer, String> result = new HashMap<>();
 
         result.put(COMBUSTION_ENGINE, getEngineTypeName(COMBUSTION_ENGINE));
         result.put(NORMAL_ENGINE, getEngineTypeName(NORMAL_ENGINE));
@@ -618,7 +622,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * @return the engine criticals in the side torsos.
+     * @return the engine critical slots in the side torsos.
      */
     public int[] getSideTorsoCriticalSlots() {
         if ((engineType == LIGHT_ENGINE)
@@ -669,33 +673,25 @@ public class Engine implements Serializable, ITechnology {
     /**
      * @return the heat generated while the mek is walking.
      */
-    public int getWalkHeat(Entity e) {
-        boolean hasSCM = (e instanceof Mek) && e.hasWorkingSCM();
-        switch (engineType) {
-            case COMBUSTION_ENGINE:
-            case FUEL_CELL:
-                return 0;
-            case XXL_ENGINE:
-                return hasSCM ? 3 : 4;
-            default:
-                return hasSCM ? 0 : 1;
-        }
+    public int getWalkHeat(Entity entity) {
+        boolean hasSCM = (entity instanceof Mek) && entity.hasWorkingSCM();
+        return switch (engineType) {
+            case COMBUSTION_ENGINE, FUEL_CELL -> 0;
+            case XXL_ENGINE -> hasSCM ? 3 : 4;
+            default -> hasSCM ? 0 : 1;
+        };
     }
 
     /**
      * @return the heat generated while the mek is running.
      */
-    public int getRunHeat(Entity e) {
-        boolean hasSCM = (e instanceof Mek) && e.hasWorkingSCM();
-        switch (engineType) {
-            case COMBUSTION_ENGINE:
-            case FUEL_CELL:
-                return 0;
-            case XXL_ENGINE:
-                return hasSCM ? 4 : 6;
-            default:
-                return hasSCM ? 0 : 2;
-        }
+    public int getRunHeat(Entity entity) {
+        boolean hasSCM = (entity instanceof Mek) && entity.hasWorkingSCM();
+        return switch (engineType) {
+            case COMBUSTION_ENGINE, FUEL_CELL -> 0;
+            case XXL_ENGINE -> hasSCM ? 4 : 6;
+            default -> hasSCM ? 0 : 2;
+        };
     }
 
     /**
@@ -703,15 +699,11 @@ public class Engine implements Serializable, ITechnology {
      */
     public int getSprintHeat(Entity e) {
         boolean hasSCM = (e instanceof Mek) && e.hasWorkingSCM();
-        switch (engineType) {
-            case COMBUSTION_ENGINE:
-            case FUEL_CELL:
-                return 0;
-            case XXL_ENGINE:
-                return hasSCM ? 6 : 9;
-            default:
-                return hasSCM ? 0 : 3;
-        }
+        return switch (engineType) {
+            case COMBUSTION_ENGINE, FUEL_CELL -> 0;
+            case XXL_ENGINE -> hasSCM ? 6 : 9;
+            default -> hasSCM ? 0 : 3;
+        };
     }
 
     /**
@@ -730,9 +722,9 @@ public class Engine implements Serializable, ITechnology {
             return 0.25; // IS XXL
         } else if (sideCrits >= 3) {
             return 0.5; // IS XL, clan XXL, superheavy IS XXL, superheavy IS large XXL
-        } else if (sideCrits >= 2) {
+        } else if (sideCrits == 2) {
             return 0.75; // IS light, clan XL, superheavy clan XXL, superheavy clan large XXL
-        } else if (sideCrits >= 1) {
+        } else if (sideCrits == 1) {
             return 0.825; // superheavy IS Light, superheavy clan XL
         } else {
             return 1; // standard, compact, ice, fuel cell, fission
@@ -740,36 +732,17 @@ public class Engine implements Serializable, ITechnology {
     }
 
     public int getBaseCost() {
-        int cost = 0;
-        switch (engineType) {
-            case COMBUSTION_ENGINE:
-                cost = 1250;
-                break;
-            case NORMAL_ENGINE:
-                cost = 5000;
-                break;
-            case XL_ENGINE:
-                cost = 20000;
-                break;
-            case XXL_ENGINE:
-                cost = 100000;
-                break;
-            case COMPACT_ENGINE:
-                cost = 10000;
-                break;
-            case LIGHT_ENGINE:
-                cost = 15000;
-                break;
-            case FUEL_CELL:
-                cost = 3500;
-                break;
-            case FISSION:
-                cost = 7500;
-                break;
-            case NONE:
-                cost = 0;
-                break;
-        }
+        int cost = switch (engineType) {
+            case COMBUSTION_ENGINE -> 1250;
+            case NORMAL_ENGINE -> 5000;
+            case XL_ENGINE -> 20000;
+            case XXL_ENGINE -> 100000;
+            case COMPACT_ENGINE -> 10000;
+            case LIGHT_ENGINE -> 15000;
+            case FUEL_CELL -> 3500;
+            case FISSION -> 7500;
+            default -> 0;
+        };
         if (hasFlag(LARGE_ENGINE)) {
             cost *= 2;
         }
@@ -785,26 +758,16 @@ public class Engine implements Serializable, ITechnology {
      * @return The type multiplier for cost
      */
     public static double getSVCostMultiplier(int etype) {
-        switch (etype) {
-            case STEAM:
-                return 0.8;
-            case BATTERY:
-                return 1.2;
-            case FUEL_CELL:
-                return 1.4;
-            case SOLAR:
-                return 1.6;
-            case MAGLEV:
-                return 2.5;
-            case FISSION:
-                return 3.0;
-            case NORMAL_ENGINE:
-                return 2.0;
-            case COMBUSTION_ENGINE:
-            case EXTERNAL:
-            default:
-                return 1.0;
-        }
+        return switch (etype) {
+            case STEAM -> 0.8;
+            case BATTERY -> 1.2;
+            case FUEL_CELL -> 1.4;
+            case SOLAR -> 1.6;
+            case MAGLEV -> 2.5;
+            case FISSION -> 3.0;
+            case NORMAL_ENGINE -> 2.0;
+            default -> 1.0;
+        };
     }
 
     private static final TechAdvancement STANDARD_FUSION_TA = new TechAdvancement(TechBase.ALL)
@@ -1282,7 +1245,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * For omnis set the base Chassies HS any variants will only use this and the reset will have to be added.
+     * For OmniMeks set the base Chassis HS any variants will only use this and the reset will have to be added.
      *
      * @param amount The number to set as base chassis heat sinks
      */
@@ -1291,7 +1254,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * Return the Base Chassies Engine heat Sinks or integralHeatSinkCapacity which ever is less.
+     * Return the Base Chassis Engine heat Sinks or integralHeatSinkCapacity which ever is less.
      *
      * @param compact Whether this engine uses compact heat sinks or not.
      *

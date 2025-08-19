@@ -37,9 +37,9 @@ package megamek.common.weapons.missiles.innerSphere;
 import static megamek.common.equipment.MountedHelper.isArtemisIV;
 import static megamek.common.equipment.MountedHelper.isArtemisProto;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.missiles.MMLWeapon;
 
 /**
@@ -63,7 +63,7 @@ public class ISMML7 extends MMLWeapon {
         heat = 4;
         rackSize = 7;
         tonnage = 4.5;
-        criticals = 4;
+        criticalSlots = 4;
         bv = 67;
         cost = 105000;
         shortAV = 4;

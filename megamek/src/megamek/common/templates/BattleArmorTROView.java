@@ -115,7 +115,7 @@ public class BattleArmorTROView extends TROView {
               TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
         final EquipmentType armor = EquipmentType.get(armorName);
         setModelData("armorType", armor == null ? "Unknown" : armor.getName().replaceAll("^BA\\s+", ""));
-        setModelData("armorSlots", armor == null ? 0 : armor.getCriticals(ba));
+        setModelData("armorSlots", armor == null ? 0 : armor.getNumCriticalSlots(ba));
         setModelData("armorMass", testBA.getWeightArmor() * 1000);
         setModelData("armorValue", ba.getOArmor(BattleArmor.LOC_TROOPER_1));
         setModelData("internal", ba.getOInternal(BattleArmor.LOC_TROOPER_1));
@@ -184,7 +184,7 @@ public class BattleArmorTROView extends TROView {
             if (name.length() >= nameWidth) {
                 nameWidth = name.length() + 1;
             }
-            row.put("slots", m.getCriticals());
+            row.put("slots", m.getNumCriticalSlots());
             if (m.getType() instanceof AmmoType) {
                 row.put("mass", ((AmmoType) m.getType()).getKgPerShot() * m.getOriginalShots());
             } else {

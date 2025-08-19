@@ -53,7 +53,7 @@ public class ISSRM1OS extends SRMWeapon {
         longRange = 9;
         extremeRange = 12;
         bv = 3;
-        flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
+        flags = flags.or(F_NO_FIRES).or(F_ONE_SHOT);
         rulesRefs = "Unofficial";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

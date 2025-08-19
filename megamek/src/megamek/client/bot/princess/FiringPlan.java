@@ -41,15 +41,15 @@ import java.util.Set;
 import java.util.Vector;
 
 import megamek.codeUtilities.StringUtility;
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.Mounted;
-import megamek.common.units.Targetable;
-import megamek.common.equipment.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Targetable;
 
 /**
  * FiringPlan is a series of {@link WeaponFireInfo} objects describing a full attack turn
@@ -354,7 +354,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
     private double getDamageByClusterTable(double damage, WeaponType weaponType, AmmoMounted ammoMounted) {
         if (ammoMounted != null) {
             AmmoType ammoType = ammoMounted.getType();
-            if ((WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType.getDamage()) ||
+            if ((WeaponType.DAMAGE_BY_CLUSTER_TABLE == weaponType.getDamage()) ||
                   (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER))) {
                 damage = ammoType.getDamagePerShot();
             }

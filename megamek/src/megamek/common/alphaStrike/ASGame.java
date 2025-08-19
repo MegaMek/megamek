@@ -112,11 +112,10 @@ public class ASGame extends AbstractGame {
                  OFFBOARD_REPORT,
                  DEPLOYMENT,
                  PREMOVEMENT,
-                 MOVEMENT,
-                 PREFIRING,
+                 MOVEMENT, PRE_FIRING,
                  FIRING,
                  DEPLOY_MINEFIELDS,
-                 SET_ARTILLERY_AUTOHIT_HEXES -> hasMoreTurns();
+                 SET_ARTILLERY_AUTO_HIT_HEXES -> hasMoreTurns();
             default -> true;
         };
     }

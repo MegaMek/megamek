@@ -52,7 +52,6 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.panels.phaseDisplay.TowLinkWarning;
 import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.board.AllowedDeploymentHelper;
 import megamek.common.BulldozerMovePath;
 import megamek.common.BulldozerMovePath.MPCostComparator;
 import megamek.common.CalledShot;
@@ -71,6 +70,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
+import megamek.common.board.AllowedDeploymentHelper;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
@@ -80,13 +80,13 @@ import megamek.common.compute.Compute;
 import megamek.common.containers.PlayerIDAndList;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.BombType.BombTypeEnum;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.Transporter;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.game.IGame;
@@ -1225,7 +1225,7 @@ public class Princess extends BotClient {
                     ammoConservation.put(weapon, 0.01);
                     msg.append(" doesn't use ammo.");
                     continue;
-                } else if (weaponType.hasFlag(WeaponType.F_ONESHOT)) {
+                } else if (weaponType.hasFlag(WeaponType.F_ONE_SHOT)) {
                     // Shoot OS weapons on a 10 / 9 / 8 for Aggro 10 / 5 / 0
                     ammoConservation.put(weapon, (35 - 2.0 * aggroFactor) / 100.0);
                     msg.append(" One Shot weapon.");
@@ -2009,7 +2009,7 @@ public class Princess extends BotClient {
                 maximumTN = calcEnhancedTargetingMaxTN(false);
 
                 // If the weapon uses the cluster table, increase the maximum target number
-                if (shot.getWeapon().getType().getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE ||
+                if (shot.getWeapon().getType().getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE ||
                       (shot.getAmmo() != null &&
                             shot.getAmmo().getType().getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) ||
                       shot.getWeapon().getType().hasFlag(WeaponType.F_INFANTRY)) {

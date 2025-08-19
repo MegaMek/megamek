@@ -56,7 +56,7 @@ public class ISStreakSRM6 extends StreakSRMWeapon {
         this.longRange = 9;
         this.extremeRange = 12;
         this.tonnage = 4.5;
-        this.criticals = 2;
+        this.criticalSlots = 2;
         this.bv = 89;
         this.cost = 120000;
         this.shortAV = 12;

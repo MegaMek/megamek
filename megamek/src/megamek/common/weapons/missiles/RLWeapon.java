@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.missiles;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.RLHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -58,7 +58,7 @@ public abstract class RLWeapon extends MissileWeapon {
     public RLWeapon() {
         super();
         ammoType = AmmoType.AmmoTypeEnum.ROCKET_LAUNCHER;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONE_SHOT);
         toHitModifier = 1;
         atClass = CLASS_ROCKET_LAUNCHER;
     }

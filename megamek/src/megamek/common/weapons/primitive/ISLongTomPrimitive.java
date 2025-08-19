@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.primitive;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.SimpleTechLevel;
+import megamek.common.equipment.AmmoType;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 
 /**
@@ -62,7 +62,7 @@ public class ISLongTomPrimitive extends ArtilleryWeapon {
         longRange = 30;
         extremeRange = 30; // No extreme range.
         tonnage = 30;
-        criticals = 30;
+        criticalSlots = 30;
         bv = 368;
         cost = 450000;
         rulesRefs = "118, IO";

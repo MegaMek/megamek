@@ -34,14 +34,14 @@
 
 package megamek.common.weapons.battlearmor.innerSphere;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.battlearmor.BATaserHandler;
+import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -67,8 +67,8 @@ public class ISBATaser extends AmmoWeapon {
         toHitModifier = 1;
         cost = 10000;
         tonnage = 0.3;
-        criticals = 3;
-        flags = flags.or(F_BA_WEAPON).or(F_ONESHOT).or(F_TASER).or(F_BALLISTIC)
+        criticalSlots = 3;
+        flags = flags.or(F_BA_WEAPON).or(F_ONE_SHOT).or(F_TASER).or(F_BALLISTIC)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "346, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS

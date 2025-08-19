@@ -61,7 +61,7 @@ import megamek.client.ui.dialogs.UnitEditorDialog;
 import megamek.client.ui.dialogs.abstractDialogs.ASStatsDialog;
 import megamek.client.ui.dialogs.customMek.CustomMekDialog;
 import megamek.client.ui.dialogs.iconChooser.CamoChooserDialog;
-import megamek.common.*;
+import megamek.common.Player;
 import megamek.common.bays.Bay;
 import megamek.common.enums.Gender;
 import megamek.common.equipment.Mounted;
@@ -572,7 +572,7 @@ public class LobbyActions {
         for (Entity entity : entities) {
             for (Mounted<?> mounted : entity.getWeaponList()) {
                 if (mounted.getType().hasFlag(WeaponType.F_MG)) {
-                    mounted.setRapidfire(burstOn);
+                    mounted.setRapidFire(burstOn);
                     updateCandidates.add(entity);
                 }
             }

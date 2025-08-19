@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,29 +34,29 @@
 
 package megamek.common.equipment;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
+import megamek.common.ECMInfo;
+import megamek.common.LosEffects;
+import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeECM;
-import megamek.common.board.Coords;
-import megamek.common.ECMInfo;
-import megamek.common.units.Entity;
 import megamek.common.game.Game;
-import megamek.common.units.Infantry;
-import megamek.common.LosEffects;
-import megamek.common.units.Terrains;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.Terrains;
 
 /**
  * This class will hold all the information about a particular active sensor, including its rolls
  */
-public class Sensor implements Serializable {
+public record Sensor(int type) implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6838624193286089782L;
-
-    private int type;
 
     // types of sensors
     public static final int TYPE_MEK_RADAR = 0;
@@ -68,8 +68,8 @@ public class Sensor implements Serializable {
     public static final int TYPE_LIGHT_AP = 6;
     public static final int TYPE_MEK_IR = 7;
     public static final int TYPE_VEE_IR = 8;
-    public static final int TYPE_MEK_MAGSCAN = 9;
-    public static final int TYPE_VEE_MAGSCAN = 10;
+    public static final int TYPE_MEK_MAG_SCAN = 9;
+    public static final int TYPE_VEE_MAG_SCAN = 10;
     public static final int TYPE_BA_HEAT = 11;
     public static final int TYPE_BA_IMPROVED = 12;
     public static final int TYPE_MEK_SEISMIC = 13;
@@ -90,28 +90,28 @@ public class Sensor implements Serializable {
     public static final String CLAN_AP = "CLActiveProbe";
     public static final String BLOODHOUND = "BloodhoundActiveProbe";
     public static final String LIGHT_AP = "CLLightActiveProbe";
-    public static final String ISIMPROVED = "ISImprovedSensors";
-    public static final String CLIMPROVED = "CLImprovedSensors";
-    public static final String CLBALIGHT_AP = "CLBALightActiveProbe";
-    public static final String ISBALIGHT_AP = "ISBALightActiveProbe";
+    public static final String IS_IMPROVED = "ISImprovedSensors";
+    public static final String CL_IMPROVED = "CLImprovedSensors";
+    public static final String CL_BA_LIGHT_AP = "CLBALightActiveProbe";
+    public static final String IS_BA_LIGHT_AP = "ISBALightActiveProbe";
     public static final String EW_EQUIPMENT = "ISElectronicWarfareEquipment";
 
-    private static String[] sensorNames = { "Mek Radar", "Vehicle Radar",
-                                            "Beagle Active Probe", "Clan AP", "Bloodhound AP", "Watchdog",
-                                            "Light AP", "Mek IR", "Vehicle IR", "Mek Magscan",
-                                            "Vehicle Magscan", "Heat Sensors", "Improved Sensors",
-                                            "Mek Seismic", "Vehicle Seismic", "EW Equipment", "Nova CEWS",
-                                            "Beagle Active Probe Prototype",
-                                            "Aero Sensor Suite (Active)", "Spacecraft Radar (Active)",
-                                            "Spacecraft Electronic Support Measures (Passive)",
-                                            "Spacecraft Thermal/Optical Sensors (Passive)",
-                                            "Aero Thermal/Optical Sensors (Passive)" };
+    private static final String[] sensorNames = { "Mek Radar", "Vehicle Radar",
+                                                  "Beagle Active Probe", "Clan AP", "Bloodhound AP", "Watchdog",
+                                                  "Light AP", "Mek IR", "Vehicle IR", "Mek Magscan",
+                                                  "Vehicle Magscan", "Heat Sensors", "Improved Sensors",
+                                                  "Mek Seismic", "Vehicle Seismic", "EW Equipment", "Nova CEWS",
+                                                  "Beagle Active Probe Prototype",
+                                                  "Aero Sensor Suite (Active)", "Spacecraft Radar (Active)",
+                                                  "Spacecraft Electronic Support Measures (Passive)",
+                                                  "Spacecraft Thermal/Optical Sensors (Passive)",
+                                                  "Aero Thermal/Optical Sensors (Passive)" };
     public static final int SIZE = sensorNames.length;
 
     //Constants for space automatic visual detection ranges
-    public static final int ASF_RADAR_AUTOSPOT_RANGE = 55;
+    public static final int ASF_RADAR_AUTO_SPOT_RANGE = 55;
     public static final int ASF_OPTICAL_FIRING_SOLUTION_RANGE = 14;
-    public static final int LC_RADAR_AUTOSPOT_RANGE = 555;
+    public static final int LC_RADAR_AUTO_SPOT_RANGE = 555;
     public static final int LC_RADAR_GROUND_RANGE = 30;
     //Yeah, same value, but we might want to know what it's for later...
     public static final int ASF_RADAR_MAX_RANGE = 555;
@@ -120,12 +120,7 @@ public class Sensor implements Serializable {
     /**
      * Constructor
      */
-    public Sensor(int type) {
-        this.type = type;
-    }
-
-    public int getType() {
-        return type;
+    public Sensor {
     }
 
     public String getDisplayName() {
@@ -144,60 +139,36 @@ public class Sensor implements Serializable {
 
     public int getRangeByBracket() {
 
-        switch (type) {
-            case TYPE_BAP:
-                return 12;
-            case TYPE_BAPP:
-                return 12;
-            case TYPE_BLOODHOUND:
-                return 16;
-            case TYPE_CLAN_AP:
-                return 15;
-            case TYPE_WATCHDOG:
-            case TYPE_LIGHT_AP:
-            case TYPE_VEE_MAGSCAN:
-            case TYPE_VEE_IR:
-            case TYPE_BA_HEAT:
-                return 9;
-            case TYPE_NOVA:
+        return switch (type) {
+            case TYPE_BAP, TYPE_BAPP -> 12;
+            case TYPE_BLOODHOUND -> 16;
+            case TYPE_CLAN_AP -> 15;
+            case TYPE_WATCHDOG, TYPE_LIGHT_AP, TYPE_VEE_MAG_SCAN, TYPE_VEE_IR, TYPE_BA_HEAT -> 9;
+            case TYPE_NOVA ->
                 // I've not found a reference for sensor range of NovaCEWS.
                 // Assuming Watchdog range.
-                return 9;
-            case TYPE_MEK_MAGSCAN:
-            case TYPE_MEK_IR:
-                //Under the current errata (3.0,Dec 2017), the rules only give aero sensor ranges against overflown ground units
-                //No differences in range are mentioned for any sensor but active probe, so I'm assuming magscan range for standard sensors
-            case TYPE_AERO_SENSOR:
-                return 10;
-            case TYPE_MEK_RADAR:
-                return 8;
-            case TYPE_VEE_RADAR:
-            case TYPE_BA_IMPROVED:
-                return 6;
-            case TYPE_EW_EQUIPMENT:
-                return 3;
-            case TYPE_MEK_SEISMIC:
-                return 2;
-            case TYPE_VEE_SEISMIC:
-                return 1;
+                  9;
+            //Under the current errata (3.0,Dec 2017), the rules only give aero sensor ranges against overflown ground units
+            //No differences in range are mentioned for any sensor but active probe, so I'm assuming magscan range for standard sensors
+            case TYPE_MEK_MAG_SCAN, TYPE_MEK_IR, TYPE_AERO_SENSOR -> 10;
+            case TYPE_MEK_RADAR -> 8;
+            case TYPE_VEE_RADAR, TYPE_BA_IMPROVED -> 6;
+            case TYPE_EW_EQUIPMENT -> 3;
+            case TYPE_MEK_SEISMIC -> 2;
+            case TYPE_VEE_SEISMIC -> 1;
             //The ranges listed for the various sensors in SO are so far beyond gameplay distances that I'm condensing
             //them into just the types that have different detection mechanics.
-            case TYPE_SPACECRAFT_RADAR:
-            case TYPE_SPACECRAFT_ESM:
-                return 5555;
-            case TYPE_SPACECRAFT_THERMAL:
-                return 1388;
-            case TYPE_AERO_THERMAL:
-                return 139;
-            default:
-                return 0;
-        }
+            case TYPE_SPACECRAFT_RADAR, TYPE_SPACECRAFT_ESM -> 5555;
+            case TYPE_SPACECRAFT_THERMAL -> 1388;
+            case TYPE_AERO_THERMAL -> 139;
+            default -> 0;
+        };
     }
 
     public int adjustRange(int range, Game game, LosEffects los) {
 
         if (((type == TYPE_MEK_RADAR) || (type == TYPE_VEE_RADAR)
-              || (type == TYPE_VEE_MAGSCAN) || (type == TYPE_MEK_MAGSCAN))
+              || (type == TYPE_VEE_MAG_SCAN) || (type == TYPE_MEK_MAG_SCAN))
               && ((los.getHardBuildings() + los.getSoftBuildings()) > 0)) {
             return 0;
         }
@@ -205,9 +176,9 @@ public class Sensor implements Serializable {
         if (los.isBlockedByHill()
               && (type != TYPE_MEK_SEISMIC)
               && (type != TYPE_VEE_SEISMIC)
-              && ((type != TYPE_MEK_MAGSCAN) || game.getOptions()
+              && ((type != TYPE_MEK_MAG_SCAN) || game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_MAGSCAN_NOHILLS))
-              && ((type != TYPE_VEE_MAGSCAN) || game.getOptions()
+              && ((type != TYPE_VEE_MAG_SCAN) || game.getOptions()
               .booleanOption(OptionsConstants.ADVANCED_MAGSCAN_NOHILLS)) && !isBAP()) {
             return 0;
         }
@@ -263,8 +234,8 @@ public class Sensor implements Serializable {
         // first if we have seismic/magscan/IR we don't have to mod anything
         if ((type == TYPE_MEK_SEISMIC) || (type == TYPE_VEE_SEISMIC)
               || (type == TYPE_VEE_IR) || (type == TYPE_MEK_IR)
-              || (type == TYPE_BA_HEAT) || (type == TYPE_MEK_MAGSCAN)
-              || (type == TYPE_VEE_MAGSCAN)) {
+              || (type == TYPE_BA_HEAT) || (type == TYPE_MEK_MAG_SCAN)
+              || (type == TYPE_VEE_MAG_SCAN)) {
             return mod;
         }
 
@@ -458,11 +429,9 @@ public class Sensor implements Serializable {
     /**
      * Computes the sensor check modifier for ECM.
      *
-     * @param en
-     * @param allECMInfo A collection of ECMInfo for all entities, this value can be null and it will be computed when
+     * @param allECMInfo A collection of ECMInfo for all entities, this value can be null, and it will be computed when
      *                   it's needed, however passing in the pre-computed collection is much faster
      *
-     * @return
      */
     public int getModForECM(Entity en, List<ECMInfo> allECMInfo) {
         // how many ECM fields are affecting the entity?
@@ -475,11 +444,9 @@ public class Sensor implements Serializable {
     /**
      * Computes the sensor check modifier for ECM.
      *
-     * @param targetEntity
-     * @param allECMInfo   A collection of ECMInfo for all entities, this value can be null and it will be computed when
-     *                     it's needed, however passing in the pre-computed collection is much faster
+     * @param allECMInfo A collection of ECMInfo for all entities, this value can be null, and it will be computed when
+     *                   it's needed, however passing in the pre-computed collection is much faster
      *
-     * @return
      */
     public int getModForTargetECM(Entity targetEntity, List<ECMInfo> allECMInfo) {
         // how many ECM fields are affecting the target entity?
@@ -495,39 +462,25 @@ public class Sensor implements Serializable {
             ecmAngel = Math.max(0, ecmInfo.getAngelECMStrength());
         }
 
-        switch (type) {
-            case TYPE_BAP:
-            case TYPE_BAPP:
-            case TYPE_CLAN_AP:
-            case TYPE_WATCHDOG:
-                // as above, no data, assuming watchdog quality
-            case TYPE_NOVA:
-            case TYPE_EW_EQUIPMENT:
-                return (int) Math.floor((ecm * 4) + (ecmAngel * 5));
-            case TYPE_BLOODHOUND:
-                return (int) Math.floor((ecm * 2) + (ecmAngel * 3));
-            case TYPE_LIGHT_AP:
-            case TYPE_MEK_RADAR:
-                return (int) Math.floor((ecm * 5) + (ecmAngel * 6));
-            case TYPE_VEE_RADAR:
-            case TYPE_BA_IMPROVED:
-                return (int) Math.floor((ecm * 6) + (ecmAngel * 7));
-            default:
-                return 0;
-        }
+        return switch (type) {
+            // as above, no data, assuming watchdog quality
+            case TYPE_BAP, TYPE_BAPP, TYPE_CLAN_AP, TYPE_WATCHDOG, TYPE_NOVA, TYPE_EW_EQUIPMENT ->
+                  (int) Math.floor((ecm * 4) + (ecmAngel * 5));
+            case TYPE_BLOODHOUND -> (int) Math.floor((ecm * 2) + (ecmAngel * 3));
+            case TYPE_LIGHT_AP, TYPE_MEK_RADAR -> (int) Math.floor((ecm * 5) + (ecmAngel * 6));
+            case TYPE_VEE_RADAR, TYPE_BA_IMPROVED -> (int) Math.floor((ecm * 6) + (ecmAngel * 7));
+            default -> 0;
+        };
     }
 
     public int getModForMetalContent(Entity en, Entity te) {
         // How much metal is affecting the entity?
         int metal = Compute.getMetalInPath(en, en.getPosition(), te.getPosition());
 
-        switch (type) {
-            case TYPE_MEK_MAGSCAN:
-            case TYPE_VEE_MAGSCAN:
-                return metal;
-            default:
-                return 0;
-        }
+        return switch (type) {
+            case TYPE_MEK_MAG_SCAN, TYPE_VEE_MAG_SCAN -> metal;
+            default -> 0;
+        };
     }
 
     public int entityAdjustments(int range, Entity target, Game game) {
@@ -553,7 +506,7 @@ public class Sensor implements Serializable {
             }
         }
 
-        if ((type == TYPE_MEK_MAGSCAN) || (type == TYPE_VEE_MAGSCAN)) {
+        if ((type == TYPE_MEK_MAG_SCAN) || (type == TYPE_VEE_MAG_SCAN)) {
             if (target.getWeight() > 1000) {
                 range += 3;
             } else if (target.getWeight() > 100) {

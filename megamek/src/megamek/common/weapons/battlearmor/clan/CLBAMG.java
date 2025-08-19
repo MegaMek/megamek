@@ -63,7 +63,7 @@ public class CLBAMG extends BAMGWeapon {
         longRange = 3;
         extremeRange = 4;
         tonnage = 0.1;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 5;
         cost = 5000;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE)

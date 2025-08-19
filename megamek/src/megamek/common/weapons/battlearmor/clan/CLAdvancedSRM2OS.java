@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.battlearmor.clan;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.battlearmor.AdvancedSRMWeapon;
 
 /**
@@ -54,10 +54,10 @@ public class CLAdvancedSRM2OS extends AdvancedSRMWeapon {
         longRange = 12;
         extremeRange = 16;
         bv = 6;
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONE_SHOT).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         tonnage = .07;
-        criticals = 3;
+        criticalSlots = 3;
         cost = 15000;
         rulesRefs = "261, TM";
         techAdvancement.setTechBase(TechBase.CLAN)

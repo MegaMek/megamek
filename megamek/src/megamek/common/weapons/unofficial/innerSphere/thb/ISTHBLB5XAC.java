@@ -59,7 +59,7 @@ public class ISTHBLB5XAC extends LBXACWeapon {
         this.longRange = 22;
         this.extremeRange = 30;
         this.tonnage = 8.0;
-        this.criticals = 6;
+        this.criticalSlots = 6;
         this.shortAV = getBaseAeroDamage();
         this.medAV = this.shortAV;
         this.longAV = this.shortAV;

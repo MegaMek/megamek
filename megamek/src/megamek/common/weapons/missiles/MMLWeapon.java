@@ -36,10 +36,10 @@ package megamek.common.weapons.missiles;
 
 import java.io.Serial;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.handlers.AttackHandler;
@@ -77,7 +77,7 @@ public abstract class MMLWeapon extends MissileWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_MML;
+        return BF_CLASS_MML;
     }
 
     @Override

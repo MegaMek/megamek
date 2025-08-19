@@ -34,9 +34,9 @@
 
 package megamek.common.weapons.lasers;
 
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.ReengineeredLaserWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -53,6 +53,6 @@ public abstract class ReengineeredLaserWeapon extends PulseLaserWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_REL;
+        return BF_CLASS_REL;
     }
 }

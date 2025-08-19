@@ -34,9 +34,9 @@
 
 package megamek.common.weapons.missiles.innerSphere;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.missiles.MMLWeapon;
 
 /**
@@ -60,7 +60,7 @@ public class ISMML3 extends MMLWeapon {
         heat = 2;
         rackSize = 3;
         tonnage = 1.5;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 29;
         cost = 45000;
         shortAV = 2;

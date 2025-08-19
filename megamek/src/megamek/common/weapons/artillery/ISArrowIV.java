@@ -54,8 +54,8 @@ public class ISArrowIV extends ArrowIV {
         longRange = 8;
         extremeRange = 8; // No extreme range.
         tonnage = 15;
-        criticals = 15;
-        svslots = 7;
+        criticalSlots = 15;
+        svSlots = 7;
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)

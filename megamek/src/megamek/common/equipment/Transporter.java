@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,9 +37,9 @@ package megamek.common.equipment;
 import java.io.Serializable;
 import java.util.List;
 
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.annotations.Nullable;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 
 /**
  * Classes that implement this interface have the ability to load, carry, and unload units in the game. It is
@@ -77,8 +77,8 @@ public interface Transporter extends Serializable {
      * Get a <code>Vector</code> of the units currently loaded into this payload.
      *
      * @return A <code>List</code> of loaded <code>Entity</code> units. This list will never be <code>null</code>, but
-     *       it may be empty. The returned <code>List</code> is independent from the underlying data structure;
-     *       modifying one does not affect the other.
+     *       it may be empty. The returned <code>List</code> is independent of the underlying data structure; modifying
+     *       one does not affect the other.
      */
     List<Entity> getLoadedUnits();
 
@@ -165,8 +165,6 @@ public interface Transporter extends Serializable {
         return 0;
     }
 
-    ;
-
     /**
      * Returns the number of units loaded on to this transporter this turn. Used to determine loading eligibility
      *
@@ -176,7 +174,6 @@ public interface Transporter extends Serializable {
         return 0;
     }
 
-    ;
 
     default String getType() {
         return "Unknown";

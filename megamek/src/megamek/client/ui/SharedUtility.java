@@ -46,7 +46,6 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.EscapePods;
-import megamek.common.equipment.TeleMissile;
 import megamek.common.game.Game;
 import megamek.common.internationalization.I18n;
 import megamek.common.moves.MovePath;
@@ -56,6 +55,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
+import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 

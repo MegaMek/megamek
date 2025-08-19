@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,7 +36,15 @@ package megamek.common.equipment;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
 import megamek.common.RangeType;
@@ -44,6 +52,7 @@ import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.enums.BombType;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.units.Entity;
 import megamek.common.util.RoundWeight;
@@ -64,7 +73,7 @@ public class EquipmentType implements ITechnology {
     private static final MMLogger logger = MMLogger.create(EquipmentType.class);
 
     public static final double TONNAGE_VARIABLE = Float.MIN_VALUE;
-    public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
+    public static final int CRITICAL_SLOTS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
     public static final int COST_VARIABLE = Integer.MIN_VALUE;
     /**
@@ -153,17 +162,17 @@ public class EquipmentType implements ITechnology {
      */
     protected String sortingName;
 
-    protected Vector<String> namesVector = new Vector<String>();
+    protected Vector<String> namesVector = new Vector<>();
 
     protected double tonnage = 0;
-    protected int criticals = 0;
-    protected int tankslots = 1;
-    protected int svslots = MEK_SLOT_COST;
+    protected int criticalSlots = 0;
+    protected int tankSlots = 1;
+    protected int svSlots = MEK_SLOT_COST;
 
     protected boolean explosive = false;
     protected boolean hittable = true; // if false, reroll critical hits
 
-    /** can the criticals for this be spread over locations? */
+    /** can the criticalSlots for this be spread over locations? */
     protected boolean spreadable = false;
     protected int toHitModifier = 0;
 
@@ -182,7 +191,7 @@ public class EquipmentType implements ITechnology {
     /**
      * what modes can this equipment be in?
      */
-    protected Vector<EquipmentMode> modes = null;
+    final protected Vector<EquipmentMode> modes = new Vector<>();
 
     /**
      * can modes be switched instantly, or at end of turn?
@@ -192,7 +201,7 @@ public class EquipmentType implements ITechnology {
      * sometimes some modes can be switched at the end of turn and some instantly In that case, the specific end of turn
      * mode names can be added here
      */
-    public Vector<String> endTurnModes = new Vector<String>();
+    public Vector<String> endTurnModes = new Vector<>();
 
     // static list of equipment
     protected static Vector<EquipmentType> allTypes;
@@ -261,7 +270,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public Map<Integer, Integer> getTechLevels() {
-        Map<Integer, Integer> techLevel = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> techLevel = new HashMap<>();
         if (isUnofficial()) {
             if (techAdvancement.getTechBase() == TechBase.CLAN) {
                 techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_CLAN_UNOFFICIAL);
@@ -380,23 +389,23 @@ public class EquipmentType implements ITechnology {
         this.tonnage = tonnage;
     }
 
-    public int getCriticals(Entity entity) {
-        return getCriticals(entity, 1.0);
+    public int getNumCriticalSlots(Entity entity) {
+        return getNumCriticalSlots(entity, 1.0);
     }
 
-    public int getCriticals(Entity entity, double size) {
-        return criticals;
+    public int getNumCriticalSlots(Entity entity, double size) {
+        return criticalSlots;
     }
 
     public int getTankSlots(Entity entity) {
-        return tankslots;
+        return tankSlots;
     }
 
     public int getSupportVeeSlots(Entity entity) {
-        if (svslots == MEK_SLOT_COST) {
-            return getCriticals(entity);
+        if (svSlots == MEK_SLOT_COST) {
+            return getNumCriticalSlots(entity);
         }
-        return svslots;
+        return svSlots;
     }
 
     public boolean isExplosive(Mounted<?> mounted) {
@@ -486,7 +495,7 @@ public class EquipmentType implements ITechnology {
             return false;
         }
 
-        // If we're here, then none of the special cases apply and we should
+        // If we're here, then none of the special cases apply, and we should
         // just return our own explosive status.
         return explosive;
     }
@@ -536,11 +545,11 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Checks if the equipment has all of the specified flags.
+     * Checks if the equipment has all the specified flags.
      *
      * @param flag The flags to check
      *
-     * @return True if the equipment has all of the specified flags
+     * @return True if the equipment has all the specified flags
      */
     public boolean hasFlag(EquipmentBitSet flag) {
         return flags.contains(flag);
@@ -562,7 +571,7 @@ public class EquipmentType implements ITechnology {
      *       it can be in.
      */
     public boolean hasModes() {
-        return (modes != null) && (!modes.isEmpty());
+        return !modes.isEmpty();
     }
 
     /**
@@ -579,8 +588,8 @@ public class EquipmentType implements ITechnology {
 
         // Avoid Concurrent Modification exception with this one simple trick!
         synchronized (modes) {
-            for (Iterator<EquipmentMode> iterator = modes.iterator(); iterator.hasNext(); ) {
-                if (iterator.next().getName().equals(modeType)) {
+            for (EquipmentMode mode : modes) {
+                if (mode.getName().equals(modeType)) {
                     return true;
                 }
             }
@@ -604,10 +613,7 @@ public class EquipmentType implements ITechnology {
      *       <code>0</code> if it doesn't have modes.
      */
     public int getModesCount() {
-        if (modes != null) {
-            return modes.size();
-        }
-        return 0;
+        return modes.size();
     }
 
     /**
@@ -615,22 +621,7 @@ public class EquipmentType implements ITechnology {
      *       this type of equipment can be in
      */
     public Enumeration<EquipmentMode> getModes() {
-        if (modes != null) {
-            return modes.elements();
-        }
-
-        return new Enumeration<>() {
-            @Override
-            public boolean hasMoreElements() {
-                return false;
-            }
-
-            @Override
-            public EquipmentMode nextElement() {
-                return null;
-            }
-
-        };
+        return modes.elements();
     }
 
     /**
@@ -638,29 +629,22 @@ public class EquipmentType implements ITechnology {
      * don't try to call this method with null or empty argument.
      * TODO: Refactor so the equipment knows the phase they can be armed/disarmed
      *
-     * @param modes non null, non empty list of available mode names.
+     * @param modes non-null, non-empty list of available mode names.
      */
     public void setModes(String... modes) {
-        Vector<EquipmentMode> newModes = new Vector<>(modes.length);
+        this.modes.clear();
+
         for (String mode : modes) {
-            newModes.addElement(EquipmentMode.getMode(mode));
+            this.modes.addElement(EquipmentMode.getMode(mode));
         }
-        this.modes = newModes;
     }
 
     /**
      * Remove a specific mode from the list of modes.
      *
-     * @param mode
-     *
-     * @return
      */
     public boolean removeMode(String mode) {
-        if (modes != null) {
-            return modes.remove(EquipmentMode.getMode(mode));
-        } else {
-            return false;
-        }
+        return modes.remove(EquipmentMode.getMode(mode));
     }
 
     /**
@@ -674,11 +658,9 @@ public class EquipmentType implements ITechnology {
      * @author Simon (Juliez)
      */
     public boolean addMode(String mode) {
-        if (modes == null) {
-            modes = new Vector<>();
-        }
-        if (!modes.contains(EquipmentMode.getMode(mode))) {
-            return modes.add(EquipmentMode.getMode(mode));
+        EquipmentMode mod = EquipmentMode.getMode(mode);
+        if (!modes.contains(mod)) {
+            return modes.add(mod);
         } else {
             return false;
         }
@@ -689,7 +671,7 @@ public class EquipmentType implements ITechnology {
      * modes, but the supertype of that type such as standard LRMs has modes that do not apply to the subtype
      */
     protected void clearModes() {
-        modes = null;
+        modes.clear();
     }
 
     public void addEndTurnMode(String mode) {
@@ -722,8 +704,6 @@ public class EquipmentType implements ITechnology {
      * </p>
      * <p>
      * Fails if this type of the equipment doesn't have modes, or given mode is out of the valid range.
-     *
-     * @param modeNum
      *
      * @return mode number <code>modeNum</code> from the list of modes available for this type of equipment.
      *
@@ -808,7 +788,7 @@ public class EquipmentType implements ITechnology {
         if (EquipmentType.allTypes == null) {
             EquipmentType.initializeTypes();
         }
-        return new ArrayList<EquipmentType>(EquipmentType.allTypes);
+        return new ArrayList<>(EquipmentType.allTypes);
     }
 
     protected static void addType(EquipmentType type) {
@@ -828,23 +808,12 @@ public class EquipmentType implements ITechnology {
 
     public static String getArmorTypeName(int armorType) {
         ArmorType armor = ArmorType.of(armorType, false);
-        if (armor == null) {
-            armor = ArmorType.of(armorType, true);
-        }
-        if (armor != null) {
-            return armor.getName();
-        } else {
-            return "UNKNOWN";
-        }
+        return armor.getName();
     }
 
     public static String getArmorTypeName(int armorType, boolean clan) {
         ArmorType armor = ArmorType.of(armorType, clan);
-        if (armor != null) {
-            return clan ? "Clan " + armor.getName() : "IS " + armor.getName();
-        } else {
-            return "UNKNOWN";
-        }
+        return clan ? "Clan " + armor.getName() : "IS " + armor.getName();
     }
 
     /**
@@ -986,8 +955,8 @@ public class EquipmentType implements ITechnology {
         return cost == COST_VARIABLE;
     }
 
-    public boolean isVariableCriticals() {
-        return criticals == CRITICALS_VARIABLE;
+    public boolean isVariableCriticalSlots() {
+        return criticalSlots == CRITICAL_SLOTS_VARIABLE;
     }
 
     /**
@@ -1195,7 +1164,7 @@ public class EquipmentType implements ITechnology {
                       .map(equipmentType::getTechLevel)
                       .sorted() // ordered for ease of use
                       .distinct()
-                      .collect(Collectors.toList());
+                      .toList();
 
                 // ... and use them to output the tech names ...
                 bufferedWriter.write("\",\"");
@@ -1243,10 +1212,10 @@ public class EquipmentType implements ITechnology {
                 }
 
                 bufferedWriter.write(",");
-                if (equipmentType.criticals == EquipmentType.CRITICALS_VARIABLE) {
+                if (equipmentType.criticalSlots == EquipmentType.CRITICAL_SLOTS_VARIABLE) {
                     bufferedWriter.write("Variable");
                 } else {
-                    bufferedWriter.write(Integer.toString(equipmentType.criticals));
+                    bufferedWriter.write(Integer.toString(equipmentType.criticalSlots));
                 }
 
                 bufferedWriter.write(",");
@@ -1296,10 +1265,9 @@ public class EquipmentType implements ITechnology {
             for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes();
                   equipmentTypes.hasMoreElements(); ) {
                 EquipmentType equipmentType = equipmentTypes.nextElement();
-                if (!(equipmentType instanceof WeaponType)) {
+                if (!(equipmentType instanceof WeaponType weaponType)) {
                     continue;
                 }
-                WeaponType weaponType = (WeaponType) equipmentType;
 
                 bufferedWriter.write("\"");
                 bufferedWriter.write(weaponType.getName());
@@ -1311,7 +1279,7 @@ public class EquipmentType implements ITechnology {
                       .map(weaponType::getTechLevel)
                       .sorted() // ordered for ease of use
                       .distinct()
-                      .collect(Collectors.toList());
+                      .toList();
 
                 // ... and use them to output the tech names ...
                 bufferedWriter.write("\",\"");
@@ -1350,10 +1318,10 @@ public class EquipmentType implements ITechnology {
                     bufferedWriter.write(Double.toString(weaponType.tonnage));
                 }
                 bufferedWriter.write(",");
-                if (weaponType.criticals == EquipmentType.CRITICALS_VARIABLE) {
+                if (weaponType.criticalSlots == EquipmentType.CRITICAL_SLOTS_VARIABLE) {
                     bufferedWriter.write("Variable");
                 } else {
-                    bufferedWriter.write(Integer.toString(weaponType.criticals));
+                    bufferedWriter.write(Integer.toString(weaponType.criticalSlots));
                 }
                 bufferedWriter.write(",");
                 if (weaponType.cost == EquipmentType.COST_VARIABLE) {
@@ -1445,10 +1413,9 @@ public class EquipmentType implements ITechnology {
             for (Enumeration<EquipmentType> equipmentTypes = EquipmentType.getAllTypes();
                   equipmentTypes.hasMoreElements(); ) {
                 EquipmentType equipmentType = equipmentTypes.nextElement();
-                if (!(equipmentType instanceof AmmoType)) {
+                if (!(equipmentType instanceof AmmoType ammoType)) {
                     continue;
                 }
-                AmmoType ammoType = (AmmoType) equipmentType;
 
                 bufferedWriter.write("\"");
                 bufferedWriter.write(ammoType.getName());
@@ -1460,7 +1427,7 @@ public class EquipmentType implements ITechnology {
                       .map(ammoType::getTechLevel)
                       .sorted() // ordered for ease of use
                       .distinct()
-                      .collect(Collectors.toList());
+                      .toList();
 
                 // ... and use them to output the tech names ...
                 bufferedWriter.write("\",\"");
@@ -1508,10 +1475,10 @@ public class EquipmentType implements ITechnology {
                 }
 
                 bufferedWriter.write(",");
-                if (ammoType.criticals == EquipmentType.CRITICALS_VARIABLE) {
+                if (ammoType.criticalSlots == EquipmentType.CRITICAL_SLOTS_VARIABLE) {
                     bufferedWriter.write("Variable");
                 } else {
-                    bufferedWriter.write(Integer.toString(ammoType.criticals));
+                    bufferedWriter.write(Integer.toString(ammoType.criticalSlots));
                 }
 
                 bufferedWriter.write(",");
@@ -1601,7 +1568,7 @@ public class EquipmentType implements ITechnology {
                       .map(equipmentType::getTechLevel)
                       .sorted() // ordered for ease of use
                       .distinct()
-                      .collect(Collectors.toList());
+                      .toList();
 
                 // ... and use them to output the tech names ...
                 bufferedWriter.write("\",\"");
@@ -1649,10 +1616,10 @@ public class EquipmentType implements ITechnology {
                 }
 
                 bufferedWriter.write(",");
-                if (equipmentType.criticals == EquipmentType.CRITICALS_VARIABLE) {
+                if (equipmentType.criticalSlots == EquipmentType.CRITICAL_SLOTS_VARIABLE) {
                     bufferedWriter.write("Variable");
                 } else {
-                    bufferedWriter.write(Integer.toString(equipmentType.criticals));
+                    bufferedWriter.write(Integer.toString(equipmentType.criticalSlots));
                 }
 
                 bufferedWriter.write(",");
@@ -1794,7 +1761,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public static Map<Integer, String> getAllStructureCodeName() {
-        Map<Integer, String> result = new HashMap<Integer, String>();
+        Map<Integer, String> result = new HashMap<>();
 
         result.put(T_STRUCTURE_UNKNOWN, getStructureTypeName(T_STRUCTURE_UNKNOWN));
         result.put(T_STRUCTURE_STANDARD, getStructureTypeName(T_STRUCTURE_STANDARD));
@@ -1811,7 +1778,7 @@ public class EquipmentType implements ITechnology {
     /**
      * @return True if this equipment type is eligible for being an armored component, TO:AUE p.95
      */
-    public boolean isArmorable() {
+    public boolean isEligibleForBeingArmored() {
         return isHittable();
     }
 

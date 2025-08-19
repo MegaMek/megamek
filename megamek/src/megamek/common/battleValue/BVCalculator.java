@@ -51,7 +51,8 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
-import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -951,9 +952,9 @@ public abstract class BVCalculator {
     /** @return The BV modifier for AFC or BFC. Override as necessary. */
     protected double fireControlModifier() {
         if (entity.isSupportVehicle()) {
-            if (entity.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)) {
+            if (entity.hasWorkingMisc(MiscType.F_BASIC_FIRE_CONTROL)) {
                 return 0.9;
-            } else if (!entity.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
+            } else if (!entity.hasWorkingMisc(MiscType.F_ADVANCED_FIRE_CONTROL)) {
                 return 0.8;
             }
         }
@@ -992,7 +993,7 @@ public abstract class BVCalculator {
                   miscType.hasFlag(MiscType.F_CHAFF_POD) ||
                   miscType.hasFlag(MiscType.F_BULLDOZER) ||
                   miscType.hasFlag(MiscType.F_BAP) ||
-                  miscType.hasFlag(MiscType.F_TARGCOMP) ||
+                  miscType.hasFlag(MiscType.F_TARGETING_COMPUTER) ||
                   miscType.hasFlag(MiscType.F_SPIKES) ||
                   miscType.hasFlag(MiscType.F_MINESWEEPER) ||
                   miscType.hasFlag(MiscType.F_HARJEL_II) ||
@@ -1207,7 +1208,7 @@ public abstract class BVCalculator {
                         (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.VEHICLE_FLAMER) ||
                         (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.HEAVY_FLAMER) ||
                         (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.CHEMICAL_LASER))) ||
-                  weaponType.hasFlag(WeaponType.F_ONESHOT) ||
+                  weaponType.hasFlag(WeaponType.F_ONE_SHOT) ||
                   weaponType.hasFlag(WeaponType.F_INFANTRY) ||
                   (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.NA))) {
                 String key = weaponType.getAmmoType() + ":" + weaponType.getRackSize();

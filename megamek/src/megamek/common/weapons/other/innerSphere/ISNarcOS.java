@@ -56,8 +56,8 @@ public class ISNarcOS extends NarcWeapon {
         longRange = 9;
         extremeRange = 12;
         tonnage = 3.5;
-        criticals = 2;
-        flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
+        criticalSlots = 2;
+        flags = flags.or(F_ONE_SHOT).andNot(F_PROTO_WEAPON);
         bv = 6;
         cost = 100000;
         rulesRefs = "232, TM";

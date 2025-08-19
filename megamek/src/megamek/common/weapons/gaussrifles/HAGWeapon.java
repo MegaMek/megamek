@@ -38,11 +38,11 @@
  */
 package megamek.common.weapons.gaussrifles;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.HAGWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -58,7 +58,7 @@ public abstract class HAGWeapon extends GaussWeapon {
 
     public HAGWeapon() {
         super();
-        damage = DAMAGE_BY_CLUSTERTABLE;
+        damage = DAMAGE_BY_CLUSTER_TABLE;
         ammoType = AmmoType.AmmoTypeEnum.HAG;
         flags = flags.or(F_NO_AIM);
         atClass = CLASS_AC;
@@ -104,6 +104,6 @@ public abstract class HAGWeapon extends GaussWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_FLAK;
+        return BF_CLASS_FLAK;
     }
 }

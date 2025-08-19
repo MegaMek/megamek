@@ -34,9 +34,9 @@
 
 package megamek.common.weapons.other.innerSphere;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
-import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.lasers.LaserWeapon;
 
 /**
@@ -66,7 +66,7 @@ public class ISLaserAMS extends LaserWeapon {
         shortAV = 3;
         ammoType = AmmoType.AmmoTypeEnum.NA;
         tonnage = 1.5;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 45;
         atClass = CLASS_AMS;
         // we need to remove the direct fire flag again, so TC weight is not

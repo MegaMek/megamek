@@ -35,8 +35,8 @@
 package megamek.common.weapons.battlearmor.clan;
 
 import megamek.common.TechAdvancement;
-import megamek.common.equipment.WeaponType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.battlearmor.BAFlamerWeapon;
 
 /**
@@ -61,7 +61,7 @@ public class CLBAFlamer extends BAFlamerWeapon {
         longRange = 3;
         extremeRange = 4;
         tonnage = 0.15;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 5;
         cost = 7500;
         shortAV = 2;

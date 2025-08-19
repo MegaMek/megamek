@@ -52,12 +52,14 @@ import megamek.SuiteConstants;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.battleArmor.BattleArmorHandles;
+import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.*;
+import megamek.common.equipment.enums.BombType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.interfaces.ITechnology;
@@ -888,7 +890,7 @@ public abstract class Mek extends Entity {
     public boolean hasNullSig() {
         for (Mounted<?> mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_NULLSIG)) {
+            if (mtype.hasFlag(MiscType.F_NULL_SIG)) {
                 // The Mek has Null-Sig
                 return true;
             }
@@ -904,7 +906,7 @@ public abstract class Mek extends Entity {
     public boolean hasVoidSig() {
         for (Mounted<?> mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_VOIDSIG)) {
+            if (mtype.hasFlag(MiscType.F_VOID_SIG)) {
                 // The Mek has Void-Sig
                 return true;
             }
@@ -2731,13 +2733,13 @@ public abstract class Mek extends Entity {
         mounted2.setOmniPodMounted(omniPod);
         mounted.setArmored(armored);
         mounted2.setArmored(armored);
-        // check criticals for space
+        // check criticalSlots for space
         if (getEmptyCriticals(loc) < 1) {
             throw new LocationFullException(mounted.getName() + " and "
                   + mounted2.getName() + " do not fit in "
                   + getLocationAbbr(loc) + " on " + getDisplayName()
-                  + "\n        free criticals in location: "
-                  + getEmptyCriticals(loc) + ", criticals needed: " + 1);
+                  + "\n        free criticalSlots in location: "
+                  + getEmptyCriticals(loc) + ", criticalSlots needed: " + 1);
         }
         super.addEquipment(mounted, loc, false);
         super.addEquipment(mounted2, loc, false);
@@ -2763,7 +2765,7 @@ public abstract class Mek extends Entity {
     public void addEquipment(Mounted<?> mounted, int loc, boolean rearMounted, int critSlot)
           throws LocationFullException {
         // if there's no actual location or this is a LAM capital fighter weapons group,
-        // or ammo for a LAM bomb weapon then don't add criticals
+        // or ammo for a LAM bomb weapon then don't add criticalSlots
         if ((loc == LOC_NONE) || mounted.isWeaponGroup()
               || (mounted.getType() instanceof BombType)) {
             super.addEquipment(mounted, loc, rearMounted);
@@ -2772,7 +2774,7 @@ public abstract class Mek extends Entity {
 
         // spreadable or split equipment only gets added to 1 crit at a time,
         // since we don't know how many are in this location
-        int reqSlots = mounted.getCriticals();
+        int reqSlots = mounted.getNumCriticalSlots();
         if (mounted.getType().isSpreadable() || mounted.isSplitable()) {
             reqSlots = 1;
         }
@@ -2797,13 +2799,13 @@ public abstract class Mek extends Entity {
             }
         }
 
-        // check criticals for space
+        // check criticalSlots for space
         if (getEmptyCriticals(loc) < reqSlots) {
             throw new LocationFullException(mounted.getName()
                   + " does not fit in " + getLocationAbbr(loc) + " on "
                   + getDisplayName()
-                  + "\n        free criticals in location: "
-                  + getEmptyCriticals(loc) + ", criticals needed: "
+                  + "\n        free criticalSlots in location: "
+                  + getEmptyCriticals(loc) + ", criticalSlots needed: "
                   + reqSlots);
         }
         // add it
@@ -2811,7 +2813,7 @@ public abstract class Mek extends Entity {
             super.addEquipment(mounted, loc, rearMounted);
         }
 
-        // add criticals
+        // add criticalSlots
         if (critSlot == -1) {
             for (int i = 0; i < reqSlots; i++) {
                 CriticalSlot cs = new CriticalSlot(mounted);
@@ -2831,7 +2833,7 @@ public abstract class Mek extends Entity {
                       + getDisplayName()
                       + "\n    needs "
                       + getEmptyCriticals(loc)
-                      + " free contiguous criticals");
+                      + " free contiguous criticalSlots");
             }
             for (int i = 0; i < reqSlots; i++) {
                 CriticalSlot cs = new CriticalSlot(mounted);
@@ -3268,8 +3270,8 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * This method will return the number of contiguous criticals in the given location, starting at the given critical
-     * slot
+     * This method will return the number of contiguous criticalSlots in the given location, starting at the given
+     * critical slot
      *
      * @param loc          The location on the unit to check slots on
      * @param startingSlot The critical slot to start at
@@ -3548,7 +3550,7 @@ public abstract class Mek extends Entity {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_NULLSIG)
+                if (type.hasFlag(MiscType.F_NULL_SIG)
                       && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
@@ -3562,7 +3564,7 @@ public abstract class Mek extends Entity {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_NULLSIG)
+                if (type.hasFlag(MiscType.F_NULL_SIG)
                       && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
@@ -3584,7 +3586,7 @@ public abstract class Mek extends Entity {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_VOIDSIG)
+                if (type.hasFlag(MiscType.F_VOID_SIG)
                       && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
@@ -3601,7 +3603,7 @@ public abstract class Mek extends Entity {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_VOIDSIG)
+                if (type.hasFlag(MiscType.F_VOID_SIG)
                       && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
@@ -4518,7 +4520,7 @@ public abstract class Mek extends Entity {
             sb.append(newLine);
         }
         for (Mounted<?> mounted : getMisc()) {
-            if ((mounted.getCriticals() == 0)
+            if ((mounted.getNumCriticalSlots() == 0)
                   && !mounted.getType().hasFlag(MiscType.F_CASE)
                   && !EquipmentType.isArmorType(mounted.getType())
                   && !EquipmentType.isStructureType(mounted.getType())) {
@@ -5091,7 +5093,7 @@ public abstract class Mek extends Entity {
      * @return The crew slot index associated with this critical slot, or -1 to indicate the entire crew.
      */
     public int getCrewForCockpitSlot(int loc, CriticalSlot cs) {
-        // For those with split cockpits, count the cockpit criticals in the location
+        // For those with split cockpits, count the cockpit criticalSlots in the location
         // until we reach the correct
         // one.
         if (getCockpitType() == COCKPIT_COMMAND_CONSOLE
@@ -5118,7 +5120,7 @@ public abstract class Mek extends Entity {
               || (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE))
               && getCrew().hasActiveCommandConsole()
               && getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY
-              && (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL));
+              && (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRE_CONTROL));
     }
 
     /**
@@ -5794,11 +5796,11 @@ public abstract class Mek extends Entity {
                   && (mount.getLinkedBy() != null)) {
                 mountBv += ((MiscType) mount.getLinkedBy().getType()).getBV(
                       this, mount);
-                bv += mountBv * 0.05 * (mount.getCriticals() + 1);
+                bv += mountBv * 0.05 * (mount.getNumCriticalSlots() + 1);
             } else if (mountBv > 0) {
-                bv += mountBv * 0.05 * mount.getCriticals();
+                bv += mountBv * 0.05 * mount.getNumCriticalSlots();
             } else {
-                bv += 5 * mount.getCriticals();
+                bv += 5 * mount.getNumCriticalSlots();
             }
         }
 

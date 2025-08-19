@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.flamers.clan;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.SimpleTechLevel;
-import megamek.common.equipment.WeaponType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 
 /**
@@ -66,7 +66,7 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         longRange = 4;
         extremeRange = 6;
         tonnage = 1.5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 15;
         shortAV = 4;
         maxRange = RANGE_SHORT;

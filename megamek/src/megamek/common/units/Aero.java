@@ -2866,8 +2866,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             for (WeaponMounted weapon : getWeaponBayList()) {
                 // Skip anything that's not an AMS, AMS Bay or Point Defense Bay
                 if (!weapon.getType().hasFlag(WeaponType.F_AMS) &&
-                      !weapon.getType().hasFlag(WeaponType.F_AMSBAY) &&
-                      !weapon.getType().hasFlag(WeaponType.F_PDBAY)) {
+                      !weapon.getType().hasFlag(WeaponType.F_AMS_BAY) &&
+                      !weapon.getType().hasFlag(WeaponType.F_PD_BAY)) {
                     continue;
                 }
 
@@ -2919,13 +2919,13 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         boolean hasESM = false;
 
         for (Sensor sensor : getSensors()) {
-            if (sensor.getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+            if (sensor.type() == Sensor.TYPE_SPACECRAFT_THERMAL) {
                 hasSpacecraftThermal = true;
             }
-            if (sensor.getType() == Sensor.TYPE_AERO_THERMAL) {
+            if (sensor.type() == Sensor.TYPE_AERO_THERMAL) {
                 hasAeroThermal = true;
             }
-            if (sensor.getType() == Sensor.TYPE_SPACECRAFT_ESM) {
+            if (sensor.type() == Sensor.TYPE_SPACECRAFT_ESM) {
                 hasESM = true;
             }
         }
@@ -2935,18 +2935,18 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             Vector<Sensor> sensorsToRemove = new Vector<>();
             if (hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
                 for (Sensor sensor : getSensors()) {
-                    if (sensor.getType() == Sensor.TYPE_SPACECRAFT_ESM) {
+                    if (sensor.type() == Sensor.TYPE_SPACECRAFT_ESM) {
                         hasESM = false;
                         sensorsToRemove.add(sensor);
                     }
-                    if (sensor.getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+                    if (sensor.type() == Sensor.TYPE_SPACECRAFT_THERMAL) {
                         hasSpacecraftThermal = false;
                         sensorsToRemove.add(sensor);
                     }
                 }
             } else if (hasETypeFlag(Entity.ETYPE_AERO)) {
                 for (Sensor sensor : getSensors()) {
-                    if (sensor.getType() == Sensor.TYPE_AERO_THERMAL) {
+                    if (sensor.type() == Sensor.TYPE_AERO_THERMAL) {
                         hasAeroThermal = false;
                         sensorsToRemove.add(sensor);
                     }

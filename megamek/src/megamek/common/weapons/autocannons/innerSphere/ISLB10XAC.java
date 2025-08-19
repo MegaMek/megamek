@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.autocannons.innerSphere;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.autocannons.LBXACWeapon;
 
 /**
@@ -58,7 +58,7 @@ public class ISLB10XAC extends LBXACWeapon {
         this.longRange = 18;
         this.extremeRange = 24;
         this.tonnage = 11.0;
-        this.criticals = 6;
+        this.criticalSlots = 6;
         this.bv = 148;
         this.cost = 400000;
         this.shortAV = getBaseAeroDamage();

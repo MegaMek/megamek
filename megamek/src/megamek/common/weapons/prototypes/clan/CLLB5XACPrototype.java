@@ -34,9 +34,9 @@
 
 package megamek.common.weapons.prototypes.clan;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 
 /**
  * @author Andrew Hunter
@@ -60,7 +60,7 @@ public class CLLB5XACPrototype extends CLLBXACPrototypeWeapon {
         longRange = 21;
         extremeRange = 28;
         tonnage = 8.0;
-        criticals = 6;
+        criticalSlots = 6;
         bv = 83;
         cost = 250000;
         shortAV = 5;

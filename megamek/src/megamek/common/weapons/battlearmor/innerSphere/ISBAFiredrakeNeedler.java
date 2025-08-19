@@ -60,7 +60,7 @@ public class ISBAFiredrakeNeedler extends Weapon {
         bv = 2;
         cost = 1500;
         tonnage = 0.050;
-        criticals = 1;
+        criticalSlots = 1;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INCENDIARY_NEEDLES).or(F_BURST_FIRE)
               .or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON)
               .andNot(F_PROTO_WEAPON);

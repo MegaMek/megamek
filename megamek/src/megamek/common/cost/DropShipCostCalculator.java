@@ -36,8 +36,8 @@ package megamek.common.cost;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.bays.BattleArmorBay;
 import megamek.common.bays.Bay;
-import megamek.common.units.Dropship;
 import megamek.common.bays.InfantryBay;
+import megamek.common.units.Dropship;
 
 public class DropShipCostCalculator {
 
@@ -53,21 +53,21 @@ public class DropShipCostCalculator {
         }
 
         // Transport Bays
-        int baydoors = 0;
+        int bayDoors = 0;
         long bayCost = 0;
         long quartersCost = 0;
         // Passenger and crew quarters and infantry bays are considered part of the structure
         // and don't add to the cost
         for (Bay bay : dropShip.getTransportBays()) {
-            baydoors += bay.getDoors();
+            bayDoors += bay.getDoors();
             if (!bay.isQuarters() && !(bay instanceof InfantryBay) && !(bay instanceof BattleArmorBay)) {
                 bayCost += bay.getCost();
             }
         }
-        costs[idx++] = bayCost + (baydoors * 1000L);
+        costs[idx++] = bayCost + (bayDoors * 1000L);
         costs[idx++] = quartersCost;
 
-        // Life Boats and Escape Pods
+        // Lifeboats and Escape Pods
         costs[idx++] += 5000 * (dropShip.getLifeBoats() + dropShip.getEscapePods());
 
         // For all additive costs - replace negatives with 0 to separate from multipliers

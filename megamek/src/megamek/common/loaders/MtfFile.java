@@ -47,9 +47,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
-import megamek.common.exceptions.LocationFullException;
-import megamek.common.interfaces.ITechnology.TechBase;
+import megamek.common.CriticalSlot;
+import megamek.common.QuirkEntry;
+import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Engine;
@@ -58,6 +58,8 @@ import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.interfaces.ITechnology.TechBase;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityFluff;
@@ -893,7 +895,7 @@ public class MtfFile implements IMekLoader {
 
                             m.setSize(size);
                         }
-                    } else if (etype instanceof MiscType && etype.hasFlag(MiscType.F_TARGCOMP)) {
+                    } else if (etype instanceof MiscType && etype.hasFlag(MiscType.F_TARGETING_COMPUTER)) {
                         // Targeting computers are special, they need to be loaded like spreadable
                         // equipment, but they aren't spreadable
                         Mounted<?> m = hSharedEquip.get(etype);
@@ -903,7 +905,7 @@ public class MtfFile implements IMekLoader {
                         }
                         mek.addCritical(loc, new CriticalSlot(m));
 
-                    } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplitable())
+                    } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplittableOverCriticalSlots())
                           || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
                         // do we already have this one in this or an outer location?
                         Mounted<?> m = null;
@@ -920,7 +922,7 @@ public class MtfFile implements IMekLoader {
                         }
                         if (bFound) {
                             m.setFoundCrits(m.getFoundCrits() + (mek.isSuperHeavy() ? 2 : 1));
-                            if (m.getFoundCrits() >= m.getCriticals()) {
+                            if (m.getFoundCrits() >= m.getNumCriticalSlots()) {
                                 vSplitWeapons.remove(m);
                             }
                             // if we're in a new location, set the weapon as
@@ -976,7 +978,7 @@ public class MtfFile implements IMekLoader {
                             mount.setSize(size);
                             // The size may require additional critical slots
                             // Account for loading Superheavy oversized Variable Size components
-                            int critCount = mount.getCriticals();
+                            int critCount = mount.getNumCriticalSlots();
                             if (mek.isSuperHeavy()) {
                                 critCount = (int) Math.ceil(critCount / 2.0);
                             }
@@ -1009,7 +1011,7 @@ public class MtfFile implements IMekLoader {
                         mek.addFailedEquipment(critName);
                         // Make the failed equipment an empty slot
                         critData[loc][i] = MtfFile.EMPTY;
-                        // Compact criticals again
+                        // Compact criticalSlots again
                         compactCriticals(mek, loc);
                         // Re-parse the same slot, since the compacting
                         // could have moved new equipment to this slot

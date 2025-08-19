@@ -34,13 +34,13 @@
 
 package megamek.common.weapons.bayweapons.subCapital;
 
-import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.game.Game;
+import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBayHandler;
-import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -85,6 +85,6 @@ public class SubCapitalMissileBayWeapon extends AmmoBayWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_CAPITAL_MISSILE;
+        return BF_CLASS_CAPITAL_MISSILE;
     }
 }

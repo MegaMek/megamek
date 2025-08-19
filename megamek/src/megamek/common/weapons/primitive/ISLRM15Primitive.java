@@ -35,11 +35,11 @@
 
 package megamek.common.weapons.primitive;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.lrm.LRMHandler;
 import megamek.common.weapons.lrms.LRMWeapon;
@@ -66,7 +66,7 @@ public class ISLRM15Primitive extends LRMWeapon {
         rackSize = 15;
         minimumRange = 6;
         tonnage = 7.0;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 136;
         cost = 175000;
         shortAV = 9;

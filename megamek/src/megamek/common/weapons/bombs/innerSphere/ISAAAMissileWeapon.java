@@ -35,7 +35,7 @@
 package megamek.common.weapons.bombs.innerSphere;
 
 import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.weapons.missiles.ThunderboltWeapon;
 
 /**
@@ -62,12 +62,12 @@ public class ISAAAMissileWeapon extends ThunderboltWeapon {
         this.longRange = 24;
         this.extremeRange = 36;
         this.tonnage = 1;
-        this.criticals = 0;
+        this.criticalSlots = 0;
         this.hittable = false;
         this.bv = 0;
         this.cost = 9000;
         this.flags = flags.or(F_MISSILE)
-              .or(F_LARGEMISSILE)
+              .or(F_LARGE_MISSILE)
               .or(F_BOMB_WEAPON)
               .andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON);

@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.battlearmor.innerSphere;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.TechAdvancement;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.weapons.Weapon;
 
@@ -69,7 +69,7 @@ public class ISBAGrenadeLauncherHeavy extends Weapon {
         longRange = 3;
         extremeRange = 4;
         tonnage = 0.1;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 2;
         cost = 4500;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)

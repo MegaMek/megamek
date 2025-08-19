@@ -58,7 +58,7 @@ public class ISBAGaussRifleTsunami extends Weapon {
         longRange = 5;
         extremeRange = 7;
         tonnage = 0.125;
-        criticals = 2;
+        criticalSlots = 2;
         cost = 9500;
         bv = 6;
         flags = flags.or(F_NO_FIRES)

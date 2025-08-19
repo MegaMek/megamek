@@ -301,7 +301,7 @@ public class ProtoMek extends Entity {
     }
 
     /**
-     * Counts the # of crits taken by proto in the location. Needed in several places, due to proto set criticals.
+     * Counts the # of crits taken by proto in the location. Needed in several places, due to proto set criticalSlots.
      */
     public int getCritsHit(int loc) {
         int count = 0;

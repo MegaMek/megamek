@@ -55,14 +55,14 @@ public class CLBAMGLight extends BAMGWeapon {
         sortingName = "MG B";
         heat = 0;
         damage = 1;
-        infDamageClass = WeaponType.WEAPON_BURST_HALFD6;
+        infDamageClass = WeaponType.WEAPON_BURST_HALF_D6;
         rackSize = 1;
         shortRange = 2;
         mediumRange = 4;
         longRange = 6;
         extremeRange = 8;
         tonnage = 0.075;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 5;
         cost = 5000;
         rulesRefs = "258, TM";

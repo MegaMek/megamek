@@ -34,12 +34,12 @@
 
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.srm.AdvancedSRMHandler;
 import megamek.common.weapons.srms.SRMWeapon;
@@ -93,7 +93,7 @@ public abstract class AdvancedSRMWeapon extends SRMWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_STANDARD;
+        return BF_CLASS_STANDARD;
     }
 
     @Override
@@ -101,7 +101,7 @@ public abstract class AdvancedSRMWeapon extends SRMWeapon {
         if (sortingName != null) {
             return sortingName;
         } else {
-            String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+            String oneShotTag = hasFlag(F_ONE_SHOT) ? "OS " : "";
             if (name.contains("I-OS")) {
                 oneShotTag = "OSI ";
             }

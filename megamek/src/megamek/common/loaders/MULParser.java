@@ -59,7 +59,7 @@ import megamek.common.board.Board;
 import megamek.common.compute.Compute;
 import megamek.common.enums.Gender;
 import megamek.common.equipment.*;
-import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.GameOptions;
@@ -1881,7 +1881,7 @@ public class MULParser {
 
                 mounted.setRepairable(repairFlag);
 
-                mounted.setRapidfire(Boolean.parseBoolean(rfmg));
+                mounted.setRapidFire(Boolean.parseBoolean(rfmg));
 
                 // Is the mounted a type of ammo?
                 if (mounted instanceof AmmoMounted) {
@@ -2700,7 +2700,7 @@ public class MULParser {
             entity.getWeaponList().remove(apWeapon);
             entity.getTotalWeaponList().remove(apWeapon);
             // We need to make sure that the weapon has been removed
-            // from the criticals, otherwise it can cause issues
+            // from the criticalSlots, otherwise it can cause issues
             for (int loc = 0; loc < entity.locations(); loc++) {
                 for (int c = 0; c < entity.getNumberOfCriticals(loc); c++) {
                     CriticalSlot crit = entity.getCritical(loc, c);

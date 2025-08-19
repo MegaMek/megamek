@@ -66,6 +66,6 @@ public class SubCapLaserBayWeapon extends BayWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_SUBCAPITAL;
+        return BF_CLASS_SUBCAPITAL;
     }
 }

@@ -62,7 +62,7 @@ public class ISGAC6 extends ACWeapon {
         longRange = 24;
         extremeRange = 32;
         tonnage = 14.0;
-        criticals = 4;
+        criticalSlots = 4;
         bv = 316;
         cost = 300000;
         explosive = true; // when firing incendiary ammo

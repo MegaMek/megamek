@@ -61,7 +61,7 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
         longRange = 22;
         extremeRange = 28;
         tonnage = 6.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 400;
         cost = 300000;
         // Gonna use the same tech info as the Cannon

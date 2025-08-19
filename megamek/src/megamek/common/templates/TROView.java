@@ -54,7 +54,9 @@ import java.util.stream.Collectors;
 import freemarker.template.Template;
 import freemarker.template.TemplateMethodModelEx;
 import megamek.client.ui.util.ViewFormatting;
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.CriticalSlot;
+import megamek.common.Messages;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
@@ -503,7 +505,7 @@ public class TROView {
                     fields.put("slots", crits.toString());
                 } else {
                     fields.put("location", loc);
-                    fields.put("slots", eq.getCriticals(entity, entry.getValue()) * count);
+                    fields.put("slots", eq.getNumCriticalSlots(entity, entry.getValue()) * count);
                 }
                 eqList.add(fields);
             }

@@ -48,7 +48,7 @@ public class CLLightTAG extends TAGWeapon {
         addLookupName("Clan Light TAG");
         addLookupName("Light TAG [Clan]");
         tonnage = 0.5;
-        criticals = 1;
+        criticalSlots = 1;
         hittable = true;
         spreadable = false;
         heat = 0;

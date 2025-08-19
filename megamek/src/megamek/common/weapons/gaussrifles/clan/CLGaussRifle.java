@@ -34,13 +34,13 @@
 
 package megamek.common.weapons.gaussrifles.clan;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
+import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.GRHandler;
-import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -65,7 +65,7 @@ public class CLGaussRifle extends GaussWeapon {
         this.longRange = 22;
         this.extremeRange = 33;
         this.tonnage = 12.0;
-        this.criticals = 6;
+        this.criticalSlots = 6;
         this.bv = 320;
         this.cost = 300000;
         this.shortAV = 15;

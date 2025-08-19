@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.prototypes;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.prototype.PrototypeRLHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
@@ -59,7 +59,7 @@ public abstract class PrototypeRLWeapon extends MissileWeapon {
     public PrototypeRLWeapon() {
         super();
         ammoType = AmmoType.AmmoTypeEnum.ROCKET_LAUNCHER;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONE_SHOT);
         toHitModifier = 1;
         atClass = CLASS_ROCKET_LAUNCHER;
     }

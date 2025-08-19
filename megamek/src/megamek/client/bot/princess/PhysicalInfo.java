@@ -37,18 +37,18 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import megamek.client.bot.PhysicalOption;
-import megamek.common.units.BipedMek;
-import megamek.common.compute.Compute;
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.units.Mek;
-import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.units.TripodMek;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
+import megamek.common.units.TripodMek;
 import megamek.logging.MMLogger;
 
 /**
@@ -71,7 +71,7 @@ public class PhysicalInfo {
     private double expectedDamageOnHit;
     private int damageDirection; // direction damage is coming from relative to target
     private double expectedCriticals;
-    private double killProbability; // probability to destroy CT or HEAD (ignores criticals)
+    private double killProbability; // probability to destroy CT or HEAD (ignores criticalSlots)
     private double utility; // filled out externally
     private final Princess owner;
 
@@ -148,7 +148,7 @@ public class PhysicalInfo {
     }
 
     /**
-     * Helper function to determine damage and criticals
+     * Helper function to determine damage and criticalSlots
      */
     protected void initDamage(PhysicalAttackType physicalAttackType, EntityState shooterState, EntityState targetState,
           boolean guess, Game game) {

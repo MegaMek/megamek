@@ -34,12 +34,12 @@
 
 package megamek.common.weapons.ppc.clan;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.plasma.PlasmaCannonHandler;
@@ -65,7 +65,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
         longRange = 18;
         extremeRange = 24;
         tonnage = 3.0;
-        criticals = 1;
+        criticalSlots = 1;
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
               .or(F_PROTO_WEAPON).or(F_PLASMA).or(F_DIRECT_FIRE).or(F_ENERGY);
         bv = 170;

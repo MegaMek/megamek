@@ -62,7 +62,7 @@ public class CLPulseLaserLarge extends PulseLaserWeapon {
         waterLongRange = 14;
         waterExtremeRange = 21;
         tonnage = 6.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 265;
         cost = 175000;
         shortAV = 10;

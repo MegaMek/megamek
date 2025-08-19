@@ -148,9 +148,9 @@ public class ASSpecialAbilityConverter {
             assign(misc, LPRB);
         } else if (miscType.isAnyOf(Sensor.BAP, Sensor.BAPP, Sensor.CLAN_AP)) {
             assign(misc, PRB);
-        } else if (miscType.isAnyOf(Sensor.CLIMPROVED, Sensor.ISIMPROVED)) {
+        } else if (miscType.isAnyOf(Sensor.CL_IMPROVED, Sensor.IS_IMPROVED)) {
             assign(misc, RCN);
-        } else if (miscType.isAnyOf(Sensor.LIGHT_AP, Sensor.ISBALIGHT_AP)) {
+        } else if (miscType.isAnyOf(Sensor.LIGHT_AP, Sensor.IS_BA_LIGHT_AP)) {
             assign(misc, LPRB);
         } else if (miscType.isAnyOf(Sensor.BLOODHOUND)) {
             assign(misc, BH);
@@ -204,7 +204,7 @@ public class ASSpecialAbilityConverter {
         } else if (miscType.hasFlag(F_SRCS)
               || miscType.hasFlag(F_SASRCS)
               || miscType.hasFlag(F_CASPAR)
-              || miscType.hasFlag(F_CASPARII)) {
+              || miscType.hasFlag(F_CASPAR_II)) {
             assign(misc, RBT);
             if (miscType.hasFlag(F_CASPAR)) {
                 assign(misc, SDCS);
@@ -283,18 +283,18 @@ public class ASSpecialAbilityConverter {
             assign(misc, ITSM);
         } else if (miscType.hasFlag(F_TSM)) {
             assign(misc, TSM);
-        } else if (miscType.hasFlag(F_VOIDSIG)) {
+        } else if (miscType.hasFlag(F_VOID_SIG)) {
             assign(misc, MAS);
-        } else if (miscType.hasFlag(F_NULLSIG)
+        } else if (miscType.hasFlag(F_NULL_SIG)
               || miscType.hasFlag(F_CHAMELEON_SHIELD)) {
             assign(misc, STL);
         } else if (miscType.hasFlag(F_UMU)) {
             assign(misc, UMU);
         } else if (miscType.hasFlag(F_EW_EQUIPMENT)) {
             assign(misc, ECM);
-        } else if (miscType.hasFlag(F_ADVANCED_FIRECONTROL)) {
+        } else if (miscType.hasFlag(F_ADVANCED_FIRE_CONTROL)) {
             assign(misc, AFC);
-        } else if (miscType.hasFlag(F_BASIC_FIRECONTROL)) {
+        } else if (miscType.hasFlag(F_BASIC_FIRE_CONTROL)) {
             assign(misc, BFC);
         } else if (miscType.hasFlag(F_AMPHIBIOUS) || miscType.hasFlag(F_FULLY_AMPHIBIOUS)
               || miscType.hasFlag(F_LIMITED_AMPHIBIOUS)) {

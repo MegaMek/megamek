@@ -34,9 +34,9 @@
 
 package megamek.common.weapons.artillery;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
@@ -63,8 +63,8 @@ public class Sniper extends ArtilleryWeapon {
         longRange = 18;
         extremeRange = 18; // No extreme range.
         tonnage = 20;
-        criticals = 20;
-        svslots = 10;
+        criticalSlots = 20;
+        svSlots = 10;
         bv = 85;
         cost = 300000;
         rulesRefs = "284, TO";

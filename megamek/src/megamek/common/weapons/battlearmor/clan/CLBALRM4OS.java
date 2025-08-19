@@ -50,12 +50,12 @@ public class CLBALRM4OS extends LRMWeapon {
         rackSize = 4;
         minimumRange = WEAPON_NA;
         tonnage = 0.1;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 9;
         cost = 12000;
         flags = flags.or(F_NO_FIRES)
               .or(F_BA_WEAPON)
-              .or(F_ONESHOT)
+              .or(F_ONE_SHOT)
               .andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON)

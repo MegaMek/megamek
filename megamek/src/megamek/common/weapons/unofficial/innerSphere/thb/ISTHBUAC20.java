@@ -58,7 +58,7 @@ public class ISTHBUAC20 extends UACWeapon {
         longRange = 12;
         extremeRange = 16;
         tonnage = 15.0;
-        criticals = 11;
+        criticalSlots = 11;
         bv = 335;
         cost = 600000;
         // Since this are the Tactical Handbook Weapons I'm using the TM Stats.

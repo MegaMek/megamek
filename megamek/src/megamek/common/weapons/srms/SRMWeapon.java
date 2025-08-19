@@ -36,13 +36,14 @@ package megamek.common.weapons.srms;
 
 import java.io.Serial;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.handlers.*;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.MissileMineClearanceHandler;
 import megamek.common.weapons.handlers.srm.SRMAXHandler;
 import megamek.common.weapons.handlers.srm.SRMAntiTSMHandler;
 import megamek.common.weapons.handlers.srm.SRMDeadFireHandler;
@@ -95,7 +96,7 @@ public abstract class SRMWeapon extends MissileWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_SRM;
+        return BF_CLASS_SRM;
     }
 
     @Override
@@ -103,7 +104,7 @@ public abstract class SRMWeapon extends MissileWeapon {
         if (sortingName != null) {
             return sortingName;
         } else {
-            String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+            String oneShotTag = hasFlag(F_ONE_SHOT) ? "OS " : "";
             if (name.contains("I-OS")) {
                 oneShotTag = "OSI ";
             }

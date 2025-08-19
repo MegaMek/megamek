@@ -59,7 +59,8 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.Munitions;
-import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.force.Force;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.loaders.BLKFile;
@@ -145,7 +146,7 @@ public class EntityListFile {
             }
 
             if ((mount.getType() instanceof WeaponType) &&
-                  (mount.getType()).hasFlag(WeaponType.F_ONESHOT) &&
+                  (mount.getType()).hasFlag(WeaponType.F_ONE_SHOT) &&
                   (mount.getLinked() != null)) {
                 output.append("\" " + MULParser.ATTR_MUNITION + "=\"");
                 output.append(mount.getLinked().getType().getInternalName());
@@ -167,7 +168,7 @@ public class EntityListFile {
                 }
             }
 
-            if (mount.isRapidfire()) {
+            if (mount.isRapidFire()) {
                 output.append("\" " + MULParser.ATTR_RFMG + "=\"true");
             }
 
@@ -390,7 +391,7 @@ public class EntityListFile {
                     }
 
                     // Record Rapid Fire Machine Guns
-                    else if ((mount != null) && (mount.isRapidfire())) {
+                    else if ((mount != null) && (mount.isRapidFire())) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
                               mount,
                               slot.isHit(),
@@ -439,7 +440,7 @@ public class EntityListFile {
                     else if (!isDestroyed &&
                           (mount != null) &&
                           (mount.getType() instanceof WeaponType) &&
-                          ((mount.getType()).hasFlag(WeaponType.F_ONESHOT) ||
+                          ((mount.getType()).hasFlag(WeaponType.F_ONE_SHOT) ||
                                 (entity.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)))) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
                               mount,

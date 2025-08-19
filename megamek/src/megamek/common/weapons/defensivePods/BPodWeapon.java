@@ -34,11 +34,11 @@
 
 package megamek.common.weapons.defensivePods;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.BPodHandler;
@@ -63,8 +63,8 @@ public abstract class BPodWeapon extends AmmoWeapon {
         longRange = 0;
         extremeRange = 0;
         tonnage = 1.0;
-        criticals = 1;
-        flags = flags.or(F_ONESHOT).or(F_B_POD).or(F_BALLISTIC)
+        criticalSlots = 1;
+        flags = flags.or(F_ONE_SHOT).or(F_B_POD).or(F_BALLISTIC)
               .or(F_MEK_WEAPON).or(F_TANK_WEAPON);
         explosive = true;
         bv = 2;

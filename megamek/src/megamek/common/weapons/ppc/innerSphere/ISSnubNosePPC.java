@@ -67,7 +67,7 @@ public class ISSnubNosePPC extends PPCWeapon {
         damageMedium = 8;
         damageLong = 5;
         tonnage = 6.0;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 165;
         cost = 300000;
         maxRange = RANGE_MED;

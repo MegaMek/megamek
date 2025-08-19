@@ -34,9 +34,9 @@
 
 package megamek.common.weapons.battlearmor.innerSphere;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.Weapon;
 
 /**
@@ -60,7 +60,7 @@ public class ISBAPlasmaRifle extends Weapon {
         extremeRange = 8;
         bv = 12;
         tonnage = 0.3;
-        criticals = 2;
+        criticalSlots = 2;
         cost = 28000;
         flags = flags.or(F_BA_WEAPON)
               .or(F_DIRECT_FIRE)

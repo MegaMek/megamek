@@ -59,7 +59,7 @@ public class ISReengineeredLaserSmall extends ReengineeredLaserWeapon {
         waterLongRange = 2;
         waterExtremeRange = 2;
         tonnage = 1.5;
-        criticals = 1;
+        criticalSlots = 1;
         flags = flags.or(F_NO_FIRES);
         bv = 14;
         cost = 25000;

@@ -76,7 +76,7 @@ public class ComputeSensorRangeTest {
     static List<Integer> radarSensorTypes = Arrays.asList(Sensor.TYPE_MEK_RADAR, Sensor.TYPE_VEE_RADAR);
     static List<Integer> seismicSensorTypes = Arrays.asList(Sensor.TYPE_MEK_SEISMIC, Sensor.TYPE_VEE_SEISMIC);
     static List<Integer> irSensorTypes = Arrays.asList(Sensor.TYPE_MEK_IR, Sensor.TYPE_VEE_IR);
-    static List<Integer> magscanSensorTypes = Arrays.asList(Sensor.TYPE_MEK_MAGSCAN, Sensor.TYPE_VEE_MAGSCAN);
+    static List<Integer> magscanSensorTypes = Arrays.asList(Sensor.TYPE_MEK_MAG_SCAN, Sensor.TYPE_VEE_MAG_SCAN);
     //  End Field Sources
 
     // Start tests for Compute.getSensorRangeByBracket(Game, Entity, Targetable, LosEffects)

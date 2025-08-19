@@ -65,9 +65,10 @@ public class EquipmentMessages {
      * @return the string
      */
     public static String getString(String key, Object... args) {
-        String s = getString(key);
-        if (s != null) {
-            return MessageFormat.format(getString(key), args);
+        String string = getString(key);
+
+        if (string != null) {
+            return MessageFormat.format(string, args);
         }
         return null;
     }

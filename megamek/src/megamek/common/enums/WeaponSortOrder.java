@@ -37,14 +37,13 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import megamek.MegaMek;
-import megamek.common.units.Entity;
 import megamek.common.comparators.WeaponComparatorArc;
 import megamek.common.comparators.WeaponComparatorCustom;
 import megamek.common.comparators.WeaponComparatorDamage;
 import megamek.common.comparators.WeaponComparatorNum;
 import megamek.common.comparators.WeaponComparatorRange;
 import megamek.common.equipment.WeaponMounted;
-import megamek.logging.MMLogger;
+import megamek.common.units.Entity;
 
 public enum WeaponSortOrder {
     // region Enum Declarations
@@ -106,27 +105,15 @@ public enum WeaponSortOrder {
      *       yet.
      */
     public Comparator<WeaponMounted> getWeaponSortComparator(final Entity entity) {
-        switch (this) {
-            case DEFAULT:
-                return new WeaponComparatorNum(entity);
-            case RANGE_LOW_HIGH:
-                return new WeaponComparatorRange(true);
-            case RANGE_HIGH_LOW:
-                return new WeaponComparatorRange(false);
-            case DAMAGE_LOW_HIGH:
-                return new WeaponComparatorDamage(true);
-            case DAMAGE_HIGH_LOW:
-                return new WeaponComparatorDamage(false);
-            case WEAPON_ARC:
-                return new WeaponComparatorArc(entity);
-            case CUSTOM:
-                return new WeaponComparatorCustom(entity);
-            default:
-                MMLogger.create(WeaponSortOrder.class).error(String.format(
-                      "Attempted to get weapon sort comparator for unknown WeaponSortOrder %s, returning the DEFAULT weapon sort comparator.",
-                      name()));
-                return DEFAULT.getWeaponSortComparator(entity);
-        }
+        return switch (this) {
+            case DEFAULT -> new WeaponComparatorNum(entity);
+            case RANGE_LOW_HIGH -> new WeaponComparatorRange(true);
+            case RANGE_HIGH_LOW -> new WeaponComparatorRange(false);
+            case DAMAGE_LOW_HIGH -> new WeaponComparatorDamage(true);
+            case DAMAGE_HIGH_LOW -> new WeaponComparatorDamage(false);
+            case WEAPON_ARC -> new WeaponComparatorArc(entity);
+            case CUSTOM -> new WeaponComparatorCustom(entity);
+        };
     }
 
     @Override

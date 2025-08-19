@@ -43,14 +43,14 @@ public class ISTSEMPOneShot extends TSEMPWeapon {
 
     public ISTSEMPOneShot() {
         super();
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONE_SHOT);
         cost = 500000;
         bv = 98;
         name = "TSEMP One-Shot";
         setInternalName(name);
         addLookupName("ISTSEMPOS");
         tonnage = 4;
-        criticals = 3;
+        criticalSlots = 3;
         rulesRefs = "84, IO:AE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)

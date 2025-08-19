@@ -48,7 +48,7 @@ public class CriticalSlot implements Serializable {
 
     /**
      * Determines what the type of this CriticalSlot is, either system or equipment. Systems represent core components
-     * of a unit that are located in specific criticals, such as gyros, engines, and cockpits. Equipment represents
+     * of a unit that are located in specific criticalSlots, such as gyros, engines, and cockpits. Equipment represents
      * everything else, and will have an entry in an EquipmentType subclass.
      */
     private int type;
@@ -277,6 +277,6 @@ public class CriticalSlot implements Serializable {
      */
     public boolean isArmorable() {
         return ((getType() == CriticalSlot.TYPE_SYSTEM) || ((getMount() != null) && getMount().getType()
-              .isArmorable()));
+              .isEligibleForBeingArmored()));
     }
 }

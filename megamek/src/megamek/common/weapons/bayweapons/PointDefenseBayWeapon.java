@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AmmoBayWeaponHandler;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.totalwarfare.TWGameManager;
@@ -64,7 +64,7 @@ public class PointDefenseBayWeapon extends AmmoBayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_POINT_DEFENSE;
-        flags = flags.or(F_PDBAY).or(F_AERO_WEAPON);
+        flags = flags.or(F_PD_BAY).or(F_AERO_WEAPON);
         setModes(new String[] { "Point Defense", "Normal" });
         setInstantModeSwitch(false);
     }

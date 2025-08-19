@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.missiles.clan;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.CLIATMWeapon;
 
 /**
@@ -57,7 +57,7 @@ public class CLIATM6 extends CLIATMWeapon {
         this.longRange = 15;
         this.extremeRange = 20;
         this.tonnage = 3.5;
-        this.criticals = 3;
+        this.criticalSlots = 3;
         this.bv = 165; // Ammo BV is 39
         this.cost = 250000;
         this.shortAV = this.getBaseAeroDamage(); // This is a streak weapon so we use the rack size for the AV

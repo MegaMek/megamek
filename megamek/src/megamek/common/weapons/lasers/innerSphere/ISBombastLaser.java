@@ -34,12 +34,12 @@
 
 package megamek.common.weapons.lasers.innerSphere;
 
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.BombastLaserWeaponHandler;
 import megamek.common.weapons.lasers.LaserWeapon;
@@ -72,7 +72,7 @@ public class ISBombastLaser extends LaserWeapon {
         waterLongRange = 9;
         waterExtremeRange = 12;
         tonnage = 7.0;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 137;
         cost = 200000;
         shortAV = 12;

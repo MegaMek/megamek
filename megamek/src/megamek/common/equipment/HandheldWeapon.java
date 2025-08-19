@@ -40,7 +40,6 @@ import java.util.Vector;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.HitData;
 import megamek.common.Report;
-import megamek.common.util.RoundWeight;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
@@ -50,10 +49,9 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.UnitType;
-import megamek.logging.MMLogger;
+import megamek.common.util.RoundWeight;
 
 public class HandheldWeapon extends Entity {
-    private static final MMLogger logger = MMLogger.create(HandheldWeapon.class);
 
     @Serial
     private static final long serialVersionUID = 5872304985723094857L;
@@ -84,7 +82,7 @@ public class HandheldWeapon extends Entity {
 
     public static final int LOC_GUN = 0;
     private static final String[] LOCATION_NAMES = new String[] { "Gun" };
-    private static final String[] LOCATION_ABBRS = new String[] { "GUN" };
+    private static final String[] LOCATION_ABBREVIATIONS = new String[] { "GUN" };
 
     @Override
     public int locations() {
@@ -98,7 +96,7 @@ public class HandheldWeapon extends Entity {
 
     @Override
     public String[] getLocationAbbrs() {
-        return LOCATION_ABBRS;
+        return LOCATION_ABBREVIATIONS;
     }
 
     @Override
@@ -117,12 +115,12 @@ public class HandheldWeapon extends Entity {
     }
 
     @Override
-    public String getMovementString(EntityMovementType mtype) {
+    public String getMovementString(EntityMovementType movementType) {
         throw new UnsupportedOperationException("Construction only.");
     }
 
     @Override
-    public String getMovementAbbr(EntityMovementType mtype) {
+    public String getMovementAbbr(EntityMovementType movementType) {
         throw new UnsupportedOperationException("Construction only.");
     }
 

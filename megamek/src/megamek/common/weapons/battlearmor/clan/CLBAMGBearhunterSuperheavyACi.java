@@ -63,7 +63,7 @@ public class CLBAMGBearhunterSuperheavyACi extends Weapon {
         longRange = 2;
         extremeRange = 2;
         tonnage = 0.15;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 9;
         flags = flags.or(F_DIRECT_FIRE).or(F_NO_FIRES).or(F_BALLISTIC)
               .or(F_BA_WEAPON).or(F_BURST_FIRE);

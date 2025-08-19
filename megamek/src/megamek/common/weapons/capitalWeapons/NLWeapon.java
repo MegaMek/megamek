@@ -38,8 +38,8 @@
  */
 package megamek.common.weapons.capitalWeapons;
 
-import megamek.common.equipment.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.lasers.EnergyWeapon;
 
 /**
@@ -60,7 +60,7 @@ public abstract class NLWeapon extends EnergyWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_CAPITAL;
+        return BF_CLASS_CAPITAL;
     }
 
     @Override

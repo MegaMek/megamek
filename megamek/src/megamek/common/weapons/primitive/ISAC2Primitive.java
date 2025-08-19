@@ -76,7 +76,7 @@ public class ISAC2Primitive extends ACWeapon {
         longRange = 24;
         extremeRange = 32;
         tonnage = 6.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 37;
         cost = 75000;
         explosive = true; // when firing incendiary ammo

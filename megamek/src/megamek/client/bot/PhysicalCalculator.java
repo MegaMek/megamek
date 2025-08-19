@@ -38,7 +38,8 @@ import java.util.Iterator;
 
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.IHonorUtil;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.ToHitData;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.KickAttackAction;
@@ -187,17 +188,17 @@ public final class PhysicalCalculator {
                     test_ranking = 1.0;
                     test_pod = pod_list.next();
                     // If pod is homing and attacker has no ECM
-                    if ((test_pod.getType() == INarcPod.HOMING) && !entity.hasActiveECM()) {
+                    if ((test_pod.type() == INarcPod.HOMING) && !entity.hasActiveECM()) {
                         // Pod is +1
                         test_ranking += 1.0;
                     }
                     // If pod is ECM and attacker has C3 link
-                    if ((test_pod.getType() == INarcPod.ECM) && (entity.hasC3() || entity.hasC3i())) {
+                    if ((test_pod.type() == INarcPod.ECM) && (entity.hasC3() || entity.hasC3i())) {
                         // Pod is +2
                         test_ranking += 2.0;
                     }
                     // If pod is Nemesis
-                    if (test_pod.getType() == INarcPod.NEMESIS) {
+                    if (test_pod.type() == INarcPod.NEMESIS) {
                         // Pod is +variable, based on movement
                         test_ranking += (entity.getWalkMP() + entity.getAnyTypeMaxJumpMP()) / 2.0;
                     }

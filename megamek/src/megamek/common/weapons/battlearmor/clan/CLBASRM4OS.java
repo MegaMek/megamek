@@ -64,11 +64,11 @@ public class CLBASRM4OS extends SRMWeapon {
         longRange = 9;
         extremeRange = 12;
         tonnage = .080;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 8;
         flags = flags.or(F_NO_FIRES)
               .or(F_BA_WEAPON)
-              .or(F_ONESHOT)
+              .or(F_ONE_SHOT)
               .andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON)

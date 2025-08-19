@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,6 +46,7 @@ import megamek.common.CalledShot;
 import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.enums.BombType;
 import megamek.common.interfaces.PhaseUpdated;
 import megamek.common.interfaces.RoundUpdated;
 import megamek.common.options.IGameOptions;
@@ -80,17 +81,17 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean useless = false;
     private boolean fired = false; // Only true for used OS stuff and TSEMP.
     private boolean tsempDowntime = false; // Needed for "every other turn" TSEMP.
-    private boolean rapidfire = false; // MGs in rapid-fire mode
-    private boolean hotloaded = false; // Hotloading for ammoType
+    private boolean rapidFire = false; // MGs in rapid-fire mode
+    private boolean hotLoaded = false; // Hot loading for ammoType
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
-    private boolean mekTurretMounted = false; // is this mounted in a mekturret
-    private boolean sponsonTurretMounted = false; // is this mounted in a sponsonturret
-    private boolean pintleTurretMounted = false; // is this mounted in a pintleturret
+    private boolean mekTurretMounted = false; // is this mounted in a mek turret
+    private boolean sponsonTurretMounted = false; // is this mounted in a sponson turret
+    private boolean pintleTurretMounted = false; // is this mounted in a pintle turret
     private int facing = -1; // facing for turrets
 
-    private int mode; // Equipment's current state. On or Off. Sixshot or
-    // Fourshot, etc
+    private int mode; // Equipment's current state. On or Off. Six shot or
+    // Four shot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
     private boolean modeSwitchable = true; // disallow mode switching
 
@@ -101,7 +102,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private Mounted<?> linkedBy = null; // reverse link for convenience
 
     private Mounted<?> crossLinkedBy = null; // Weapons with crossLinked capacitors
-    private int linkedBayId = -1;
+    private final int linkedBayId = -1;
 
     private final Entity entity; // what I'm mounted on
 
@@ -124,7 +125,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     // provide a boolean indicating this type of mount and the number of weapons
     // represented
     private boolean weaponGroup = false;
-    private int nweapons = 1;
+    private int numWeapons = 1;
 
     // for ammo loaded by shot rather than ton, a boolean
     private boolean byShot = false;
@@ -185,7 +186,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean isAPMMounted = false;
 
     /**
-     * Does this Mounted represent equipmented that is pod mounted in an omni unit?
+     * Does this Mounted represent equipment that is pod mounted in an omni unit?
      */
     private boolean omniPodMounted = false;
 
@@ -371,7 +372,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
                 }
             }
         }
-        // all communications equipment mounteds need to have the same mode at all times
+        // all communications equipment mounted need to have the same mode at all times
         if ((getType() instanceof MiscType) && getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
             for (Mounted<?> m : entity.getMisc()) {
                 if (!m.equals(this) && m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
@@ -558,8 +559,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return retVal;
     }
 
-    public int getCriticals() {
-        return getType().getCriticals(getEntity(), getSize());
+    public int getNumCriticalSlots() {
+        return getType().getNumCriticalSlots(getEntity(), getSize());
     }
 
     /**
@@ -619,7 +620,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * Set this Mounted's destroyed status NOTE: only set this if this Mounted cannot be used in the current phase
      * anymore. If it still can, use setHit instead
      *
-     * @param destroyed set this object as detroyed
+     * @param destroyed set this object as destroyed
      *
      * @see #setHit(boolean)
      */
@@ -852,7 +853,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     /**
      * Sets the size of variable-sized equipment.
      *
-     * @param size of the quipment
+     * @param size of the equipment
      *
      * @see #getSize()
      */
@@ -860,18 +861,18 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         this.size = size;
     }
 
-    public boolean isRapidfire() {
-        return rapidfire;
+    public boolean isRapidFire() {
+        return rapidFire;
     }
 
-    public void setRapidfire(boolean rapidfire) {
-        this.rapidfire = rapidfire;
+    public void setRapidFire(boolean rapidFire) {
+        this.rapidFire = rapidFire;
     }
 
     /**
-     * Checks to see if the current ammo for this weapon is hotloaded
+     * Checks to see if the current ammo for this weapon is hotLoaded
      *
-     * @return <code>true</code> if ammo is hotloaded or <code>false</code> if
+     * @return <code>true</code> if ammo is hotLoaded or <code>false</code> if
      *       not
      */
     public boolean isHotLoaded() {
@@ -884,10 +885,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
                 return false;
             }
 
-            isHotLoaded = link.hotloaded;
+            isHotLoaded = link.hotLoaded;
 
-            // Check to see if the ammo has its mode set to hotloaded.
-            // This is for vehicles that can change hotload status during
+            // Check to see if the ammo has its mode set to hotLoaded.
+            // This is for vehicles that can change hot load status during
             // combat.
             if (!isHotLoaded && link.getType().hasModes() && link.curMode().equals("HotLoad")) {
                 isHotLoaded = true;
@@ -897,10 +898,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
 
         if (getType() instanceof AmmoType) {
-            isHotLoaded = hotloaded;
+            isHotLoaded = hotLoaded;
 
-            // Check to see if the ammo has its mode set to hotloaded.
-            // This is for vehicles that can change hotload status during
+            // Check to see if the ammo has its mode set to hotLoaded.
+            // This is for vehicles that can change hot load status during
             // combat.
             if (!isHotLoaded && getType().hasModes() && curMode().equals("HotLoad")) {
                 isHotLoaded = true;
@@ -913,11 +914,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Sets the hotloading parameter for this weapons ammo.
+     * Sets the hot loading parameter for this weapons ammo.
      *
-     * @param hotload set the ammo loaded as hotloaded or not
+     * @param hotLoad set the ammo loaded as hotLoaded or not
      */
-    public void setHotLoad(boolean hotload) {
+    public void setHotLoad(boolean hotLoad) {
 
         if (getType() instanceof WeaponType) {
             Mounted<?> link = getLinked();
@@ -925,12 +926,12 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
                 return;
             }
             if (link.getType().hasFlag(AmmoType.F_HOTLOAD)) {
-                link.hotloaded = hotload;
+                link.hotLoaded = hotLoad;
             }
         }
         if (getType() instanceof AmmoType) {
             if (getType().hasFlag(AmmoType.F_HOTLOAD)) {
-                hotloaded = hotload;
+                hotLoaded = hotLoad;
             }
         }
 
@@ -1112,7 +1113,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public boolean isSplitable() {
-        return (((getType() instanceof WeaponType) && ((WeaponType) getType()).isSplitable()) ||
+        return (((getType() instanceof WeaponType) && ((WeaponType) getType()).isSplittableOverCriticalSlots()) ||
               ((getType() instanceof MiscType) && getType().hasFlag(MiscType.F_SPLITABLE)));
     }
 
@@ -1121,28 +1122,28 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public int getExplosionDamage() {
-        if (type instanceof MiscType mtype) {
-            if (mtype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
+        if (type instanceof MiscType miscType) {
+            if (miscType.hasFlag(MiscType.F_PPC_CAPACITOR)) {
                 if (curMode().equals("Charge") && (linked != null) && !linked.isFired()) {
                     return 15;
                 }
             }
-            if (mtype.hasFlag(MiscType.F_FUEL)) {
+            if (miscType.hasFlag(MiscType.F_FUEL)) {
                 return 20;
             }
-            if (mtype.hasFlag(MiscType.F_BLUE_SHIELD)) {
+            if (miscType.hasFlag(MiscType.F_BLUE_SHIELD)) {
                 return 5;
             }
-            if (mtype.hasFlag(MiscType.F_JUMP_JET) &&
-                  mtype.hasSubType(MiscType.S_PROTOTYPE) &&
-                  mtype.hasSubType(MiscType.S_IMPROVED)) {
+            if (miscType.hasFlag(MiscType.F_JUMP_JET) &&
+                  miscType.hasSubType(MiscType.S_PROTOTYPE) &&
+                  miscType.hasSubType(MiscType.S_IMPROVED)) {
                 return 10;
             }
-            if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+            if (miscType.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
                 return 2;
             }
 
-            if (mtype.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+            if (miscType.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
                 return 5;
             }
             return 0;
@@ -1153,7 +1154,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return 0;
     }
 
-    public boolean isFired() { // has a oneshot weapon been fired?
+    public boolean isFired() { // has a one shot weapon been fired?
         return fired;
     }
 
@@ -1223,7 +1224,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * @return The index of this mount in the entity's equipmentlist.
+     * @return The index of this mount in the entity's equipment list.
      */
     public int getEquipmentNum() {
         return getEntity().getEquipmentNum(this);
@@ -1231,7 +1232,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * Returns false if this ammo should not be loaded. Checks if the ammo is already destroyed or missing, is being
-     * dumped, has been breached, is already used up, or is locationless (oneshot ammo).
+     * dumped, has been breached, is already used up, or is location less (one shot ammo).
      */
     public boolean isAmmoUsable() {
         return !destroyed && !missing && !m_bDumping && !useless && (shotsLeft > 0) && (location != Entity.LOC_NONE);
@@ -1262,7 +1263,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Convenience method to determine if a bomb munition is mounted EXternally (reduces MP) or INternally (no MP
+     * Convenience method to determine if a bomb munition is mounted Externally (reduces MP) or Internally (no MP
      * reduction).
      *
      * @return True if
@@ -1315,7 +1316,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public int getNWeapons() {
-        return nweapons;
+        return numWeapons;
     }
 
     public void setNWeapons(int i) {
@@ -1326,7 +1327,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (i > 40) {
             i = 40;
         }
-        nweapons = i;
+        numWeapons = i;
     }
 
     /**
@@ -1336,7 +1337,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * @param armored The armored status to be set
      */
     public void setArmored(boolean armored) {
-        armoredComponent = getType().isArmorable() && armored;
+        armoredComponent = getType().isEligibleForBeingArmored() && armored;
     }
 
     /**
@@ -1704,8 +1705,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (fired) {
             state.add("Fired");
         }
-        if (rapidfire) {
-            state.add("Rapidfire");
+        if (rapidFire) {
+            state.add("Rapid fire");
         }
         if (jammed) {
             state.add("Jammed");
@@ -1725,8 +1726,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (weaponGroup) {
             state.add("Group");
         }
-        if (nweapons != 1 || weaponGroup) {
-            state.add("#Weapons: " + nweapons);
+        if (numWeapons != 1 || weaponGroup) {
+            state.add("#Weapons: " + numWeapons);
         }
         if (size != 1) {
             state.add("Size: " + size);

@@ -34,13 +34,13 @@
 
 package megamek.common.weapons;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
-import megamek.common.equipment.Mounted;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.handlers.AttackHandler;
@@ -106,7 +106,7 @@ public abstract class CLIATMWeapon extends MissileWeapon {
 
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_IATM;
+        return BF_CLASS_IATM;
     }
 
     @Override

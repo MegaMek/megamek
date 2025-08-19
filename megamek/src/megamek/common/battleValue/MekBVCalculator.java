@@ -259,7 +259,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             } else if (mounted.getType() instanceof HVACWeapon) {
                 criticalSlots = 1; // HVAC weapons are -1 total regardless of slot count
             } else {
-                criticalSlots = mounted.getCriticals();
+                criticalSlots = mounted.getNumCriticalSlots();
             }
 
             // Adjust defensive value

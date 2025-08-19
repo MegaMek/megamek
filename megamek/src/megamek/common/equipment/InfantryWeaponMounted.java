@@ -40,7 +40,6 @@ import java.util.List;
 
 import megamek.common.options.IGameOptions;
 import megamek.common.units.Entity;
-import megamek.common.weapons.Weapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -131,7 +130,7 @@ public class InfantryWeaponMounted extends WeaponMounted {
 
     @Override
     public void adaptToGameOptions(IGameOptions options) {
-        ((Weapon) getOtherWeapon()).adaptToGameOptions(options);
+        getOtherWeapon().adaptToGameOptions(options);
         super.adaptToGameOptions(options);
         rebuildModeList();
     }

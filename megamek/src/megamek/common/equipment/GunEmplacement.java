@@ -1,7 +1,7 @@
 /*
    Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2005 Mike Gratton <mike@vee.net>
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -77,7 +77,7 @@ public class GunEmplacement extends Tank {
     public static final String[] HIT_LOCATION_NAMES = { "guns" };
 
     private static final int[] CRITICAL_SLOTS = new int[] { 100 };
-    private static final String[] LOCATION_ABBRS = { "GUN" };
+    private static final String[] LOCATION_ABBREVIATIONS = { "GUN" };
     private static final String[] LOCATION_NAMES = { "GUNS" };
 
     private static final TechAdvancement TA_GUN_EMPLACEMENT = new TechAdvancement(TechBase.ALL)
@@ -134,12 +134,12 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public String getMovementString(EntityMovementType mtype) {
+    public String getMovementString(EntityMovementType movementType) {
         return "Not possible!";
     }
 
     @Override
-    public String getMovementAbbr(EntityMovementType mtype) {
+    public String getMovementAbbr(EntityMovementType movementType) {
         return "!";
     }
 
@@ -185,7 +185,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public String[] getLocationAbbrs() {
-        return LOCATION_ABBRS;
+        return LOCATION_ABBREVIATIONS;
     }
 
     @Override
@@ -306,10 +306,10 @@ public class GunEmplacement extends Tank {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if (checkCrew && (null != getCrew()) && getCrew().isDead()) {
-            logger.debug(getDisplayName() + " CRIPPLED: Crew dead.");
+            logger.debug("{} CRIPPLED: Crew dead.", getDisplayName());
             return true;
         } else if (isMilitary() && !hasViableWeapons()) {
-            logger.debug(getDisplayName() + " CRIPPLED: no viable weapons left.");
+            logger.debug("{} CRIPPLED: no viable weapons left.", getDisplayName());
             return true;
         } else {
             return false;
@@ -378,7 +378,7 @@ public class GunEmplacement extends Tank {
 
     /**
      * @return The Building this Gun Emplacement is deployed onto, if any. Safe to call under any circumstances (game
-     *       may be null, may be undeployed etc).
+     *       may be null, may be un deployed etc.).
      */
     private Optional<Building> occupiedBuilding() {
         if (game != null) {
@@ -395,7 +395,7 @@ public class GunEmplacement extends Tank {
 
     private double armorPercentage(Building building) {
         if (initialBuildingCF + initialBuildingArmor == 0) {
-            // probably undeployed; avoid division by zero
+            // probably un-deployed; avoid division by zero
             return 1;
         } else {
             return (building.getCurrentCF(getPosition()) + building.getArmor(getPosition()))

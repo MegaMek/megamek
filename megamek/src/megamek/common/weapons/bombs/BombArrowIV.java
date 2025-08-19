@@ -35,7 +35,7 @@
 package megamek.common.weapons.bombs;
 
 import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 
 /**
@@ -57,7 +57,7 @@ public class BombArrowIV extends ArtilleryWeapon {
         this.longRange = 9;
         this.extremeRange = 9; // No extreme range.
         this.tonnage = 0;
-        this.criticals = 0;
+        this.criticalSlots = 0;
         this.hittable = false;
         this.bv = 0;
         this.cost = 0;

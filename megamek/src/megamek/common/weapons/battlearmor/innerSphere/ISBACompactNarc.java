@@ -61,7 +61,7 @@ public class ISBACompactNarc extends NarcWeapon {
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         tonnage = .15;
-        criticals = 1;
+        criticalSlots = 1;
         cost = 15000;
         rulesRefs = "263, TM";
         techAdvancement.setTechBase(TechBase.ALL)

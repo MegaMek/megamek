@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.artillery;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
 
 /**
  * @author Sebastian Brocks
@@ -61,7 +61,7 @@ public class LongTomCannon extends ArtilleryCannonWeapon {
         rackSize = 20;
         ammoType = AmmoType.AmmoTypeEnum.LONG_TOM_CANNON;
         tonnage = 20;
-        criticals = 15;
+        criticalSlots = 15;
         bv = 329;
         cost = 650000;
         minimumRange = 4;

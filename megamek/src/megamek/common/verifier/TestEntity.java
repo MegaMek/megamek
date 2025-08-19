@@ -48,12 +48,16 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.CriticalSlot;
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
 import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.*;
+import megamek.common.equipment.enums.BombType;
 import megamek.common.interfaces.ITechManager;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.units.*;
@@ -803,7 +807,7 @@ public abstract class TestEntity implements TestEntityOption {
             } else if (mt.getInternalName().equals("CLMASC")) {
                 return (int) Math.round(getWeight() / 25.0);
             }
-        } else if (mt.hasFlag(MiscType.F_TARGCOMP)) {
+        } else if (mt.hasFlag(MiscType.F_TARGETING_COMPUTER)) {
             double fTons = 0.0f;
             for (WeaponMounted mounted : getEntity().getWeaponList()) {
                 if (mounted.getType().hasFlag(WeaponType.F_DIRECT_FIRE)) {
@@ -879,7 +883,7 @@ public abstract class TestEntity implements TestEntityOption {
             }
             return 10;
         }
-        return mt.getCriticals(getEntity(), size);
+        return mt.getNumCriticalSlots(getEntity(), size);
     }
 
     /**
@@ -1591,7 +1595,7 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append("ProtoMek can't mount light fluid suction system\n");
                 }
             }
-            if (m.getType().hasFlag(MiscType.F_VOIDSIG)
+            if (m.getType().hasFlag(MiscType.F_VOID_SIG)
                   && !getEntity().hasWorkingMisc(MiscType.F_ECM)) {
                 illegal = true;
                 buff.append("void signature system needs ECM suite\n");
@@ -1617,10 +1621,10 @@ public abstract class TestEntity implements TestEntityOption {
                 illegal = true;
             }
             if (m.getType().hasFlag(MiscType.F_SRCS) || m.getType().hasFlag(MiscType.F_SASRCS)
-                  || m.getType().hasFlag(MiscType.F_CASPAR) || m.getType().hasFlag(MiscType.F_CASPARII)) {
+                  || m.getType().hasFlag(MiscType.F_CASPAR) || m.getType().hasFlag(MiscType.F_CASPAR_II)) {
                 robotics++;
             }
-            if (m.getType().hasFlag(MiscType.F_LIFTHOIST)) {
+            if (m.getType().hasFlag(MiscType.F_LIFT_HOIST)) {
                 liftHoists++;
             } else if ((m.getLocation() > 0)
                   && ((m.getType().hasFlag(MiscType.F_CLUB) && !((MiscType) m.getType()).isShield())

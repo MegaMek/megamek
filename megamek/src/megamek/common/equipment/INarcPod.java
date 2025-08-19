@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,50 +35,33 @@
 
 package megamek.common.equipment;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 
+import megamek.common.Player;
+import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.units.Entity;
-import megamek.common.Player;
 import megamek.common.units.Targetable;
-import megamek.common.ToHitData;
 
 /**
  * @author Sebastian Brocks This class represents an iNarc pod attached to an entity. This class is immutable. Once it
  *       is created, it can not be changed. An iNarc pod can be targeted for a "brush off" attack.
  */
-public class INarcPod implements Serializable, Targetable {
+public record INarcPod(int team, int type, int location) implements Serializable, Targetable {
+    @Serial
     private static final long serialVersionUID = -3566809840132774242L;
     public static final int HOMING = 1;
     public static final int ECM = 2;
     public static final int HAYWIRE = 4;
     public static final int NEMESIS = 8;
 
-    private int team;
-    private int type;
-    private int location;
-
     /**
      * Creates a new <code>INarcPod</code>, from the team and of the type specified.
      */
-    public INarcPod(int team, int type, int location) {
-        this.team = team;
-        this.type = type;
-        this.location = location;
-    }
-
-    public int getTeam() {
-        return team;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public int getLocation() {
-        return location;
+    public INarcPod {
     }
 
     /**
@@ -115,7 +98,7 @@ public class INarcPod implements Serializable, Targetable {
      */
     @Override
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         switch (type) {
             case HOMING:
                 buf.append("Homing");
@@ -157,7 +140,7 @@ public class INarcPod implements Serializable, Targetable {
     @Override
     public int getId() {
         // All INarcPods of the same type from the
-        // same team are interchangable targets.
+        // same team are interchangeable targets.
         return ((team << 4) + type);
     }
 

@@ -65,7 +65,7 @@ public class CLBARecoillessRifleHeavy extends Weapon {
         extremeRange = 10;
         bv = 22;
         tonnage = 0.325;
-        criticals = 3;
+        criticalSlots = 3;
         flags = flags.or(F_NO_FIRES)
               .or(F_DIRECT_FIRE)
               .or(F_BALLISTIC)

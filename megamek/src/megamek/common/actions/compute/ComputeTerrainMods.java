@@ -140,7 +140,7 @@ public class ComputeTerrainMods {
 
         // TW p.111
         boolean indirectMortarWithoutSpotter = (weaponType != null)
-              && weaponType.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT)
+              && weaponType.hasFlag(WeaponType.F_MORTAR_TYPE_INDIRECT)
               && isIndirect
               && (Compute.findSpotter(game, attacker, target) == null);
 

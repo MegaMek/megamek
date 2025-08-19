@@ -36,7 +36,9 @@ package megamek.common.weapons.handlers;
 
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.HitData;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
@@ -122,7 +124,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
             hit = new HitData(Tank.LOC_FRONT);
         }
         hit.setGeneralDamageType(generalDamageType);
-        // Do criticals.
+        // Do criticalSlots.
         Vector<Report> specialDamageReport = gameManager
               .criticalEntity(
                     entityTarget,

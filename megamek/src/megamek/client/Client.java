@@ -67,7 +67,11 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.SpecialHexDisplay;
+import megamek.common.TagInfo;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -245,7 +249,7 @@ public class Client extends AbstractClient {
             case MOVEMENT:
             case PREMOVEMENT:
             case OFFBOARD:
-            case PREFIRING:
+            case PRE_FIRING:
             case FIRING:
             case PHYSICAL:
                 memDump("entering phase " + phase);

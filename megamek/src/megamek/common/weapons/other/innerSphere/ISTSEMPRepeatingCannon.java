@@ -48,8 +48,8 @@ public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
         addLookupName("ISTSEMPREPEATING");
         flags = flags.or(F_REPEATING);
         tonnage = 8;
-        criticals = 7;
-        tankslots = 1;
+        criticalSlots = 7;
+        tankSlots = 1;
         rulesRefs = "88, IO:AE";
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)

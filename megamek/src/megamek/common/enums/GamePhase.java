@@ -57,7 +57,7 @@ public enum GamePhase {
     OFFBOARD("GamePhase.OFFBOARD.text"),
     OFFBOARD_REPORT("GamePhase.OFFBOARD_REPORT.text"),
     POINTBLANK_SHOT("GamePhase.POINTBLANK_SHOT.text"), // Fake phase only reached through hidden units
-    PREFIRING("GamePhase.PREFIRING.text"),
+    PRE_FIRING("GamePhase.PREFIRING.text"),
     FIRING("GamePhase.FIRING.text"),
     FIRING_REPORT("GamePhase.FIRING_REPORT.text"),
     PHYSICAL("GamePhase.PHYSICAL.text"),
@@ -67,7 +67,7 @@ public enum GamePhase {
     VICTORY("GamePhase.VICTORY.text"),
     DEPLOY_MINEFIELDS("GamePhase.DEPLOY_MINEFIELDS.text"),
     STARTING_SCENARIO("GamePhase.STARTING_SCENARIO.text"),
-    SET_ARTILLERY_AUTOHIT_HEXES("GamePhase.SET_ARTILLERY_AUTOHIT_HEXES.text");
+    SET_ARTILLERY_AUTO_HIT_HEXES("GamePhase.SET_ARTILLERY_AUTOHIT_HEXES.text");
 
     private final String name;
 
@@ -138,8 +138,8 @@ public enum GamePhase {
         return this == POINTBLANK_SHOT;
     }
 
-    public boolean isPrefiring() {
-        return this == PREFIRING;
+    public boolean isPreFiring() {
+        return this == PRE_FIRING;
     }
 
     public boolean isFiring() {
@@ -178,8 +178,8 @@ public enum GamePhase {
         return this == STARTING_SCENARIO;
     }
 
-    public boolean isSetArtilleryAutohitHexes() {
-        return this == SET_ARTILLERY_AUTOHIT_HEXES;
+    public boolean isSetArtilleryAutoHitHexes() {
+        return this == SET_ARTILLERY_AUTO_HIT_HEXES;
     }
 
     // endregion
@@ -207,7 +207,7 @@ public enum GamePhase {
      */
     public boolean usesTurns() {
         return switch (this) {
-            case SET_ARTILLERY_AUTOHIT_HEXES, DEPLOY_MINEFIELDS, DEPLOYMENT, PREMOVEMENT, MOVEMENT, PREFIRING, FIRING,
+            case SET_ARTILLERY_AUTO_HIT_HEXES, DEPLOY_MINEFIELDS, DEPLOYMENT, PREMOVEMENT, MOVEMENT, PRE_FIRING, FIRING,
                  PHYSICAL, TARGETING, OFFBOARD -> true;
             default -> false;
         };
@@ -225,7 +225,7 @@ public enum GamePhase {
             case FIRING -> game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_FIRING);
             case PHYSICAL -> game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL);
             case TARGETING, OFFBOARD -> game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_TARGETING);
-            case PREMOVEMENT, PREFIRING -> true;
+            case PREMOVEMENT, PRE_FIRING -> true;
             default -> false;
         };
     }

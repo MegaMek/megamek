@@ -60,7 +60,7 @@ public class ISERPPC extends PPCWeapon {
         waterLongRange = 16;
         waterExtremeRange = 24;
         tonnage = 7.0;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 229;
         cost = 300000;
         shortAV = 10;

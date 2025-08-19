@@ -35,12 +35,12 @@ package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CriticalSlot;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadVee;
-import megamek.common.equipment.ArmorType;
-import megamek.common.options.OptionsConstants;
 
 public class MekCostCalculator {
 
@@ -80,9 +80,9 @@ public class MekCostCalculator {
         costs[i++] = cockpitCost;
         costs[i++] = 50000;// life support
         costs[i++] = mek.getWeight() * 2000;// sensors
-        int muscCost = mek.hasSCM() ? 10000 : mek.hasTSM(false) ? 16000 :
+        int musculatureCost = mek.hasSCM() ? 10000 : mek.hasTSM(false) ? 16000 :
               mek.hasTSM(true) ? 32000 : mek.hasIndustrialTSM() ? 12000 : mek.isSuperHeavy() ? 12000 : 2000;
-        costs[i++] = muscCost * mek.getWeight();// musculature
+        costs[i++] = musculatureCost * mek.getWeight();// musculature
         double structureCost = getStructureCost(mek) * mek.getWeight() * (mek.isTripodMek() ? 1.2 : 1);// IS
         costs[i++] = structureCost;
         costs[i++] = mek.getActuatorCost() * (mek.isSuperHeavy() ? 2 : 1);// arm and/or leg actuators

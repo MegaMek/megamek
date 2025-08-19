@@ -58,7 +58,7 @@ public class ISImprovedNarc extends NarcWeapon {
         longRange = 15;
         extremeRange = 22;
         tonnage = 5.0;
-        criticals = 3;
+        criticalSlots = 3;
         bv = 75;
         cost = 250000;
         rulesRefs = "232, TM";

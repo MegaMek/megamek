@@ -34,11 +34,11 @@
 
 package megamek.common.weapons.battlearmor.clan;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
@@ -72,8 +72,8 @@ public class CLBAMortarHeavy extends Weapon {
         bv = 17;
         cost = 7500;
         tonnage = 0.4;
-        criticals = 2;
-        flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).or(F_MORTARTYPE_INDIRECT)
+        criticalSlots = 2;
+        flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).or(F_MORTAR_TYPE_INDIRECT)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "263, TM";
         techAdvancement.setTechBase(TechBase.ALL)

@@ -34,10 +34,10 @@
 
 package megamek.common.weapons.primitive;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.RLHandler;
 import megamek.common.weapons.missiles.RLWeapon;
@@ -59,7 +59,7 @@ public abstract class PrimRLWeapon extends RLWeapon {
     public PrimRLWeapon() {
         super();
         ammoType = AmmoType.AmmoTypeEnum.ROCKET_LAUNCHER;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONE_SHOT);
         toHitModifier = 1;
         atClass = CLASS_ROCKET_LAUNCHER;
     }

@@ -31,7 +31,9 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.equipment;
+package megamek.common.equipment.enums;
+
+import megamek.common.equipment.EquipmentFlag;
 
 /**
  * Set of flags that can be used to determine special equipment properties and behaviors. Every type of equipment has
@@ -63,8 +65,8 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_MECHANICAL_JUMP_BOOSTER,
 
     F_CASE,
-    F_CASEII,
-    F_CASEP,
+    F_CASE_II,
+    F_CASE_P,
 
     F_MASC,
     F_TSM,
@@ -83,7 +85,7 @@ public enum MiscTypeFlag implements EquipmentFlag {
     ANY_C3,
 
     F_ARTEMIS,
-    F_TARGCOMP,
+    F_TARGETING_COMPUTER,
     F_ARTEMIS_V,
 
     F_BATTLEMEK_NIU,
@@ -135,9 +137,9 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_VISUAL_CAMO,
     F_APOLLO,
 
-    F_NULLSIG,
-    F_VOIDSIG,
-    F_LIFTHOIST,
+    F_NULL_SIG,
+    F_VOID_SIG,
+    F_LIFT_HOIST,
     F_CHAMELEON_SHIELD,
     F_VIBROCLAW,
 
@@ -157,8 +159,8 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_MAST_MOUNT,
     F_FUEL,
     F_BLUE_SHIELD,
-    F_BASIC_FIRECONTROL,
-    F_ADVANCED_FIRECONTROL,
+    F_BASIC_FIRE_CONTROL,
+    F_ADVANCED_FIRE_CONTROL,
     F_LIQUID_CARGO,
     F_HITCH,
     F_FLOTATION_HULL,
@@ -189,7 +191,7 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_COMBAT_VEHICLE_ESCAPE_POD,
     F_DETACHABLE_WEAPON_PACK,
     F_SPRAYER,
-    F_EXTENDED_LIFESUPPORT,
+    F_EXTENDED_LIFE_SUPPORT,
 
     F_SHOULDER_TURRET,
     F_HEAD_TURRET,
@@ -211,7 +213,7 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_BULLDOZER,
     F_EXTERNAL_STORES_HARDPOINT,
     F_MANIPULATOR,
-    F_CARGOLIFTER,
+    F_CARGO_LIFTER,
     F_NAVAL_TUG_ADAPTOR,
     F_AMPHIBIOUS,
     F_PROP,
@@ -285,7 +287,7 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_ARTEMIS_PROTO, // Prototype Stuff
     F_STORAGE_BATTERY, // Flags for Large Craft Systems
 
-    F_VEEDC,
+    F_VEE_DC,
     F_SC_EQUIPMENT,
     F_DS_EQUIPMENT,
     F_JS_EQUIPMENT,
@@ -300,7 +302,7 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_SASRCS,
 
     F_CASPAR,
-    F_CASPARII,
+    F_CASPAR_II,
 
     F_ATAC,
     F_DTAC,
@@ -319,7 +321,7 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_FIELD_KITCHEN,
 
 
-    F_SPLITABLE, // Marks the equipament as something that can be split betwen multiple crit slots
+    F_CAN_BE_SPlIT_ACROSS_CRITICAL_SLOTS, // Marks the equipment as something that can be split between multiple crit slots
     F_VARIABLE_SIZE, // marks the equipment as being something with a size that can be changed at will
 
     // Satellite Equipment

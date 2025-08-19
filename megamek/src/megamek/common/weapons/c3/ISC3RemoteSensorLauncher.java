@@ -34,11 +34,11 @@
 
 package megamek.common.weapons.c3;
 
-import megamek.common.equipment.AmmoType;
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalwarfare.TWGameManager;
@@ -64,8 +64,8 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
         flags = flags.or(F_NO_FIRES);
         ammoType = AmmoType.AmmoTypeEnum.C3_REMOTE_SENSOR;
         cost = 400000;
-        criticals = 3;
-        tankslots = 1;
+        criticalSlots = 3;
+        tankSlots = 1;
         tonnage = 4;
         rackSize = 1;
         damage = 0;

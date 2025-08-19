@@ -55,7 +55,7 @@ public class CLStreakLRM17 extends StreakLRMWeapon {
         longRange = 21;
         extremeRange = 28;
         tonnage = 6.80;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 293;
         cost = 255000;
         rulesRefs = "327, TO";

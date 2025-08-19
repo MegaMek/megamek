@@ -41,13 +41,13 @@ import javax.swing.AbstractListModel;
 
 import megamek.client.ui.Messages;
 import megamek.common.equipment.AmmoType;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 
 /**
  * ListModel implementation that supports keeping track of a list of Mounted instantiations, how to display them in the
@@ -159,7 +159,7 @@ class WeaponListModel extends AbstractListModel<String> {
         wn.append(']');
         // determine shots left & total shots left
         if ((weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
-              && (!weaponType.hasFlag(WeaponType.F_ONESHOT)
+              && (!weaponType.hasFlag(WeaponType.F_ONE_SHOT)
               || weaponType.hasFlag(WeaponType.F_BA_INDIVIDUAL))
               && (weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.INFANTRY)) {
             int shotsLeft = 0;
@@ -175,7 +175,7 @@ class WeaponListModel extends AbstractListModel<String> {
             wn.append('/');
             wn.append(totalShotsLeft);
             wn.append(')');
-        } else if (weaponType.hasFlag(WeaponType.F_DOUBLE_ONESHOT)
+        } else if (weaponType.hasFlag(WeaponType.F_DOUBLE_ONE_SHOT)
               || (entity.isSupportVehicle() && (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.INFANTRY))) {
             int shotsLeft = 0;
             int totalShots = 0;
@@ -191,7 +191,7 @@ class WeaponListModel extends AbstractListModel<String> {
         }
 
         // MG rapid fire
-        if (mounted.isRapidfire()) {
+        if (mounted.isRapidFire()) {
             wn.append(Messages.getString("MekDisplay.rapidFire"));
         }
 

@@ -63,10 +63,10 @@ public class ISBAMRM1OS extends MRMWeapon {
         bv = 2;
         cost = 2500;
         tonnage = .05;
-        criticals = 2;
+        criticalSlots = 2;
         flags = flags.or(F_NO_FIRES)
               .or(F_BA_WEAPON)
-              .or(F_ONESHOT)
+              .or(F_ONE_SHOT)
               .andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON)

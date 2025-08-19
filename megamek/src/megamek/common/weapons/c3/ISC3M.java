@@ -53,9 +53,9 @@ public class ISC3M extends TAGWeapon {
         addLookupName("ISC3MasterComputer");
         addLookupName("C3 Computer [Master]");
         tonnage = 5;
-        criticals = 5;
-        tankslots = 1;
-        svslots = 1;
+        criticalSlots = 5;
+        tankSlots = 1;
+        svSlots = 1;
         hittable = true;
         spreadable = false;
         cost = 1500000;

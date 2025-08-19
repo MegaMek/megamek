@@ -415,7 +415,7 @@ public class ComputeToHit {
                 }
             }
 
-            if (weaponType.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT) && isIndirect) {
+            if (weaponType.hasFlag(WeaponType.F_MORTAR_TYPE_INDIRECT) && isIndirect) {
                 los.setArcedAttack(true);
             }
 
@@ -444,7 +444,7 @@ public class ComputeToHit {
                 }
             }
 
-            if (weaponType.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT) || semiGuidedIndirectVsTaggedTarget) {
+            if (weaponType.hasFlag(WeaponType.F_MORTAR_TYPE_INDIRECT) || semiGuidedIndirectVsTaggedTarget) {
                 los.setArcedAttack(true);
             }
 
@@ -1492,7 +1492,7 @@ public class ComputeToHit {
         }
 
         // And if this is a Mek Mortar
-        if (weaponType.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT)) {
+        if (weaponType.hasFlag(WeaponType.F_MORTAR_TYPE_INDIRECT)) {
             if (isIndirect) {
                 // +2 penalty if there's no spotting entity
                 if (spotter == null) {

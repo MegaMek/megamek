@@ -34,8 +34,8 @@
 
 package megamek.common.weapons.artillery;
 
-import megamek.common.equipment.AmmoType;
 import megamek.common.SimpleTechLevel;
+import megamek.common.equipment.AmmoType;
 
 /**
  * @author Sebastian Brocks
@@ -58,8 +58,8 @@ public class CLArrowIV extends ArrowIV {
         longRange = 9;
         extremeRange = 9; // No extreme range.
         tonnage = 12;
-        criticals = 12;
-        svslots = 6;
+        criticalSlots = 12;
+        svSlots = 6;
         techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)

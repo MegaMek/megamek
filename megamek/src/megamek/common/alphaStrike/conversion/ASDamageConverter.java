@@ -266,7 +266,7 @@ public class ASDamageConverter {
     protected double determineDamage(Mounted<?> weapon, int range) {
         WeaponType weaponType = (WeaponType) weapon.getType();
         if ((weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY) ||
-              (weaponType.getBattleForceClass() == WeaponType.BFCLASS_TORP)) {
+              (weaponType.getBattleForceClass() == WeaponType.BF_CLASS_TORPEDO)) {
             return 0;
         }
         return ((WeaponType) weapon.getType()).getBattleForceDamage(range, weapon.getLinkedBy());
@@ -415,7 +415,7 @@ public class ASDamageConverter {
         double damageModifier = ammoModifier.getOrDefault(weaponType, 1d);
 
         // One shot or Fusillade
-        if (weaponType.hasFlag(WeaponType.F_ONESHOT) && !(weaponType instanceof CLFussilade)) {
+        if (weaponType.hasFlag(WeaponType.F_ONE_SHOT) && !(weaponType instanceof CLFussilade)) {
             damageModifier *= .1;
         }
 
@@ -441,7 +441,7 @@ public class ASDamageConverter {
         for (Mounted<?> weapon : weaponsList) {
             WeaponType weaponType = (WeaponType) weapon.getType();
             if ((weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA) &&
-                  !weaponType.hasFlag(WeaponType.F_ONESHOT) &&
+                  !weaponType.hasFlag(WeaponType.F_ONE_SHOT) &&
                   (!(entity instanceof BattleArmor) || weaponType instanceof MissileWeapon)) {
                 weaponCount.merge(weaponType, 1, Integer::sum);
             }
@@ -487,7 +487,7 @@ public class ASDamageConverter {
         }
 
         if (weaponType.hasFlag(WeaponType.F_TSEMP) || weaponType.hasFlag(WeaponType.F_CWS)) {
-            assignToLocations(weapon, weaponType.hasFlag(WeaponType.F_ONESHOT) ? TSEMPO : TSEMP, 1);
+            assignToLocations(weapon, weaponType.hasFlag(WeaponType.F_ONE_SHOT) ? TSEMPO : TSEMP, 1);
         }
 
         if (weaponType.getAtClass() == WeaponType.CLASS_TELE_MISSILE) {
@@ -825,32 +825,32 @@ public class ASDamageConverter {
         WeaponType weaponType = (WeaponType) weapon.getType();
         return switch (dmgType) {
             case LRM -> !MountedHelper.isAnyArtemis(weapon.getLinkedBy()) &&
-                  ((weaponType.getBattleForceClass() == WeaponType.BFCLASS_LRM) ||
-                        (weaponType.getBattleForceClass() == WeaponType.BFCLASS_MML));
+                  ((weaponType.getBattleForceClass() == WeaponType.BF_CLASS_LRM) ||
+                        (weaponType.getBattleForceClass() == WeaponType.BF_CLASS_MML));
             case SRM -> !MountedHelper.isAnyArtemis(weapon.getLinkedBy()) &&
-                  ((weaponType.getBattleForceClass() == WeaponType.BFCLASS_SRM) ||
-                        (weaponType.getBattleForceClass() == WeaponType.BFCLASS_MML));
-            case FLK -> weaponType.getBattleForceClass() == WeaponType.BFCLASS_FLAK;
-            case AC -> weaponType.getBattleForceClass() == WeaponType.BFCLASS_AC;
-            case TOR -> weaponType.getBattleForceClass() == WeaponType.BFCLASS_TORP;
-            case IATM -> weaponType.getBattleForceClass() == WeaponType.BFCLASS_IATM;
+                  ((weaponType.getBattleForceClass() == WeaponType.BF_CLASS_SRM) ||
+                        (weaponType.getBattleForceClass() == WeaponType.BF_CLASS_MML));
+            case FLK -> weaponType.getBattleForceClass() == WeaponType.BF_CLASS_FLAK;
+            case AC -> weaponType.getBattleForceClass() == WeaponType.BF_CLASS_AC;
+            case TOR -> weaponType.getBattleForceClass() == WeaponType.BF_CLASS_TORPEDO;
+            case IATM -> weaponType.getBattleForceClass() == WeaponType.BF_CLASS_IATM;
             case IF -> weaponType.isAlphaStrikeIndirectFire();
-            case REL -> weaponType.getBattleForceClass() == WeaponType.BFCLASS_REL;
+            case REL -> weaponType.getBattleForceClass() == WeaponType.BF_CLASS_REL;
             case REAR, TUR -> true;
             case PNT -> weaponType.isAlphaStrikePointDefense();
-            case MSL -> weaponType.getBattleForceClass() == WeaponType.BFCLASS_CAPITAL_MISSILE;
-            case CAP -> weaponType.getBattleForceClass() == WeaponType.BFCLASS_CAPITAL;
-            case SCAP -> weaponType.getBattleForceClass() == WeaponType.BFCLASS_SUBCAPITAL;
-            case STD -> (weaponType.getBattleForceClass() != WeaponType.BFCLASS_CAPITAL_MISSILE) &&
-                  (weaponType.getBattleForceClass() != WeaponType.BFCLASS_CAPITAL) &&
-                  (weaponType.getBattleForceClass() != WeaponType.BFCLASS_SUBCAPITAL) &&
-                  (weaponType.getBattleForceClass() != WeaponType.BFCLASS_TORP);
+            case MSL -> weaponType.getBattleForceClass() == WeaponType.BF_CLASS_CAPITAL_MISSILE;
+            case CAP -> weaponType.getBattleForceClass() == WeaponType.BF_CLASS_CAPITAL;
+            case SCAP -> weaponType.getBattleForceClass() == WeaponType.BF_CLASS_SUBCAPITAL;
+            case STD -> (weaponType.getBattleForceClass() != WeaponType.BF_CLASS_CAPITAL_MISSILE) &&
+                  (weaponType.getBattleForceClass() != WeaponType.BF_CLASS_CAPITAL) &&
+                  (weaponType.getBattleForceClass() != WeaponType.BF_CLASS_SUBCAPITAL) &&
+                  (weaponType.getBattleForceClass() != WeaponType.BF_CLASS_TORPEDO);
             default -> false;
         };
     }
 
     private double mmlMultiplier(WeaponType weaponType, BattleForceSUA dmgType, ASRange range) {
-        if (weaponType.getBattleForceClass() == WeaponType.BFCLASS_MML) {
+        if (weaponType.getBattleForceClass() == WeaponType.BF_CLASS_MML) {
             if ((dmgType == LRM) && (range == ASRange.SHORT)) {
                 return 0;
             } else if ((dmgType == LRM) && (range == ASRange.MEDIUM)) {
@@ -980,8 +980,8 @@ public class ASDamageConverter {
         }
 
         if (entity.hasWorkingMisc(MiscType.F_STEALTH, -1) ||
-              entity.hasWorkingMisc(MiscType.F_VOIDSIG, -1) ||
-              entity.hasWorkingMisc(MiscType.F_NULLSIG, -1)) {
+              entity.hasWorkingMisc(MiscType.F_VOID_SIG, -1) ||
+              entity.hasWorkingMisc(MiscType.F_NULL_SIG, -1)) {
             totalHeat += 10;
         }
 
@@ -994,7 +994,7 @@ public class ASDamageConverter {
 
     protected int weaponHeat(Mounted<?> weapon, boolean onlyRear, boolean onlyLongRange) {
         WeaponType weaponType = (WeaponType) weapon.getType();
-        if (weaponType.hasFlag(WeaponType.F_ONESHOT) ||
+        if (weaponType.hasFlag(WeaponType.F_ONE_SHOT) ||
               (onlyRear && !weapon.isRearMounted()) ||
               (!onlyRear && weapon.isRearMounted()) ||
               (onlyLongRange && weaponType.getBattleForceDamage(LONG_RANGE) == 0)) {

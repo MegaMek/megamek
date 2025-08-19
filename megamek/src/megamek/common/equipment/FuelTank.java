@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,10 +34,12 @@
 
 package megamek.common.equipment;
 
+import java.io.Serial;
+
 import megamek.common.board.Board;
-import megamek.common.units.Building;
 import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
+import megamek.common.units.Building;
 
 /**
  * This class represents a single, possibly multi-hex fuel tank on the board.
@@ -45,8 +47,9 @@ import megamek.common.enums.BasementType;
  * @author fastsammy@sourceforge.net (Robin D. Toll)
  */
 public class FuelTank extends Building {
+    @Serial
     private static final long serialVersionUID = 5275543640680231747L;
-    private int _magnitude;
+    private final int _magnitude;
 
     public FuelTank(Coords coords, Board board, int structureType, int magnitude) {
         super(coords, board, structureType, BasementType.NONE);

@@ -65,14 +65,14 @@ public class CLBASRM3OS extends SRMWeapon {
         bv = 6;
         flags = flags.or(F_NO_FIRES)
               .or(F_BA_WEAPON)
-              .or(F_ONESHOT)
+              .or(F_ONE_SHOT)
               .andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON)
               .andNot(F_PROTO_WEAPON);
         cost = 7500;
         tonnage = .06;
-        criticals = 2;
+        criticalSlots = 2;
         shortAV = 2;
         maxRange = RANGE_SHORT;
         rulesRefs = "261, TM";

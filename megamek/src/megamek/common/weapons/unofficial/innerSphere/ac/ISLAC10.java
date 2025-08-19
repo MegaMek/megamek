@@ -58,7 +58,7 @@ public class ISLAC10 extends LACWeapon {
         longRange = 9;
         extremeRange = 12;
         tonnage = 8.0;
-        criticals = 4;
+        criticalSlots = 4;
         bv = 74;
         cost = 225000;
         explosionDamage = damage;

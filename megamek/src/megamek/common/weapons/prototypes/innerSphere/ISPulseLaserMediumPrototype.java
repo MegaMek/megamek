@@ -38,10 +38,10 @@
  */
 package megamek.common.weapons.prototypes.innerSphere;
 
-import megamek.common.game.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.game.Game;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.prototype.PrototypeLaserHandler;
 import megamek.common.weapons.lasers.PulseLaserWeapon;
@@ -79,7 +79,7 @@ public class ISPulseLaserMediumPrototype extends PulseLaserWeapon {
         waterLongRange = 4;
         waterExtremeRange = 6;
         tonnage = 2.0;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 43;
         cost = 300000;
         rulesRefs = "71, IO";

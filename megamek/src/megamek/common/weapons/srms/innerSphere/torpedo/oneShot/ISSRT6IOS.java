@@ -57,9 +57,9 @@ public class ISSRT6IOS extends SRTWeapon {
         waterLongRange = 9;
         waterExtremeRange = 12;
         tonnage = 2.5;
-        criticals = 2;
+        criticalSlots = 2;
         bv = 12;
-        flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
+        flags = flags.or(F_NO_FIRES).or(F_ONE_SHOT);
         cost = 64000;
         rulesRefs = "327, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS

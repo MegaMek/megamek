@@ -63,7 +63,7 @@ public class RocketLauncher10 extends RLWeapon {
         longRange = 18;
         extremeRange = 27;
         tonnage = .5;
-        criticals = 1;
+        criticalSlots = 1;
         bv = 18;
         cost = 15000;
         shortAV = 6;

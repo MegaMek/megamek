@@ -53,14 +53,14 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.SkinSpecification;
-import megamek.common.board.Board;
-import megamek.common.board.BoardLocation;
-import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.SpecialHexDisplay;
+import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
 import megamek.common.containers.PlayerIDAndList;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 
 public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
@@ -304,7 +304,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         if (isIgnoringEvents()) {
             return;
         }
-        if (game().getPhase().isSetArtilleryAutohitHexes()) {
+        if (game().getPhase().isSetArtilleryAutoHitHexes()) {
             setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase"));
         } else if (isMyTurn()) {
             endMyTurn();

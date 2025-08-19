@@ -37,7 +37,8 @@ package megamek.common.loaders;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
@@ -199,34 +200,34 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
         // check for removed arm actuators...
 
         // no lower right arm
-        if (!dataFile.getDataAsString("ra criticals")[2].trim().equalsIgnoreCase("Lower Arm Actuator")) {
+        if (!dataFile.getDataAsString("ra criticalSlots")[2].trim().equalsIgnoreCase("Lower Arm Actuator")) {
             mek.removeCriticals(Mek.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
         }
         // no right hand
-        if (!dataFile.getDataAsString("ra criticals")[3].trim().equalsIgnoreCase("Hand Actuator")) {
+        if (!dataFile.getDataAsString("ra criticalSlots")[3].trim().equalsIgnoreCase("Hand Actuator")) {
             mek.removeCriticals(Mek.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
         }
 
         // no lower left arm
-        if (!dataFile.getDataAsString("la criticals")[2].trim().equalsIgnoreCase("Lower Arm Actuator")) {
+        if (!dataFile.getDataAsString("la criticalSlots")[2].trim().equalsIgnoreCase("Lower Arm Actuator")) {
             mek.removeCriticals(Mek.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM));
         }
         // no left hand
-        if (!dataFile.getDataAsString("la criticals")[3].trim().equalsIgnoreCase("Hand Actuator")) {
+        if (!dataFile.getDataAsString("la criticalSlots")[3].trim().equalsIgnoreCase("Hand Actuator")) {
             mek.removeCriticals(Mek.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HAND));
         }
 
         // load equipment stuff...
         List<String>[] criticals = new Vector[8];
 
-        criticals[Mek.LOC_HEAD] = dataFile.getDataAsVector("hd criticals");
-        criticals[Mek.LOC_LARM] = dataFile.getDataAsVector("la criticals");
-        criticals[Mek.LOC_RARM] = dataFile.getDataAsVector("ra criticals");
-        criticals[Mek.LOC_LLEG] = dataFile.getDataAsVector("ll criticals");
-        criticals[Mek.LOC_RLEG] = dataFile.getDataAsVector("rl criticals");
-        criticals[Mek.LOC_LT] = dataFile.getDataAsVector("lt criticals");
-        criticals[Mek.LOC_RT] = dataFile.getDataAsVector("rt criticals");
-        criticals[Mek.LOC_CT] = dataFile.getDataAsVector("ct criticals");
+        criticals[Mek.LOC_HEAD] = dataFile.getDataAsVector("hd criticalSlots");
+        criticals[Mek.LOC_LARM] = dataFile.getDataAsVector("la criticalSlots");
+        criticals[Mek.LOC_RARM] = dataFile.getDataAsVector("ra criticalSlots");
+        criticals[Mek.LOC_LLEG] = dataFile.getDataAsVector("ll criticalSlots");
+        criticals[Mek.LOC_RLEG] = dataFile.getDataAsVector("rl criticalSlots");
+        criticals[Mek.LOC_LT] = dataFile.getDataAsVector("lt criticalSlots");
+        criticals[Mek.LOC_RT] = dataFile.getDataAsVector("rt criticalSlots");
+        criticals[Mek.LOC_CT] = dataFile.getDataAsVector("ct criticalSlots");
 
         // prefix is "Clan " or "IS "
         String prefix;

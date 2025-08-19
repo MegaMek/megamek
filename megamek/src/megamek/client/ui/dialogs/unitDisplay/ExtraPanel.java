@@ -52,7 +52,8 @@ import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PicMap;
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.Player;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.ComputeECM;
@@ -617,7 +618,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                 condition = " (Disabled)";
             }
             chSensors.addItem(sensor.getDisplayName() + condition);
-            if ((en.getNextSensor() != null) && (sensor.getType() == en.getNextSensor().getType())) {
+            if ((en.getNextSensor() != null) && (sensor.type() == en.getNextSensor().type())) {
                 chSensors.setSelectedIndex(i);
             }
         }

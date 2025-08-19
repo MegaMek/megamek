@@ -53,7 +53,7 @@ public class InfantryProstheticClimbingClawsWeapon extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 1000;
         bv = 0.02;
-        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC).or(F_INF_CLIMBINGCLAWS);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC).or(F_INF_CLIMBING_CLAWS);
         // TODO Add game rules IO pg 84
         infantryDamage = 0.02;
         infantryRange = 0;

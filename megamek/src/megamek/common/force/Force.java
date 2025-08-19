@@ -33,6 +33,7 @@
 
 package megamek.common.force;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,11 +41,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import megamek.common.interfaces.ForceAssignable;
-import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.game.Game;
 import megamek.common.icons.Camouflage;
+import megamek.common.interfaces.ForceAssignable;
 
 /**
  * A representation of a force or part of a force. Very similar to MHQ's Force. A Force in MM belongs to a player. It
@@ -54,6 +55,7 @@ import megamek.common.icons.Camouflage;
  */
 public final class Force implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -3870731687743542253L;
 
     public static final int NO_FORCE = -1;
@@ -76,7 +78,7 @@ public final class Force implements Serializable {
     }
 
     /**
-     * Creates a subforce.
+     * Creates a sub force.
      */
     public Force(final String name, final int id, final Camouflage camouflage, final Force parent) {
         this(name, id, camouflage);
@@ -190,15 +192,15 @@ public final class Force implements Serializable {
 
     /**
      * Returns the id of the entity at the provided index from the list of direct members of this force (not subForces).
-     * Indices outside of 0 ... entityCount() - 1 will result in an exception.
+     * Indices outside 0 ... entityCount() - 1 will result in an exception.
      */
     public int getEntityId(int index) {
         return entities.get(index);
     }
 
     /**
-     * Returns the id of the force at the provided index from the list of subForces of this force. Indices outside of 0
-     * ... subForceCount() - 1 will result in an exception.
+     * Returns the id of the force at the provided index from the list of subForces of this force. Indices outside 0 ...
+     * subForceCount() - 1 will result in an exception.
      */
     public int getSubForceId(int index) {
         return subForces.get(index);
@@ -206,7 +208,7 @@ public final class Force implements Serializable {
 
     /**
      * Returns true if the provided unit is among the force's direct members. Does NOT check if the unit is part of any
-     * subforce.
+     * sub force.
      */
     public boolean containsEntity(ForceAssignable unit) {
         return containsEntity(unit.getId());
@@ -214,7 +216,7 @@ public final class Force implements Serializable {
 
     /**
      * Returns true if the provided entity is among the force's direct members. Does NOT check if the entity is part of
-     * any subforce.
+     * any sub force.
      */
     public boolean containsEntity(int id) {
         return entities.contains(id);
@@ -237,7 +239,7 @@ public final class Force implements Serializable {
 
     /**
      * Returns the index of the provided force in the list of direct subForces of this force. Returns -1 if the force is
-     * no direct subforce of this force.
+     * no direct sub force of this force.
      */
     public int subForceIndex(Force force) {
         return subForces.indexOf(force.getId());
@@ -288,7 +290,7 @@ public final class Force implements Serializable {
         List<String> en = entities.stream().map(e -> Integer.toString(e)).collect(Collectors.toList());
         List<String> sf = subForces.stream().map(e -> Integer.toString(e)).collect(Collectors.toList());
         return name + ": [" + id + "]; Parent: " + parent + "; Entities: "
-              + String.join(",", en) + "; Subforces: " + String.join(",", sf)
+              + String.join(",", en) + "; Sub forces: " + String.join(",", sf)
               + "; Owner: " + ownerId;
     }
 
@@ -318,7 +320,7 @@ public final class Force implements Serializable {
         return false;
     }
 
-    /** Moves up the given subforce by one position if possible. Returns true when an actual change occurred. */
+    /** Moves up the given sub force by one position if possible. Returns true when an actual change occurred. */
     boolean moveUp(Force subforce) {
         if (!containsSubForce(subforce)) {
             return false;
@@ -331,7 +333,7 @@ public final class Force implements Serializable {
         return false;
     }
 
-    /** Moves down the given subforce by one position if possible. Returns true when an actual change occurred. */
+    /** Moves down the given sub force by one position if possible. Returns true when an actual change occurred. */
     boolean moveDown(Force subforce) {
         if (!containsSubForce(subforce)) {
             return false;

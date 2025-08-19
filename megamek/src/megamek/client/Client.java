@@ -1154,7 +1154,7 @@ public class Client extends AbstractClient {
                             break;
                         case CFR_APDS_ASSIGN:
                             cfrEvt.setEntityId(packet.getIntValue(1));
-                            cfrEvt.setApdsDists(packet.getIntList(2));
+                            cfrEvt.setApdsDistances(packet.getIntList(2));
                             cfrEvt.setWAAs(packet.getWeaponAttackActionList(3));
                             break;
                         case CFR_HIDDEN_PBS:

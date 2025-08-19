@@ -45,9 +45,6 @@ import java.util.stream.Collectors;
 
 import megamek.common.Hex;
 import megamek.common.Player;
-import megamek.common.interfaces.PlayerTurn;
-import megamek.common.interfaces.ReportEntry;
-import megamek.common.interfaces.ServerOnly;
 import megamek.common.Team;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
@@ -57,6 +54,9 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
+import megamek.common.interfaces.PlayerTurn;
+import megamek.common.interfaces.ReportEntry;
+import megamek.common.interfaces.ServerOnly;
 import megamek.common.options.IGameOptions;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
@@ -359,7 +359,7 @@ public interface IGame {
      * id. This method is written with the idea that a game might have more than one board. Game's legacy methods of
      * setBoard() and getBoard() use the boardId 0. This method is meant as a server-side method.
      *
-     * @param boardId (currently ignored) The boardId to assing to that board
+     * @param boardId (currently ignored) The boardId to assign to that board
      * @param board   The board to use
      */
     void setBoard(int boardId, Board board);
@@ -411,7 +411,7 @@ public interface IGame {
      * id. This method is written with the idea that a game might have more than one board. This method is meant as a
      * client-side method and may fire game events.
      *
-     * @param boardId (currently ignored) The boardId to assing to that board
+     * @param boardId (currently ignored) The boardId to assign to that board
      * @param board   The board to use
      */
     void receiveBoard(int boardId, Board board);
@@ -439,7 +439,7 @@ public interface IGame {
         if ((lowerBoard.isLowAltitude() && !higherBoard.isSpace()) || (lowerBoard.isGround()
               && !higherBoard.isLowAltitude())
               || lowerBoard.isSpace() || higherBoard.isGround()) {
-            LOGGER.error("Can only enclose a ground map in an atmo map or an atmo map in a space map.");
+            LOGGER.error("Can only enclose a ground map in an atmosphere map or an atmosphere map in a space map.");
             return;
         }
         if (!higherBoard.contains(coords)) {
@@ -538,7 +538,7 @@ public interface IGame {
 
     /**
      * Returns true if the given coords and boardID really exist, are not null, the board ID is an actual board in the
-     * game and the coords are contained in that board. This means that a hex can be found for these values and it will
+     * game and the coords are contained in that board. This means that a hex can be found for these values, and it will
      * not be null (unless the board data is corrupted).
      *
      * @param coords  The coords to test
@@ -689,7 +689,7 @@ public interface IGame {
      * and/or high atmospheric maps. Also returns true when both are on the same board.
      * <p>
      * When two maps are not connected they're part of different hierarchies of maps and therefore, nothing happening on
-     * one can influence the other. It is possible to set up games of such unrelated map clusters but it is not
+     * one can influence the other. It is possible to set up games of such unrelated map clusters, but it is not
      * advisable. Such games could just as well be played separately from each other and suffer a lower chance of MM
      * crashing both...
      *
@@ -737,7 +737,7 @@ public interface IGame {
      * Also returns true if the boards are one and the same.
      * <p>
      * When two maps are not connected they're part of different hierarchies of maps and therefore, nothing happening on
-     * one can influence the other. It is possible to set up games of such unrelated map clusters but it is not
+     * one can influence the other. It is possible to set up games of such unrelated map clusters, but it is not
      * advisable. Such games could just as well be played separately from each other and suffer a lower chance of MM
      * crashing both...
      *
@@ -817,10 +817,10 @@ public interface IGame {
     // endregion
 
     /**
-     * Returns a new ReportEntry with the given report message Id. The ReportEntry subclass returned depends on the
+     * Returns a new ReportEntry with the given report message ID. The ReportEntry subclass returned depends on the
      * implementation in the IGame subclass.
      *
-     * @param messageId The message Id from report-messages.properties
+     * @param messageId The message ID from report-messages.properties
      *
      * @return A new report of an appropriate type and message
      */

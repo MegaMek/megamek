@@ -102,9 +102,9 @@ public abstract class AbstractGame implements IGame {
     protected Forces forces = new Forces(this);
 
     /**
-     * This map links deployment rounds to lists of Deployables that deploy in respective rounds. It only contains
-     * units/objects that are not yet deployed or will redeploy (returning Aeros, units going from one board to another
-     * if implemented). For those, the list is updated every round.
+     * This map links deployment rounds to lists of Deployable that deploy in respective rounds. It only contains
+     * units/objects that are not yet deployed or will redeploy (returning Aerospace, units going from one board to
+     * another if implemented). For those, the list is updated every round.
      */
     private final Map<Integer, List<Deployable>> deploymentTable = new HashMap<>();
 
@@ -289,7 +289,7 @@ public abstract class AbstractGame implements IGame {
     }
 
     /**
-     * Clears and re-calculates the deployment table, i.e. assembles all units/objects in the game that are undeployed
+     * Clears and re-calculates the deployment table, i.e. assembles all units/objects in the game that are un-deployed
      * (that includes returning units or reinforcements) together with the game round that they are supposed to deploy
      * on. This method can be called at any time in the game and will assemble deployment according to the present game
      * state.

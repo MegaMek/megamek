@@ -38,7 +38,7 @@ import java.io.Serial;
 import megamek.common.actions.EntityAction;
 
 /**
- * Instances of this class are sent when an strategic action is created in the game
+ * Instances of this class are sent when a strategic action is created in the game
  *
  * @see GameListener
  */
@@ -52,7 +52,6 @@ public class GamePlayerStrategicActionEvent extends GameEvent {
      * Construct new GameNewActionEvent
      *
      * @param source sender
-     * @param action
      */
     public GamePlayerStrategicActionEvent(Object source, EntityAction action) {
         super(source);

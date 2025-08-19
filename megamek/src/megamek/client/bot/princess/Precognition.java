@@ -41,7 +41,12 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import megamek.client.bot.princess.geometry.CoordFacingCombo;
-import megamek.common.*;
+import megamek.common.ECMInfo;
+import megamek.common.Hex;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.SpecialHexDisplay;
+import megamek.common.TagInfo;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -291,7 +296,7 @@ public class Precognition implements Runnable {
                             break;
                         case CFR_APDS_ASSIGN:
                             cfrEvt.setEntityId((int) c.data()[1]);
-                            cfrEvt.setApdsDists((List<Integer>) c.data()[2]);
+                            cfrEvt.setApdsDistances((List<Integer>) c.data()[2]);
                             cfrEvt.setWAAs((List<WeaponAttackAction>) c.data()[3]);
                             break;
                         default:

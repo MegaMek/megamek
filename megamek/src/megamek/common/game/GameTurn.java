@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.game;
 
+import java.io.Serial;
+
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -47,6 +49,7 @@ import megamek.common.units.ProtoMek;
  * @author Ben
  */
 public class GameTurn extends AbstractPlayerTurn {
+    @Serial
     private static final long serialVersionUID = -8340385894504735190L;
 
     /**
@@ -77,8 +80,8 @@ public class GameTurn extends AbstractPlayerTurn {
      * Determine if the specified entity is a valid one to use for this turn.
      * <p>
      * In addition to the "standard" validity checks, there is also a check for the optional rules "infantry move later"
-     * and "protos move later." This checks to see if those options are enabled and if there is a valid non-infantry (or
-     * proto) unit to move and if so, the entity is invalid.
+     * and "ProtoMeks move later." This checks to see if those options are enabled and if there is a valid non-infantry
+     * (or proto) unit to move and if so, the entity is invalid.
      * <p>
      * There are certain instances where this check should not be used when the optional rules are enabled (such as
      * loading infantry into a unit). Hence, the use of these additional checks is specified by a boolean input

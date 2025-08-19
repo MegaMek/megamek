@@ -7776,7 +7776,7 @@ public class TWGameManager extends AbstractGameManager {
         // Check for minesweepers sweeping VB minefields
         if (minesweeper != null) {
             Vector<Minefield> fieldsToRemove = new Vector<>();
-            for (Minefield mf : game.getVibrabombs()) {
+            for (Minefield mf : game.getVibraBombs()) {
                 // Ignore mines if they aren't in this position
                 if (!mf.getCoords().equals(coords)) {
                     continue;
@@ -7847,7 +7847,7 @@ public class TWGameManager extends AbstractGameManager {
             return false;
         }
 
-        Enumeration<Minefield> e = game.getVibrabombs().elements();
+        Enumeration<Minefield> e = game.getVibraBombs().elements();
 
         while (e.hasMoreElements()) {
             Minefield mf = e.nextElement();
@@ -8833,7 +8833,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         Report r;
         // check entity in target hex
-        Entity affaTarget = game.getAffaTarget(dest, entity);
+        Entity affaTarget = game.getAFFATarget(dest, entity);
         // falling mek falls
         r = new Report(2205);
         r.subject = entity.getId();

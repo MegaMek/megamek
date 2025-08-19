@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.exceptions;
 
+import java.io.Serial;
+
 /**
  * Thrown by Mek, if a location is too full for new equipment.
  *
@@ -41,6 +43,7 @@ package megamek.common.exceptions;
  * @since June 19, 2002, 7:16 PM
  */
 public class LocationFullException extends java.lang.Exception {
+    @Serial
     private static final long serialVersionUID = -8220621982313473559L;
 
     /**

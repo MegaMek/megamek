@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,17 +34,19 @@
 
 package megamek.common.game;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.interfaces.FullGameReport;
 import megamek.common.Report;
+import megamek.common.interfaces.FullGameReport;
 
 /**
  * This class is a container for the various reports created by the server during a game.
  */
 public class GameReports implements FullGameReport<Report> {
+    @Serial
     private static final long serialVersionUID = -2388197938278797669L;
 
     private List<List<Report>> reports;

@@ -2822,7 +2822,7 @@ public class ClientGUI extends AbstractClientGUI
                 case CFR_APDS_ASSIGN:
                     ArrayList<String> apdsOptions = new ArrayList<>();
                     apdsOptions.add(Messages.getString("NONE"));
-                    Iterator<Integer> distIt = gameCFREvent.getApdsDists().iterator();
+                    Iterator<Integer> distIt = gameCFREvent.getApdsDistances().iterator();
                     for (WeaponAttackAction waa : gameCFREvent.getWAAs()) {
                         Entity ae = waa.getEntity(client.getGame());
                         int dist = distIt.next();

@@ -41,10 +41,10 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 import megamek.ai.dataset.*;
-import megamek.common.loaders.MapSettings;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.board.Board;
+import megamek.common.loaders.MapSettings;
 import megamek.common.moves.MovePath;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
@@ -162,12 +162,6 @@ public class GameDatasetLogger {
             BoardData data = BoardData.fromBoard(board);
             String lines = boardDataSerializer.serialize(data);
             appendToFile(lines);
-            // Write all lines from the board serializer
-            // maybe its not necessary to split by new line
-            //            for (String line : lines.split("\n")) {
-            //                appendToFile(line);
-            //            }
-
         } catch (Exception ex) {
             logger.error("Error logging board", ex);
         }

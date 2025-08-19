@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,8 @@
 
 package megamek.common.event;
 
+import java.io.Serial;
+
 import megamek.common.actions.EntityAction;
 
 /**
@@ -46,6 +48,7 @@ public class GameNewActionEvent extends GameEvent {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 928848699583079097L;
     protected EntityAction action;
 
@@ -53,7 +56,6 @@ public class GameNewActionEvent extends GameEvent {
      * Construct new GameNewActionEvent
      *
      * @param source sender
-     * @param action
      */
     public GameNewActionEvent(Object source, EntityAction action) {
         super(source);
